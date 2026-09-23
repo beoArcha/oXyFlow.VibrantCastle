@@ -7,6 +7,9 @@ import aureliaMetaJson from "../../../../assets/characters/aurelia/aurelia_meta.
 import gargoyleMetaJson from "../../../../assets/enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_meta.json";
 import dummyMetaJson from "../../../../assets/enemies/training_dummy/training_dummy_meta.json";
 import gateMetaJson from "../../../../assets/structures/aether_gate/aether_gate_meta.json";
+import leverMetaJson from "../../../../assets/structures/chrono_lever/chrono_lever_meta.json";
+import portcullisMetaJson from "../../../../assets/structures/grand_portcullis/grand_portcullis_meta.json";
+import thornsMetaJson from "../../../../assets/structures/hazard_thorns/hazard_thorns_meta.json";
 
 describe("SOLID MetaParser & Section Parsers Suite", () => {
   describe("1. Character Document Parsing (Valen & Aurelia)", () => {
@@ -135,6 +138,54 @@ describe("SOLID MetaParser & Section Parsers Suite", () => {
       expect(doc.states?.states.charging.animation).toBe("light_up");
       expect(doc.states?.states.activating.animation).toBe("action");
       expect(doc.states?.states.active.animation).toBe("close_up");
+    });
+
+    it("correctly parses Chrono Lever with switch interaction and activating state", () => {
+      const doc = defaultMetaParser.parseStructure(leverMetaJson);
+
+      expect(doc.info.id).toBe("chrono_lever");
+      expect(doc.info.entityType).toBe("structure");
+      expect(doc.atlas.columns).toBe(6);
+      expect(doc.atlas.rows).toBe(3);
+      expect(doc.atlas.cellWidth).toBe(96);
+      expect(doc.atlas.cellHeight).toBe(96);
+
+      expect(doc.interaction?.type).toBe("switch");
+      expect(doc.interaction?.trigger?.onPlayerInteract).toBe(true);
+      expect(doc.interaction?.effects?.openGate).toBe(true);
+
+      expect(doc.states?.states.inactive.animation).toBe("idle");
+      expect(doc.states?.states.activating.animation).toBe("activating");
+      expect(doc.states?.states.active.animation).toBe("active");
+    });
+
+    it("correctly parses Grand Portcullis with closed/opening/open states", () => {
+      const doc = defaultMetaParser.parseStructure(portcullisMetaJson);
+
+      expect(doc.info.id).toBe("grand_portcullis");
+      expect(doc.info.entityType).toBe("structure");
+      expect(doc.atlas.columns).toBe(6);
+      expect(doc.atlas.rows).toBe(3);
+      expect(doc.atlas.cellWidth).toBe(96);
+      expect(doc.atlas.cellHeight).toBe(192);
+
+      expect(doc.states?.states.closed.animation).toBe("closed");
+      expect(doc.states?.states.opening.animation).toBe("opening");
+      expect(doc.states?.states.open.animation).toBe("open");
+    });
+
+    it("correctly parses Hazard Thorns with idle and active states", () => {
+      const doc = defaultMetaParser.parseStructure(thornsMetaJson);
+
+      expect(doc.info.id).toBe("hazard_thorns");
+      expect(doc.info.entityType).toBe("structure");
+      expect(doc.atlas.columns).toBe(6);
+      expect(doc.atlas.rows).toBe(2);
+      expect(doc.atlas.cellWidth).toBe(192);
+      expect(doc.atlas.cellHeight).toBe(64);
+
+      expect(doc.states?.states.idle.animation).toBe("idle");
+      expect(doc.states?.states.active.animation).toBe("active");
     });
   });
 

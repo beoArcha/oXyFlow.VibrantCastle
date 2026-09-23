@@ -1,0 +1,75 @@
+{
+  "entityId": "grand_portcullis",
+  "entityType": "structure",
+  "version": "1.0",
+  "description": "Heavy Gilded Iron Portcullis. Impassable barrier operated by distant clockwork levers.",
+  "atlas": {
+    "image": "grand_portcullis_high.png",
+    "cellWidth": 96,
+    "cellHeight": 192,
+    "columns": 6,
+    "rows": 3,
+    "spacing": 0,
+    "safeMargin": 0,
+    "background": "transparent"
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 1.0
+  },
+  "layout": {
+    "closed": { "row": 0, "startCol": 0, "frames": 4, "widthCells": 1 },
+    "opening": { "row": 1, "startCol": 0, "frames": 6, "widthCells": 1 },
+    "open": { "row": 2, "startCol": 0, "frames": 4, "widthCells": 1 }
+  },
+  "animations": {
+    "closed": {
+      "row": 0,
+      "frames": 4,
+      "fps": 4,
+      "loop": true
+    },
+    "opening": {
+      "row": 1,
+      "frames": 6,
+      "fps": 10,
+      "loop": false
+    },
+    "open": {
+      "row": 2,
+      "frames": 4,
+      "fps": 4,
+      "loop": true
+    }
+  },
+  "states": {
+    "active": {
+      "animation": "closed"
+    },
+    "closed": {
+      "animation": "closed"
+    },
+    "opening": {
+      "animation": "opening"
+    },
+    "inactive": {
+      "animation": "open"
+    },
+    "open": {
+      "animation": "open"
+    }
+  },
+  "infoFrames": {
+    "default": 0,
+    "open": 2
+  },
+  "render": {
+    "layer": "interactive",
+    "zIndex": 8,
+    "blend": "normal"
+  },
+  "constraints": {
+    "strictGrid": true,
+    "fixedBaseline": true
+  }
+}
