@@ -7,15 +7,15 @@
 
   "atlas": {
     "image": "aether_gate_high.png",
-    "cellWidth": 140,
-    "cellHeight": 140,
+    "cellWidth": 198,
+    "cellHeight": 198,
     "columns": 8,
     "rows": 5
   },
 
   "anchor": {
     "x": 0.5,
-    "y": 0.9
+    "y": 1.0
   },
 
   "layout": {

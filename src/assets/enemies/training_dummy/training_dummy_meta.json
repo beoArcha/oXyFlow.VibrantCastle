@@ -8,6 +8,8 @@
   "atlas": {
     "columns": 6,
     "rows": 4,
+    "cellWidth": 256,
+    "cellHeight": 256,
     "spacing": 0,
     "background": "transparent",
     "safeMargin": 10,
@@ -15,20 +17,22 @@
     "noOverlap": true
   },
 
+  "naturalFacing": "left",
+
   "variants": {
     "low": {
-      "cellWidth": 76,
-      "cellHeight": 76,
-      "scale": 0.6
+      "cellWidth": 128,
+      "cellHeight": 128,
+      "scale": 0.5
     },
     "mid": {
-      "cellWidth": 96,
-      "cellHeight": 96,
-      "scale": 0.8
+      "cellWidth": 192,
+      "cellHeight": 192,
+      "scale": 0.75
     },
     "high": {
-      "cellWidth": 140,
-      "cellHeight": 140,
+      "cellWidth": 256,
+      "cellHeight": 256,
       "scale": 1.0
     }
   },
@@ -86,7 +90,7 @@
       "type": "feet",
       "normalized": {
         "x": 0.5,
-        "y": 0.95
+        "y": 1.0
       }
     }
   }

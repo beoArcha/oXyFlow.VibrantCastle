@@ -8,7 +8,10 @@
       "category": "dummy",
       "isDummy": true,
       "isAerial": false,
-      "dimensions": { "width": 35, "height": 60 },
+      "dimensions": {
+        "width": 35,
+        "height": 60
+      },
       "stats": {
         "health": 60,
         "maxHealth": 60,
@@ -35,7 +38,10 @@
       "category": "aerial",
       "isDummy": false,
       "isAerial": true,
-      "dimensions": { "width": 44, "height": 40 },
+      "dimensions": {
+        "width": 44,
+        "height": 40
+      },
       "stats": {
         "health": 45,
         "maxHealth": 45,
@@ -45,10 +51,10 @@
       },
       "atlas": {
         "presetId": "clockwork_owl_gargoyle",
-        "defaultAnimation": "gargoyle_fly",
-        "hitAnimation": "gargoyle_hit",
-        "attackAnimation": "gargoyle_attack",
-        "deathAnimation": "gargoyle_death"
+        "defaultAnimation": "fly",
+        "hitAnimation": "hit",
+        "attackAnimation": "attack",
+        "deathAnimation": "death"
       },
       "proceduralFallback": {
         "bodyColor": "#b45309",
@@ -63,7 +69,10 @@
       "category": "ground_patrol",
       "isDummy": false,
       "isAerial": false,
-      "dimensions": { "width": 42, "height": 62 },
+      "dimensions": {
+        "width": 42,
+        "height": 62
+      },
       "stats": {
         "health": 80,
         "maxHealth": 80,
@@ -84,7 +93,10 @@
       "category": "aerial",
       "isDummy": false,
       "isAerial": true,
-      "dimensions": { "width": 46, "height": 42 },
+      "dimensions": {
+        "width": 46,
+        "height": 42
+      },
       "stats": {
         "health": 65,
         "maxHealth": 65,
@@ -105,7 +117,10 @@
       "category": "automaton",
       "isDummy": false,
       "isAerial": false,
-      "dimensions": { "width": 48, "height": 65 },
+      "dimensions": {
+        "width": 48,
+        "height": 65
+      },
       "stats": {
         "health": 120,
         "maxHealth": 120,
@@ -126,7 +141,10 @@
       "category": "construct",
       "isDummy": false,
       "isAerial": false,
-      "dimensions": { "width": 45, "height": 65 },
+      "dimensions": {
+        "width": 45,
+        "height": 65
+      },
       "stats": {
         "health": 110,
         "maxHealth": 110,
@@ -147,7 +165,10 @@
       "category": "elite",
       "isDummy": false,
       "isAerial": true,
-      "dimensions": { "width": 56, "height": 76 },
+      "dimensions": {
+        "width": 56,
+        "height": 76
+      },
       "stats": {
         "health": 220,
         "maxHealth": 220,
@@ -168,7 +189,10 @@
       "category": "elite",
       "isDummy": false,
       "isAerial": false,
-      "dimensions": { "width": 50, "height": 72 },
+      "dimensions": {
+        "width": 50,
+        "height": 72
+      },
       "stats": {
         "health": 260,
         "maxHealth": 260,

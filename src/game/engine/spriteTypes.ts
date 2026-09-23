@@ -280,6 +280,8 @@ export interface AtlasMetaDoc {
     origin?: AtlasOriginDefinition;
     [key: string]: any;
   };
+  naturalFacing?: "left" | "right";
+  defaultFacing?: "left" | "right";
   anchor?: {
     x: number;
     y: number;

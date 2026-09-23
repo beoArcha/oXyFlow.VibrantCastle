@@ -27,7 +27,7 @@ import {
 export class ParallaxRenderer {
   // Deterministic star field cache for dusk/space sky gradients
   private cachedStars: Array<{ xRatio: number; yRatio: number; size: number; phase: number; brightness: number }> = [];
-  private imageCache: Map<string, HTMLImageElement> = new Map(); 1
+  private imageCache: Map<string, HTMLImageElement> = new Map();
   private readonly multiLayerSystem: IMultiLayerBackgroundSystem;
 
   constructor(deps: { multiLayerSystem?: IMultiLayerBackgroundSystem } = {}) {

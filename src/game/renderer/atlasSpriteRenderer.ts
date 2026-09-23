@@ -43,15 +43,11 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
     const meta: AtlasMetaDoc = atlasItem.meta;
     const quality = options.quality || assetLoader.getQuality();
 
-    // 1. Resolve cell dimensions from metadata variants or nominal atlas grid
-    const cellW =
-      meta.variants?.[quality]?.cellWidth ??
-      meta.atlas?.cellWidth ??
-      Math.round(texture.naturalWidth / (meta.atlas?.columns || 6));
-    const cellH =
-      meta.variants?.[quality]?.cellHeight ??
-      meta.atlas?.cellHeight ??
-      Math.round(texture.naturalHeight / (meta.atlas?.rows || 4));
+    // 1. Resolve source cell dimensions directly from actual texture dimensions & atlas grid
+    const cols = meta.atlas?.columns || (meta.animations ? 6 : 6);
+    const rows = meta.atlas?.rows || 4;
+    const cellW = texture.naturalWidth / cols;
+    const cellH = texture.naturalHeight / rows;
 
     // 2. Resolve animation track name (check state aliases e.g. inactive -> idle)
     let animKey = options.animationName;
@@ -122,18 +118,28 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
       anchorY = meta.layout.origin.normalized.y;
     }
 
-    // Target scale calculation: fit entity smoothly
-    const variantScale = meta.variants?.[quality]?.scale ?? 1.0;
+    // 6. Target scale calculation: fit entity hitbox smoothly
     const extraMultiplier = options.scaleMultiplier ?? 1.0;
-    const scale = variantScale * extraMultiplier;
+    let scale: number;
+
+    if (options.height > 0) {
+      // The sprite character/structure occupies ~90-95% of cell height
+      const visibleRatio = anchorY >= 0.8 ? 0.94 : 0.88;
+      const baseScale = options.height / (cellH * visibleRatio);
+      scale = baseScale * extraMultiplier;
+    } else {
+      const variantScale = meta.variants?.[quality]?.scale ?? 1.0;
+      scale = variantScale * extraMultiplier;
+    }
 
     const dw = Math.round(sw * scale);
     const dh = Math.round(sh * scale);
 
-    // Target world anchor point
+    // 7. Target world anchor point and draw coordinates
     const targetAnchorX = Math.round(options.x + options.width / 2);
+    const isGroundAnchored = anchorY >= 0.8;
     const targetAnchorY = Math.round(
-      anchorY >= 0.85 ? options.y + options.height : options.y + options.height / 2
+      isGroundAnchored ? options.y + options.height : options.y + options.height / 2
     );
 
     const drawX = Math.round(targetAnchorX - anchorX * dw);
@@ -145,17 +151,28 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
       ctx.globalAlpha = options.alpha;
     }
 
-    // Directional mirroring (e.g. facingLeft)
-    if (options.facingLeft) {
+    // 8. Directional mirroring (respecting asset's natural orientation)
+    const naturalFacing =
+      meta.naturalFacing ||
+      meta.defaultFacing ||
+      meta.layout?.defaultFacing ||
+      "right";
+
+    const needsFlip =
+      naturalFacing === "left"
+        ? options.facingLeft === false
+        : !!options.facingLeft;
+
+    if (needsFlip) {
       ctx.translate(targetAnchorX, 0);
       ctx.scale(-1, 1);
       ctx.translate(-targetAnchorX, 0);
     }
 
-    // Draw main sprite
+    // 9. Draw main sprite
     ctx.drawImage(texture, sx, sy, sw, sh, drawX, drawY, dw, dh);
 
-    // Damage flash tint overlay
+    // 10. Damage flash tint overlay
     if (options.tintColor) {
       ctx.save();
       ctx.globalCompositeOperation = "source-atop";
