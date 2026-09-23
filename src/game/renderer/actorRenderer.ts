@@ -1,5 +1,6 @@
 import { Player, Enemy, AssetQuality } from "../types";
 import { SpriteAnimator } from "../engine/spriteAnimator";
+import { IEnemyRenderer, defaultEnemyRenderer } from "./enemyRenderer";
 
 export interface IActorRenderer {
   renderPlayers(
@@ -9,14 +10,20 @@ export interface IActorRenderer {
     tickCount: number
   ): void;
 
-  renderEnemies(ctx: CanvasRenderingContext2D, enemies: Enemy[]): void;
+  renderEnemies(ctx: CanvasRenderingContext2D, enemies: Enemy[], tickCount?: number): void;
 }
 
 /**
  * Dedicated renderer for animated characters: players (with shield, squash & stretch)
- * and enemies (target dummies, flying gargoyles, damage flashes) (SRP).
+ * and enemies (delegated via composition to EnemyRenderer) (SRP).
  */
 export class ActorRenderer implements IActorRenderer {
+  private readonly enemyRenderer: IEnemyRenderer;
+
+  constructor(enemyRenderer: IEnemyRenderer = defaultEnemyRenderer) {
+    this.enemyRenderer = enemyRenderer;
+  }
+
   public renderPlayers(
     ctx: CanvasRenderingContext2D,
     players: Player[],
@@ -72,78 +79,14 @@ export class ActorRenderer implements IActorRenderer {
     });
   }
 
-  public renderEnemies(ctx: CanvasRenderingContext2D, enemies: Enemy[]): void {
-    enemies.forEach((enemy) => {
-      if (enemy.isDead) return;
-
-      ctx.save();
-
-      if (enemy.damageTimer > 0) {
-        ctx.fillStyle = "#f87171";
-      } else {
-        ctx.fillStyle = enemy.isDummy ? "#d97706" : "#4c1d95";
-      }
-
-      if (enemy.isDummy) {
-        const cx = enemy.x + enemy.width / 2;
-
-        ctx.fillStyle = "#78350f";
-        ctx.fillRect(cx - 4, enemy.y + enemy.height - 12, 8, 12);
-        ctx.fillRect(enemy.x, enemy.y + 24, enemy.width, 6);
-
-        ctx.fillStyle = enemy.damageTimer > 0 ? "#ef4444" : "#eab308";
-        ctx.fillRect(enemy.x + 4, enemy.y + 8, enemy.width - 8, enemy.height - 20);
-
-        ctx.fillStyle = "#5c2512";
-        ctx.fillRect(enemy.x + 4, enemy.y + 14, enemy.width - 8, 3);
-        ctx.fillRect(enemy.x + 4, enemy.y + 32, enemy.width - 8, 3);
-
-        ctx.fillStyle = "#6b7280";
-        ctx.fillRect(cx - 10, enemy.y - 12, 20, 20);
-        ctx.fillStyle = "#ef4444";
-        ctx.fillRect(cx - 2, enemy.y - 20, 6, 8);
-      } else {
-        const cy = enemy.y + enemy.height / 2;
-        const hoverOffset = Math.sin(Date.now() * 0.008) * 6;
-        const flapAngle = Math.sin(Date.now() * 0.02) * 15;
-
-        ctx.fillStyle = "#b45309";
-
-        // Left Wing
-        ctx.save();
-        ctx.translate(enemy.x, cy + hoverOffset);
-        ctx.rotate((-flapAngle * Math.PI) / 180);
-        ctx.fillRect(-22, -10, 22, 14);
-        ctx.restore();
-
-        // Right Wing
-        ctx.save();
-        ctx.translate(enemy.x + enemy.width, cy + hoverOffset);
-        ctx.rotate((flapAngle * Math.PI) / 180);
-        ctx.fillRect(0, -10, 22, 14);
-        ctx.restore();
-
-        ctx.fillStyle = enemy.damageTimer > 0 ? "#ef4444" : "#c29547";
-        ctx.fillRect(enemy.x, enemy.y + hoverOffset, enemy.width, enemy.height);
-
-        ctx.fillStyle = "#22d3ee";
-        ctx.fillRect(
-          enemy.facingLeft ? enemy.x + 4 : enemy.x + enemy.width - 12,
-          enemy.y + hoverOffset + 6,
-          4,
-          4
-        );
-        ctx.fillRect(
-          enemy.facingLeft ? enemy.x + 12 : enemy.x + enemy.width - 20,
-          enemy.y + hoverOffset + 6,
-          4,
-          4
-        );
-      }
-
-      ctx.restore();
-    });
+  public renderEnemies(
+    ctx: CanvasRenderingContext2D,
+    enemies: Enemy[],
+    tickCount: number = 0
+  ): void {
+    this.enemyRenderer.render(ctx, enemies, tickCount);
   }
 }
 
 export const defaultActorRenderer = new ActorRenderer();
+

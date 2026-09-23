@@ -199,10 +199,10 @@ export class GameRenderer {
     }
 
     // 4. LEVEL ENTITIES (Platforms, Hazards, Levers, Portals - SRP via LevelEntityRenderer)
-    this.levelEntityRenderer.render(this.ctx, entities, this.language);
+    this.levelEntityRenderer.render(this.ctx, entities, this.language, this.tickCount);
 
     // 5. ENEMIES & TARGET DUMMIES (SRP via ActorRenderer)
-    this.actorRenderer.renderEnemies(this.ctx, enemies);
+    this.actorRenderer.renderEnemies(this.ctx, enemies, this.tickCount);
 
     // 6. MAGIC PROJECTILES (SRP via FxRenderer)
     this.fxRenderer.renderProjectiles(this.ctx, projectiles);

@@ -1,0 +1,136 @@
+{
+  "version": "1.0",
+  "structures": {
+    "aether_gate": {
+      "id": "aether_gate",
+      "labelKey": "portalMastery",
+      "defaultLabel": "Aether Mastery Gate",
+      "type": "goal",
+      "dimensions": { "width": 100, "height": 130 },
+      "atlas": {
+        "presetId": "aether_gate",
+        "states": {
+          "inactive": "idle",
+          "charging": "light_up",
+          "activating": "action",
+          "active": "close_up"
+        }
+      },
+      "interaction": {
+        "type": "victory_gate",
+        "activation": "touch",
+        "triggerRadius": 180,
+        "effects": {
+          "playFanfare": true,
+          "unlockNextStage": true,
+          "emitParticles": true
+        }
+      },
+      "proceduralFallback": {
+        "innerColor": "#ffffff",
+        "outerColor": "#06b6d4",
+        "borderColor": "#d97706"
+      }
+    },
+    "chrono_lever": {
+      "id": "chrono_lever",
+      "labelKey": "labelGateLever",
+      "defaultLabel": "Golden Gate Lever",
+      "type": "lever",
+      "dimensions": { "width": 30, "height": 30 },
+      "interaction": {
+        "type": "switch",
+        "activation": "interact",
+        "effects": {
+          "openGate": true,
+          "sound": "sfx_unlock"
+        }
+      },
+      "proceduralFallback": {
+        "baseColor": "#5c3d2e",
+        "leverColor": "#c29547",
+        "activeLamp": "#22c55e",
+        "inactiveLamp": "#ef4444"
+      }
+    },
+    "sluice_lever": {
+      "id": "sluice_lever",
+      "labelKey": "labelMainSluiceLever",
+      "defaultLabel": "Main Sluice Lever",
+      "type": "lever",
+      "dimensions": { "width": 36, "height": 34 },
+      "interaction": {
+        "type": "switch",
+        "activation": "interact",
+        "effects": {
+          "openGate": true,
+          "sound": "sfx_unlock"
+        }
+      },
+      "proceduralFallback": {
+        "baseColor": "#451a03",
+        "leverColor": "#f59e0b",
+        "activeLamp": "#10b981",
+        "inactiveLamp": "#dc2626"
+      }
+    },
+    "grand_portcullis": {
+      "id": "grand_portcullis",
+      "labelKey": "labelGrandPortcullis",
+      "defaultLabel": "Grand Portcullis",
+      "type": "solid",
+      "dimensions": { "width": 40, "height": 180 },
+      "proceduralFallback": {
+        "bodyColor": "#1e293b",
+        "latticeColor": "#94a3b8",
+        "lockColor": "#f59e0b"
+      }
+    },
+    "vertical_lift": {
+      "id": "vertical_lift",
+      "labelKey": "labelVerticalLift",
+      "defaultLabel": "Clockwork Lift",
+      "type": "solid",
+      "dimensions": { "width": 90, "height": 18 },
+      "proceduralFallback": {
+        "bodyColor": "#b45309",
+        "gearColor": "#f59e0b",
+        "chainColor": "#475569"
+      }
+    },
+    "moving_platform": {
+      "id": "moving_platform",
+      "labelKey": "labelMovingPlatform",
+      "defaultLabel": "Ley Platform",
+      "type": "solid",
+      "dimensions": { "width": 100, "height": 20 },
+      "proceduralFallback": {
+        "bodyColor": "#0284c7",
+        "energyColor": "#38bdf8",
+        "railColor": "#1e3a8a"
+      }
+    },
+    "hazard_thorns": {
+      "id": "hazard_thorns",
+      "labelKey": "labelAmberThorns",
+      "defaultLabel": "Amber Hazard Thorns",
+      "type": "hazard",
+      "dimensions": { "width": 120, "height": 30 },
+      "proceduralFallback": {
+        "spikeColor": "#e06c35",
+        "crystalGlow": "#fbbf24"
+      }
+    },
+    "celestial_barrier": {
+      "id": "celestial_barrier",
+      "labelKey": "labelCelestialBarrier",
+      "defaultLabel": "Celestial Barrier",
+      "type": "solid",
+      "dimensions": { "width": 30, "height": 140 },
+      "proceduralFallback": {
+        "barrierColor": "rgba(6, 182, 212, 0.65)",
+        "runeColor": "#a5f3fc"
+      }
+    }
+  }
+}

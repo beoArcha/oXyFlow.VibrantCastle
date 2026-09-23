@@ -6,9 +6,18 @@ import {
   CharacterPortraitMood,
   SpriteAtlasMap,
   SpriteFrame,
+  AtlasMetaDoc,
 } from "./spriteTypes";
 import { VALEN_MANIFEST, AURELIA_MANIFEST } from "./characterManifests";
 import { SpriteExtractorFactory, PixelBoundsScanner } from "./extractors";
+
+// Preloaded atlas assets for enemies and structures
+import dummyHighPng from "../../assets/enemies/training_dummy/training_dummy_high.png";
+import dummyMetaJson from "../../assets/enemies/training_dummy/training_dummy_meta.json";
+import owlHighPng from "../../assets/enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_high.png";
+import owlMetaJson from "../../assets/enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_meta.json";
+import gateHighPng from "../../assets/structures/aether_gate/aether_gate_high.png";
+import gateMetaJson from "../../assets/structures/aether_gate/aether_gate_meta.json";
 
 export interface ResolvedPortrait {
   texture: HTMLImageElement | null;
@@ -22,8 +31,16 @@ export interface ResolvedPortrait {
   description?: string;
 }
 
+export interface RegisteredAtlasItem {
+  id: string;
+  category: "enemy" | "structure";
+  imageSrc: string;
+  meta: AtlasMetaDoc;
+}
+
 class AssetLoaderEngine {
   private characterRegistry: Map<string, CharacterAssetManifest> = new Map();
+  private atlasRegistry: Map<string, RegisteredAtlasItem> = new Map();
   private textureCache: Map<string, HTMLImageElement> = new Map();
   private loadPromises: Map<string, Promise<HTMLImageElement>> = new Map();
   private currentQuality: AssetQuality = "high";
@@ -32,6 +49,50 @@ class AssetLoaderEngine {
   constructor() {
     this.registerCharacter(VALEN_MANIFEST);
     this.registerCharacter(AURELIA_MANIFEST);
+
+    this.registerAtlas({
+      id: "training_dummy",
+      category: "enemy",
+      imageSrc: dummyHighPng,
+      meta: dummyMetaJson as unknown as AtlasMetaDoc,
+    });
+    this.registerAtlas({
+      id: "clockwork_owl_gargoyle",
+      category: "enemy",
+      imageSrc: owlHighPng,
+      meta: owlMetaJson as unknown as AtlasMetaDoc,
+    });
+    this.registerAtlas({
+      id: "aether_gate",
+      category: "structure",
+      imageSrc: gateHighPng,
+      meta: gateMetaJson as unknown as AtlasMetaDoc,
+    });
+  }
+
+  public registerAtlas(item: RegisteredAtlasItem) {
+    this.atlasRegistry.set(item.id, item);
+    if (typeof window !== "undefined") {
+      this.loadTexture(item.imageSrc).catch(() => {});
+    }
+  }
+
+  public getAtlas(id: string): RegisteredAtlasItem | undefined {
+    return this.atlasRegistry.get(id);
+  }
+
+  public getAtlasTexture(id: string): HTMLImageElement | null {
+    const item = this.atlasRegistry.get(id);
+    if (!item) return null;
+    const tex = this.getTexture(item.imageSrc);
+    if (!tex && !this.loadPromises.has(item.imageSrc)) {
+      this.loadTexture(item.imageSrc).catch(() => {});
+    }
+    return tex;
+  }
+
+  public getAllAtlases(): RegisteredAtlasItem[] {
+    return Array.from(this.atlasRegistry.values());
   }
 
   public registerCharacter(manifest: CharacterAssetManifest) {

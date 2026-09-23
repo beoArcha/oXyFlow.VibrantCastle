@@ -85,6 +85,7 @@ export class LocationParser {
               prefab?.type === "oneway" ? CollisionType.OneWay : CollisionType.Solid;
             entities.push({
               id: s.id,
+              structureId: s.prefabId || (s.id.includes("portcullis") ? "grand_portcullis" : s.id.includes("lift") ? "vertical_lift" : s.id.includes("platform") ? "moving_platform" : undefined),
               type: collisionType,
               x: s.x,
               y: s.y,
@@ -110,6 +111,7 @@ export class LocationParser {
             const prefab = h.prefabId ? dictionaries.entities[h.prefabId] : undefined;
             entities.push({
               id: h.id,
+              structureId: h.prefabId || "hazard_thorns",
               type: CollisionType.Hazard,
               x: h.x,
               y: h.y,
@@ -143,6 +145,7 @@ export class LocationParser {
           for (const lev of layout.levers) {
             entities.push({
               id: lev.id,
+              structureId: lev.id.includes("sluice") ? "sluice_lever" : "chrono_lever",
               type: CollisionType.Lever,
               x: lev.x,
               y: lev.y,
@@ -174,6 +177,7 @@ export class LocationParser {
 
             entities.push({
               id: p.id,
+              structureId: "aether_gate",
               type: CollisionType.Goal,
               x: p.x,
               y: p.y,
@@ -217,6 +221,7 @@ export class LocationParser {
 
             enemies.push({
               id: ep.id,
+              templateId: ep.monsterKey,
               nameKey: monsterDef.nameKey,
               defaultName: monsterDef.defaultName || monsterDef.name,
               x: ep.x,

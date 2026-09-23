@@ -236,3 +236,60 @@ export interface CharacterAssetManifest {
   tiers?: Record<CharacterProgressionTier, CharacterTierManifest>;
   meta?: any;
 }
+
+/**
+ * Universal Atlas Metadata schema for characters, creatures (enemies), and structures.
+ */
+export interface AtlasOriginDefinition {
+  type?: string;
+  normalized: {
+    x: number;
+    y: number;
+  };
+}
+
+export interface AtlasMetaDoc {
+  characterId?: string;
+  entityId?: string;
+  entityType?: string;
+  version?: string;
+  description?: string;
+  atlas: {
+    columns: number;
+    rows: number;
+    spacing?: number;
+    safeMargin?: number;
+    cellWidth?: number;
+    cellHeight?: number;
+    image?: string;
+    background?: string;
+    noOverflow?: boolean;
+    noOverlap?: boolean;
+  };
+  variants?: Record<
+    string,
+    {
+      cellWidth: number;
+      cellHeight: number;
+      scale?: number;
+    }
+  >;
+  animations?: Record<string, any>;
+  layout?: {
+    ordering?: string[];
+    origin?: AtlasOriginDefinition;
+    [key: string]: any;
+  };
+  anchor?: {
+    x: number;
+    y: number;
+  };
+  states?: Record<
+    string,
+    {
+      animation: string;
+    }
+  >;
+  interaction?: any;
+  render?: any;
+}

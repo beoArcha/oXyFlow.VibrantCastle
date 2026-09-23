@@ -1,0 +1,186 @@
+{
+  "version": "1.0",
+  "enemies": {
+    "training_dummy": {
+      "id": "training_dummy",
+      "nameKey": "monsterTrainingDummy",
+      "defaultName": "Training Dummy",
+      "category": "dummy",
+      "isDummy": true,
+      "isAerial": false,
+      "dimensions": { "width": 35, "height": 60 },
+      "stats": {
+        "health": 60,
+        "maxHealth": 60,
+        "speed": 0,
+        "attackPower": 0,
+        "scoreReward": 150
+      },
+      "atlas": {
+        "presetId": "training_dummy",
+        "defaultAnimation": "idle",
+        "hitAnimation": "hit",
+        "deathAnimation": "destroy"
+      },
+      "proceduralFallback": {
+        "bodyColor": "#a16207",
+        "accentColor": "#ca8a04",
+        "eyesColor": "#eab308"
+      }
+    },
+    "clockwork_owl_gargoyle": {
+      "id": "clockwork_owl_gargoyle",
+      "nameKey": "monsterGargoyleScout",
+      "defaultName": "Clockwork Owl Gargoyle",
+      "category": "aerial",
+      "isDummy": false,
+      "isAerial": true,
+      "dimensions": { "width": 44, "height": 40 },
+      "stats": {
+        "health": 45,
+        "maxHealth": 45,
+        "speed": 1.4,
+        "attackPower": 16,
+        "scoreReward": 200
+      },
+      "atlas": {
+        "presetId": "clockwork_owl_gargoyle",
+        "defaultAnimation": "gargoyle_fly",
+        "hitAnimation": "gargoyle_hit",
+        "attackAnimation": "gargoyle_attack",
+        "deathAnimation": "gargoyle_death"
+      },
+      "proceduralFallback": {
+        "bodyColor": "#b45309",
+        "accentColor": "#f59e0b",
+        "eyesColor": "#22d3ee"
+      }
+    },
+    "court_sentinel": {
+      "id": "court_sentinel",
+      "nameKey": "monsterCourtSentinel",
+      "defaultName": "Courtyard Sentinel",
+      "category": "ground_patrol",
+      "isDummy": false,
+      "isAerial": false,
+      "dimensions": { "width": 42, "height": 62 },
+      "stats": {
+        "health": 80,
+        "maxHealth": 80,
+        "speed": 0.8,
+        "attackPower": 20,
+        "scoreReward": 250
+      },
+      "proceduralFallback": {
+        "bodyColor": "#78350f",
+        "accentColor": "#d97706",
+        "eyesColor": "#ea580c"
+      }
+    },
+    "chasm_gargoyle": {
+      "id": "chasm_gargoyle",
+      "nameKey": "monsterChasmGargoyle",
+      "defaultName": "Chasm Gargoyle",
+      "category": "aerial",
+      "isDummy": false,
+      "isAerial": true,
+      "dimensions": { "width": 46, "height": 42 },
+      "stats": {
+        "health": 65,
+        "maxHealth": 65,
+        "speed": 1.6,
+        "attackPower": 22,
+        "scoreReward": 300
+      },
+      "proceduralFallback": {
+        "bodyColor": "#4c1d95",
+        "accentColor": "#7c3aed",
+        "eyesColor": "#a855f7"
+      }
+    },
+    "clockwork_automaton": {
+      "id": "clockwork_automaton",
+      "nameKey": "monsterClockworkAutomaton",
+      "defaultName": "Clockwork Automaton",
+      "category": "automaton",
+      "isDummy": false,
+      "isAerial": false,
+      "dimensions": { "width": 48, "height": 65 },
+      "stats": {
+        "health": 120,
+        "maxHealth": 120,
+        "speed": 1.1,
+        "attackPower": 24,
+        "scoreReward": 350
+      },
+      "proceduralFallback": {
+        "bodyColor": "#92400e",
+        "accentColor": "#f59e0b",
+        "eyesColor": "#fef08a"
+      }
+    },
+    "aether_sentinel": {
+      "id": "aether_sentinel",
+      "nameKey": "monsterAetherSentinel",
+      "defaultName": "Aether Sentinel",
+      "category": "construct",
+      "isDummy": false,
+      "isAerial": false,
+      "dimensions": { "width": 45, "height": 65 },
+      "stats": {
+        "health": 110,
+        "maxHealth": 110,
+        "speed": 1.2,
+        "attackPower": 28,
+        "scoreReward": 400
+      },
+      "proceduralFallback": {
+        "bodyColor": "#1e3a8a",
+        "accentColor": "#06b6d4",
+        "eyesColor": "#38bdf8"
+      }
+    },
+    "aether_archon": {
+      "id": "aether_archon",
+      "nameKey": "monsterAetherArchon",
+      "defaultName": "Aether Archon",
+      "category": "elite",
+      "isDummy": false,
+      "isAerial": true,
+      "dimensions": { "width": 56, "height": 76 },
+      "stats": {
+        "health": 220,
+        "maxHealth": 220,
+        "speed": 1.3,
+        "attackPower": 35,
+        "scoreReward": 750
+      },
+      "proceduralFallback": {
+        "bodyColor": "#312e81",
+        "accentColor": "#818cf8",
+        "eyesColor": "#c084fc"
+      }
+    },
+    "shadow_knight": {
+      "id": "shadow_knight",
+      "nameKey": "monsterShadowKnight",
+      "defaultName": "Shadow Knight",
+      "category": "elite",
+      "isDummy": false,
+      "isAerial": false,
+      "dimensions": { "width": 50, "height": 72 },
+      "stats": {
+        "health": 260,
+        "maxHealth": 260,
+        "speed": 1.5,
+        "attackPower": 40,
+        "scoreReward": 1000
+      },
+      "proceduralFallback": {
+        "bodyColor": "#0f172a",
+        "accentColor": "#64748b",
+        "eyesColor": "#ef4444"
+      }
+    }
+  }
+}

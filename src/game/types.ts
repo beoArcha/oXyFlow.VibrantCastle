@@ -299,6 +299,9 @@ export interface Enemy {
   isAerial?: boolean;
   nameKey?: string;
   defaultName?: string;
+  templateId?: string; // Links to enemies.json
+  animationState?: string; // e.g. "idle", "gargoyle_fly", "hit", "gargoyle_attack", "destroy"
+  animationTicks?: number;
 }
 
 export interface Entity {
@@ -314,6 +317,9 @@ export interface Entity {
   label?: string;
   labelKey?: string;
   triggerId?: string; // Links to narrative logs or events
+  structureId?: string; // Links to structures.json (e.g. "aether_gate", "chrono_lever")
+  animationState?: string; // e.g. "inactive", "charging", "activating", "active"
+  animationTicks?: number;
   // For portals / transitions (Castlevania-style)
   targetLocationId?: string;
   targetSpawnPoint?: { x: number; y: number };
