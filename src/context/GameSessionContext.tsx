@@ -76,8 +76,47 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
     }
   }, [currentNarration, setSafeTimeout]);
 
-  const p1 = gameEngine.players.find((p) => p.id === "player1");
-  const p2 = gameEngine.players.find((p) => p.id === "player2");
+  const rawP1 = gameEngine.players.find((p) => p.id === "player1");
+  const rawP2 = gameEngine.players.find((p) => p.id === "player2");
+
+  const p1 = useMemo(() => {
+    if (!rawP1) return undefined;
+    return { ...rawP1 };
+  }, [
+    rawP1,
+    rawP1?.health,
+    rawP1?.mana,
+    rawP1?.stamina,
+    rawP1?.maxHealth,
+    rawP1?.maxMana,
+    rawP1?.maxStamina,
+    rawP1?.skillPoints,
+    rawP1?.primarySpellId,
+    rawP1?.secondarySpellId,
+    rawP1?.characterId,
+    rawP1?.isDead,
+    rawP1?.inventory,
+  ]);
+
+  const p2 = useMemo(() => {
+    if (!rawP2) return undefined;
+    return { ...rawP2 };
+  }, [
+    rawP2,
+    rawP2?.health,
+    rawP2?.mana,
+    rawP2?.stamina,
+    rawP2?.maxHealth,
+    rawP2?.maxMana,
+    rawP2?.maxStamina,
+    rawP2?.skillPoints,
+    rawP2?.primarySpellId,
+    rawP2?.secondarySpellId,
+    rawP2?.characterId,
+    rawP2?.isDead,
+    rawP2?.inventory,
+  ]);
+
   const isVictory = gameEngine.isVictory;
   const isDefeat = gameEngine.isDefeat;
   const isPaused = gameEngine.isPaused;

@@ -128,6 +128,22 @@ export class GameEngine {
 
   // React listener callbacks
   private stateListeners: Set<() => void> = new Set();
+  private lastVitalsHash: string = "";
+  private uiSyncTimer: number = 0;
+
+  public checkAndUpdateVitalsSnapshot(): boolean {
+    const currentHash = this.players
+      .map(
+        (p) =>
+          `${p.id}:${Math.round(p.health)}:${Math.round(p.mana)}:${Math.round(p.stamina)}:${p.skillPoints}`
+      )
+      .join("|");
+    if (currentHash !== this.lastVitalsHash) {
+      this.lastVitalsHash = currentHash;
+      return true;
+    }
+    return false;
+  }
 
   constructor(deps: IGameDependencies = {}) {
     this.audio = deps.audio || gameAudio;
@@ -445,9 +461,24 @@ export class GameEngine {
       }
 
       // Quick potion triggers
-      if (inputs.potion1) useQuickPotion(player, 0);
-      if (inputs.potion2) useQuickPotion(player, 1);
-      if (inputs.potion3) useQuickPotion(player, 2);
+      if (inputs.potion1) {
+        if (useQuickPotion(player, 0)) {
+          this.checkAndUpdateVitalsSnapshot();
+          this.notifyReact();
+        }
+      }
+      if (inputs.potion2) {
+        if (useQuickPotion(player, 1)) {
+          this.checkAndUpdateVitalsSnapshot();
+          this.notifyReact();
+        }
+      }
+      if (inputs.potion3) {
+        if (useQuickPotion(player, 2)) {
+          this.checkAndUpdateVitalsSnapshot();
+          this.notifyReact();
+        }
+      }
 
       // Magic Spell Cast: Primary
       if (inputs.magic1 && player.magicCooldown === 0) {
@@ -464,6 +495,8 @@ export class GameEngine {
             "magic",
             6
           );
+          this.checkAndUpdateVitalsSnapshot();
+          this.notifyReact();
         }
       }
 
@@ -482,6 +515,8 @@ export class GameEngine {
             "magic",
             6
           );
+          this.checkAndUpdateVitalsSnapshot();
+          this.notifyReact();
         }
       }
 
@@ -693,6 +728,15 @@ export class GameEngine {
     const narrationChanged = this.narrationSystem.update(dtMultiplier);
     if (narrationChanged) {
       this.notifyReact();
+    }
+
+    // 12. Throttled UI telemetry synchronization for player vitals (health, mana, stamina)
+    this.uiSyncTimer += dtMultiplier;
+    if (this.uiSyncTimer >= 6) {
+      this.uiSyncTimer = 0;
+      if (this.checkAndUpdateVitalsSnapshot()) {
+        this.notifyReact();
+      }
     }
 
     // 10. Update Camera & Render the frame on canvas
