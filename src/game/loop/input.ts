@@ -40,6 +40,8 @@ export class GameInputEngine {
   }
 
   private setupListeners() {
+    if (typeof window === "undefined") return;
+
     window.addEventListener("keydown", (e: KeyboardEvent) => {
       // Dynamic prevent-default for game control keys
       const isBoundKey = Object.values(this.keyboardBindings).some(pBindings => 

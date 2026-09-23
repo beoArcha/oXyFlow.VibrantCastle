@@ -52,7 +52,7 @@ AI → generation + modification
 
 ### 2.1 Game Loop (MANDATORY)
 
-* Fixed timestep: 60 Hz
+* Framerates: 30/60/90/120 Hz
 * Decoupled render
 
 Structure:

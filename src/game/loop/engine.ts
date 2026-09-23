@@ -314,14 +314,38 @@ export class GameEngine {
     this.audio.init();
     this.audio.setMusicIntensity(this.currentLocation?.theme.musicIntensity || 0.1);
 
+    let lastTimestamp = 0;
+    const MAX_STEPS_PER_FRAME = 8; // Guard against spiral of death
+
     const loop = (timestamp: number) => {
       if (!this.isRunning) return;
-      if (fpsManager.shouldExecuteFrame(timestamp)) {
-        const dtMultiplier = fpsManager.getDtMultiplier();
-        this.tick(dtMultiplier);
+
+      if (lastTimestamp === 0) {
+        lastTimestamp = timestamp;
       }
+      const elapsed = timestamp - lastTimestamp;
+      lastTimestamp = timestamp;
+
+      if (this.isPaused) {
+        this.renderFrame(1.0);
+      } else {
+        fpsManager.pushDelta(elapsed);
+        const stepMultiplier = fpsManager.getStepMultiplier() * (debugManager.state.timeScale || 1.0);
+
+        let updateSteps = 0;
+        while (fpsManager.consumeFixedStep() && updateSteps < MAX_STEPS_PER_FRAME) {
+          this.fixedUpdate(stepMultiplier);
+          updateSteps++;
+        }
+
+        const alpha = fpsManager.getInterpolationAlpha();
+        this.renderFrame(alpha);
+      }
+
+      fpsManager.recordFrameRender(timestamp);
       this.animationId = requestAnimationFrame(loop);
     };
+
     this.animationId = requestAnimationFrame(loop);
   }
 
@@ -377,42 +401,11 @@ export class GameEngine {
   }
 
   /**
-   * Executes a single frame update with exact FPS delta multiplier scaling.
+   * Deterministic physics & logic simulation step (Fixed Timestep 60Hz / 15-FPS quantum).
+   * Fully decoupled from rendering.
    */
-  private tick(dtMultiplier: number = 1.0) {
-    const effectiveDt = dtMultiplier * (debugManager.state.timeScale || 1.0);
-
-    if (this.isPaused) {
-      if (this.renderer) {
-        const cameraState = this.cameraManager.update(
-          this.players,
-          this.renderer.viewportWidth,
-          this.renderer.viewportHeight,
-          this.levelWidth,
-          this.levelHeight
-        );
-        this.renderer.render(
-          this.players,
-          this.enemies,
-          this.entities,
-          this.projectiles,
-          this.particleSystem.getParticles(),
-          cameraState,
-          this.levelWidth,
-          this.levelHeight,
-          this.settings.display.assetQuality,
-          this.currentLocation,
-          this.settings.language,
-          effectiveDt,
-          {
-            targetFps: fpsManager.getTargetFps(),
-            measuredFps: fpsManager.getMeasuredFps(),
-            showFps: !!this.settings.display.showFpsCounter,
-          }
-        );
-      }
-      return;
-    }
+  public fixedUpdate(stepMultiplier: number = 1.0) {
+    const effectiveDt = stepMultiplier * (debugManager.state.timeScale || 1.0);
 
     let anyPlayerAttacking = false;
     let anyEnemyAggro = false;
@@ -553,13 +546,13 @@ export class GameEngine {
       this.players,
       this.enemies,
       this.projectiles,
-      dtMultiplier,
+      stepMultiplier,
       this.audio
     );
 
     // 3. Resolve two-player co-op physics and soft separation
     if (this.players.length > 1) {
-      this.physics.resolvePlayerPlayerCollision(this.players, dtMultiplier);
+      this.physics.resolvePlayerPlayerCollision(this.players, stepMultiplier);
     }
 
     // Context for combat interactions
@@ -732,49 +725,66 @@ export class GameEngine {
     this.particleSystem.update(this.cameraManager.x);
 
     // 11. Update narration fading timers (SRP via NarrationSystem)
-    const narrationChanged = this.narrationSystem.update(dtMultiplier);
+    const narrationChanged = this.narrationSystem.update(stepMultiplier);
     if (narrationChanged) {
       this.notifyReact();
     }
 
     // 12. Throttled UI telemetry synchronization for player vitals (health, mana, stamina)
-    this.uiSyncTimer += dtMultiplier;
+    this.uiSyncTimer += stepMultiplier;
     if (this.uiSyncTimer >= 6) {
       this.uiSyncTimer = 0;
       if (this.checkAndUpdateVitalsSnapshot()) {
         this.notifyReact();
       }
     }
+  }
 
-    // 10. Update Camera & Render the frame on canvas
-    if (this.renderer) {
-      const cameraState = this.cameraManager.update(
-        this.players,
-        this.renderer.viewportWidth,
-        this.renderer.viewportHeight,
-        this.levelWidth,
-        this.levelHeight
-      );
-      this.renderer.render(
-        this.players,
-        this.enemies,
-        this.entities,
-        this.projectiles,
-        this.particleSystem.getParticles(),
-        cameraState,
-        this.levelWidth,
-        this.levelHeight,
-        this.settings.display.assetQuality,
-        this.currentLocation,
-        this.settings.language,
-        dtMultiplier,
-        {
-          targetFps: fpsManager.getTargetFps(),
-          measuredFps: fpsManager.getMeasuredFps(),
-          showFps: !!this.settings.display.showFpsCounter,
-        }
-      );
+  /**
+   * Decoupled rendering pass (interpolates positions on Canvas 2D without mutating game state).
+   */
+  public renderFrame(interpolationAlpha: number = 1.0) {
+    if (!this.renderer) return;
+
+    const cameraState = this.cameraManager.update(
+      this.players,
+      this.renderer.viewportWidth,
+      this.renderer.viewportHeight,
+      this.levelWidth,
+      this.levelHeight
+    );
+
+    this.renderer.render(
+      this.players,
+      this.enemies,
+      this.entities,
+      this.projectiles,
+      this.particleSystem.getParticles(),
+      cameraState,
+      this.levelWidth,
+      this.levelHeight,
+      this.settings.display.assetQuality,
+      this.currentLocation,
+      this.settings.language,
+      interpolationAlpha,
+      {
+        targetFps: fpsManager.getTargetFps(),
+        measuredFps: fpsManager.getMeasuredFps(),
+        showFps: !!this.settings.display.showFpsCounter,
+      }
+    );
+  }
+
+  /**
+   * Executes a single synchronized step + render pass (backward compatibility).
+   */
+  public tick(dtMultiplier: number = 1.0) {
+    if (this.isPaused) {
+      this.renderFrame(1.0);
+      return;
     }
+    this.fixedUpdate(dtMultiplier);
+    this.renderFrame(1.0);
   }
 
   private handleLeverUnlocks(triggerId: string) {

@@ -18,6 +18,7 @@ export class FPSManager {
   public static readonly BASELINE_STEPS = 60 / 15; // 4 steps
 
   public static readonly SUPPORTED_FPS: readonly TargetFps[] = [30, 60, 90, 120];
+  public static readonly MAX_ACCUMULATOR_MS = 250; // Guard against spiral of death after background tab pause
 
   private targetFps: TargetFps = 60;
   private lastFrameTimestamp: number = 0;
@@ -69,10 +70,72 @@ export class FPSManager {
   }
 
   /**
-   * Expected duration of a single frame in milliseconds.
+   * Expected duration of a single simulation step in milliseconds.
+   */
+  public getFixedStepMs(fps: TargetFps = this.targetFps): number {
+    return 1000 / fps;
+  }
+
+  /**
+   * Delta multiplier for the current target framerate fixed step.
+   */
+  public getStepMultiplier(): number {
+    return this.getDtMultiplier(this.targetFps);
+  }
+
+  /**
+   * Pushes elapsed real time into the accumulator with spiral-of-death guard.
+   */
+  public pushDelta(deltaMs: number): number {
+    const safeDelta = Math.max(0, Math.min(deltaMs, FPSManager.MAX_ACCUMULATOR_MS));
+    this.accumulator = Math.min(this.accumulator + safeDelta, FPSManager.MAX_ACCUMULATOR_MS);
+    return this.accumulator;
+  }
+
+  /**
+   * Consumes a single fixed step if enough time has accumulated.
+   */
+  public consumeFixedStep(): boolean {
+    const stepMs = this.getFixedStepMs();
+    if (this.accumulator >= stepMs) {
+      this.accumulator -= stepMs;
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Returns current interpolation factor alpha in [0.0, 1.0] for decoupled rendering.
+   */
+  public getInterpolationAlpha(): number {
+    const stepMs = this.getFixedStepMs();
+    if (stepMs <= 0) return 1.0;
+    return Math.max(0.0, Math.min(1.0, this.accumulator / stepMs));
+  }
+
+  /**
+   * Expected duration of a single frame in milliseconds (backward compatibility).
    */
   public getTargetFrameIntervalMs(fps: TargetFps = this.targetFps): number {
-    return 1000 / fps;
+    return this.getFixedStepMs(fps);
+  }
+
+  /**
+   * Records a rendered frame timestamp and updates measured FPS telemetry.
+   */
+  public recordFrameRender(timestamp: number) {
+    if (this.lastFpsWindowTime === 0) {
+      this.lastFpsWindowTime = timestamp;
+      this.frameCountInWindow = 1;
+      return;
+    }
+    this.frameCountInWindow++;
+    const timeSinceWindow = timestamp - this.lastFpsWindowTime;
+    if (timeSinceWindow >= 500) {
+      this.measuredFps = Math.round((this.frameCountInWindow * 1000) / timeSinceWindow);
+      this.frameCountInWindow = 0;
+      this.lastFpsWindowTime = timestamp;
+    }
   }
 
   /**
@@ -103,15 +166,7 @@ export class FPSManager {
         }
       }
 
-      // Track measured FPS
-      this.frameCountInWindow++;
-      const timeSinceWindow = timestamp - this.lastFpsWindowTime;
-      if (timeSinceWindow >= 500) {
-        this.measuredFps = Math.round((this.frameCountInWindow * 1000) / timeSinceWindow);
-        this.frameCountInWindow = 0;
-        this.lastFpsWindowTime = timestamp;
-      }
-
+      this.recordFrameRender(timestamp);
       return true;
     }
 
@@ -123,6 +178,10 @@ export class FPSManager {
    */
   public getMeasuredFps(): number {
     return this.measuredFps;
+  }
+
+  public getAccumulator(): number {
+    return this.accumulator;
   }
 
   public reset() {
