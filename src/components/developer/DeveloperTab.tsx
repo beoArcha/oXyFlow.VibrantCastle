@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import { Wrench, Activity, Grid } from "lucide-react";
 import { DeveloperTabLayout } from "./DeveloperTabLayout";
 import { TesterSubTab } from "./subtabs/TesterSubTab";
+import { DebugSubTab } from "./subtabs/DebugSubTab";
 import { useI18n } from "../../hooks/useI18n";
 import { TabItem } from "../ui/Tabs";
 
@@ -29,7 +30,6 @@ export const DeveloperTab: React.FC = () => {
         id: "debug",
         label: t("subtabDebug"),
         icon: <Activity size={13} />,
-        badge: "v2",
       },
       {
         id: "atlas_slicer",
@@ -49,6 +49,7 @@ export const DeveloperTab: React.FC = () => {
       badgeLabel="DEV SUITE"
     >
       {activeSubTab === "testing" && <TesterSubTab />}
+      {activeSubTab === "debug" && <DebugSubTab />}
     </DeveloperTabLayout>
   );
 };
