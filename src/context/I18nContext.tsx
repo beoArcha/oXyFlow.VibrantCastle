@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
+import React, { createContext, useContext, useState, useCallback, useMemo } from "react";
 import { LanguageCode, GameTranslationDictionary, translations, t as translateFn, getDomainI18n } from "../game/i18n";
 import gameEngine from "../game/loop/engine";
+import { useEngineSubscription } from "./useEngineSubscription";
 
 export interface I18nContextValue {
   language: LanguageCode;
@@ -22,14 +23,11 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
     gameEngine.setLanguage(lang);
   }, []);
 
-  useEffect(() => {
-    const unbind = gameEngine.registerStateListener(() => {
-      if (gameEngine.settings.language !== language) {
-        setLanguageState(gameEngine.settings.language);
-      }
-    });
-    return () => unbind();
-  }, [language]);
+  useEngineSubscription(() => {
+    if (gameEngine.settings.language !== language) {
+      setLanguageState(gameEngine.settings.language);
+    }
+  }, gameEngine);
 
   const dictionary = useMemo(() => translations[language] || translations.pl, [language]);
   const domains = useMemo(() => getDomainI18n(language), [language]);

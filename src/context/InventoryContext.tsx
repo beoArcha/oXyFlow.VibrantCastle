@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
 import { IContext } from "./IContext";
+import { useEngineSubscription } from "./useEngineSubscription";
 import { GameEngine } from "../game/loop/engine";
 import {
   InventoryState,
@@ -56,14 +57,14 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   const [activePlayerIndex, setActivePlayerIndex] = useState(0);
   const [stateVersion, setStateVersion] = useState(0);
 
-  // Subscribe to engine state notifications so inventory UI updates reactively
   useEffect(() => {
-    const unsub = engine.registerStateListener(() => {
-      setStateVersion((v) => v + 1);
-    });
     setIsLoaded(true);
-    return unsub;
-  }, [engine]);
+  }, []);
+
+  // Subscribe to engine state notifications so inventory UI updates reactively
+  useEngineSubscription(() => {
+    setStateVersion((v) => v + 1);
+  }, engine);
 
   const activePlayer = useMemo(() => {
     if (activePlayerIndex === 1 && engine.players[1]) {

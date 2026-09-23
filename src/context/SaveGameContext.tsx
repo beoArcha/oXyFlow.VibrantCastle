@@ -10,6 +10,7 @@ import gameEngine from "../game/loop/engine";
 import { gameSave } from "../game/logic/save";
 import { useI18n } from "./I18nContext";
 import { IContext } from "./IContext";
+import { useSafeTimeout } from "./useSafeTimeout";
 
 export interface SaveGameContextValue extends IContext<SaveState | null> {
   saveNotification: string;
@@ -34,6 +35,7 @@ export const SaveGameProvider: React.FC<{
   onStateApplied?: () => void;
 }> = ({ children, onStateApplied }) => {
   const { t } = useI18n();
+  const { setSafeTimeout } = useSafeTimeout();
   const [saveNotification, setSaveNotification] = useState("");
   const [lastSavedState, setLastSavedState] = useState<SaveState | null>(() => {
     return gameSave.loadFromLocalStorage();
@@ -42,8 +44,8 @@ export const SaveGameProvider: React.FC<{
 
   const showNotification = useCallback((msg: string) => {
     setSaveNotification(msg);
-    setTimeout(() => setSaveNotification(""), 3500);
-  }, []);
+    setSafeTimeout(() => setSaveNotification(""), 3500);
+  }, [setSafeTimeout]);
 
   const saveToLocalStorage = useCallback(() => {
     const state = gameSave.compileSaveState(

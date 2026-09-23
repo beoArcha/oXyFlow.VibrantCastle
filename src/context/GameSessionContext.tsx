@@ -16,6 +16,8 @@ import gameEngine from "../game/loop/engine";
 import { gameAudio } from "../game/engine/audioEngine";
 import { getNextLocation, getLocation } from "../game/locations";
 import { useI18n } from "./I18nContext";
+import { useEngineSubscription } from "./useEngineSubscription";
+import { useSafeTimeout } from "./useSafeTimeout";
 
 export interface GameSessionContextValue {
   // Live State
@@ -53,6 +55,7 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
   onNotification,
 }) => {
   const { t } = useI18n();
+  const { setSafeTimeout } = useSafeTimeout();
   const [tick, setTick] = useState(0);
   const [isAudioInitialized, setIsAudioInitialized] = useState(false);
   const [subAnim, setSubAnim] = useState(false);
@@ -62,22 +65,16 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
     setTick((prev) => prev + 1);
   }, []);
 
-  useEffect(() => {
-    const unbind = gameEngine.registerStateListener(() => {
-      notifyEngineUpdate();
-    });
-    return () => unbind();
-  }, [notifyEngineUpdate]);
+  useEngineSubscription(notifyEngineUpdate, gameEngine);
 
   const currentNarration = gameEngine.currentNarrationText;
   useEffect(() => {
     if (currentNarration !== prevNarrationRef.current) {
       prevNarrationRef.current = currentNarration;
       setSubAnim(true);
-      const timer = setTimeout(() => setSubAnim(false), 200);
-      return () => clearTimeout(timer);
+      setSafeTimeout(() => setSubAnim(false), 200);
     }
-  }, [currentNarration]);
+  }, [currentNarration, setSafeTimeout]);
 
   const p1 = gameEngine.players.find((p) => p.id === "player1");
   const p2 = gameEngine.players.find((p) => p.id === "player2");

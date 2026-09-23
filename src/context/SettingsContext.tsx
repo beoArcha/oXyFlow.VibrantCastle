@@ -9,6 +9,7 @@ import React, {
 import { DisplaySettings } from "../game/types";
 import gameEngine from "../game/loop/engine";
 import { gameAudio } from "../game/engine/audioEngine";
+import { useEngineSubscription } from "./useEngineSubscription";
 import {
   GameSettingsState,
   DEFAULT_SETTINGS,
@@ -115,19 +116,17 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [settings]);
 
   // Keep React settings context synchronized with engine state changes (portal transitions, save loads)
-  useEffect(() => {
-    return gameEngine.registerStateListener(() => {
-      const engineIs2P = gameEngine.players.length > 1;
-      setSettings((prev) => {
-        if (prev.isTwoPlayer !== engineIs2P) {
-          const next = { ...prev, isTwoPlayer: engineIs2P };
-          persist(next);
-          return next;
-        }
-        return prev;
-      });
+  useEngineSubscription(() => {
+    const engineIs2P = gameEngine.players.length > 1;
+    setSettings((prev) => {
+      if (prev.isTwoPlayer !== engineIs2P) {
+        const next = { ...prev, isTwoPlayer: engineIs2P };
+        persist(next);
+        return next;
+      }
+      return prev;
     });
-  }, [persist]);
+  }, gameEngine);
 
   const saveToLocalStorage = useCallback(() => {
     persist(settings);

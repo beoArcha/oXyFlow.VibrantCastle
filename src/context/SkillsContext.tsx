@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
 import { IContext } from "./IContext";
+import { useEngineSubscription } from "./useEngineSubscription";
 import { GameEngine } from "../game/loop/engine";
 import { Player, SkillTreeNode } from "../game/types";
 import {
@@ -67,14 +68,14 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
   const [stateVersion, setStateVersion] = useState(0);
 
-  // Subscribe to engine tick/state notifications
   useEffect(() => {
-    const unsub = engine.registerStateListener(() => {
-      setStateVersion((v) => v + 1);
-    });
     setIsLoaded(true);
-    return unsub;
-  }, [engine]);
+  }, []);
+
+  // Subscribe to engine tick/state notifications
+  useEngineSubscription(() => {
+    setStateVersion((v) => v + 1);
+  }, engine);
 
   const activePlayer = useMemo(() => {
     if (activePlayerIndex === 1 && engine.players[1]) {
