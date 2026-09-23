@@ -113,8 +113,9 @@ export class GameEngine {
       aspectRatio: defaultSettingsJson.display.aspectRatio as "16:10" | "16:9" | "4:3",
       scalingFilter: defaultSettingsJson.display.scalingFilter as "pixel" | "smooth",
       assetQuality: defaultSettingsJson.display.assetQuality as AssetQuality,
-      targetFps: ((defaultSettingsJson as any).display?.targetFps as TargetFps) || 60,
-      showFpsCounter: !!(defaultSettingsJson as any).display?.showFpsCounter,
+      hardwareAcceleration: defaultSettingsJson.display.hardwareAcceleration,
+      targetFps: (defaultSettingsJson.display.targetFps as TargetFps) || 60,
+      showFpsCounter: !!defaultSettingsJson.display.showFpsCounter,
     },
   };
 

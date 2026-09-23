@@ -6,7 +6,7 @@ import { GameRenderer } from "../renderer";
 
 describe("Hardware GPU Acceleration Pipeline", () => {
   it("defaults hardwareAcceleration to true in defaultSettings.json", () => {
-    expect((defaultSettings.display as any).hardwareAcceleration).toBe(true);
+    expect(defaultSettings.display.hardwareAcceleration).toBe(true);
   });
 
   it("defaults hardwareAcceleration to true in DEFAULT_SETTINGS React context", () => {
