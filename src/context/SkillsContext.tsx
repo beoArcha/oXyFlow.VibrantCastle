@@ -7,9 +7,6 @@ import {
   getSkillTreeNodesForCharacter,
   getSkillNodeById,
   checkSkillUnlockConditions,
-  unlockSkillNode,
-  assignSpellToSlot,
-  getDefaultSkillsForCharacter,
   getCharacterKey
 } from "../game/logic/skills";
 
@@ -147,54 +144,32 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
 
   const unlockSkill = useCallback(
     (nodeId: string, playerIndex?: number): { success: boolean; messageKey?: string } => {
-      const player = getTargetPlayer(playerIndex);
-      if (!player) return { success: false, messageKey: "noSkillFound" };
-
-      const result = unlockSkillNode(player, nodeId);
+      const pIdx = typeof playerIndex === "number" ? playerIndex : activePlayerIndex;
+      const result = engine.unlockPlayerSkill(pIdx, nodeId);
       if (result.success) {
-        engine.notifyReact();
         setStateVersion((v) => v + 1);
       }
       return result;
     },
-    [getTargetPlayer, engine]
+    [engine, activePlayerIndex]
   );
 
   const assignSpell = useCallback(
     (spellId: string, slot: "primary" | "secondary", playerIndex?: number): boolean => {
-      const player = getTargetPlayer(playerIndex);
-      if (!player) return false;
-
-      const success = assignSpellToSlot(player, spellId, slot);
+      const pIdx = typeof playerIndex === "number" ? playerIndex : activePlayerIndex;
+      const success = engine.assignPlayerSpell(pIdx, spellId, slot);
       if (success) {
-        engine.notifyReact();
         setStateVersion((v) => v + 1);
       }
       return success;
     },
-    [getTargetPlayer, engine]
+    [engine, activePlayerIndex]
   );
 
   // === Capability methods (IResettableContext) ===
   const resetToDefaults = useCallback(() => {
-    const p1Defaults = getDefaultSkillsForCharacter("valen");
-    if (engine.players[0]) {
-      engine.players[0].unlockedSkills = [...p1Defaults.unlockedSkills];
-      engine.players[0].skillPoints = p1Defaults.skillPoints;
-      engine.players[0].primarySpellId = p1Defaults.primarySpellId;
-      engine.players[0].secondarySpellId = p1Defaults.secondarySpellId;
-    }
-
-    if (engine.players[1]) {
-      const p2Defaults = getDefaultSkillsForCharacter("aurelia");
-      engine.players[1].unlockedSkills = [...p2Defaults.unlockedSkills];
-      engine.players[1].skillPoints = p2Defaults.skillPoints;
-      engine.players[1].primarySpellId = p2Defaults.primarySpellId;
-      engine.players[1].secondarySpellId = p2Defaults.secondarySpellId;
-    }
-
+    engine.resetPlayerSkillsToDefaults();
     setActivePlayerIndex(0);
-    engine.notifyReact();
     setStateVersion((v) => v + 1);
   }, [engine]);
 

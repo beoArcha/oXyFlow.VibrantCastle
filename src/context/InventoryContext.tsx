@@ -9,12 +9,7 @@ import {
   Item,
 } from "../game/types";
 import {
-  equipItemFromBackpack,
-  unequipSlotToBackpack,
-  useQuickPotion,
-  discardItemFromBackpack,
   calculatePlayerDerivedStats,
-  createDefaultInventory,
 } from "../game/logic/inventory";
 
 export interface InventoryContextState {
@@ -93,12 +88,8 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   const equipItem = useCallback(
     (backpackIndex: number, playerIndex?: number): boolean => {
       const pIdx = playerIndex !== undefined ? playerIndex : activePlayerIndex;
-      const targetPlayer = engine.players[pIdx];
-      if (!targetPlayer) return false;
-
-      const success = equipItemFromBackpack(targetPlayer, backpackIndex);
+      const success = engine.equipPlayerItem(pIdx, backpackIndex);
       if (success) {
-        engine.notifyReact();
         setStateVersion((v) => v + 1);
       }
       return success;
@@ -109,12 +100,8 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   const unequipItem = useCallback(
     (slot: keyof EquipmentState, playerIndex?: number): boolean => {
       const pIdx = playerIndex !== undefined ? playerIndex : activePlayerIndex;
-      const targetPlayer = engine.players[pIdx];
-      if (!targetPlayer) return false;
-
-      const success = unequipSlotToBackpack(targetPlayer, slot);
+      const success = engine.unequipPlayerItem(pIdx, slot);
       if (success) {
-        engine.notifyReact();
         setStateVersion((v) => v + 1);
       }
       return success;
@@ -125,12 +112,8 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   const usePotion = useCallback(
     (slotIndex: number, playerIndex?: number): boolean => {
       const pIdx = playerIndex !== undefined ? playerIndex : activePlayerIndex;
-      const targetPlayer = engine.players[pIdx];
-      if (!targetPlayer) return false;
-
-      const success = useQuickPotion(targetPlayer, slotIndex);
+      const success = engine.usePlayerPotion(pIdx, slotIndex);
       if (success) {
-        engine.notifyReact();
         setStateVersion((v) => v + 1);
       }
       return success;
@@ -141,12 +124,8 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   const discardItem = useCallback(
     (backpackIndex: number, playerIndex?: number): boolean => {
       const pIdx = playerIndex !== undefined ? playerIndex : activePlayerIndex;
-      const targetPlayer = engine.players[pIdx];
-      if (!targetPlayer) return false;
-
-      const success = discardItemFromBackpack(targetPlayer, backpackIndex);
+      const success = engine.discardPlayerItem(pIdx, backpackIndex);
       if (success) {
-        engine.notifyReact();
         setStateVersion((v) => v + 1);
       }
       return success;
@@ -156,22 +135,8 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
 
   // Capability methods (IResettableContext)
   const resetToDefaults = useCallback(() => {
-    if (engine.players[0]) {
-      engine.players[0].inventory = createDefaultInventory();
-      const stats = calculatePlayerDerivedStats(engine.players[0]);
-      engine.players[0].maxHealth = stats.maxHp;
-      engine.players[0].maxMana = stats.maxMana;
-      engine.players[0].maxStamina = stats.maxStamina;
-    }
-    if (engine.players[1]) {
-      engine.players[1].inventory = createDefaultInventory();
-      const stats = calculatePlayerDerivedStats(engine.players[1]);
-      engine.players[1].maxHealth = stats.maxHp;
-      engine.players[1].maxMana = stats.maxMana;
-      engine.players[1].maxStamina = stats.maxStamina;
-    }
+    engine.resetPlayerInventoryToDefaults();
     setActivePlayerIndex(0);
-    engine.notifyReact();
     setStateVersion((v) => v + 1);
   }, [engine]);
 

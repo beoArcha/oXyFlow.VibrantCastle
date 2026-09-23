@@ -9,6 +9,7 @@ import {
   Projectile,
   AssetQuality,
   PlayerId,
+  EquipmentState,
 } from "../types";
 import { gameAudio, GameAudioEngine } from "../engine/audioEngine";
 import { gameInputs, GameInputEngine } from "./input";
@@ -21,7 +22,20 @@ import { ParticleSystem } from "./../engine/particleSystem";
 import { CameraManager } from "../engine/cameraManager";
 import { gameSave } from "../logic/save";
 import { castMagicSpell, SPELL_REGISTRY } from "../logic/magic";
-import { useQuickPotion, ITEM_REGISTRY } from "../logic/inventory";
+import {
+  useQuickPotion,
+  ITEM_REGISTRY,
+  equipItemFromBackpack,
+  unequipSlotToBackpack,
+  discardItemFromBackpack,
+  calculatePlayerDerivedStats,
+  createDefaultInventory,
+} from "../logic/inventory";
+import {
+  unlockSkillNode,
+  assignSpellToSlot,
+  getDefaultSkillsForCharacter,
+} from "../logic/skills";
 import { statsManager } from "../logic/stats";
 import { fpsManager, TargetFps } from "../engine/fpsManager";
 import { CombatSystem, ICombatSystem } from "../engine/combatSystem";
@@ -994,6 +1008,104 @@ export class GameEngine {
     if (!player) return;
     player.inventory.backpack = Array(12).fill(null);
     this.audio.playSFX(SoundType.SFX_HIT);
+    this.notifyReact();
+  }
+
+  // --- Player Command Pipeline (AGENT.md unidirectional architecture) ---
+
+  public equipPlayerItem(playerIndex: number, backpackIndex: number): boolean {
+    const player = this.players[playerIndex];
+    if (!player) return false;
+    const success = equipItemFromBackpack(player, backpackIndex);
+    if (success) {
+      this.notifyReact();
+    }
+    return success;
+  }
+
+  public unequipPlayerItem(playerIndex: number, slot: keyof EquipmentState): boolean {
+    const player = this.players[playerIndex];
+    if (!player) return false;
+    const success = unequipSlotToBackpack(player, slot);
+    if (success) {
+      this.notifyReact();
+    }
+    return success;
+  }
+
+  public usePlayerPotion(playerIndex: number, slotIndex: number): boolean {
+    const player = this.players[playerIndex];
+    if (!player) return false;
+    const success = useQuickPotion(player, slotIndex);
+    if (success) {
+      this.notifyReact();
+    }
+    return success;
+  }
+
+  public discardPlayerItem(playerIndex: number, backpackIndex: number): boolean {
+    const player = this.players[playerIndex];
+    if (!player) return false;
+    const success = discardItemFromBackpack(player, backpackIndex);
+    if (success) {
+      this.notifyReact();
+    }
+    return success;
+  }
+
+  public resetPlayerInventoryToDefaults(): void {
+    if (this.players[0]) {
+      this.players[0].inventory = createDefaultInventory();
+      const stats = calculatePlayerDerivedStats(this.players[0]);
+      this.players[0].maxHealth = stats.maxHp;
+      this.players[0].maxMana = stats.maxMana;
+      this.players[0].maxStamina = stats.maxStamina;
+    }
+    if (this.players[1]) {
+      this.players[1].inventory = createDefaultInventory();
+      const stats = calculatePlayerDerivedStats(this.players[1]);
+      this.players[1].maxHealth = stats.maxHp;
+      this.players[1].maxMana = stats.maxMana;
+      this.players[1].maxStamina = stats.maxStamina;
+    }
+    this.notifyReact();
+  }
+
+  public unlockPlayerSkill(playerIndex: number, nodeId: string): { success: boolean; messageKey?: string } {
+    const player = this.players[playerIndex];
+    if (!player) return { success: false, messageKey: "noSkillFound" };
+    const result = unlockSkillNode(player, nodeId);
+    if (result.success) {
+      this.notifyReact();
+    }
+    return result;
+  }
+
+  public assignPlayerSpell(playerIndex: number, spellId: string, slot: "primary" | "secondary"): boolean {
+    const player = this.players[playerIndex];
+    if (!player) return false;
+    const success = assignSpellToSlot(player, spellId, slot);
+    if (success) {
+      this.notifyReact();
+    }
+    return success;
+  }
+
+  public resetPlayerSkillsToDefaults(): void {
+    const p1Defaults = getDefaultSkillsForCharacter("valen");
+    if (this.players[0]) {
+      this.players[0].unlockedSkills = [...p1Defaults.unlockedSkills];
+      this.players[0].skillPoints = p1Defaults.skillPoints;
+      this.players[0].primarySpellId = p1Defaults.primarySpellId;
+      this.players[0].secondarySpellId = p1Defaults.secondarySpellId;
+    }
+    if (this.players[1]) {
+      const p2Defaults = getDefaultSkillsForCharacter("aurelia");
+      this.players[1].unlockedSkills = [...p2Defaults.unlockedSkills];
+      this.players[1].skillPoints = p2Defaults.skillPoints;
+      this.players[1].primarySpellId = p2Defaults.primarySpellId;
+      this.players[1].secondarySpellId = p2Defaults.secondarySpellId;
+    }
     this.notifyReact();
   }
 
