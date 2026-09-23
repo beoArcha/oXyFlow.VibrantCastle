@@ -3,6 +3,7 @@ import { Wrench, Activity, Grid } from "lucide-react";
 import { DeveloperTabLayout } from "./DeveloperTabLayout";
 import { TesterSubTab } from "./subtabs/TesterSubTab";
 import { DebugSubTab } from "./subtabs/DebugSubTab";
+import { AtlasMetaSubTab } from "./subtabs/AtlasMetaSubTab";
 import { useI18n } from "../../hooks/useI18n";
 import { TabItem } from "../ui/Tabs";
 
@@ -50,6 +51,7 @@ export const DeveloperTab: React.FC = () => {
     >
       {activeSubTab === "testing" && <TesterSubTab />}
       {activeSubTab === "debug" && <DebugSubTab />}
+      {activeSubTab === "atlas_slicer" && <AtlasMetaSubTab />}
     </DeveloperTabLayout>
   );
 };
