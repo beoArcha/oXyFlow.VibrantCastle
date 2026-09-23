@@ -55,7 +55,7 @@ export class GameAudioEngine implements IGameAudioEngine {
    * Initializes the AudioContext. Must be triggered via a user gesture.
    */
   public init() {
-    if (this.ctx) return;
+    if (typeof window === "undefined" || this.ctx) return;
 
     const AudioContextClass =
       window.AudioContext ||

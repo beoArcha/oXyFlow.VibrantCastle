@@ -15,8 +15,11 @@ import { gameAudio, GameAudioEngine } from "../engine/audioEngine";
 import { gameInputs, GameInputEngine } from "./input";
 import { gamePhysics, GamePhysicsEngine } from "../physics/physics";
 import { gameCollisions, ICollisionEngine } from "../physics/collisions";
-import { LevelDesigner } from "../locations/levels";
-import { LocationId, LocationDefinition, getLocation, getNextLocation } from "../locations";
+import { LocationId, LocationDefinition, getLocation } from "../locations";
+import {
+  LevelLifecycleManager,
+  ILevelLifecycleManager,
+} from "../locations/levelLifecycleManager";
 import { GameRenderer } from "../renderer/renderer";
 import { ParticleSystem } from "./../engine/particleSystem";
 import { CameraManager } from "../engine/cameraManager";
@@ -52,6 +55,7 @@ export interface IGameDependencies {
   saveManager?: typeof gameSave;
   debugCheats?: DebugCheatsController;
   playerCommands?: IPlayerCommandController;
+  levelManager?: ILevelLifecycleManager;
 }
 
 /**
@@ -68,11 +72,6 @@ export class GameEngine {
   public enemies: Enemy[] = [];
   public entities: Entity[] = [];
   public projectiles: Projectile[] = [];
-  public levelWidth: number = 2600;
-  public levelHeight: number = 650;
-  public spawnPoint = { x: 120, y: 460 };
-  public currentLocationId: LocationId = "courtyard";
-  public currentLocation: LocationDefinition = getLocation("courtyard");
 
   // Subsystems (DIP)
   private readonly audio: GameAudioEngine;
@@ -86,6 +85,7 @@ export class GameEngine {
   private readonly save: typeof gameSave;
   private readonly debugCheats: DebugCheatsController;
   private readonly playerCommandController: IPlayerCommandController;
+  private readonly levelLifecycleManager: ILevelLifecycleManager;
 
   public get debugController(): DebugCheatsController {
     return this.debugCheats;
@@ -93,6 +93,74 @@ export class GameEngine {
 
   public get playerCommands(): IPlayerCommandController {
     return this.playerCommandController;
+  }
+
+  public get level(): ILevelLifecycleManager {
+    return this.levelLifecycleManager;
+  }
+
+  // Delegated level state getters/setters (Facade / backward compatibility)
+  public get currentLocationId(): LocationId {
+    return this.levelLifecycleManager.currentLocationId;
+  }
+  public set currentLocationId(val: LocationId) {
+    this.levelLifecycleManager.currentLocationId = val;
+  }
+
+  public get currentLocation(): LocationDefinition {
+    return this.levelLifecycleManager.currentLocation;
+  }
+  public set currentLocation(val: LocationDefinition) {
+    this.levelLifecycleManager.currentLocation = val;
+  }
+
+  public get levelWidth(): number {
+    return this.levelLifecycleManager.levelWidth;
+  }
+  public set levelWidth(val: number) {
+    this.levelLifecycleManager.levelWidth = val;
+  }
+
+  public get levelHeight(): number {
+    return this.levelLifecycleManager.levelHeight;
+  }
+  public set levelHeight(val: number) {
+    this.levelLifecycleManager.levelHeight = val;
+  }
+
+  public get spawnPoint(): { x: number; y: number } {
+    return this.levelLifecycleManager.spawnPoint;
+  }
+  public set spawnPoint(val: { x: number; y: number }) {
+    this.levelLifecycleManager.spawnPoint = val;
+  }
+
+  public get isVictory(): boolean {
+    return this.levelLifecycleManager.isVictory;
+  }
+  public set isVictory(val: boolean) {
+    this.levelLifecycleManager.isVictory = val;
+  }
+
+  public get isDefeat(): boolean {
+    return this.levelLifecycleManager.isDefeat;
+  }
+  public set isDefeat(val: boolean) {
+    this.levelLifecycleManager.isDefeat = val;
+  }
+
+  public get isLevelTransitionPending(): boolean {
+    return this.levelLifecycleManager.isLevelTransitionPending;
+  }
+  public set isLevelTransitionPending(val: boolean) {
+    this.levelLifecycleManager.isLevelTransitionPending = val;
+  }
+
+  public get portalCooldownTimer(): number {
+    return this.levelLifecycleManager.portalCooldownTimer;
+  }
+  public set portalCooldownTimer(val: number) {
+    this.levelLifecycleManager.portalCooldownTimer = val;
   }
 
   // Narration property getter for backward-compatible UI bindings
@@ -122,12 +190,6 @@ export class GameEngine {
   public readonly cameraManager: CameraManager = new CameraManager();
   private isRunning: boolean = false;
   private animationId: number | null = null;
-
-  // Level markers
-  public isVictory: boolean = false;
-  public isDefeat: boolean = false;
-  private isLevelTransitionPending: boolean = false;
-  public portalCooldownTimer: number = 0;
   public isPaused: boolean = false;
 
   // React listener callbacks
@@ -187,7 +249,53 @@ export class GameEngine {
         notifyStateChanged: () => this.notifyReact(),
       });
 
-    this.resetLevel("courtyard");
+    this.levelLifecycleManager =
+      deps.levelManager ||
+      new LevelLifecycleManager({
+        getPlayers: () => this.players,
+        setPlayers: (p) => {
+          this.players = p;
+        },
+        getEnemies: () => this.enemies,
+        setEnemies: (e) => {
+          this.enemies = e;
+        },
+        getEntities: () => this.entities,
+        setEntities: (ent) => {
+          this.entities = ent;
+        },
+        clearProjectiles: () => {
+          this.projectiles = [];
+        },
+        getIsTwoPlayer: () => this.settings.isTwoPlayer,
+        setIsTwoPlayer: (val) => {
+          this.settings.isTwoPlayer = val;
+        },
+        getViewportSize: () => ({
+          width: this.renderer?.viewportWidth || 1280,
+          height: this.renderer?.viewportHeight || 720,
+        }),
+        snapCamera: (pList, w, h) =>
+          this.cameraManager.snapToPlayers(
+            pList,
+            this.renderer?.viewportWidth || 1280,
+            this.renderer?.viewportHeight || 720,
+            w,
+            h
+          ),
+        triggerNarration: (key) => this.triggerNarration(key),
+        resetNarration: () => this.narrationSystem.reset(),
+        playSFX: (type) => this.audio.playSFX(type),
+        setMusicIntensity: (intensity) => this.audio.setMusicIntensity(intensity),
+        spawnBurst: (x, y, color, type, count) =>
+          this.particleSystem.spawnBurst(x, y, color, type, count),
+        stopEngine: () => this.stop(),
+        startEngine: () => this.start(),
+        isRunning: () => this.isRunning,
+        notifyReact: () => this.notifyReact(),
+      });
+
+    this.levelLifecycleManager.resetLevel("courtyard");
   }
 
   public setPaused(paused: boolean) {
@@ -236,11 +344,7 @@ export class GameEngine {
     targetSpawnPoint?: { x: number; y: number },
     preservePlayerStats: boolean = true
   ) {
-    this.currentLocationId = locationId;
-    this.resetLevel(locationId, targetSpawnPoint, preservePlayerStats);
-    if (!this.isRunning) {
-      this.start();
-    }
+    this.levelLifecycleManager.loadLocation(locationId, targetSpawnPoint, preservePlayerStats);
   }
 
   public resetLevel(
@@ -248,63 +352,11 @@ export class GameEngine {
     customSpawnPoint?: { x: number; y: number },
     preservePlayerStats: boolean = false
   ) {
-    if (locationId) {
-      this.currentLocationId = locationId;
-    }
-    const targetLocId = this.currentLocationId || "courtyard";
-    const data = LevelDesigner.createLocationState(
-      targetLocId,
-      this.settings.isTwoPlayer,
-      customSpawnPoint,
-      preservePlayerStats ? this.players : undefined
-    );
-
-    this.players = data.players;
-    this.enemies = data.enemies;
-    this.entities = data.entities;
-    this.projectiles = [];
-    this.levelWidth = data.levelWidth;
-    this.levelHeight = data.levelHeight;
-    this.spawnPoint = data.spawnPoint;
-    this.currentLocation = data.location;
-    // Explicitly maintain engine settings in sync with active player session
-    this.settings.isTwoPlayer = this.players.length > 1;
-
-    this.isVictory = false;
-    this.isDefeat = false;
-    this.isLevelTransitionPending = false;
-    this.portalCooldownTimer = 45;
-    this.narrationSystem.reset();
-
-    this.cameraManager.snapToPlayers(
-      this.players,
-      this.renderer?.viewportWidth || 1280,
-      this.renderer?.viewportHeight || 720,
-      this.levelWidth,
-      this.levelHeight
-    );
-
-    this.triggerNarration(this.currentLocation.openingNarrationKey || "narrationOpening");
-    this.audio.setMusicIntensity(this.currentLocation.theme.musicIntensity);
-    this.notifyReact();
+    this.levelLifecycleManager.resetLevel(locationId, customSpawnPoint, preservePlayerStats);
   }
 
   public setTwoPlayerMode(enabled: boolean, preserveStats: boolean = true) {
-    this.settings.isTwoPlayer = enabled;
-    if (preserveStats && this.players && this.players.length > 0) {
-      if (enabled && this.players.length === 1) {
-        const p1 = this.players[0];
-        const p2Offset = this.currentLocation?.p2SpawnOffset || { x: 40, y: 0 };
-        const p2X = Math.max(0, Math.min(this.levelWidth - 32, p1.x + p2Offset.x));
-        const p2Y = p1.y;
-        this.players.push(LevelDesigner.createDefaultP2(p2X, p2Y));
-      } else if (!enabled && this.players.length > 1) {
-        this.players = [this.players[0]];
-      }
-      this.notifyReact();
-    } else {
-      this.resetLevel(undefined, undefined, preserveStats);
-    }
+    this.levelLifecycleManager.setTwoPlayerMode(enabled, preserveStats);
   }
 
   public setLanguage(lang: "pl" | "en") {
@@ -374,16 +426,22 @@ export class GameEngine {
       }
 
       fpsManager.recordFrameRender(timestamp);
-      this.animationId = requestAnimationFrame(loop);
+      if (typeof requestAnimationFrame !== "undefined") {
+        this.animationId = requestAnimationFrame(loop);
+      }
     };
 
-    this.animationId = requestAnimationFrame(loop);
+    if (typeof requestAnimationFrame !== "undefined") {
+      this.animationId = requestAnimationFrame(loop);
+    }
   }
 
   public stop() {
     this.isRunning = false;
     if (this.animationId) {
-      cancelAnimationFrame(this.animationId);
+      if (typeof cancelAnimationFrame !== "undefined") {
+        cancelAnimationFrame(this.animationId);
+      }
       this.animationId = null;
     }
     this.audio.stopBGM();
@@ -442,9 +500,7 @@ export class GameEngine {
     let anyEnemyAggro = false;
 
     // Portal immunity cooldown timer
-    if (this.portalCooldownTimer > 0) {
-      this.portalCooldownTimer -= 1;
-    }
+    this.levelLifecycleManager.decrementCooldowns();
 
     // Track active playtime (scaled with FPS delta multiplier)
     statsManager.addPlayTime(effectiveDt / 60);
@@ -590,7 +646,7 @@ export class GameEngine {
       collisionEngine: this.collisions,
       audio: this.audio,
       triggerNarration: (id: string) => this.triggerNarration(id),
-      onLeverActivated: (id: string) => this.handleLeverUnlocks(id),
+      onLeverActivated: (id: string) => this.levelLifecycleManager.handleLeverUnlocks(id),
     };
 
     // 4. Process Melee sword attacks via CombatSystem (SRP)
@@ -659,8 +715,8 @@ export class GameEngine {
 
           this.collisions.resolve(player, entity, {
             triggerNarration: (id: string) => this.triggerNarration(id),
-            onGoalReached: (goalEntity?: Entity) => this.handleGoalCompletion(goalEntity),
-            onLeverActivated: (id: string) => this.handleLeverUnlocks(id),
+            onGoalReached: (goalEntity?: Entity) => this.levelLifecycleManager.handleGoalCompletion(goalEntity),
+            onLeverActivated: (id: string) => this.levelLifecycleManager.handleLeverUnlocks(id),
           });
 
           if (this.isLevelTransitionPending) {
@@ -815,91 +871,8 @@ export class GameEngine {
     this.renderFrame(1.0);
   }
 
-  private handleLeverUnlocks(triggerId: string) {
-    statsManager.recordLeverPulled();
-    this.entities.forEach((entity) => {
-      // Check if entity is a gate or wall in this location
-      if (
-        entity.type === CollisionType.Solid &&
-        (entity.id.includes("gate") || entity.id.includes("wall") || entity.id === "grand_gate")
-      ) {
-        entity.y = -1000; // lift gate out of collision
-        this.audio.playSFX(SoundType.SFX_UNLOCK);
-        this.triggerNarration("trainingLeverSuccess");
-
-        this.particleSystem.spawnBurst(entity.x + entity.width / 2, 300, "#e2b653", "dust", 20);
-      }
-    });
-    this.notifyReact();
-  }
-
-  private handleGoalCompletion(portalEntity?: Entity) {
-    statsManager.recordLevelCompleted();
-    this.audio.playSFX(SoundType.SFX_SAVE);
-
-    // If portal specifies targetLocationId, transition seamlessly across the Castlevania network!
-    const targetLocId = (portalEntity?.targetLocationId || this.currentLocation?.nextLocationId) as
-      | LocationId
-      | undefined;
-    const targetSpawn = portalEntity?.targetSpawnPoint;
-
-    // Conquering Grand Bastion mastery portal rewards victory screen!
-    if (
-      this.currentLocationId === "grand_bastion" &&
-      (portalEntity?.id === "grand_portal" || !targetLocId || targetLocId === "courtyard")
-    ) {
-      if (portalEntity) {
-        this.particleSystem.spawnBurst(
-          portalEntity.x + portalEntity.width / 2,
-          portalEntity.y + portalEntity.height / 2,
-          "#f59e0b",
-          "magic",
-          35
-        );
-      }
-      this.isVictory = true;
-      this.triggerNarration("trainingGoalSuccess");
-      this.stop();
-      this.notifyReact();
-      return;
-    }
-
-    if (targetLocId && targetLocId !== this.currentLocationId) {
-      if (portalEntity) {
-        const pColor = portalEntity.portalColors?.outer || "#06b6d4";
-        const pEffect =
-          portalEntity.particleEffect === "dust" || portalEntity.particleEffect === "spark"
-            ? portalEntity.particleEffect
-            : "magic";
-        this.particleSystem.spawnBurst(
-          portalEntity.x + portalEntity.width / 2,
-          portalEntity.y + portalEntity.height / 2,
-          pColor,
-          pEffect,
-          30
-        );
-      }
-      this.isLevelTransitionPending = true;
-      this.portalCooldownTimer = 45;
-      this.loadLocation(targetLocId, targetSpawn, true);
-      this.notifyReact();
-      return;
-    }
-
-    // Final victory if no further location
-    this.isVictory = true;
-    this.triggerNarration("trainingGoalSuccess");
-    this.stop();
-    this.notifyReact();
-  }
-
   public advanceToNextLocation() {
-    const nextLoc = getNextLocation(this.currentLocationId);
-    this.loadLocation(nextLoc.id, undefined, true);
-    if (!this.isRunning) {
-      this.start();
-    }
-    this.notifyReact();
+    this.levelLifecycleManager.advanceToNextLocation();
   }
 
   // ==========================================
