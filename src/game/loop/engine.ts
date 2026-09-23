@@ -22,20 +22,11 @@ import { ParticleSystem } from "./../engine/particleSystem";
 import { CameraManager } from "../engine/cameraManager";
 import { gameSave } from "../logic/save";
 import { castMagicSpell } from "../logic/magic";
-import {
-  useQuickPotion,
-  equipItemFromBackpack,
-  unequipSlotToBackpack,
-  discardItemFromBackpack,
-  calculatePlayerDerivedStats,
-  createDefaultInventory,
-} from "../logic/inventory";
 import { DebugCheatsController } from "../debug/debugCheatsController";
 import {
-  unlockSkillNode,
-  assignSpellToSlot,
-  getDefaultSkillsForCharacter,
-} from "../logic/skills";
+  PlayerCommandController,
+  IPlayerCommandController,
+} from "../controllers/playerCommandController";
 import { statsManager } from "../logic/stats";
 import { fpsManager, TargetFps } from "../engine/fpsManager";
 import { CombatSystem, ICombatSystem } from "../engine/combatSystem";
@@ -60,6 +51,7 @@ export interface IGameDependencies {
   playerController?: IPlayerController;
   saveManager?: typeof gameSave;
   debugCheats?: DebugCheatsController;
+  playerCommands?: IPlayerCommandController;
 }
 
 /**
@@ -93,9 +85,14 @@ export class GameEngine {
   private readonly playerController: IPlayerController;
   private readonly save: typeof gameSave;
   private readonly debugCheats: DebugCheatsController;
+  private readonly playerCommandController: IPlayerCommandController;
 
   public get debugController(): DebugCheatsController {
     return this.debugCheats;
+  }
+
+  public get playerCommands(): IPlayerCommandController {
+    return this.playerCommandController;
   }
 
   // Narration property getter for backward-compatible UI bindings
@@ -181,6 +178,13 @@ export class GameEngine {
           this.isDefeat = d;
         },
         notifyReact: () => this.notifyReact(),
+      });
+
+    this.playerCommandController =
+      deps.playerCommands ||
+      new PlayerCommandController({
+        getPlayers: () => this.players,
+        notifyStateChanged: () => this.notifyReact(),
       });
 
     this.resetLevel("courtyard");
@@ -446,7 +450,7 @@ export class GameEngine {
     statsManager.addPlayTime(effectiveDt / 60);
 
     // 1. Process inputs & physics for players
-    this.players.forEach((player) => {
+    this.players.forEach((player, pIndex) => {
       // Dynamic Level Group / Tier Progression based on skills unlocked or score
       const skillCount = player.unlockedSkills ? player.unlockedSkills.length : 0;
       const computedTier: 1 | 2 | 3 = skillCount >= 6 ? 3 : skillCount >= 3 ? 2 : 1;
@@ -489,21 +493,18 @@ export class GameEngine {
 
       // Quick potion triggers
       if (inputs.potion1) {
-        if (useQuickPotion(player, 0)) {
+        if (this.playerCommandController.usePlayerPotion(pIndex, 0)) {
           this.checkAndUpdateVitalsSnapshot();
-          this.notifyReact();
         }
       }
       if (inputs.potion2) {
-        if (useQuickPotion(player, 1)) {
+        if (this.playerCommandController.usePlayerPotion(pIndex, 1)) {
           this.checkAndUpdateVitalsSnapshot();
-          this.notifyReact();
         }
       }
       if (inputs.potion3) {
-        if (useQuickPotion(player, 2)) {
+        if (this.playerCommandController.usePlayerPotion(pIndex, 2)) {
           this.checkAndUpdateVitalsSnapshot();
-          this.notifyReact();
         }
       }
 
@@ -974,99 +975,35 @@ export class GameEngine {
   // --- Player Command Pipeline (AGENT.md unidirectional architecture) ---
 
   public equipPlayerItem(playerIndex: number, backpackIndex: number): boolean {
-    const player = this.players[playerIndex];
-    if (!player) return false;
-    const success = equipItemFromBackpack(player, backpackIndex);
-    if (success) {
-      this.notifyReact();
-    }
-    return success;
+    return this.playerCommandController.equipPlayerItem(playerIndex, backpackIndex);
   }
 
   public unequipPlayerItem(playerIndex: number, slot: keyof EquipmentState): boolean {
-    const player = this.players[playerIndex];
-    if (!player) return false;
-    const success = unequipSlotToBackpack(player, slot);
-    if (success) {
-      this.notifyReact();
-    }
-    return success;
+    return this.playerCommandController.unequipPlayerItem(playerIndex, slot);
   }
 
   public usePlayerPotion(playerIndex: number, slotIndex: number): boolean {
-    const player = this.players[playerIndex];
-    if (!player) return false;
-    const success = useQuickPotion(player, slotIndex);
-    if (success) {
-      this.notifyReact();
-    }
-    return success;
+    return this.playerCommandController.usePlayerPotion(playerIndex, slotIndex);
   }
 
   public discardPlayerItem(playerIndex: number, backpackIndex: number): boolean {
-    const player = this.players[playerIndex];
-    if (!player) return false;
-    const success = discardItemFromBackpack(player, backpackIndex);
-    if (success) {
-      this.notifyReact();
-    }
-    return success;
+    return this.playerCommandController.discardPlayerItem(playerIndex, backpackIndex);
   }
 
   public resetPlayerInventoryToDefaults(): void {
-    if (this.players[0]) {
-      this.players[0].inventory = createDefaultInventory();
-      const stats = calculatePlayerDerivedStats(this.players[0]);
-      this.players[0].maxHealth = stats.maxHp;
-      this.players[0].maxMana = stats.maxMana;
-      this.players[0].maxStamina = stats.maxStamina;
-    }
-    if (this.players[1]) {
-      this.players[1].inventory = createDefaultInventory();
-      const stats = calculatePlayerDerivedStats(this.players[1]);
-      this.players[1].maxHealth = stats.maxHp;
-      this.players[1].maxMana = stats.maxMana;
-      this.players[1].maxStamina = stats.maxStamina;
-    }
-    this.notifyReact();
+    this.playerCommandController.resetPlayerInventoryToDefaults();
   }
 
   public unlockPlayerSkill(playerIndex: number, nodeId: string): { success: boolean; messageKey?: string } {
-    const player = this.players[playerIndex];
-    if (!player) return { success: false, messageKey: "noSkillFound" };
-    const result = unlockSkillNode(player, nodeId);
-    if (result.success) {
-      this.notifyReact();
-    }
-    return result;
+    return this.playerCommandController.unlockPlayerSkill(playerIndex, nodeId);
   }
 
   public assignPlayerSpell(playerIndex: number, spellId: string, slot: "primary" | "secondary"): boolean {
-    const player = this.players[playerIndex];
-    if (!player) return false;
-    const success = assignSpellToSlot(player, spellId, slot);
-    if (success) {
-      this.notifyReact();
-    }
-    return success;
+    return this.playerCommandController.assignPlayerSpell(playerIndex, spellId, slot);
   }
 
   public resetPlayerSkillsToDefaults(): void {
-    const p1Defaults = getDefaultSkillsForCharacter("valen");
-    if (this.players[0]) {
-      this.players[0].unlockedSkills = [...p1Defaults.unlockedSkills];
-      this.players[0].skillPoints = p1Defaults.skillPoints;
-      this.players[0].primarySpellId = p1Defaults.primarySpellId;
-      this.players[0].secondarySpellId = p1Defaults.secondarySpellId;
-    }
-    if (this.players[1]) {
-      const p2Defaults = getDefaultSkillsForCharacter("aurelia");
-      this.players[1].unlockedSkills = [...p2Defaults.unlockedSkills];
-      this.players[1].skillPoints = p2Defaults.skillPoints;
-      this.players[1].primarySpellId = p2Defaults.primarySpellId;
-      this.players[1].secondarySpellId = p2Defaults.secondarySpellId;
-    }
-    this.notifyReact();
+    this.playerCommandController.resetPlayerSkillsToDefaults();
   }
 
   public stepSingleFrame() {
