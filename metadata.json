@@ -1,0 +1,6 @@
+{
+  "name": "Vibrant Castle: 2D Modular Platformer",
+  "description": "An action-packed 2D platformer prototype featuring a robust modular architecture, two-player shared keyboard co-op, Bastion-like narration, and retro synth music.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

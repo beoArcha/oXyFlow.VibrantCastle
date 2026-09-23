@@ -1,0 +1,104 @@
+{
+  "characterId": "clockwork_owl_gargoyle",
+  "entityType": "creature",
+  "version": "4.0",
+
+  "description": "Clockwork Owl Gargoyle. Flying brass sentinel with articulated wings and glowing cyan optics. Patrols airspace and performs precise strike attacks.",
+
+  "atlas": {
+    "columns": 6,
+    "rows": 5,
+    "spacing": 0,
+    "background": "transparent",
+    "safeMargin": 10,
+    "noOverflow": true,
+    "noOverlap": true
+  },
+
+  "variants": {
+    "low": {
+      "cellWidth": 76,
+      "cellHeight": 76,
+      "scale": 0.6
+    },
+    "mid": {
+      "cellWidth": 96,
+      "cellHeight": 96,
+      "scale": 0.8
+    },
+    "high": {
+      "cellWidth": 140,
+      "cellHeight": 140,
+      "scale": 1.0
+    }
+  },
+
+  "animations": {
+    "gargoyle_fly": {
+      "row": 0,
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "wide": false,
+      "slotSpan": [1,1,1,1,1,1],
+      "cells":    [1,1,1,1,1,1]
+    },
+
+    "gargoyle_attack": {
+      "row": 1,
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "wide": false,
+      "slotSpan": [1,1,1,1,1,1],
+      "cells":    [1,1,1,1,1,1]
+    },
+
+    "gargoyle_hit": {
+      "row": 2,
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "wide": false,
+      "slotSpan": [1,1,1,1,0,0],
+      "cells":    [1,1,1,1,0,0]
+    },
+
+    "gargoyle_death": {
+      "row": 3,
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "wide": false,
+      "slotSpan": [1,1,1,1,1,1],
+      "cells":    [1,1,1,1,1,1]
+    },
+
+    "gargoyle_bestiary": {
+      "row": 4,
+      "frames": 6,
+      "fps": 1,
+      "loop": false,
+      "wide": false,
+      "slotSpan": [1,1,1,1,1,1],
+      "cells":    [1,1,1,1,1,1]
+    }
+  },
+
+  "layout": {
+    "ordering": [
+      "gargoyle_fly",
+      "gargoyle_attack",
+      "gargoyle_hit",
+      "gargoyle_death",
+      "gargoyle_bestiary"
+    ],
+    "origin": {
+      "type": "center",
+      "normalized": {
+        "x": 0.5,
+        "y": 0.55
+      }
+    }
+  }
+}

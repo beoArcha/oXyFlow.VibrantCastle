@@ -1,0 +1,437 @@
+{
+  "schemaVersion": "1.0",
+  "id": "grand_bastion",
+  "nameKey": "locationGrandBastionName",
+  "descriptionKey": "locationGrandBastionDesc",
+  "openingNarrationKey": "trainingIntro",
+  "dimensions": {
+    "width": 3800,
+    "height": 750
+  },
+  "spawnPoints": {
+    "default": { "x": 150, "y": 560 },
+    "p2Offset": { "x": 45, "y": 0 },
+    "entries": {
+      "from_sanctuary": { "x": 150, "y": 560 },
+      "from_courtyard": { "x": 3400, "y": 505 }
+    }
+  },
+  "theme": {
+    "bgGradientTop": "#33160a",
+    "bgGradientBottom": "#120602",
+    "ambientParticle": "leaf",
+    "fogColor": "rgba(245, 158, 11, 0.08)",
+    "musicIntensity": 0.4
+  },
+  "parallaxBackground": {
+    "boxWidth": 3800,
+    "boxHeight": 950,
+    "layers": [
+      {
+        "id": "bg_bastion_far",
+        "name": "Grand Bastion Far Horizon & Sky (High)",
+        "tier": "far",
+        "type": "image",
+        "imageUrl": "grand_bastion_far_high",
+        "depth": 0.1,
+        "scrollSpeedX": 0.0,
+        "scrollSpeedY": 0.0,
+        "opacity": 1.0
+      },
+      {
+        "id": "bg_bastion_mid_far",
+        "name": "Grand Bastion Mid-Far Fortress & Mountains (High)",
+        "tier": "mid_far",
+        "type": "image",
+        "imageUrl": "grand_bastion_mid_far_high",
+        "depth": 0.25,
+        "scrollSpeedX": 0.24,
+        "scrollSpeedY": 0.10,
+        "opacity": 1.0
+      },
+      {
+        "id": "bg_bastion_mid",
+        "name": "Grand Bastion Mid Ramparts & Spires (High)",
+        "tier": "mid",
+        "type": "image",
+        "imageUrl": "grand_bastion_mid_high",
+        "depth": 0.45,
+        "scrollSpeedX": 0.42,
+        "scrollSpeedY": 0.18,
+        "opacity": 1.0
+      },
+      {
+        "id": "bg_bastion_mid_close",
+        "name": "Grand Bastion Mid-Close Stonework & Bastions (High)",
+        "tier": "mid_close",
+        "type": "image",
+        "imageUrl": "grand_bastion_mid_close_high",
+        "depth": 0.65,
+        "scrollSpeedX": 0.65,
+        "scrollSpeedY": 0.30,
+        "opacity": 1.0
+      },
+      {
+        "id": "bg_bastion_close",
+        "name": "Grand Bastion Close Forefront & Ramparts (High)",
+        "tier": "close",
+        "type": "image",
+        "imageUrl": "grand_bastion_close_high",
+        "depth": 0.85,
+        "scrollSpeedX": 0.85,
+        "scrollSpeedY": 0.45,
+        "opacity": 1.0
+      }
+    ]
+  },
+  "dictionaries": {
+    "monsters": {
+      "grand_dummy": {
+        "templateId": "grand_dummy",
+        "nameKey": "monsterTrainingDummy",
+        "defaultName": "Training Dummy",
+        "width": 35,
+        "height": 60,
+        "health": 60,
+        "maxHealth": 60,
+        "speed": 0,
+        "attackPower": 0,
+        "isDummy": true,
+        "isAerial": false,
+        "colorScheme": {
+          "body": "#b45309",
+          "accent": "#f59e0b",
+          "eyes": "#fef08a"
+        },
+        "scoreReward": 120
+      },
+      "bastion_gargoyle": {
+        "templateId": "bastion_gargoyle",
+        "nameKey": "monsterChasmGargoyle",
+        "defaultName": "Chasm Gargoyle",
+        "width": 40,
+        "height": 40,
+        "health": 50,
+        "maxHealth": 50,
+        "speed": 1.2,
+        "attackPower": 15,
+        "isDummy": false,
+        "isAerial": true,
+        "colorScheme": {
+          "body": "#57534e",
+          "accent": "#ea580c",
+          "eyes": "#f97316"
+        },
+        "scoreReward": 450
+      },
+      "bastion_sentinel_boss": {
+        "templateId": "bastion_sentinel_boss",
+        "nameKey": "monsterCourtSentinel",
+        "defaultName": "Courtyard Sentinel",
+        "width": 45,
+        "height": 60,
+        "health": 100,
+        "maxHealth": 100,
+        "speed": 1.0,
+        "attackPower": 25,
+        "isDummy": false,
+        "isAerial": false,
+        "colorScheme": {
+          "body": "#431407",
+          "accent": "#ea580c",
+          "eyes": "#ef4444"
+        },
+        "scoreReward": 800
+      }
+    },
+    "entities": {
+      "bastion_floor": {
+        "prefabId": "bastion_floor",
+        "type": "solid",
+        "color": "#b35a38",
+        "borderColor": "#e2b653",
+        "labelKey": "labelStoneFloor",
+        "defaultLabel": "Stone Floor"
+      },
+      "bastion_step": {
+        "prefabId": "bastion_step",
+        "type": "solid",
+        "color": "#d98a55",
+        "borderColor": "#fed7aa",
+        "labelKey": "labelStoneStep",
+        "defaultLabel": "Stone Step"
+      },
+      "bastion_thorns": {
+        "prefabId": "bastion_thorns",
+        "type": "hazard",
+        "color": "#e06c35",
+        "borderColor": "#ea580c",
+        "labelKey": "labelAmberThorns",
+        "defaultLabel": "Amber Thorns"
+      },
+      "bastion_tunnel_roof": {
+        "prefabId": "bastion_tunnel_roof",
+        "type": "solid",
+        "color": "#5c2d18",
+        "borderColor": "#9a3412",
+        "labelKey": "labelLowArchway",
+        "defaultLabel": "Low Archway"
+      },
+      "bastion_lift": {
+        "prefabId": "bastion_lift",
+        "type": "solid",
+        "color": "#f59e0b",
+        "borderColor": "#fbbf24",
+        "labelKey": "labelMovingPlatform",
+        "defaultLabel": "Moving Platform"
+      },
+      "target_step": {
+        "prefabId": "target_step",
+        "type": "solid",
+        "color": "#c29547",
+        "borderColor": "#fef08a",
+        "labelKey": "labelStonePlatform",
+        "defaultLabel": "Stone Platform"
+      },
+      "bastion_gate": {
+        "prefabId": "bastion_gate",
+        "type": "solid",
+        "color": "#6e473b",
+        "borderColor": "#9a3412",
+        "labelKey": "labelGrandPortcullis",
+        "defaultLabel": "Grand Portcullis"
+      }
+    },
+    "portals": {
+      "portal_return_sanctuary": {
+        "id": "portal_return_sanctuary",
+        "labelKey": "portalToAetherSanctuary",
+        "defaultLabel": "To Aether Sanctuary",
+        "targetLocationId": "aether_sanctuary",
+        "targetSpawnPoint": { "x": 2650, "y": 165 },
+        "activation": "touch",
+        "particleEffect": "magic",
+        "colors": {
+          "inner": "#ffffff",
+          "outer": "#0284c7",
+          "border": "#38bdf8"
+        }
+      },
+      "portal_mastery_loop": {
+        "id": "portal_mastery_loop",
+        "labelKey": "portalMastery",
+        "defaultLabel": "Mastery Portal",
+        "targetLocationId": "courtyard",
+        "targetSpawnPoint": { "x": 140, "y": 640 },
+        "activation": "touch",
+        "particleEffect": "magic",
+        "colors": {
+          "inner": "#ffffff",
+          "outer": "#d97706",
+          "border": "#f59e0b"
+        }
+      }
+    }
+  },
+  "layout": {
+    "solids": [
+      {
+        "id": "grand_floor_1",
+        "prefabId": "bastion_floor",
+        "x": 0,
+        "y": 640,
+        "width": 800,
+        "height": 110
+      },
+      {
+        "id": "grand_step_1",
+        "prefabId": "bastion_step",
+        "x": 450,
+        "y": 550,
+        "width": 100,
+        "height": 25
+      },
+      {
+        "id": "grand_step_2",
+        "prefabId": "bastion_step",
+        "x": 600,
+        "y": 460,
+        "width": 100,
+        "height": 25
+      },
+      {
+        "id": "grand_stone_1",
+        "prefabId": "bastion_step",
+        "x": 880,
+        "y": 540,
+        "width": 90,
+        "height": 25
+      },
+      {
+        "id": "grand_stone_2",
+        "prefabId": "bastion_step",
+        "x": 1060,
+        "y": 480,
+        "width": 90,
+        "height": 25
+      },
+      {
+        "id": "grand_stone_3",
+        "prefabId": "bastion_step",
+        "x": 1240,
+        "y": 520,
+        "width": 90,
+        "height": 25
+      },
+      {
+        "id": "grand_floor_mid",
+        "prefabId": "bastion_floor",
+        "x": 1500,
+        "y": 620,
+        "width": 800,
+        "height": 130
+      },
+      {
+        "id": "grand_tunnel_roof",
+        "prefabId": "bastion_tunnel_roof",
+        "x": 1650,
+        "y": 500,
+        "width": 260,
+        "height": 50
+      },
+      {
+        "id": "grand_moving_plat",
+        "prefabId": "bastion_lift",
+        "x": 2350,
+        "y": 520,
+        "width": 110,
+        "height": 22,
+        "vx": 1.4,
+        "vy": 0,
+        "minX": 2320,
+        "maxX": 2650
+      },
+      {
+        "id": "grand_target_high",
+        "prefabId": "target_step",
+        "x": 2550,
+        "y": 320,
+        "width": 140,
+        "height": 22
+      },
+      {
+        "id": "grand_target_diag",
+        "prefabId": "target_step",
+        "x": 2850,
+        "y": 420,
+        "width": 140,
+        "height": 22
+      },
+      {
+        "id": "grand_floor_end",
+        "prefabId": "bastion_floor",
+        "x": 2700,
+        "y": 600,
+        "width": 1100,
+        "height": 150
+      },
+      {
+        "id": "grand_gate",
+        "prefabId": "bastion_gate",
+        "x": 3250,
+        "y": 300,
+        "width": 35,
+        "height": 300
+      }
+    ],
+    "hazards": [
+      {
+        "id": "grand_thorn_bed",
+        "prefabId": "bastion_thorns",
+        "x": 800,
+        "y": 690,
+        "width": 700,
+        "height": 60
+      }
+    ],
+    "levers": [
+      {
+        "id": "grand_lever",
+        "x": 3000,
+        "y": 555,
+        "width": 25,
+        "height": 45,
+        "triggerId": "lever_1",
+        "targetGateId": "grand_gate",
+        "labelKey": "labelMainSluiceLever",
+        "defaultLabel": "Main Sluice Lever"
+      }
+    ],
+    "portals": [
+      {
+        "id": "grand_portal_back",
+        "portalKey": "portal_return_sanctuary",
+        "x": 40,
+        "y": 545,
+        "width": 60,
+        "height": 95
+      },
+      {
+        "id": "grand_portal",
+        "portalKey": "portal_mastery_loop",
+        "x": 3550,
+        "y": 505,
+        "width": 75,
+        "height": 95
+      }
+    ],
+    "enemies": [
+      {
+        "id": "grand_dummy_1",
+        "monsterKey": "grand_dummy",
+        "x": 350,
+        "y": 580,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_dummy_mid",
+        "monsterKey": "grand_dummy",
+        "x": 2000,
+        "y": 560,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_dummy_high",
+        "monsterKey": "grand_dummy",
+        "x": 2590,
+        "y": 260,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_dummy_diag",
+        "monsterKey": "grand_dummy",
+        "x": 2890,
+        "y": 360,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_gargoyle",
+        "monsterKey": "bastion_gargoyle",
+        "x": 1050,
+        "y": 360,
+        "patrolMinX": 980,
+        "patrolMaxX": 1180,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_sentinel_boss",
+        "monsterKey": "bastion_sentinel_boss",
+        "x": 3120,
+        "y": 540,
+        "patrolMinX": 3050,
+        "patrolMaxX": 3220,
+        "facingLeft": true
+      }
+    ]
+  }
+}

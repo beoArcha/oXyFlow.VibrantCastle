@@ -1,0 +1,356 @@
+{
+  "schemaVersion": "1.0",
+  "id": "clocktower",
+  "nameKey": "locationClocktowerName",
+  "descriptionKey": "locationClocktowerDesc",
+  "openingNarrationKey": "narrationShootingRange",
+  "dimensions": {
+    "width": 3200,
+    "height": 1050
+  },
+  "spawnPoints": {
+    "default": { "x": 150, "y": 880 },
+    "p2Offset": { "x": 45, "y": 0 },
+    "entries": {
+      "from_chasm": { "x": 150, "y": 880 },
+      "from_sanctuary": { "x": 2800, "y": 205 }
+    }
+  },
+  "theme": {
+    "bgGradientTop": "#1c1008",
+    "bgGradientBottom": "#0b0402",
+    "ambientParticle": "spark",
+    "fogColor": "rgba(245, 158, 11, 0.09)",
+    "musicIntensity": 0.5
+  },
+  "parallaxBackground": {
+    "boxWidth": 4400,
+    "boxHeight": 1400,
+    "layers": [
+      {
+        "id": "bg_tower_sky",
+        "name": "Tower Spire Twilight",
+        "type": "sky_gradient",
+        "depth": 0.02,
+        "scrollSpeedX": 0.03,
+        "scrollSpeedY": 0.03,
+        "color": "#eab308"
+      },
+      {
+        "id": "bg_tower_moon",
+        "name": "Amber Clockwork Eclipse",
+        "type": "celestial",
+        "depth": 0.04,
+        "scrollSpeedX": 0.05,
+        "scrollSpeedY": 0.04,
+        "color": "rgba(234, 179, 8, 0.28)",
+        "elements": [
+          { "type": "circle", "x": 2200, "y": 200, "radius": 150, "color": "rgba(245, 158, 11, 0.2)" },
+          { "type": "circle", "x": 2200, "y": 200, "radius": 95, "color": "rgba(251, 191, 36, 0.38)" }
+        ]
+      },
+      {
+        "id": "bg_tower_spires",
+        "name": "Distant Bell Spires",
+        "type": "castle_silhouettes",
+        "depth": 0.18,
+        "scrollSpeedX": 0.2,
+        "scrollSpeedY": 0.08,
+        "color": "rgba(180, 83, 9, 0.18)",
+        "opacity": 0.95
+      },
+      {
+        "id": "bg_tower_mid_scenery",
+        "name": "Clockwork Shaft Architecture",
+        "type": "scenery_trees",
+        "depth": 0.4,
+        "scrollSpeedX": 0.42,
+        "scrollSpeedY": 0.16,
+        "color": "#78350f"
+      },
+      {
+        "id": "bg_tower_fog",
+        "name": "Steam and Brass Exhaust",
+        "type": "fog_overlay",
+        "depth": 0.8,
+        "scrollSpeedX": 0.7,
+        "scrollSpeedY": 0.25,
+        "autoDriftX": 0.3,
+        "autoDriftY": 0,
+        "color": "rgba(245, 158, 11, 0.08)",
+        "opacity": 0.85
+      }
+    ]
+  },
+  "dictionaries": {
+    "monsters": {
+      "training_target": {
+        "templateId": "training_target",
+        "nameKey": "monsterTrainingDummy",
+        "defaultName": "Training Dummy",
+        "width": 35,
+        "height": 60,
+        "health": 70,
+        "maxHealth": 70,
+        "speed": 0,
+        "attackPower": 0,
+        "isDummy": true,
+        "isAerial": false,
+        "colorScheme": {
+          "body": "#b45309",
+          "accent": "#f59e0b",
+          "eyes": "#fef08a"
+        },
+        "scoreReward": 150
+      },
+      "clockwork_automaton": {
+        "templateId": "clockwork_automaton",
+        "nameKey": "monsterClockworkAutomaton",
+        "defaultName": "Clockwork Automaton",
+        "width": 48,
+        "height": 65,
+        "health": 120,
+        "maxHealth": 120,
+        "speed": 1.1,
+        "attackPower": 24,
+        "isDummy": false,
+        "isAerial": false,
+        "colorScheme": {
+          "body": "#78350f",
+          "accent": "#d97706",
+          "eyes": "#ef4444"
+        },
+        "scoreReward": 700
+      }
+    },
+    "entities": {
+      "tower_masonry": {
+        "prefabId": "tower_masonry",
+        "type": "solid",
+        "color": "#78350f",
+        "borderColor": "#d97706",
+        "labelKey": "labelStonePlatform",
+        "defaultLabel": "Stone Platform"
+      },
+      "vertical_lift": {
+        "prefabId": "vertical_lift",
+        "type": "solid",
+        "color": "#f59e0b",
+        "borderColor": "#fbbf24",
+        "labelKey": "labelVerticalLift",
+        "defaultLabel": "Clockwork Elevator"
+      },
+      "target_ledge": {
+        "prefabId": "target_ledge",
+        "type": "solid",
+        "color": "#d97706",
+        "borderColor": "#fef08a",
+        "labelKey": "labelStoneStep",
+        "defaultLabel": "Stone Step"
+      },
+      "clockwork_lever": {
+        "prefabId": "clockwork_lever",
+        "type": "lever",
+        "color": "#f59e0b",
+        "borderColor": "#d97706",
+        "labelKey": "labelClockworkGear",
+        "defaultLabel": "Clockwork Gear"
+      },
+      "spire_gate": {
+        "prefabId": "spire_gate",
+        "type": "solid",
+        "color": "#451a03",
+        "borderColor": "#9a3412",
+        "labelKey": "labelSpireGate",
+        "defaultLabel": "Spire Gate"
+      }
+    },
+    "portals": {
+      "portal_to_chasm": {
+        "id": "portal_to_chasm",
+        "labelKey": "portalToThornChasm",
+        "defaultLabel": "To Thorn Chasm",
+        "targetLocationId": "thorn_chasm",
+        "targetSpawnPoint": { "x": 2500, "y": 405 },
+        "activation": "touch",
+        "particleEffect": "dust",
+        "colors": {
+          "inner": "#ffffff",
+          "outer": "#ea580c",
+          "border": "#f59e0b"
+        }
+      },
+      "portal_to_sanctuary": {
+        "id": "portal_to_sanctuary",
+        "labelKey": "portalToAetherSanctuary",
+        "defaultLabel": "To Aether Sanctuary",
+        "targetLocationId": "aether_sanctuary",
+        "targetSpawnPoint": { "x": 150, "y": 560 },
+        "activation": "touch",
+        "particleEffect": "magic",
+        "colors": {
+          "inner": "#ffffff",
+          "outer": "#0284c7",
+          "border": "#38bdf8"
+        }
+      }
+    }
+  },
+  "layout": {
+    "solids": [
+      {
+        "id": "tower_base_floor",
+        "prefabId": "tower_masonry",
+        "x": 0,
+        "y": 960,
+        "width": 850,
+        "height": 90
+      },
+      {
+        "id": "tower_lift_1",
+        "prefabId": "vertical_lift",
+        "x": 750,
+        "y": 860,
+        "width": 110,
+        "height": 22,
+        "vx": 0,
+        "vy": 1.2,
+        "minY": 620,
+        "maxY": 880
+      },
+      {
+        "id": "tower_mezzanine",
+        "prefabId": "tower_masonry",
+        "x": 920,
+        "y": 620,
+        "width": 600,
+        "height": 30
+      },
+      {
+        "id": "tower_target_ledge_high",
+        "prefabId": "target_ledge",
+        "x": 1250,
+        "y": 380,
+        "width": 140,
+        "height": 22
+      },
+      {
+        "id": "tower_target_ledge_diagonal",
+        "prefabId": "target_ledge",
+        "x": 1550,
+        "y": 480,
+        "width": 140,
+        "height": 22
+      },
+      {
+        "id": "tower_lift_2",
+        "prefabId": "vertical_lift",
+        "x": 1750,
+        "y": 540,
+        "width": 110,
+        "height": 22,
+        "vx": 0,
+        "vy": 1.5,
+        "minY": 300,
+        "maxY": 560
+      },
+      {
+        "id": "tower_belfry_floor",
+        "prefabId": "tower_masonry",
+        "x": 1900,
+        "y": 300,
+        "width": 800,
+        "height": 35
+      },
+      {
+        "id": "tower_gate_wall",
+        "prefabId": "spire_gate",
+        "x": 2400,
+        "y": 100,
+        "width": 35,
+        "height": 200
+      },
+      {
+        "id": "tower_exit_platform",
+        "prefabId": "tower_masonry",
+        "x": 2750,
+        "y": 300,
+        "width": 450,
+        "height": 750
+      }
+    ],
+    "triggers": [
+      {
+        "id": "trigger_tower_intro",
+        "x": 200,
+        "y": 780,
+        "width": 80,
+        "height": 180,
+        "triggerId": "trainingRangePrompt"
+      }
+    ],
+    "levers": [
+      {
+        "id": "tower_gear_lever",
+        "x": 2150,
+        "y": 255,
+        "width": 25,
+        "height": 45,
+        "triggerId": "lever_tower",
+        "targetGateId": "tower_gate_wall",
+        "labelKey": "labelClockworkGear",
+        "defaultLabel": "Clockwork Gear"
+      }
+    ],
+    "portals": [
+      {
+        "id": "tower_portal_back",
+        "portalKey": "portal_to_chasm",
+        "x": 40,
+        "y": 865,
+        "width": 60,
+        "height": 95
+      },
+      {
+        "id": "tower_goal_portal",
+        "portalKey": "portal_to_sanctuary",
+        "x": 2950,
+        "y": 205,
+        "width": 65,
+        "height": 95
+      }
+    ],
+    "enemies": [
+      {
+        "id": "tower_dummy_ground",
+        "monsterKey": "training_target",
+        "x": 520,
+        "y": 900,
+        "facingLeft": true
+      },
+      {
+        "id": "tower_dummy_high_vertical",
+        "monsterKey": "training_target",
+        "x": 1290,
+        "y": 320,
+        "facingLeft": true
+      },
+      {
+        "id": "tower_dummy_diagonal",
+        "monsterKey": "training_target",
+        "x": 1590,
+        "y": 420,
+        "facingLeft": true
+      },
+      {
+        "id": "tower_automaton_boss",
+        "monsterKey": "clockwork_automaton",
+        "x": 2280,
+        "y": 235,
+        "patrolMinX": 2000,
+        "patrolMaxX": 2380,
+        "facingLeft": true
+      }
+    ]
+  }
+}

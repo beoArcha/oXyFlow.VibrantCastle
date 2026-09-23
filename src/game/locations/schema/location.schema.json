@@ -1,0 +1,127 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CastlevaniaLocationBlueprint",
+  "description": "Blueprint schema for extensible Castlevania-style levels with dictionaries, multi-portal routing, and parallax backgrounds",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "id",
+    "nameKey",
+    "descriptionKey",
+    "dimensions",
+    "spawnPoints",
+    "theme",
+    "parallaxBackground",
+    "dictionaries",
+    "layout"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string" },
+    "id": { "type": "string" },
+    "nameKey": { "type": "string" },
+    "descriptionKey": { "type": "string" },
+    "openingNarrationKey": { "type": "string" },
+    "dimensions": {
+      "type": "object",
+      "required": ["width", "height"],
+      "properties": {
+        "width": { "type": "number", "minimum": 100 },
+        "height": { "type": "number", "minimum": 100 }
+      }
+    },
+    "spawnPoints": {
+      "type": "object",
+      "required": ["default", "p2Offset"],
+      "properties": {
+        "default": {
+          "type": "object",
+          "required": ["x", "y"],
+          "properties": { "x": { "type": "number" }, "y": { "type": "number" } }
+        },
+        "p2Offset": {
+          "type": "object",
+          "required": ["x", "y"],
+          "properties": { "x": { "type": "number" }, "y": { "type": "number" } }
+        },
+        "entries": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["x", "y"],
+            "properties": { "x": { "type": "number" }, "y": { "type": "number" } }
+          }
+        }
+      }
+    },
+    "theme": {
+      "type": "object",
+      "required": ["bgGradientTop", "bgGradientBottom", "ambientParticle", "fogColor", "musicIntensity"],
+      "properties": {
+        "bgGradientTop": { "type": "string" },
+        "bgGradientBottom": { "type": "string" },
+        "ambientParticle": { "type": "string", "enum": ["leaf", "dust", "spark", "magic", "shield"] },
+        "fogColor": { "type": "string" },
+        "musicIntensity": { "type": "number" }
+      }
+    },
+    "parallaxBackground": {
+      "type": "object",
+      "required": ["boxWidth", "boxHeight", "layers"],
+      "properties": {
+        "boxWidth": { "type": "number" },
+        "boxHeight": { "type": "number" },
+        "layers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "type", "depth", "scrollSpeedX", "scrollSpeedY"],
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "sky_gradient",
+                  "celestial",
+                  "castle_silhouettes",
+                  "mountain_ridges",
+                  "scenery_trees",
+                  "fog_overlay",
+                  "custom_shapes"
+                ]
+              },
+              "depth": { "type": "number" },
+              "scrollSpeedX": { "type": "number" },
+              "scrollSpeedY": { "type": "number" },
+              "autoDriftX": { "type": "number" },
+              "autoDriftY": { "type": "number" },
+              "color": { "type": "string" },
+              "opacity": { "type": "number" }
+            }
+          }
+        }
+      }
+    },
+    "dictionaries": {
+      "type": "object",
+      "required": ["monsters", "entities", "portals"],
+      "properties": {
+        "monsters": { "type": "object" },
+        "entities": { "type": "object" },
+        "portals": { "type": "object" }
+      }
+    },
+    "layout": {
+      "type": "object",
+      "required": ["solids"],
+      "properties": {
+        "solids": { "type": "array" },
+        "hazards": { "type": "array" },
+        "triggers": { "type": "array" },
+        "levers": { "type": "array" },
+        "portals": { "type": "array" },
+        "enemies": { "type": "array" }
+      }
+    }
+  }
+}

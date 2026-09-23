@@ -1,0 +1,99 @@
+{
+  "entityId": "aether_gate",
+  "entityType": "structure",
+  "version": "4.0",
+
+  "description": "Ancient Aether Portal Gateway. Victory point and dimensional transition node. Activates upon player proximity, emits aether particles and triggers level completion sequence.",
+
+  "atlas": {
+    "image": "aether_gate_high.png",
+    "cellWidth": 140,
+    "cellHeight": 140,
+    "columns": 8,
+    "rows": 5
+  },
+
+  "anchor": {
+    "x": 0.5,
+    "y": 0.9
+  },
+
+  "layout": {
+    "idle":        { "row": 0, "startCol": 0, "frames": 6, "widthCells": 1 },
+    "light_up":    { "row": 1, "startCol": 0, "frames": 8, "widthCells": 1 },
+    "action":      { "row": 2, "startCol": 0, "frames": 4, "widthCells": 2 },
+    "close_up":    { "row": 3, "startCol": 0, "frames": 6, "widthCells": 1 },
+    "info":        { "row": 4, "startCol": 0, "frames": 8, "widthCells": 1 }
+  },
+
+  "animations": {
+    "idle": {
+      "fps": 6,
+      "loop": true
+    },
+    "light_up": {
+      "fps": 10,
+      "loop": false
+    },
+    "action": {
+      "fps": 10,
+      "loop": false
+    },
+    "close_up": {
+      "fps": 8,
+      "loop": true
+    }
+  },
+
+  "states": {
+    "inactive": {
+      "animation": "idle"
+    },
+    "charging": {
+      "animation": "light_up"
+    },
+    "activating": {
+      "animation": "action"
+    },
+    "active": {
+      "animation": "close_up"
+    }
+  },
+
+  "infoFrames": {
+    "default": 0,
+    "active": 1,
+    "highlight": 2,
+    "overcharged": 3,
+    "damaged": 4,
+    "ancient": 5,
+    "energized": 6,
+    "ui_focus": 7
+  },
+
+  "interaction": {
+    "type": "victory_gate",
+    "trigger": {
+      "onPlayerEnterRadius": true,
+      "radius": 180
+    },
+    "effects": {
+      "playFanfare": true,
+      "unlockNextStage": true,
+      "emitParticles": true
+    }
+  },
+
+  "render": {
+    "layer": "interactive",
+    "zIndex": 10,
+    "blend": "normal"
+  },
+
+  "constraints": {
+    "fixedBaseline": true,
+    "noFrameOffset": true,
+    "strictGrid": true,
+    "allowOverflow": false
+  }
+}

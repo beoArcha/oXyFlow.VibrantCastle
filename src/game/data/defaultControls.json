@@ -1,0 +1,55 @@
+{
+  "keyboard": {
+    "player1": {
+      "left": ["KeyA", "a"],
+      "right": ["KeyD", "d"],
+      "up": ["KeyW", "w"],
+      "down": ["KeyS", "s"],
+      "jump": ["Space", " "],
+      "action1": ["KeyJ", "j"],
+      "action2": ["KeyL", "l"],
+      "magic1": ["KeyU", "u"],
+      "magic2": ["KeyO", "o"],
+      "potion1": ["Digit1", "1"],
+      "potion2": ["Digit2", "2"],
+      "potion3": ["Digit3", "3"]
+    },
+    "player2": {
+      "left": ["ArrowLeft"],
+      "right": ["ArrowRight"],
+      "up": ["ArrowUp"],
+      "down": ["ArrowDown"],
+      "jump": ["Numpad0", "Slash", "/"],
+      "action1": ["Numpad1", "KeyN", "n", "Comma", ","],
+      "action2": ["Numpad2", "KeyM", "m", "Period", "."],
+      "magic1": ["Numpad4", "BracketLeft", "["],
+      "magic2": ["Numpad5", "BracketRight", "]"],
+      "potion1": ["Numpad7", "Digit8", "8"],
+      "potion2": ["Numpad8", "Digit9", "9"],
+      "potion3": ["Numpad9", "Digit0", "0"]
+    }
+  },
+  "gamepad": {
+    "player1": {
+      "jump": 0,
+      "action1": 2,
+      "action2": 1,
+      "magic1": 3,
+      "magic2": 5,
+      "potion1": 4,
+      "potion2": 6,
+      "potion3": 7
+    },
+    "player2": {
+      "jump": 0,
+      "action1": 2,
+      "action2": 1,
+      "magic1": 3,
+      "magic2": 5,
+      "potion1": 4,
+      "potion2": 6,
+      "potion3": 7
+    }
+  },
+  "stickDeadzone": 0.25
+}

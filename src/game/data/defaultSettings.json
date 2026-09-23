@@ -1,0 +1,11 @@
+{
+  "language": "pl",
+  "volumeMusic": 0.45,
+  "volumeSFX": 0.65,
+  "isTwoPlayer": false,
+  "display": {
+    "aspectRatio": "16:10",
+    "scalingFilter": "pixel",
+    "assetQuality": "high"
+  }
+}

@@ -1,0 +1,351 @@
+{
+  "schemaVersion": "1.0",
+  "id": "aether_sanctuary",
+  "nameKey": "locationAetherSanctuaryName",
+  "descriptionKey": "locationAetherSanctuaryDesc",
+  "openingNarrationKey": "narrationMagicUsed",
+  "dimensions": {
+    "width": 3000,
+    "height": 800
+  },
+  "spawnPoints": {
+    "default": { "x": 150, "y": 560 },
+    "p2Offset": { "x": 45, "y": 0 },
+    "entries": {
+      "from_tower": { "x": 150, "y": 560 },
+      "from_bastion": { "x": 2650, "y": 165 }
+    }
+  },
+  "theme": {
+    "bgGradientTop": "#172554",
+    "bgGradientBottom": "#090d16",
+    "ambientParticle": "magic",
+    "fogColor": "rgba(56, 189, 248, 0.12)",
+    "musicIntensity": 0.6
+  },
+  "parallaxBackground": {
+    "boxWidth": 4200,
+    "boxHeight": 1100,
+    "layers": [
+      {
+        "id": "bg_aether_sky",
+        "name": "Deep Space Aether Vault",
+        "type": "sky_gradient",
+        "depth": 0.02,
+        "scrollSpeedX": 0.02,
+        "scrollSpeedY": 0.02,
+        "color": "#38bdf8"
+      },
+      {
+        "id": "bg_aether_celestials",
+        "name": "Twin Aether Moons",
+        "type": "celestial",
+        "depth": 0.04,
+        "scrollSpeedX": 0.05,
+        "scrollSpeedY": 0.03,
+        "color": "rgba(56, 189, 248, 0.35)",
+        "elements": [
+          { "type": "circle", "x": 1600, "y": 150, "radius": 140, "color": "rgba(56, 189, 248, 0.22)" },
+          { "type": "circle", "x": 1600, "y": 150, "radius": 90, "color": "rgba(125, 211, 252, 0.45)" },
+          { "type": "circle", "x": 600, "y": 120, "radius": 80, "color": "rgba(167, 139, 250, 0.28)" }
+        ]
+      },
+      {
+        "id": "bg_aether_isles_distant",
+        "name": "Floating Temple Silhouettes",
+        "type": "castle_silhouettes",
+        "depth": 0.16,
+        "scrollSpeedX": 0.18,
+        "scrollSpeedY": 0.07,
+        "color": "rgba(30, 58, 138, 0.25)",
+        "opacity": 0.95
+      },
+      {
+        "id": "bg_aether_aqueduct",
+        "name": "Celestial Aqueduct Masonry",
+        "type": "scenery_trees",
+        "depth": 0.45,
+        "scrollSpeedX": 0.48,
+        "scrollSpeedY": 0.18,
+        "color": "#1e3a8a"
+      },
+      {
+        "id": "bg_aether_fog",
+        "name": "Luminous Aether Mist",
+        "type": "fog_overlay",
+        "depth": 0.78,
+        "scrollSpeedX": 0.68,
+        "scrollSpeedY": 0.24,
+        "autoDriftX": 0.35,
+        "autoDriftY": 0,
+        "color": "rgba(56, 189, 248, 0.08)",
+        "opacity": 0.88
+      }
+    ]
+  },
+  "dictionaries": {
+    "monsters": {
+      "aether_sentinel": {
+        "templateId": "aether_sentinel",
+        "nameKey": "monsterAetherSentinel",
+        "defaultName": "Aether Sentinel",
+        "width": 42,
+        "height": 60,
+        "health": 90,
+        "maxHealth": 90,
+        "speed": 1.2,
+        "attackPower": 22,
+        "isDummy": false,
+        "isAerial": false,
+        "colorScheme": {
+          "body": "#1e3a8a",
+          "accent": "#38bdf8",
+          "eyes": "#e0f2fe"
+        },
+        "scoreReward": 600
+      },
+      "aether_wisp": {
+        "templateId": "aether_wisp",
+        "nameKey": "monsterAetherWisp",
+        "defaultName": "Aether Wisp",
+        "width": 36,
+        "height": 36,
+        "health": 60,
+        "maxHealth": 60,
+        "speed": 1.6,
+        "attackPower": 18,
+        "isDummy": false,
+        "isAerial": true,
+        "colorScheme": {
+          "body": "#0369a1",
+          "accent": "#06b6d4",
+          "eyes": "#67e8f9"
+        },
+        "scoreReward": 500
+      },
+      "aether_archon": {
+        "templateId": "aether_archon",
+        "nameKey": "monsterAetherArchon",
+        "defaultName": "Aether Archon",
+        "width": 50,
+        "height": 65,
+        "health": 140,
+        "maxHealth": 140,
+        "speed": 1.0,
+        "attackPower": 30,
+        "isDummy": false,
+        "isAerial": false,
+        "colorScheme": {
+          "body": "#1e1b4b",
+          "accent": "#818cf8",
+          "eyes": "#c7d2fe"
+        },
+        "scoreReward": 850
+      }
+    },
+    "entities": {
+      "sanctuary_masonry": {
+        "prefabId": "sanctuary_masonry",
+        "type": "solid",
+        "color": "#1e3a8a",
+        "borderColor": "#38bdf8",
+        "labelKey": "labelStonePlatform",
+        "defaultLabel": "Stone Platform"
+      },
+      "crystal_plat": {
+        "prefabId": "crystal_plat",
+        "type": "solid",
+        "color": "#38bdf8",
+        "borderColor": "#e0f2fe",
+        "labelKey": "labelMovingPlatform",
+        "defaultLabel": "Moving Platform"
+      },
+      "void_hazard": {
+        "prefabId": "void_hazard",
+        "type": "hazard",
+        "color": "#0284c7",
+        "borderColor": "#38bdf8",
+        "labelKey": "labelAetherVoid",
+        "defaultLabel": "Aether Void"
+      },
+      "sanctuary_gate": {
+        "prefabId": "sanctuary_gate",
+        "type": "solid",
+        "color": "#0f172a",
+        "borderColor": "#38bdf8",
+        "labelKey": "labelCelestialBarrier",
+        "defaultLabel": "Celestial Barrier"
+      }
+    },
+    "portals": {
+      "portal_return_tower": {
+        "id": "portal_return_tower",
+        "labelKey": "portalToClocktower",
+        "defaultLabel": "To Clocktower",
+        "targetLocationId": "clocktower",
+        "targetSpawnPoint": { "x": 2800, "y": 205 },
+        "activation": "touch",
+        "particleEffect": "spark",
+        "colors": {
+          "inner": "#ffffff",
+          "outer": "#f59e0b",
+          "border": "#fbbf24"
+        }
+      },
+      "portal_to_bastion": {
+        "id": "portal_to_bastion",
+        "labelKey": "portalToGrandBastion",
+        "defaultLabel": "To Grand Bastion",
+        "targetLocationId": "grand_bastion",
+        "targetSpawnPoint": { "x": 150, "y": 560 },
+        "activation": "touch",
+        "particleEffect": "magic",
+        "colors": {
+          "inner": "#ffffff",
+          "outer": "#e11d48",
+          "border": "#f59e0b"
+        }
+      }
+    }
+  },
+  "layout": {
+    "solids": [
+      {
+        "id": "aether_isle_1",
+        "prefabId": "sanctuary_masonry",
+        "x": 0,
+        "y": 640,
+        "width": 600,
+        "height": 160
+      },
+      {
+        "id": "aether_crystal_plat_1",
+        "prefabId": "crystal_plat",
+        "x": 680,
+        "y": 520,
+        "width": 130,
+        "height": 25,
+        "vx": 1.5,
+        "vy": 0,
+        "minX": 650,
+        "maxX": 950
+      },
+      {
+        "id": "aether_isle_2",
+        "prefabId": "sanctuary_masonry",
+        "x": 1050,
+        "y": 460,
+        "width": 700,
+        "height": 40
+      },
+      {
+        "id": "aether_lift_up",
+        "prefabId": "crystal_plat",
+        "x": 1820,
+        "y": 420,
+        "width": 120,
+        "height": 25,
+        "vx": 0,
+        "vy": 1.2,
+        "minY": 240,
+        "maxY": 460
+      },
+      {
+        "id": "aether_altar_isle",
+        "prefabId": "sanctuary_masonry",
+        "x": 2000,
+        "y": 260,
+        "width": 1000,
+        "height": 540
+      },
+      {
+        "id": "aether_altar_gate",
+        "prefabId": "sanctuary_gate",
+        "x": 2550,
+        "y": 80,
+        "width": 35,
+        "height": 180
+      }
+    ],
+    "hazards": [
+      {
+        "id": "aether_hazard_void",
+        "prefabId": "void_hazard",
+        "x": 600,
+        "y": 740,
+        "width": 1800,
+        "height": 60
+      }
+    ],
+    "triggers": [
+      {
+        "id": "trigger_aether_intro",
+        "x": 200,
+        "y": 440,
+        "width": 80,
+        "height": 200,
+        "triggerId": "trainingMagicPrompt"
+      }
+    ],
+    "levers": [
+      {
+        "id": "aether_altar_lever",
+        "x": 2300,
+        "y": 215,
+        "width": 25,
+        "height": 45,
+        "triggerId": "lever_aether",
+        "targetGateId": "aether_altar_gate",
+        "labelKey": "labelSanctuaryGateway",
+        "defaultLabel": "Sanctuary Gateway"
+      }
+    ],
+    "portals": [
+      {
+        "id": "aether_portal_back",
+        "portalKey": "portal_return_tower",
+        "x": 40,
+        "y": 545,
+        "width": 60,
+        "height": 95
+      },
+      {
+        "id": "aether_goal_portal",
+        "portalKey": "portal_to_bastion",
+        "x": 2800,
+        "y": 165,
+        "width": 75,
+        "height": 95
+      }
+    ],
+    "enemies": [
+      {
+        "id": "aether_sentinel_1",
+        "monsterKey": "aether_sentinel",
+        "x": 1250,
+        "y": 400,
+        "patrolMinX": 1100,
+        "patrolMaxX": 1450,
+        "facingLeft": true
+      },
+      {
+        "id": "aether_wisp_aerial",
+        "monsterKey": "aether_wisp",
+        "x": 1550,
+        "y": 300,
+        "patrolMinX": 1480,
+        "patrolMaxX": 1720,
+        "facingLeft": false
+      },
+      {
+        "id": "aether_archon_boss",
+        "monsterKey": "aether_archon",
+        "x": 2450,
+        "y": 195,
+        "patrolMinX": 2350,
+        "patrolMaxX": 2540,
+        "facingLeft": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "solar_rapier": {
+    "id": "solar_rapier",
+    "nameKey": "itemSolarRapierName",
+    "descriptionKey": "itemSolarRapierDesc",
+    "type": "weapon",
+    "icon": "Sword",
+    "rarity": "uncommon",
+    "attackBonus": 15,
+    "maxStaminaBonus": 10
+  },
+  "frost_rapier": {
+    "id": "frost_rapier",
+    "nameKey": "itemFrostRapierName",
+    "descriptionKey": "itemFrostRapierDesc",
+    "type": "weapon",
+    "icon": "Zap",
+    "rarity": "rare",
+    "attackBonus": 22,
+    "maxManaBonus": 20
+  },
+  "aether_staff": {
+    "id": "aether_staff",
+    "nameKey": "itemAetherStaffName",
+    "descriptionKey": "itemAetherStaffDesc",
+    "type": "weapon",
+    "icon": "Wand",
+    "rarity": "rare",
+    "attackBonus": 10,
+    "maxManaBonus": 40,
+    "manaRegenBonus": 0.15
+  },
+  "brass_buckler": {
+    "id": "brass_buckler",
+    "nameKey": "itemBrassBucklerName",
+    "descriptionKey": "itemBrassBucklerDesc",
+    "type": "shield",
+    "icon": "Shield",
+    "rarity": "common",
+    "defenseBonus": 12,
+    "maxHpBonus": 25
+  },
+  "spell_grimoire": {
+    "id": "spell_grimoire",
+    "nameKey": "itemSpellGrimoireName",
+    "descriptionKey": "itemSpellGrimoireDesc",
+    "type": "shield",
+    "icon": "BookOpen",
+    "rarity": "rare",
+    "defenseBonus": 5,
+    "maxManaBonus": 35,
+    "manaRegenBonus": 0.2
+  },
+  "velvet_hat": {
+    "id": "velvet_hat",
+    "nameKey": "itemVelvetHatName",
+    "descriptionKey": "itemVelvetHatDesc",
+    "type": "helmet",
+    "icon": "Crown",
+    "rarity": "common",
+    "defenseBonus": 4,
+    "maxManaBonus": 15
+  },
+  "knight_helm": {
+    "id": "knight_helm",
+    "nameKey": "itemKnightHelmName",
+    "descriptionKey": "itemKnightHelmDesc",
+    "type": "helmet",
+    "icon": "HardHat",
+    "rarity": "uncommon",
+    "defenseBonus": 10,
+    "maxHpBonus": 20
+  },
+  "crimson_coat": {
+    "id": "crimson_coat",
+    "nameKey": "itemCrimsonCoatName",
+    "descriptionKey": "itemCrimsonCoatDesc",
+    "type": "armor",
+    "icon": "Shirt",
+    "rarity": "rare",
+    "defenseBonus": 18,
+    "maxHpBonus": 40,
+    "staminaRegenBonus": 0.1
+  },
+  "scholar_robe": {
+    "id": "scholar_robe",
+    "nameKey": "itemScholarRobeName",
+    "descriptionKey": "itemScholarRobeDesc",
+    "type": "armor",
+    "icon": "Shirt",
+    "rarity": "uncommon",
+    "defenseBonus": 8,
+    "maxManaBonus": 50,
+    "manaRegenBonus": 0.25
+  },
+  "amber_amulet": {
+    "id": "amber_amulet",
+    "nameKey": "itemAmberAmuletName",
+    "descriptionKey": "itemAmberAmuletDesc",
+    "type": "necklace",
+    "icon": "Sparkles",
+    "rarity": "uncommon",
+    "attackBonus": 5,
+    "defenseBonus": 5,
+    "maxHpBonus": 15
+  },
+  "aether_pendant": {
+    "id": "aether_pendant",
+    "nameKey": "itemAetherPendantName",
+    "descriptionKey": "itemAetherPendantDesc",
+    "type": "necklace",
+    "icon": "Sparkles",
+    "rarity": "rare",
+    "maxManaBonus": 40,
+    "manaRegenBonus": 0.2
+  },
+  "garnet_ring": {
+    "id": "garnet_ring",
+    "nameKey": "itemGarnetRingName",
+    "descriptionKey": "itemGarnetRingDesc",
+    "type": "ring",
+    "icon": "CircleDot",
+    "rarity": "common",
+    "attackBonus": 8
+  },
+  "swift_ring": {
+    "id": "swift_ring",
+    "nameKey": "itemSwiftRingName",
+    "descriptionKey": "itemSwiftRingDesc",
+    "type": "ring",
+    "icon": "CircleDot",
+    "rarity": "uncommon",
+    "speedBonus": 0.5,
+    "maxStaminaBonus": 20
+  },
+  "potion_health": {
+    "id": "potion_health",
+    "nameKey": "itemPotionHealthName",
+    "descriptionKey": "itemPotionHealthDesc",
+    "type": "potion",
+    "icon": "Heart",
+    "rarity": "common",
+    "healHp": 45
+  },
+  "potion_mana": {
+    "id": "potion_mana",
+    "nameKey": "itemPotionManaName",
+    "descriptionKey": "itemPotionManaDesc",
+    "type": "potion",
+    "icon": "Zap",
+    "rarity": "common",
+    "healMana": 40
+  },
+  "potion_elixir": {
+    "id": "potion_elixir",
+    "nameKey": "itemPotionElixirName",
+    "descriptionKey": "itemPotionElixirDesc",
+    "type": "potion",
+    "icon": "Flame",
+    "rarity": "rare",
+    "healHp": 50,
+    "healMana": 50,
+    "healStamina": 50
+  }
+}

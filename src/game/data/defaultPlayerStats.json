@@ -1,0 +1,26 @@
+{
+  "player1": {
+    "name": "Valen",
+    "baseHealth": 100,
+    "baseMana": 60,
+    "baseStamina": 100,
+    "speed": 5.5,
+    "jumpForce": 13.5,
+    "baseAttack": 15,
+    "baseDefense": 5,
+    "staminaRegenRate": 0.45,
+    "manaRegenRate": 0.2
+  },
+  "player2": {
+    "name": "Aurelia",
+    "baseHealth": 120,
+    "baseMana": 80,
+    "baseStamina": 90,
+    "speed": 5.2,
+    "jumpForce": 13.2,
+    "baseAttack": 18,
+    "baseDefense": 8,
+    "staminaRegenRate": 0.4,
+    "manaRegenRate": 0.25
+  }
+}

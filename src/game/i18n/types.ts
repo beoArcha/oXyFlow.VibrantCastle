@@ -1,0 +1,563 @@
+/**
+ * TypeScript Interfaces and Types for Centralized Internationalization (i18n).
+ * Modularized by domain (HUD, Settings, Inventory, Skills, Items, Locations, Narrations, Dialogues, Lore).
+ */
+
+export type LanguageCode = "pl" | "en";
+
+export interface HudI18n {
+  title: string;
+  subtitle: string;
+  health: string;
+  mana: string;
+  stamina: string;
+  skillPoints: string;
+  stats: string;
+  attackPower: string;
+  defense: string;
+  manaRegen: string;
+  staminaRegen: string;
+  p1Status: string;
+  p2Status: string;
+  inventoryBtn: string;
+  skillTreeBtn: string;
+  creationBtn: string;
+  enableAudio: string;
+  victory: string;
+  defeat: string;
+  defeatSubtitle: string;
+  restart: string;
+  narratorTitle: string;
+  narratorIdlePrompt: string;
+  saveNotification: string;
+  loadSuccess: string;
+  saveSuccess: string;
+  noSaveFound: string;
+  invalidSaveFormat: string;
+  saveLoadError: string;
+  audioActivated: string;
+  styleBadge: string;
+  locationLabel: string;
+  changeLocation: string;
+  nextLocation: string;
+  activeBadge: string;
+  skillPointsUnit: string;
+  manaUnit: string;
+  healthUnit: string;
+  staminaUnit: string;
+  tierLabel: string;
+  spaceKey: string;
+  keyBoundNotification: string;
+  crouchDescription: string;
+  copyrightNotice: string;
+  pause: string;
+  resume: string;
+  gamePaused: string;
+  hints: string;
+  menu: string;
+  settings: string;
+  helpModalTitle: string;
+  closeModal: string;
+  closeModalHint: string;
+  quickPotions: string;
+  primarySpell: string;
+  secondarySpell: string;
+  meleeAttack: string;
+  dashAction: string;
+  controlsHelp: string;
+  tipsMechanics: string;
+  potionEmpty: string;
+  usePotion: string;
+  cooldown: string;
+  cost: string;
+  pressToResume: string;
+  tipsTextMove: string;
+  tipsTextCombat: string;
+  tipsTextShortcuts: string;
+  tipsTextObjectives: string;
+  helpGuideSubtitle: string;
+  noPauseLive: string;
+  moveAndCrouch: string;
+  jumpAction: string;
+  tipsTextLiveScreens: string;
+  returnToGame: string;
+  p1FlankLabel: string;
+  p2FlankLabel: string;
+  combatAndMovement: string;
+  tabAllSections: string;
+  tabStats: string;
+  gameStatsTitle: string;
+  gameStatsSubtitle: string;
+  playTime: string;
+  totalKills: string;
+  damageDealt: string;
+  damageTaken: string;
+  xpEarned: string;
+  potionsConsumed: string;
+  mostUsedWeapon: string;
+  mostEffectiveSpell: string;
+  killsBreakdown: string;
+  weaponsBreakdown: string;
+  potionsBreakdown: string;
+  leversActivatedCount: string;
+  levelsClearedCount: string;
+  secondsUnit: string;
+  minutesUnit: string;
+  hoursUnit: string;
+  healthPotionStat: string;
+  manaPotionStat: string;
+  staminaPotionStat: string;
+  trainingDummiesKilled: string;
+  automatonsKilled: string;
+  gargoylesKilled: string;
+  crawlersKilled: string;
+  statsBtn: string;
+  resetStatsBtn: string;
+  statsResetNotification: string;
+}
+
+export interface SettingsI18n {
+  tabGameplay: string;
+  tabStats: string;
+  tabKeyboard: string;
+  tabGamepad: string;
+  tabDisplay: string;
+  tabAudio: string;
+  tabLocations: string;
+  tabTester: string;
+  gameMode: string;
+  play1P: string;
+  play2P: string;
+  p1Tag: string;
+  p2Tag: string;
+  crouchAimTitle: string;
+  dashAction: string;
+  slideDescription: string;
+  backstepDescription: string;
+  directionalAimingTitle: string;
+  aimStraightUp: string;
+  aim45Up: string;
+  aim45Down: string;
+  aimStraightDown: string;
+  saveLoadTitle: string;
+  saveGame: string;
+  loadGame: string;
+  restartLocation: string;
+  resetDefaultBindings: string;
+  remapKey: string;
+  rebindTitle: string;
+  rebindPrompt: string;
+  cancel: string;
+  rebindSuccess: string;
+  aspectRatioOption: string;
+  aspectRatioAuto: string;
+  scalingOption: string;
+  scalingPixel: string;
+  scalingSmooth: string;
+  assetQualityOption: string;
+  assetQualityLow: string;
+  assetQualityLowDesc: string;
+  assetQualityMid: string;
+  assetQualityMidDesc: string;
+  assetQualityHigh: string;
+  assetQualityHighDesc: string;
+  assetQualityPreviewTitle: string;
+  assetQualityHadesOwlboyMix: string;
+  assetValenIdentity: string;
+  assetCurrentQualityBadge: string;
+  viewportTipTitle: string;
+  viewportTipDesc: string;
+  soundVolume: string;
+  musicVolume: string;
+  soundEffectsVolume: string;
+  gamepadConnected: string;
+  gamepadDisconnected: string;
+  noGamepadDetected: string;
+  remapGamepadPrompt: string;
+  lastPressedButton: string;
+  p1Controls: string;
+  p2Controls: string;
+  movement: string;
+  jump: string;
+  attack: string;
+  dash: string;
+  magicPrimary: string;
+  magicSecondary: string;
+  crouchAim: string;
+  quickPotionsTitle: string;
+  close: string;
+  keyMoveLeft: string;
+  keyMoveRight: string;
+  keyAimUp: string;
+  keyCrouchDown: string;
+  keyJump: string;
+  keyMeleeAttack: string;
+  keyDashAction: string;
+  keyPrimaryMagic: string;
+  keySecondaryMagic: string;
+  keyPotion1: string;
+  keyPotion2: string;
+  keyPotion3: string;
+  buttonPrefix: string;
+  dimensionsLabel: string;
+  animIdle: string;
+  animRun: string;
+  animJump: string;
+  animFall: string;
+  animAttack: string;
+  animDash: string;
+  animCast: string;
+  animCrouch: string;
+  playbackSpeedLabel: string;
+  zoomLabel: string;
+  fpsOption: string;
+  fpsCounterOption: string;
+  fps30Desc: string;
+  fps60Desc: string;
+  fps90Desc: string;
+  fps120Desc: string;
+  fpsMultipliersDesc: string;
+  displayResetNotification: string;
+  displayResetTitle: string;
+  displayResetDesc: string;
+  displayResetDefaultsBtn: string;
+  atlasSheetTab: string;
+  atlasPortraitsTab: string;
+  atlasToggleGrid: string;
+  atlasToggleRows: string;
+  atlasZoomIn: string;
+  atlasZoomOut: string;
+  atlasResetZoom: string;
+  atlasDimensions: string;
+  atlasCellSize: string;
+  atlasGridFrames: string;
+  atlasLoading: string;
+  aspectRatioTitle: string;
+  aspectRatioAutoFill: string;
+  aspectRatioAutoFillDesc: string;
+  aspectRatio169Desc: string;
+  aspectRatio1610Desc: string;
+  aspectRatio43Desc: string;
+  fullscreenTitle: string;
+  fullscreenActiveDesc: string;
+  fullscreenInactiveDesc: string;
+  fullscreenExitBtn: string;
+  fullscreenEnterBtn: string;
+  scalingPixelTitle: string;
+  scalingPixelDesc: string;
+  scalingSmoothTitle: string;
+  scalingSmoothDesc: string;
+  studioTitle: string;
+  studioStageTab: string;
+  studioAtlasTab: string;
+  studioPlay: string;
+  studioPause: string;
+  studioFlipTitle: string;
+  valenClassTitle: string;
+  valenClassTags: string;
+  aureliaClassTitle: string;
+  aureliaClassTags: string;
+  speedLabel: string;
+  tabCreation: string;
+  creationTitle: string;
+  creationSubtitle: string;
+  toolTester: string;
+  toolAtlasViewer: string;
+  toolMetaBuilder: string;
+  toolLevelDesigner: string;
+  toolMetaBuilderDesc: string;
+  toolLevelDesignerDesc: string;
+  creationFlagLabel: string;
+  creationFlagDesc: string;
+}
+
+export interface InventoryI18n {
+  inventoryTitle: string;
+  inventorySubtitle: string;
+  paperdoll: string;
+  backpack: string;
+  quickBelt: string;
+  mainHand: string;
+  offHand: string;
+  helmet: string;
+  armor: string;
+  amulet: string;
+  ring: string;
+  useItem: string;
+  equipItem: string;
+  unequipItem: string;
+  emptySlot: string;
+  itemTypeWeapon: string;
+  itemTypeShield: string;
+  itemTypeHelmet: string;
+  itemTypeArmor: string;
+  itemTypeAmulet: string;
+  itemTypeRing: string;
+  itemTypePotion: string;
+  rarityCommon: string;
+  rarityUncommon: string;
+  rarityRare: string;
+  rarityLegendary: string;
+  discardItem: string;
+  itemAttackBonus: string;
+  itemDefenseBonus: string;
+  itemHpBonus: string;
+  itemManaBonus: string;
+  itemStaminaBonus: string;
+  itemHealHp: string;
+  itemHealMana: string;
+  itemHealStamina: string;
+  switchCharacter: string;
+}
+
+export interface SkillsI18n {
+  skillTreeTitle: string;
+  skillTreeSubtitle: string;
+  offensiveCategory: string;
+  defensiveCategory: string;
+  passiveCategory: string;
+  actionType: string;
+  autoType: string;
+  passiveType: string;
+  unlockSkill: string;
+  equipAsPrimary: string;
+  equipAsSecondary: string;
+  skillUnlocked: string;
+  notEnoughPoints: string;
+  reqPrerequisite: string;
+  skillPointsLabel: string;
+  manaCostLabel: string;
+  damageLabel: string;
+  cooldownLabel: string;
+  constellationInspectHint: string;
+  statusLearned: string;
+
+  // Requirements & Restrictions
+  requirementsAndRestrictions: string;
+  restrictionTitle: string;
+  restrictionCharacterValen: string;
+  restrictionCharacterAurelia: string;
+  restrictionPrerequisite: string;
+  restrictionNone: string;
+  restrictionTier: string;
+  restrictionCost: string;
+  statusRequirementMet: string;
+  statusRequirementNotMet: string;
+  restrictionUnavailable: string;
+  equippedPrimaryBadge: string;
+  equippedSecondaryBadge: string;
+  activeCharacterLabel: string;
+
+  // Spell names & descriptions
+  spellAetherBoltName: string;
+  spellAetherBoltDesc: string;
+  spellSolarFireballName: string;
+  spellSolarFireballDesc: string;
+  spellEmeraldBarrageName: string;
+  spellEmeraldBarrageDesc: string;
+  spellPrismaticShieldName: string;
+  spellPrismaticShieldDesc: string;
+  spellSentinelSparkName: string;
+  spellSentinelSparkDesc: string;
+  spellManaFontName: string;
+  spellManaFontDesc: string;
+  spellStaminaSurgeName: string;
+  spellStaminaSurgeDesc: string;
+  spellBladeInfusionName: string;
+  spellBladeInfusionDesc: string;
+  spellFrostNovaName: string;
+  spellFrostNovaDesc: string;
+
+  // Additional spells for Valen & Aurelia
+  spellSolarFlareName: string;
+  spellSolarFlareDesc: string;
+  spellRadiantStrikeName: string;
+  spellRadiantStrikeDesc: string;
+  spellShieldBashName: string;
+  spellShieldBashDesc: string;
+  spellSunSentinelName: string;
+  spellSunSentinelDesc: string;
+  spellVitalitySurgeName: string;
+  spellVitalitySurgeDesc: string;
+
+  spellCelestialCometName: string;
+  spellCelestialCometDesc: string;
+  spellAetherBarrierName: string;
+  spellAetherBarrierDesc: string;
+  spellChronoRewindName: string;
+  spellChronoRewindDesc: string;
+  spellScholarlyFocusName: string;
+  spellScholarlyFocusDesc: string;
+  spellAstralAttunementName: string;
+  spellAstralAttunementDesc: string;
+
+  // Individual restriction explanations
+  restrictionValenStarter: string;
+  restrictionValenSolarFireball: string;
+  restrictionValenRadiantStrike: string;
+  restrictionValenStarterDef: string;
+  restrictionValenPrismaticShield: string;
+  restrictionValenSunSentinel: string;
+  restrictionValenBladeInfusion: string;
+  restrictionValenStaminaSurge: string;
+  restrictionValenVitalitySurge: string;
+
+  restrictionAureliaStarter: string;
+  restrictionAureliaFrostNova: string;
+  restrictionAureliaCelestialComet: string;
+  restrictionAureliaStarterDef: string;
+  restrictionAureliaChronoRewind: string;
+  restrictionAureliaSentinelSpark: string;
+  restrictionAureliaManaFont: string;
+  restrictionAureliaScholarlyFocus: string;
+  restrictionAureliaAstralAttunement: string;
+}
+
+export interface ItemsI18n {
+  itemSolarRapierName: string;
+  itemSolarRapierDesc: string;
+  itemFrostRapierName: string;
+  itemFrostRapierDesc: string;
+  itemAetherStaffName: string;
+  itemAetherStaffDesc: string;
+  itemBrassBucklerName: string;
+  itemBrassBucklerDesc: string;
+  itemSpellGrimoireName: string;
+  itemSpellGrimoireDesc: string;
+  itemVelvetHatName: string;
+  itemVelvetHatDesc: string;
+  itemKnightHelmName: string;
+  itemKnightHelmDesc: string;
+  itemCrimsonCoatName: string;
+  itemCrimsonCoatDesc: string;
+  itemScholarRobeName: string;
+  itemScholarRobeDesc: string;
+  itemAetherRobeName: string;
+  itemAetherRobeDesc: string;
+  itemAmberAmuletName: string;
+  itemAmberAmuletDesc: string;
+  itemAetherPendantName: string;
+  itemAetherPendantDesc: string;
+  itemGarnetRingName: string;
+  itemGarnetRingDesc: string;
+  itemSwiftRingName: string;
+  itemSwiftRingDesc: string;
+  itemChronoRingName: string;
+  itemChronoRingDesc: string;
+  itemHealthPotionName: string;
+  itemHealthPotionDesc: string;
+  itemManaPotionName: string;
+  itemManaPotionDesc: string;
+  itemStaminaElixirName: string;
+  itemStaminaElixirDesc: string;
+  itemPotionHealthName: string;
+  itemPotionHealthDesc: string;
+  itemPotionManaName: string;
+  itemPotionManaDesc: string;
+  itemPotionElixirName: string;
+  itemPotionElixirDesc: string;
+}
+
+export interface LocationsI18n {
+  locationCourtyardName: string;
+  locationCourtyardDesc: string;
+  locationThornChasmName: string;
+  locationThornChasmDesc: string;
+  locationClocktowerName: string;
+  locationClocktowerDesc: string;
+  locationAetherSanctuaryName: string;
+  locationAetherSanctuaryDesc: string;
+  locationGrandBastionName: string;
+  locationGrandBastionDesc: string;
+  selectLocationTitle: string;
+  locationDimensions: string;
+  // Portals
+  portalToCourtyard: string;
+  portalToThornChasm: string;
+  portalToClocktower: string;
+  portalToAetherSanctuary: string;
+  portalToGrandBastion: string;
+  portalReturn: string;
+  portalMastery: string;
+  // Entity Prefabs & Levers
+  labelStoneFloor: string;
+  labelStonePlatform: string;
+  labelStoneStep: string;
+  labelHighArcade: string;
+  labelCastleGate: string;
+  labelGateLever: string;
+  labelLowArchway: string;
+  labelAmberThorns: string;
+  labelAetherVoid: string;
+  labelMovingPlatform: string;
+  labelVerticalLift: string;
+  labelClockworkGear: string;
+  labelSpireGate: string;
+  labelSanctuaryGateway: string;
+  labelCelestialBarrier: string;
+  labelMainSluiceLever: string;
+  labelGrandPortcullis: string;
+  // Monsters & Dummies
+  monsterTrainingDummy: string;
+  monsterCourtSentinel: string;
+  monsterGargoyleScout: string;
+  monsterChasmGargoyle: string;
+  monsterChasmCrawler: string;
+  monsterClockworkAutomaton: string;
+  monsterAetherSentinel: string;
+  monsterAetherWisp: string;
+  monsterAetherArchon: string;
+  monsterShadowKnight: string;
+}
+
+export interface NarrationsI18n {
+  narrationOpening: string;
+  narrationMovement: string;
+  narrationJump: string;
+  narrationCombat: string;
+  narrationEnemyHit: string;
+  narrationEnemyDefeat: string;
+  narrationLever: string;
+  narrationGateOpen: string;
+  narrationGoal: string;
+  narrationMagicUsed: string;
+  narrationShootingRange: string;
+  trainingIntro: string;
+  trainingMovementSuccess: string;
+  trainingCombatPrompt: string;
+  trainingCombatSuccess: string;
+  trainingLeverPrompt: string;
+  trainingLeverSuccess: string;
+  trainingGoalPrompt: string;
+  trainingGoalSuccess: string;
+  trainingMagicPrompt: string;
+  trainingRangePrompt: string;
+  creativeVibe: string;
+}
+
+export interface DialoguesI18n {
+  ravenCorvusGreeting: string;
+  catAmberGreeting: string;
+  sageBastionGreeting: string;
+}
+
+export interface LoreI18n {
+  bastionHistory: string;
+  aetherLore: string;
+  valenLore: string;
+  aureliaLore: string;
+}
+
+/**
+ * Complete Flattened and Structured Translation Dictionary
+ */
+export interface GameTranslationDictionary
+  extends HudI18n,
+    SettingsI18n,
+    InventoryI18n,
+    SkillsI18n,
+    ItemsI18n,
+    LocationsI18n,
+    NarrationsI18n,
+    DialoguesI18n,
+    LoreI18n {}
