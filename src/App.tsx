@@ -6,11 +6,12 @@ import { useGame } from "./hooks/useGame";
 import { useModalManager } from "./hooks/useModalManager";
 import { MenuModal } from "./components/menu/MenuModal";
 import { HelpModal } from "./components/help/HelpModal";
+import { DeveloperModal } from "./components/developer";
 import { HUDOverlay } from "./components/hud/HUDOverlay";
 import { InventoryPanel } from "./components/inventory/InventoryPanel";
 import { SkillTreePanel } from "./components/skills/SkillTreePanel";
 import { Globe, Layers, Swords, Pause, Play, HelpCircle, Menu as MenuIcon } from "lucide-react";
-import { Button, Badge, KbdKey } from "./components/ui";
+import { Button, Badge, KbdKey, ModalType } from "./components/ui";
 import { gameInputs } from "./game/loop/input";
 import { PlayerId, InputMap } from "./game/types";
 import { cn } from "./lib/utils";
@@ -75,8 +76,14 @@ function GameScreen() {
     modalManager.openHelp();
   }, [modalManager, setPaused]);
 
+  const handleOpenCreation = useCallback(() => {
+    setPaused(true);
+    modalManager.openCreation();
+  }, [modalManager, setPaused]);
+
   const handleCloseModal = useCallback(() => {
-    const wasPausedModal = modalManager.isMenuOpen || modalManager.isHelpOpen;
+    const wasPausedModal =
+      modalManager.isMenuOpen || modalManager.isHelpOpen || modalManager.isCreationOpen;
     modalManager.closeModal();
     if (wasPausedModal) {
       setPaused(false);
@@ -97,7 +104,7 @@ function GameScreen() {
   }, [modalManager, handleResumeGame, togglePause]);
 
   const handleNavigateModal = useCallback(
-    (targetModal: "menu" | "help" | "inventory" | "skillTree") => {
+    (targetModal: ModalType) => {
       if (targetModal === "menu") {
         setPaused(true);
         modalManager.openMenu();
@@ -108,6 +115,9 @@ function GameScreen() {
         modalManager.openInventory();
       } else if (targetModal === "skillTree") {
         modalManager.openSkillTree();
+      } else if (targetModal === "creation") {
+        setPaused(true);
+        modalManager.openCreation();
       }
     },
     [modalManager, setPaused]
@@ -141,6 +151,17 @@ function GameScreen() {
           handleCloseModal();
         } else {
           handleOpenMenu();
+        }
+        return;
+      }
+
+      // Creation / Developer Modal shortcut: 'c' or 'C'
+      if (e.key === "c" || e.key === "C") {
+        e.preventDefault();
+        if (modalManager.isCreationOpen) {
+          handleCloseModal();
+        } else {
+          handleOpenCreation();
         }
         return;
       }
@@ -297,6 +318,7 @@ function GameScreen() {
           onOpenSkillTree={modalManager.openSkillTree}
           onOpenHelp={handleOpenHelp}
           onOpenMenu={handleOpenMenu}
+          onOpenCreation={handleOpenCreation}
           onTogglePause={handleTogglePause}
         />
       </main>
@@ -335,6 +357,15 @@ function GameScreen() {
       {/* Skill Tree Modal */}
       {modalManager.isSkillTreeOpen && (
         <SkillTreePanel
+          onClose={handleCloseModal}
+          onNavigateModal={handleNavigateModal}
+          onResume={handleResumeGame}
+        />
+      )}
+
+      {/* Developer / Creation Modal */}
+      {modalManager.isCreationOpen && (
+        <DeveloperModal
           onClose={handleCloseModal}
           onNavigateModal={handleNavigateModal}
           onResume={handleResumeGame}

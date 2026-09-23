@@ -7,14 +7,13 @@ import {
   Volume2,
   MapPin,
   BarChart3,
-  Wrench,
 } from "lucide-react";
 import { PlayerId, InputMap } from "../../game/types";
 import { Tabs } from "../ui";
 import KeyboardMapper from "../controls/KeyboardMapper";
 import GamepadMapper from "../controls/GamepadMapper";
 import StatsPanel from "./StatsPanel";
-import { GameplayTab, LocationsTab, DisplayTab, AudioTab, TesterTab } from "./tabs";
+import { GameplayTab, LocationsTab, DisplayTab, AudioTab } from "./tabs";
 import { useI18n } from "../../hooks/useI18n";
 
 export interface MenuPanelProps {
@@ -33,7 +32,6 @@ export const MenuPanel: React.FC<MenuPanelProps> = ({ onStartRebind }) => {
     { id: "gamepad", label: t("tabGamepad"), icon: <GamepadIcon size={14} /> },
     { id: "display", label: t("tabDisplay"), icon: <Monitor size={14} /> },
     { id: "audio", label: t("tabAudio"), icon: <Volume2 size={14} /> },
-    { id: "tester", label: t("tabTester"), icon: <Wrench size={14} /> },
   ];
 
   return (
@@ -58,7 +56,6 @@ export const MenuPanel: React.FC<MenuPanelProps> = ({ onStartRebind }) => {
         )}
         {activeTab === "display" && <DisplayTab />}
         {activeTab === "audio" && <AudioTab />}
-        {activeTab === "tester" && <TesterTab />}
       </div>
     </div>
   );

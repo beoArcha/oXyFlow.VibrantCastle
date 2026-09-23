@@ -131,6 +131,7 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
           onTogglePause={onTogglePause || togglePause}
           onOpenHelp={onOpenHelp}
           onOpenMenu={onOpenMenu}
+          onOpenCreation={onOpenCreation}
           locationName={currentLocationName}
         />
       }

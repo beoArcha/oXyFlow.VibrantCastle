@@ -1,5 +1,4 @@
-import React from "react";
-import { Menu as MenuIcon, HelpCircle, Backpack, BookOpen, Play } from "lucide-react";
+import { Menu as MenuIcon, HelpCircle, Backpack, BookOpen, Play, Layers } from "lucide-react";
 import { useI18n } from "../../hooks/useI18n";
 import { cn } from "../../lib/utils";
 
