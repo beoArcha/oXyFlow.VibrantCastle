@@ -28,58 +28,59 @@
     "boxHeight": 1100,
     "layers": [
       {
-        "id": "bg_aether_sky",
-        "name": "Deep Space Aether Vault",
-        "type": "sky_gradient",
-        "depth": 0.02,
-        "scrollSpeedX": 0.02,
-        "scrollSpeedY": 0.02,
-        "color": "#38bdf8"
+        "id": "bg_aether_far",
+        "name": "Aether Sanctuary Far Cosmos & Spires (High)",
+        "tier": "far",
+        "type": "image",
+        "imageUrl": "aether_sanctuary_far_high",
+        "depth": 0.1,
+        "scrollSpeedX": 0.0,
+        "scrollSpeedY": 0.0,
+        "opacity": 1.0
       },
       {
-        "id": "bg_aether_celestials",
-        "name": "Twin Aether Moons",
-        "type": "celestial",
-        "depth": 0.04,
-        "scrollSpeedX": 0.05,
-        "scrollSpeedY": 0.03,
-        "color": "rgba(56, 189, 248, 0.35)",
-        "elements": [
-          { "type": "circle", "x": 1600, "y": 150, "radius": 140, "color": "rgba(56, 189, 248, 0.22)" },
-          { "type": "circle", "x": 1600, "y": 150, "radius": 90, "color": "rgba(125, 211, 252, 0.45)" },
-          { "type": "circle", "x": 600, "y": 120, "radius": 80, "color": "rgba(167, 139, 250, 0.28)" }
-        ]
+        "id": "bg_aether_mid_far",
+        "name": "Aether Sanctuary Mid-Far Celestial Isles (High)",
+        "tier": "mid_far",
+        "type": "image",
+        "imageUrl": "aether_sanctuary_mid_far_high",
+        "depth": 0.25,
+        "scrollSpeedX": 0.24,
+        "scrollSpeedY": 0.10,
+        "opacity": 1.0
       },
       {
-        "id": "bg_aether_isles_distant",
-        "name": "Floating Temple Silhouettes",
-        "type": "castle_silhouettes",
-        "depth": 0.16,
-        "scrollSpeedX": 0.18,
-        "scrollSpeedY": 0.07,
-        "color": "rgba(30, 58, 138, 0.25)",
-        "opacity": 0.95
-      },
-      {
-        "id": "bg_aether_aqueduct",
-        "name": "Celestial Aqueduct Masonry",
-        "type": "scenery_trees",
+        "id": "bg_aether_mid",
+        "name": "Aether Sanctuary Mid Floating Temples & Aqueduct (High)",
+        "tier": "mid",
+        "type": "image",
+        "imageUrl": "aether_sanctuary_mid_high",
         "depth": 0.45,
-        "scrollSpeedX": 0.48,
+        "scrollSpeedX": 0.42,
         "scrollSpeedY": 0.18,
-        "color": "#1e3a8a"
+        "opacity": 1.0
       },
       {
-        "id": "bg_aether_fog",
-        "name": "Luminous Aether Mist",
-        "type": "fog_overlay",
-        "depth": 0.78,
-        "scrollSpeedX": 0.68,
-        "scrollSpeedY": 0.24,
-        "autoDriftX": 0.35,
-        "autoDriftY": 0,
-        "color": "rgba(56, 189, 248, 0.08)",
-        "opacity": 0.88
+        "id": "bg_aether_mid_close",
+        "name": "Aether Sanctuary Mid-Close Crystal Foundations (High)",
+        "tier": "mid_close",
+        "type": "image",
+        "imageUrl": "aether_sanctuary_mid_close_high",
+        "depth": 0.65,
+        "scrollSpeedX": 0.65,
+        "scrollSpeedY": 0.30,
+        "opacity": 1.0
+      },
+      {
+        "id": "bg_aether_close",
+        "name": "Aether Sanctuary Close Fore-elements & Pillars (High)",
+        "tier": "close",
+        "type": "image",
+        "imageUrl": "aether_sanctuary_close_high",
+        "depth": 0.85,
+        "scrollSpeedX": 0.85,
+        "scrollSpeedY": 0.45,
+        "opacity": 1.0
       }
     ]
   },

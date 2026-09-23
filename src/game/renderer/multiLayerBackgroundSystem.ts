@@ -24,6 +24,18 @@ import bgCourtMidPng from "../../assets/bg/courtyard/courtyard_mid_high.png";
 import bgCourtMidClosePng from "../../assets/bg/courtyard/courtyard_mid-close_high.png";
 import bgCourtClosePng from "../../assets/bg/courtyard/courtyard_close_high.png";
 
+import bgTowerFarPng from "../../assets/bg/clocktower/clocktower_far_high.png";
+import bgTowerMidFarPng from "../../assets/bg/clocktower/clocktower_mid_far_high.png";
+import bgTowerMidPng from "../../assets/bg/clocktower/clocktower_mid_high.png";
+import bgTowerMidClosePng from "../../assets/bg/clocktower/clocktower_mid_close_high.png";
+import bgTowerClosePng from "../../assets/bg/clocktower/clocktower_close_high.png";
+
+import bgAetherFarPng from "../../assets/bg/aether_sanctuary/aether_sanctuary_far_high.png";
+import bgAetherMidFarPng from "../../assets/bg/aether_sanctuary/aether_sanctuary_mid_far_high.png";
+import bgAetherMidPng from "../../assets/bg/aether_sanctuary/aether_sanctuary_mid_high.png";
+import bgAetherMidClosePng from "../../assets/bg/aether_sanctuary/aether_sanctuary_mid_close_high.png";
+import bgAetherClosePng from "../../assets/bg/aether_sanctuary/aether_sanctuary_close_high.png";
+
 export interface IMultiLayerBackgroundSystem {
   isSupported(locationId: string): boolean;
   preload(): void;
@@ -50,7 +62,8 @@ const TIER_ORDER: BackgroundLayerTier[] = [
 
 /**
  * MultiLayerBackgroundSystem:
- * Implements a multi-layered parallax background system for "grand_bastion" and "thorn_chasm":
+ * Implements a multi-layered parallax background system for all 5 sectors
+ * ("courtyard", "thorn_chasm", "clocktower", "aether_sanctuary", "grand_bastion"):
  * - 'far' tier: Rendered as a static backdrop, anchored to the viewport without camera parallax movement.
  * - 'mid_far', 'mid', 'mid_close', 'close' tiers: Dynamically rendered on top with calculated parallax scrolling,
  *   sub-pixel offset alignment, seamless horizontal wrapping, and vertical camera perspective shifts.
@@ -70,7 +83,9 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
     return (
       locationId === "grand_bastion" ||
       locationId === "thorn_chasm" ||
-      locationId === "courtyard"
+      locationId === "courtyard" ||
+      locationId === "clocktower" ||
+      locationId === "aether_sanctuary"
     );
   }
 
@@ -97,6 +112,16 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
       bgCourtMidPng,
       bgCourtMidClosePng,
       bgCourtClosePng,
+      bgTowerFarPng,
+      bgTowerMidFarPng,
+      bgTowerMidPng,
+      bgTowerMidClosePng,
+      bgTowerClosePng,
+      bgAetherFarPng,
+      bgAetherMidFarPng,
+      bgAetherMidPng,
+      bgAetherMidClosePng,
+      bgAetherClosePng,
     ];
 
     urls.forEach((url) => {
@@ -227,10 +252,18 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
       }
 
       // Subtle atmospheric environmental depth blending between mid and close tiers
-      if (tier === "mid" && location.id === "thorn_chasm") {
-        this.renderChasmAtmosphericMist(ctx, viewportWidth, viewportHeight, tickCount);
-      } else if (tier === "mid" && location.id === "grand_bastion") {
-        this.renderBastionSolarGlow(ctx, viewportWidth, viewportHeight, tickCount);
+      if (tier === "mid") {
+        if (location.id === "thorn_chasm") {
+          this.renderChasmAtmosphericMist(ctx, viewportWidth, viewportHeight, tickCount);
+        } else if (location.id === "grand_bastion") {
+          this.renderBastionSolarGlow(ctx, viewportWidth, viewportHeight, tickCount);
+        } else if (location.id === "clocktower") {
+          this.renderClocktowerAtmosphericSteam(ctx, viewportWidth, viewportHeight, tickCount);
+        } else if (location.id === "aether_sanctuary") {
+          this.renderAetherAtmosphericAura(ctx, viewportWidth, viewportHeight, tickCount);
+        } else if (location.id === "courtyard") {
+          this.renderCourtyardAutumnHaze(ctx, viewportWidth, viewportHeight, tickCount);
+        }
       }
     }
   }
@@ -381,9 +414,26 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
     viewportHeight: number,
     tickCount: number
   ): void {
-    // Horizon glow
-    const isChasm = location.id === "thorn_chasm";
-    const glowColor = isChasm ? "rgba(168, 85, 247, 0.12)" : "rgba(245, 158, 11, 0.15)";
+    // Horizon glow tuned to location archetype
+    let glowColor = "rgba(245, 158, 11, 0.15)";
+    let mountainColor = "#1a0b05";
+
+    if (location.id === "thorn_chasm") {
+      glowColor = "rgba(168, 85, 247, 0.12)";
+      mountainColor = "#12031a";
+    } else if (location.id === "aether_sanctuary") {
+      glowColor = "rgba(56, 189, 248, 0.18)";
+      mountainColor = "#081426";
+    } else if (location.id === "clocktower") {
+      glowColor = "rgba(245, 158, 11, 0.16)";
+      mountainColor = "#1a0e05";
+    } else if (location.id === "grand_bastion") {
+      glowColor = "rgba(251, 191, 36, 0.15)";
+      mountainColor = "#1a0b05";
+    } else if (location.id === "courtyard") {
+      glowColor = "rgba(224, 108, 53, 0.14)";
+      mountainColor = "#1c0b05";
+    }
 
     const grad = ctx.createRadialGradient(
       viewportWidth * 0.5,
@@ -399,7 +449,7 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
     ctx.fillRect(0, 0, viewportWidth, viewportHeight);
 
     // Distant mountain silhouette
-    ctx.fillStyle = isChasm ? "#12031a" : "#1a0b05";
+    ctx.fillStyle = mountainColor;
     ctx.beginPath();
     ctx.moveTo(0, viewportHeight);
     for (let x = 0; x <= viewportWidth; x += 40) {
@@ -452,6 +502,74 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
     glowGrad.addColorStop(1, "rgba(180, 83, 9, 0)");
     ctx.fillStyle = glowGrad;
     ctx.fillRect(0, 0, viewportWidth, viewportHeight);
+    ctx.restore();
+  }
+
+  /**
+   * Atmospheric warm bronze steam and cog haze for Clocktower between mid & close layers.
+   */
+  private renderClocktowerAtmosphericSteam(
+    ctx: CanvasRenderingContext2D,
+    viewportWidth: number,
+    viewportHeight: number,
+    tickCount: number
+  ): void {
+    ctx.save();
+    ctx.globalAlpha = 0.09 + Math.sin(tickCount * 0.02) * 0.02;
+    const waveOffset = Math.sin(tickCount * 0.018) * 12;
+    const steamGrad = ctx.createLinearGradient(0, viewportHeight * 0.5 + waveOffset, 0, viewportHeight);
+    steamGrad.addColorStop(0, "rgba(217, 119, 6, 0)");
+    steamGrad.addColorStop(0.5, "rgba(245, 158, 11, 0.16)");
+    steamGrad.addColorStop(1, "rgba(180, 83, 9, 0.04)");
+    ctx.fillStyle = steamGrad;
+    ctx.fillRect(0, viewportHeight * 0.5 + waveOffset, viewportWidth, viewportHeight * 0.5);
+    ctx.restore();
+  }
+
+  /**
+   * Atmospheric glowing celestial aura for Aether Sanctuary between mid & close layers.
+   */
+  private renderAetherAtmosphericAura(
+    ctx: CanvasRenderingContext2D,
+    viewportWidth: number,
+    viewportHeight: number,
+    tickCount: number
+  ): void {
+    ctx.save();
+    ctx.globalAlpha = 0.10 + Math.sin(tickCount * 0.025) * 0.03;
+    const auraGrad = ctx.createRadialGradient(
+      viewportWidth * 0.5,
+      viewportHeight * 0.35,
+      60,
+      viewportWidth * 0.5,
+      viewportHeight * 0.35,
+      viewportWidth * 0.65
+    );
+    auraGrad.addColorStop(0, "rgba(56, 189, 248, 0.18)");
+    auraGrad.addColorStop(0.5, "rgba(99, 102, 241, 0.08)");
+    auraGrad.addColorStop(1, "rgba(15, 23, 42, 0)");
+    ctx.fillStyle = auraGrad;
+    ctx.fillRect(0, 0, viewportWidth, viewportHeight);
+    ctx.restore();
+  }
+
+  /**
+   * Atmospheric autumn twilight haze for Courtyard between mid & close layers.
+   */
+  private renderCourtyardAutumnHaze(
+    ctx: CanvasRenderingContext2D,
+    viewportWidth: number,
+    viewportHeight: number,
+    tickCount: number
+  ): void {
+    ctx.save();
+    ctx.globalAlpha = 0.07 + Math.sin(tickCount * 0.012) * 0.015;
+    const hazeGrad = ctx.createLinearGradient(0, viewportHeight * 0.55, 0, viewportHeight);
+    hazeGrad.addColorStop(0, "rgba(234, 88, 12, 0)");
+    hazeGrad.addColorStop(0.5, "rgba(224, 108, 53, 0.12)");
+    hazeGrad.addColorStop(1, "rgba(120, 53, 15, 0.03)");
+    ctx.fillStyle = hazeGrad;
+    ctx.fillRect(0, viewportHeight * 0.55, viewportWidth, viewportHeight * 0.45);
     ctx.restore();
   }
 

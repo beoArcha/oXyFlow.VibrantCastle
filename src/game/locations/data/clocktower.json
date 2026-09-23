@@ -28,57 +28,59 @@
     "boxHeight": 1400,
     "layers": [
       {
-        "id": "bg_tower_sky",
-        "name": "Tower Spire Twilight",
-        "type": "sky_gradient",
-        "depth": 0.02,
-        "scrollSpeedX": 0.03,
-        "scrollSpeedY": 0.03,
-        "color": "#eab308"
+        "id": "bg_clocktower_far",
+        "name": "Clockwork Tower Far Spires & Sky (High)",
+        "tier": "far",
+        "type": "image",
+        "imageUrl": "clocktower_far_high",
+        "depth": 0.1,
+        "scrollSpeedX": 0.0,
+        "scrollSpeedY": 0.0,
+        "opacity": 1.0
       },
       {
-        "id": "bg_tower_moon",
-        "name": "Amber Clockwork Eclipse",
-        "type": "celestial",
-        "depth": 0.04,
-        "scrollSpeedX": 0.05,
-        "scrollSpeedY": 0.04,
-        "color": "rgba(234, 179, 8, 0.28)",
-        "elements": [
-          { "type": "circle", "x": 2200, "y": 200, "radius": 150, "color": "rgba(245, 158, 11, 0.2)" },
-          { "type": "circle", "x": 2200, "y": 200, "radius": 95, "color": "rgba(251, 191, 36, 0.38)" }
-        ]
+        "id": "bg_clocktower_mid_far",
+        "name": "Clockwork Tower Mid-Far Gears & Spires (High)",
+        "tier": "mid_far",
+        "type": "image",
+        "imageUrl": "clocktower_mid_far_high",
+        "depth": 0.25,
+        "scrollSpeedX": 0.24,
+        "scrollSpeedY": 0.10,
+        "opacity": 1.0
       },
       {
-        "id": "bg_tower_spires",
-        "name": "Distant Bell Spires",
-        "type": "castle_silhouettes",
-        "depth": 0.18,
-        "scrollSpeedX": 0.2,
-        "scrollSpeedY": 0.08,
-        "color": "rgba(180, 83, 9, 0.18)",
-        "opacity": 0.95
-      },
-      {
-        "id": "bg_tower_mid_scenery",
-        "name": "Clockwork Shaft Architecture",
-        "type": "scenery_trees",
-        "depth": 0.4,
+        "id": "bg_clocktower_mid",
+        "name": "Clockwork Tower Mid Horologium Shaft (High)",
+        "tier": "mid",
+        "type": "image",
+        "imageUrl": "clocktower_mid_high",
+        "depth": 0.45,
         "scrollSpeedX": 0.42,
-        "scrollSpeedY": 0.16,
-        "color": "#78350f"
+        "scrollSpeedY": 0.18,
+        "opacity": 1.0
       },
       {
-        "id": "bg_tower_fog",
-        "name": "Steam and Brass Exhaust",
-        "type": "fog_overlay",
-        "depth": 0.8,
-        "scrollSpeedX": 0.7,
-        "scrollSpeedY": 0.25,
-        "autoDriftX": 0.3,
-        "autoDriftY": 0,
-        "color": "rgba(245, 158, 11, 0.08)",
-        "opacity": 0.85
+        "id": "bg_clocktower_mid_close",
+        "name": "Clockwork Tower Mid-Close Mechanism & Chains (High)",
+        "tier": "mid_close",
+        "type": "image",
+        "imageUrl": "clocktower_mid_close_high",
+        "depth": 0.65,
+        "scrollSpeedX": 0.65,
+        "scrollSpeedY": 0.30,
+        "opacity": 1.0
+      },
+      {
+        "id": "bg_clocktower_close",
+        "name": "Clockwork Tower Close Fore-elements & Brackets (High)",
+        "tier": "close",
+        "type": "image",
+        "imageUrl": "clocktower_close_high",
+        "depth": 0.85,
+        "scrollSpeedX": 0.85,
+        "scrollSpeedY": 0.45,
+        "opacity": 1.0
       }
     ]
   },

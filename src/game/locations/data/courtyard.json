@@ -31,16 +31,18 @@
       {
         "id": "bg_far",
         "name": "Courtyard Far Horizon & Spires (High)",
+        "tier": "far",
         "type": "image",
         "imageUrl": "courtyard_far_high",
         "depth": 0.1,
-        "scrollSpeedX": 0.12,
-        "scrollSpeedY": 0.05,
+        "scrollSpeedX": 0.0,
+        "scrollSpeedY": 0.0,
         "opacity": 1.0
       },
       {
         "id": "bg_mid_far",
         "name": "Courtyard Mid-Far Castle Architecture (High)",
+        "tier": "mid_far",
         "type": "image",
         "imageUrl": "courtyard_mid-far_high",
         "depth": 0.25,
@@ -51,6 +53,7 @@
       {
         "id": "bg_mid",
         "name": "Courtyard Mid Ramparts & Spires (High)",
+        "tier": "mid",
         "type": "image",
         "imageUrl": "courtyard_mid_high",
         "depth": 0.45,
@@ -61,6 +64,7 @@
       {
         "id": "bg_mid_close",
         "name": "Courtyard Mid-Close Stonework & Arches (High)",
+        "tier": "mid_close",
         "type": "image",
         "imageUrl": "courtyard_mid-close_high",
         "depth": 0.65,
@@ -71,6 +75,7 @@
       {
         "id": "bg_close",
         "name": "Courtyard Close Fore-elements & Flora (High)",
+        "tier": "close",
         "type": "image",
         "imageUrl": "courtyard_close_high",
         "depth": 0.85,

@@ -37,11 +37,27 @@ if (courtyardLocation.parallaxBackground?.layers) {
     courtyard_close_high: bgCloseHighPng,
   };
 
+  const tierMap: Record<string, "far" | "mid_far" | "mid" | "mid_close" | "close"> = {
+    bg_far: "far",
+    bg_mid_far: "mid_far",
+    bg_mid: "mid",
+    bg_mid_close: "mid_close",
+    bg_close: "close",
+    courtyard_far_high: "far",
+    "courtyard_mid-far_high": "mid_far",
+    courtyard_mid_high: "mid",
+    "courtyard_mid-close_high": "mid_close",
+    courtyard_close_high: "close",
+  };
+
   courtyardLocation.parallaxBackground.layers.forEach((layer) => {
     if (layer.imageUrl && urlMap[layer.imageUrl]) {
       layer.imageUrl = urlMap[layer.imageUrl];
     } else if (urlMap[layer.id]) {
       layer.imageUrl = urlMap[layer.id];
+    }
+    if (!layer.tier && tierMap[layer.id]) {
+      layer.tier = tierMap[layer.id];
     }
   });
 }
