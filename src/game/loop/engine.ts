@@ -20,6 +20,10 @@ import {
   LevelLifecycleManager,
   ILevelLifecycleManager,
 } from "../locations/levelLifecycleManager";
+import {
+  EnvironmentCollisionSystem,
+  IEnvironmentCollisionSystem,
+} from "../physics/environmentCollisionSystem";
 import { GameRenderer } from "../renderer/renderer";
 import { ParticleSystem } from "./../engine/particleSystem";
 import { CameraManager } from "../engine/cameraManager";
@@ -56,6 +60,7 @@ export interface IGameDependencies {
   debugCheats?: DebugCheatsController;
   playerCommands?: IPlayerCommandController;
   levelManager?: ILevelLifecycleManager;
+  environmentCollisions?: IEnvironmentCollisionSystem;
 }
 
 /**
@@ -86,6 +91,7 @@ export class GameEngine {
   private readonly debugCheats: DebugCheatsController;
   private readonly playerCommandController: IPlayerCommandController;
   private readonly levelLifecycleManager: ILevelLifecycleManager;
+  private readonly environmentCollisionSystem: IEnvironmentCollisionSystem;
 
   public get debugController(): DebugCheatsController {
     return this.debugCheats;
@@ -97,6 +103,10 @@ export class GameEngine {
 
   public get level(): ILevelLifecycleManager {
     return this.levelLifecycleManager;
+  }
+
+  public get environmentCollisions(): IEnvironmentCollisionSystem {
+    return this.environmentCollisionSystem;
   }
 
   // Delegated level state getters/setters (Facade / backward compatibility)
@@ -294,6 +304,9 @@ export class GameEngine {
         isRunning: () => this.isRunning,
         notifyReact: () => this.notifyReact(),
       });
+
+    this.environmentCollisionSystem =
+      deps.environmentCollisions || new EnvironmentCollisionSystem();
 
     this.levelLifecycleManager.resetLevel("courtyard");
   }
@@ -684,117 +697,27 @@ export class GameEngine {
     // 7. Update Environmental platform physics with player rider tracking
     this.physics.updateEntities(this.entities, effectiveDt, this.players);
 
-    // 8. Apply Environmental collisions
-    for (const player of this.players) {
-      if (this.isLevelTransitionPending) break;
-      if (debugManager.state.noClip) continue; // Ghost / noclip mode passes through terrain
-      let groundedThisFrame = false;
-
-      for (const entity of this.entities) {
-        if (this.isLevelTransitionPending) break;
-        if (entity.y === -1000) continue;
-
-        // Portal grace period after transition prevents immediate re-trigger / ping-pong
-        if (entity.type === CollisionType.Goal && this.portalCooldownTimer > 0) {
-          continue;
-        }
-
-        const collides = this.collisions.checkIntersection(player, entity);
-        if (collides) {
-          // If hazard and player has active shield, shield absorbs damage!
-          if (entity.type === CollisionType.Hazard && player.shieldActiveTime > 0) {
-            this.particleSystem.spawnBurst(
-              player.x + player.width / 2,
-              player.y + player.height / 2,
-              "#a855f7",
-              "spark",
-              8
-            );
-            continue;
-          }
-
-          this.collisions.resolve(player, entity, {
-            triggerNarration: (id: string) => this.triggerNarration(id),
-            onGoalReached: (goalEntity?: Entity) => this.levelLifecycleManager.handleGoalCompletion(goalEntity),
-            onLeverActivated: (id: string) => this.levelLifecycleManager.handleLeverUnlocks(id),
-          });
-
-          if (this.isLevelTransitionPending) {
-            break;
-          }
-
-          if (
-            (entity.type === CollisionType.Solid || entity.type === CollisionType.OneWay) &&
-            player.vy === 0 &&
-            player.y + player.height <= entity.y + 10
-          ) {
-            groundedThisFrame = true;
-            player.standingPlatformId = entity.id;
-            player.platformVelocityX = entity.vx || 0;
-            player.platformVelocityY = entity.vy || 0;
-          }
-        }
+    // 8. Apply Environmental collisions (SRP via EnvironmentCollisionSystem)
+    this.environmentCollisionSystem.resolveEnvironmentCollisions(
+      this.players,
+      this.entities,
+      this.levelWidth,
+      this.portalCooldownTimer,
+      {
+        collisionEngine: this.collisions,
+        triggerNarration: (id: string) => this.triggerNarration(id),
+        onGoalReached: (goalEntity?: Entity) =>
+          this.levelLifecycleManager.handleGoalCompletion(goalEntity),
+        onLeverActivated: (id: string) =>
+          this.levelLifecycleManager.handleLeverUnlocks(id),
+        spawnBurst: (x, y, color, type, count) =>
+          this.particleSystem.spawnBurst(x, y, color, type, count),
+        isNoClip: () => !!debugManager.state.noClip,
+        isLevelTransitionPending: () => this.isLevelTransitionPending,
       }
+    );
 
-      if (this.isLevelTransitionPending) {
-        break;
-      }
-
-      if (groundedThisFrame) {
-        if (!player.isGrounded) {
-          // Landing puff dust particles
-          this.particleSystem.spawnBurst(
-            player.x + player.width / 2,
-            player.y + player.height,
-            "#fed7aa",
-            "dust",
-            6
-          );
-        }
-        player.isGrounded = true;
-      } else if (player.isGrounded) {
-        let solidBeneath = false;
-        const testFeet = {
-          x: player.x,
-          y: player.y + 1,
-          width: player.width,
-          height: player.height,
-        };
-
-        for (const entity of this.entities) {
-          if (
-            (entity.type === CollisionType.Solid || entity.type === CollisionType.OneWay) &&
-            entity.y !== -1000
-          ) {
-            if (
-              testFeet.x < entity.x + entity.width &&
-              testFeet.x + testFeet.width > entity.x &&
-              testFeet.y < entity.y + entity.height &&
-              testFeet.y + testFeet.height > entity.y
-            ) {
-              solidBeneath = true;
-              player.standingPlatformId = entity.id;
-              player.platformVelocityX = entity.vx || 0;
-              player.platformVelocityY = entity.vy || 0;
-              break;
-            }
-          }
-        }
-        if (!solidBeneath) {
-          player.isGrounded = false;
-          player.standingPlatformId = null;
-          player.platformVelocityX = 0;
-          player.platformVelocityY = 0;
-        }
-      }
-
-      // Screen bound clamps (ensure platform carriage never pushes outside map bounds)
-      if (player.x < 0) player.x = 0;
-      if (player.x + player.width > this.levelWidth) player.x = this.levelWidth - player.width;
-    }
-
-    if (this.isLevelTransitionPending) {
-      this.isLevelTransitionPending = false;
+    if (this.levelLifecycleManager.consumeLevelTransitionPending()) {
       return;
     }
 
