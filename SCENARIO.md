@@ -1,70 +1,100 @@
-# Scenariusz Fabularny Gry: Vibrant Castle
+# Game Scenario & Narrative Campaign: Vibrant Castle
 
-## Wstęp i Koncepcja Świata
-Świat *Vibrant Castle* to połączenie melancholijnej, ciepłej estetyki XIX-wiecznego gotyckiego fantasy (inspirowanej *Owlboy* oraz *Castlevania: Aria of Sorrow*) z dynamiczną, kinetyczną akcją i reaktywną narracją w stylu *Bastion* oraz *Hades*.
+## Introduction & World Concept
 
-Świat zamkowy zawieszony jest w wiecznej, złotej jesieni. Prastary Zamek Aetheru, niegdyś siedziba gildii szermierzy i zegarmistrzów, został uśpiony przez tajemniczy kataklizm. Gracze wcielają się w Przebudzonych Szermierzy, którzy pod okiem niewidzialnego, mądrego Kronikarza przemierzają kolejne kondygnacje twierdzy, uruchamiając zapomniane machiny i pokonując mechaniczno-magicznych strażników.
+The world of *Vibrant Castle* merges the warm, melancholic aesthetic of late 19th-century gothic fantasy (inspired by *Owlboy* and *Castlevania: Aria of Sorrow*) with kinetic, responsive action and dynamic acoustic narration reminiscent of *Bastion* and *Hades*.
 
----
-
-## Akt I: Słoneczny Bastion Zamku (Poziom Treningowy / The Sunlit Bastion)
-
-### Przebieg Rozgrywki i Etapy:
-
-```
-[Dziedziniec] ---> [Rozpadlina Cierni] ---> [Arena Treningowa] ---> [Winda i Portal]
-  (Start 0-500)      (Skoki 500-1050)        (Walka 1050-1480)       (Finał 1480-2000)
-```
-
-### 1. Przebudzenie na Słonecznym Dziedzińcu (x: 0 - 500)
-- **Atmosfera**: Ciepłe, złoto-ochrowe niebo, spadające powoli liście dębowe, bezpieczna posadzka z terakotowych cegieł.
-- **Narracja początkowa**:
-  > *„Chłopak obudził się na zalanym słońcem dziedzińcu zamkowym. Wokół unosił się zapach jesieni i starożytnego kamienia...”*
-- **Cel gracza**: Zapoznanie się z podstawowym ruchem (kroki w lewo/prawo) oraz dynamiką postaci.
-- **Dla 2 Graczy (Kooperacja)**: Drugi gracz budzi się obok; Kronikarz odnotowuje braterstwo broni i wspólną przysięgę.
-
-### 2. Próba Zręczności – Rozpadlina Bursztynowych Cierni (x: 500 - 1050)
-- **Atmosfera**: Spękane mury, dno przepaści najeżone połyskującymi, ostrymi kryształami o barwie bursztynu (śmiertelna pułapka typu *Hazard*).
-- **Wyzwanie**: Seria zawieszonych w powietrzu półek skalnych na zmiennych wysokościach:
-  - Półka 1: (x: 500, y: 460)
-  - Półka 2: (x: 680, y: 360)
-  - Półka 3: (x: 860, y: 280)
-- **Narracja po skokach**:
-  > *„Jeden zły krok i po tobie. Ale ten chłopak wiedział, jak oszukać grawitację.”*
-- **Mechanika zrywu (Dash)**: Gracz wykorzystuje mechanikę `Dash` (zryw z widmowym powidokiem), by bezpiecznie pokonać najszersze szczeliny.
-
-### 3. Sala Szermiercza i Złoty Rygiel (x: 1050 - 1480)
-- **Atmosfera**: Zamknięta arena otoczona zabytkowymi kolumnami. Na środku stoi słomiany manekin ćwiczebny w żelaznym hełmie. Drogę dalej blokuje opuszczona, żelazna brama kratowa (`gate_1`).
-- **Wyzwanie Bojowe**:
-  - Gracz testuje pchnięcie i cięcie rapierem na manekinie (Straw Dummy).
-  - Po uderzeniu manekin rozbłyskuje czerwienią i uwalnia deszcz trocin oraz iskier, dodając 150 punktów do wyniku.
-  - **Komentarz Narratora**: *„Pierwszy cios zawsze smakuje najlepiej. Stal śpiewała w powietrzu.”*
-- **Wyzwanie Logiczne (Dźwignia)**:
-  - Złota dźwignia mechaniczna (x: 1200, y: 375).
-  - Gracz musi uderzyć dźwignię orężem, by zwolnić blokadę przeciwwagi. Dźwignia zmienia pozycję, zapala się szmaragdowy wskaźnik, a brama zamkowa unosi się pod sufit.
-  - **Komentarz Narratora**: *„Dźwignia stawiła opór, ale determinacja była silniejsza. Droga stała otworem.”*
-
-### 4. Podniebna Wspinaczka i Brama Aetheru (x: 1480 - 2000)
-- **Atmosfera**: Otwarty taras z widokiem na odległe sylwetki wież zamkowych w paralaksie. W powietrzu unosi się mosiężna, poruszająca się poziomo platforma.
-- **Zagrożenie**: Zegarowy Sowi Gargulec (Clockwork Owl Gargoyle) patrolujący przestrzeń powietrzną.
-- **Wyzwanie Finałowe**:
-  - Uniknięcie lub zniszczenie latającego przeciwnika.
-  - Wskoczenie na ruchomą windę (x: 1550, y: 280) w odpowiednim momencie trajektorii.
-  - Dotarcie na najwyższą basztę (x: 1880, y: 340).
-- **Zwieńczenie Poziomu**:
-  - Wejście w pulsujący, aeterowy portal o błękitno-złotym blasku.
-  - Ekran Zwycięstwa i podsumowanie punktów.
-  - **Końcowy Monolog Narratora**:
-    > *„Brama Aetheru rozbłysła dawnym blaskiem. Pierwsza próba dobiegła końca, lecz prawdziwa podróż dopiero się zaczynała...”*
+The castle is suspended in an eternal, golden autumn. Once the illustrious seat of a guild of fencing scholars, astronomers, and horologists, the ancient Citadel of Aether fell into stasis following a catastrophic temporal fracture. Players embody the Awakened Duelists who, under the watchful chronicle of an omniscient Narrator, traverse the citadel's interconnected sectors, restarting dormant clockwork apparatuses and pacifying guardians corrupted by wild Aetherial radiation.
 
 ---
 
-## Zarys Kolejnych Rozdziałów (Przyszłe Akty)
+## Act I: The Awakening of the Bastion (The 5-Sector Citadel Circuit)
 
-### Akt II: Zegarowe Ogrody Aetheru (Clockwork Gardens)
-Bohaterowie docierają do wiszących ogrodów napędzanych potężnymi przekładniami zębatymi. Środowisko pełne ruchomych kół młyńskich, parowych gejzerów i mechanicznych modliszek.
-- **Główny cel**: Odnalezienie trzech Kryształów Rezonansu i ponowne uruchomienie Głównego Akweduktu.
+### Campaign Progression & Sector Network
 
-### Akt III: Serce Prastarej Cytadeli (The Citadel Core)
-Wnętrze wieży zegarowej, gdzie czas i przestrzeń ulegają zagięciu. Walka z Wielkim Konstruktem Zegarowym (The Grand Chronomancer).
-- **Główny cel**: Ustabilizowanie Rdzenia Czasu i ocalenie zamku przed zapomnieniem.
+```text
+
+[Courtyard of Awakening] ===> [Chasm of Thorns] ===> [Clockwork Tower] ===> [Aether Sky Sanctuary]
+         |                                                                           |
+         +====================> [ Grand Bastion Circuit ] <=========================+
+```
+
+---
+
+### Phase 1: Awakening in the Courtyard (`courtyard`)
+
+* **Setting & Tone**: Warm golden-ochre twilight, descending dry oak foliage, tranquil flagstone terraces.
+* **Opening Chronicle**:
+  > *"The youth awoke upon the vast castle grounds. The crisp air carried scents of dry autumn leaves and fresh aether..."*
+* **Player Objective**: Re-attune to fundamental footwork, rapid sprints, directional slides, and initial rapier thrusts against Master Oakhaven's training automata.
+* **Cooperative Dynamic**: In two-player mode, Aurelia awakens beside Valen; the Narrator observes the resurgence of their historic covenant of steel and celestial craft.
+
+---
+
+### Phase 2: Trial of Agility – The Chasm of Thorns and Shadows (`thorn_chasm`)
+
+* **Setting & Tone**: Fractured foundations over a sheer gorge, carpeted with glowing amber spikes (`labelAmberThorns`).
+* **Platforming Gauntlet**:
+  * Precision leaps across isolated stone slabs suspended at staggered elevations (`y: 460`, `360`, `280`).
+  * Low archway clearances requiring sliding under full momentum while dodging crawling subterranean beasts.
+* **Narrative Reaction**:
+  > *"One false step and it was over. But this kid knew how to bend gravity to his will."*
+* **Kinetic Mastery**: Introduction of `Chrono Dash` and `Phase Dash`, allowing players to glide across broad gaps and slip through hazardous hitboxes.
+
+---
+
+### Phase 3: The Ascent – Clockwork Tower & Angled Range (`clocktower`)
+
+* **Setting & Tone**: The towering vertical Horologium. Massive brass gear trains, swinging pendulums, and open-air battlements looking out across misty clouds.
+* **Combat & Trickshot Challenge**:
+  * Mobilizing the motorized vertical lift to ascend between grinding gear chambers.
+  * Angled Target Practice: Targets positioned aloft and sunken below necessitate mastering 45° elevation shots while running or true 90° vertical shots while stationary.
+* **Mechanical Obstacle**:
+  * Striking the golden escapement lever with blade or projectile releases pneumatic locks, lifting the spire gate.
+* **Narrator Commentary**:
+  > *"Deep within the clocktower, massive iron cogs groaned, lifting the portcullis toward the clouds."*
+
+---
+
+### Phase 4: Celestial Threshold – Aether Sky Sanctuary & Aqueduct (`aether_sanctuary`)
+
+* **Setting & Tone**: Floating marble islands suspended above the cloud canopy by giant Aether crystals. A ruined aqueduct cascades liquid light into the starry abyss.
+* **Climactic Encounter**:
+  * Confronting the **Aether Archon** amidst swirling stardust and starlight cascades.
+  * Navigating floating glider platforms while neutralizing aerial wisps.
+* **Zwieńczenie Poziomu (Sector Culmination)**:
+  * Stepping through the celestial threshold unseals the **Mastery Portal**.
+  * **Narrative Milestone**:
+    > *"And so they stepped into a new dawn, fully armed and attuned to ancient Aether. The first trial was conquered, yet the deeper heart of the castle still slept..."*
+
+---
+
+### Phase 5: The Grand Circuit – Grand Bastion Proving Grounds (`grand_bastion`)
+
+* **Setting & Tone**: The master unified circuit spanning 5200 pixels, seamlessly weaving courtyards, thorn chasms, clockwork lifts, and high battlements into one continuous gauntlet.
+* **Mastery Trial**:
+  * Defeating elite Shadow Knights who mirror player feints and backsteps.
+  * Striking the **Main Sluice Lever** atop the highest bastion to release the **Grand Portcullis**.
+  * Celebrating ultimate stage mastery with high score calculations and skill tree progression.
+
+---
+
+## Future Campaign Outline (Subsequent Acts)
+
+### Act II: The Sunken Clockwork Gardens (Clockwork Aqueducts)
+
+The champions descend into subterranean greenhouse conservatories powered by colossal waterwheels and geothermal steam vents.
+
+* **Environment**: Overgrown Victorian ironwork, water wheels, cascading fountains, and mechanical mantises.
+* **Primary Objective**: Locate the three Resonance Crystals to restart the Grand Aqueduct and restore life to the desiccated arboretum.
+* **Boss**: *The Amber Fortress Golem* – an ancient terracotta behemoth bound by molten amber veins.
+
+---
+
+### Act III: The Heart of the Citadel (The Chronomancer's Spire)
+
+The highest reaches of the central clocktower, where time, gravity, and spatial coordinates warp violently.
+
+* **Environment**: Shattered floating staircases, inverted rooms, and temporal rifts that loop fallen players back in time.
+* **Primary Objective**: Stabilize the Central Chrono-Core and seal the spatial anomaly threatening to erase the citadel from memory.
+* **Final Boss**: *The Grand Chronomancer* – the fallen guildmaster who sought immortality through frozen time.
