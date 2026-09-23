@@ -2,7 +2,7 @@ import React from "react";
 import { Backpack as BackpackIcon, Shield, Sparkles } from "lucide-react";
 import { Modal, ModalNavigationTabs, ModalType, Card, CardHeader, CardTitle, CardContent, LanguageSelector } from "../ui";
 import { CharacterPortrait } from "../character";
-import { useGame, useInventory } from "../../hooks/useGame";
+import { useGameSession, useSettings, useInventory } from "../../hooks/useGame";
 import { useI18n } from "../../hooks/useI18n";
 import { useInventorySelection } from "./useInventorySelection";
 
@@ -24,7 +24,8 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
   onNavigateModal,
   onResume,
 }) => {
-  const { displaySettings, p1, p2, isTwoPlayer } = useGame();
+  const { displaySettings, isTwoPlayer } = useSettings();
+  const { p1, p2 } = useGameSession();
   const {
     activePlayerIndex,
     setActivePlayerIndex,

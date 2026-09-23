@@ -13,13 +13,13 @@ import {
   Flame,
 } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "../../ui";
-import { useGame } from "../../../hooks/useGame";
+import { useSettings } from "../../../hooks/useGame";
 import { useI18n } from "../../../hooks/useI18n";
 import { AspectRatioMode, ScalingFilterMode, TargetFps, AssetQuality } from "../../../game/types";
 import { cn } from "../../../lib/utils";
 
 export const DisplaySettingsSection: React.FC = () => {
-  const { displaySettings, setDisplaySettings } = useGame();
+  const { displaySettings, setDisplaySettings } = useSettings();
   const { t } = useI18n();
 
   // Fullscreen state and handler

@@ -18,13 +18,15 @@ import {
 import { statsManager } from "../../game/logic/stats";
 import { Card, CardHeader, CardTitle, CardContent, StatRow, Button, Badge, ProgressBar } from "../ui";
 import { useI18n } from "../../hooks/useI18n";
-import { useGame } from "../../hooks/useGame";
+import { useSettings, useGameSession, useSaveGame } from "../../hooks/useGame";
 import { ITEM_REGISTRY } from "../../game/logic/inventory";
 import { SPELL_REGISTRY } from "../../game/logic/magic";
 
 export const StatsPanel: React.FC = () => {
   const { t } = useI18n();
-  const { isTwoPlayer, p1, p2, setSaveNotification } = useGame();
+  const { isTwoPlayer } = useSettings();
+  const { p1, p2 } = useGameSession();
+  const { setSaveNotification } = useSaveGame();
   const [stats, setStats] = useState(() => statsManager.getStats());
   const [resetConfirm, setResetConfirm] = useState(false);
 

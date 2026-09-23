@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo } from "react";
+import React, { createContext, useContext, useMemo, useCallback } from "react";
 import {
   Player,
   DisplaySettings,
@@ -132,6 +132,20 @@ const GameContextBridge: React.FC<{ children: React.ReactNode }> = ({ children }
   const inv = useInventory();
   const skillsCtx = useSkills();
 
+  const resetAll = useCallback(() => {
+    settingsCtx.resetToDefaults();
+    saveCtx.resetToDefaults();
+    inv.resetToDefaults();
+    skillsCtx.resetToDefaults();
+    session.restart();
+  }, [
+    settingsCtx.resetToDefaults,
+    saveCtx.resetToDefaults,
+    inv.resetToDefaults,
+    skillsCtx.resetToDefaults,
+    session.restart,
+  ]);
+
   const value = useMemo<GameContextValue>(() => {
     return {
       // Session
@@ -196,15 +210,68 @@ const GameContextBridge: React.FC<{ children: React.ReactNode }> = ({ children }
       discardItem: inv.discardItem,
 
       // Orchestrator Action
-      resetAll: () => {
-        settingsCtx.resetToDefaults();
-        saveCtx.resetToDefaults();
-        inv.resetToDefaults();
-        skillsCtx.resetToDefaults();
-        session.restart();
-      },
+      resetAll,
     };
-  }, [session, settingsCtx, saveCtx, inv, skillsCtx]);
+  }, [
+    session.p1,
+    session.p2,
+    session.isVictory,
+    session.isDefeat,
+    session.isPaused,
+    session.currentLocation,
+    session.currentLocationId,
+    session.narration,
+    session.subAnim,
+    session.isAudioInitialized,
+    session.tick,
+    session.setPaused,
+    session.togglePause,
+    session.restart,
+    session.loadLocation,
+    session.advanceLocation,
+    session.initializeAudio,
+    session.notifyEngineUpdate,
+
+    settingsCtx.settings,
+    settingsCtx.displaySettings,
+    settingsCtx.volumeMusic,
+    settingsCtx.volumeSFX,
+    settingsCtx.isTwoPlayer,
+    settingsCtx.hudSettings,
+    settingsCtx.setTwoPlayer,
+    settingsCtx.setDisplaySettings,
+    settingsCtx.setVolumeMusic,
+    settingsCtx.setVolumeSFX,
+    settingsCtx.setHudSettings,
+    settingsCtx.updateSettings,
+    settingsCtx.resetToDefaults,
+    settingsCtx.exportSettingsToFile,
+    settingsCtx.importSettingsFromFile,
+
+    saveCtx.saveNotification,
+    saveCtx.lastSavedState,
+    saveCtx.setSaveNotification,
+    saveCtx.saveGame,
+    saveCtx.loadGame,
+    saveCtx.saveToLocalStorage,
+    saveCtx.loadFromLocalStorage,
+    saveCtx.exportSaveToFile,
+    saveCtx.importSaveFromFile,
+    saveCtx.exportToJson,
+    saveCtx.importFromJson,
+
+    inv.activePlayerIndex,
+    inv.setActivePlayerIndex,
+    inv.activePlayer,
+    inv.activeInventory,
+    inv.activeDerivedStats,
+    inv.equipItem,
+    inv.unequipItem,
+    inv.usePotion,
+    inv.discardItem,
+
+    resetAll,
+  ]);
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 };

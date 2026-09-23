@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { SPELL_REGISTRY } from "../../game/logic/magic";
 import { useQuickPotion, calculatePlayerDerivedStats } from "../../game/logic/inventory";
-import { useGame } from "../../hooks/useGame";
+import { useGameSession, useSettings } from "../../hooks/useGame";
 import { useI18n } from "../../hooks/useI18n";
 import { HUDOverlayLayout } from "./HUDOverlayLayout";
 import { HUDViewportCanvas } from "./HUDViewportCanvas";
@@ -32,7 +32,6 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
   const {
     p1,
     p2,
-    isTwoPlayer,
     isVictory,
     isDefeat,
     isPaused,
@@ -42,13 +41,13 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
     narration,
     subAnim,
     isAudioInitialized,
-    displaySettings,
-    hudSettings,
     restart,
     advanceLocation,
     initializeAudio,
     notifyEngineUpdate,
-  } = useGame();
+  } = useGameSession();
+
+  const { isTwoPlayer, displaySettings, hudSettings } = useSettings();
 
   const { t } = useI18n();
 

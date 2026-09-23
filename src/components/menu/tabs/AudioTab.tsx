@@ -1,14 +1,14 @@
 import React from "react";
 import { Music, Volume2, VolumeX, Sparkles, Play } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent, Slider, Button, Badge } from "../../ui";
-import { useGame } from "../../../hooks/useGame";
+import { useSettings } from "../../../hooks/useGame";
 import { useI18n } from "../../../hooks/useI18n";
 import gameEngine from "../../../game/loop/engine";
 import { SoundType } from "../../../game/types";
 import { cn } from "../../../lib/utils";
 
 export const AudioTab: React.FC = () => {
-  const { volumeMusic, setVolumeMusic, volumeSFX, setVolumeSFX } = useGame();
+  const { volumeMusic, setVolumeMusic, volumeSFX, setVolumeSFX } = useSettings();
   const { t, language } = useI18n();
   const isPl = language === "pl";
 

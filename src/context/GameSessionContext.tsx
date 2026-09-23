@@ -101,13 +101,18 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
     [notifyEngineUpdate]
   );
 
+  const onNotificationRef = useRef(onNotification);
+  onNotificationRef.current = onNotification;
+  const tRef = useRef(t);
+  tRef.current = t;
+
   const initializeAudio = useCallback(() => {
     gameAudio.init();
     setIsAudioInitialized(true);
-    if (onNotification) {
-      onNotification(t("audioActivated"));
+    if (onNotificationRef.current) {
+      onNotificationRef.current(tRef.current("audioActivated"));
     }
-  }, [onNotification, t]);
+  }, []);
 
   const restart = useCallback(() => {
     gameEngine.resetLevel();
@@ -150,7 +155,25 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
     }),
     [
       p1,
+      p1?.health,
+      p1?.maxHealth,
+      p1?.mana,
+      p1?.maxMana,
+      p1?.stamina,
+      p1?.maxStamina,
+      p1?.skillPoints,
+      p1?.primarySpellId,
+      p1?.secondarySpellId,
       p2,
+      p2?.health,
+      p2?.maxHealth,
+      p2?.mana,
+      p2?.maxMana,
+      p2?.stamina,
+      p2?.maxStamina,
+      p2?.skillPoints,
+      p2?.primarySpellId,
+      p2?.secondarySpellId,
       isVictory,
       isDefeat,
       isPaused,
@@ -159,7 +182,6 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
       currentNarration,
       subAnim,
       isAudioInitialized,
-      tick,
       setPaused,
       togglePause,
       restart,

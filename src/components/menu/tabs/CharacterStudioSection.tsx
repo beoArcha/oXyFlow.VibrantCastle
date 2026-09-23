@@ -10,13 +10,13 @@ import {
 import { Button, Card, CardHeader, CardTitle, CardContent } from "../../ui";
 import { CharacterPortrait, CharacterSpritePreview, AtlasSheetViewer, CharacterProvider } from "../../character";
 import { AnimationName } from "../../../game/engine/spriteTypes";
-import { useGame } from "../../../hooks/useGame";
+import { useSettings } from "../../../hooks/useGame";
 import { useI18n } from "../../../hooks/useI18n";
 import { useSpritePreviewState } from "../hooks/useSpritePreviewState";
 import { cn } from "../../../lib/utils";
 
 export const CharacterStudioSection: React.FC = () => {
-  const { displaySettings } = useGame();
+  const { displaySettings } = useSettings();
   const { t } = useI18n();
 
   // Character preview state

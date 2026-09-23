@@ -5,13 +5,14 @@ import { DebugEntityTableCard } from "./debug/DebugEntityTableCard";
 import { DebugCollisionsCard } from "./debug/DebugCollisionsCard";
 import { DebugEventLogCard, LogEntry } from "./debug/DebugEventLogCard";
 import { DebugStateDumpCard } from "./debug/DebugStateDumpCard";
-import { useGame } from "../../../hooks/useGame";
+import { useGameSession, useSettings } from "../../../hooks/useGame";
 import gameEngine from "../../../game/loop/engine";
 import { debugManager } from "../../../game/debug/debugManager";
 import fpsManager from "../../../game/engine/fpsManager";
 
 export const DebugSubTab: React.FC = () => {
-  const { p1, p2, isTwoPlayer, currentLocationId } = useGame();
+  const { p1, p2, currentLocationId } = useGameSession();
+  const { isTwoPlayer } = useSettings();
 
   // Reactive debug manager state
   const [debugState, setDebugState] = useState(debugManager.state);

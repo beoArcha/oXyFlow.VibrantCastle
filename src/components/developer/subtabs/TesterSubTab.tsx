@@ -23,7 +23,7 @@ import {
   StepForward,
 } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "../../ui";
-import { useGame } from "../../../hooks/useGame";
+import { useGameSession } from "../../../hooks/useGame";
 import { useI18n } from "../../../hooks/useI18n";
 import { debugManager, SpawnPreset } from "../../../game/debug/debugManager";
 import gameEngine from "../../../game/loop/engine";
@@ -50,7 +50,7 @@ const MONSTER_ID_LIST = [
 ];
 
 export const TesterSubTab: React.FC = () => {
-  const { p1, currentLocationId, loadLocation } = useGame();
+  const { p1, currentLocationId, loadLocation } = useGameSession();
   const { t } = useI18n();
 
   // Reactive debug state from debugManager

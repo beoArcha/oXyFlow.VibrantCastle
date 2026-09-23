@@ -24,7 +24,7 @@ import {
   StepForward,
 } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "../../ui";
-import { useGame } from "../../../hooks/useGame";
+import { useGameSession } from "../../../hooks/useGame";
 import { useI18n } from "../../../hooks/useI18n";
 import { debugManager } from "../../../game/debug/debugManager";
 import gameEngine from "../../../game/loop/engine";
@@ -50,7 +50,7 @@ const MONSTER_OPTIONS = [
 ];
 
 export const TesterTab: React.FC = () => {
-  const { p1, currentLocationId, loadLocation, restart } = useGame();
+  const { p1, currentLocationId, loadLocation, restart } = useGameSession();
   const { language } = useI18n();
   const isPl = language === "pl";
 

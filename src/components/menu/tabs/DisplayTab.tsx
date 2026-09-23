@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { RotateCcw, Check } from "lucide-react";
 import { Button } from "../../ui";
-import { useGame } from "../../../hooks/useGame";
+import { useSettings } from "../../../hooks/useGame";
 import { useI18n } from "../../../hooks/useI18n";
 import { DEFAULT_SETTINGS } from "../../../context/settingsTypes";
 import { DisplaySettingsSection } from "./DisplaySettingsSection";
 import { CharacterStudioSection } from "./CharacterStudioSection";
 
 export const DisplayTab: React.FC = () => {
-  const { setDisplaySettings } = useGame();
+  const { setDisplaySettings } = useSettings();
   const { t } = useI18n();
   const [statusNotification, setStatusNotification] = useState<string | null>(null);
 
