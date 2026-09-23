@@ -1,4 +1,26 @@
 import { AssetQuality } from "../types";
+export type {
+  IMetaInfo,
+  IAtlasGrid,
+  IVariantTier,
+  IVariantsConfig,
+  IAnimationTrackMeta,
+  IAnimationTracks,
+  ISpatialOrigin,
+  ISpatialLayout,
+  IPortraitMatrix,
+  IStateMapping,
+  IInfoFrames,
+  IInteractionTrigger,
+  IInteractionEffects,
+  IInteractionConfig,
+  IRenderDirectives,
+  IValidationConstraints,
+  ICharacterMetaDocument,
+  ICreatureMetaDocument,
+  IStructureMetaDocument,
+  IUniversalMetaDocument,
+} from "./meta";
 
 export type CharacterProgressionTier = 1 | 2 | 3;
 

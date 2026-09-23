@@ -1,5 +1,10 @@
 import { AssetQuality } from "../types";
-import { AtlasMetaDoc } from "../engine/spriteTypes";
+import {
+  AtlasMetaDoc,
+  IUniversalMetaDocument,
+  ICreatureMetaDocument,
+  IStructureMetaDocument,
+} from "../engine/spriteTypes";
 import { assetLoader } from "../engine/assetLoader";
 
 export interface RenderAtlasFrameOptions {
@@ -25,7 +30,7 @@ export interface IAtlasSpriteRenderer {
 
 /**
  * Universal AtlasSpriteRenderer (Single Responsibility Principle).
- * Renders sliced frames from any registered AtlasMetaDoc sprite atlas with
+ * Renders sliced frames from any registered AtlasMetaDoc or IUniversalMetaDocument sprite atlas with
  * normalized origin anchoring, sub-cell span calculations, and optional directional mirroring.
  */
 export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
@@ -40,25 +45,29 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
     const texture = assetLoader.getAtlasTexture(options.atlasId);
     if (!texture || !texture.complete || texture.naturalWidth === 0) return false;
 
-    const meta: AtlasMetaDoc = atlasItem.meta;
+    const meta: IUniversalMetaDocument | ICreatureMetaDocument | IStructureMetaDocument | AtlasMetaDoc = atlasItem.meta;
     const quality = options.quality || assetLoader.getQuality();
 
     // 1. Resolve source cell dimensions directly from actual texture dimensions & atlas grid
-    const cols = meta.atlas?.columns || (meta.animations ? 6 : 6);
+    const cols = meta.atlas?.columns || 6;
     const rows = meta.atlas?.rows || 4;
     const cellW = texture.naturalWidth / cols;
     const cellH = texture.naturalHeight / rows;
 
     // 2. Resolve animation track name (check state aliases e.g. inactive -> idle)
     let animKey = options.animationName;
-    if (meta.states?.[animKey]?.animation) {
-      animKey = meta.states[animKey].animation;
+    if ("states" in meta && meta.states) {
+      const statesObj: any = "states" in meta.states ? (meta.states as any).states : meta.states;
+      if (statesObj?.[animKey]?.animation) {
+        animKey = statesObj[animKey].animation;
+      }
     }
 
-    const animTrack =
-      meta.animations?.[animKey] ||
-      meta.layout?.[animKey] ||
-      (meta.animations ? Object.values(meta.animations)[0] : null);
+    let animTrack: any = null;
+    if ("animations" in meta && meta.animations) {
+      const animsObj: any = "animations" in meta.animations ? (meta.animations as any).animations : meta.animations;
+      animTrack = animsObj?.[animKey] || (meta as any).layout?.[animKey] || (animsObj ? Object.values(animsObj)[0] : null);
+    }
 
     const trackFrames: number = animTrack?.frames ?? 1;
     const trackFps: number = animTrack?.fps ?? 8;
@@ -110,9 +119,12 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
     let anchorX = 0.5;
     let anchorY = 1.0;
 
-    if (meta.anchor) {
-      anchorX = meta.anchor.x;
-      anchorY = meta.anchor.y;
+    if ("anchor" in meta && (meta as any).anchor) {
+      anchorX = (meta as any).anchor.x;
+      anchorY = (meta as any).anchor.y;
+    } else if (meta.layout?.anchor) {
+      anchorX = meta.layout.anchor.x;
+      anchorY = meta.layout.anchor.y;
     } else if (meta.layout?.origin?.normalized) {
       anchorX = meta.layout.origin.normalized.x;
       anchorY = meta.layout.origin.normalized.y;
@@ -128,7 +140,11 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
       const baseScale = options.height / (cellH * visibleRatio);
       scale = baseScale * extraMultiplier;
     } else {
-      const variantScale = meta.variants?.[quality]?.scale ?? 1.0;
+      let variantScale = 1.0;
+      if ("variants" in meta && meta.variants) {
+        const variantsObj: any = "variants" in meta.variants ? (meta.variants as any).variants : meta.variants;
+        variantScale = variantsObj?.[quality]?.scale ?? 1.0;
+      }
       scale = variantScale * extraMultiplier;
     }
 
@@ -153,8 +169,9 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
 
     // 8. Directional mirroring (respecting asset's natural orientation)
     const naturalFacing =
-      meta.naturalFacing ||
-      meta.defaultFacing ||
+      (meta as any).naturalFacing ||
+      (meta as any).defaultFacing ||
+      meta.layout?.naturalFacing ||
       meta.layout?.defaultFacing ||
       "right";
 

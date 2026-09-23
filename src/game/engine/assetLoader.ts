@@ -10,6 +10,12 @@ import {
 } from "./spriteTypes";
 import { VALEN_MANIFEST, AURELIA_MANIFEST } from "./characterManifests";
 import { SpriteExtractorFactory, PixelBoundsScanner } from "./extractors";
+import {
+  defaultMetaParser,
+  IUniversalMetaDocument,
+  ICreatureMetaDocument,
+  IStructureMetaDocument,
+} from "./meta";
 
 // Preloaded atlas assets for enemies and structures
 import dummyHighPng from "../../assets/enemies/training_dummy/training_dummy_high.png";
@@ -35,7 +41,7 @@ export interface RegisteredAtlasItem {
   id: string;
   category: "enemy" | "structure";
   imageSrc: string;
-  meta: AtlasMetaDoc;
+  meta: IUniversalMetaDocument | ICreatureMetaDocument | IStructureMetaDocument | AtlasMetaDoc;
 }
 
 class AssetLoaderEngine {
@@ -54,19 +60,19 @@ class AssetLoaderEngine {
       id: "training_dummy",
       category: "enemy",
       imageSrc: dummyHighPng,
-      meta: dummyMetaJson as unknown as AtlasMetaDoc,
+      meta: defaultMetaParser.parseCreature(dummyMetaJson),
     });
     this.registerAtlas({
       id: "clockwork_owl_gargoyle",
       category: "enemy",
       imageSrc: owlHighPng,
-      meta: owlMetaJson as unknown as AtlasMetaDoc,
+      meta: defaultMetaParser.parseCreature(owlMetaJson),
     });
     this.registerAtlas({
       id: "aether_gate",
       category: "structure",
       imageSrc: gateHighPng,
-      meta: gateMetaJson as unknown as AtlasMetaDoc,
+      meta: defaultMetaParser.parseStructure(gateMetaJson),
     });
   }
 
