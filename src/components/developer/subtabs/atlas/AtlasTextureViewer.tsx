@@ -328,7 +328,7 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
             </Badge>
           )}
           <Badge variant="amber">
-            {gridConfig.columns} cols × {gridConfig.rows} rows
+            {gridConfig.columns} {t("atlasStudioColsShort")} × {gridConfig.rows} {t("atlasStudioRowsShort")}
           </Badge>
         </div>
 
@@ -456,16 +456,18 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
                 <strong className="text-cyan-300">{hoverInfo.row}</strong>
               </span>
             ) : (
-              <span>Hover canvas for coordinates</span>
+              <span>{t("atlasStudioHoverCoords")}</span>
             )}
           </div>
           <div className="flex items-center gap-3">
             <span>
-              Cell: <strong className="text-amber-300">{gridConfig.cellWidth}</strong> ×{" "}
+              {t("atlasStudioCellPrefix")}{" "}
+              <strong className="text-amber-300">{gridConfig.cellWidth}</strong> ×{" "}
               <strong className="text-amber-300">{gridConfig.cellHeight}</strong>px
             </span>
             <span>
-              SafeMargin: <strong className="text-sky-300">{gridConfig.safeMargin}</strong>px
+              {t("atlasStudioSafeMargin")}:{" "}
+              <strong className="text-sky-300">{gridConfig.safeMargin}</strong>px
             </span>
           </div>
         </div>

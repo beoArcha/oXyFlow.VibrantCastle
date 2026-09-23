@@ -357,7 +357,7 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
                 className="h-8 px-2.5 text-xs"
               >
                 <Crosshair size={13} className="mr-1" />
-                Pivot
+                {t("atlasStudioPivotShort")}
               </Button>
             </div>
 

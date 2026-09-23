@@ -116,16 +116,16 @@ export const AtlasMetaEditor: React.FC<AtlasMetaEditorProps> = ({
     const issues: string[] = [];
 
     if (gridConfig.columns <= 0 || gridConfig.rows <= 0) {
-      issues.push("Columns and rows must be greater than 0");
+      issues.push(t("atlasStudioWarnColsRows"));
     }
     if (gridConfig.cellWidth <= 0 || gridConfig.cellHeight <= 0) {
-      issues.push("Cell dimensions must be greater than 0px");
+      issues.push(t("atlasStudioWarnCellSize"));
     }
 
     tracks.forEach((tr) => {
       if (tr.row >= gridConfig.rows) {
         issues.push(
-          `Track '${tr.name}' row (${tr.row}) exceeds atlas rows count (${gridConfig.rows})`
+          `${t("atlasStudioWarnRowExceeds")}: '${tr.name}' (row ${tr.row} >= ${gridConfig.rows})`
         );
       }
 
@@ -140,13 +140,13 @@ export const AtlasMetaEditor: React.FC<AtlasMetaEditorProps> = ({
 
       if (totalCols > gridConfig.columns) {
         issues.push(
-          `Track '${tr.name}' spans ${totalCols} cells, exceeding atlas columns (${gridConfig.columns})`
+          `${t("atlasStudioWarnColsExceeds")}: '${tr.name}' (${totalCols} > ${gridConfig.columns})`
         );
       }
     });
 
     return issues;
-  }, [gridConfig, tracks]);
+  }, [gridConfig, tracks, t]);
 
   // Copy JSON to clipboard
   const handleCopyJson = async () => {
@@ -269,7 +269,7 @@ export const AtlasMetaEditor: React.FC<AtlasMetaEditorProps> = ({
           <Badge variant={validationIssues.length === 0 ? "green" : "amber"}>
             {validationIssues.length === 0
               ? t("atlasStudioValidationValid")
-              : `${validationIssues.length} warnings`}
+              : `${validationIssues.length} ${t("atlasStudioValidationWarning")}`}
           </Badge>
         </div>
 
@@ -285,7 +285,7 @@ export const AtlasMetaEditor: React.FC<AtlasMetaEditorProps> = ({
                   : "text-stone-400 hover:text-stone-200"
               }`}
             >
-              <Sliders size={12} /> Form
+              <Sliders size={12} /> {t("atlasStudioModeForm")}
             </button>
             <button
               onClick={() => setEditorMode("json")}
@@ -295,7 +295,7 @@ export const AtlasMetaEditor: React.FC<AtlasMetaEditorProps> = ({
                   : "text-stone-400 hover:text-stone-200"
               }`}
             >
-              <Code size={12} /> JSON
+              <Code size={12} /> {t("atlasStudioModeJson")}
             </button>
           </div>
 
@@ -503,8 +503,8 @@ export const AtlasMetaEditor: React.FC<AtlasMetaEditorProps> = ({
                       <th className="py-1.5 px-2">{t("atlasStudioTrackFrames")}</th>
                       <th className="py-1.5 px-2">{t("atlasStudioTrackFps")}</th>
                       <th className="py-1.5 px-2">{t("atlasStudioLoop")}</th>
-                      <th className="py-1.5 px-2">SlotSpan</th>
-                      <th className="py-1.5 px-2 text-right">Action</th>
+                      <th className="py-1.5 px-2">{t("atlasStudioSlotSpanCol")}</th>
+                      <th className="py-1.5 px-2 text-right">{t("atlasStudioActionCol")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-stone-900">
