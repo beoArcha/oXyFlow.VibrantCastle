@@ -62,6 +62,10 @@ function loadInitialSettings(): GameSettingsState {
             assetQuality: parsedDisplay.assetQuality || "high",
             targetFps: parsedDisplay.targetFps || 60,
             showFpsCounter: !!parsedDisplay.showFpsCounter,
+            hardwareAcceleration:
+              parsedDisplay.hardwareAcceleration !== undefined
+                ? parsedDisplay.hardwareAcceleration
+                : true,
           },
         };
       }
@@ -106,6 +110,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
       gameEngine.setTargetFps(settings.display.targetFps);
     }
     gameEngine.setShowFpsCounter(!!settings.display.showFpsCounter);
+    gameEngine.setHardwareAcceleration(settings.display.hardwareAcceleration !== false);
 
     // Keep gameEngine players synchronized on mount/change
     if (settings.isTwoPlayer && gameEngine.players.length === 1) {

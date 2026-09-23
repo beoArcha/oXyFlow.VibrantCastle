@@ -45,6 +45,7 @@ export const DEFAULT_SETTINGS: GameSettingsState = {
     assetQuality: "high",
     targetFps: 60,
     showFpsCounter: false,
+    hardwareAcceleration: true,
   },
   hud: {
     p1CharacterName: "Valen",

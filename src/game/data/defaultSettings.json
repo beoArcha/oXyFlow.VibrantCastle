@@ -6,6 +6,7 @@
   "display": {
     "aspectRatio": "16:10",
     "scalingFilter": "pixel",
-    "assetQuality": "high"
+    "assetQuality": "high",
+    "hardwareAcceleration": true
   }
 }

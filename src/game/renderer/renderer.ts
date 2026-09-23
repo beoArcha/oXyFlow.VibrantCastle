@@ -30,9 +30,19 @@ import {
   defaultHitboxRenderer,
 } from "./hitboxRenderer";
 import { debugManager } from "../debug/debugManager";
+import {
+  ProceduralBackdropCache,
+  defaultProceduralBackdropCache,
+} from "./proceduralBackdropCache";
+
+const SCENERY_TREE_OFFSETS = [350, 1100, 1600, 2450, 3050, 3500] as const;
 
 export type { IMultiLayerBackgroundSystem, IHitboxRenderer };
 export { MultiLayerBackgroundSystem, defaultMultiLayerBackgroundSystem, HitboxRenderer, defaultHitboxRenderer };
+
+export interface IRendererConfig {
+  hardwareAcceleration?: boolean;
+}
 
 export interface IRendererDependencies {
   parallaxRenderer?: ParallaxRenderer;
@@ -41,6 +51,7 @@ export interface IRendererDependencies {
   actorRenderer?: IActorRenderer;
   fxRenderer?: IFxRenderer;
   hitboxRenderer?: IHitboxRenderer;
+  proceduralBackdropCache?: ProceduralBackdropCache;
 }
 
 /**
@@ -62,6 +73,7 @@ export class GameRenderer {
   public viewportHeight: number = 625;
   public scaleFactor: number = 1;
   public assetQuality: AssetQuality = "high";
+  public isHardwareAccelerated: boolean = true;
   private tickCount: number = 0;
 
   // Camera settings (cached for parallax computations)
@@ -75,10 +87,35 @@ export class GameRenderer {
   private readonly actorRenderer: IActorRenderer;
   private readonly fxRenderer: IFxRenderer;
   private readonly hitboxRenderer: IHitboxRenderer;
+  private readonly backdropCache: ProceduralBackdropCache;
 
-  constructor(canvas: HTMLCanvasElement, deps: IRendererDependencies = {}) {
+  constructor(
+    canvas: HTMLCanvasElement,
+    deps: IRendererDependencies = {},
+    config: IRendererConfig = {}
+  ) {
     this.canvas = canvas;
-    const context = canvas.getContext("2d");
+    this.isHardwareAccelerated = config.hardwareAcceleration !== false;
+
+    let context: CanvasRenderingContext2D | null = null;
+    if (this.isHardwareAccelerated) {
+      try {
+        context = canvas.getContext("2d", {
+          alpha: false,
+          desynchronized: true,
+          willReadFrequently: false,
+        });
+      } catch (err) {
+        console.warn("Failed to acquire accelerated 2D context, falling back:", err);
+      }
+    }
+    if (!context) {
+      context =
+        canvas.getContext("2d", {
+          alpha: true,
+          willReadFrequently: false,
+        }) || canvas.getContext("2d");
+    }
     if (!context) throw new Error("Could not acquire 2D context");
     this.ctx = context;
     this.ctx.imageSmoothingEnabled = false;
@@ -90,6 +127,14 @@ export class GameRenderer {
     this.actorRenderer = deps.actorRenderer || defaultActorRenderer;
     this.fxRenderer = deps.fxRenderer || defaultFxRenderer;
     this.hitboxRenderer = deps.hitboxRenderer || defaultHitboxRenderer;
+    this.backdropCache = deps.proceduralBackdropCache || defaultProceduralBackdropCache;
+  }
+
+  public setHardwareAcceleration(enabled: boolean) {
+    this.isHardwareAccelerated = enabled;
+    if (enabled) {
+      this.backdropCache.resize(this.viewportWidth, this.viewportHeight);
+    }
   }
 
   public get scale(): number {
@@ -126,6 +171,10 @@ export class GameRenderer {
     this.viewportHeight = this.canvas.height / this.scaleFactor;
 
     this.ctx.imageSmoothingEnabled = filterMode === "smooth";
+
+    if (this.isHardwareAccelerated) {
+      this.backdropCache.resize(this.viewportWidth, this.viewportHeight);
+    }
   }
 
   /**
@@ -155,7 +204,12 @@ export class GameRenderer {
     this.cameraX = camera.x;
     this.cameraY = camera.y;
 
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    if (this.isHardwareAccelerated) {
+      this.ctx.fillStyle = "#0a0301";
+      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    } else {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
     this.ctx.save();
 
     // Scale from logical world coordinates to physical pixels
@@ -240,7 +294,8 @@ export class GameRenderer {
         fpsInfo?.measuredFps || 60,
         location?.id || "unknown",
         levelWidth,
-        levelHeight
+        levelHeight,
+        this.isHardwareAccelerated
       );
     }
   }
@@ -248,7 +303,7 @@ export class GameRenderer {
   private drawFpsOverlay(targetFps: number, measuredFps: number) {
     this.ctx.save();
     const pad = 12;
-    const badgeW = 100;
+    const badgeW = this.isHardwareAccelerated ? 138 : 100;
     const badgeH = 24;
     const x = this.canvas.width - badgeW - pad;
     const y = pad;
@@ -265,11 +320,17 @@ export class GameRenderer {
     this.ctx.fillStyle = "#fbbf24";
     this.ctx.textAlign = "center";
     this.ctx.textBaseline = "middle";
-    this.ctx.fillText(`${measuredFps} / ${targetFps} FPS`, x + badgeW / 2, y + badgeH / 2);
+    const gpuTag = this.isHardwareAccelerated ? " • GPU" : "";
+    this.ctx.fillText(`${measuredFps} / ${targetFps} FPS${gpuTag}`, x + badgeW / 2, y + badgeH / 2);
     this.ctx.restore();
   }
 
   private drawSkyBackground(width: number, height: number) {
+    if (this.isHardwareAccelerated) {
+      this.backdropCache.renderSky(this.ctx, width, height, this.cameraX);
+      return;
+    }
+
     const grad = this.ctx.createLinearGradient(0, 0, 0, height);
     grad.addColorStop(0, "#fef3c7");
     grad.addColorStop(0.5, "#fde68a");
@@ -291,6 +352,11 @@ export class GameRenderer {
   }
 
   private drawParallaxCastles() {
+    if (this.isHardwareAccelerated) {
+      this.backdropCache.renderCastles(this.ctx, this.viewportWidth, this.cameraX);
+      return;
+    }
+
     this.ctx.fillStyle = "rgba(180, 83, 9, 0.12)";
     const p1 = -(this.cameraX * 0.15) % 700;
     for (let offset = -700; offset < this.viewportWidth + 700; offset += 700) {
@@ -321,10 +387,17 @@ export class GameRenderer {
   }
 
   private drawSceneryDecorations() {
+    if (this.isHardwareAccelerated) {
+      for (let i = 0; i < SCENERY_TREE_OFFSETS.length; i++) {
+        this.backdropCache.renderTree(this.ctx, SCENERY_TREE_OFFSETS[i], 260);
+      }
+      return;
+    }
+
     this.ctx.fillStyle = "#8d4325";
-    [350, 1100, 1600, 2450, 3050, 3500].forEach((tx) => {
-      this.drawPixelTree(tx, 260);
-    });
+    for (let i = 0; i < SCENERY_TREE_OFFSETS.length; i++) {
+      this.drawPixelTree(SCENERY_TREE_OFFSETS[i], 260);
+    }
   }
 
   private drawPixelTree(x: number, y: number) {

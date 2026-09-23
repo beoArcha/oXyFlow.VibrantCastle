@@ -11,6 +11,7 @@ import {
   Activity,
   Layers,
   Flame,
+  Cpu,
 } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "../../ui";
 import { useSettings } from "../../../hooks/useGame";
@@ -316,7 +317,47 @@ export const DisplaySettingsSection: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* 4. JAKOŚĆ ZASOBÓW GRAFICZNYCH (HiPixel Asset Tier) */}
+      {/* 4. AKCELERACJA SPRZĘTOWA GPU (Hardware Acceleration) */}
+      <Card variant="subtle">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle icon={<Cpu className="w-4 h-4 text-amber-400" />}>
+              {t("gpuAccelerationBadge")}
+            </CardTitle>
+            <Badge
+              variant={displaySettings.hardwareAcceleration !== false ? "amber" : "stone"}
+              className="font-mono text-[10px]"
+            >
+              {displaySettings.hardwareAcceleration !== false ? "GPU: ACTIVE" : "GPU: DISABLED"}
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          <div className="flex items-center justify-between p-3 rounded-xl bg-[#140602] border border-[#5c2d18]/40">
+            <div className="flex flex-col gap-1 pr-4">
+              <label
+                htmlFor="gpu-acceleration-toggle"
+                className="text-xs font-bold text-stone-200 flex items-center gap-2 cursor-pointer"
+              >
+                <Zap className="w-3.5 h-3.5 text-amber-400" />
+                <span>{t("gpuAccelerationOption")}</span>
+              </label>
+              <p className="text-[11px] text-stone-400 leading-relaxed">
+                {t("gpuAccelerationDesc")}
+              </p>
+            </div>
+            <input
+              id="gpu-acceleration-toggle"
+              type="checkbox"
+              checked={displaySettings.hardwareAcceleration !== false}
+              onChange={(e) => setDisplaySettings({ hardwareAcceleration: e.target.checked })}
+              className="w-5 h-5 rounded text-amber-600 bg-stone-900 border-stone-700 focus:ring-amber-500 cursor-pointer accent-amber-500 shrink-0"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 5. JAKOŚĆ ZASOBÓW GRAFICZNYCH (HiPixel Asset Tier) */}
       <Card variant="subtle">
         <CardHeader>
           <div className="flex items-center justify-between">

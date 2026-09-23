@@ -17,14 +17,15 @@ export const HUDViewportCanvas: React.FC<HUDViewportCanvasProps> = ({
   children,
 }) => {
   const { containerRef, canvasRef, canvasStyle } = useResponsiveCanvas(displaySettings);
+  const isGpu = displaySettings.hardwareAcceleration !== false;
 
-  // Mount canvas into gameEngine renderer on initial render
+  // Mount canvas into gameEngine renderer on initial render or canvas recreation
   useEffect(() => {
     if (canvasRef.current) {
       gameEngine.attachCanvas(canvasRef.current);
       gameEngine.start();
     }
-  }, [canvasRef]);
+  }, [canvasRef, isGpu]);
 
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!debugManager.state.clickToTeleport || !canvasRef.current) return;
@@ -48,9 +49,11 @@ export const HUDViewportCanvas: React.FC<HUDViewportCanvasProps> = ({
     <div
       ref={containerRef}
       id="canvas-container-viewport"
+      style={{ contain: isGpu ? "strict" : undefined }}
       className="absolute inset-0 w-full h-full bg-[#0a0301] flex items-center justify-center overflow-hidden"
     >
       <canvas
+        key={isGpu ? "game-viewport-canvas-gpu" : "game-viewport-canvas-standard"}
         id="game-viewport-canvas"
         ref={canvasRef}
         tabIndex={0}

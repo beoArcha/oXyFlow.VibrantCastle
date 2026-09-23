@@ -294,7 +294,14 @@ export class GameEngine {
   }
 
   public attachCanvas(canvas: HTMLCanvasElement) {
-    this.renderer = new GameRenderer(canvas);
+    const isGpu = this.settings.display.hardwareAcceleration !== false;
+    this.renderer = new GameRenderer(canvas, {}, { hardwareAcceleration: isGpu });
+  }
+
+  public setHardwareAcceleration(enabled: boolean) {
+    this.settings.display.hardwareAcceleration = enabled;
+    this.renderer?.setHardwareAcceleration(enabled);
+    this.notifyReact();
   }
 
   public start() {

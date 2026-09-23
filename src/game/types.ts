@@ -416,6 +416,7 @@ export interface DisplaySettings {
   assetQuality: AssetQuality;
   targetFps: TargetFps;
   showFpsCounter?: boolean;
+  hardwareAcceleration?: boolean;
 }
 
 export interface GameSettings {

@@ -388,6 +388,9 @@ export interface SettingsI18n {
   zoomLabel: string;
   fpsOption: string;
   fpsCounterOption: string;
+  gpuAccelerationOption: string;
+  gpuAccelerationDesc: string;
+  gpuAccelerationBadge: string;
   fps30Desc: string;
   fps60Desc: string;
   fps90Desc: string;

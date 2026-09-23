@@ -111,6 +111,8 @@ export function useResponsiveCanvas(displaySettings: DisplaySettings): Responsiv
     };
   }, [calculateTargetDimensions, displaySettings.scalingFilter, updateDimensions]);
 
+  const isGpu = displaySettings.hardwareAcceleration !== false;
+
   // Compute CSS properties for the canvas
   const canvasStyle: React.CSSProperties = {
     width: displaySettings.aspectRatio === "auto" ? "100%" : `${dimensions.width}px`,
@@ -119,6 +121,9 @@ export function useResponsiveCanvas(displaySettings: DisplaySettings): Responsiv
     maxHeight: "100%",
     imageRendering: displaySettings.scalingFilter === "pixel" ? "pixelated" : "auto",
     boxShadow: displaySettings.aspectRatio !== "auto" ? "0 0 24px rgba(0, 0, 0, 0.85)" : undefined,
+    transform: isGpu ? "translate3d(0, 0, 0)" : undefined,
+    backfaceVisibility: isGpu ? "hidden" : undefined,
+    willChange: isGpu ? "transform" : undefined,
   };
 
   return {

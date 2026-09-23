@@ -23,7 +23,8 @@ export interface IHitboxRenderer {
     measuredFps: number,
     locationId: string,
     levelWidth: number,
-    levelHeight: number
+    levelHeight: number,
+    isHardwareAccelerated?: boolean
   ): void;
 }
 
@@ -183,7 +184,8 @@ export class HitboxRenderer implements IHitboxRenderer {
     measuredFps: number,
     locationId: string,
     levelWidth: number,
-    levelHeight: number
+    levelHeight: number,
+    isHardwareAccelerated: boolean = true
   ): void {
     ctx.save();
     const p1 = players[0];
@@ -191,7 +193,7 @@ export class HitboxRenderer implements IHitboxRenderer {
     const frameTimeMs = measuredFps > 0 ? (1000 / measuredFps).toFixed(1) : "0.0";
 
     const boxW = 260;
-    const boxH = 155;
+    const boxH = 170;
     const x = 12;
     const y = 12;
 
@@ -210,31 +212,32 @@ export class HitboxRenderer implements IHitboxRenderer {
     ctx.font = "10px monospace";
     ctx.fillStyle = "#fed7aa";
 
-    ctx.fillText(`FPS: ${measuredFps} / ${targetFps} (${frameTimeMs} ms)`, x + 10, y + 38);
-    ctx.fillText(`Lokacja: ${locationId} (${levelWidth}x${levelHeight})`, x + 10, y + 54);
+    ctx.fillText(`FPS: ${measuredFps} / ${targetFps} (${frameTimeMs} ms)`, x + 10, y + 36);
+    ctx.fillText(`GPU: ${isHardwareAccelerated ? "DIRECT (VRAM CACHE)" : "STANDARD 2D (COMP)"}`, x + 10, y + 50);
+    ctx.fillText(`Lokacja: ${locationId} (${levelWidth}x${levelHeight})`, x + 10, y + 64);
 
     if (p1) {
       ctx.fillText(
         `P1 Pos: X=${Math.round(p1.x)} Y=${Math.round(p1.y)} Ground=${p1.isGrounded ? "TAK" : "NIE"}`,
         x + 10,
-        y + 70
+        y + 78
       );
       ctx.fillText(
         `P1 Spd: VX=${p1.vx.toFixed(1)} VY=${p1.vy.toFixed(1)}`,
         x + 10,
-        y + 86
+        y + 92
       );
       ctx.fillText(
         `P1 Vit: HP=${Math.round(p1.health)}/${p1.maxHealth} MP=${Math.round(p1.mana)} SP=${Math.round(p1.stamina)}`,
         x + 10,
-        y + 102
+        y + 106
       );
     }
 
     ctx.fillText(
       `Obiekty: Wrogowie=${aliveEnemies}/${enemies.length} Encje=${entities.length}`,
       x + 10,
-      y + 118
+      y + 120
     );
     ctx.fillText(
       `Pociski=${projectiles.length} Cząstki=${particleCount}`,
