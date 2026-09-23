@@ -2,7 +2,6 @@ import {
   Player,
   Enemy,
   Entity,
-  CollisionType,
   SoundType,
   GameSettings,
   SaveState,
@@ -15,7 +14,7 @@ import { gameAudio, GameAudioEngine } from "../engine/audioEngine";
 import { gameInputs, GameInputEngine } from "./input";
 import { gamePhysics, GamePhysicsEngine } from "../physics/physics";
 import { gameCollisions, ICollisionEngine } from "../physics/collisions";
-import { LocationId, LocationDefinition, getLocation } from "../locations";
+import { LocationId, LocationDefinition, LOCATION_REGISTRY } from "../locations";
 import {
   LevelLifecycleManager,
   ILevelLifecycleManager,
@@ -481,7 +480,7 @@ export class GameEngine {
 
     const hasP2InSave = state.p2Health > 0;
     this.settings.isTwoPlayer = hasP2InSave;
-    if (state.levelId && (state.levelId as LocationId) in getLocation) {
+    if (state.levelId && (state.levelId as LocationId) in LOCATION_REGISTRY) {
       this.currentLocationId = state.levelId as LocationId;
     }
     this.resetLevel(this.currentLocationId);
