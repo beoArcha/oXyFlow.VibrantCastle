@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
-import { IContext } from "./IContext";
+import { ILoadableContext, IResettableContext } from "./IContext";
 import { useEngineSubscription } from "./useEngineSubscription";
 import { GameEngine } from "../game/loop/engine";
 import { Player, SkillTreeNode } from "../game/types";
@@ -35,7 +35,7 @@ export interface SkillUnlockEvaluation {
   reasonKey?: string;
 }
 
-export interface SkillsContextValue extends IContext<SkillsContextState> {
+export interface SkillsContextValue extends ILoadableContext, IResettableContext {
   activePlayerIndex: number;
   setActivePlayerIndex: (idx: number) => void;
   activePlayer: Player | undefined;
@@ -54,8 +54,6 @@ export interface SkillsContextValue extends IContext<SkillsContextState> {
 }
 
 const SkillsContext = createContext<SkillsContextValue | null>(null);
-
-const STORAGE_KEY = "vibrant_castle_skills_context_state";
 
 export interface SkillsProviderProps {
   children: React.ReactNode;
@@ -156,33 +154,10 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
       if (result.success) {
         engine.notifyReact();
         setStateVersion((v) => v + 1);
-        try {
-          // Auto-persist on unlock
-          const state: SkillsContextState = {
-            p1Skills: {
-              unlockedSkills: engine.players[0].unlockedSkills,
-              skillPoints: engine.players[0].skillPoints,
-              primarySpellId: engine.players[0].primarySpellId,
-              secondarySpellId: engine.players[0].secondarySpellId
-            },
-            p2Skills: engine.players[1]
-              ? {
-                  unlockedSkills: engine.players[1].unlockedSkills,
-                  skillPoints: engine.players[1].skillPoints,
-                  primarySpellId: engine.players[1].primarySpellId,
-                  secondarySpellId: engine.players[1].secondarySpellId
-                }
-              : undefined,
-            activePlayerIndex
-          };
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        } catch {
-          // ignore
-        }
       }
       return result;
     },
-    [getTargetPlayer, engine, activePlayerIndex]
+    [getTargetPlayer, engine]
   );
 
   const assignSpell = useCallback(
@@ -194,35 +169,13 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
       if (success) {
         engine.notifyReact();
         setStateVersion((v) => v + 1);
-        try {
-          const state: SkillsContextState = {
-            p1Skills: {
-              unlockedSkills: engine.players[0].unlockedSkills,
-              skillPoints: engine.players[0].skillPoints,
-              primarySpellId: engine.players[0].primarySpellId,
-              secondarySpellId: engine.players[0].secondarySpellId
-            },
-            p2Skills: engine.players[1]
-              ? {
-                  unlockedSkills: engine.players[1].unlockedSkills,
-                  skillPoints: engine.players[1].skillPoints,
-                  primarySpellId: engine.players[1].primarySpellId,
-                  secondarySpellId: engine.players[1].secondarySpellId
-                }
-              : undefined,
-            activePlayerIndex
-          };
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        } catch {
-          // ignore
-        }
       }
       return success;
     },
-    [getTargetPlayer, engine, activePlayerIndex]
+    [getTargetPlayer, engine]
   );
 
-  // === IContext Lifecycle implementations ===
+  // === Capability methods (IResettableContext) ===
   const resetToDefaults = useCallback(() => {
     const p1Defaults = getDefaultSkillsForCharacter("valen");
     if (engine.players[0]) {
@@ -241,130 +194,14 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
     }
 
     setActivePlayerIndex(0);
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      // ignore
-    }
     engine.notifyReact();
     setStateVersion((v) => v + 1);
   }, [engine]);
-
-  const saveToLocalStorage = useCallback(() => {
-    try {
-      const state: SkillsContextState = {
-        p1Skills: {
-          unlockedSkills: engine.players[0]?.unlockedSkills || [],
-          skillPoints: engine.players[0]?.skillPoints || 0,
-          primarySpellId: engine.players[0]?.primarySpellId || "",
-          secondarySpellId: engine.players[0]?.secondarySpellId || ""
-        },
-        p2Skills: engine.players[1]
-          ? {
-              unlockedSkills: engine.players[1].unlockedSkills,
-              skillPoints: engine.players[1].skillPoints,
-              primarySpellId: engine.players[1].primarySpellId,
-              secondarySpellId: engine.players[1].secondarySpellId
-            }
-          : undefined,
-        activePlayerIndex
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch (e) {
-      console.warn("Failed to save skills state to localStorage", e);
-    }
-  }, [engine, activePlayerIndex]);
-
-  const loadFromLocalStorage = useCallback((): boolean => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return false;
-      const parsed: SkillsContextState = JSON.parse(raw);
-      if (parsed.p1Skills && engine.players[0]) {
-        engine.players[0].unlockedSkills = parsed.p1Skills.unlockedSkills || [];
-        engine.players[0].skillPoints = parsed.p1Skills.skillPoints ?? 0;
-        if (parsed.p1Skills.primarySpellId) engine.players[0].primarySpellId = parsed.p1Skills.primarySpellId;
-        if (parsed.p1Skills.secondarySpellId) engine.players[0].secondarySpellId = parsed.p1Skills.secondarySpellId;
-      }
-      if (parsed.p2Skills && engine.players[1]) {
-        engine.players[1].unlockedSkills = parsed.p2Skills.unlockedSkills || [];
-        engine.players[1].skillPoints = parsed.p2Skills.skillPoints ?? 0;
-        if (parsed.p2Skills.primarySpellId) engine.players[1].primarySpellId = parsed.p2Skills.primarySpellId;
-        if (parsed.p2Skills.secondarySpellId) engine.players[1].secondarySpellId = parsed.p2Skills.secondarySpellId;
-      }
-      if (typeof parsed.activePlayerIndex === "number") {
-        setActivePlayerIndex(parsed.activePlayerIndex);
-      }
-      engine.notifyReact();
-      setStateVersion((v) => v + 1);
-      return true;
-    } catch (e) {
-      console.warn("Failed to load skills state from localStorage", e);
-      return false;
-    }
-  }, [engine]);
-
-  const exportToJson = useCallback((): string => {
-    const state: SkillsContextState = {
-      p1Skills: {
-        unlockedSkills: engine.players[0]?.unlockedSkills || [],
-        skillPoints: engine.players[0]?.skillPoints || 0,
-        primarySpellId: engine.players[0]?.primarySpellId || "",
-        secondarySpellId: engine.players[0]?.secondarySpellId || ""
-      },
-      p2Skills: engine.players[1]
-        ? {
-            unlockedSkills: engine.players[1].unlockedSkills,
-            skillPoints: engine.players[1].skillPoints,
-            primarySpellId: engine.players[1].primarySpellId,
-            secondarySpellId: engine.players[1].secondarySpellId
-          }
-        : undefined,
-      activePlayerIndex
-    };
-    return JSON.stringify(state, null, 2);
-  }, [engine, activePlayerIndex]);
-
-  const importFromJson = useCallback(
-    (jsonStr: string): boolean => {
-      try {
-        const parsed: SkillsContextState = JSON.parse(jsonStr);
-        if (!parsed.p1Skills) return false;
-
-        if (engine.players[0]) {
-          engine.players[0].unlockedSkills = parsed.p1Skills.unlockedSkills || [];
-          engine.players[0].skillPoints = parsed.p1Skills.skillPoints ?? 0;
-          if (parsed.p1Skills.primarySpellId) engine.players[0].primarySpellId = parsed.p1Skills.primarySpellId;
-          if (parsed.p1Skills.secondarySpellId) engine.players[0].secondarySpellId = parsed.p1Skills.secondarySpellId;
-        }
-        if (parsed.p2Skills && engine.players[1]) {
-          engine.players[1].unlockedSkills = parsed.p2Skills.unlockedSkills || [];
-          engine.players[1].skillPoints = parsed.p2Skills.skillPoints ?? 0;
-          if (parsed.p2Skills.primarySpellId) engine.players[1].primarySpellId = parsed.p2Skills.primarySpellId;
-          if (parsed.p2Skills.secondarySpellId) engine.players[1].secondarySpellId = parsed.p2Skills.secondarySpellId;
-        }
-        if (typeof parsed.activePlayerIndex === "number") {
-          setActivePlayerIndex(parsed.activePlayerIndex);
-        }
-        engine.notifyReact();
-        setStateVersion((v) => v + 1);
-        return true;
-      } catch (e) {
-        console.error("Failed to import skills JSON", e);
-        return false;
-      }
-    },
-    [engine]
-  );
 
   const value = useMemo<SkillsContextValue>(
     () => ({
       isLoaded,
       resetToDefaults,
-      saveToLocalStorage,
-      loadFromLocalStorage,
-      exportToJson,
-      importFromJson,
       activePlayerIndex,
       setActivePlayerIndex,
       activePlayer,
@@ -384,10 +221,6 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
     [
       isLoaded,
       resetToDefaults,
-      saveToLocalStorage,
-      loadFromLocalStorage,
-      exportToJson,
-      importFromJson,
       activePlayerIndex,
       activePlayer,
       activeCharacter,

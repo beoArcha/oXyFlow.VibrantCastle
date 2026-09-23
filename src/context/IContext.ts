@@ -1,37 +1,39 @@
 /**
- * Base Context Interface.
- * Defines the standard lifecycle, storage persistence, and serialization contract.
+ * Granular capability interfaces following the Interface Segregation Principle (ISP)
+ * and composition over inheritance.
  */
-export interface IContext<T = unknown> {
-  /**
-   * Flag indicating if initial state has been restored from storage or defaults.
-   */
+
+/**
+ * Capability interface for contexts supporting an asynchronous or deferred loading state.
+ */
+export interface ILoadableContext {
   isLoaded: boolean;
+}
 
-  /**
-   * Resets the context state to its initial default configuration.
-   */
+/**
+ * Capability interface for contexts that can be restored to initial defaults.
+ */
+export interface IResettableContext {
   resetToDefaults: () => void;
+}
 
-  /**
-   * Persists the context state to browser LocalStorage.
-   */
+/**
+ * Capability interface for contexts with direct browser storage persistence.
+ */
+export interface IPersistentContext extends ILoadableContext, IResettableContext {
   saveToLocalStorage: () => void;
-
-  /**
-   * Restores the context state from browser LocalStorage.
-   * @returns true if state was found and successfully applied, false otherwise.
-   */
   loadFromLocalStorage: () => boolean;
+}
 
-  /**
-   * Serializes current state to a formatted JSON string.
-   */
+/**
+ * Capability interface for contexts supporting file / JSON string serialization.
+ */
+export interface ISerializableContext {
   exportToJson: () => string;
-
-  /**
-   * Parses and applies a serialized JSON string.
-   * @returns true if JSON was valid and applied, false otherwise.
-   */
   importFromJson: (jsonString: string) => boolean;
 }
+
+/**
+ * Composite context interface maintained for backward compatibility.
+ */
+export interface IContext<T = unknown> extends IPersistentContext, ISerializableContext {}

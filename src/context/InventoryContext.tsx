@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
-import { IContext } from "./IContext";
+import { ILoadableContext, IResettableContext } from "./IContext";
 import { useEngineSubscription } from "./useEngineSubscription";
 import { GameEngine } from "../game/loop/engine";
 import {
@@ -23,7 +23,7 @@ export interface InventoryContextState {
   activePlayerIndex: number;
 }
 
-export interface InventoryContextValue extends IContext<InventoryContextState> {
+export interface InventoryContextValue extends ILoadableContext, IResettableContext {
   activePlayerIndex: number;
   setActivePlayerIndex: (idx: number) => void;
   activePlayer: Player | undefined;
@@ -44,8 +44,6 @@ export interface InventoryContextValue extends IContext<InventoryContextState> {
 }
 
 const InventoryContext = createContext<InventoryContextValue | null>(null);
-
-const STORAGE_KEY = "vibrant_castle_inventory_context_state";
 
 export interface InventoryProviderProps {
   children: React.ReactNode;
@@ -156,7 +154,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
     [engine, activePlayerIndex]
   );
 
-  // IContext methods
+  // Capability methods (IResettableContext)
   const resetToDefaults = useCallback(() => {
     if (engine.players[0]) {
       engine.players[0].inventory = createDefaultInventory();
@@ -173,106 +171,14 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
       engine.players[1].maxStamina = stats.maxStamina;
     }
     setActivePlayerIndex(0);
-    localStorage.removeItem(STORAGE_KEY);
     engine.notifyReact();
     setStateVersion((v) => v + 1);
   }, [engine]);
-
-  const saveToLocalStorage = useCallback(() => {
-    try {
-      const snapshot: InventoryContextState = {
-        p1Inventory: engine.players[0]?.inventory || createDefaultInventory(),
-        p2Inventory: engine.players[1]?.inventory,
-        activePlayerIndex,
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
-    } catch (e) {
-      console.error("Failed to save inventory state to localStorage", e);
-    }
-  }, [engine.players, activePlayerIndex]);
-
-  const loadFromLocalStorage = useCallback((): boolean => {
-    try {
-      const data = localStorage.getItem(STORAGE_KEY);
-      if (!data) return false;
-      const parsed = JSON.parse(data) as InventoryContextState;
-      if (parsed.p1Inventory && engine.players[0]) {
-        engine.players[0].inventory = parsed.p1Inventory;
-        const stats = calculatePlayerDerivedStats(engine.players[0]);
-        engine.players[0].maxHealth = stats.maxHp;
-        engine.players[0].maxMana = stats.maxMana;
-        engine.players[0].maxStamina = stats.maxStamina;
-      }
-      if (parsed.p2Inventory && engine.players[1]) {
-        engine.players[1].inventory = parsed.p2Inventory;
-        const stats = calculatePlayerDerivedStats(engine.players[1]);
-        engine.players[1].maxHealth = stats.maxHp;
-        engine.players[1].maxMana = stats.maxMana;
-        engine.players[1].maxStamina = stats.maxStamina;
-      }
-      if (typeof parsed.activePlayerIndex === "number") {
-        setActivePlayerIndex(parsed.activePlayerIndex);
-      }
-      engine.notifyReact();
-      setStateVersion((v) => v + 1);
-      return true;
-    } catch (e) {
-      console.error("Failed to load inventory state from localStorage", e);
-      return false;
-    }
-  }, [engine]);
-
-  const exportToJson = useCallback((): string => {
-    const snapshot: InventoryContextState = {
-      p1Inventory: engine.players[0]?.inventory || createDefaultInventory(),
-      p2Inventory: engine.players[1]?.inventory,
-      activePlayerIndex,
-    };
-    return JSON.stringify(snapshot, null, 2);
-  }, [engine.players, activePlayerIndex]);
-
-  const importFromJson = useCallback(
-    (jsonStr: string): boolean => {
-      try {
-        const parsed = JSON.parse(jsonStr) as InventoryContextState;
-        if (!parsed || !parsed.p1Inventory) return false;
-
-        if (engine.players[0]) {
-          engine.players[0].inventory = parsed.p1Inventory;
-          const stats = calculatePlayerDerivedStats(engine.players[0]);
-          engine.players[0].maxHealth = stats.maxHp;
-          engine.players[0].maxMana = stats.maxMana;
-          engine.players[0].maxStamina = stats.maxStamina;
-        }
-        if (parsed.p2Inventory && engine.players[1]) {
-          engine.players[1].inventory = parsed.p2Inventory;
-          const stats = calculatePlayerDerivedStats(engine.players[1]);
-          engine.players[1].maxHealth = stats.maxHp;
-          engine.players[1].maxMana = stats.maxMana;
-          engine.players[1].maxStamina = stats.maxStamina;
-        }
-        if (typeof parsed.activePlayerIndex === "number") {
-          setActivePlayerIndex(parsed.activePlayerIndex);
-        }
-        engine.notifyReact();
-        setStateVersion((v) => v + 1);
-        return true;
-      } catch (e) {
-        console.error("Failed to import inventory JSON", e);
-        return false;
-      }
-    },
-    [engine]
-  );
 
   const value = useMemo<InventoryContextValue>(
     () => ({
       isLoaded,
       resetToDefaults,
-      saveToLocalStorage,
-      loadFromLocalStorage,
-      exportToJson,
-      importFromJson,
       activePlayerIndex,
       setActivePlayerIndex,
       activePlayer,
@@ -286,10 +192,6 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
     [
       isLoaded,
       resetToDefaults,
-      saveToLocalStorage,
-      loadFromLocalStorage,
-      exportToJson,
-      importFromJson,
       activePlayerIndex,
       activePlayer,
       activeInventory,
