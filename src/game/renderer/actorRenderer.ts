@@ -30,19 +30,20 @@ export class ActorRenderer implements IActorRenderer {
     assetQuality: AssetQuality,
     tickCount: number
   ): void {
-    players.forEach((player) => {
+    for (let i = 0; i < players.length; i++) {
+      const player = players[i];
       if (player.isDead) {
         ctx.fillStyle =
           player.id === "player1" ? "rgba(239, 68, 68, 0.4)" : "rgba(6, 182, 212, 0.4)";
-        ctx.fillRect(player.x, player.y + player.height - 12, player.height, 12);
-        return;
+        ctx.fillRect(Math.round(player.x), Math.round(player.y + player.height - 12), player.height, 12);
+        continue;
       }
 
       ctx.save();
 
       // Apply Squash & Stretch animation rooted at feet
-      const feetX = player.x + player.width / 2;
-      const feetY = player.y + player.height;
+      const feetX = Math.round(player.x + player.width / 2);
+      const feetY = Math.round(player.y + player.height);
       const scaleX = player.squashStretchScaleX ?? 1;
       const scaleY = player.squashStretchScaleY ?? 1;
 
@@ -56,10 +57,10 @@ export class ActorRenderer implements IActorRenderer {
       // Prismatic Shield Active Aura
       if (player.shieldActiveTime > 0) {
         ctx.save();
-        const cx = player.x + player.width / 2;
-        const cy = player.y + player.height / 2;
+        const cx = Math.round(player.x + player.width / 2);
+        const cy = Math.round(player.y + player.height / 2);
 
-        const shieldPulse = Math.sin(Date.now() * 0.01) * 3;
+        const shieldPulse = Math.sin(tickCount * 0.1) * 3;
         ctx.strokeStyle =
           player.id === "player1" ? "rgba(245, 158, 11, 0.85)" : "rgba(168, 85, 247, 0.8)";
         ctx.lineWidth = 3;
@@ -76,7 +77,7 @@ export class ActorRenderer implements IActorRenderer {
       }
 
       ctx.restore();
-    });
+    }
   }
 
   public renderEnemies(

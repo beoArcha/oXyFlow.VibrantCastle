@@ -36,6 +36,7 @@ import {
 } from "./proceduralBackdropCache";
 
 const SCENERY_TREE_OFFSETS = [350, 1100, 1600, 2450, 3050, 3500] as const;
+const LEAF_COLORS = ["#b45309", "#d97706", "#f59e0b", "#fbbf24"] as const;
 
 export type { IMultiLayerBackgroundSystem, IHitboxRenderer };
 export { MultiLayerBackgroundSystem, defaultMultiLayerBackgroundSystem, HitboxRenderer, defaultHitboxRenderer };
@@ -404,13 +405,12 @@ export class GameRenderer {
     this.ctx.fillStyle = "#5c2512";
     this.ctx.fillRect(x - 6, y, 12, 240);
 
-    const leafColors = ["#b45309", "#d97706", "#f59e0b", "#fbbf24"];
-    leafColors.forEach((color, idx) => {
-      this.ctx.fillStyle = color;
+    for (let idx = 0; idx < LEAF_COLORS.length; idx++) {
+      this.ctx.fillStyle = LEAF_COLORS[idx];
       this.ctx.beginPath();
       this.ctx.arc(x, y - idx * 12, 35 - idx * 4, 0, Math.PI * 2);
       this.ctx.fill();
-    });
+    }
   }
 }
 

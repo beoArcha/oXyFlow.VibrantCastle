@@ -19,10 +19,9 @@ export class EnemyRenderer implements IEnemyRenderer {
   }
 
   public render(ctx: CanvasRenderingContext2D, enemies: Enemy[], tickCount: number): void {
-    enemies.forEach((enemy) => {
-      if (enemy.isDead) return;
-
-      ctx.save();
+    for (let i = 0; i < enemies.length; i++) {
+      const enemy = enemies[i];
+      if (enemy.isDead) continue;
 
       // 1. Determine Atlas ID
       let atlasId: string | null = null;
@@ -35,7 +34,7 @@ export class EnemyRenderer implements IEnemyRenderer {
       }
 
       // 2. Determine Animation State
-      let animName = enemy.animationState || (enemy.isAerial ? "gargoyle_fly" : "idle");
+      let animName = enemy.animationState || (enemy.isAerial ? "fly" : "idle");
       if (enemy.damageTimer > 0) {
         animName = enemy.isAerial ? "gargoyle_hit" : "hit";
       }
@@ -66,9 +65,7 @@ export class EnemyRenderer implements IEnemyRenderer {
       if (enemy.health < enemy.maxHealth && enemy.health > 0) {
         this.renderHealthBar(ctx, enemy);
       }
-
-      ctx.restore();
-    });
+    }
   }
 
   /**

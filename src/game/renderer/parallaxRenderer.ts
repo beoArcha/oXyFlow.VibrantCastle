@@ -28,6 +28,7 @@ export class ParallaxRenderer {
   // Deterministic star field cache for dusk/space sky gradients
   private cachedStars: Array<{ xRatio: number; yRatio: number; size: number; phase: number; brightness: number }> = [];
   private imageCache: Map<string, HTMLImageElement> = new Map();
+  private readonly sortedLayersCache = new WeakMap<ParallaxLayerSchema[], ParallaxLayerSchema[]>();
   private readonly multiLayerSystem: IMultiLayerBackgroundSystem;
 
   constructor(deps: { multiLayerSystem?: IMultiLayerBackgroundSystem } = {}) {
@@ -102,8 +103,12 @@ export class ParallaxRenderer {
     const progressX = Math.max(0, Math.min(1, cameraX / maxCamX));
     const progressY = Math.max(0, Math.min(1, cameraY / maxCamY));
 
-    // Sort layers by depth (shallowest 0.02 first, deepest 0.9 last)
-    const sortedLayers = [...pb.layers].sort((a, b) => (a.depth ?? 0) - (b.depth ?? 0));
+    // Sort layers by depth (cached to avoid per-frame array clone & sort allocations)
+    let sortedLayers = this.sortedLayersCache.get(pb.layers);
+    if (!sortedLayers) {
+      sortedLayers = [...pb.layers].sort((a, b) => (a.depth ?? 0) - (b.depth ?? 0));
+      this.sortedLayersCache.set(pb.layers, sortedLayers);
+    }
 
     for (const layer of sortedLayers) {
       ctx.save();
@@ -957,7 +962,7 @@ export class ParallaxRenderer {
     viewportWidth: number,
     viewportHeight: number
   ) {
-    if (!layer.imageUrl) return;
+    if (!layer.imageUrl || typeof Image === "undefined") return;
 
     let img = layer.imageElement || this.imageCache.get(layer.imageUrl);
     if (!img) {

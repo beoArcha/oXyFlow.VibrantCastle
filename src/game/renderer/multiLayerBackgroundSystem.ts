@@ -60,6 +60,21 @@ const TIER_ORDER: BackgroundLayerTier[] = [
   "close",
 ];
 
+const DYNAMIC_TIERS: readonly BackgroundLayerTier[] = [
+  "mid_far",
+  "mid",
+  "mid_close",
+  "close",
+] as const;
+
+const DEFAULT_TIER_SPEEDS: Readonly<Record<BackgroundLayerTier, { readonly x: number; readonly y: number }>> = {
+  far: { x: 0.0, y: 0.0 }, // static
+  mid_far: { x: 0.22, y: 0.09 },
+  mid: { x: 0.42, y: 0.18 },
+  mid_close: { x: 0.65, y: 0.30 },
+  close: { x: 0.85, y: 0.45 },
+};
+
 /**
  * MultiLayerBackgroundSystem:
  * Implements a multi-layered parallax background system for all 5 sectors
@@ -71,6 +86,13 @@ const TIER_ORDER: BackgroundLayerTier[] = [
 export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
   private imageCache: Map<string, HTMLImageElement> = new Map();
   private isPreloaded: boolean = false;
+  private readonly tierBuckets: Record<BackgroundLayerTier, ParallaxLayerSchema[]> = {
+    far: [],
+    mid_far: [],
+    mid: [],
+    mid_close: [],
+    close: [],
+  };
 
   constructor() {
     this.preload();
@@ -134,7 +156,7 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
   }
 
   private getImage(url: string | undefined): HTMLImageElement | null {
-    if (!url) return null;
+    if (!url || typeof Image === "undefined") return null;
     let img = this.imageCache.get(url);
     if (!img) {
       img = new Image();
@@ -197,18 +219,17 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
     const progressX = Math.max(0, Math.min(1, cameraX / maxCamX));
     const progressY = Math.max(0, Math.min(1, cameraY / maxCamY));
 
-    // Group layers into tiers
-    const tierBuckets: Record<BackgroundLayerTier, ParallaxLayerSchema[]> = {
-      far: [],
-      mid_far: [],
-      mid: [],
-      mid_close: [],
-      close: [],
-    };
+    // Group layers into preallocated reusable tiers (zero per-frame allocations)
+    this.tierBuckets.far.length = 0;
+    this.tierBuckets.mid_far.length = 0;
+    this.tierBuckets.mid.length = 0;
+    this.tierBuckets.mid_close.length = 0;
+    this.tierBuckets.close.length = 0;
 
-    for (const layer of pb.layers) {
+    for (let i = 0; i < pb.layers.length; i++) {
+      const layer = pb.layers[i];
       const tier = this.resolveTier(layer);
-      tierBuckets[tier].push(layer);
+      this.tierBuckets[tier].push(layer);
     }
 
     // 1. Render 'far' as a static backdrop (anchored to viewport, zero parallax movement)
@@ -216,7 +237,7 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
       this.renderFarStaticBackdrop(
         ctx,
         location,
-        tierBuckets.far,
+        this.tierBuckets.far,
         viewportWidth,
         viewportHeight,
         tickCount
@@ -224,17 +245,12 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
     }
 
     // 2. Render dynamic layers ('mid_far', 'mid', 'mid_close', 'close') on top in sequence
-    const dynamicTiers: BackgroundLayerTier[] = [
-      "mid_far",
-      "mid",
-      "mid_close",
-      "close",
-    ];
-
-    for (const tier of dynamicTiers) {
+    for (let i = 0; i < DYNAMIC_TIERS.length; i++) {
+      const tier = DYNAMIC_TIERS[i];
       if (debugManager.state.parallaxTiers[tier] === false) continue;
-      const layersInTier = tierBuckets[tier];
-      for (const layer of layersInTier) {
+      const layersInTier = this.tierBuckets[tier];
+      for (let j = 0; j < layersInTier.length; j++) {
+        const layer = layersInTier[j];
         this.renderDynamicLayer(
           ctx,
           layer,
@@ -366,16 +382,8 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
     const drawH = effectiveHeight;
 
     // Tier-appropriate scroll speeds if not explicitly assigned
-    const defaultSpeeds: Record<BackgroundLayerTier, { x: number; y: number }> = {
-      far: { x: 0.0, y: 0.0 }, // static
-      mid_far: { x: 0.22, y: 0.09 },
-      mid: { x: 0.42, y: 0.18 },
-      mid_close: { x: 0.65, y: 0.30 },
-      close: { x: 0.85, y: 0.45 },
-    };
-
-    const speedX = layer.scrollSpeedX !== undefined ? layer.scrollSpeedX : defaultSpeeds[tier].x;
-    const speedY = layer.scrollSpeedY !== undefined ? layer.scrollSpeedY : defaultSpeeds[tier].y;
+    const speedX = layer.scrollSpeedX !== undefined ? layer.scrollSpeedX : DEFAULT_TIER_SPEEDS[tier].x;
+    const speedY = layer.scrollSpeedY !== undefined ? layer.scrollSpeedY : DEFAULT_TIER_SPEEDS[tier].y;
 
     // Horizontal parallax scroll position
     const scrollX = progressX * extraWidth * speedX;

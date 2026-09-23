@@ -29,6 +29,7 @@ export interface IHitboxRenderer {
 }
 
 export class HitboxRenderer implements IHitboxRenderer {
+  private readonly profilerFlags: string[] = [];
   public renderHitboxes(
     ctx: CanvasRenderingContext2D,
     players: Player[],
@@ -189,7 +190,10 @@ export class HitboxRenderer implements IHitboxRenderer {
   ): void {
     ctx.save();
     const p1 = players[0];
-    const aliveEnemies = enemies.filter((e) => !e.isDead).length;
+    let aliveEnemies = 0;
+    for (let i = 0; i < enemies.length; i++) {
+      if (!enemies[i].isDead) aliveEnemies++;
+    }
     const frameTimeMs = measuredFps > 0 ? (1000 / measuredFps).toFixed(1) : "0.0";
 
     const boxW = 260;
@@ -247,17 +251,17 @@ export class HitboxRenderer implements IHitboxRenderer {
 
     // Active Cheats Status bar
     const st = debugManager.state;
-    const flags: string[] = [];
-    if (st.godMode) flags.push("GOD");
-    if (st.infiniteMana) flags.push("INF_MP");
-    if (st.infiniteStamina) flags.push("INF_SP");
-    if (st.noClip) flags.push("NOCLIP");
-    if (st.freezeAI) flags.push("FROZEN_AI");
-    if (st.timeScale !== 1.0) flags.push(`${st.timeScale}x`);
+    this.profilerFlags.length = 0;
+    if (st.godMode) this.profilerFlags.push("GOD");
+    if (st.infiniteMana) this.profilerFlags.push("INF_MP");
+    if (st.infiniteStamina) this.profilerFlags.push("INF_SP");
+    if (st.noClip) this.profilerFlags.push("NOCLIP");
+    if (st.freezeAI) this.profilerFlags.push("FROZEN_AI");
+    if (st.timeScale !== 1.0) this.profilerFlags.push(`${st.timeScale}x`);
 
-    if (flags.length > 0) {
+    if (this.profilerFlags.length > 0) {
       ctx.fillStyle = "#ef4444";
-      ctx.fillText(`Aktywne: ${flags.join(" | ")}`, x + 10, y + 148);
+      ctx.fillText(`Aktywne: ${this.profilerFlags.join(" | ")}`, x + 10, y + 148);
     }
 
     ctx.restore();

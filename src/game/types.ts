@@ -163,7 +163,7 @@ export interface IPotionEffects {
   count?: number; // stack count for potions
 }
 
-export interface Item extends ItemBase, ICombatModifiers, IPotionEffects {}
+export interface Item extends ItemBase, ICombatModifiers, IPotionEffects { }
 
 export interface EquipmentState {
   mainHand: Item | null;
@@ -270,12 +270,12 @@ export interface IPlayerProgression {
 
 export interface Player
   extends ICharacterIdentity,
-    ITransform2D,
-    IJumpPhysicsState,
-    IVitalResources,
-    ICombatTimers,
-    ISpellcasterState,
-    IPlayerProgression {
+  ITransform2D,
+  IJumpPhysicsState,
+  IVitalResources,
+  ICombatTimers,
+  ISpellcasterState,
+  IPlayerProgression {
   id: PlayerId;
   animationState: AnimationState;
 }
@@ -300,7 +300,7 @@ export interface Enemy {
   nameKey?: string;
   defaultName?: string;
   templateId?: string; // Links to enemies.json
-  animationState?: string; // e.g. "idle", "gargoyle_fly", "hit", "gargoyle_attack", "destroy"
+  animationState?: string; // e.g. "idle", "fly", "hit", "attack", "destroy"
   animationTicks?: number;
 }
 

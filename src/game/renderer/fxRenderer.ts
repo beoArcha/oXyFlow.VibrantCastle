@@ -14,8 +14,8 @@ export interface IFxRenderer {
  */
 export class FxRenderer implements IFxRenderer {
   public renderProjectiles(ctx: CanvasRenderingContext2D, projectiles: Projectile[]): void {
-    projectiles.forEach((p) => {
-      ctx.save();
+    for (let i = 0; i < projectiles.length; i++) {
+      const p = projectiles[i];
 
       // Glowing outer aura
       const grad = ctx.createRadialGradient(p.x, p.y, 2, p.x, p.y, p.radius * 2);
@@ -37,9 +37,7 @@ export class FxRenderer implements IFxRenderer {
       // Trailing tail spark
       ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
       ctx.fillRect(p.x - p.vx * 1.5, p.y - p.vy * 1.5, p.radius * 0.8, p.radius * 0.8);
-
-      ctx.restore();
-    });
+    }
   }
 
   public renderParticles(
@@ -47,8 +45,9 @@ export class FxRenderer implements IFxRenderer {
     particles: readonly Particle[],
     targetType: "dust" | "leaf" | "spark"
   ): void {
-    particles.forEach((p) => {
-      if (p.type !== targetType) return;
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      if (p.type !== targetType) continue;
 
       ctx.fillStyle = p.color;
 
@@ -65,7 +64,7 @@ export class FxRenderer implements IFxRenderer {
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();
       }
-    });
+    }
   }
 }
 

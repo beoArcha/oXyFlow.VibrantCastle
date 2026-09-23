@@ -21,16 +21,16 @@ import { GameRenderer } from "../renderer/renderer";
 import { ParticleSystem } from "./../engine/particleSystem";
 import { CameraManager } from "../engine/cameraManager";
 import { gameSave } from "../logic/save";
-import { castMagicSpell, SPELL_REGISTRY } from "../logic/magic";
+import { castMagicSpell } from "../logic/magic";
 import {
   useQuickPotion,
-  ITEM_REGISTRY,
   equipItemFromBackpack,
   unequipSlotToBackpack,
   discardItemFromBackpack,
   calculatePlayerDerivedStats,
   createDefaultInventory,
 } from "../logic/inventory";
+import { DebugCheatsController } from "../debug/debugCheatsController";
 import {
   unlockSkillNode,
   assignSpellToSlot,
@@ -59,6 +59,7 @@ export interface IGameDependencies {
   narration?: INarrationSystem;
   playerController?: IPlayerController;
   saveManager?: typeof gameSave;
+  debugCheats?: DebugCheatsController;
 }
 
 /**
@@ -91,6 +92,11 @@ export class GameEngine {
   private readonly narrationSystem: INarrationSystem;
   private readonly playerController: IPlayerController;
   private readonly save: typeof gameSave;
+  private readonly debugCheats: DebugCheatsController;
+
+  public get debugController(): DebugCheatsController {
+    return this.debugCheats;
+  }
 
   // Narration property getter for backward-compatible UI bindings
   public get currentNarrationText(): string {
@@ -155,6 +161,26 @@ export class GameEngine {
     this.narrationSystem = deps.narration || new NarrationSystem();
     this.playerController = deps.playerController || defaultPlayerController;
     this.save = deps.saveManager || gameSave;
+    this.debugCheats =
+      deps.debugCheats ||
+      new DebugCheatsController({
+        getPlayers: () => this.players,
+        getEnemies: () => this.enemies,
+        getLevelDimensions: () => ({ width: this.levelWidth, height: this.levelHeight }),
+        spawnBurst: (x, y, color, type, count) =>
+          this.particleSystem.spawnBurst(x, y, color, type, count),
+        playSFX: (type) => this.audio.playSFX(type),
+        recordKill: (playerId, enemyId) => statsManager.recordKill(playerId, enemyId),
+        triggerNarration: (key) => this.triggerNarration(key),
+        stopEngine: () => this.stop(),
+        setVictory: (v) => {
+          this.isVictory = v;
+        },
+        setDefeat: (d) => {
+          this.isDefeat = d;
+        },
+        notifyReact: () => this.notifyReact(),
+      });
 
     this.resetLevel("courtyard");
   }
@@ -886,118 +912,22 @@ export class GameEngine {
     return this.renderer ? this.renderer.scaleFactor : 1;
   }
 
+  // --- Debug & Cheat Delegation (Delegated to DebugCheatsController - SRP) ---
+
   public teleportPlayer(playerId: PlayerId = PlayerId.Player1, x: number, y: number) {
-    const player = this.players.find((p) => p.id === playerId) || this.players[0];
-    if (!player) return;
-
-    // Burst at old position
-    this.particleSystem.spawnBurst(player.x + player.width / 2, player.y + player.height / 2, "#38bdf8", "spark", 10);
-
-    player.x = Math.max(0, Math.min(this.levelWidth - player.width, x));
-    player.y = Math.max(0, Math.min(this.levelHeight - player.height, y));
-    player.vx = 0;
-    player.vy = 0;
-    player.isGrounded = false;
-
-    // Burst at new arrival position
-    this.particleSystem.spawnBurst(player.x + player.width / 2, player.y + player.height / 2, "#a855f7", "magic", 16);
-    this.audio.playSFX(SoundType.SFX_UNLOCK);
-    this.notifyReact();
+    this.debugCheats.teleportPlayer(playerId, x, y);
   }
 
   public killAllEnemies() {
-    this.enemies.forEach((enemy) => {
-      if (!enemy.isDead) {
-        enemy.health = 0;
-        enemy.isDead = true;
-        this.particleSystem.spawnBurst(
-          enemy.x + enemy.width / 2,
-          enemy.y + enemy.height / 2,
-          "#f43f5e",
-          "spark",
-          12
-        );
-        statsManager.recordKill(PlayerId.Player1, enemy.id);
-      }
-    });
-    this.audio.playSFX(SoundType.SFX_HIT);
-    this.notifyReact();
+    this.debugCheats.killAllEnemies();
   }
 
-  public spawnEnemy(enemyType: string, customX?: number, customY?: number) {
-    const p1 = this.players[0];
-    const spawnX = customX !== undefined ? customX : (p1 ? p1.x + 120 : 300);
-    const spawnY = customY !== undefined ? customY : (p1 ? p1.y : 400);
-
-    const id = `debug_${enemyType}_${Date.now()}`;
-    let name = enemyType.replace(/_/g, " ");
-    let maxHp = 100;
-    let width = 36;
-    let height = 48;
-    let isAerial = false;
-    let isDummy = false;
-
-    if (enemyType.includes("dummy") || enemyType.includes("target")) {
-      isDummy = true;
-      maxHp = 9999;
-      name = "Kukła Treningowa";
-    } else if (enemyType.includes("boss") || enemyType.includes("sentinel_boss")) {
-      maxHp = 600;
-      width = 56;
-      height = 70;
-      name = "Bastion Sentinel Boss";
-    } else if (enemyType.includes("gargoyle") || enemyType.includes("wisp")) {
-      isAerial = true;
-      maxHp = 120;
-      width = 32;
-      height = 36;
-    } else if (enemyType.includes("crawler")) {
-      maxHp = 90;
-      width = 44;
-      height = 28;
-    } else {
-      maxHp = 150;
-      width = 38;
-      height = 52;
-    }
-
-    const newEnemy: Enemy = {
-      id,
-      defaultName: name,
-      x: spawnX,
-      y: spawnY,
-      vx: 0,
-      vy: 0,
-      width,
-      height,
-      health: maxHp,
-      maxHealth: maxHp,
-      isDead: false,
-      patrolMinX: Math.max(0, spawnX - 200),
-      patrolMaxX: Math.min(this.levelWidth, spawnX + 200),
-      facingLeft: true,
-      isDummy,
-      damageTimer: 0,
-      isAerial,
-    };
-
-    this.enemies.push(newEnemy);
-    this.particleSystem.spawnBurst(spawnX + width / 2, spawnY + height / 2, "#f43f5e", "magic", 20);
-    this.audio.playSFX(SoundType.SFX_SKILL_UNLOCK);
-    this.notifyReact();
+  public spawnEnemy(enemyType: string, customX?: number, customY?: number): Enemy {
+    return this.debugCheats.spawnEnemy(enemyType, customX, customY);
   }
 
   public refillVitals(playerIndex: number = 0) {
-    const player = this.players[playerIndex];
-    if (player) {
-      player.health = player.maxHealth;
-      player.mana = player.maxMana;
-      player.stamina = player.maxStamina;
-      player.isDead = false;
-      this.particleSystem.spawnBurst(player.x + player.width / 2, player.y + player.height / 2, "#22c55e", "spark", 15);
-      this.audio.playSFX(SoundType.SFX_POTION);
-      this.notifyReact();
-    }
+    this.debugCheats.refillVitals(playerIndex);
   }
 
   public setPlayerStat(
@@ -1005,71 +935,39 @@ export class GameEngine {
     stat: "health" | "maxHealth" | "mana" | "maxMana" | "stamina" | "maxStamina",
     value: number
   ) {
-    const player = this.players[playerIndex];
-    if (!player) return;
-    const clamped = Math.max(1, Math.min(9999, Math.round(value)));
-    player[stat] = clamped;
-    if (stat === "maxHealth" && player.health > clamped) player.health = clamped;
-    if (stat === "maxMana" && player.mana > clamped) player.mana = clamped;
-    if (stat === "maxStamina" && player.stamina > clamped) player.stamina = clamped;
-    this.notifyReact();
+    this.debugCheats.setPlayerStat(playerIndex, stat, value);
   }
 
   public unlockAllSkills(playerIndex: number = 0) {
-    const player = this.players[playerIndex];
-    if (!player) return;
-    const allSpellIds = Object.keys(SPELL_REGISTRY);
-    player.unlockedSkills = Array.from(new Set([...player.unlockedSkills, ...allSpellIds]));
-    player.skillPoints = Math.max(player.skillPoints, 10);
-    this.particleSystem.spawnBurst(player.x + player.width / 2, player.y + player.height / 2, "#facc15", "magic", 25);
-    this.audio.playSFX(SoundType.SFX_SKILL_UNLOCK);
-    this.notifyReact();
+    this.debugCheats.unlockAllSkills(playerIndex);
   }
 
   public giveAllWeapons(playerIndex: number = 0) {
-    const player = this.players[playerIndex];
-    if (!player) return;
-    const weapons = Object.values(ITEM_REGISTRY).filter((item) => item.type === "weapon");
-    weapons.forEach((w) => {
-      // Find empty slot
-      const emptyIdx = player.inventory.backpack.findIndex((s) => s === null);
-      if (emptyIdx !== -1) {
-        player.inventory.backpack[emptyIdx] = { ...w };
-      }
-    });
-    this.particleSystem.spawnBurst(player.x + player.width / 2, player.y + player.height / 2, "#fbbf24", "spark", 20);
-    this.audio.playSFX(SoundType.SFX_SAVE);
-    this.notifyReact();
+    this.debugCheats.giveAllWeapons(playerIndex);
   }
 
   public givePotions(playerIndex: number = 0) {
-    const player = this.players[playerIndex];
-    if (!player) return;
-    player.inventory.quickPotions = [
-      ITEM_REGISTRY.potion_health ? { ...ITEM_REGISTRY.potion_health, count: 5 } : null,
-      ITEM_REGISTRY.potion_mana ? { ...ITEM_REGISTRY.potion_mana, count: 5 } : null,
-      ITEM_REGISTRY.potion_elixir ? { ...ITEM_REGISTRY.potion_elixir, count: 5 } : null,
-    ];
-    this.audio.playSFX(SoundType.SFX_POTION);
-    this.notifyReact();
+    this.debugCheats.givePotions(playerIndex);
   }
 
   public addGold(amount: number) {
-    statsManager.addXp(PlayerId.Player1, amount);
-    const p1 = this.players[0];
-    if (p1) {
-      p1.skillPoints = (p1.skillPoints || 0) + Math.max(1, Math.round(amount / 500));
-    }
-    this.audio.playSFX(SoundType.SFX_UNLOCK);
-    this.notifyReact();
+    this.debugCheats.addGold(amount);
   }
 
   public clearInventory(playerIndex: number = 0) {
-    const player = this.players[playerIndex];
-    if (!player) return;
-    player.inventory.backpack = Array(12).fill(null);
-    this.audio.playSFX(SoundType.SFX_HIT);
-    this.notifyReact();
+    this.debugCheats.clearInventory(playerIndex);
+  }
+
+  public triggerParticleBurst(type: "dust" | "spark" | "magic", count: number = 25) {
+    this.debugCheats.triggerParticleBurst(type, count);
+  }
+
+  public forceVictory() {
+    this.debugCheats.forceVictory();
+  }
+
+  public forceDefeat() {
+    this.debugCheats.forceDefeat();
   }
 
   // --- Player Command Pipeline (AGENT.md unidirectional architecture) ---
@@ -1170,45 +1068,12 @@ export class GameEngine {
     this.notifyReact();
   }
 
-  public forceVictory() {
-    this.isVictory = true;
-    this.triggerNarration("trainingGoalSuccess");
-    this.audio.playSFX(SoundType.SFX_SKILL_UNLOCK);
-    this.stop();
-    this.notifyReact();
-  }
-
-  public forceDefeat() {
-    const p1 = this.players[0];
-    if (p1) {
-      p1.health = 0;
-      p1.isDead = true;
-    }
-    this.isDefeat = true;
-    this.triggerNarration("defeat");
-    this.audio.playSFX(SoundType.SFX_HIT);
-    this.notifyReact();
-  }
-
   public stepSingleFrame() {
     const wasPaused = this.isPaused;
     this.isPaused = false;
     this.tick(1.0);
     this.isPaused = wasPaused;
     this.notifyReact();
-  }
-
-  public triggerParticleBurst(type: "dust" | "spark" | "magic", count: number = 25) {
-    const p1 = this.players[0];
-    const x = p1 ? p1.x + p1.width / 2 : this.levelWidth / 2;
-    const y = p1 ? p1.y + p1.height / 2 : this.levelHeight / 2;
-    const color =
-      type === "spark"
-        ? "#f59e0b"
-        : type === "magic"
-        ? "#a855f7"
-        : "#d97706";
-    this.particleSystem.spawnBurst(x, y, color, type, count);
   }
 
   public setMusicIntensity(intensity: number) {

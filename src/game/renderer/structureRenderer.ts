@@ -29,10 +29,9 @@ export class StructureRenderer implements IStructureRenderer {
     language: LanguageCode,
     tickCount: number
   ): void {
-    entities.forEach((entity) => {
-      if (entity.y === -1000) return;
-
-      ctx.save();
+    for (let i = 0; i < entities.length; i++) {
+      const entity = entities[i];
+      if (entity.y === -1000) continue;
 
       switch (entity.type) {
         case CollisionType.Goal:
@@ -55,9 +54,7 @@ export class StructureRenderer implements IStructureRenderer {
           this.renderHazardSpikes(ctx, entity);
           break;
       }
-
-      ctx.restore();
-    });
+    }
   }
 
   private renderGoalPortal(
