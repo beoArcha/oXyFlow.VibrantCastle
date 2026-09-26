@@ -59,6 +59,32 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
     durationMs: 0,
   });
 
+  const handleMetricsChange = useCallback(
+    (metrics: {
+      frameCount: number;
+      durationMs: number;
+      textureWidth?: number;
+      textureHeight?: number;
+    }) => {
+      setSliceMetrics((prev) => {
+        if (
+          prev.frameCount === metrics.frameCount &&
+          prev.textureWidth === metrics.textureWidth &&
+          prev.textureHeight === metrics.textureHeight &&
+          Math.abs(prev.durationMs - metrics.durationMs) < 0.5
+        ) {
+          return prev;
+        }
+        return metrics;
+      });
+    },
+    []
+  );
+
+  const handleErrorChange = useCallback((err: GameBaseError | null) => {
+    setErrorState(err);
+  }, []);
+
   // Active preset item
   const activePreset = useMemo(() => {
     return (
@@ -149,7 +175,7 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
       setMetaDoc(preset.defaultMeta);
       setErrorState(null);
 
-      studioLogger.info(`Załadowano preset atlasu: ${preset.name} [${preset.id}]`, {
+      studioLogger.info(`Loaded atlas preset: ${preset.name} [${preset.id}]`, {
         presetId: preset.id,
         category: preset.category,
       });
@@ -213,7 +239,7 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
     if (file) {
       if (!file.type.startsWith("image/")) {
         const err = new AssetError(
-          `Nieprawidłowy typ pliku graficznego: ${file.type || file.name}`,
+          `Invalid graphic file type: ${file.type || file.name}`,
           ErrorCode.ASSET_CORRUPTED,
           { details: { fileName: file.name, fileType: file.type } }
         );
@@ -227,7 +253,7 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
       setImageSrc(url);
       setErrorState(null);
       studioLogger.info(
-        `Wczytano własną teksturę obrazu: ${file.name} (${Math.round(file.size / 1024)} KB)`,
+        `Loaded custom image texture: ${file.name} (${Math.round(file.size / 1024)} KB)`,
         { fileName: file.name, size: file.size }
       );
     }
@@ -242,17 +268,17 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
         try {
           const content = event.target?.result as string;
           if (!content || !content.trim()) {
-            throw new Error("Plik JSON jest pusty");
+            throw new Error("JSON file is empty");
           }
           const parsed = JSON.parse(content);
           if (!parsed || typeof parsed !== "object") {
-            throw new Error("Brak poprawnego obiektu JSON");
+            throw new Error("Invalid JSON document structure");
           }
 
           setMetaDoc(parsed);
           setErrorState(null);
           studioLogger.info(
-            `Pomyślnie sparsowano i wczytano konfigurację JSON: ${file.name}`,
+            `Successfully parsed and loaded JSON configuration: ${file.name}`,
             { fileName: file.name, size: file.size }
           );
 
@@ -289,7 +315,7 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
           setSelectedFrameIndex(0);
         } catch (err: any) {
           const parseError = new ParserError(
-            `Nie udało się sparsować pliku meta JSON: ${err?.message || "Nieznany błąd"}`,
+            `Failed to parse meta JSON file: ${err?.message || "Unknown error"}`,
             ErrorCode.PARSER_INVALID_FORMAT,
             { details: { fileName: file.name }, cause: err }
           );
@@ -302,7 +328,7 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
       };
       reader.onerror = () => {
         const readError = new ParserError(
-          `Błąd odczytu pliku z dysku: ${file.name}`,
+          `Failed to read file from disk: ${file.name}`,
           ErrorCode.PARSER_INVALID_FORMAT,
           { details: { fileName: file.name } }
         );
@@ -540,8 +566,8 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
             selectedFrameIndex={selectedFrameIndex}
             externalTool={viewerTool}
             onToolChange={(tool) => setViewerTool(tool)}
-            onError={(err) => setErrorState(err)}
-            onMetricsChange={(metrics) => setSliceMetrics(metrics)}
+            onError={handleErrorChange}
+            onMetricsChange={handleMetricsChange}
             onSelectCell={(info) => {
               setSelectedCellInfo(info);
               if (info.trackName) {

@@ -1,4 +1,4 @@
-# 🧱 AGENT.md v2 — Vibrant Castle
+# 🧱 AGENT.md v3 — Vibrant Castle
 
 ---
 
@@ -82,6 +82,172 @@ Architecture is always more important than implementation speed.
 
 ---
 
+### 1.6 CHANGE MANAGEMENT PROTOCOL (MANDATORY)
+
+#### 1.6.1 When Required
+
+This protocol MUST be used when:
+
+* change affects multiple systems (ENGINE / UI / CONTENT / AI)
+* change impacts determinism, rendering, input, or state flow
+* change introduces or modifies core mechanics
+* change touches multiple technical domains (e.g. rendering + collision + logging)
+* change complexity is non-trivial
+
+❌ FORBIDDEN:
+
+* implementing complex changes in a single step
+* skipping analysis phase
+* introducing partial, non-working states
+
+#### 1.6.2 Required Workflow
+
+Every complex change MUST follow:
+
+* ANALYSIS
+* IMPLEMENTATION PLAN
+* PHASED DELIVERY
+* VALIDATION
+
+#### 1.6.3 Analysis (MANDATORY)
+
+Analysis MUST include:
+
+* problem definition
+* affected domains:
+
+* ENGINE
+* UI
+* CONTENT
+* AI
+
+Affected technical layers:
+
+* rendering
+* simulation
+* collision
+* input
+* persistence
+* logging
+* risks:
+* determinism break
+* performance degradation
+* visual inconsistency
+* invariants that MUST NOT be broken
+
+Output: structured analysis document
+
+#### 1.6.4 Implementation Plan (MANDATORY)
+
+Plan MUST:
+
+* define phases
+* define scope per phase
+* define expected output per phase
+
+Ensure each phase produces:
+
+* working
+* testable
+* stable
+
+Each phase MUST NOT break:
+
+* game loop
+* determinism
+* rendering pipeline
+* UI contract
+
+#### 1.6.5 Phased Delivery Rules
+
+Each phase MUST:
+
+* be independently runnable
+* not require unfinished future work
+* maintain full engine integrity
+
+Allowed:
+
+* temporary adapters
+* feature flags
+
+❌ FORBIDDEN:
+
+* partially implemented systems
+* dead code paths
+* breaking snapshot contract
+
+#### 1.6.6 Domain vs Technical Decomposition
+
+Changes MUST be decomposed along TWO axes:
+
+A. System Domains
+
+* ENGINE
+* UI
+* CONTENT
+* AI
+
+B. Technical Concerns
+
+* rendering
+* simulation
+* collision
+* input
+* animation
+* logging
+* persistence
+
+A single problem MAY span multiple domains and multiple concerns.
+
+Example:
+
+"Slicing system"
+
+Domains:
+
+* ENGINE (collision + damage)
+* UI (feedback)
+* CONTENT (weapon config)
+
+Technical:
+
+* collision detection
+* animation timing
+* rendering effects
+
+#### 1.6.7 Phase Design Strategy
+
+Phases SHOULD be ordered:
+
+* Data structures
+* Core logic (ENGINE)
+* Rendering
+* UI integration
+* Content integration
+
+Never reverse this order.
+
+#### 1.6.8 Validation (MANDATORY)
+
+Each phase MUST pass:
+
+* determinism check
+* performance check
+* rendering correctness
+* no regression in existing systems
+
+#### 1.6.9 Output Format (STRICT)
+
+Every complex change MUST produce:
+
+* ANALYSIS
+* PHASE PLAN
+* IMPLEMENTATION (per phase)
+* VALIDATION REPORT
+
+---
+
 ## 2. ENGINE ARCHITECTURE (TS + CANVAS 2D)
 
 ### 2.1 Game Loop (MANDATORY)
@@ -98,6 +264,13 @@ render(interpolation)
 
 * Game logic in React
 * Variable timestep gameplay
+
+#### 2.1.1 Game loop config
+
+* fixedStep = 1/60 (configurable).
+* maxUpdatesPerFrame = 5.
+* Deterministic RNG: pcg32 seeded from level.seed.
+* Snapshot format: { timestamp_ms, entities: [...], global: {...}, checksum } — UI must treat snapshots as read-only.
 
 ---
 
@@ -207,6 +380,12 @@ Each level MUST:
 
 ---
 
+### 4.4 Level JSON schema (required)
+
+Provide level.schema.json and ensure CI validates all level JSONs. Minimal required fields and an example must be in the repo. Parallax layer entry must include type (far|mid_far|mid|mid_close|close), path, opaque (boolean).
+
+---
+
 ## 5. AI OPERATING CONTRACT
 
 ### 5.1 Allowed
@@ -290,14 +469,8 @@ CLOSE → foreground
 
 ### 7.2 FAR (CRITICAL RULE)
 
-* MUST cover 100% of scene
-* MUST NOT contain transparency
-* Acts as base/fill layer
-
-❌ FORBIDDEN:
-
-* transparent FAR
-* holes or gaps
+* MUST cover 100% of scene and MUST be opaque (no alpha).
+* Exception to "PNG ONLY / TRUE transparency": FAR is allowed to be an opaque PNG without transparency and must have opaque: true in level JSON. All other parallax layers must use true transparency.
 
 ---
 
@@ -431,6 +604,8 @@ Castlevania-style action platformer
 
 ## 13. TOOLING (BUN ONLY)
 
+Provide bun minimal version; include Dockerfile/GHA sample; provide node fallback commands or state that contributors must use bun. Include ci/bun-setup.yml example.
+
 ### 13.1 Runtime
 
 * Bun ONLY
@@ -456,6 +631,11 @@ A task is complete ONLY if:
 * performance safe
 * lore consistent
 * asset rules satisfied
+* Unit tests >= 80% coverage for engine core.
+* Performance: 60 FPS smoke test on defined CI runner.
+* Asset validator clean.
+* Level schema validated.
+* i18n keys complete.
 
 ---
 

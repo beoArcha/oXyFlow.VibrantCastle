@@ -58,7 +58,7 @@ describe("Atlas Studio Logging & Domain Error Architecture Suite (Phase 3)", () 
   });
 
   it("verifies ParserError conforms to DomainError & GameBaseError contracts", () => {
-    const error = new ParserError("Nieprawidłowy JSON meta", ErrorCode.PARSER_INVALID_FORMAT, {
+    const error = new ParserError("Invalid meta JSON document", ErrorCode.PARSER_INVALID_FORMAT, {
       details: { fileName: "bad_meta.json", line: 42 },
     });
 
@@ -71,7 +71,7 @@ describe("Atlas Studio Logging & Domain Error Architecture Suite (Phase 3)", () 
   });
 
   it("verifies AssetError conforms to DomainError & GameBaseError contracts", () => {
-    const error = new AssetError("Nie udało się załadować tekstury atlasu", ErrorCode.ASSET_LOAD_FAILED, {
+    const error = new AssetError("Failed to load atlas texture", ErrorCode.ASSET_LOAD_FAILED, {
       details: { imageSrc: "assets/missing.png" },
     });
 
@@ -112,4 +112,36 @@ describe("Atlas Studio Logging & Domain Error Architecture Suite (Phase 3)", () 
     expect(settingsTranslations.en.atlasStudioOpenLogsTab).toBe("Full view (Logs)");
     expect(settingsTranslations.en.atlasStudioNoLogsYet).toBe("No slicer events recorded yet.");
   });
+
+  it("verifies telemetry shallow comparator rejects redundant state dispatches", () => {
+    let stateUpdates = 0;
+    let currentMetrics = {
+      frameCount: 12,
+      durationMs: 1.23,
+      textureWidth: 1024,
+      textureHeight: 768,
+    };
+
+    const updateMetrics = (next: typeof currentMetrics) => {
+      if (
+        currentMetrics.frameCount === next.frameCount &&
+        currentMetrics.textureWidth === next.textureWidth &&
+        currentMetrics.textureHeight === next.textureHeight &&
+        Math.abs(currentMetrics.durationMs - next.durationMs) < 0.5
+      ) {
+        return; // Suppressed
+      }
+      currentMetrics = next;
+      stateUpdates++;
+    };
+
+    // First update: should trigger
+    updateMetrics({ frameCount: 12, durationMs: 1.35, textureWidth: 1024, textureHeight: 768 });
+    expect(stateUpdates).toBe(0); // Diff is only 0.12ms, suppressed!
+
+    // Second update: dimension change, should trigger
+    updateMetrics({ frameCount: 16, durationMs: 1.35, textureWidth: 1024, textureHeight: 768 });
+    expect(stateUpdates).toBe(1);
+  });
 });
+

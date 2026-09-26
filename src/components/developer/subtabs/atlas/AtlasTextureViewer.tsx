@@ -174,6 +174,17 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
     hex?: string;
   } | null>(null);
 
+  // Ref for callbacks to prevent re-triggering effects on parent re-renders
+  const onMetricsChangeRef = useRef(onMetricsChange);
+  useEffect(() => {
+    onMetricsChangeRef.current = onMetricsChange;
+  }, [onMetricsChange]);
+
+  const onErrorRef = useRef(onError);
+  useEffect(() => {
+    onErrorRef.current = onError;
+  }, [onError]);
+
   // Load image & extract pure pixel buffer
   useEffect(() => {
     const img = new Image();
@@ -181,23 +192,23 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
 
     img.onerror = () => {
       const err = new AssetError(
-        `Nie udało się wczytać tekstury atlasu ze źródła: ${imageSrc.slice(0, 80)}`,
+        `Failed to load atlas texture from source: ${imageSrc.slice(0, 80)}`,
         ErrorCode.ASSET_LOAD_FAILED,
         { details: { imageSrc: imageSrc.slice(0, 100) } }
       );
       LoggerManager.getInstance()
         .getLogger("AtlasStudio")
         .error(err.message, { code: err.code, details: err.details });
-      onError?.(err);
+      onErrorRef.current?.(err);
     };
 
     img.onload = () => {
       setImage(img);
-      onError?.(null);
+      onErrorRef.current?.(null);
       LoggerManager.getInstance()
         .getLogger("AtlasStudio")
         .info(
-          `Pomyślnie załadowano teksturę atlasu: ${img.naturalWidth}x${img.naturalHeight}px`,
+          `Atlas texture loaded successfully: ${img.naturalWidth}x${img.naturalHeight}px`,
           { width: img.naturalWidth, height: img.naturalHeight }
         );
 
@@ -218,7 +229,7 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
         }
       }
     };
-  }, [imageSrc, onError]);
+  }, [imageSrc]);
 
   // Spacebar hotkey listener for temporary Pan mode
   useEffect(() => {
@@ -299,16 +310,37 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
     return { resolvedFrames: frames, sliceDuration: duration };
   }, [image, gridConfig, tracks, slicingConfig, backgroundConfig, metaDoc, pixelBuffer]);
 
-  // Report telemetry and frame metrics to parent
+  const lastReportedMetricsRef = useRef<{
+    frameCount: number;
+    textureWidth: number;
+    textureHeight: number;
+  } | null>(null);
+
+  // Report telemetry and frame metrics to parent only when actual dimensions or frame counts change
   useEffect(() => {
     if (!image) return;
-    onMetricsChange?.({
-      frameCount: resolvedFrames.length,
-      durationMs: sliceDuration,
-      textureWidth: image.naturalWidth,
-      textureHeight: image.naturalHeight,
-    });
-  }, [resolvedFrames.length, sliceDuration, image, onMetricsChange]);
+
+    const prev = lastReportedMetricsRef.current;
+    const hasChanged =
+      !prev ||
+      prev.frameCount !== resolvedFrames.length ||
+      prev.textureWidth !== image.naturalWidth ||
+      prev.textureHeight !== image.naturalHeight;
+
+    if (hasChanged) {
+      lastReportedMetricsRef.current = {
+        frameCount: resolvedFrames.length,
+        textureWidth: image.naturalWidth,
+        textureHeight: image.naturalHeight,
+      };
+      onMetricsChangeRef.current?.({
+        frameCount: resolvedFrames.length,
+        durationMs: sliceDuration,
+        textureWidth: image.naturalWidth,
+        textureHeight: image.naturalHeight,
+      });
+    }
+  }, [resolvedFrames.length, sliceDuration, image]);
 
   // Center fit helper
   const handleFitToContainer = useCallback(() => {
