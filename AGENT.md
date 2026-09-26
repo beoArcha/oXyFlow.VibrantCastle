@@ -48,6 +48,40 @@ AI → generation + modification
 
 ---
 
+### 1.4 Engineering Goals
+
+Every engineering decision should improve at least one of the following without unnecessarily harming the others.
+
+* Simplicity
+* Maintainability
+* Correctness
+* Predictability
+* Testability
+* Native User Experience
+* Long-Term Sustainability
+* SOLID Principles
+* Clean Code Principles
+* KISS (Keep It Simple, Stupid)
+* YAGNI (You Ain't Gonna Need This)
+* DRY (Don't Repeat Yourself)
+
+---
+
+### 1.5 Code Goals
+
+Always produce code that is:
+
+* Correct
+* Predictable
+* Maintainable
+* Readable
+* Consistent
+* Easy to extend
+
+Architecture is always more important than implementation speed.
+
+---
+
 ## 2. ENGINE ARCHITECTURE (TS + CANVAS 2D)
 
 ### 2.1 Game Loop (MANDATORY)

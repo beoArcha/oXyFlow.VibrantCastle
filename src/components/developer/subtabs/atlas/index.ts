@@ -7,3 +7,4 @@ export * from "./AtlasSlicingInspector";
 export * from "./AtlasBackgroundPanel";
 export * from "./AtlasJsonExportPanel";
 export * from "./AtlasInspectorDock";
+export * from "./AtlasPresetSelector";

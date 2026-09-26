@@ -276,6 +276,14 @@ export interface SettingsI18n {
   atlasStudioAddSlotSpan: string;
   atlasStudioSubSlotSpan: string;
   atlasStudioPresetPortraits: string;
+  atlasStudioFilterAll: string;
+  atlasStudioFilterPopular: string;
+  atlasStudioFilterCharacters: string;
+  atlasStudioFilterEnemies: string;
+  atlasStudioFilterStructures: string;
+  atlasStudioFilterPortraits: string;
+  atlasStudioSearchPlaceholder: string;
+  atlasStudioNoAssetsFound: string;
   atlasStudioCreateTrackFromSelection: string;
   atlasStudioAssignSelection: string;
   atlasStudioMergeWide: string;

@@ -1,0 +1,105 @@
+{
+  "version": "1.0",
+  "assets": [
+    {
+      "id": "valen",
+      "name": "Valen (Duelist / Hero)",
+      "category": "character",
+      "isPopular": true,
+      "tags": ["hero", "duelist", "player1", "sword"],
+      "imageRelPath": "./characters/valen/valen_level_1_high.png",
+      "metaRelPath": "./characters/valen/valen_meta.json",
+      "description": "Master Duelist & Arcanist player character spritesheet"
+    },
+    {
+      "id": "aurelia",
+      "name": "Aurelia (Mage / Heroine)",
+      "category": "character",
+      "isPopular": true,
+      "tags": ["heroine", "mage", "player2", "staff"],
+      "imageRelPath": "./characters/aurelia/aurelia_level_1_high.png",
+      "metaRelPath": "./characters/aurelia/aurelia_meta.json",
+      "description": "Archmage & Astral Scholar player character spritesheet"
+    },
+    {
+      "id": "clockwork_owl_gargoyle",
+      "name": "Clockwork Owl Gargoyle",
+      "category": "enemy",
+      "isPopular": true,
+      "tags": ["enemy", "flying", "clockwork", "boss"],
+      "imageRelPath": "./enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_high.png",
+      "metaRelPath": "./enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_meta.json",
+      "description": "Gilded clockwork sentinel enemy"
+    },
+    {
+      "id": "training_dummy",
+      "name": "Training Dummy",
+      "category": "enemy",
+      "isPopular": false,
+      "tags": ["enemy", "dummy", "practice", "combat"],
+      "imageRelPath": "./enemies/training_dummy/training_dummy_high.png",
+      "metaRelPath": "./enemies/training_dummy/training_dummy_meta.json",
+      "description": "Resilient enchanted practice dummy"
+    },
+    {
+      "id": "aether_gate",
+      "name": "Aether Gate (Portal)",
+      "category": "structure",
+      "isPopular": true,
+      "tags": ["structure", "portal", "gateway", "teleport"],
+      "imageRelPath": "./structures/aether_gate/aether_gate_high.png",
+      "metaRelPath": "./structures/aether_gate/aether_gate_meta.json",
+      "description": "Resonant celestial portal to higher castle terraces"
+    },
+    {
+      "id": "chrono_lever",
+      "name": "Chrono Lever (Actuator)",
+      "category": "structure",
+      "isPopular": true,
+      "tags": ["structure", "lever", "switch", "interactive"],
+      "imageRelPath": "./structures/chrono_lever/chrono_lever_high.png",
+      "metaRelPath": "./structures/chrono_lever/chrono_lever_meta.json",
+      "description": "Gilded clockwork lever operating castle portcullises"
+    },
+    {
+      "id": "grand_portcullis",
+      "name": "Grand Portcullis (Gate)",
+      "category": "structure",
+      "isPopular": false,
+      "tags": ["structure", "gate", "door", "barrier"],
+      "imageRelPath": "./structures/grand_portcullis/grand_portcullis_high.png",
+      "metaRelPath": "./structures/grand_portcullis/grand_portcullis_meta.json",
+      "description": "Heavy gilded iron security portcullis"
+    },
+    {
+      "id": "hazard_thorns",
+      "name": "Hazard Thorns (Spikes)",
+      "category": "structure",
+      "isPopular": false,
+      "tags": ["structure", "hazard", "trap", "thorns", "crystals"],
+      "imageRelPath": "./structures/hazard_thorns/hazard_thorns_high.png",
+      "metaRelPath": "./structures/hazard_thorns/hazard_thorns_meta.json",
+      "description": "Crystalline amber floor hazard spikes"
+    },
+    {
+      "id": "valen_portraits",
+      "name": "Valen Portraits (5x5)",
+      "category": "portrait",
+      "isPopular": true,
+      "tags": ["portrait", "dialogue", "valen", "emotions"],
+      "imageRelPath": "./characters/valen/valen_portraits.png",
+      "metaRelPath": "./characters/valen/valen_portraits_meta.json",
+      "description": "Valen 5x5 emotional dialogue expression grid"
+    },
+    {
+      "id": "aurelia_portraits",
+      "name": "Aurelia Portraits (5x5)",
+      "category": "portrait",
+      "isPopular": false,
+      "tags": ["portrait", "dialogue", "aurelia", "emotions"],
+      "imageRelPath": "./characters/aurelia/aurelia_portraits.png",
+      "metaRelPath": "./characters/aurelia/aurelia_portraits_meta.json",
+      "description": "Aurelia 5x5 emotional dialogue expression grid"
+    }
+  ]
+}

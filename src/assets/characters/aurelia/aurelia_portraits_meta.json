@@ -1,0 +1,38 @@
+{
+  "entityId": "aurelia_portraits",
+  "entityType": "portrait",
+  "version": "1.0",
+  "description": "Aurelia 5x5 Emotion & Dialogue Portrait Matrix",
+  "atlas": {
+    "image": "aurelia_portraits.png",
+    "columns": 5,
+    "rows": 5,
+    "cellWidth": 235,
+    "cellHeight": 268,
+    "spacing": 0,
+    "safeMargin": 0,
+    "background": "transparent"
+  },
+  "slicing": {
+    "method": "by_count",
+    "grid": {
+      "columns": 5,
+      "rows": 5,
+      "cellWidth": 235,
+      "cellHeight": 268,
+      "spacing": 0,
+      "safeMargin": 0
+    }
+  },
+  "animations": {
+    "row_0_curious_focused": { "row": 0, "frames": 5, "fps": 2, "loop": true },
+    "row_1_radiant_smiling": { "row": 1, "frames": 5, "fps": 2, "loop": true },
+    "row_2_sorrow_pensive": { "row": 2, "frames": 5, "fps": 2, "loop": true },
+    "row_3_determined_battle": { "row": 3, "frames": 5, "fps": 2, "loop": true },
+    "row_4_serene_transcendent": { "row": 4, "frames": 5, "fps": 2, "loop": true }
+  },
+  "anchor": { "x": 0.5, "y": 0.5 },
+  "layout": {
+    "origin": { "type": "center", "normalized": { "x": 0.5, "y": 0.5 } }
+  }
+}

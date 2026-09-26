@@ -22,6 +22,8 @@ import {
   SelectedCellInfo,
   AtlasTextureViewer,
   AtlasInspectorDock,
+  AtlasPresetSelector,
+  defaultAtlasAssetRegistry,
   AtlasInspectorTabId,
   SlicerViewerTool,
   IAtlasSlicingConfig,
@@ -350,50 +352,38 @@ export const AtlasMetaSubTab: React.FC = () => {
       id="subtab-content-atlas-slicer"
       className="flex flex-col gap-3 animate-in fade-in duration-150"
     >
-      {/* 1. Header Toolbar: Preset Selector & File Buttons */}
+      {/* 1. Header Toolbar: Searchable Atlas Selector & File Buttons */}
       <Card variant="default">
-        <CardHeader className="flex flex-wrap items-center justify-between gap-2.5 p-3">
-          <div className="flex items-center gap-2">
-            <CardTitle icon={<Grid className="w-4 h-4 text-amber-400" />}>
-              {t("subtabAtlasSlicer")}
-            </CardTitle>
-            <Badge variant="amber">Studio v3 Pro</Badge>
+        <CardHeader className="flex flex-wrap items-center justify-between gap-3 p-3">
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-2">
+              <CardTitle icon={<Grid className="w-4 h-4 text-amber-400" />}>
+                {t("subtabAtlasSlicer")}
+              </CardTitle>
+              <Badge variant="amber">Studio v3 Pro</Badge>
+            </div>
+
+            {/* Dynamic Searchable Preset Selector (OCP & KISS) */}
+            <AtlasPresetSelector
+              selectedPresetId={selectedPresetId}
+              onSelectPreset={(presetId) => {
+                const resolved = defaultAtlasAssetRegistry.resolveAsset(presetId);
+                if (resolved) {
+                  applyPreset({
+                    id: resolved.id,
+                    name: resolved.name,
+                    category: resolved.category,
+                    imageSrc: resolved.imageSrc,
+                    defaultMeta: resolved.defaultMeta,
+                  });
+                }
+              }}
+            />
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            {/* Presets Pills */}
-            <div className="flex items-center gap-1 bg-[#120603] p-1 rounded-xl border border-stone-800 flex-wrap">
-              {ATLAS_PRESETS.map((p) => {
-                const isSelected = p.id === selectedPresetId;
-                return (
-                  <button
-                    key={p.id}
-                    onClick={() => applyPreset(p)}
-                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all border ${
-                      isSelected
-                        ? "bg-gradient-to-r from-amber-600 to-amber-700 text-white border-amber-400 shadow-md shadow-amber-950/60"
-                        : "bg-black/40 text-stone-300 border-stone-800 hover:border-amber-700 hover:text-amber-200"
-                    }`}
-                  >
-                    {p.category === "character" ? (
-                      <User size={12} className="text-amber-300" />
-                    ) : p.category === "enemy" ? (
-                      <Skull size={12} className="text-rose-400" />
-                    ) : p.category === "structure" ? (
-                      <Building size={12} className="text-cyan-400" />
-                    ) : p.category === "portrait" ? (
-                      <Sparkles size={12} className="text-purple-400" />
-                    ) : (
-                      <Layers size={12} className="text-stone-400" />
-                    )}
-                    {p.name.split(" ")[0]}
-                  </button>
-                );
-              })}
-            </div>
-
             {/* Custom Texture Upload Button */}
-            <label className="flex items-center gap-1.5 px-2.5 py-1 bg-black/60 hover:bg-[#1f0d06] text-stone-300 hover:text-amber-200 border border-stone-800 hover:border-amber-700 rounded-lg text-xs font-bold cursor-pointer transition-all">
+            <label className="flex items-center gap-1.5 px-2.5 py-1.5 bg-black/60 hover:bg-[#1f0d06] text-stone-300 hover:text-amber-200 border border-stone-800 hover:border-amber-700 rounded-xl text-xs font-bold cursor-pointer transition-all shadow-sm">
               <Upload size={12} />
               <span>{t("atlasStudioUploadImage")}</span>
               <input
@@ -405,7 +395,7 @@ export const AtlasMetaSubTab: React.FC = () => {
             </label>
 
             {/* Custom JSON Upload Button */}
-            <label className="flex items-center gap-1.5 px-2.5 py-1 bg-black/60 hover:bg-[#1f0d06] text-stone-300 hover:text-amber-200 border border-stone-800 hover:border-amber-700 rounded-lg text-xs font-bold cursor-pointer transition-all">
+            <label className="flex items-center gap-1.5 px-2.5 py-1.5 bg-black/60 hover:bg-[#1f0d06] text-stone-300 hover:text-amber-200 border border-stone-800 hover:border-amber-700 rounded-xl text-xs font-bold cursor-pointer transition-all shadow-sm">
               <FileJson size={12} />
               <span>{t("atlasStudioLoadJsonFile")}</span>
               <input
@@ -422,9 +412,9 @@ export const AtlasMetaSubTab: React.FC = () => {
               variant="ghost"
               onClick={handleResetDefaults}
               title={t("atlasStudioResetDefaults")}
-              className="h-7 px-2"
+              className="h-8 px-2.5"
             >
-              <RotateCcw size={12} />
+              <RotateCcw size={13} />
             </Button>
           </div>
         </CardHeader>
