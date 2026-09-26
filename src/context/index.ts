@@ -1,5 +1,6 @@
 export * from "./IContext";
 export * from "./settingsTypes";
+export * from "./settings";
 export * from "./SettingsContext";
 export * from "./SaveGameContext";
 export * from "./GameSessionContext";

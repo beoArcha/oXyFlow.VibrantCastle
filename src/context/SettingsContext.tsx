@@ -2,222 +2,108 @@ import React, {
   createContext,
   useContext,
   useState,
-  useEffect,
   useCallback,
   useMemo,
 } from "react";
 import { DisplaySettings } from "../game/types";
 import gameEngine from "../game/loop/engine";
-import { gameAudio } from "../game/engine/audioEngine";
-import { useEngineSubscription } from "./useEngineSubscription";
 import {
   GameSettingsState,
   DEFAULT_SETTINGS,
   SettingsContextValue,
   HudSettings,
 } from "./settingsTypes";
-import { getLogger } from "../lib/logger";
+import {
+  ISettingsStorage,
+  defaultSettingsStorage,
+  useSettingsSync,
+} from "./settings";
 import { MissingContextProviderError } from "../lib/errors";
-
-const settingsLogger = getLogger("context:settings");
-
-const SETTINGS_STORAGE_KEY = "vibrant_castle_full_settings";
-const LEGACY_DISPLAY_STORAGE_KEY = "vibrant_castle_display_settings";
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 
-function loadInitialSettings(): GameSettingsState {
-  try {
-    const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (parsed && typeof parsed === "object") {
-        return {
-          ...DEFAULT_SETTINGS,
-          ...parsed,
-          display: { ...DEFAULT_SETTINGS.display, ...(parsed.display || {}) },
-          hud: {
-            ...DEFAULT_SETTINGS.hud,
-            ...(parsed.hud || {}),
-            p1QuickKeys: {
-              ...DEFAULT_SETTINGS.hud.p1QuickKeys,
-              ...(parsed.hud?.p1QuickKeys || {}),
-            },
-            p2QuickKeys: {
-              ...DEFAULT_SETTINGS.hud.p2QuickKeys,
-              ...(parsed.hud?.p2QuickKeys || {}),
-            },
-          },
-        };
-      }
-    }
-
-    // Check legacy display storage
-    const legacyDisplay = localStorage.getItem(LEGACY_DISPLAY_STORAGE_KEY);
-    if (legacyDisplay) {
-      const parsedDisplay = JSON.parse(legacyDisplay);
-      if (parsedDisplay && parsedDisplay.assetQuality) {
-        return {
-          ...DEFAULT_SETTINGS,
-          display: {
-            ...DEFAULT_SETTINGS.display,
-            aspectRatio: parsedDisplay.aspectRatio || "16:10",
-            scalingFilter: parsedDisplay.scalingFilter || "pixel",
-            assetQuality: parsedDisplay.assetQuality || "high",
-            targetFps: parsedDisplay.targetFps || 60,
-            showFpsCounter: !!parsedDisplay.showFpsCounter,
-            hardwareAcceleration:
-              parsedDisplay.hardwareAcceleration !== undefined
-                ? parsedDisplay.hardwareAcceleration
-                : true,
-          },
-        };
-      }
-    }
-  } catch (err) {
-    settingsLogger.warn("Failed to read settings from localStorage, using defaults:", { storageKey: SETTINGS_STORAGE_KEY }, err);
-  }
-
-  return DEFAULT_SETTINGS;
+export interface SettingsProviderProps {
+  children: React.ReactNode;
+  storage?: ISettingsStorage;
 }
 
-export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
+export const SettingsProvider: React.FC<SettingsProviderProps> = ({
   children,
+  storage = defaultSettingsStorage,
 }) => {
-  const [settings, setSettings] = useState<GameSettingsState>(loadInitialSettings);
-  const [isLoaded, setIsLoaded] = useState(true);
+  const [settings, setSettings] = useState<GameSettingsState>(() => storage.load());
+  const [isLoaded] = useState(true);
 
-  // Persist helper
-  const persist = useCallback((nextSettings: GameSettingsState) => {
-    try {
-      localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(nextSettings));
-      localStorage.setItem(
-        LEGACY_DISPLAY_STORAGE_KEY,
-        JSON.stringify(nextSettings.display)
-      );
-    } catch (e) {
-      settingsLogger.error("Failed to write settings to localStorage:", { storageKey: SETTINGS_STORAGE_KEY }, e);
-    }
-  }, []);
+  // Sync settings with external subsystems (engine, audio, 2-player state)
+  const handleEngineTwoPlayerChange = useCallback(
+    (engineIs2P: boolean) => {
+      setSettings((prev) => {
+        if (prev.isTwoPlayer !== engineIs2P) {
+          const next = { ...prev, isTwoPlayer: engineIs2P };
+          storage.save(next);
+          return next;
+        }
+        return prev;
+      });
+    },
+    [storage]
+  );
 
-  // Sync to gameEngine on mount or setting change
-  useEffect(() => {
-    gameEngine.settings.isTwoPlayer = settings.isTwoPlayer;
-    gameEngine.settings.volumeMusic = settings.volumeMusic;
-    gameEngine.settings.volumeSFX = settings.volumeSFX;
-    gameEngine.settings.display = settings.display;
-    gameEngine.settings.language = settings.language;
-    gameAudio.setBGMVolume(settings.volumeMusic);
-    gameAudio.setSFXVolume(settings.volumeSFX);
+  useSettingsSync(settings, handleEngineTwoPlayerChange);
 
-    if (settings.display.targetFps) {
-      gameEngine.setTargetFps(settings.display.targetFps);
-    }
-    gameEngine.setShowFpsCounter(!!settings.display.showFpsCounter);
-    gameEngine.setHardwareAcceleration(settings.display.hardwareAcceleration !== false);
-
-    // Keep gameEngine players synchronized on mount/change
-    if (settings.isTwoPlayer && gameEngine.players.length === 1) {
-      gameEngine.setTwoPlayerMode(true, true);
-    } else if (!settings.isTwoPlayer && gameEngine.players.length > 1) {
-      gameEngine.setTwoPlayerMode(false, true);
-    }
-  }, [settings]);
-
-  // Keep React settings context synchronized with engine state changes (portal transitions, save loads)
-  useEngineSubscription(() => {
-    const engineIs2P = gameEngine.players.length > 1;
-    setSettings((prev) => {
-      if (prev.isTwoPlayer !== engineIs2P) {
-        const next = { ...prev, isTwoPlayer: engineIs2P };
-        persist(next);
-        return next;
-      }
-      return prev;
-    });
-  }, gameEngine);
-
+  // Storage and import/export actions delegated to ISettingsStorage
   const saveToLocalStorage = useCallback(() => {
-    persist(settings);
-  }, [persist, settings]);
+    storage.save(settings);
+  }, [storage, settings]);
 
   const loadFromLocalStorage = useCallback((): boolean => {
     try {
-      const reloaded = loadInitialSettings();
+      const reloaded = storage.load();
       setSettings(reloaded);
       return true;
     } catch {
       return false;
     }
-  }, []);
+  }, [storage]);
 
   const resetToDefaults = useCallback(() => {
     setSettings(DEFAULT_SETTINGS);
-    persist(DEFAULT_SETTINGS);
-  }, [persist]);
+    storage.save(DEFAULT_SETTINGS);
+  }, [storage]);
 
   const exportToJson = useCallback((): string => {
-    return JSON.stringify(settings, null, 2);
-  }, [settings]);
+    return storage.exportToJson(settings);
+  }, [storage, settings]);
 
   const importFromJson = useCallback(
     (jsonString: string): boolean => {
-      try {
-        const parsed = JSON.parse(jsonString);
-        if (!parsed || typeof parsed !== "object") return false;
-        const merged: GameSettingsState = {
-          ...DEFAULT_SETTINGS,
-          ...parsed,
-          display: { ...DEFAULT_SETTINGS.display, ...(parsed.display || {}) },
-          hud: {
-            ...DEFAULT_SETTINGS.hud,
-            ...(parsed.hud || {}),
-            p1QuickKeys: {
-              ...DEFAULT_SETTINGS.hud.p1QuickKeys,
-              ...(parsed.hud?.p1QuickKeys || {}),
-            },
-            p2QuickKeys: {
-              ...DEFAULT_SETTINGS.hud.p2QuickKeys,
-              ...(parsed.hud?.p2QuickKeys || {}),
-            },
-          },
-        };
+      const merged = storage.importFromJson(jsonString);
+      if (merged) {
         setSettings(merged);
-        persist(merged);
         return true;
-      } catch (err) {
-        settingsLogger.error("Failed to import settings JSON:", { context: "importSettingsFromJson" }, err);
-        return false;
       }
+      return false;
     },
-    [persist]
+    [storage]
   );
 
   const exportSettingsToFile = useCallback(() => {
-    const jsonStr = exportToJson();
-    const blob = new Blob([jsonStr], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `vibrant_castle_settings_${new Date().toISOString().slice(0, 10)}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }, [exportToJson]);
+    storage.exportToFile(settings);
+  }, [storage, settings]);
 
   const importSettingsFromFile = useCallback(
     async (file: File): Promise<boolean> => {
-      try {
-        const text = await file.text();
-        return importFromJson(text);
-      } catch {
-        return false;
+      const merged = await storage.importFromFile(file);
+      if (merged) {
+        setSettings(merged);
+        return true;
       }
+      return false;
     },
-    [importFromJson]
+    [storage]
   );
 
+  // Granular mutation actions
   const setDisplaySettings = useCallback(
     (displayUpdates: Partial<DisplaySettings>) => {
       setSettings((prev) => {
@@ -225,11 +111,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
           ...prev,
           display: { ...prev.display, ...displayUpdates },
         };
-        persist(next);
+        storage.save(next);
         return next;
       });
     },
-    [persist]
+    [storage]
   );
 
   const setVolumeMusic = useCallback(
@@ -237,11 +123,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
       const clamped = Math.max(0, Math.min(1, val));
       setSettings((prev) => {
         const next: GameSettingsState = { ...prev, volumeMusic: clamped };
-        persist(next);
+        storage.save(next);
         return next;
       });
     },
-    [persist]
+    [storage]
   );
 
   const setVolumeSFX = useCallback(
@@ -249,23 +135,23 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
       const clamped = Math.max(0, Math.min(1, val));
       setSettings((prev) => {
         const next: GameSettingsState = { ...prev, volumeSFX: clamped };
-        persist(next);
+        storage.save(next);
         return next;
       });
     },
-    [persist]
+    [storage]
   );
 
   const setTwoPlayer = useCallback(
     (val: boolean) => {
       setSettings((prev) => {
         const next: GameSettingsState = { ...prev, isTwoPlayer: val };
-        persist(next);
+        storage.save(next);
         return next;
       });
       gameEngine.setTwoPlayerMode(val, true);
     },
-    [persist]
+    [storage]
   );
 
   const setHudSettings = useCallback(
@@ -275,22 +161,22 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
           ...prev,
           hud: { ...prev.hud, ...hudUpdates },
         };
-        persist(next);
+        storage.save(next);
         return next;
       });
     },
-    [persist]
+    [storage]
   );
 
   const updateSettings = useCallback(
     (partial: Partial<GameSettingsState>) => {
       setSettings((prev) => {
         const next: GameSettingsState = { ...prev, ...partial };
-        persist(next);
+        storage.save(next);
         return next;
       });
     },
-    [persist]
+    [storage]
   );
 
   const value = useMemo<SettingsContextValue>(
