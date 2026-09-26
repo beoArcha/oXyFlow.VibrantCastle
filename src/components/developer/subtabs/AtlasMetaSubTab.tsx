@@ -85,29 +85,53 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
     setErrorState(err);
   }, []);
 
+  // Fallback empty meta doc in case no preset is loaded
+  const fallbackMetaDoc: AtlasMetaDoc = useMemo(
+    () => ({
+      characterId: "default",
+      entityType: "humanoid",
+      version: "1.0",
+      description: "Default Atlas",
+      atlas: {
+        columns: 12,
+        rows: 8,
+        spacing: 0,
+        background: "transparent",
+        safeMargin: 0,
+        noOverflow: true,
+        noOverlap: true,
+      },
+    }),
+    []
+  );
+
   // Active preset item
   const activePreset = useMemo(() => {
     return (
-      ATLAS_PRESETS.find((p) => p.id === selectedPresetId) || ATLAS_PRESETS[0]
+      ATLAS_PRESETS.find((p) => p.id === selectedPresetId) ||
+      ATLAS_PRESETS[0] ||
+      null
     );
   }, [selectedPresetId]);
 
-  // Working state
-  const [metaDoc, setMetaDoc] = useState<AtlasMetaDoc>(activePreset.defaultMeta);
-  const [imageSrc, setImageSrc] = useState<string>(activePreset.imageSrc);
+  // Working state with fallback
+  const [metaDoc, setMetaDoc] = useState<AtlasMetaDoc>(
+    activePreset?.defaultMeta || fallbackMetaDoc
+  );
+  const [imageSrc, setImageSrc] = useState<string>(activePreset?.imageSrc || "");
 
   const [gridConfig, setGridConfig] = useState<AtlasGridConfig>({
-    columns: activePreset.defaultMeta.atlas?.columns || 12,
-    rows: activePreset.defaultMeta.atlas?.rows || 8,
-    spacing: activePreset.defaultMeta.atlas?.spacing || 0,
-    safeMargin: activePreset.defaultMeta.atlas?.safeMargin || 0,
+    columns: activePreset?.defaultMeta?.atlas?.columns || 12,
+    rows: activePreset?.defaultMeta?.atlas?.rows || 8,
+    spacing: activePreset?.defaultMeta?.atlas?.spacing || 0,
+    safeMargin: activePreset?.defaultMeta?.atlas?.safeMargin || 0,
     cellWidth:
-      activePreset.defaultMeta.variants?.high?.cellWidth ||
-      activePreset.defaultMeta.atlas?.cellWidth ||
+      activePreset?.defaultMeta?.variants?.high?.cellWidth ||
+      activePreset?.defaultMeta?.atlas?.cellWidth ||
       128,
     cellHeight:
-      activePreset.defaultMeta.variants?.high?.cellHeight ||
-      activePreset.defaultMeta.atlas?.cellHeight ||
+      activePreset?.defaultMeta?.variants?.high?.cellHeight ||
+      activePreset?.defaultMeta?.atlas?.cellHeight ||
       128,
   });
 

@@ -14,53 +14,45 @@ import {
 } from "./types";
 import { defaultAtlasManifestParser } from "./AtlasManifestParser";
 
-// Bundled Vite image imports
-import valenHighPng from "../../../../assets/characters/valen/valen_level_1_high.png";
-import valenMetaJson from "../../../../assets/characters/valen/valen_meta.json";
+import { LoggerManager } from "../../../../lib/logger";
 
-import aureliaHighPng from "../../../../assets/characters/aurelia/aurelia_level_1_high.png";
-import aureliaMetaJson from "../../../../assets/characters/aurelia/aurelia_meta.json";
+// Vite eager module globs (evaluated at build/serve time by Vite AST compiler)
+let viteImageModules: Record<string, string> = {};
+let viteMetaModules: Record<string, any> = {};
 
-import owlHighPng from "../../../../assets/enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_high.png";
-import owlMetaJson from "../../../../assets/enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_meta.json";
+try {
+  viteImageModules = import.meta.glob("../../../../assets/**/*.{png,jpg,jpeg,webp}", {
+    eager: true,
+    import: "default",
+  });
+  viteMetaModules = import.meta.glob("../../../../assets/**/*.json", {
+    eager: true,
+    import: "default",
+  });
+} catch {
+  // Fallback for non-Vite environments (e.g. Bun test runner or Node.js)
+}
 
-import dummyHighPng from "../../../../assets/enemies/training_dummy/training_dummy_high.png";
-import dummyMetaJson from "../../../../assets/enemies/training_dummy/training_dummy_meta.json";
-
-import gateHighPng from "../../../../assets/structures/aether_gate/aether_gate_high.png";
-import gateMetaJson from "../../../../assets/structures/aether_gate/aether_gate_meta.json";
-
-import leverHighPng from "../../../../assets/structures/chrono_lever/chrono_lever_high.png";
-import leverMetaJson from "../../../../assets/structures/chrono_lever/chrono_lever_meta.json";
-
-import portcullisHighPng from "../../../../assets/structures/grand_portcullis/grand_portcullis_high.png";
-import portcullisMetaJson from "../../../../assets/structures/grand_portcullis/grand_portcullis_meta.json";
-
-import thornsHighPng from "../../../../assets/structures/hazard_thorns/hazard_thorns_high.png";
-import thornsMetaJson from "../../../../assets/structures/hazard_thorns/hazard_thorns_meta.json";
-
-import valenPortraitsPng from "../../../../assets/characters/valen/valen_portraits.png";
-import valenPortraitsMetaJson from "../../../../assets/characters/valen/valen_portraits_meta.json";
-
-import aureliaPortraitsPng from "../../../../assets/characters/aurelia/aurelia_portraits.png";
-import aureliaPortraitsMetaJson from "../../../../assets/characters/aurelia/aurelia_portraits_meta.json";
-
-const RESOLVED_BUNDLED_MAP: Record<string, { imageSrc: string; defaultMeta: any }> = {
-  valen: { imageSrc: valenHighPng, defaultMeta: valenMetaJson },
-  aurelia: { imageSrc: aureliaHighPng, defaultMeta: aureliaMetaJson },
-  clockwork_owl_gargoyle: { imageSrc: owlHighPng, defaultMeta: owlMetaJson },
-  training_dummy: { imageSrc: dummyHighPng, defaultMeta: dummyMetaJson },
-  aether_gate: { imageSrc: gateHighPng, defaultMeta: gateMetaJson },
-  chrono_lever: { imageSrc: leverHighPng, defaultMeta: leverMetaJson },
-  grand_portcullis: { imageSrc: portcullisHighPng, defaultMeta: portcullisMetaJson },
-  hazard_thorns: { imageSrc: thornsHighPng, defaultMeta: thornsMetaJson },
-  valen_portraits: { imageSrc: valenPortraitsPng, defaultMeta: valenPortraitsMetaJson },
-  aurelia_portraits: { imageSrc: aureliaPortraitsPng, defaultMeta: aureliaPortraitsMetaJson },
-};
+// Node / Bun fallback for server-side / unit test environments
+let nodeFs: any = null;
+let nodePath: any = null;
+if (
+  typeof window === "undefined" &&
+  typeof process !== "undefined" &&
+  typeof require !== "undefined"
+) {
+  try {
+    nodeFs = require("node:fs");
+    nodePath = require("node:path");
+  } catch {
+    // browser or sandboxed environment
+  }
+}
 
 export class AtlasAssetRegistry implements IAtlasAssetRegistry {
   private readonly items: Map<string, IAtlasAssetManifestItem> = new Map();
   private readonly resolvedCache: Map<string, ResolvedAtlasAssetItem> = new Map();
+  private readonly logger = LoggerManager.getInstance().getLogger("AtlasAssetRegistry");
 
   constructor(initialManifest?: unknown) {
     const parsed = defaultAtlasManifestParser.parse(initialManifest || rawManifest);
@@ -69,13 +61,87 @@ export class AtlasAssetRegistry implements IAtlasAssetRegistry {
     });
   }
 
+  /**
+   * Dynamically resolves asset bundled payload using Vite globs or environment fallback.
+   * Adheres strictly to OCP and SRP - zero hardcoded imports.
+   */
+  private resolveBundledPayload(
+    item: IAtlasAssetManifestItem
+  ): { imageSrc: string; defaultMeta: any } | undefined {
+    const cleanImageRel = item.imageRelPath.replace(/^\.\//, "").replace(/\\/g, "/");
+    const cleanMetaRel = item.metaRelPath.replace(/^\.\//, "").replace(/\\/g, "/");
+
+    let imageSrc: string | undefined;
+    let defaultMeta: any;
+
+    // 1. Vite eager import.meta.glob resolution (Browser runtime & Vite builds)
+    const imageEntries = Object.entries(viteImageModules);
+    if (imageEntries.length > 0) {
+      for (const [key, mod] of imageEntries) {
+        const normalizedKey = key.replace(/\\/g, "/");
+        if (
+          normalizedKey.endsWith("/" + cleanImageRel) ||
+          normalizedKey === cleanImageRel ||
+          normalizedKey.endsWith(cleanImageRel)
+        ) {
+          imageSrc = mod;
+          break;
+        }
+      }
+    }
+
+    const metaEntries = Object.entries(viteMetaModules);
+    if (metaEntries.length > 0) {
+      for (const [key, mod] of metaEntries) {
+        const normalizedKey = key.replace(/\\/g, "/");
+        if (
+          normalizedKey.endsWith("/" + cleanMetaRel) ||
+          normalizedKey === cleanMetaRel ||
+          normalizedKey.endsWith(cleanMetaRel)
+        ) {
+          defaultMeta = mod;
+          break;
+        }
+      }
+    }
+
+    // 2. Node / Bun test runner fallback (when running directly in bun test without Vite)
+    if ((!imageSrc || !defaultMeta) && nodeFs && nodePath) {
+      try {
+        const basePath = nodePath.resolve(process.cwd(), "src/assets");
+        const fullImagePath = nodePath.resolve(basePath, cleanImageRel);
+        const fullMetaPath = nodePath.resolve(basePath, cleanMetaRel);
+
+        if (!imageSrc && nodeFs.existsSync(fullImagePath)) {
+          imageSrc = fullImagePath;
+        }
+
+        if (!defaultMeta && nodeFs.existsSync(fullMetaPath)) {
+          const raw = nodeFs.readFileSync(fullMetaPath, "utf-8");
+          defaultMeta = JSON.parse(raw);
+        }
+      } catch (err: any) {
+        this.logger.debug(`Filesystem fallback error for '${item.id}': ${err?.message}`);
+      }
+    }
+
+    if (imageSrc && defaultMeta) {
+      return { imageSrc, defaultMeta };
+    }
+
+    this.logger.warn(
+      `Could not resolve bundle payload for asset '${item.id}' [image: ${item.imageRelPath}, meta: ${item.metaRelPath}]`
+    );
+    return undefined;
+  }
+
   public register(
     item: IAtlasAssetManifestItem,
     resolvedPayload?: { imageSrc: string; defaultMeta: any }
   ): void {
     this.items.set(item.id, item);
 
-    const payload = resolvedPayload || RESOLVED_BUNDLED_MAP[item.id];
+    const payload = resolvedPayload || this.resolveBundledPayload(item);
     if (payload) {
       this.resolvedCache.set(item.id, {
         ...item,

@@ -127,4 +127,35 @@ describe("Atlas Architecture & Asset Integrity Test Suite (SOLID)", () => {
     expect(registered).toBeDefined();
     expect(registered?.name).toBe("Dungeon Wall Torch");
   });
+
+  it("8. Dynamic Resolution: verifies all manifest assets resolve with valid imageSrc and defaultMeta", () => {
+    const resolved = defaultAtlasAssetRegistry.getAllResolved();
+    expect(resolved.length).toBeGreaterThanOrEqual(10);
+
+    for (const item of resolved) {
+      expect(item.imageSrc).toBeDefined();
+      expect(typeof item.imageSrc).toBe("string");
+      expect(item.imageSrc.length).toBeGreaterThan(0);
+
+      expect(item.defaultMeta).toBeDefined();
+      expect(typeof item.defaultMeta).toBe("object");
+      expect(item.defaultMeta.atlas).toBeDefined();
+      expect(item.defaultMeta.atlas.columns).toBeGreaterThanOrEqual(1);
+      expect(item.defaultMeta.atlas.rows).toBeGreaterThanOrEqual(1);
+    }
+  });
+
+  it("9. Architectural Invariant: enforces ZERO hardcoded asset imports in AtlasAssetRegistry.ts (OCP)", () => {
+    const registrySourcePath = path.resolve(__dirname, "../AtlasAssetRegistry.ts");
+    const sourceCode = fs.readFileSync(registrySourcePath, "utf-8");
+
+    // Must not have hardcoded static imports of png/json
+    expect(sourceCode.includes("import valenHighPng")).toBe(false);
+    expect(sourceCode.includes("import aureliaHighPng")).toBe(false);
+    expect(sourceCode.includes("import owlHighPng")).toBe(false);
+    expect(sourceCode.includes("RESOLVED_BUNDLED_MAP")).toBe(false);
+
+    // Must use dynamic resolution
+    expect(sourceCode.includes("resolveBundledPayload")).toBe(true);
+  });
 });
