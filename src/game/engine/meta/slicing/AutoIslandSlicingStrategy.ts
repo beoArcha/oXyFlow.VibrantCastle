@@ -1,6 +1,7 @@
 import { ISlicingStrategy, SlicingContext } from "./ISlicingStrategy";
 import { ResolvedFrameRect, SlicingMethod } from "../types";
 import { BackgroundProcessor, IPixelBuffer } from "./BackgroundProcessor";
+import { LoggerManager } from "../../../../lib/logger";
 
 export interface AutoIslandConfig {
   minWidth?: number;
@@ -20,6 +21,9 @@ export class AutoIslandSlicingStrategy implements ISlicingStrategy {
   public slice(context: SlicingContext, rawConfig?: unknown): ResolvedFrameRect[] {
     const buffer: IPixelBuffer | undefined = context.pixelBuffer;
     if (!buffer || buffer.width <= 0 || buffer.height <= 0) {
+      LoggerManager.getInstance()
+        .getLogger("AtlasSlicing")
+        .warn("AutoIsland strategy requires a valid pixel buffer to detect sprite contours.");
       return [];
     }
 
@@ -182,6 +186,14 @@ export class AutoIslandSlicingStrategy implements ISlicingStrategy {
           frameIndex: cIdx,
         });
       });
+    });
+
+    const logger = LoggerManager.getInstance().getLogger("AtlasSlicing");
+    logger.debug(`AutoIsland extracted ${frames.length} sprite islands across ${rows.length} rows`, {
+      islandsCount: frames.length,
+      rowsCount: rows.length,
+      minWidth,
+      minHeight,
     });
 
     return frames;

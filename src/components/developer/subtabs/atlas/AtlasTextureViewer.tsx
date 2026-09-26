@@ -33,6 +33,8 @@ import {
   BackgroundProcessor,
   IPixelBuffer,
 } from "../../../../game/engine/meta/slicing";
+import { LoggerManager } from "../../../../lib/logger";
+import { AssetError, ErrorCode, GameBaseError } from "../../../../lib/errors";
 
 export interface AtlasTextureViewerProps {
   imageSrc: string;
@@ -71,6 +73,13 @@ export interface AtlasTextureViewerProps {
   }) => void;
   externalTool?: SlicerViewerTool;
   onToolChange?: (tool: SlicerViewerTool) => void;
+  onMetricsChange?: (metrics: {
+    frameCount: number;
+    durationMs: number;
+    textureWidth: number;
+    textureHeight: number;
+  }) => void;
+  onError?: (error: GameBaseError | null) => void;
 }
 
 export type SlicerViewerTool = "select" | "pan" | "eyedropper";
@@ -104,6 +113,8 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
   onMergeSelectionAsWide,
   externalTool,
   onToolChange,
+  onMetricsChange,
+  onError,
 }) => {
   const { t } = useI18n();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -167,8 +178,28 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
   useEffect(() => {
     const img = new Image();
     img.src = imageSrc;
+
+    img.onerror = () => {
+      const err = new AssetError(
+        `Nie udało się wczytać tekstury atlasu ze źródła: ${imageSrc.slice(0, 80)}`,
+        ErrorCode.ASSET_LOAD_FAILED,
+        { details: { imageSrc: imageSrc.slice(0, 100) } }
+      );
+      LoggerManager.getInstance()
+        .getLogger("AtlasStudio")
+        .error(err.message, { code: err.code, details: err.details });
+      onError?.(err);
+    };
+
     img.onload = () => {
       setImage(img);
+      onError?.(null);
+      LoggerManager.getInstance()
+        .getLogger("AtlasStudio")
+        .info(
+          `Pomyślnie załadowano teksturę atlasu: ${img.naturalWidth}x${img.naturalHeight}px`,
+          { width: img.naturalWidth, height: img.naturalHeight }
+        );
 
       // Extract pixel buffer via offscreen canvas
       if (typeof document !== "undefined") {
@@ -187,7 +218,7 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
         }
       }
     };
-  }, [imageSrc]);
+  }, [imageSrc, onError]);
 
   // Spacebar hotkey listener for temporary Pan mode
   useEffect(() => {
@@ -223,8 +254,8 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
   }, []);
 
   // Compute resolved frame rects using AtlasSlicingEngine
-  const resolvedFrames = useMemo(() => {
-    if (!image) return [];
+  const { resolvedFrames, sliceDuration } = useMemo(() => {
+    if (!image) return { resolvedFrames: [] as ResolvedFrameRect[], sliceDuration: 0 };
 
     const effectiveDoc: AtlasMetaDoc = {
       ...(metaDoc || {}),
@@ -256,13 +287,28 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
     });
     effectiveDoc.animations = animMap;
 
-    return defaultAtlasSlicingEngine.resolveFrames(
+    const t0 = performance.now();
+    const frames = defaultAtlasSlicingEngine.resolveFrames(
       effectiveDoc,
       image.naturalWidth,
       image.naturalHeight,
       pixelBuffer || undefined
     );
+    const duration = performance.now() - t0;
+
+    return { resolvedFrames: frames, sliceDuration: duration };
   }, [image, gridConfig, tracks, slicingConfig, backgroundConfig, metaDoc, pixelBuffer]);
+
+  // Report telemetry and frame metrics to parent
+  useEffect(() => {
+    if (!image) return;
+    onMetricsChange?.({
+      frameCount: resolvedFrames.length,
+      durationMs: sliceDuration,
+      textureWidth: image.naturalWidth,
+      textureHeight: image.naturalHeight,
+    });
+  }, [resolvedFrames.length, sliceDuration, image, onMetricsChange]);
 
   // Center fit helper
   const handleFitToContainer = useCallback(() => {

@@ -4,6 +4,7 @@ import { CellSizeSlicingStrategy, defaultCellSizeSlicingStrategy } from "./CellS
 import { FreeformRectSlicingStrategy, defaultFreeformRectSlicingStrategy } from "./FreeformRectSlicingStrategy";
 import { AutoIslandSlicingStrategy, defaultAutoIslandSlicingStrategy } from "./AutoIslandSlicingStrategy";
 import { IPixelBuffer } from "./BackgroundProcessor";
+import { LoggerManager, ILogger } from "../../../../lib/logger";
 import {
   SlicingMethod,
   ResolvedFrameRect,
@@ -16,6 +17,7 @@ import {
 
 export interface AtlasSlicingEngineDependencies {
   strategies?: Map<SlicingMethod, ISlicingStrategy>;
+  logger?: ILogger;
 }
 
 /**
@@ -24,9 +26,11 @@ export interface AtlasSlicingEngineDependencies {
  */
 export class AtlasSlicingEngine {
   private readonly strategies: Map<SlicingMethod, ISlicingStrategy>;
+  private readonly logger: ILogger;
 
   constructor(deps: AtlasSlicingEngineDependencies = {}) {
     this.strategies = deps.strategies || new Map<SlicingMethod, ISlicingStrategy>();
+    this.logger = deps.logger || LoggerManager.getInstance().getLogger("AtlasSlicing");
 
     if (!this.strategies.has("by_count")) {
       this.strategies.set("by_count", defaultGridCountSlicingStrategy);
@@ -88,27 +92,42 @@ export class AtlasSlicingEngine {
       backgroundConfig: metaDoc?.backgroundConfig,
     };
 
+    const startTime = performance.now();
+    let result: ResolvedFrameRect[];
+
     // 1. Explicit slicing config
     if (metaDoc?.slicing && metaDoc.slicing.method) {
       const method: SlicingMethod = metaDoc.slicing.method;
       const strategy = this.getStrategy(method);
 
       if (method === "by_cell_size") {
-        return strategy.slice(context, metaDoc.slicing.cellSize);
+        result = strategy.slice(context, metaDoc.slicing.cellSize);
+      } else if (method === "freeform_rects") {
+        result = strategy.slice(context, metaDoc.slicing.frames);
+      } else if (method === "by_count") {
+        result = strategy.slice(context, metaDoc.slicing.grid || metaDoc.atlas);
+      } else {
+        result = strategy.slice(context, metaDoc.slicing);
       }
-      if (method === "freeform_rects") {
-        return strategy.slice(context, metaDoc.slicing.frames);
-      }
-      if (method === "by_count") {
-        return strategy.slice(context, metaDoc.slicing.grid || metaDoc.atlas);
-      }
-
-      return strategy.slice(context, metaDoc.slicing);
+    } else {
+      // 2. Default backward-compatible fallback: by_count using atlas grid
+      const defaultStrategy = this.getStrategy("by_count");
+      result = defaultStrategy.slice(context, metaDoc?.atlas);
     }
 
-    // 2. Default backward-compatible fallback: by_count using atlas grid
-    const defaultStrategy = this.getStrategy("by_count");
-    return defaultStrategy.slice(context, metaDoc?.atlas);
+    const elapsedMs = Number((performance.now() - startTime).toFixed(2));
+    this.logger.debug(
+      `Resolved ${result.length} frames via strategy '${metaDoc?.slicing?.method || "by_count"}' in ${elapsedMs}ms`,
+      {
+        method: metaDoc?.slicing?.method || "by_count",
+        framesCount: result.length,
+        elapsedMs,
+        textureWidth: safeW,
+        textureHeight: safeH,
+      }
+    );
+
+    return result;
   }
 
   /**

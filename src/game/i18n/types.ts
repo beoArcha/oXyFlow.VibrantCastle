@@ -347,6 +347,14 @@ export interface SettingsI18n {
   atlasStudioToggleInspector: string;
   atlasStudioCollapseInspector: string;
   atlasStudioExpandInspector: string;
+  atlasStudioStatusReady: string;
+  atlasStudioStatusError: string;
+  atlasStudioDismissError: string;
+  atlasStudioToggleLogs: string;
+  atlasStudioLogs: string;
+  atlasStudioRecentLogs: string;
+  atlasStudioOpenLogsTab: string;
+  atlasStudioNoLogsYet: string;
   gameMode: string;
   play1P: string;
   play2P: string;

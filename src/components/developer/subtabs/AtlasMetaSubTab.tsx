@@ -25,19 +25,39 @@ import {
   AtlasTextureViewer,
   AtlasInspectorDock,
   AtlasPresetSelector,
+  AtlasStatusBar,
   defaultAtlasAssetRegistry,
   AtlasInspectorTabId,
   SlicerViewerTool,
   IAtlasSlicingConfig,
   IAtlasBackgroundConfig,
 } from "./atlas";
+import { LoggerManager } from "../../../lib/logger";
+import { AssetError, ParserError, ErrorCode, GameBaseError } from "../../../lib/errors";
 
-export const AtlasMetaSubTab: React.FC = () => {
+export interface AtlasMetaSubTabProps {
+  onNavigateToLogs?: () => void;
+}
+
+export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLogs }) => {
   const { t } = useI18n();
+  const studioLogger = useMemo(() => LoggerManager.getInstance().getLogger("AtlasStudio"), []);
 
   // Selected Preset
   const [selectedPresetId, setSelectedPresetId] = useState<string>("valen");
   const [, setCustomImageSrc] = useState<string | null>(null);
+
+  // Diagnostics & Error Telemetry State
+  const [errorState, setErrorState] = useState<GameBaseError | null>(null);
+  const [sliceMetrics, setSliceMetrics] = useState<{
+    frameCount: number;
+    durationMs: number;
+    textureWidth?: number;
+    textureHeight?: number;
+  }>({
+    frameCount: 0,
+    durationMs: 0,
+  });
 
   // Active preset item
   const activePreset = useMemo(() => {
@@ -127,6 +147,12 @@ export const AtlasMetaSubTab: React.FC = () => {
       setSelectedPresetId(preset.id);
       setImageSrc(preset.imageSrc);
       setMetaDoc(preset.defaultMeta);
+      setErrorState(null);
+
+      studioLogger.info(`Załadowano preset atlasu: ${preset.name} [${preset.id}]`, {
+        presetId: preset.id,
+        category: preset.category,
+      });
 
       const parsedGrid: AtlasGridConfig = {
         columns: preset.defaultMeta.atlas?.columns || 12,
@@ -185,9 +211,25 @@ export const AtlasMetaSubTab: React.FC = () => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (!file.type.startsWith("image/")) {
+        const err = new AssetError(
+          `Nieprawidłowy typ pliku graficznego: ${file.type || file.name}`,
+          ErrorCode.ASSET_CORRUPTED,
+          { details: { fileName: file.name, fileType: file.type } }
+        );
+        studioLogger.error(err.message, { code: err.code, details: err.details });
+        setErrorState(err);
+        return;
+      }
+
       const url = URL.createObjectURL(file);
       setCustomImageSrc(url);
       setImageSrc(url);
+      setErrorState(null);
+      studioLogger.info(
+        `Wczytano własną teksturę obrazu: ${file.name} (${Math.round(file.size / 1024)} KB)`,
+        { fileName: file.name, size: file.size }
+      );
     }
   };
 
@@ -198,8 +240,22 @@ export const AtlasMetaSubTab: React.FC = () => {
       const reader = new FileReader();
       reader.onload = (event) => {
         try {
-          const parsed = JSON.parse(event.target?.result as string);
+          const content = event.target?.result as string;
+          if (!content || !content.trim()) {
+            throw new Error("Plik JSON jest pusty");
+          }
+          const parsed = JSON.parse(content);
+          if (!parsed || typeof parsed !== "object") {
+            throw new Error("Brak poprawnego obiektu JSON");
+          }
+
           setMetaDoc(parsed);
+          setErrorState(null);
+          studioLogger.info(
+            `Pomyślnie sparsowano i wczytano konfigurację JSON: ${file.name}`,
+            { fileName: file.name, size: file.size }
+          );
+
           if (parsed.atlas) {
             setGridConfig({
               columns: parsed.atlas.columns ?? gridConfig.columns,
@@ -231,9 +287,27 @@ export const AtlasMetaSubTab: React.FC = () => {
           setTracks(parsedTracks);
           setSelectedTrackName(parsedTracks[0].name);
           setSelectedFrameIndex(0);
-        } catch (err) {
-          console.error("Failed to parse uploaded JSON file", err);
+        } catch (err: any) {
+          const parseError = new ParserError(
+            `Nie udało się sparsować pliku meta JSON: ${err?.message || "Nieznany błąd"}`,
+            ErrorCode.PARSER_INVALID_FORMAT,
+            { details: { fileName: file.name }, cause: err }
+          );
+          studioLogger.error(parseError.message, {
+            code: parseError.code,
+            details: parseError.details,
+          });
+          setErrorState(parseError);
         }
+      };
+      reader.onerror = () => {
+        const readError = new ParserError(
+          `Błąd odczytu pliku z dysku: ${file.name}`,
+          ErrorCode.PARSER_INVALID_FORMAT,
+          { details: { fileName: file.name } }
+        );
+        studioLogger.error(readError.message, { code: readError.code });
+        setErrorState(readError);
       };
       reader.readAsText(file);
     }
@@ -466,6 +540,8 @@ export const AtlasMetaSubTab: React.FC = () => {
             selectedFrameIndex={selectedFrameIndex}
             externalTool={viewerTool}
             onToolChange={(tool) => setViewerTool(tool)}
+            onError={(err) => setErrorState(err)}
+            onMetricsChange={(metrics) => setSliceMetrics(metrics)}
             onSelectCell={(info) => {
               setSelectedCellInfo(info);
               if (info.trackName) {
@@ -522,6 +598,21 @@ export const AtlasMetaSubTab: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* 3. Studio Telemetry & Status Bar */}
+      <AtlasStatusBar
+        assetId={activePreset.id}
+        assetName={activePreset.name}
+        category={activePreset.category}
+        slicingMethod={metaDoc.slicing?.method || "by_count"}
+        frameCount={sliceMetrics.frameCount}
+        textureWidth={sliceMetrics.textureWidth}
+        textureHeight={sliceMetrics.textureHeight}
+        durationMs={sliceMetrics.durationMs}
+        error={errorState}
+        onClearError={() => setErrorState(null)}
+        onNavigateToLogs={onNavigateToLogs}
+      />
     </div>
   );
 };

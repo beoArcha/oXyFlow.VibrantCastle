@@ -71,7 +71,9 @@ export const DeveloperTab: React.FC = () => {
       {activeSubTab === "testing" && <TesterSubTab />}
       {activeSubTab === "debug" && <DebugSubTab />}
       {activeSubTab === "logs" && <LogsSubTab />}
-      {activeSubTab === "atlas_slicer" && <AtlasMetaSubTab />}
+      {activeSubTab === "atlas_slicer" && (
+        <AtlasMetaSubTab onNavigateToLogs={() => setActiveSubTab("logs")} />
+      )}
     </DeveloperTabLayout>
   );
 };
