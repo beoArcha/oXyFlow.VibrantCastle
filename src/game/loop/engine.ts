@@ -27,7 +27,7 @@ import { GameRenderer } from "../renderer/renderer";
 import { ParticleSystem } from "./../engine/particleSystem";
 import { CameraManager } from "../engine/cameraManager";
 import { gameSave } from "../logic/save";
-import { castMagicSpell } from "../logic/magic";
+import { attemptCastSpell } from "../logic/magic";
 import { DebugCheatsController } from "../debug/debugCheatsController";
 import {
   PlayerCommandController,
@@ -368,7 +368,7 @@ export class GameEngine {
       try {
         cb();
       } catch (err) {
-        this.logger.error("Error in engine state listener:", undefined, err);
+        this.logger.error("Error in engine state listener:", { listenerCount: this.stateListeners.size }, err);
       }
     });
   }
@@ -614,12 +614,14 @@ export class GameEngine {
 
       // Magic Spell Cast: Primary
       if (inputs.magic1 && player.magicCooldown === 0) {
-        const newProjectiles = castMagicSpell(player, player.primarySpellId, inputs, this.audio);
-        if (newProjectiles.length > 0) {
+        const castRes = attemptCastSpell(player, player.primarySpellId, inputs, this.audio);
+        if (castRes.ok) {
           player.isCasting = true;
           player.castTime = 16;
           statsManager.recordSpellCast(player.id);
-          this.projectiles.push(...newProjectiles);
+          if (castRes.value.projectiles.length > 0) {
+            this.projectiles.push(...castRes.value.projectiles);
+          }
           this.particleSystem.spawnBurst(
             player.x + player.width / 2,
             player.y + player.height / 2,
@@ -634,12 +636,14 @@ export class GameEngine {
 
       // Magic Spell Cast: Secondary
       if (inputs.magic2 && player.magicCooldown === 0) {
-        const newProjectiles = castMagicSpell(player, player.secondarySpellId, inputs, this.audio);
-        if (newProjectiles.length > 0) {
+        const castRes = attemptCastSpell(player, player.secondarySpellId, inputs, this.audio);
+        if (castRes.ok) {
           player.isCasting = true;
           player.castTime = 16;
           statsManager.recordSpellCast(player.id);
-          this.projectiles.push(...newProjectiles);
+          if (castRes.value.projectiles.length > 0) {
+            this.projectiles.push(...castRes.value.projectiles);
+          }
           this.particleSystem.spawnBurst(
             player.x + player.width / 2,
             player.y + player.height / 2,

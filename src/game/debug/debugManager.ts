@@ -67,7 +67,7 @@ export class DebugManager {
       try {
         cb();
       } catch (err) {
-        debugLogger.error("Error in DebugManager listener:", undefined, err);
+        debugLogger.error("Error in DebugManager listener:", { listenerCount: this.listeners.size }, err);
       }
     });
   }

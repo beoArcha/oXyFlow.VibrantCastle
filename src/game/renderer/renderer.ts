@@ -109,7 +109,7 @@ export class GameRenderer {
           willReadFrequently: false,
         });
       } catch (err) {
-        rendererLogger.warn("Failed to acquire accelerated 2D context, falling back:", undefined, err);
+        rendererLogger.warn("Failed to acquire accelerated 2D context, falling back:", { mode: "accelerated_2d" }, err);
       }
     }
     if (!context) {

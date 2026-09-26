@@ -2,6 +2,7 @@ import { Item, ItemType, InventoryState, EquipmentState, Player, SoundType } fro
 import { gameAudio } from "../engine/audioEngine";
 import { statsManager } from "./stats";
 import itemsData from "../data/items.json";
+import { inventoryLogger } from "../logger/gameLogger";
 import { Result, ok, err, GameplayError, ErrorCode } from "../../lib/errors";
 
 /**
@@ -136,11 +137,11 @@ export interface PotionConsumptionResult {
 export function equipItem(player: Player, backpackIndex: number): Result<EquipResult, GameplayError> {
   const item = player.inventory.backpack[backpackIndex];
   if (!item) {
-    return err(
-      new GameplayError("No item found in backpack slot", ErrorCode.GAMEPLAY_ITEM_NOT_FOUND, {
-        details: { backpackIndex },
-      })
-    );
+    const error = new GameplayError("No item found in backpack slot", ErrorCode.GAMEPLAY_ITEM_NOT_FOUND, {
+      details: { backpackIndex, playerId: player.id },
+    });
+    inventoryLogger.warn(error.message, error.toLogContext());
+    return err(error);
   }
 
   let targetSlot: keyof EquipmentState | null = null;
@@ -169,24 +170,30 @@ export function equipItem(player: Player, backpackIndex: number): Result<EquipRe
         player.inventory.quickPotions[emptyPotionIdx] = item;
         player.inventory.backpack[backpackIndex] = null;
         gameAudio.playSFX(SoundType.SFX_UNLOCK);
+        inventoryLogger.debug(`Player ${player.id} equipped potion to belt slot ${emptyPotionIdx}`, {
+          playerId: player.id,
+          itemId: item.id,
+          slot: emptyPotionIdx,
+        });
         return ok({
           equipped: item,
           swappedItem: null,
           targetSlot: `quickPotion_${emptyPotionIdx}`,
         });
       }
-      return err(
-        new GameplayError("Quick potion belt is full", ErrorCode.GAMEPLAY_SLOT_LOCKED, {
-          details: { backpackIndex, beltCapacity: player.inventory.quickPotions.length },
-        })
-      );
+      const error = new GameplayError("Quick potion belt is full", ErrorCode.GAMEPLAY_SLOT_LOCKED, {
+        details: { backpackIndex, beltCapacity: player.inventory.quickPotions.length, playerId: player.id },
+      });
+      inventoryLogger.warn(error.message, error.toLogContext());
+      return err(error);
     }
-    default:
-      return err(
-        new GameplayError(`Cannot equip item of unsupported type: '${item.type}'`, ErrorCode.GAMEPLAY_INVALID_ACTION, {
-          details: { itemType: item.type, itemId: item.id },
-        })
-      );
+    default: {
+      const error = new GameplayError(`Cannot equip item of unsupported type: '${item.type}'`, ErrorCode.GAMEPLAY_INVALID_ACTION, {
+        details: { itemType: item.type, itemId: item.id, playerId: player.id },
+      });
+      inventoryLogger.warn(error.message, error.toLogContext());
+      return err(error);
+    }
   }
 
   if (targetSlot) {
@@ -201,6 +208,13 @@ export function equipItem(player: Player, backpackIndex: number): Result<EquipRe
     player.maxMana = stats.maxMana;
     player.maxStamina = stats.maxStamina;
 
+    inventoryLogger.debug(`Player ${player.id} equipped '${item.nameKey || item.id}' to slot ${targetSlot}`, {
+      playerId: player.id,
+      itemId: item.id,
+      targetSlot,
+      swappedItemId: previous?.id ?? null,
+    });
+
     return ok({
       equipped: item,
       swappedItem: previous,
@@ -208,9 +222,9 @@ export function equipItem(player: Player, backpackIndex: number): Result<EquipRe
     });
   }
 
-  return err(
-    new GameplayError(`Item '${item.nameKey || item.id}' could not be equipped`, ErrorCode.GAMEPLAY_INVALID_ACTION)
-  );
+  const error = new GameplayError(`Item '${item.nameKey || item.id}' could not be equipped`, ErrorCode.GAMEPLAY_INVALID_ACTION);
+  inventoryLogger.warn(error.message, error.toLogContext());
+  return err(error);
 }
 
 /**
@@ -226,20 +240,20 @@ export function equipItemFromBackpack(player: Player, backpackIndex: number): bo
 export function unequipItem(player: Player, slot: keyof EquipmentState): Result<UnequipResult, GameplayError> {
   const item = player.inventory.equipment[slot];
   if (!item) {
-    return err(
-      new GameplayError(`Equipment slot '${slot}' is empty`, ErrorCode.GAMEPLAY_ITEM_NOT_FOUND, {
-        details: { slot },
-      })
-    );
+    const error = new GameplayError(`Equipment slot '${slot}' is empty`, ErrorCode.GAMEPLAY_ITEM_NOT_FOUND, {
+      details: { slot, playerId: player.id },
+    });
+    inventoryLogger.warn(error.message, error.toLogContext());
+    return err(error);
   }
 
   const emptyIdx = player.inventory.backpack.findIndex(s => s === null);
   if (emptyIdx === -1) {
-    return err(
-      new GameplayError("Cannot unequip item: Backpack is full", ErrorCode.GAMEPLAY_SLOT_LOCKED, {
-        details: { slot, backpackCapacity: player.inventory.backpack.length },
-      })
-    );
+    const error = new GameplayError("Cannot unequip item: Backpack is full", ErrorCode.GAMEPLAY_SLOT_LOCKED, {
+      details: { slot, backpackCapacity: player.inventory.backpack.length, playerId: player.id },
+    });
+    inventoryLogger.warn(error.message, error.toLogContext());
+    return err(error);
   }
 
   player.inventory.backpack[emptyIdx] = item;
@@ -250,6 +264,13 @@ export function unequipItem(player: Player, slot: keyof EquipmentState): Result<
   player.maxHealth = stats.maxHp;
   player.maxMana = stats.maxMana;
   player.maxStamina = stats.maxStamina;
+
+  inventoryLogger.debug(`Player ${player.id} unequipped '${item.nameKey || item.id}' from slot ${slot}`, {
+    playerId: player.id,
+    itemId: item.id,
+    slot,
+    backpackIndex: emptyIdx,
+  });
 
   return ok({
     unequipped: item,
@@ -271,11 +292,11 @@ export function unequipSlotToBackpack(player: Player, slot: keyof EquipmentState
 export function consumePotion(player: Player, slotIndex: number): Result<PotionConsumptionResult, GameplayError> {
   const potion = player.inventory.quickPotions[slotIndex];
   if (!potion || (potion.count !== undefined && potion.count <= 0)) {
-    return err(
-      new GameplayError(`Quick potion slot ${slotIndex + 1} is empty`, ErrorCode.GAMEPLAY_ITEM_NOT_FOUND, {
-        details: { slotIndex },
-      })
-    );
+    const error = new GameplayError(`Quick potion slot ${slotIndex + 1} is empty`, ErrorCode.GAMEPLAY_ITEM_NOT_FOUND, {
+      details: { slotIndex, playerId: player.id },
+    });
+    inventoryLogger.warn(error.message, error.toLogContext());
+    return err(error);
   }
 
   let healedType: "health" | "mana" | "stamina" | "none" = "none";
@@ -304,6 +325,13 @@ export function consumePotion(player: Player, slotIndex: number): Result<PotionC
     }
   }
 
+  inventoryLogger.debug(`Player ${player.id} consumed potion '${potion.nameKey || potion.id}'`, {
+    playerId: player.id,
+    potionId: potion.id,
+    healedType,
+    remainingCount: remaining,
+  });
+
   return ok({
     consumed: potion,
     remainingCount: remaining,
@@ -324,14 +352,19 @@ export function useQuickPotion(player: Player, slotIndex: number): boolean {
 export function discardItem(player: Player, backpackIndex: number): Result<Item, GameplayError> {
   const item = player.inventory.backpack[backpackIndex];
   if (!item) {
-    return err(
-      new GameplayError("No item found to discard", ErrorCode.GAMEPLAY_ITEM_NOT_FOUND, {
-        details: { backpackIndex },
-      })
-    );
+    const error = new GameplayError("No item found to discard", ErrorCode.GAMEPLAY_ITEM_NOT_FOUND, {
+      details: { backpackIndex, playerId: player.id },
+    });
+    inventoryLogger.warn(error.message, error.toLogContext());
+    return err(error);
   }
   player.inventory.backpack[backpackIndex] = null;
   gameAudio.playSFX(SoundType.SFX_UNLOCK);
+  inventoryLogger.debug(`Player ${player.id} discarded item '${item.nameKey || item.id}'`, {
+    playerId: player.id,
+    itemId: item.id,
+    backpackIndex,
+  });
   return ok(item);
 }
 

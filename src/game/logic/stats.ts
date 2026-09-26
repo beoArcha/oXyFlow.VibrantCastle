@@ -123,7 +123,7 @@ export class StatsManager {
       try {
         listener();
       } catch (err) {
-        statsLogger.error("Error in stats subscriber:", undefined, err);
+        statsLogger.error("Error in stats subscriber:", { subscriberCount: this.listeners.size }, err);
       }
     });
   }
@@ -146,7 +146,7 @@ export class StatsManager {
         return true;
       }
     } catch (e) {
-      statsLogger.warn("Failed to load game statistics from localStorage:", undefined, e);
+      statsLogger.warn("Failed to load game statistics from localStorage:", { storageKey: StatsManager.STORAGE_KEY }, e);
     }
     return false;
   }
@@ -168,7 +168,7 @@ export class StatsManager {
       }
       return true;
     } catch (e) {
-      statsLogger.error("Failed to save game statistics to localStorage:", undefined, e);
+      statsLogger.error("Failed to save game statistics to localStorage:", { storageKey: StatsManager.STORAGE_KEY }, e);
       return false;
     }
   }
@@ -195,7 +195,7 @@ export class StatsManager {
       try {
         localStorage.removeItem(StatsManager.STORAGE_KEY);
       } catch (e) {
-        statsLogger.error("Failed to remove game statistics from localStorage:", undefined, e);
+        statsLogger.error("Failed to remove game statistics from localStorage:", { storageKey: StatsManager.STORAGE_KEY }, e);
       }
     }
     this.stats = createInitialSessionStats();

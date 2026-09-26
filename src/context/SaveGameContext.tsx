@@ -168,7 +168,7 @@ export const SaveGameProvider: React.FC<{
         const text = await file.text();
         return importFromJson(text);
       } catch (err) {
-        saveContextLogger.error("Error loading save file:", undefined, err);
+        saveContextLogger.error("Error loading save file:", { fileName: file.name, fileSize: file.size, fileType: file.type }, err);
         showNotification(t("saveLoadError"));
         return false;
       }

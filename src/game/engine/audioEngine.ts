@@ -79,7 +79,7 @@ export class GameAudioEngine implements IGameAudioEngine {
       this.bgmSynth.start(this.ctx, this.masterBGMNode);
       audioLogger.info("AudioContext and synthesizers initialized successfully");
     } catch (err) {
-      audioLogger.warn("Failed to initialize AudioContext:", undefined, err);
+      audioLogger.warn("Failed to initialize AudioContext:", { action: "init_audio_context" }, err);
     }
   }
 

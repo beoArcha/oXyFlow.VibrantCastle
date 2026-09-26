@@ -2,6 +2,7 @@ import { Projectile, Player, InputMap, SoundType } from "../types";
 import { gameAudio } from "../engine/audioEngine";
 import { SPELL_REGISTRY } from "../data/spells";
 import { Result, ok, err, GameplayError, ErrorCode } from "../../lib/errors";
+import { magicLogger } from "../logger/gameLogger";
 
 // Re-export SPELL_REGISTRY for backward compatibility with existing UI components
 export { SPELL_REGISTRY };
@@ -59,38 +60,52 @@ export function attemptCastSpell(
 ): Result<CastOutcome, GameplayError> {
   const skill = SPELL_REGISTRY[spellId];
   if (!skill) {
-    return err(
-      new GameplayError(`Spell with id '${spellId}' is not registered`, ErrorCode.GAMEPLAY_INVALID_ACTION, {
-        details: { spellId },
-      })
-    );
+    const error = new GameplayError(`Spell with id '${spellId}' is not registered`, ErrorCode.GAMEPLAY_INVALID_ACTION, {
+      details: { spellId, playerId: player.id },
+    });
+    magicLogger.warn("Attempted to cast unregistered spell", error.toLogContext(), error);
+    return err(error);
   }
 
   // Check cooldown
   if (player.magicCooldown > 0) {
-    return err(
-      new GameplayError("Spell is currently on cooldown", ErrorCode.GAMEPLAY_COOLDOWN_ACTIVE, {
-        details: { cooldownFrames: player.magicCooldown },
-      })
-    );
+    const error = new GameplayError("Spell is currently on cooldown", ErrorCode.GAMEPLAY_COOLDOWN_ACTIVE, {
+      details: { spellId, cooldownFrames: player.magicCooldown, playerId: player.id },
+    });
+    magicLogger.warn("Spell is currently on cooldown", error.toLogContext(), error);
+    return err(error);
   }
 
   // Check mana
   if (player.mana < skill.manaCost) {
-    return err(
-      new GameplayError("Insufficient mana to cast spell", ErrorCode.GAMEPLAY_INSUFFICIENT_MANA, {
-        details: { required: skill.manaCost, current: player.mana },
-      })
-    );
+    const error = new GameplayError("Insufficient mana to cast spell", ErrorCode.GAMEPLAY_INSUFFICIENT_MANA, {
+      details: {
+        spellId,
+        required: skill.manaCost,
+        requiredMana: skill.manaCost,
+        current: player.mana,
+        currentMana: player.mana,
+        playerId: player.id,
+      },
+    });
+    magicLogger.warn("Insufficient mana to cast spell", error.toLogContext(), error);
+    return err(error);
   }
 
   // Check stamina
   if (player.stamina < skill.staminaCost) {
-    return err(
-      new GameplayError("Insufficient stamina to cast spell", ErrorCode.GAMEPLAY_INSUFFICIENT_RESOURCE, {
-        details: { required: skill.staminaCost, current: player.stamina },
-      })
-    );
+    const error = new GameplayError("Insufficient stamina to cast spell", ErrorCode.GAMEPLAY_INSUFFICIENT_RESOURCE, {
+      details: {
+        spellId,
+        required: skill.staminaCost,
+        requiredStamina: skill.staminaCost,
+        current: player.stamina,
+        currentStamina: player.stamina,
+        playerId: player.id,
+      },
+    });
+    magicLogger.warn("Insufficient stamina to cast spell", error.toLogContext(), error);
+    return err(error);
   }
 
   // Consume resources
@@ -104,6 +119,13 @@ export function attemptCastSpell(
   if (skill.shieldDurationFrames && skill.shieldDurationFrames > 0) {
     player.shieldActiveTime = skill.shieldDurationFrames;
     audio.playSFX(SoundType.SFX_MAGIC_SHIELD);
+    magicLogger.debug("Cast defensive spell", {
+      spellId,
+      playerId: player.id,
+      shieldDurationFrames: skill.shieldDurationFrames,
+      manaCost: skill.manaCost,
+      staminaCost: skill.staminaCost,
+    });
     return ok({
       projectiles: [],
       spellId,
@@ -189,6 +211,14 @@ export function attemptCastSpell(
       skillId: skill.id
     });
   }
+
+  magicLogger.debug("Cast offensive spell", {
+    spellId,
+    playerId: player.id,
+    projectileCount: projectiles.length,
+    manaCost: skill.manaCost,
+    staminaCost: skill.staminaCost,
+  });
 
   return ok({
     projectiles,

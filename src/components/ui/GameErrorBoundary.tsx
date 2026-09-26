@@ -109,7 +109,7 @@ export class GameErrorBoundary extends Component<
       this.setState({ copied: true });
       setTimeout(() => this.setState({ copied: false }), 3000);
     } catch (err) {
-      this.logger.error("Failed to copy diagnostic report to clipboard", undefined, err);
+      this.logger.error("Failed to copy diagnostic report to clipboard", { action: "copy_diagnostic_report" }, err);
     }
   };
 

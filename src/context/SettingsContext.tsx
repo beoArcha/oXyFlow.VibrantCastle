@@ -75,7 +75,7 @@ function loadInitialSettings(): GameSettingsState {
       }
     }
   } catch (err) {
-    settingsLogger.warn("Failed to read settings from localStorage, using defaults:", undefined, err);
+    settingsLogger.warn("Failed to read settings from localStorage, using defaults:", { storageKey: SETTINGS_STORAGE_KEY }, err);
   }
 
   return DEFAULT_SETTINGS;
@@ -96,7 +96,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
         JSON.stringify(nextSettings.display)
       );
     } catch (e) {
-      settingsLogger.error("Failed to write settings to localStorage:", undefined, e);
+      settingsLogger.error("Failed to write settings to localStorage:", { storageKey: SETTINGS_STORAGE_KEY }, e);
     }
   }, []);
 
@@ -186,7 +186,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
         persist(merged);
         return true;
       } catch (err) {
-        settingsLogger.error("Failed to import settings JSON:", undefined, err);
+        settingsLogger.error("Failed to import settings JSON:", { context: "importSettingsFromJson" }, err);
         return false;
       }
     },

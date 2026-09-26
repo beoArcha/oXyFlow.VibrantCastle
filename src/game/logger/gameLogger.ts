@@ -12,4 +12,6 @@ export const rendererLogger: ILogger = getLogger("game:renderer");
 export const assetsLogger: ILogger = getLogger("game:assets");
 export const saveLogger: ILogger = getLogger("game:save");
 export const statsLogger: ILogger = getLogger("game:stats");
+export const inventoryLogger: ILogger = getLogger("game:inventory");
+export const magicLogger: ILogger = getLogger("game:magic");
 export const debugLogger: ILogger = getLogger("game:debug");
