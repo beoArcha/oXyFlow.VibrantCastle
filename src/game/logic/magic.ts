@@ -1,12 +1,21 @@
 import { Projectile, Player, InputMap, SoundType } from "../types";
 import { gameAudio } from "../engine/audioEngine";
 import { SPELL_REGISTRY } from "../data/spells";
+import { Result, ok, err, GameplayError, ErrorCode } from "../../lib/errors";
 
 // Re-export SPELL_REGISTRY for backward compatibility with existing UI components
 export { SPELL_REGISTRY };
 
 export interface IMagicAudio {
   playSFX(type: SoundType): void;
+}
+
+export interface CastOutcome {
+  projectiles: Projectile[];
+  spellId: string;
+  isDefensive: boolean;
+  manaConsumed: number;
+  staminaConsumed: number;
 }
 
 /**
@@ -39,21 +48,50 @@ export function calculateAimAngle(player: Player, inputs: InputMap): { angleRad:
 }
 
 /**
- * Casts a spell from player, consumes Mana & Stamina, and generates projectile or defensive ward.
- * Adheres to DIP by allowing audio injection with default fallback.
+ * Attempts to cast a spell, checking cooldowns, resources and generating projectile/defense outcomes.
+ * Returns a typed Result<CastOutcome, GameplayError> eliminating Nil/Boolean blindness.
  */
-export function castMagicSpell(
+export function attemptCastSpell(
   player: Player,
   spellId: string,
   inputs: InputMap,
   audio: IMagicAudio = gameAudio
-): Projectile[] {
+): Result<CastOutcome, GameplayError> {
   const skill = SPELL_REGISTRY[spellId];
-  if (!skill) return [];
+  if (!skill) {
+    return err(
+      new GameplayError(`Spell with id '${spellId}' is not registered`, ErrorCode.GAMEPLAY_INVALID_ACTION, {
+        details: { spellId },
+      })
+    );
+  }
 
-  // Check resource costs and cooldown
-  if (player.magicCooldown > 0) return [];
-  if (player.mana < skill.manaCost || player.stamina < skill.staminaCost) return [];
+  // Check cooldown
+  if (player.magicCooldown > 0) {
+    return err(
+      new GameplayError("Spell is currently on cooldown", ErrorCode.GAMEPLAY_COOLDOWN_ACTIVE, {
+        details: { cooldownFrames: player.magicCooldown },
+      })
+    );
+  }
+
+  // Check mana
+  if (player.mana < skill.manaCost) {
+    return err(
+      new GameplayError("Insufficient mana to cast spell", ErrorCode.GAMEPLAY_INSUFFICIENT_MANA, {
+        details: { required: skill.manaCost, current: player.mana },
+      })
+    );
+  }
+
+  // Check stamina
+  if (player.stamina < skill.staminaCost) {
+    return err(
+      new GameplayError("Insufficient stamina to cast spell", ErrorCode.GAMEPLAY_INSUFFICIENT_RESOURCE, {
+        details: { required: skill.staminaCost, current: player.stamina },
+      })
+    );
+  }
 
   // Consume resources
   player.mana -= skill.manaCost;
@@ -66,7 +104,13 @@ export function castMagicSpell(
   if (skill.shieldDurationFrames && skill.shieldDurationFrames > 0) {
     player.shieldActiveTime = skill.shieldDurationFrames;
     audio.playSFX(SoundType.SFX_MAGIC_SHIELD);
-    return [];
+    return ok({
+      projectiles: [],
+      spellId,
+      isDefensive: true,
+      manaConsumed: skill.manaCost,
+      staminaConsumed: skill.staminaCost,
+    });
   }
 
   // Handle Offensive Projectile spells
@@ -146,5 +190,25 @@ export function castMagicSpell(
     });
   }
 
-  return projectiles;
+  return ok({
+    projectiles,
+    spellId,
+    isDefensive: false,
+    manaConsumed: skill.manaCost,
+    staminaConsumed: skill.staminaCost,
+  });
+}
+
+/**
+ * Casts a spell from player, consumes Mana & Stamina, and generates projectile or defensive ward.
+ * Backwards-compatible wrapper returning the projectiles array directly.
+ */
+export function castMagicSpell(
+  player: Player,
+  spellId: string,
+  inputs: InputMap,
+  audio: IMagicAudio = gameAudio
+): Projectile[] {
+  const result = attemptCastSpell(player, spellId, inputs, audio);
+  return result.ok ? result.value.projectiles : [];
 }
