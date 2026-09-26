@@ -70,6 +70,7 @@ export interface ILogTransport {
  */
 export interface ISubscribableLogBuffer {
   readonly capacity: number;
+  readonly size: number;
   getLogs(): readonly LogRecord[];
   subscribe(listener: (record: LogRecord) => void): () => void;
   clear(): void;

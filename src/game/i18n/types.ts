@@ -128,6 +128,7 @@ export interface SettingsI18n {
   tabDeveloper: string;
   subtabTesting: string;
   subtabDebug: string;
+  subtabLogs: string;
   subtabAtlasSlicer: string;
   devSuiteSubtitle: string;
   testerSpawnPointsTitle: string;

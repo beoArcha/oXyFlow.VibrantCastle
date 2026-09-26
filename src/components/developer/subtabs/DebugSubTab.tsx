@@ -1,15 +1,13 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { DebugTelemetryCard } from "./debug/DebugTelemetryCard";
 import { DebugPlayerInspectorCard } from "./debug/DebugPlayerInspectorCard";
 import { DebugEntityTableCard } from "./debug/DebugEntityTableCard";
 import { DebugCollisionsCard } from "./debug/DebugCollisionsCard";
-import { DebugEventLogCard, DisplayLogItem } from "./debug/DebugEventLogCard";
 import { DebugStateDumpCard } from "./debug/DebugStateDumpCard";
 import { useGameSession, useSettings } from "../../../hooks/useGame";
 import gameEngine from "../../../game/loop/engine";
 import { debugManager } from "../../../game/debug/debugManager";
 import fpsManager from "../../../game/engine/fpsManager";
-import { LoggerManager } from "../../../lib/logger";
 
 export const DebugSubTab: React.FC = () => {
   const { p1, p2, currentLocationId } = useGameSession();
@@ -30,26 +28,6 @@ export const DebugSubTab: React.FC = () => {
       setTick((t) => (t + 1) % 10000);
     }, 250);
     return () => clearInterval(interval);
-  }, []);
-
-  // Live Event Log buffer from central Logger RingBuffer
-  const [logs, setLogs] = useState<DisplayLogItem[]>(() => [
-    ...LoggerManager.getInstance().ringBuffer.getLogs(),
-  ]);
-
-  useEffect(() => {
-    const ringBuffer = LoggerManager.getInstance().ringBuffer;
-    setLogs([...ringBuffer.getLogs()]);
-
-    const unsubscribe = ringBuffer.subscribe(() => {
-      setLogs([...ringBuffer.getLogs()]);
-    });
-    return unsubscribe;
-  }, []);
-
-  const handleClearLogs = useCallback(() => {
-    LoggerManager.getInstance().ringBuffer.clear();
-    setLogs([]);
   }, []);
 
   // Dynamic telemetry calculations
@@ -136,10 +114,7 @@ export const DebugSubTab: React.FC = () => {
         onActionComplete={() => setTick((t) => t + 1)}
       />
 
-      {/* 5. Live Event Stream Log */}
-      <DebugEventLogCard logs={logs} onClearLogs={handleClearLogs} />
-
-      {/* 6. JSON State Dump */}
+      {/* 5. JSON State Dump */}
       <DebugStateDumpCard stateObject={stateSnapshot} />
     </div>
   );

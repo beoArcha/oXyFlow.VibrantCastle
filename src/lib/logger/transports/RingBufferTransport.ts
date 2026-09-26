@@ -18,6 +18,10 @@ export class RingBufferTransport implements ILogTransport, ISubscribableLogBuffe
     this.minLevel = options.minLevel ?? LogLevel.DEBUG;
   }
 
+  public get size(): number {
+    return this.buffer.length;
+  }
+
   public write(record: LogRecord): void {
     if (record.level < this.minLevel) {
       return;
