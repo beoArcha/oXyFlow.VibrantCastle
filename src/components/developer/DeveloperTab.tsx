@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { Wrench, Activity, Grid, ScrollText } from "lucide-react";
 import { DeveloperTabLayout } from "./DeveloperTabLayout";
 import { TesterSubTab } from "./subtabs/TesterSubTab";
@@ -6,8 +6,8 @@ import { DebugSubTab } from "./subtabs/DebugSubTab";
 import { LogsSubTab } from "./subtabs/LogsSubTab";
 import { AtlasMetaSubTab } from "./subtabs/AtlasMetaSubTab";
 import { useI18n } from "../../hooks/useI18n";
+import { useThrottledLogCount } from "../../hooks/useThrottledLogs";
 import { TabItem } from "../ui/Tabs";
-import { LoggerManager } from "../../lib/logger";
 
 export type DeveloperSubTabId = "testing" | "debug" | "logs" | "atlas_slicer";
 
@@ -22,16 +22,8 @@ export const DeveloperTab: React.FC = () => {
   const [activeSubTab, setActiveSubTab] = useState<DeveloperSubTabId>("testing");
   const { t } = useI18n();
 
-  // Dynamic log count badge
-  const [logCount, setLogCount] = useState<number>(() => LoggerManager.getInstance().ringBuffer.size);
-
-  useEffect(() => {
-    const ringBuffer = LoggerManager.getInstance().ringBuffer;
-    setLogCount(ringBuffer.size);
-    return ringBuffer.subscribe(() => {
-      setLogCount(ringBuffer.size);
-    });
-  }, []);
+  // Dynamic log count badge with throttled updates (AGENT.md § 3.3 & § 12.1)
+  const logCount = useThrottledLogCount(250);
 
   const subTabItems: TabItem[] = useMemo(
     () => [

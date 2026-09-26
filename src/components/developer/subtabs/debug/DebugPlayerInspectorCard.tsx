@@ -36,7 +36,7 @@ export const DebugPlayerInspectorCard: React.FC<DebugPlayerInspectorProps> = ({
             </span>
           </div>
           <Badge variant={playerNumber === 1 ? "amber" : "cyan"}>
-            {player.facingLeft ? "← LEFT" : "RIGHT →"}
+            {player.facingLeft ? t("debugPlayerFacingLeft") : t("debugPlayerFacingRight")}
           </Badge>
         </div>
 
@@ -73,12 +73,12 @@ export const DebugPlayerInspectorCard: React.FC<DebugPlayerInspectorProps> = ({
           </span>
           {isAttacking && (
             <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-950/60 text-rose-300 border border-rose-700/60">
-              ATTACK
+              {t("debugPlayerAttack")}
             </span>
           )}
           {isDashing && (
             <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-yellow-950/60 text-yellow-300 border border-yellow-700/60">
-              DASH
+              {t("debugPlayerDash")}
             </span>
           )}
         </div>
@@ -151,8 +151,8 @@ export const DebugPlayerInspectorCard: React.FC<DebugPlayerInspectorProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {p1 && renderPlayerStats(p1, 1, "Valen")}
-        {isTwoPlayer && p2 && renderPlayerStats(p2, 2, "Aurelia")}
+        {p1 && renderPlayerStats(p1, 1, t("p1Tag"))}
+        {isTwoPlayer && p2 && renderPlayerStats(p2, 2, t("p2Tag"))}
       </CardContent>
     </Card>
   );

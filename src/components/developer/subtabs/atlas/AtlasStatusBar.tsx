@@ -13,8 +13,11 @@ import {
 } from "lucide-react";
 import { Badge, Button } from "../../../ui";
 import { useI18n } from "../../../../hooks/useI18n";
-import { LoggerManager, LogRecord, LogLevel } from "../../../../lib/logger";
+import { useThrottledLogs } from "../../../../hooks/useThrottledLogs";
+import { LogLevel } from "../../../../lib/logger";
 import { GameBaseError } from "../../../../lib/errors";
+
+const ATLAS_LOG_CATEGORIES = ["AtlasStudio", "AtlasSlicing"];
 
 export interface AtlasStatusBarProps {
   assetId: string;
@@ -45,23 +48,12 @@ export const AtlasStatusBar: React.FC<AtlasStatusBarProps> = ({
 }) => {
   const { t } = useI18n();
   const [isLogsOpen, setIsLogsOpen] = useState<boolean>(false);
-  const [atlasLogs, setAtlasLogs] = useState<LogRecord[]>([]);
 
-  // Update logs from RingBuffer filtered for AtlasStudio & AtlasSlicing
-  useEffect(() => {
-    const ringBuffer = LoggerManager.getInstance().ringBuffer;
-
-    const filterAtlasLogs = () => {
-      const all = ringBuffer.getLogs();
-      const filtered = all.filter(
-        (r) => r.category === "AtlasStudio" || r.category === "AtlasSlicing"
-      );
-      setAtlasLogs(filtered);
-    };
-
-    filterAtlasLogs();
-    return ringBuffer.subscribe(filterAtlasLogs);
-  }, []);
+  // Throttled log subscription filtered for AtlasStudio & AtlasSlicing (AGENT.md § 3.3)
+  const { logs: atlasLogs } = useThrottledLogs({
+    throttleMs: 200,
+    categories: ATLAS_LOG_CATEGORIES,
+  });
 
   const getLevelBadge = (level: LogLevel) => {
     switch (level) {

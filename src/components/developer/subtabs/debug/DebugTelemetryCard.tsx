@@ -1,6 +1,6 @@
 import React from "react";
 import { Activity, Gauge, Zap, Sparkles, Crosshair, Map, Video } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Badge } from "../../../ui";
+import { Card, CardHeader, CardTitle, CardContent, Badge, BadgeVariant } from "../../../ui";
 import { useI18n } from "../../../../hooks/useI18n";
 
 export interface DebugTelemetryProps {
@@ -32,8 +32,8 @@ export const DebugTelemetryCard: React.FC<DebugTelemetryProps> = ({
 }) => {
   const { t } = useI18n();
 
-  const fpsBadgeVariant =
-    measuredFps >= targetFps - 5 ? "emerald" : measuredFps >= 30 ? "amber" : "rose";
+  const fpsBadgeVariant: BadgeVariant =
+    measuredFps >= targetFps - 5 ? "green" : measuredFps >= 30 ? "amber" : "red";
 
   return (
     <Card variant="default">
@@ -41,7 +41,7 @@ export const DebugTelemetryCard: React.FC<DebugTelemetryProps> = ({
         <CardTitle icon={<Activity className="w-4 h-4 text-emerald-400" />}>
           {t("debugTelemetryTitle")}
         </CardTitle>
-        <Badge variant={fpsBadgeVariant as any}>
+        <Badge variant={fpsBadgeVariant}>
           {measuredFps} FPS / {targetFps}
         </Badge>
       </CardHeader>

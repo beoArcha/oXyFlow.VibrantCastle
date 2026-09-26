@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent, Button } from "../../../ui";
 import { useI18n } from "../../../../hooks/useI18n";
 
 export interface DebugStateDumpProps {
-  stateObject: Record<string, any>;
+  stateObject: Record<string, unknown>;
 }
 
 export const DebugStateDumpCard: React.FC<DebugStateDumpProps> = ({ stateObject }) => {
@@ -13,10 +13,14 @@ export const DebugStateDumpCard: React.FC<DebugStateDumpProps> = ({ stateObject 
 
   const jsonString = JSON.stringify(stateObject, null, 2);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(jsonString);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(jsonString);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      // Ignore clipboard errors if denied
+    }
   };
 
   return (

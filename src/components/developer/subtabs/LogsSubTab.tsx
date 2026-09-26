@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Button } from "../../ui";
 import { useI18n } from "../../../hooks/useI18n";
+import { useThrottledLogs } from "../../../hooks/useThrottledLogs";
 import { LogRecord, LogLevel, LoggerManager } from "../../../lib/logger";
 
 export interface DisplayLogItem extends LogRecord {
@@ -28,19 +29,8 @@ export interface DisplayLogItem extends LogRecord {
 export const LogsSubTab: React.FC = () => {
   const { t } = useI18n();
 
-  // Ring buffer reactive subscription
-  const [logs, setLogs] = useState<LogRecord[]>(() => [
-    ...LoggerManager.getInstance().ringBuffer.getLogs(),
-  ]);
-
-  useEffect(() => {
-    const ringBuffer = LoggerManager.getInstance().ringBuffer;
-    setLogs([...ringBuffer.getLogs()]);
-
-    return ringBuffer.subscribe(() => {
-      setLogs([...ringBuffer.getLogs()]);
-    });
-  }, []);
+  // Throttled ring buffer reactive subscription (AGENT.md § 3.3 & § 12.1)
+  const { logs, lastUpdated, clearLogs } = useThrottledLogs({ throttleMs: 150 });
 
   // Filtering states
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -55,12 +45,12 @@ export const LogsSubTab: React.FC = () => {
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom on new logs if enabled
+  // Auto-scroll to bottom on new logs if enabled (fixed dependency to lastUpdated)
   useEffect(() => {
     if (autoScroll && scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
     }
-  }, [logs.length, autoScroll]);
+  }, [lastUpdated, autoScroll]);
 
   const toggleExpand = useCallback((id: string) => {
     setExpandedLogIds((prev) => {
@@ -75,10 +65,9 @@ export const LogsSubTab: React.FC = () => {
   }, []);
 
   const handleClearLogs = useCallback(() => {
-    LoggerManager.getInstance().ringBuffer.clear();
-    setLogs([]);
+    clearLogs();
     setExpandedLogIds(new Set());
-  }, []);
+  }, [clearLogs]);
 
   const handleChangeGlobalLevel = (level: LogLevel) => {
     LoggerManager.getInstance().setDefaultLevel(level);
@@ -231,7 +220,7 @@ export const LogsSubTab: React.FC = () => {
                 </span>
               </div>
               <p className="text-[11px] text-stone-400">
-                Pełny podgląd strumienia zdarzeń RingBuffer, diagnostyka błędów oraz kontekstów operacji
+                {t("debugEventLogSubtitle")}
               </p>
             </div>
           </div>
@@ -246,10 +235,10 @@ export const LogsSubTab: React.FC = () => {
                   ? "bg-amber-600/30 border-amber-500 text-amber-200 shadow-sm"
                   : "bg-stone-900/80 border-stone-800 text-stone-400 hover:text-stone-200"
               }`}
-              title="Przełącz automatyczne przewijanie do najnowszych logów"
+              title={t("debugAutoScrollToggle")}
             >
               <ArrowDownCircle size={13} className={autoScroll ? "text-amber-400" : "text-stone-500"} />
-              <span>Auto-scroll</span>
+              <span>{t("debugAutoScrollLabel")}</span>
             </button>
 
             <Button
@@ -257,10 +246,10 @@ export const LogsSubTab: React.FC = () => {
               variant="outline"
               icon={copied ? <Check size={13} className="text-emerald-400" /> : <Copy size={13} />}
               onClick={handleCopyLogs}
-              title="Kopiuj widoczne logi do schowka"
+              title={t("debugCopyVisibleLogs")}
               className="text-xs text-stone-300 hover:text-white"
             >
-              Kopiuj
+              {t("debugCopyBtn")}
             </Button>
 
             <Button
@@ -268,7 +257,7 @@ export const LogsSubTab: React.FC = () => {
               variant="outline"
               icon={<Download size={13} />}
               onClick={handleDownloadLogs}
-              title="Pobierz pełny zrzut logów JSON"
+              title={t("debugDownloadLogsJson")}
               className="text-xs text-stone-300 hover:text-white"
             >
               JSON
@@ -282,7 +271,7 @@ export const LogsSubTab: React.FC = () => {
               title={t("debugClearLog")}
               className="text-xs text-rose-300 hover:bg-rose-950/40 hover:text-rose-200 border border-rose-900/50"
             >
-              Wyczyść
+              {t("debugClearBtn")}
             </Button>
           </div>
         </div>
@@ -297,7 +286,7 @@ export const LogsSubTab: React.FC = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Filtruj treść, kategorię, kod błędu..."
+                placeholder={t("debugFilterPlaceholder")}
                 className="w-full pl-8 pr-7 py-1 rounded-lg bg-black/60 border border-stone-800 focus:border-amber-500/70 text-xs text-stone-200 placeholder:text-stone-500 font-mono outline-none"
               />
               {searchQuery && (
@@ -345,7 +334,7 @@ export const LogsSubTab: React.FC = () => {
                 onChange={(e) => setCategoryFilter(e.target.value)}
                 className="bg-black/60 border border-stone-800 text-stone-300 text-xs rounded-lg px-2 py-1 font-mono outline-none focus:border-amber-500/70 cursor-pointer"
               >
-                <option value="all">Wszystkie kategorie</option>
+                <option value="all">{t("debugAllCategories")}</option>
                 {availableCategories.map((cat) => (
                   <option key={cat} value={cat}>
                     {cat}
@@ -358,7 +347,7 @@ export const LogsSubTab: React.FC = () => {
           {/* Engine Global Log Level Switch */}
           <div className="flex items-center gap-1.5 font-mono text-[11px] text-stone-400 shrink-0">
             <Cpu size={13} className="text-amber-500" />
-            <span className="text-[10px] text-stone-400">Poziom rejestrowania:</span>
+            <span className="text-[10px] text-stone-400">{t("debugGlobalLogLevelLabel")}</span>
             <div className="flex items-center rounded bg-black/60 border border-stone-800 p-0.5">
               {[
                 { level: LogLevel.DEBUG, name: "DEBUG" },
@@ -395,7 +384,7 @@ export const LogsSubTab: React.FC = () => {
             <p className="text-sm font-semibold">{t("debugEmptyLog")}</p>
             {searchQuery && (
               <p className="text-xs text-stone-600">
-                Brak wyników dla zapytania &quot;{searchQuery}&quot;. Spróbuj zresetować filtry.
+                {t("debugNoFilterResults")}
               </p>
             )}
           </div>
@@ -421,7 +410,7 @@ export const LogsSubTab: React.FC = () => {
                     <button
                       type="button"
                       className="mt-0.5 text-stone-500 hover:text-amber-400 transition-colors"
-                      title={isExpanded ? "Zwiń szczegóły" : "Rozwiń kontekst diagnostyczny"}
+                      title={isExpanded ? t("debugCollapseDetails") : t("debugExpandDetails")}
                     >
                       {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                     </button>
@@ -506,7 +495,7 @@ export const LogsSubTab: React.FC = () => {
                               }}
                               className="text-[9px] text-stone-400 hover:text-stone-200 font-mono underline cursor-pointer"
                             >
-                              Kopiuj Stack Trace
+                              {t("debugCopyStackTrace")}
                             </button>
                           )}
                         </div>

@@ -46,7 +46,16 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
 
   // Selected Preset
   const [selectedPresetId, setSelectedPresetId] = useState<string>("valen");
-  const [, setCustomImageSrc] = useState<string | null>(null);
+  const [customImageSrc, setCustomImageSrc] = useState<string | null>(null);
+
+  // Clean up object URLs to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (customImageSrc) {
+        URL.revokeObjectURL(customImageSrc);
+      }
+    };
+  }, [customImageSrc]);
 
   // Diagnostics & Error Telemetry State
   const [errorState, setErrorState] = useState<GameBaseError | null>(null);
@@ -198,6 +207,12 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
     (preset: AtlasPresetItem) => {
       setSelectedPresetId(preset.id);
       setImageSrc(preset.imageSrc);
+      setCustomImageSrc((prev) => {
+        if (prev) {
+          URL.revokeObjectURL(prev);
+        }
+        return null;
+      });
       setMetaDoc(preset.defaultMeta);
       setErrorState(null);
 
@@ -275,7 +290,12 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
       }
 
       const url = URL.createObjectURL(file);
-      setCustomImageSrc(url);
+      setCustomImageSrc((prev) => {
+        if (prev) {
+          URL.revokeObjectURL(prev);
+        }
+        return url;
+      });
       setImageSrc(url);
       setErrorState(null);
       studioLogger.info(
