@@ -9,6 +9,7 @@ import {
   checkSkillUnlockConditions,
   getCharacterKey
 } from "../game/logic/skills";
+import { MissingContextProviderError } from "../lib/errors";
 
 export interface SkillsCharacterState {
   unlockedSkills: string[];
@@ -218,7 +219,7 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
 export const useSkills = (): SkillsContextValue => {
   const ctx = useContext(SkillsContext);
   if (!ctx) {
-    throw new Error("useSkills must be used within a SkillsProvider");
+    throw new MissingContextProviderError("useSkills", "SkillsProvider");
   }
   return ctx;
 };

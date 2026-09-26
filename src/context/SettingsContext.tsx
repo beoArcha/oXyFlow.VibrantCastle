@@ -17,6 +17,7 @@ import {
   HudSettings,
 } from "./settingsTypes";
 import { getLogger } from "../lib/logger";
+import { MissingContextProviderError } from "../lib/errors";
 
 const settingsLogger = getLogger("context:settings");
 
@@ -344,7 +345,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
 export function useSettings(): SettingsContextValue {
   const context = useContext(SettingsContext);
   if (!context) {
-    throw new Error("useSettings must be used within a SettingsProvider");
+    throw new MissingContextProviderError("useSettings", "SettingsProvider");
   }
   return context;
 }

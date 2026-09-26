@@ -1,5 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { getLogger, ILogger, LoggerManager } from "../../lib/logger";
+import { GameBaseError } from "../../lib/errors";
 import { AlertTriangle, RefreshCw, Copy, Check } from "lucide-react";
 import { Button } from "./Button";
 
@@ -83,15 +84,24 @@ export class GameErrorBoundary extends Component<
     try {
       const ringBuffer = LoggerManager.getInstance().ringBuffer;
       const logs = ringBuffer.exportAsText();
+      const err = this.state.error;
+      const gameError = err instanceof GameBaseError ? err : null;
+
       const diagnosticReport = [
         "=== VIBRANT CASTLE CRASH REPORT ===",
         `Timestamp: ${new Date().toISOString()}`,
-        `Error: ${this.state.error?.name || "Error"}: ${this.state.error?.message || "Unknown"}`,
-        `Stack: ${this.state.error?.stack || "No stack"}`,
+        `Error: ${err?.name || "Error"}: ${err?.message || "Unknown"}`,
+        gameError ? `Domain: ${gameError.domain}` : null,
+        gameError ? `Code: ${gameError.code}` : null,
+        gameError?.details ? `Details: ${JSON.stringify(gameError.details, null, 2)}` : null,
+        gameError ? `Log Context: ${JSON.stringify(gameError.toLogContext(), null, 2)}` : null,
+        `Stack: ${err?.stack || "No stack"}`,
         `Component Stack: ${this.state.componentStack || "No component stack"}`,
         "\n=== RECENT GAME LOGS ===",
         logs || "No logs in ring buffer",
-      ].join("\n");
+      ]
+        .filter(Boolean)
+        .join("\n");
 
       if (navigator.clipboard) {
         await navigator.clipboard.writeText(diagnosticReport);
@@ -113,6 +123,8 @@ export class GameErrorBoundary extends Component<
       fallbackMessage = "The interface encountered a fatal rendering failure. Your save data is safe.",
     } = this.props;
 
+    const gameError = this.state.error instanceof GameBaseError ? this.state.error : null;
+
     return (
       <div className="w-full h-full min-h-[300px] flex items-center justify-center p-6 bg-[#0c0302] text-stone-200">
         <div className="max-w-xl w-full p-6 rounded-2xl bg-[#170603] border-2 border-red-900/60 shadow-2xl shadow-red-950/40 flex flex-col gap-4 text-center items-center font-sans">
@@ -129,12 +141,31 @@ export class GameErrorBoundary extends Component<
             </p>
           </div>
 
+          {gameError && (
+            <div className="flex flex-wrap items-center gap-2 justify-center">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-red-900/60 text-red-200 border border-red-700/50">
+                [{gameError.domain}]
+              </span>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold tracking-wider uppercase bg-stone-900/80 text-amber-300 border border-amber-500/30">
+                {gameError.code}
+              </span>
+            </div>
+          )}
+
           {this.state.error && (
-            <div className="w-full text-left p-3 rounded-xl bg-[#090201] border border-red-950/80 text-[11px] font-mono text-red-200/90 overflow-x-auto max-h-32 custom-scrollbar">
-              <span className="font-bold text-red-400">
-                {this.state.error.name}:
-              </span>{" "}
-              {this.state.error.message}
+            <div className="w-full text-left p-3 rounded-xl bg-[#090201] border border-red-950/80 text-[11px] font-mono text-red-200/90 overflow-x-auto max-h-36 custom-scrollbar flex flex-col gap-1.5">
+              <div>
+                <span className="font-bold text-red-400">
+                  {this.state.error.name}:
+                </span>{" "}
+                {this.state.error.message}
+              </div>
+              {gameError?.details && Object.keys(gameError.details).length > 0 && (
+                <div className="text-[10px] text-stone-400 pt-1.5 border-t border-stone-800/80">
+                  <span className="text-stone-500 font-sans font-semibold">Details: </span>
+                  {JSON.stringify(gameError.details)}
+                </div>
+              )}
             </div>
           )}
 

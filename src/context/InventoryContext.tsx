@@ -11,6 +11,7 @@ import {
 import {
   calculatePlayerDerivedStats,
 } from "../game/logic/inventory";
+import { MissingContextProviderError } from "../lib/errors";
 
 export interface InventoryContextState {
   p1Inventory: InventoryState;
@@ -174,7 +175,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
 export const useInventory = (): InventoryContextValue => {
   const ctx = useContext(InventoryContext);
   if (!ctx) {
-    throw new Error("useInventory must be used within an InventoryProvider");
+    throw new MissingContextProviderError("useInventory", "InventoryProvider");
   }
   return ctx;
 };

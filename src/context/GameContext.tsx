@@ -23,6 +23,7 @@ import {
   useInventory,
   InventoryContextValue,
 } from "./InventoryContext";
+import { MissingContextProviderError } from "../lib/errors";
 import {
   SkillsProvider,
   useSkills,
@@ -299,7 +300,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export function useGame(): GameContextValue {
   const context = useContext(GameContext);
   if (!context) {
-    throw new Error("useGame must be used within a GameProvider");
+    throw new MissingContextProviderError("useGame", "GameProvider");
   }
   return context;
 }

@@ -12,6 +12,7 @@ import { useI18n } from "./I18nContext";
 import { IContext } from "./IContext";
 import { useSafeTimeout } from "./useSafeTimeout";
 import { getLogger } from "../lib/logger";
+import { MissingContextProviderError } from "../lib/errors";
 
 const saveContextLogger = getLogger("context:save");
 
@@ -91,7 +92,7 @@ export const SaveGameProvider: React.FC<{
   }, [onStateApplied, showNotification, t]);
 
   const resetToDefaults = useCallback(() => {
-    localStorage.removeItem("vibrant_castle_save_state");
+    gameSave.clearSave();
     setLastSavedState(null);
     gameEngine.resetLevel();
     if (onStateApplied) onStateApplied();
@@ -112,37 +113,33 @@ export const SaveGameProvider: React.FC<{
 
   const importFromJson = useCallback(
     (jsonString: string): boolean => {
-      try {
-        const parsed = JSON.parse(jsonString) as SaveState;
-        if (!parsed || !parsed.levelId) {
-          showNotification(t("invalidSaveFormat"));
-          return false;
-        }
+      const parseResult = gameSave.parseSaveJson(jsonString);
+      if (!parseResult.ok) {
+        saveContextLogger.error("Failed to parse imported save JSON", parseResult.error.toLogContext(), parseResult.error);
+        showNotification(t("invalidSaveFormat"));
+        return false;
+      }
 
-        if (parsed.levelId !== gameEngine.currentLocationId) {
-          gameEngine.loadLocation(parsed.levelId as LocationId);
-        }
+      const parsed = parseResult.value;
+      if (parsed.levelId !== gameEngine.currentLocationId) {
+        gameEngine.loadLocation(parsed.levelId as LocationId);
+      }
 
-        const ok = gameSave.applySaveState(
-          parsed,
-          gameEngine.players,
-          gameEngine.enemies,
-          gameEngine.entities
-        );
+      const ok = gameSave.applySaveState(
+        parsed,
+        gameEngine.players,
+        gameEngine.enemies,
+        gameEngine.entities
+      );
 
-        if (ok) {
-          setLastSavedState(parsed);
-          localStorage.setItem("vibrant_castle_save_state", JSON.stringify(parsed));
-          if (onStateApplied) onStateApplied();
-          showNotification(t("loadSuccess"));
-          return true;
-        } else {
-          showNotification(t("invalidSaveFormat"));
-          return false;
-        }
-      } catch (e) {
-        saveContextLogger.error("Failed to parse save JSON:", undefined, e);
-        showNotification(t("saveLoadError"));
+      if (ok) {
+        setLastSavedState(parsed);
+        gameSave.saveStateToStorage(parsed);
+        if (onStateApplied) onStateApplied();
+        showNotification(t("loadSuccess"));
+        return true;
+      } else {
+        showNotification(t("invalidSaveFormat"));
         return false;
       }
     },
@@ -235,7 +232,7 @@ export const SaveGameProvider: React.FC<{
 export function useSaveGame(): SaveGameContextValue {
   const context = useContext(SaveGameContext);
   if (!context) {
-    throw new Error("useSaveGame must be used within a SaveGameProvider");
+    throw new MissingContextProviderError("useSaveGame", "SaveGameProvider");
   }
   return context;
 }

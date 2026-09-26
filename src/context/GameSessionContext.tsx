@@ -18,6 +18,7 @@ import { getNextLocation, getLocation } from "../game/locations";
 import { useI18n } from "./I18nContext";
 import { useEngineSubscription } from "./useEngineSubscription";
 import { useSafeTimeout } from "./useSafeTimeout";
+import { MissingContextProviderError } from "../lib/errors";
 
 export interface GameSessionContextValue {
   // Live State
@@ -241,7 +242,7 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
 export function useGameSession(): GameSessionContextValue {
   const context = useContext(GameSessionContext);
   if (!context) {
-    throw new Error("useGameSession must be used within a GameSessionProvider");
+    throw new MissingContextProviderError("useGameSession", "GameSessionProvider");
   }
   return context;
 }

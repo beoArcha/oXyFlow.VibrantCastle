@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useCallback, useMemo } from
 import { LanguageCode, GameTranslationDictionary, translations, t as translateFn, getDomainI18n } from "../game/i18n";
 import gameEngine from "../game/loop/engine";
 import { useEngineSubscription } from "./useEngineSubscription";
+import { MissingContextProviderError } from "../lib/errors";
 
 export interface I18nContextValue {
   language: LanguageCode;
@@ -58,7 +59,7 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export function useI18n(): I18nContextValue {
   const context = useContext(I18nContext);
   if (!context) {
-    throw new Error("useI18n must be used within an I18nProvider");
+    throw new MissingContextProviderError("useI18n", "I18nProvider");
   }
   return context;
 }
