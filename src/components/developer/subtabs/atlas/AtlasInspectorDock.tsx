@@ -1,0 +1,172 @@
+import React from "react";
+import { Sparkles, Grid, Pipette, FileJson } from "lucide-react";
+import { Card, CardHeader, CardContent } from "../../../ui";
+import { useI18n } from "../../../../hooks/useI18n";
+import {
+  AtlasGridConfig,
+  AtlasAnimationTrackDefinition,
+  AtlasOriginDefinition,
+  AtlasMetaDoc,
+  IAtlasBackgroundConfig,
+  IAtlasSlicingConfig,
+  AtlasInspectorTabId,
+} from "./types";
+import { AtlasAnimationPreview } from "./AtlasAnimationPreview";
+import { AtlasSlicingInspector } from "./AtlasSlicingInspector";
+import { AtlasBackgroundPanel } from "./AtlasBackgroundPanel";
+import { AtlasJsonExportPanel } from "./AtlasJsonExportPanel";
+
+export interface AtlasInspectorDockProps {
+  activeTab: AtlasInspectorTabId;
+  onTabChange: (tab: AtlasInspectorTabId) => void;
+  imageSrc: string;
+  assetId: string;
+  metaDoc: AtlasMetaDoc;
+  gridConfig: AtlasGridConfig;
+  tracks: AtlasAnimationTrackDefinition[];
+  selectedTrackName: string | null;
+  selectedFrameIndex: number | null;
+  origin: AtlasOriginDefinition;
+  backgroundConfig?: IAtlasBackgroundConfig;
+  slicingConfig?: IAtlasSlicingConfig;
+  onGridConfigChange: (grid: AtlasGridConfig) => void;
+  onTracksChange: (tracks: AtlasAnimationTrackDefinition[]) => void;
+  onSelectTrack: (trackName: string) => void;
+  onSelectFrame: (frameIdx: number) => void;
+  onOriginChange: (origin: AtlasOriginDefinition) => void;
+  onBackgroundConfigChange: (config: IAtlasBackgroundConfig) => void;
+  onSlicingConfigChange: (config: IAtlasSlicingConfig) => void;
+  onMetaDocChange: (doc: AtlasMetaDoc) => void;
+  onResetDefaults: () => void;
+  onRequestEyedropper: () => void;
+}
+
+export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
+  activeTab,
+  onTabChange,
+  imageSrc,
+  assetId,
+  metaDoc,
+  gridConfig,
+  tracks,
+  selectedTrackName,
+  selectedFrameIndex,
+  origin,
+  backgroundConfig,
+  slicingConfig,
+  onGridConfigChange,
+  onTracksChange,
+  onSelectTrack,
+  onSelectFrame,
+  onOriginChange,
+  onBackgroundConfigChange,
+  onSlicingConfigChange,
+  onMetaDocChange,
+  onResetDefaults,
+  onRequestEyedropper,
+}) => {
+  const { t } = useI18n();
+
+  const tabs: { id: AtlasInspectorTabId; label: string; icon: React.ReactNode }[] = [
+    {
+      id: "preview",
+      label: t("atlasStudioTabLivePreview"),
+      icon: <Sparkles size={13} className="text-cyan-400" />,
+    },
+    {
+      id: "slicing",
+      label: t("atlasStudioTabSlicing"),
+      icon: <Grid size={13} className="text-amber-400" />,
+    },
+    {
+      id: "background",
+      label: t("atlasStudioTabBackground"),
+      icon: <Pipette size={13} className="text-rose-400" />,
+    },
+    {
+      id: "json",
+      label: t("atlasStudioTabExport"),
+      icon: <FileJson size={13} className="text-emerald-400" />,
+    },
+  ];
+
+  return (
+    <Card variant="default" className="flex flex-col flex-1 h-full min-h-[580px]">
+      {/* Dock Tabs Header */}
+      <CardHeader className="p-2 border-b border-stone-800">
+        <div className="grid grid-cols-4 gap-1 w-full bg-black/60 p-1 rounded-xl border border-stone-800">
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => onTabChange(tab.id)}
+                className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-bold transition-all ${
+                  isActive
+                    ? "bg-gradient-to-r from-amber-600 to-amber-700 text-white border border-amber-400 shadow-md shadow-amber-950/50"
+                    : "text-stone-400 hover:text-stone-200 hover:bg-stone-900/50"
+                }`}
+              >
+                {tab.icon}
+                <span className="hidden sm:inline truncate">{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </CardHeader>
+
+      {/* Dock Content Body */}
+      <CardContent className="p-3 overflow-y-auto custom-scrollbar flex-1 max-h-[750px]">
+        {activeTab === "preview" && (
+          <AtlasAnimationPreview
+            imageSrc={imageSrc}
+            gridConfig={gridConfig}
+            tracks={tracks}
+            selectedTrackName={selectedTrackName}
+            selectedFrameIndex={selectedFrameIndex}
+            origin={origin}
+            backgroundConfig={backgroundConfig}
+            onSelectTrack={onSelectTrack}
+            onSelectFrame={onSelectFrame}
+            onOriginChange={onOriginChange}
+          />
+        )}
+
+        {activeTab === "slicing" && (
+          <AtlasSlicingInspector
+            slicingConfig={slicingConfig}
+            gridConfig={gridConfig}
+            tracks={tracks}
+            selectedTrackName={selectedTrackName}
+            onSlicingConfigChange={onSlicingConfigChange}
+            onGridConfigChange={onGridConfigChange}
+            onTracksChange={onTracksChange}
+            onSelectTrack={onSelectTrack}
+          />
+        )}
+
+        {activeTab === "background" && (
+          <AtlasBackgroundPanel
+            imageSrc={imageSrc}
+            assetId={assetId}
+            backgroundConfig={backgroundConfig}
+            onBackgroundConfigChange={onBackgroundConfigChange}
+            onRequestEyedropper={onRequestEyedropper}
+          />
+        )}
+
+        {activeTab === "json" && (
+          <AtlasJsonExportPanel
+            metaDoc={metaDoc}
+            gridConfig={gridConfig}
+            tracks={tracks}
+            origin={origin}
+            assetId={assetId}
+            onMetaDocChange={onMetaDocChange}
+            onResetDefaults={onResetDefaults}
+          />
+        )}
+      </CardContent>
+    </Card>
+  );
+};

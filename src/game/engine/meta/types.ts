@@ -86,8 +86,17 @@ export interface ICellSizeSlicingParams {
   cellHeight: number;
   offsetX?: number;
   offsetY?: number;
+  startX?: number;
+  startY?: number;
   spacingX?: number;
   spacingY?: number;
+  spacing?: number;
+  margin?: number;
+}
+
+export interface IAutoIslandSlicingParams {
+  minIslandPixels?: number;
+  clusterYTolerance?: number;
 }
 
 export interface IFreeformFrameRect {
@@ -104,7 +113,12 @@ export interface IAtlasSlicingConfig {
   grid?: {
     columns: number;
     rows: number;
+    cellWidth?: number;
+    cellHeight?: number;
+    spacing?: number;
+    safeMargin?: number;
   };
+  autoIslands?: IAutoIslandSlicingParams;
   frames?: Record<string, IFreeformFrameRect>;
 }
 

@@ -109,13 +109,21 @@ export class CellSizeSlicingStrategy implements ISlicingStrategy {
   private normalizeConfig(rawConfig?: unknown): Required<ICellSizeSlicingParams> {
     if (typeof rawConfig === "object" && rawConfig !== null) {
       const c = rawConfig as Partial<ICellSizeSlicingParams>;
+      const offsetX = Math.max(0, Number(c.offsetX ?? c.startX) || 0);
+      const offsetY = Math.max(0, Number(c.offsetY ?? c.startY) || 0);
+      const spacingX = Math.max(0, Number(c.spacingX ?? c.spacing) || 0);
+      const spacingY = Math.max(0, Number(c.spacingY ?? c.spacing) || 0);
       return {
         cellWidth: Math.max(1, Number(c.cellWidth) || 64),
         cellHeight: Math.max(1, Number(c.cellHeight) || 64),
-        offsetX: Math.max(0, Number(c.offsetX) || 0),
-        offsetY: Math.max(0, Number(c.offsetY) || 0),
-        spacingX: Math.max(0, Number(c.spacingX) || 0),
-        spacingY: Math.max(0, Number(c.spacingY) || 0),
+        offsetX,
+        offsetY,
+        startX: offsetX,
+        startY: offsetY,
+        spacingX,
+        spacingY,
+        spacing: spacingX,
+        margin: Math.max(0, Number(c.margin) || 0),
       };
     }
 
@@ -124,8 +132,12 @@ export class CellSizeSlicingStrategy implements ISlicingStrategy {
       cellHeight: 64,
       offsetX: 0,
       offsetY: 0,
+      startX: 0,
+      startY: 0,
       spacingX: 0,
       spacingY: 0,
+      spacing: 0,
+      margin: 0,
     };
   }
 }

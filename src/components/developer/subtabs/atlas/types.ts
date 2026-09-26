@@ -1,3 +1,12 @@
+import {
+  IAtlasSlicingConfig,
+  IAtlasBackgroundConfig,
+  ResolvedFrameRect,
+  SlicingMethod,
+} from "../../../../game/engine/meta/types";
+
+export type { IAtlasSlicingConfig, IAtlasBackgroundConfig, ResolvedFrameRect, SlicingMethod };
+
 export interface AtlasAnimationTrackDefinition {
   name: string;
   row: number;
@@ -33,6 +42,8 @@ export interface AtlasMetaDoc {
   entityType?: string;
   version?: string;
   description?: string;
+  slicing?: IAtlasSlicingConfig;
+  backgroundConfig?: IAtlasBackgroundConfig;
   atlas: {
     columns: number;
     rows: number;
@@ -77,10 +88,12 @@ export interface AtlasMetaDoc {
   [key: string]: any;
 }
 
+export type AtlasInspectorTabId = "preview" | "slicing" | "background" | "json";
+
 export interface AtlasPresetItem {
   id: string;
   name: string;
-  category: "character" | "enemy" | "structure" | "custom";
+  category: "character" | "enemy" | "structure" | "portrait" | "custom";
   imageSrc: string;
   defaultMeta: AtlasMetaDoc;
 }

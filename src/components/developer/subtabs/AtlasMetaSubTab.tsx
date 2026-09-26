@@ -7,8 +7,10 @@ import {
   Skull,
   Building,
   FileJson,
+  Layers,
+  RotateCcw,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from "../../ui";
+import { Card, CardHeader, CardTitle, Badge, Button } from "../../ui";
 import { useI18n } from "../../../hooks/useI18n";
 import {
   ATLAS_PRESETS,
@@ -19,8 +21,11 @@ import {
   AtlasMetaDoc,
   SelectedCellInfo,
   AtlasTextureViewer,
-  AtlasAnimationPreview,
-  AtlasMetaEditor,
+  AtlasInspectorDock,
+  AtlasInspectorTabId,
+  SlicerViewerTool,
+  IAtlasSlicingConfig,
+  IAtlasBackgroundConfig,
 } from "./atlas";
 
 export const AtlasMetaSubTab: React.FC = () => {
@@ -28,9 +33,9 @@ export const AtlasMetaSubTab: React.FC = () => {
 
   // Selected Preset
   const [selectedPresetId, setSelectedPresetId] = useState<string>("valen");
-  const [customImageSrc, setCustomImageSrc] = useState<string | null>(null);
+  const [, setCustomImageSrc] = useState<string | null>(null);
 
-  // Active preset object
+  // Active preset item
   const activePreset = useMemo(() => {
     return (
       ATLAS_PRESETS.find((p) => p.id === selectedPresetId) || ATLAS_PRESETS[0]
@@ -64,17 +69,18 @@ export const AtlasMetaSubTab: React.FC = () => {
 
   const [selectedTrackName, setSelectedTrackName] = useState<string | null>(null);
   const [selectedFrameIndex, setSelectedFrameIndex] = useState<number | null>(0);
-  const [selectedCellInfo, setSelectedCellInfo] = useState<SelectedCellInfo | null>(
-    null
-  );
+  const [, setSelectedCellInfo] = useState<SelectedCellInfo | null>(null);
+
+  // Studio Dock & Tool State
+  const [activeInspectorTab, setActiveInspectorTab] = useState<AtlasInspectorTabId>("preview");
+  const [viewerTool, setViewerTool] = useState<SlicerViewerTool>("select");
 
   // Helper to parse tracks from a metaDoc
   const parseTracksFromMeta = useCallback((doc: AtlasMetaDoc) => {
     const list: AtlasAnimationTrackDefinition[] = [];
     if (doc.animations) {
       Object.entries(doc.animations).forEach(([name, data]: [string, any]) => {
-        // Character & Enemy format
-        if (data.row !== undefined) {
+        if (data && typeof data === "object" && data.row !== undefined) {
           list.push({
             name,
             row: data.row ?? 0,
@@ -133,14 +139,26 @@ export const AtlasMetaSubTab: React.FC = () => {
       };
       setGridConfig(parsedGrid);
 
-      const parsedTracks = parseTracksFromMeta(preset.defaultMeta);
+      let parsedTracks = parseTracksFromMeta(preset.defaultMeta);
+      if (parsedTracks.length === 0) {
+        parsedTracks = [
+          {
+            name: "idle",
+            row: 0,
+            frames: Math.min(4, parsedGrid.columns),
+            fps: 8,
+            loop: true,
+          },
+        ];
+      }
       setTracks(parsedTracks);
       setSelectedTrackName(parsedTracks[0]?.name || null);
       setSelectedFrameIndex(0);
 
       const parsedOrigin: AtlasOriginDefinition = {
         type: preset.defaultMeta.layout?.origin?.type || "feet",
-        normalized: preset.defaultMeta.layout?.origin?.normalized ||
+        normalized:
+          preset.defaultMeta.layout?.origin?.normalized ||
           preset.defaultMeta.anchor || { x: 0.5, y: 1.0 },
       };
       setOrigin(parsedOrigin);
@@ -193,12 +211,21 @@ export const AtlasMetaSubTab: React.FC = () => {
                 gridConfig.cellHeight,
             });
           }
-          const parsedTracks = parseTracksFromMeta(parsed);
-          setTracks(parsedTracks);
-          if (parsedTracks[0]) {
-            setSelectedTrackName(parsedTracks[0].name);
-            setSelectedFrameIndex(0);
+          let parsedTracks = parseTracksFromMeta(parsed);
+          if (parsedTracks.length === 0) {
+            parsedTracks = [
+              {
+                name: "default",
+                row: 0,
+                frames: 4,
+                fps: 8,
+                loop: true,
+              },
+            ];
           }
+          setTracks(parsedTracks);
+          setSelectedTrackName(parsedTracks[0].name);
+          setSelectedFrameIndex(0);
         } catch (err) {
           console.error("Failed to parse uploaded JSON file", err);
         }
@@ -207,19 +234,130 @@ export const AtlasMetaSubTab: React.FC = () => {
     }
   };
 
+  // Interactive Slicer & Marquee Action Handlers
+  const handleCreateTrackFromSelection = useCallback(
+    (sel: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      row?: number;
+      framesCount?: number;
+    }) => {
+      const newName = `anim_${tracks.length + 1}`;
+      const row =
+        sel.row !== undefined ? sel.row : Math.min(gridConfig.rows - 1, tracks.length);
+      const frames = Math.max(
+        1,
+        Math.round(sel.width / Math.max(1, gridConfig.cellWidth))
+      );
+      const newTrack: AtlasAnimationTrackDefinition = {
+        name: newName,
+        row,
+        frames,
+        fps: 8,
+        loop: true,
+      };
+      setTracks((prev) => [...prev, newTrack]);
+      setSelectedTrackName(newName);
+      setSelectedFrameIndex(0);
+      setActiveInspectorTab("slicing");
+    },
+    [tracks.length, gridConfig]
+  );
+
+  const handleAssignSelectionToActiveTrack = useCallback(
+    (sel: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      row?: number;
+    }) => {
+      if (!selectedTrackName) return;
+      const frames = Math.max(
+        1,
+        Math.round(sel.width / Math.max(1, gridConfig.cellWidth))
+      );
+      const row = sel.row !== undefined ? sel.row : 0;
+      setTracks((prev) =>
+        prev.map((tr) =>
+          tr.name === selectedTrackName ? { ...tr, row, frames } : tr
+        )
+      );
+    },
+    [selectedTrackName, gridConfig]
+  );
+
+  const handleMergeSelectionAsWide = useCallback(
+    (sel: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      span: number;
+    }) => {
+      if (!selectedTrackName) return;
+      setTracks((prev) =>
+        prev.map((tr) => {
+          if (tr.name !== selectedTrackName) return tr;
+          const targetFrame = selectedFrameIndex ?? 0;
+          const spans = tr.slotSpan ? [...tr.slotSpan] : Array(tr.frames).fill(1);
+          if (targetFrame < spans.length) {
+            spans[targetFrame] = sel.span;
+          }
+          return {
+            ...tr,
+            wide: true,
+            slotSpan: spans,
+          };
+        })
+      );
+      setActiveInspectorTab("slicing");
+    },
+    [selectedTrackName, selectedFrameIndex]
+  );
+
+  const handleSampleBackgroundColor = useCallback((hex: string) => {
+    setMetaDoc((prev) => ({
+      ...prev,
+      backgroundConfig: {
+        mode: "color",
+        colorHex: hex,
+        tolerance: prev.backgroundConfig?.tolerance ?? 15,
+        removeAtRuntime: prev.backgroundConfig?.removeAtRuntime ?? true,
+      },
+    }));
+    setActiveInspectorTab("background");
+  }, []);
+
+  const handleSlicingConfigChange = useCallback((config: IAtlasSlicingConfig) => {
+    setMetaDoc((prev) => ({
+      ...prev,
+      slicing: config,
+    }));
+  }, []);
+
+  const handleBackgroundConfigChange = useCallback((config: IAtlasBackgroundConfig) => {
+    setMetaDoc((prev) => ({
+      ...prev,
+      backgroundConfig: config,
+    }));
+  }, []);
+
   return (
     <div
       id="subtab-content-atlas-slicer"
-      className="flex flex-col gap-4 animate-in fade-in duration-150"
+      className="flex flex-col gap-3 animate-in fade-in duration-150"
     >
       {/* 1. Header Toolbar: Preset Selector & File Buttons */}
       <Card variant="default">
-        <CardHeader className="flex flex-wrap items-center justify-between gap-3">
+        <CardHeader className="flex flex-wrap items-center justify-between gap-2.5 p-3">
           <div className="flex items-center gap-2">
             <CardTitle icon={<Grid className="w-4 h-4 text-amber-400" />}>
               {t("subtabAtlasSlicer")}
             </CardTitle>
-            <Badge variant="amber">Studio v2</Badge>
+            <Badge variant="amber">Studio v3 Pro</Badge>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
@@ -241,8 +379,12 @@ export const AtlasMetaSubTab: React.FC = () => {
                       <User size={12} className="text-amber-300" />
                     ) : p.category === "enemy" ? (
                       <Skull size={12} className="text-rose-400" />
-                    ) : (
+                    ) : p.category === "structure" ? (
                       <Building size={12} className="text-cyan-400" />
+                    ) : p.category === "portrait" ? (
+                      <Sparkles size={12} className="text-purple-400" />
+                    ) : (
+                      <Layers size={12} className="text-stone-400" />
                     )}
                     {p.name.split(" ")[0]}
                   </button>
@@ -273,20 +415,36 @@ export const AtlasMetaSubTab: React.FC = () => {
                 className="hidden"
               />
             </label>
+
+            {/* Reset Button */}
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={handleResetDefaults}
+              title={t("atlasStudioResetDefaults")}
+              className="h-7 px-2"
+            >
+              <RotateCcw size={12} />
+            </Button>
           </div>
         </CardHeader>
       </Card>
 
-      {/* 2. Main Workbench Grid: Left = Texture Grid Viewer, Right = Animation Preview */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Left Column: Texture & Grid Slicer (7 cols) */}
-        <div className="lg:col-span-7 flex flex-col">
+      {/* 2. Unified Studio Workbench (Integrated 2-Column Split: 65% Viewport / 35% Inspector Dock) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5">
+        {/* Left Column: Texture & Grid Slicer Viewport (7 or 8 cols on desktop) */}
+        <div className="lg:col-span-7 xl:col-span-8 flex flex-col">
           <AtlasTextureViewer
             imageSrc={imageSrc}
             gridConfig={gridConfig}
             tracks={tracks}
+            slicingConfig={metaDoc.slicing}
+            backgroundConfig={metaDoc.backgroundConfig}
+            metaDoc={metaDoc}
             selectedTrackName={selectedTrackName}
             selectedFrameIndex={selectedFrameIndex}
+            externalTool={viewerTool}
+            onToolChange={(tool) => setViewerTool(tool)}
             onSelectCell={(info) => {
               setSelectedCellInfo(info);
               if (info.trackName) {
@@ -301,42 +459,45 @@ export const AtlasMetaSubTab: React.FC = () => {
               setSelectedFrameIndex(0);
             }}
             onSelectFrame={(frameIdx) => setSelectedFrameIndex(frameIdx)}
+            onSampleBackgroundColor={handleSampleBackgroundColor}
+            onCreateTrackFromSelection={handleCreateTrackFromSelection}
+            onAssignSelectionToActiveTrack={handleAssignSelectionToActiveTrack}
+            onMergeSelectionAsWide={handleMergeSelectionAsWide}
           />
         </div>
 
-        {/* Right Column: Animation Preview & Scrubber (5 cols) */}
-        <div className="lg:col-span-5 flex flex-col">
-          <AtlasAnimationPreview
+        {/* Right Column: Docked Inspector (5 or 4 cols on desktop) */}
+        <div className="lg:col-span-5 xl:col-span-4 flex flex-col">
+          <AtlasInspectorDock
+            activeTab={activeInspectorTab}
+            onTabChange={setActiveInspectorTab}
             imageSrc={imageSrc}
+            assetId={activePreset.id}
+            metaDoc={metaDoc}
             gridConfig={gridConfig}
             tracks={tracks}
             selectedTrackName={selectedTrackName}
             selectedFrameIndex={selectedFrameIndex}
             origin={origin}
-            onSelectTrack={(trackName) => {
-              setSelectedTrackName(trackName);
+            backgroundConfig={metaDoc.backgroundConfig}
+            slicingConfig={metaDoc.slicing}
+            onGridConfigChange={setGridConfig}
+            onTracksChange={setTracks}
+            onSelectTrack={(name) => {
+              setSelectedTrackName(name);
               setSelectedFrameIndex(0);
             }}
             onSelectFrame={(frameIdx) => setSelectedFrameIndex(frameIdx)}
-            onOriginChange={(newOrigin) => setOrigin(newOrigin)}
+            onOriginChange={setOrigin}
+            onBackgroundConfigChange={handleBackgroundConfigChange}
+            onSlicingConfigChange={handleSlicingConfigChange}
+            onMetaDocChange={setMetaDoc}
+            onResetDefaults={handleResetDefaults}
+            onRequestEyedropper={() => {
+              setViewerTool("eyedropper");
+            }}
           />
         </div>
-      </div>
-
-      {/* 3. Bottom Row: Full *meta.json Inspector, Form & Validator */}
-      <div className="flex flex-col">
-        <AtlasMetaEditor
-          metaDoc={metaDoc}
-          gridConfig={gridConfig}
-          tracks={tracks}
-          origin={origin}
-          assetId={activePreset.id}
-          onGridConfigChange={(grid) => setGridConfig(grid)}
-          onTracksChange={(newTracks) => setTracks(newTracks)}
-          onOriginChange={(newOrigin) => setOrigin(newOrigin)}
-          onMetaDocChange={(newDoc) => setMetaDoc(newDoc)}
-          onResetDefaults={handleResetDefaults}
-        />
       </div>
     </div>
   );
