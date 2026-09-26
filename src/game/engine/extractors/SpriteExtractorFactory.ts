@@ -6,6 +6,7 @@ import { HumanoidSpriteExtractor } from "./HumanoidSpriteExtractor";
 import { PortraitSpriteExtractor } from "./PortraitSpriteExtractor";
 import { ObjectSpriteExtractor } from "./ObjectSpriteExtractor";
 import { MonsterSpriteExtractor } from "./MonsterSpriteExtractor";
+import { AssetError, ErrorCode } from "../../../lib/errors";
 
 /**
  * Extensible factory for registering and resolving sprite extractors (SOLID / OCP).
@@ -48,7 +49,13 @@ export class SpriteExtractorFactory {
     const key = (entityType || "humanoid").toLowerCase();
     const extractor = this.extractors.get(key) || this.extractors.get("humanoid");
     if (!extractor) {
-      throw new Error(`[SpriteExtractorFactory] No extractor registered for entity type: "${entityType}"`);
+      throw new AssetError(
+        `[SpriteExtractorFactory] No extractor registered for entity type: "${entityType}"`,
+        ErrorCode.ASSET_EXTRACTOR_NOT_FOUND,
+        {
+          details: { entityType, requestedKey: key },
+        }
+      );
     }
     return extractor as T;
   }

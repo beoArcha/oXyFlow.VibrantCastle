@@ -1,4 +1,5 @@
 import { ILogger } from "../../lib/logger";
+import { GameBaseError } from "../../lib/errors";
 
 export interface LoopCircuitBreakerOptions {
   maxConsecutiveErrors?: number;
@@ -57,11 +58,24 @@ export class LoopCircuitBreaker {
       this.consecutiveErrors++;
       const now = Date.now();
 
+      const errorContext: Record<string, unknown> = {
+        operation: operationName,
+        consecutiveErrors: this.consecutiveErrors,
+      };
+
+      if (err instanceof GameBaseError) {
+        errorContext.errorCode = err.code;
+        errorContext.errorDomain = err.domain;
+        if (err.details) {
+          errorContext.errorDetails = err.details;
+        }
+      }
+
       // Throttle logging so we don't flood 60 logs per second
       if (now - this.lastLoggedTime >= this.throttleIntervalMs) {
         this.logger.error(
           `Unhandled error in game loop (${operationName}) [consecutive: ${this.consecutiveErrors}]`,
-          { operation: operationName, consecutiveErrors: this.consecutiveErrors },
+          errorContext,
           err
         );
         this.lastLoggedTime = now;
@@ -72,7 +86,7 @@ export class LoopCircuitBreaker {
         this.isTripped = true;
         this.logger.fatal(
           `Circuit breaker tripped! Repeated fatal errors in ${operationName}. Pausing engine execution to prevent memory corruption.`,
-          { operation: operationName, consecutiveErrors: this.consecutiveErrors },
+          errorContext,
           err
         );
         if (this.onTrip) {

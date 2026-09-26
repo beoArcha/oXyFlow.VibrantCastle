@@ -5,6 +5,7 @@ import {
   PortalDefinitionSchema,
 } from "../schema/locationSchema";
 import { engineLogger } from "../../logger/gameLogger";
+import { ErrorCode, ParserError } from "../../../lib/errors";
 
 /**
  * Parser for Location JSON Blueprints.
@@ -16,15 +17,33 @@ export class LocationParser {
    */
   public static parse(blueprint: LocationJsonSchema): LocationDefinition {
     if (!blueprint || typeof blueprint !== "object") {
-      throw new Error("Invalid location blueprint: Expected JSON object.");
+      throw new ParserError(
+        "Invalid location blueprint: Expected JSON object.",
+        ErrorCode.PARSER_LOCATION_SCHEMA_INVALID,
+        {
+          details: { receivedType: typeof blueprint },
+        }
+      );
     }
 
     if (!blueprint.id) {
-      throw new Error("Invalid location blueprint: Missing 'id'.");
+      throw new ParserError(
+        "Invalid location blueprint: Missing 'id'.",
+        ErrorCode.PARSER_LOCATION_SCHEMA_INVALID,
+        {
+          details: { missingField: "id" },
+        }
+      );
     }
 
     if (!blueprint.dimensions || !blueprint.dimensions.width || !blueprint.dimensions.height) {
-      throw new Error(`Location '${blueprint.id}' missing valid dimensions.`);
+      throw new ParserError(
+        `Location '${blueprint.id}' missing valid dimensions.`,
+        ErrorCode.PARSER_LOCATION_SCHEMA_INVALID,
+        {
+          details: { locationId: blueprint.id, dimensions: (blueprint as any).dimensions },
+        }
+      );
     }
 
     const {

@@ -17,6 +17,7 @@ import {
   IStructureMetaDocument,
 } from "./meta";
 import { assetsLogger } from "../logger/gameLogger";
+import { AssetError, ErrorCode } from "../../lib/errors";
 
 // Preloaded atlas assets for enemies and structures
 import dummyHighPng from "../../assets/enemies/training_dummy/training_dummy_high.png";
@@ -206,9 +207,17 @@ class AssetLoaderEngine {
         resolve(img);
       };
       img.onerror = (err) => {
-        assetsLogger.error(`Failed to load image asset: ${imageUrl}`, { imageUrl }, err);
+        const assetError = new AssetError(
+          `Failed to load image asset: ${imageUrl}`,
+          ErrorCode.ASSET_LOAD_FAILED,
+          {
+            details: { imageUrl },
+            cause: err,
+          }
+        );
+        assetsLogger.error(assetError.message, assetError.toLogContext(), assetError);
         this.loadPromises.delete(imageUrl);
-        reject(err);
+        reject(assetError);
       };
       img.src = imageUrl;
     });

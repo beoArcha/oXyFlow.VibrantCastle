@@ -35,6 +35,7 @@ import {
   defaultProceduralBackdropCache,
 } from "./proceduralBackdropCache";
 import { rendererLogger } from "../logger/gameLogger";
+import { EngineError, ErrorCode } from "../../lib/errors";
 
 const SCENERY_TREE_OFFSETS = [350, 1100, 1600, 2450, 3050, 3500] as const;
 const LEAF_COLORS = ["#b45309", "#d97706", "#f59e0b", "#fbbf24"] as const;
@@ -118,7 +119,20 @@ export class GameRenderer {
           willReadFrequently: false,
         }) || canvas.getContext("2d");
     }
-    if (!context) throw new Error("Could not acquire 2D context");
+    if (!context) {
+      throw new EngineError(
+        "Could not acquire 2D context from canvas",
+        ErrorCode.ENGINE_CANVAS_CONTEXT_LOST,
+        {
+          severity: "FATAL",
+          details: {
+            canvasWidth: canvas.width,
+            canvasHeight: canvas.height,
+            isHardwareAccelerated: this.isHardwareAccelerated,
+          },
+        }
+      );
+    }
     this.ctx = context;
     this.ctx.imageSmoothingEnabled = false;
 
