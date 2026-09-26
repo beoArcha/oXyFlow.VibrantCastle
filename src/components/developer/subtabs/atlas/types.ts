@@ -90,6 +90,8 @@ export interface AtlasMetaDoc {
 
 export type AtlasInspectorTabId = "preview" | "slicing" | "background" | "json";
 
+export type SlicerViewerTool = "select" | "pan" | "eyedropper";
+
 export interface AtlasPresetItem {
   id: string;
   name: string;

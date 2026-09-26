@@ -10,7 +10,7 @@ import {
   ArrowLeftRight,
   Minus,
 } from "lucide-react";
-import { Button, Badge, Card, CardHeader, CardTitle, CardContent, Slider } from "../../../ui";
+import { Button, Badge, Slider } from "../../../ui";
 import { useI18n } from "../../../../hooks/useI18n";
 import {
   AtlasGridConfig,
@@ -35,6 +35,14 @@ export interface AtlasAnimationPreviewProps {
 
 type PreviewBackground = "checker" | "dark" | "castle" | "white";
 
+/**
+ * AtlasAnimationPreview Component.
+ *
+ * Optimized Canvas Render Loop (AGENT.md § 1.6 & § 2.2):
+ * - Decoupled from React render cycle: animation loop runs via requestAnimationFrame.
+ * - Persistent offscreen canvas ref eliminates per-frame heap allocations / garbage collection.
+ * - Reactive state updates (currentFrame badge) only fire when the discrete frame index changes.
+ */
 export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
   imageSrc,
   gridConfig,
@@ -49,10 +57,14 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
 }) => {
   const { t } = useI18n();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const offscreenCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [currentFrame, setCurrentFrame] = useState<number>(0);
+  const currentFrameRef = useRef<number>(0);
+  currentFrameRef.current = currentFrame;
+
   const [fps, setFps] = useState<number>(8);
   const [speedMultiplier, setSpeedMultiplier] = useState<number>(1.0);
   const [loop, setLoop] = useState<boolean>(true);
@@ -66,9 +78,7 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
   useEffect(() => {
     const img = new Image();
     img.src = imageSrc;
-    img.onload = () => {
-      setImage(img);
-    };
+    img.onload = () => setImage(img);
   }, [imageSrc]);
 
   // Selected track definition
@@ -82,6 +92,7 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
       setFps(currentTrack.fps || 8);
       setLoop(currentTrack.loop !== undefined ? currentTrack.loop : true);
       setCurrentFrame(0);
+      currentFrameRef.current = 0;
     }
   }, [currentTrack?.name]);
 
@@ -89,173 +100,198 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
   useEffect(() => {
     if (selectedFrameIndex !== null && selectedFrameIndex !== undefined) {
       setCurrentFrame(selectedFrameIndex);
+      currentFrameRef.current = selectedFrameIndex;
     }
   }, [selectedFrameIndex]);
 
-  // Animation playback timer
-  useEffect(() => {
-    if (!isPlaying || !currentTrack || currentTrack.frames <= 1) return;
-
-    const effectiveFps = Math.max(1, fps * speedMultiplier);
-    const intervalMs = Math.round(1000 / effectiveFps);
-    const timer = setInterval(() => {
-      setCurrentFrame((prev) => {
-        const next = prev + 1;
-        if (next >= currentTrack.frames) {
-          return loop ? 0 : prev;
-        }
-        return next;
-      });
-    }, intervalMs);
-
-    return () => clearInterval(timer);
-  }, [isPlaying, currentTrack, fps, speedMultiplier, loop]);
-
-  // Notify parent of frame change
-  const handleFrameChange = useCallback(
+  // Render a single discrete frame onto the canvas
+  const drawFrame = useCallback(
     (frameIdx: number) => {
-      setCurrentFrame(frameIdx);
-      onSelectFrame(frameIdx);
+      const canvas = canvasRef.current;
+      if (!canvas || !image || !currentTrack) return;
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      let col = 0;
+      let span = 1;
+
+      if (currentTrack.frameIndices && currentTrack.frameIndices[frameIdx] !== undefined) {
+        col = currentTrack.frameIndices[frameIdx];
+      } else if (currentTrack.slotSpan) {
+        col = 0;
+        for (let i = 0; i < frameIdx; i++) {
+          col += currentTrack.slotSpan[i] || 1;
+        }
+        span = currentTrack.slotSpan[frameIdx] || 1;
+      } else if (currentTrack.cells) {
+        col = 0;
+        for (let i = 0; i < frameIdx; i++) {
+          col += currentTrack.cells[i] || 1;
+        }
+        span = currentTrack.cells[frameIdx] || 1;
+      } else {
+        col = frameIdx;
+      }
+
+      const sx = col * gridConfig.cellWidth;
+      const sy = currentTrack.row * gridConfig.cellHeight;
+      const sw = span * gridConfig.cellWidth;
+      const sh = gridConfig.cellHeight;
+
+      const dw = Math.round(sw * scale);
+      const dh = Math.round(sh * scale);
+
+      if (canvas.width !== dw || canvas.height !== dh) {
+        canvas.width = dw;
+        canvas.height = dh;
+      }
+
+      ctx.imageSmoothingEnabled = false;
+      ctx.clearRect(0, 0, dw, dh);
+
+      // Reusable offscreen canvas to avoid GC allocations
+      if (!offscreenCanvasRef.current) {
+        offscreenCanvasRef.current = document.createElement("canvas");
+      }
+      const offCanvas = offscreenCanvasRef.current;
+      if (offCanvas.width !== sw || offCanvas.height !== sh) {
+        offCanvas.width = sw;
+        offCanvas.height = sh;
+      }
+      const offCtx = offCanvas.getContext("2d");
+
+      if (offCtx) {
+        offCtx.clearRect(0, 0, sw, sh);
+        offCtx.drawImage(image, sx, sy, sw, sh, 0, 0, sw, sh);
+
+        if (
+          backgroundConfig?.mode === "color" &&
+          backgroundConfig.colorHex &&
+          backgroundConfig.removeAtRuntime !== false
+        ) {
+          try {
+            const frameImgData = offCtx.getImageData(0, 0, sw, sh);
+            const keyed = BackgroundProcessor.applyChromaKey(
+              frameImgData,
+              backgroundConfig.colorHex,
+              backgroundConfig.tolerance ?? 15
+            );
+            frameImgData.data.set(keyed.data);
+            offCtx.putImageData(frameImgData, 0, 0);
+          } catch {
+            // Fallback to unmodified frame
+          }
+        }
+
+        ctx.save();
+        if (flipX) {
+          ctx.translate(dw, 0);
+          ctx.scale(-1, 1);
+        }
+        ctx.drawImage(offCanvas, 0, 0, sw, sh, 0, 0, dw, dh);
+        ctx.restore();
+      }
+
+      // Draw Ground Baseline if enabled
+      if (showGroundLine && origin?.normalized) {
+        const gy = Math.round(origin.normalized.y * dh);
+        ctx.save();
+        ctx.strokeStyle = "#f59e0b";
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath();
+        ctx.moveTo(0, gy);
+        ctx.lineTo(dw, gy);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Draw Pivot / Anchor crosshair
+      if (showPivot && origin?.normalized) {
+        const normX = flipX ? 1.0 - origin.normalized.x : origin.normalized.x;
+        const px = Math.round(normX * dw);
+        const py = Math.round(origin.normalized.y * dh);
+
+        ctx.save();
+        ctx.strokeStyle = "#f43f5e";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(px - 8, py);
+        ctx.lineTo(px + 8, py);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(px, py - 8);
+        ctx.lineTo(px, py + 8);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(px, py, 3.5, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.restore();
+      }
     },
-    [onSelectFrame]
+    [image, currentTrack, gridConfig, scale, showPivot, showGroundLine, flipX, origin, backgroundConfig]
   );
 
-  // Render sliced frame to canvas
+  // High-performance requestAnimationFrame playback loop
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || !image || !currentTrack) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    // Calculate source rect
-    let col = 0;
-    let span = 1;
-
-    if (currentTrack.frameIndices && currentTrack.frameIndices[currentFrame] !== undefined) {
-      col = currentTrack.frameIndices[currentFrame];
-    } else if (currentTrack.slotSpan) {
-      col = 0;
-      for (let i = 0; i < currentFrame; i++) {
-        col += currentTrack.slotSpan[i] || 1;
-      }
-      span = currentTrack.slotSpan[currentFrame] || 1;
-    } else if (currentTrack.cells) {
-      col = 0;
-      for (let i = 0; i < currentFrame; i++) {
-        col += currentTrack.cells[i] || 1;
-      }
-      span = currentTrack.cells[currentFrame] || 1;
-    } else {
-      col = currentFrame;
+    if (!isPlaying || !currentTrack || currentTrack.frames <= 1) {
+      drawFrame(currentFrameRef.current);
+      return;
     }
 
-    const sx = col * gridConfig.cellWidth;
-    const sy = currentTrack.row * gridConfig.cellHeight;
-    const sw = span * gridConfig.cellWidth;
-    const sh = gridConfig.cellHeight;
+    let animationFrameId: number;
+    let lastTimestamp = performance.now();
+    let accumulatedTime = 0;
 
-    const dw = Math.round(sw * scale);
-    const dh = Math.round(sh * scale);
+    const frameStep = () => {
+      const now = performance.now();
+      const delta = now - lastTimestamp;
+      lastTimestamp = now;
 
-    canvas.width = dw;
-    canvas.height = dh;
+      const effectiveFps = Math.max(1, fps * speedMultiplier);
+      const frameDuration = 1000 / effectiveFps;
 
-    ctx.imageSmoothingEnabled = false;
-    ctx.clearRect(0, 0, dw, dh);
+      accumulatedTime += delta;
 
-    // Prepare offscreen canvas for frame extraction and chroma processing
-    const offCanvas = document.createElement("canvas");
-    offCanvas.width = sw;
-    offCanvas.height = sh;
-    const offCtx = offCanvas.getContext("2d");
+      if (accumulatedTime >= frameDuration) {
+        const framesToAdvance = Math.floor(accumulatedTime / frameDuration);
+        accumulatedTime %= frameDuration;
 
-    if (offCtx) {
-      offCtx.drawImage(image, sx, sy, sw, sh, 0, 0, sw, sh);
+        let nextFrame = currentFrameRef.current + framesToAdvance;
+        if (nextFrame >= currentTrack.frames) {
+          nextFrame = loop ? nextFrame % currentTrack.frames : currentTrack.frames - 1;
+        }
 
-      // Apply chroma keying if background is color mode
-      if (
-        backgroundConfig?.mode === "color" &&
-        backgroundConfig.colorHex &&
-        backgroundConfig.removeAtRuntime !== false
-      ) {
-        try {
-          const frameImgData = offCtx.getImageData(0, 0, sw, sh);
-          const keyed = BackgroundProcessor.applyChromaKey(
-            frameImgData,
-            backgroundConfig.colorHex,
-            backgroundConfig.tolerance ?? 15
-          );
-          frameImgData.data.set(keyed.data);
-          offCtx.putImageData(frameImgData, 0, 0);
-        } catch {
-          // Fallback to unmodified frame
+        if (nextFrame !== currentFrameRef.current) {
+          currentFrameRef.current = nextFrame;
+          setCurrentFrame(nextFrame);
         }
       }
 
-      // Draw transformed (flipX) onto main preview canvas
-      ctx.save();
-      if (flipX) {
-        ctx.translate(dw, 0);
-        ctx.scale(-1, 1);
-      }
-      ctx.drawImage(offCanvas, 0, 0, sw, sh, 0, 0, dw, dh);
-      ctx.restore();
-    }
+      drawFrame(currentFrameRef.current);
+      animationFrameId = requestAnimationFrame(frameStep);
+    };
 
-    // Draw Ground Baseline if enabled
-    if (showGroundLine && origin?.normalized) {
-      const gy = Math.round(origin.normalized.y * dh);
-      ctx.save();
-      ctx.strokeStyle = "#f59e0b"; // amber-500
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([4, 3]);
-      ctx.beginPath();
-      ctx.moveTo(0, gy);
-      ctx.lineTo(dw, gy);
-      ctx.stroke();
-      ctx.restore();
-    }
+    animationFrameId = requestAnimationFrame(frameStep);
 
-    // Draw Pivot / Anchor crosshair
-    if (showPivot && origin?.normalized) {
-      const normX = flipX ? 1.0 - origin.normalized.x : origin.normalized.x;
-      const px = Math.round(normX * dw);
-      const py = Math.round(origin.normalized.y * dh);
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [isPlaying, currentTrack, fps, speedMultiplier, loop, drawFrame]);
 
-      ctx.save();
-      ctx.strokeStyle = "#f43f5e"; // rose-500
-      ctx.lineWidth = 1.5;
-
-      // Crosshair lines
-      ctx.beginPath();
-      ctx.moveTo(px - 8, py);
-      ctx.lineTo(px + 8, py);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.moveTo(px, py - 8);
-      ctx.lineTo(px, py + 8);
-      ctx.stroke();
-
-      // Circle
-      ctx.beginPath();
-      ctx.arc(px, py, 3.5, 0, 2 * Math.PI);
-      ctx.stroke();
-      ctx.restore();
-    }
-  }, [
-    image,
-    currentTrack,
-    currentFrame,
-    gridConfig,
-    scale,
-    showPivot,
-    showGroundLine,
-    flipX,
-    origin,
-    backgroundConfig,
-  ]);
+  // Scrub or step frame manually
+  const handleFrameChange = useCallback(
+    (frameIdx: number) => {
+      currentFrameRef.current = frameIdx;
+      setCurrentFrame(frameIdx);
+      onSelectFrame(frameIdx);
+      drawFrame(frameIdx);
+    },
+    [onSelectFrame, drawFrame]
+  );
 
   return (
     <div className="flex flex-col gap-3">
@@ -277,7 +313,7 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
         <select
           value={currentTrack?.name || ""}
           onChange={(e) => onSelectTrack(e.target.value)}
-          className="bg-[#120603] text-stone-200 text-xs font-mono rounded-lg px-2 py-1 border border-amber-600/40 focus:outline-none focus:border-amber-400 font-bold"
+          className="bg-[#120603] text-stone-200 text-xs font-mono rounded-lg px-2 py-1 border border-amber-600/40 focus:outline-none focus:border-amber-400 font-bold cursor-pointer"
         >
           {tracks.map((tr) => (
             <option key={tr.name} value={tr.name}>
@@ -316,38 +352,23 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
 
         {/* Background Switcher Floating Pill */}
         <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/75 p-1 rounded-lg border border-stone-800 text-[10px]">
-          <button
-            onClick={() => setBgMode("checker")}
-            className={`px-1.5 py-0.5 rounded ${
-              bgMode === "checker" ? "bg-amber-600 text-white font-bold" : "text-stone-400"
-            }`}
-          >
-            {t("atlasStudioBgChecker")}
-          </button>
-          <button
-            onClick={() => setBgMode("dark")}
-            className={`px-1.5 py-0.5 rounded ${
-              bgMode === "dark" ? "bg-amber-600 text-white font-bold" : "text-stone-400"
-            }`}
-          >
-            {t("atlasStudioBgDark")}
-          </button>
-          <button
-            onClick={() => setBgMode("castle")}
-            className={`px-1.5 py-0.5 rounded ${
-              bgMode === "castle" ? "bg-amber-600 text-white font-bold" : "text-stone-400"
-            }`}
-          >
-            {t("atlasStudioBgCastle")}
-          </button>
-          <button
-            onClick={() => setBgMode("white")}
-            className={`px-1.5 py-0.5 rounded ${
-              bgMode === "white" ? "bg-amber-600 text-white font-bold" : "text-stone-400"
-            }`}
-          >
-            {t("atlasStudioBgWhite")}
-          </button>
+          {(["checker", "dark", "castle", "white"] as PreviewBackground[]).map((mode) => (
+            <button
+              key={mode}
+              onClick={() => setBgMode(mode)}
+              className={`px-1.5 py-0.5 rounded cursor-pointer ${
+                bgMode === mode ? "bg-amber-600 text-white font-bold" : "text-stone-400 hover:text-stone-200"
+              }`}
+            >
+              {mode === "checker"
+                ? t("atlasStudioBgChecker")
+                : mode === "dark"
+                ? t("atlasStudioBgDark")
+                : mode === "castle"
+                ? t("atlasStudioBgCastle")
+                : t("atlasStudioBgWhite")}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -459,7 +480,7 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
               <button
                 key={fIdx}
                 onClick={() => handleFrameChange(fIdx)}
-                className={`px-2 py-0.5 rounded text-xs font-mono font-bold transition-all border ${
+                className={`px-2 py-0.5 rounded text-xs font-mono font-bold transition-all border cursor-pointer ${
                   currentFrame === fIdx
                     ? "bg-gradient-to-r from-amber-600 to-amber-700 text-white border-amber-400 shadow-md shadow-amber-950/50"
                     : "bg-black/50 text-stone-400 border-stone-800 hover:text-stone-200 hover:border-stone-700"
@@ -473,14 +494,13 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
 
         {/* Speed Switcher & Scale Controls */}
         <div className="flex items-center justify-between gap-2 pt-1 border-t border-stone-800/80 flex-wrap text-xs">
-          {/* Speed Multipliers */}
           <div className="flex items-center gap-1">
             <span className="text-stone-400 text-[11px] font-medium">{t("atlasStudioSpeed")}:</span>
             {[0.25, 0.5, 1.0, 2.0].map((s) => (
               <button
                 key={s}
                 onClick={() => setSpeedMultiplier(s)}
-                className={`px-1.5 py-0.5 rounded text-[11px] font-mono font-bold ${
+                className={`px-1.5 py-0.5 rounded text-[11px] font-mono font-bold cursor-pointer ${
                   speedMultiplier === s
                     ? "bg-amber-600 text-white"
                     : "bg-black/60 text-stone-400 hover:text-stone-200"
@@ -491,14 +511,13 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
             ))}
           </div>
 
-          {/* Scale Multipliers */}
           <div className="flex items-center gap-1">
             <span className="text-stone-400 text-[11px] font-medium">{t("atlasStudioScale")}:</span>
             {[1, 2, 3, 4].map((s) => (
               <button
                 key={s}
                 onClick={() => setScale(s)}
-                className={`px-1.5 py-0.5 rounded text-[11px] font-mono font-bold ${
+                className={`px-1.5 py-0.5 rounded text-[11px] font-mono font-bold cursor-pointer ${
                   scale === s
                     ? "bg-amber-600 text-white"
                     : "bg-black/60 text-stone-400 hover:text-stone-200"
@@ -541,7 +560,7 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
                     normalized: { x: 0.5, y: 1.0 },
                   })
                 }
-                className="flex-1 py-1 px-1 bg-black/60 rounded border border-stone-800 hover:border-amber-700 text-stone-300 font-bold"
+                className="flex-1 py-1 px-1 bg-black/60 rounded border border-stone-800 hover:border-amber-700 text-stone-300 font-bold cursor-pointer"
               >
                 {t("atlasStudioAnchorFeet")}
               </button>
@@ -552,7 +571,7 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
                     normalized: { x: 0.5, y: 0.5 },
                   })
                 }
-                className="flex-1 py-1 px-1 bg-black/60 rounded border border-stone-800 hover:border-amber-700 text-stone-300 font-bold"
+                className="flex-1 py-1 px-1 bg-black/60 rounded border border-stone-800 hover:border-amber-700 text-stone-300 font-bold cursor-pointer"
               >
                 {t("atlasStudioAnchorCenter")}
               </button>
@@ -563,7 +582,7 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
                     normalized: { x: 0.0, y: 0.0 },
                   })
                 }
-                className="flex-1 py-1 px-1 bg-black/60 rounded border border-stone-800 hover:border-amber-700 text-stone-300 font-bold"
+                className="flex-1 py-1 px-1 bg-black/60 rounded border border-stone-800 hover:border-amber-700 text-stone-300 font-bold cursor-pointer"
               >
                 {t("atlasStudioAnchorTopLeft")}
               </button>
@@ -574,3 +593,5 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
     </div>
   );
 };
+
+export default AtlasAnimationPreview;
