@@ -1,5 +1,8 @@
 import { Player, Enemy, Entity, Projectile, CollisionType } from "../types";
-import { debugManager } from "../debug/debugManager";
+import {
+  IDebugProfilerOverlay,
+  defaultDebugProfilerOverlay,
+} from "./debugProfilerOverlay";
 
 export interface IHitboxRenderer {
   renderHitboxes(
@@ -28,9 +31,17 @@ export interface IHitboxRenderer {
   ): void;
 }
 
+/**
+ * Dedicated visual debugging renderer for physical collision boxes,
+ * sensors, attack reaches, and navigation patrol lines (SRP).
+ */
 export class HitboxRenderer implements IHitboxRenderer {
-  private readonly profilerFlags: string[] = [];
   private readonly entityTagCache: Map<string, string> = new Map();
+  private readonly profilerOverlay: IDebugProfilerOverlay;
+
+  constructor(deps: { profilerOverlay?: IDebugProfilerOverlay } = {}) {
+    this.profilerOverlay = deps.profilerOverlay || defaultDebugProfilerOverlay;
+  }
 
   public clearCaches(): void {
     this.entityTagCache.clear();
@@ -69,10 +80,11 @@ export class HitboxRenderer implements IHitboxRenderer {
     ctx.lineWidth = 1.5;
 
     // 1. Entities
-    for (const entity of entities) {
-      if (entity.y === -1000) continue; // deactivated / lifted
+    for (let i = 0; i < entities.length; i++) {
+      const entity = entities[i];
+      if (entity.y === -1000) continue;
 
-      let strokeColor = "#38bdf8"; // solid platform
+      let strokeColor = "#38bdf8";
       let fillColor = "rgba(56, 189, 248, 0.15)";
 
       if (entity.type === CollisionType.Hazard) {
@@ -106,16 +118,15 @@ export class HitboxRenderer implements IHitboxRenderer {
     }
 
     // 2. Enemies
-    for (const enemy of enemies) {
+    for (let i = 0; i < enemies.length; i++) {
+      const enemy = enemies[i];
       if (enemy.isDead) continue;
 
-      // Body box
       ctx.fillStyle = "rgba(244, 63, 94, 0.2)";
       ctx.strokeStyle = "#f43f5e";
       ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
       ctx.strokeRect(enemy.x, enemy.y, enemy.width, enemy.height);
 
-      // Label & HP
       ctx.font = "bold 9px monospace";
       ctx.fillStyle = "#fecdd3";
       ctx.fillText(
@@ -124,7 +135,7 @@ export class HitboxRenderer implements IHitboxRenderer {
         enemy.y - 4
       );
 
-      // Patrol bounds if moving
+      // Patrol bounds
       if (enemy.patrolMinX !== undefined && enemy.patrolMaxX !== undefined && enemy.patrolMaxX > enemy.patrolMinX) {
         ctx.strokeStyle = "rgba(251, 191, 36, 0.4)";
         ctx.setLineDash([4, 4]);
@@ -137,7 +148,8 @@ export class HitboxRenderer implements IHitboxRenderer {
     }
 
     // 3. Projectiles
-    for (const proj of projectiles) {
+    for (let i = 0; i < projectiles.length; i++) {
+      const proj = projectiles[i];
       const radius = proj.radius || 10;
       ctx.fillStyle = "rgba(56, 189, 248, 0.3)";
       ctx.strokeStyle = "#38bdf8";
@@ -155,10 +167,10 @@ export class HitboxRenderer implements IHitboxRenderer {
     }
 
     // 4. Players
-    for (const player of players) {
+    for (let i = 0; i < players.length; i++) {
+      const player = players[i];
       if (player.isDead) continue;
 
-      // Player body box
       ctx.fillStyle = "rgba(34, 197, 94, 0.2)";
       ctx.strokeStyle = "#22c55e";
       ctx.fillRect(player.x, player.y, player.width, player.height);
@@ -183,7 +195,6 @@ export class HitboxRenderer implements IHitboxRenderer {
         ctx.strokeRect(attackX, attackY, attackReach, attackHeight);
       }
 
-      // Player Tag
       ctx.font = "bold 10px monospace";
       ctx.fillStyle = "#86efac";
       ctx.fillText(
@@ -212,83 +223,22 @@ export class HitboxRenderer implements IHitboxRenderer {
     levelHeight: number,
     isHardwareAccelerated: boolean = true
   ): void {
-    ctx.save();
-    const p1 = players[0];
-    let aliveEnemies = 0;
-    for (let i = 0; i < enemies.length; i++) {
-      if (!enemies[i].isDead) aliveEnemies++;
-    }
-    const frameTimeMs = measuredFps > 0 ? (1000 / measuredFps).toFixed(1) : "0.0";
-
-    const boxW = 260;
-    const boxH = 170;
-    const x = 12;
-    const y = 12;
-
-    ctx.fillStyle = "rgba(10, 5, 3, 0.88)";
-    ctx.strokeStyle = "#f59e0b";
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.roundRect(x, y, boxW, boxH, 8);
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.font = "bold 11px system-ui, -apple-system, sans-serif";
-    ctx.fillStyle = "#fbbf24";
-    ctx.fillText("🛠️ DEBUG PROFILER", x + 10, y + 20);
-
-    ctx.font = "10px monospace";
-    ctx.fillStyle = "#fed7aa";
-
-    ctx.fillText(`FPS: ${measuredFps} / ${targetFps} (${frameTimeMs} ms)`, x + 10, y + 36);
-    ctx.fillText(`GPU: ${isHardwareAccelerated ? "DIRECT (VRAM CACHE)" : "STANDARD 2D (COMP)"}`, x + 10, y + 50);
-    ctx.fillText(`Lokacja: ${locationId} (${levelWidth}x${levelHeight})`, x + 10, y + 64);
-
-    if (p1) {
-      ctx.fillText(
-        `P1 Pos: X=${Math.round(p1.x)} Y=${Math.round(p1.y)} Ground=${p1.isGrounded ? "TAK" : "NIE"}`,
-        x + 10,
-        y + 78
-      );
-      ctx.fillText(
-        `P1 Spd: VX=${p1.vx.toFixed(1)} VY=${p1.vy.toFixed(1)}`,
-        x + 10,
-        y + 92
-      );
-      ctx.fillText(
-        `P1 Vit: HP=${Math.round(p1.health)}/${p1.maxHealth} MP=${Math.round(p1.mana)} SP=${Math.round(p1.stamina)}`,
-        x + 10,
-        y + 106
-      );
-    }
-
-    ctx.fillText(
-      `Obiekty: Wrogowie=${aliveEnemies}/${enemies.length} Encje=${entities.length}`,
-      x + 10,
-      y + 120
+    this.profilerOverlay.render(
+      ctx,
+      canvasWidth,
+      canvasHeight,
+      players,
+      enemies,
+      entities,
+      projectiles,
+      particleCount,
+      targetFps,
+      measuredFps,
+      locationId,
+      levelWidth,
+      levelHeight,
+      isHardwareAccelerated
     );
-    ctx.fillText(
-      `Pociski=${projectiles.length} Cząstki=${particleCount}`,
-      x + 10,
-      y + 134
-    );
-
-    // Active Cheats Status bar
-    const st = debugManager.state;
-    this.profilerFlags.length = 0;
-    if (st.godMode) this.profilerFlags.push("GOD");
-    if (st.infiniteMana) this.profilerFlags.push("INF_MP");
-    if (st.infiniteStamina) this.profilerFlags.push("INF_SP");
-    if (st.noClip) this.profilerFlags.push("NOCLIP");
-    if (st.freezeAI) this.profilerFlags.push("FROZEN_AI");
-    if (st.timeScale !== 1.0) this.profilerFlags.push(`${st.timeScale}x`);
-
-    if (this.profilerFlags.length > 0) {
-      ctx.fillStyle = "#ef4444";
-      ctx.fillText(`Aktywne: ${this.profilerFlags.join(" | ")}`, x + 10, y + 148);
-    }
-
-    ctx.restore();
   }
 }
 

@@ -37,10 +37,13 @@ import {
   defaultProceduralBackdropCache,
 } from "./proceduralBackdropCache";
 import { rendererLogger } from "../logger/gameLogger";
+import {
+  IDebugProfilerOverlay,
+  defaultDebugProfilerOverlay,
+} from "./debugProfilerOverlay";
 import { EngineError, ErrorCode } from "../../lib/errors";
 
 const SCENERY_TREE_OFFSETS = [350, 1100, 1600, 2450, 3050, 3500] as const;
-const LEAF_COLORS = ["#b45309", "#d97706", "#f59e0b", "#fbbf24"] as const;
 
 export type { IMultiLayerBackgroundSystem, IHitboxRenderer };
 export { MultiLayerBackgroundSystem, defaultMultiLayerBackgroundSystem, HitboxRenderer, defaultHitboxRenderer };
@@ -57,6 +60,7 @@ export interface IRendererDependencies {
   actorRenderer?: IActorRenderer;
   fxRenderer?: IFxRenderer;
   hitboxRenderer?: IHitboxRenderer;
+  debugProfilerOverlay?: IDebugProfilerOverlay;
   proceduralBackdropCache?: ProceduralBackdropCache;
 }
 
@@ -93,6 +97,7 @@ export class GameRenderer {
   private readonly actorRenderer: IActorRenderer;
   private readonly fxRenderer: IFxRenderer;
   private readonly hitboxRenderer: IHitboxRenderer;
+  private readonly debugProfilerOverlay: IDebugProfilerOverlay;
   private readonly backdropCache: ProceduralBackdropCache;
 
   constructor(
@@ -146,6 +151,7 @@ export class GameRenderer {
     this.actorRenderer = deps.actorRenderer || defaultActorRenderer;
     this.fxRenderer = deps.fxRenderer || defaultFxRenderer;
     this.hitboxRenderer = deps.hitboxRenderer || defaultHitboxRenderer;
+    this.debugProfilerOverlay = deps.debugProfilerOverlay || defaultDebugProfilerOverlay;
     this.backdropCache = deps.proceduralBackdropCache || defaultProceduralBackdropCache;
   }
 
@@ -258,8 +264,8 @@ export class GameRenderer {
         this.tickCount
       );
     } else {
-      this.drawSkyBackground(this.viewportWidth, this.viewportHeight);
-      this.drawParallaxCastles();
+      this.backdropCache.renderSky(this.ctx, this.viewportWidth, this.viewportHeight, this.cameraX);
+      this.backdropCache.renderCastles(this.ctx, this.viewportWidth, this.cameraX);
     }
     this.ctx.restore();
 
@@ -272,7 +278,9 @@ export class GameRenderer {
 
     // 3. SCENERY DECORATIONS (Fallback if location has no dynamic parallax scenery)
     if (!location?.parallaxBackground) {
-      this.drawSceneryDecorations();
+      for (let i = 0; i < SCENERY_TREE_OFFSETS.length; i++) {
+        this.backdropCache.renderTree(this.ctx, SCENERY_TREE_OFFSETS[i], 260);
+      }
     }
 
     // 4. LEVEL ENTITIES & STRUCTURES (Platforms, Hazards, Levers, Portals - SRP via StructureRenderer)
@@ -304,7 +312,7 @@ export class GameRenderer {
 
     // 11. DEBUG PROFILER OVERLAY
     if (debugManager.state.showProfiler) {
-      this.hitboxRenderer.renderProfiler(
+      this.debugProfilerOverlay.render(
         this.ctx,
         this.canvas.width,
         this.canvas.height,
@@ -346,93 +354,6 @@ export class GameRenderer {
     const gpuTag = this.isHardwareAccelerated ? " • GPU" : "";
     this.ctx.fillText(`${measuredFps} / ${targetFps} FPS${gpuTag}`, x + badgeW / 2, y + badgeH / 2);
     this.ctx.restore();
-  }
-
-  private drawSkyBackground(width: number, height: number) {
-    if (this.isHardwareAccelerated) {
-      this.backdropCache.renderSky(this.ctx, width, height, this.cameraX);
-      return;
-    }
-
-    const grad = this.ctx.createLinearGradient(0, 0, 0, height);
-    grad.addColorStop(0, "#fef3c7");
-    grad.addColorStop(0.5, "#fde68a");
-    grad.addColorStop(1, "#f59e0b");
-    this.ctx.fillStyle = grad;
-    this.ctx.fillRect(0, 0, width, height);
-
-    // Sun with slow parallax scroll
-    const sunX = 800 - this.cameraX * 0.05;
-    this.ctx.fillStyle = "rgba(251, 191, 36, 0.25)";
-    this.ctx.beginPath();
-    this.ctx.arc(sunX, 150, 160, 0, Math.PI * 2);
-    this.ctx.fill();
-
-    this.ctx.fillStyle = "rgba(251, 191, 36, 0.4)";
-    this.ctx.beginPath();
-    this.ctx.arc(sunX, 150, 100, 0, Math.PI * 2);
-    this.ctx.fill();
-  }
-
-  private drawParallaxCastles() {
-    if (this.isHardwareAccelerated) {
-      this.backdropCache.renderCastles(this.ctx, this.viewportWidth, this.cameraX);
-      return;
-    }
-
-    this.ctx.fillStyle = "rgba(180, 83, 9, 0.12)";
-    const p1 = -(this.cameraX * 0.15) % 700;
-    for (let offset = -700; offset < this.viewportWidth + 700; offset += 700) {
-      this.drawCastleProfile(p1 + offset, 200, 100, 320);
-      this.drawCastleProfile(p1 + offset + 350, 140, 110, 380);
-    }
-
-    this.ctx.fillStyle = "rgba(180, 83, 9, 0.22)";
-    const p2 = -(this.cameraX * 0.28) % 600;
-    for (let offset = -600; offset < this.viewportWidth + 600; offset += 600) {
-      this.drawCastleProfile(p2 + offset + 150, 260, 140, 270);
-      this.drawCastleProfile(p2 + offset + 420, 220, 130, 310);
-    }
-  }
-
-  private drawCastleProfile(x: number, y: number, w: number, h: number) {
-    this.ctx.fillRect(x, y, w, h);
-    const spikeW = w / 5;
-    for (let i = 0; i < 5; i += 2) {
-      this.ctx.fillRect(x + i * spikeW, y - 15, spikeW, 15);
-    }
-    this.ctx.beginPath();
-    this.ctx.moveTo(x + w / 2, y - 50);
-    this.ctx.lineTo(x, y - 15);
-    this.ctx.lineTo(x + w, y - 15);
-    this.ctx.closePath();
-    this.ctx.fill();
-  }
-
-  private drawSceneryDecorations() {
-    if (this.isHardwareAccelerated) {
-      for (let i = 0; i < SCENERY_TREE_OFFSETS.length; i++) {
-        this.backdropCache.renderTree(this.ctx, SCENERY_TREE_OFFSETS[i], 260);
-      }
-      return;
-    }
-
-    this.ctx.fillStyle = "#8d4325";
-    for (let i = 0; i < SCENERY_TREE_OFFSETS.length; i++) {
-      this.drawPixelTree(SCENERY_TREE_OFFSETS[i], 260);
-    }
-  }
-
-  private drawPixelTree(x: number, y: number) {
-    this.ctx.fillStyle = "#5c2512";
-    this.ctx.fillRect(x - 6, y, 12, 240);
-
-    for (let idx = 0; idx < LEAF_COLORS.length; idx++) {
-      this.ctx.fillStyle = LEAF_COLORS[idx];
-      this.ctx.beginPath();
-      this.ctx.arc(x, y - idx * 12, 35 - idx * 4, 0, Math.PI * 2);
-      this.ctx.fill();
-    }
   }
 }
 
