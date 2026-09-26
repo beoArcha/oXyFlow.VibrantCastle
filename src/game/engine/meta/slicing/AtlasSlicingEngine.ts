@@ -2,6 +2,8 @@ import { ISlicingStrategy, SlicingContext } from "./ISlicingStrategy";
 import { GridCountSlicingStrategy, defaultGridCountSlicingStrategy } from "./GridCountSlicingStrategy";
 import { CellSizeSlicingStrategy, defaultCellSizeSlicingStrategy } from "./CellSizeSlicingStrategy";
 import { FreeformRectSlicingStrategy, defaultFreeformRectSlicingStrategy } from "./FreeformRectSlicingStrategy";
+import { AutoIslandSlicingStrategy, defaultAutoIslandSlicingStrategy } from "./AutoIslandSlicingStrategy";
+import { IPixelBuffer } from "./BackgroundProcessor";
 import {
   SlicingMethod,
   ResolvedFrameRect,
@@ -34,6 +36,9 @@ export class AtlasSlicingEngine {
     if (!this.strategies.has("freeform_rects")) {
       this.strategies.set("freeform_rects", defaultFreeformRectSlicingStrategy);
     }
+    if (!this.strategies.has("auto_islands")) {
+      this.strategies.set("auto_islands", defaultAutoIslandSlicingStrategy);
+    }
   }
 
   public registerStrategy(strategy: ISlicingStrategy): void {
@@ -55,7 +60,8 @@ export class AtlasSlicingEngine {
   public resolveFrames(
     metaDoc: IUniversalMetaDocument | ICharacterMetaDocument | ICreatureMetaDocument | IStructureMetaDocument | any,
     textureWidth: number,
-    textureHeight: number
+    textureHeight: number,
+    pixelBuffer?: IPixelBuffer
   ): ResolvedFrameRect[] {
     const safeW = Math.max(1, textureWidth || 1);
     const safeH = Math.max(1, textureHeight || 1);
@@ -71,6 +77,8 @@ export class AtlasSlicingEngine {
       textureHeight: safeH,
       animations,
       layout: metaDoc?.layout,
+      pixelBuffer,
+      backgroundConfig: metaDoc?.backgroundConfig,
     };
 
     // 1. Explicit slicing config

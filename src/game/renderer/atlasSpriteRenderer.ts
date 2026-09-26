@@ -6,6 +6,7 @@ import {
   IStructureMetaDocument,
 } from "../engine/spriteTypes";
 import { assetLoader } from "../engine/assetLoader";
+import { BackgroundProcessor } from "../engine/meta/slicing/BackgroundProcessor";
 
 export interface RenderAtlasFrameOptions {
   atlasId: string;
@@ -31,11 +32,55 @@ export interface IAtlasSpriteRenderer {
 /**
  * Universal AtlasSpriteRenderer (Single Responsibility Principle).
  * Renders sliced frames from any registered AtlasMetaDoc or IUniversalMetaDocument sprite atlas with
- * normalized origin anchoring, sub-cell span calculations, and optional directional mirroring.
+ * normalized origin anchoring, sub-cell span calculations, optional directional mirroring,
+ * and zero-allocation cached runtime chroma-keying.
  */
 export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
+  private readonly chromaCache: Map<string, CanvasImageSource> = new Map();
+
   public hasAtlas(atlasId: string): boolean {
     return !!assetLoader.getAtlas(atlasId);
+  }
+
+  public clearChromaCache(): void {
+    this.chromaCache.clear();
+  }
+
+  private getEffectiveTexture(atlasId: string, texture: HTMLImageElement, meta: any): CanvasImageSource {
+    const bgConfig = meta.backgroundConfig;
+    if (!bgConfig || !bgConfig.removeAtRuntime || !bgConfig.colorHex) {
+      return texture;
+    }
+
+    const cached = this.chromaCache.get(atlasId);
+    if (cached) return cached;
+
+    if (typeof document === "undefined") {
+      return texture;
+    }
+
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = texture.naturalWidth;
+      canvas.height = texture.naturalHeight;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return texture;
+
+      ctx.drawImage(texture, 0, 0);
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const keyed = BackgroundProcessor.applyChromaKey(
+        imgData,
+        bgConfig.colorHex,
+        bgConfig.tolerance ?? 15,
+        4
+      );
+      ctx.putImageData(keyed as unknown as ImageData, 0, 0);
+
+      this.chromaCache.set(atlasId, canvas);
+      return canvas;
+    } catch {
+      return texture;
+    }
   }
 
   public render(ctx: CanvasRenderingContext2D, options: RenderAtlasFrameOptions): boolean {
@@ -46,6 +91,7 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
     if (!texture || !texture.complete || texture.naturalWidth === 0) return false;
 
     const meta: IUniversalMetaDocument | ICreatureMetaDocument | IStructureMetaDocument | AtlasMetaDoc = atlasItem.meta;
+    const effectiveTexture = this.getEffectiveTexture(options.atlasId, texture, meta);
     const quality = options.quality || assetLoader.getQuality();
 
     // 1. Resolve source cell dimensions directly from actual texture dimensions & atlas grid
@@ -187,7 +233,7 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
     }
 
     // 9. Draw main sprite
-    ctx.drawImage(texture, sx, sy, sw, sh, drawX, drawY, dw, dh);
+    ctx.drawImage(effectiveTexture, sx, sy, sw, sh, drawX, drawY, dw, dh);
 
     // 10. Damage flash tint overlay
     if (options.tintColor) {

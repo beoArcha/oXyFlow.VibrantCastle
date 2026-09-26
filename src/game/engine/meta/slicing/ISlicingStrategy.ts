@@ -1,10 +1,13 @@
-import { SlicingMethod, ResolvedFrameRect } from "../types";
+import { SlicingMethod, ResolvedFrameRect, IAtlasBackgroundConfig } from "../types";
+import { IPixelBuffer } from "./BackgroundProcessor";
 
 export interface SlicingContext {
   textureWidth: number;
   textureHeight: number;
   animations?: Record<string, any>;
   layout?: Record<string, any>;
+  pixelBuffer?: IPixelBuffer;
+  backgroundConfig?: IAtlasBackgroundConfig;
 }
 
 /**
