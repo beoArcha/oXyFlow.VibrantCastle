@@ -56,6 +56,20 @@ export class ParallaxRenderer {
   }
 
   /**
+   * Preload image layers into memory cache ahead of rendering (Zero I/O in render loop).
+   */
+  public preload(layers?: readonly ParallaxLayerSchema[]): void {
+    if (!layers || typeof Image === "undefined") return;
+    for (const layer of layers) {
+      if (layer.imageUrl && !this.imageCache.has(layer.imageUrl)) {
+        const img = new Image();
+        img.src = layer.imageUrl;
+        this.imageCache.set(layer.imageUrl, img);
+      }
+    }
+  }
+
+  /**
    * Main entry point: renders all parallax layers defined in the location schema.
    */
   public render(
@@ -962,17 +976,16 @@ export class ParallaxRenderer {
     viewportWidth: number,
     viewportHeight: number
   ) {
-    if (!layer.imageUrl || typeof Image === "undefined") return;
+    if (!layer.imageUrl) return;
 
     let img = layer.imageElement || this.imageCache.get(layer.imageUrl);
-    if (!img) {
+    if (!img && typeof Image !== "undefined") {
       img = new Image();
       img.src = layer.imageUrl;
       this.imageCache.set(layer.imageUrl, img);
-      layer.imageElement = img;
     }
 
-    if (!img.complete || img.naturalWidth === 0) return;
+    if (!img || !img.complete || img.naturalWidth === 0) return;
 
     const imgW = img.naturalWidth;
     const imgH = img.naturalHeight;

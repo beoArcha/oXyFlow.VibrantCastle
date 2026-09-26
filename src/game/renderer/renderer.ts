@@ -5,9 +5,11 @@ import { LocationDefinition } from "../locations/types";
 import { LanguageCode } from "../i18n";
 import { ParallaxRenderer } from "./parallaxRenderer";
 import {
+  IStructureRenderer,
+  defaultStructureRenderer,
+} from "./structureRenderer";
+import {
   ILevelEntityRenderer,
-  LevelEntityRenderer,
-  defaultLevelEntityRenderer,
 } from "./levelEntityRenderer";
 import {
   IActorRenderer,
@@ -50,6 +52,7 @@ export interface IRendererConfig {
 export interface IRendererDependencies {
   parallaxRenderer?: ParallaxRenderer;
   multiLayerBackgroundSystem?: IMultiLayerBackgroundSystem;
+  structureRenderer?: IStructureRenderer;
   levelEntityRenderer?: ILevelEntityRenderer;
   actorRenderer?: IActorRenderer;
   fxRenderer?: IFxRenderer;
@@ -63,7 +66,7 @@ export interface IRendererDependencies {
  * with kinetic visual flair (dashes, hit-flashes, sweeps, spells) of Hades.
  *
  * Refactored to adhere to SOLID principles:
- * - SRP: Delegates domain rendering to ParallaxRenderer, LevelEntityRenderer, ActorRenderer, and FxRenderer.
+ * - SRP: Delegates domain rendering to ParallaxRenderer, StructureRenderer, ActorRenderer, and FxRenderer.
  * - DIP: Injects sub-renderers via IRendererDependencies with robust defaults.
  * - OCP: Modular sub-renderers can be extended or replaced without modifying camera or viewport logic.
  */
@@ -86,7 +89,7 @@ export class GameRenderer {
 
   // Sub-renderers (DIP & SRP)
   private readonly parallaxRenderer: ParallaxRenderer;
-  private readonly levelEntityRenderer: ILevelEntityRenderer;
+  private readonly structureRenderer: IStructureRenderer;
   private readonly actorRenderer: IActorRenderer;
   private readonly fxRenderer: IFxRenderer;
   private readonly hitboxRenderer: IHitboxRenderer;
@@ -139,7 +142,7 @@ export class GameRenderer {
     this.parallaxRenderer =
       deps.parallaxRenderer ||
       new ParallaxRenderer({ multiLayerSystem: deps.multiLayerBackgroundSystem });
-    this.levelEntityRenderer = deps.levelEntityRenderer || defaultLevelEntityRenderer;
+    this.structureRenderer = deps.structureRenderer || deps.levelEntityRenderer || defaultStructureRenderer;
     this.actorRenderer = deps.actorRenderer || defaultActorRenderer;
     this.fxRenderer = deps.fxRenderer || defaultFxRenderer;
     this.hitboxRenderer = deps.hitboxRenderer || defaultHitboxRenderer;
@@ -155,6 +158,10 @@ export class GameRenderer {
 
   public get scale(): number {
     return this.scaleFactor;
+  }
+
+  public get currentTickCount(): number {
+    return this.tickCount;
   }
 
   public setAssetQuality(quality: AssetQuality) {
@@ -208,11 +215,11 @@ export class GameRenderer {
     assetQuality?: AssetQuality,
     location?: LocationDefinition,
     language: LanguageCode = "en",
-    dtMultiplier: number = 1.0,
+    tickCount: number = 0,
     fpsInfo?: { targetFps: number; measuredFps: number; showFps: boolean }
   ) {
     this.language = language;
-    this.tickCount += dtMultiplier;
+    this.tickCount = tickCount;
     if (assetQuality) {
       this.assetQuality = assetQuality;
     }
@@ -268,8 +275,8 @@ export class GameRenderer {
       this.drawSceneryDecorations();
     }
 
-    // 4. LEVEL ENTITIES (Platforms, Hazards, Levers, Portals - SRP via LevelEntityRenderer)
-    this.levelEntityRenderer.render(this.ctx, entities, this.language, this.tickCount);
+    // 4. LEVEL ENTITIES & STRUCTURES (Platforms, Hazards, Levers, Portals - SRP via StructureRenderer)
+    this.structureRenderer.render(this.ctx, entities, this.language, this.tickCount);
 
     // 5. ENEMIES & TARGET DUMMIES (SRP via ActorRenderer)
     this.actorRenderer.renderEnemies(this.ctx, enemies, this.tickCount);

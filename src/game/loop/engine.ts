@@ -221,6 +221,13 @@ export class GameEngine {
   private lastVitalsHash: string = "";
   private uiSyncTimer: number = 0;
 
+  // Deterministic simulation tick counter (Fixed timestep 60Hz)
+  public simulationTicks: number = 0;
+
+  public get simulationTick(): number {
+    return this.simulationTicks;
+  }
+
   public checkAndUpdateVitalsSnapshot(): boolean {
     const currentHash = this.players
       .map(
@@ -543,6 +550,7 @@ export class GameEngine {
    */
   public fixedUpdate(stepMultiplier: number = 1.0) {
     const effectiveDt = stepMultiplier * (debugManager.state.timeScale || 1.0);
+    this.simulationTicks += effectiveDt;
 
     let anyPlayerAttacking = false;
     let anyEnemyAggro = false;
@@ -800,6 +808,10 @@ export class GameEngine {
       this.levelHeight
     );
 
+    const continuousTick =
+      this.simulationTicks +
+      (this.isPaused ? 0 : interpolationAlpha * (debugManager.state.timeScale || 1.0));
+
     this.renderer.render(
       this.players,
       this.enemies,
@@ -812,7 +824,7 @@ export class GameEngine {
       this.settings.display.assetQuality,
       this.currentLocation,
       this.settings.language,
-      interpolationAlpha,
+      continuousTick,
       {
         targetFps: fpsManager.getTargetFps(),
         measuredFps: fpsManager.getMeasuredFps(),
