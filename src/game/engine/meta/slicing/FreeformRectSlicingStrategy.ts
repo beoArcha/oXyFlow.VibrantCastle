@@ -18,13 +18,28 @@ export class FreeformRectSlicingStrategy implements ISlicingStrategy {
 
     if (Array.isArray(config.frames)) {
       config.frames.forEach((rect, idx) => {
+        const frameId = rect.id || `frame_${idx}`;
+        let trackName = rect.trackName;
+        let frameIndex = rect.frameIndex;
+
+        if (!trackName) {
+          const match = frameId.match(/^(.*)_(\d+)$/);
+          if (match) {
+            trackName = match[1];
+            if (frameIndex === undefined) {
+              frameIndex = parseInt(match[2], 10);
+            }
+          }
+        }
+
         frames.push({
-          id: `frame_${idx}`,
+          id: frameId,
           x: Math.max(0, rect.x),
           y: Math.max(0, rect.y),
           width: Math.max(1, rect.width),
           height: Math.max(1, rect.height),
-          frameIndex: idx,
+          trackName,
+          frameIndex: frameIndex !== undefined ? frameIndex : idx,
           pivot: rect.pivot,
         });
       });

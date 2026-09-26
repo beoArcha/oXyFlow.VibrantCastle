@@ -16,6 +16,8 @@ import {
   AtlasAnimationTrackDefinition,
   AtlasOriginDefinition,
   AtlasMetaDoc,
+  IAtlasSlicingConfig,
+  IAtlasBackgroundConfig,
 } from "./types";
 
 export interface AtlasJsonExportPanelProps {
@@ -24,6 +26,8 @@ export interface AtlasJsonExportPanelProps {
   tracks: AtlasAnimationTrackDefinition[];
   origin: AtlasOriginDefinition;
   assetId: string;
+  slicingConfig?: IAtlasSlicingConfig;
+  backgroundConfig?: IAtlasBackgroundConfig;
   onMetaDocChange: (doc: AtlasMetaDoc) => void;
   onResetDefaults: () => void;
 }
@@ -34,6 +38,8 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
   tracks,
   origin,
   assetId,
+  slicingConfig,
+  backgroundConfig,
   onMetaDocChange,
   onResetDefaults,
 }) => {
@@ -60,10 +66,38 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
       };
     });
 
-    const doc: AtlasMetaDoc = {
-      ...metaDoc,
-      characterId: metaDoc.characterId || assetId,
-      slicing: metaDoc.slicing || {
+    const effectiveSlicing = slicingConfig || metaDoc.slicing;
+    const currentMethod = effectiveSlicing?.method || "by_count";
+
+    let resolvedSlicingSection: IAtlasSlicingConfig;
+    if (currentMethod === "auto_islands") {
+      resolvedSlicingSection = {
+        method: "auto_islands",
+        autoIslands: {
+          minIslandPixels: effectiveSlicing?.autoIslands?.minIslandPixels ?? 15,
+          clusterYTolerance: effectiveSlicing?.autoIslands?.clusterYTolerance ?? 10,
+        },
+        ...(effectiveSlicing?.frames ? { frames: effectiveSlicing.frames } : {}),
+      };
+    } else if (currentMethod === "freeform_rects") {
+      resolvedSlicingSection = {
+        method: "freeform_rects",
+        frames: effectiveSlicing?.frames || [],
+      };
+    } else if (currentMethod === "by_cell_size") {
+      resolvedSlicingSection = {
+        method: "by_cell_size",
+        cellSize: {
+          cellWidth: effectiveSlicing?.cellSize?.cellWidth ?? gridConfig.cellWidth,
+          cellHeight: effectiveSlicing?.cellSize?.cellHeight ?? gridConfig.cellHeight,
+          offsetX: effectiveSlicing?.cellSize?.offsetX ?? 0,
+          offsetY: effectiveSlicing?.cellSize?.offsetY ?? 0,
+          spacingX: effectiveSlicing?.cellSize?.spacingX ?? gridConfig.spacing,
+          spacingY: effectiveSlicing?.cellSize?.spacingY ?? gridConfig.spacing,
+        },
+      };
+    } else {
+      resolvedSlicingSection = {
         method: "by_count",
         grid: {
           columns: gridConfig.columns,
@@ -73,10 +107,27 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
           cellWidth: gridConfig.cellWidth,
           cellHeight: gridConfig.cellHeight,
         },
-      },
-      backgroundConfig: metaDoc.backgroundConfig || {
-        mode: "transparent",
-      },
+      };
+    }
+
+    const effectiveBg = backgroundConfig || metaDoc.backgroundConfig;
+    const resolvedBgSection: IAtlasBackgroundConfig =
+      effectiveBg?.mode === "color"
+        ? {
+            mode: "color",
+            colorHex: effectiveBg.colorHex,
+            tolerance: effectiveBg.tolerance ?? 15,
+            removeAtRuntime: effectiveBg.removeAtRuntime ?? true,
+          }
+        : {
+            mode: "transparent",
+          };
+
+    const doc: AtlasMetaDoc = {
+      ...metaDoc,
+      characterId: metaDoc.characterId || assetId,
+      slicing: resolvedSlicingSection,
+      backgroundConfig: resolvedBgSection,
       atlas: {
         ...metaDoc.atlas,
         columns: gridConfig.columns,
@@ -105,7 +156,7 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
     };
 
     return doc;
-  }, [metaDoc, gridConfig, tracks, origin, assetId]);
+  }, [metaDoc, gridConfig, tracks, origin, assetId, slicingConfig, backgroundConfig]);
 
   // Sync formatted rawText
   React.useEffect(() => {
@@ -228,6 +279,27 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
               <Sliders size={11} /> Edit
             </button>
           </div>
+
+          {editorMode === "raw" && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                try {
+                  const parsed = JSON.parse(rawText);
+                  setRawText(JSON.stringify(parsed, null, 2));
+                  setSyntaxError(null);
+                } catch (e: any) {
+                  setSyntaxError(e.message || "Invalid JSON syntax");
+                }
+              }}
+              title={t("atlasStudioFormatJson")}
+              className="h-6 text-[11px] px-2 text-stone-300 hover:text-white"
+            >
+              <Code size={11} className="mr-1 text-amber-400" />
+              {t("atlasStudioFormatJson")}
+            </Button>
+          )}
 
           <Button
             size="sm"

@@ -16,6 +16,7 @@ import {
   Check,
   X,
   Split,
+  Box,
 } from "lucide-react";
 import { Button, Badge, Card, CardHeader, CardTitle, CardContent } from "../../../ui";
 import { useI18n } from "../../../../hooks/useI18n";
@@ -71,6 +72,16 @@ export interface AtlasTextureViewerProps {
     height: number;
     span: number;
   }) => void;
+  onAddFreeformFrame?: (frame: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    id?: string;
+    trackName?: string;
+    pivot?: { x: number; y: number };
+  }) => void;
+  onResolvedFramesChange?: (frames: ResolvedFrameRect[]) => void;
   externalTool?: SlicerViewerTool;
   onToolChange?: (tool: SlicerViewerTool) => void;
   onMetricsChange?: (metrics: {
@@ -111,6 +122,8 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
   onCreateTrackFromSelection,
   onAssignSelectionToActiveTrack,
   onMergeSelectionAsWide,
+  onAddFreeformFrame,
+  onResolvedFramesChange,
   externalTool,
   onToolChange,
   onMetricsChange,
@@ -184,6 +197,11 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
   useEffect(() => {
     onErrorRef.current = onError;
   }, [onError]);
+
+  const onResolvedFramesChangeRef = useRef(onResolvedFramesChange);
+  useEffect(() => {
+    onResolvedFramesChangeRef.current = onResolvedFramesChange;
+  }, [onResolvedFramesChange]);
 
   // Load image & extract pure pixel buffer
   useEffect(() => {
@@ -316,6 +334,8 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
     textureHeight: number;
   } | null>(null);
 
+  const lastReportedFramesSignatureRef = useRef<string>("");
+
   // Report telemetry and frame metrics to parent only when actual dimensions or frame counts change
   useEffect(() => {
     if (!image) return;
@@ -340,7 +360,16 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
         textureHeight: image.naturalHeight,
       });
     }
-  }, [resolvedFrames.length, sliceDuration, image]);
+
+    // Sync resolved frames to parent (for islands detection list and freeform assignment)
+    const signature = resolvedFrames
+      .map((f) => `${f.id}:${f.x},${f.y},${f.width},${f.height}:${f.trackName || ""}:${f.frameIndex ?? ""}`)
+      .join("|");
+    if (signature !== lastReportedFramesSignatureRef.current) {
+      lastReportedFramesSignatureRef.current = signature;
+      onResolvedFramesChangeRef.current?.(resolvedFrames);
+    }
+  }, [resolvedFrames, sliceDuration, image]);
 
   // Center fit helper
   const handleFitToContainer = useCallback(() => {
@@ -985,6 +1014,27 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
                 >
                   <Split size={12} className="text-cyan-400" />
                   <span>{t("atlasStudioMergeWide")}</span>
+                </button>
+              )}
+
+              {onAddFreeformFrame && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onAddFreeformFrame({
+                      x: activeSelection.x,
+                      y: activeSelection.y,
+                      width: activeSelection.width,
+                      height: activeSelection.height,
+                      trackName: selectedTrackName || undefined,
+                      pivot: { x: 0.5, y: 1.0 },
+                    });
+                    setActiveSelection(null);
+                  }}
+                  className="flex items-center gap-1 px-2 py-1 rounded-lg bg-rose-900/60 hover:bg-rose-800 border border-rose-500/50 text-rose-200 text-xs font-bold transition-all cursor-pointer"
+                >
+                  <Box size={12} className="text-rose-400" />
+                  <span>{t("atlasStudioAddFreeformFrame")}</span>
                 </button>
               )}
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import {
   Grid,
   Plus,
@@ -8,6 +8,11 @@ import {
   Maximize2,
   Box,
   Copy,
+  Check,
+  CheckSquare,
+  Square,
+  Save,
+  ArrowRight,
 } from "lucide-react";
 import { Button, Badge } from "../../../ui";
 import { useI18n } from "../../../../hooks/useI18n";
@@ -16,17 +21,35 @@ import {
   AtlasAnimationTrackDefinition,
   IAtlasSlicingConfig,
   SlicingMethod,
+  ResolvedFrameRect,
 } from "./types";
+import { IFreeformFrameRect } from "../../../../game/engine/meta/types";
 
 export interface AtlasSlicingInspectorProps {
   slicingConfig?: IAtlasSlicingConfig;
   gridConfig: AtlasGridConfig;
   tracks: AtlasAnimationTrackDefinition[];
   selectedTrackName: string | null;
+  resolvedFrames?: ResolvedFrameRect[];
+  selectedFrameIndex?: number | null;
   onSlicingConfigChange: (config: IAtlasSlicingConfig) => void;
   onGridConfigChange: (grid: AtlasGridConfig) => void;
   onTracksChange: (tracks: AtlasAnimationTrackDefinition[]) => void;
   onSelectTrack: (trackName: string) => void;
+  onSelectFrame?: (frameIdx: number) => void;
+  onBakeIslands?: (islands: ResolvedFrameRect[]) => void;
+  onAddFreeformFrame?: (frame: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    id?: string;
+    trackName?: string;
+    pivot?: { x: number; y: number };
+  }) => void;
+  onUpdateFreeformFrame?: (id: string, updates: Partial<ResolvedFrameRect>) => void;
+  onDeleteFreeformFrame?: (id: string) => void;
+  onAssignFramesToTrack?: (frameIds: string[], trackName: string) => void;
 }
 
 export const AtlasSlicingInspector: React.FC<AtlasSlicingInspectorProps> = ({
@@ -34,14 +57,195 @@ export const AtlasSlicingInspector: React.FC<AtlasSlicingInspectorProps> = ({
   gridConfig,
   tracks,
   selectedTrackName,
+  resolvedFrames = [],
+  selectedFrameIndex,
   onSlicingConfigChange,
   onGridConfigChange,
   onTracksChange,
   onSelectTrack,
+  onSelectFrame,
+  onBakeIslands,
+  onAddFreeformFrame,
+  onUpdateFreeformFrame,
+  onDeleteFreeformFrame,
+  onAssignFramesToTrack,
 }) => {
   const { t } = useI18n();
 
   const currentMethod: SlicingMethod = slicingConfig?.method || "by_count";
+
+  // Phase 4: State for interactive island & freeform frames assignment
+  const [selectedFrameIds, setSelectedFrameIds] = useState<string[]>([]);
+  const [newTrackName, setNewTrackName] = useState<string>("");
+  const [assignTrackTarget, setAssignTrackTarget] = useState<string>("");
+  const [bakeSuccess, setBakeSuccess] = useState<boolean>(false);
+
+  // Normalized freeform frames list
+  const freeformFramesList: IFreeformFrameRect[] = useMemo(() => {
+    const f = slicingConfig?.frames || slicingConfig?.freeformFrames;
+    if (!f) return [];
+    if (Array.isArray(f)) return f;
+    return Object.entries(f).map(([key, val]) => {
+      const item = val as IFreeformFrameRect;
+      return { ...item, id: item?.id || key };
+    });
+  }, [slicingConfig]);
+
+  // Detected islands from resolved frames or pre-baked frames
+  const detectedIslands: ResolvedFrameRect[] = useMemo(() => {
+    if (resolvedFrames && resolvedFrames.length > 0) return resolvedFrames;
+    return freeformFramesList.map((f, idx) => ({
+      id: f.id || `frame_${idx}`,
+      x: f.x,
+      y: f.y,
+      width: f.width,
+      height: f.height,
+      trackName: f.trackName,
+      frameIndex: f.frameIndex,
+      pivot: f.pivot,
+    }));
+  }, [resolvedFrames, freeformFramesList]);
+
+  // Bake all detected islands into static frames (Zero CPU flood-fill runtime guarantee)
+  const handleBakeAllIslands = () => {
+    if (detectedIslands.length === 0) return;
+    if (onBakeIslands) {
+      onBakeIslands(detectedIslands);
+    } else {
+      const baked: IFreeformFrameRect[] = detectedIslands.map((isl, idx) => ({
+        id: isl.id || `island_${idx}`,
+        x: Math.round(isl.x),
+        y: Math.round(isl.y),
+        width: Math.round(isl.width),
+        height: Math.round(isl.height),
+        trackName: isl.trackName,
+        frameIndex: isl.frameIndex,
+        pivot: isl.pivot || { x: 0.5, y: 1.0 },
+      }));
+      onSlicingConfigChange({
+        ...slicingConfig,
+        method: "auto_islands",
+        frames: baked,
+      });
+    }
+    setBakeSuccess(true);
+    setTimeout(() => setBakeSuccess(false), 3000);
+  };
+
+  // Assign selected frame IDs to a track
+  const handleAssignSelectedToTrack = (trackName: string) => {
+    if (!trackName || selectedFrameIds.length === 0) return;
+    if (onAssignFramesToTrack) {
+      onAssignFramesToTrack(selectedFrameIds, trackName);
+    } else {
+      let assignedIdx = 0;
+      const updated = freeformFramesList.map((f) => {
+        if (selectedFrameIds.includes(f.id!)) {
+          return { ...f, trackName, frameIndex: assignedIdx++ };
+        }
+        return f;
+      });
+      onSlicingConfigChange({
+        ...slicingConfig,
+        method: currentMethod,
+        frames: updated,
+      });
+      if (!tracks.find((t) => t.name === trackName)) {
+        onTracksChange([
+          ...tracks,
+          {
+            name: trackName,
+            row: Math.min(gridConfig.rows - 1, tracks.length),
+            frames: selectedFrameIds.length,
+            fps: 8,
+            loop: true,
+          },
+        ]);
+      }
+    }
+    setSelectedFrameIds([]);
+  };
+
+  const handleCreateTrackFromSelected = () => {
+    const name = newTrackName.trim() || `anim_${tracks.length + 1}`;
+    handleAssignSelectedToTrack(name);
+    setNewTrackName("");
+    onSelectTrack(name);
+  };
+
+  const handleAddFreeformFrameAction = () => {
+    const newId = `frame_${freeformFramesList.length + 1}`;
+    if (onAddFreeformFrame) {
+      onAddFreeformFrame({
+        id: newId,
+        x: 0,
+        y: 0,
+        width: gridConfig.cellWidth,
+        height: gridConfig.cellHeight,
+        pivot: { x: 0.5, y: 1.0 },
+      });
+    } else {
+      const newFrame: IFreeformFrameRect = {
+        id: newId,
+        x: 0,
+        y: 0,
+        width: gridConfig.cellWidth,
+        height: gridConfig.cellHeight,
+        pivot: { x: 0.5, y: 1.0 },
+      };
+      onSlicingConfigChange({
+        ...slicingConfig,
+        method: "freeform_rects",
+        frames: [...freeformFramesList, newFrame],
+      });
+    }
+  };
+
+  const handleDeleteFreeformFrameAction = (id: string) => {
+    if (onDeleteFreeformFrame) {
+      onDeleteFreeformFrame(id);
+    } else {
+      const remaining = freeformFramesList.filter((f) => f.id !== id);
+      onSlicingConfigChange({
+        ...slicingConfig,
+        method: currentMethod,
+        frames: remaining,
+      });
+    }
+    setSelectedFrameIds((prev) => prev.filter((item) => item !== id));
+  };
+
+  const handleUpdateFrameField = (id: string, field: keyof IFreeformFrameRect, val: any) => {
+    if (onUpdateFreeformFrame) {
+      onUpdateFreeformFrame(id, { [field]: val });
+    } else {
+      const updated = freeformFramesList.map((f) => {
+        if (f.id === id) {
+          return { ...f, [field]: val };
+        }
+        return f;
+      });
+      onSlicingConfigChange({
+        ...slicingConfig,
+        method: currentMethod,
+        frames: updated,
+      });
+    }
+  };
+
+  const toggleSelectFrame = (id: string) => {
+    setSelectedFrameIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAll = (ids: string[]) => {
+    setSelectedFrameIds(ids);
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedFrameIds([]);
+  };
 
   // Change Slicing Strategy
   const handleMethodChange = (newMethod: SlicingMethod) => {
@@ -424,6 +628,363 @@ export const AtlasSlicingInspector: React.FC<AtlasSlicingInspectorProps> = ({
                 }}
                 className="w-full bg-black/60 border border-stone-800 rounded px-2 py-1 text-xs text-emerald-300 font-mono"
               />
+            </div>
+          </div>
+        )}
+
+        {/* FREEFORM RECTS: List of Defined Frames & Assignment */}
+        {currentMethod === "freeform_rects" && (
+          <div className="flex flex-col gap-2 pt-2 border-t border-stone-800/80">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[11px] font-bold text-rose-300 flex items-center gap-1.5">
+                <Box size={13} className="text-rose-400" />
+                <span>{t("atlasStudioFreeformFrames")} ({freeformFramesList.length})</span>
+              </span>
+
+              <Button
+                size="sm"
+                variant="primary"
+                onClick={handleAddFreeformFrameAction}
+                className="h-6 text-[10px] px-2 bg-rose-700 hover:bg-rose-600 border border-rose-500"
+              >
+                <Plus size={11} className="mr-1" />
+                {t("atlasStudioAddFrame")}
+              </Button>
+            </div>
+
+            {/* Batch Selection & Assignment Toolbar */}
+            {freeformFramesList.length > 0 && (
+              <div className="p-1.5 bg-black/60 rounded-lg border border-stone-800 flex flex-col gap-1.5">
+                <div className="flex items-center justify-between gap-1 flex-wrap text-[10px]">
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => handleSelectAll(freeformFramesList.map((f, i) => f.id || `frame_${i}`))}
+                      className="px-1.5 py-0.5 rounded bg-stone-800 hover:bg-stone-700 text-stone-300 font-mono"
+                    >
+                      {t("atlasStudioSelectAll")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleDeselectAll}
+                      className="px-1.5 py-0.5 rounded bg-stone-800 hover:bg-stone-700 text-stone-300 font-mono"
+                    >
+                      {t("atlasStudioDeselectAll")}
+                    </button>
+                  </div>
+                  <Badge variant={selectedFrameIds.length > 0 ? "amber" : "stone"} className="text-[10px]">
+                    {selectedFrameIds.length} {t("atlasStudioSelectedCount")}
+                  </Badge>
+                </div>
+
+                {selectedFrameIds.length > 0 && (
+                  <div className="flex items-center gap-1.5 pt-1 border-t border-stone-800/60 flex-wrap">
+                    <select
+                      value={assignTrackTarget}
+                      onChange={(e) => setAssignTrackTarget(e.target.value)}
+                      className="bg-black border border-stone-800 rounded px-1.5 py-0.5 text-[11px] text-amber-200 font-mono"
+                    >
+                      <option value="">-- {t("atlasStudioSelectTrack")} --</option>
+                      {tracks.map((tr) => (
+                        <option key={tr.name} value={tr.name}>
+                          {tr.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => handleAssignSelectedToTrack(assignTrackTarget)}
+                      disabled={!assignTrackTarget}
+                      className="h-6 text-[10px] px-2"
+                    >
+                      <Check size={11} className="mr-1 text-emerald-400" />
+                      {t("atlasStudioAssignToTrack")}
+                    </Button>
+
+                    <div className="flex items-center gap-1">
+                      <input
+                        type="text"
+                        placeholder="new_track"
+                        value={newTrackName}
+                        onChange={(e) => setNewTrackName(e.target.value)}
+                        className="w-20 bg-black border border-stone-800 rounded px-1.5 py-0.5 text-[11px] text-amber-200 font-mono"
+                      />
+                      <Button
+                        size="sm"
+                        variant="primary"
+                        onClick={handleCreateTrackFromSelected}
+                        disabled={!newTrackName.trim()}
+                        className="h-6 text-[10px] px-2"
+                      >
+                        <Plus size={11} className="mr-1" />
+                        {t("atlasStudioCreateTrackFromIslands")}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Freeform Frames List */}
+            <div className="max-h-52 overflow-y-auto custom-scrollbar flex flex-col gap-1 pr-0.5">
+              {freeformFramesList.map((f, idx) => {
+                const frameId = f.id || `frame_${idx}`;
+                const isSelected = selectedFrameIds.includes(frameId);
+                return (
+                  <div
+                    key={frameId}
+                    className={`p-1.5 rounded-lg border text-xs flex flex-col gap-1 transition-all ${
+                      isSelected
+                        ? "bg-rose-950/40 border-rose-500/70"
+                        : "bg-black/40 border-stone-800 hover:border-stone-700"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-1">
+                      <label className="flex items-center gap-1.5 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => toggleSelectFrame(frameId)}
+                          className="rounded border-stone-700 text-rose-600 focus:ring-0"
+                        />
+                        <span className="font-mono font-bold text-amber-300 text-[11px]">
+                          {frameId}
+                        </span>
+                      </label>
+
+                      <div className="flex items-center gap-1">
+                        {f.trackName && (
+                          <Badge variant="amber" className="text-[9px] font-mono">
+                            {f.trackName}[{f.frameIndex ?? 0}]
+                          </Badge>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteFreeformFrameAction(frameId)}
+                          title={t("atlasStudioDeleteFrame")}
+                          className="p-1 text-stone-400 hover:text-rose-400 rounded hover:bg-rose-950/40 transition-colors"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-4 gap-1 text-[10px] font-mono">
+                      <div>
+                        <span className="text-stone-500 block">X</span>
+                        <input
+                          type="number"
+                          value={f.x}
+                          onChange={(e) => handleUpdateFrameField(frameId, "x", parseInt(e.target.value) || 0)}
+                          className="w-full bg-black/70 border border-stone-800 rounded px-1 py-0.5 text-stone-200"
+                        />
+                      </div>
+                      <div>
+                        <span className="text-stone-500 block">Y</span>
+                        <input
+                          type="number"
+                          value={f.y}
+                          onChange={(e) => handleUpdateFrameField(frameId, "y", parseInt(e.target.value) || 0)}
+                          className="w-full bg-black/70 border border-stone-800 rounded px-1 py-0.5 text-stone-200"
+                        />
+                      </div>
+                      <div>
+                        <span className="text-stone-500 block">W</span>
+                        <input
+                          type="number"
+                          value={f.width}
+                          onChange={(e) => handleUpdateFrameField(frameId, "width", parseInt(e.target.value) || 1)}
+                          className="w-full bg-black/70 border border-stone-800 rounded px-1 py-0.5 text-stone-200"
+                        />
+                      </div>
+                      <div>
+                        <span className="text-stone-500 block">H</span>
+                        <input
+                          type="number"
+                          value={f.height}
+                          onChange={(e) => handleUpdateFrameField(frameId, "height", parseInt(e.target.value) || 1)}
+                          className="w-full bg-black/70 border border-stone-800 rounded px-1 py-0.5 text-stone-200"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* AUTO ISLANDS: Detected Islands List, Baking & Track Assignment */}
+        {currentMethod === "auto_islands" && (
+          <div className="flex flex-col gap-2 pt-2 border-t border-stone-800/80">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[11px] font-bold text-emerald-300 flex items-center gap-1.5">
+                <Sparkles size={13} className="text-emerald-400" />
+                <span>{t("atlasStudioIslandsDetected")} ({detectedIslands.length})</span>
+              </span>
+
+              {/* Bake into Static Frames Action */}
+              <Button
+                size="sm"
+                variant="primary"
+                onClick={handleBakeAllIslands}
+                disabled={detectedIslands.length === 0}
+                className="h-6 text-[10px] px-2 bg-emerald-700 hover:bg-emerald-600 border border-emerald-500 text-white"
+                title={t("atlasStudioBakeIslands")}
+              >
+                <Save size={11} className="mr-1" />
+                {t("atlasStudioBakeIslands")}
+              </Button>
+            </div>
+
+            {/* Baking status feedback */}
+            {bakeSuccess && (
+              <div className="p-1.5 bg-emerald-950/50 border border-emerald-500/60 rounded text-[10px] text-emerald-200 font-mono flex items-center gap-1">
+                <Check size={11} className="text-emerald-400" />
+                <span>{t("atlasStudioBakeIslandsSuccess")}</span>
+              </div>
+            )}
+
+            {slicingConfig?.frames && Array.isArray(slicingConfig.frames) && slicingConfig.frames.length > 0 && (
+              <div className="text-[10px] text-stone-400 font-mono flex items-center justify-between px-1">
+                <span>Pre-computed Frames:</span>
+                <Badge variant="green" className="text-[9px]">
+                  {slicingConfig.frames.length} static boxes
+                </Badge>
+              </div>
+            )}
+
+            {/* Batch Selection & Track Assignment Toolbar */}
+            {detectedIslands.length > 0 ? (
+              <div className="p-1.5 bg-black/60 rounded-lg border border-stone-800 flex flex-col gap-1.5">
+                <div className="flex items-center justify-between gap-1 flex-wrap text-[10px]">
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => handleSelectAll(detectedIslands.map((i) => i.id))}
+                      className="px-1.5 py-0.5 rounded bg-stone-800 hover:bg-stone-700 text-stone-300 font-mono"
+                    >
+                      {t("atlasStudioSelectAll")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleDeselectAll}
+                      className="px-1.5 py-0.5 rounded bg-stone-800 hover:bg-stone-700 text-stone-300 font-mono"
+                    >
+                      {t("atlasStudioDeselectAll")}
+                    </button>
+                  </div>
+                  <Badge variant={selectedFrameIds.length > 0 ? "amber" : "stone"} className="text-[10px]">
+                    {selectedFrameIds.length} {t("atlasStudioSelectedCount")}
+                  </Badge>
+                </div>
+
+                {selectedFrameIds.length > 0 && (
+                  <div className="flex items-center gap-1.5 pt-1 border-t border-stone-800/60 flex-wrap">
+                    <select
+                      value={assignTrackTarget}
+                      onChange={(e) => setAssignTrackTarget(e.target.value)}
+                      className="bg-black border border-stone-800 rounded px-1.5 py-0.5 text-[11px] text-amber-200 font-mono"
+                    >
+                      <option value="">-- {t("atlasStudioSelectTrack")} --</option>
+                      {tracks.map((tr) => (
+                        <option key={tr.name} value={tr.name}>
+                          {tr.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => handleAssignSelectedToTrack(assignTrackTarget)}
+                      disabled={!assignTrackTarget}
+                      className="h-6 text-[10px] px-2"
+                    >
+                      <Check size={11} className="mr-1 text-emerald-400" />
+                      {t("atlasStudioAssignToTrack")}
+                    </Button>
+
+                    <div className="flex items-center gap-1">
+                      <input
+                        type="text"
+                        placeholder="new_track"
+                        value={newTrackName}
+                        onChange={(e) => setNewTrackName(e.target.value)}
+                        className="w-20 bg-black border border-stone-800 rounded px-1.5 py-0.5 text-[11px] text-amber-200 font-mono"
+                      />
+                      <Button
+                        size="sm"
+                        variant="primary"
+                        onClick={handleCreateTrackFromSelected}
+                        disabled={!newTrackName.trim()}
+                        className="h-6 text-[10px] px-2"
+                      >
+                        <Plus size={11} className="mr-1" />
+                        {t("atlasStudioCreateTrackFromIslands")}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <span className="text-[10px] text-stone-500 italic py-1">
+                {t("atlasStudioNoIslands")}
+              </span>
+            )}
+
+            {/* Detected Islands Scrollable List */}
+            <div className="max-h-52 overflow-y-auto custom-scrollbar flex flex-col gap-1 pr-0.5">
+              {detectedIslands.map((island, idx) => {
+                const isSelected = selectedFrameIds.includes(island.id);
+                return (
+                  <div
+                    key={island.id || idx}
+                    onClick={() => {
+                      if (island.trackName) onSelectTrack(island.trackName);
+                      if (island.frameIndex !== undefined && onSelectFrame) {
+                        onSelectFrame(island.frameIndex);
+                      }
+                    }}
+                    className={`p-1.5 rounded-lg border text-xs flex items-center justify-between gap-1 cursor-pointer transition-all ${
+                      isSelected
+                        ? "bg-emerald-950/40 border-emerald-500/70"
+                        : "bg-black/40 border-stone-800 hover:border-stone-700"
+                    }`}
+                  >
+                    <label
+                      className="flex items-center gap-1.5 cursor-pointer"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleSelectFrame(island.id)}
+                        className="rounded border-stone-700 text-emerald-600 focus:ring-0"
+                      />
+                      <span className="font-mono font-bold text-amber-300 text-[11px]">
+                        {island.id}
+                      </span>
+                    </label>
+
+                    <span className="text-[10px] font-mono text-stone-400">
+                      {Math.round(island.width)}×{Math.round(island.height)}px @ ({Math.round(island.x)},{Math.round(island.y)})
+                    </span>
+
+                    {island.trackName ? (
+                      <Badge variant="amber" className="text-[9px] font-mono">
+                        {island.trackName}[{island.frameIndex ?? 0}]
+                      </Badge>
+                    ) : (
+                      <Badge variant="stone" className="text-[9px] font-mono">
+                        unassigned
+                      </Badge>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

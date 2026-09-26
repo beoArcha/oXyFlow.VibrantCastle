@@ -31,6 +31,7 @@ import {
   SlicerViewerTool,
   IAtlasSlicingConfig,
   IAtlasBackgroundConfig,
+  ResolvedFrameRect,
 } from "./atlas";
 import { LoggerManager } from "../../../lib/logger";
 import { AssetError, ParserError, ErrorCode, GameBaseError } from "../../../lib/errors";
@@ -49,6 +50,7 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
 
   // Diagnostics & Error Telemetry State
   const [errorState, setErrorState] = useState<GameBaseError | null>(null);
+  const [resolvedFrames, setResolvedFrames] = useState<ResolvedFrameRect[]>([]);
   const [sliceMetrics, setSliceMetrics] = useState<{
     frameCount: number;
     durationMs: number;
@@ -474,6 +476,163 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
     }));
   }, []);
 
+  // Phase 4: Add Freeform Frame
+  const handleAddFreeformFrame = useCallback(
+    (frame: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      id?: string;
+      trackName?: string;
+      pivot?: { x: number; y: number };
+    }) => {
+      setMetaDoc((prev) => {
+        const currentFrames = Array.isArray(prev.slicing?.frames)
+          ? [...prev.slicing.frames]
+          : [];
+        const newId = frame.id || `frame_${currentFrames.length + 1}`;
+        const newFrame = {
+          id: newId,
+          x: Math.round(frame.x),
+          y: Math.round(frame.y),
+          width: Math.round(frame.width),
+          height: Math.round(frame.height),
+          trackName: frame.trackName,
+          pivot: frame.pivot || { x: 0.5, y: 1.0 },
+        };
+        const updatedFrames = [...currentFrames, newFrame];
+        return {
+          ...prev,
+          slicing: {
+            ...(prev.slicing || { method: "freeform_rects" }),
+            method: prev.slicing?.method === "auto_islands" ? "auto_islands" : "freeform_rects",
+            frames: updatedFrames,
+          },
+        };
+      });
+      studioLogger.info(
+        `Added freeform frame: ${frame.id || "new frame"} [${frame.width}x${frame.height}]`
+      );
+    },
+    [studioLogger]
+  );
+
+  // Phase 4: Bake Islands into Static Frames (Zero Runtime CPU flood-fill)
+  const handleBakeIslands = useCallback(
+    (islands: ResolvedFrameRect[]) => {
+      const bakedFrames = islands.map((isl, idx) => ({
+        id: isl.id || `island_${idx}`,
+        x: Math.round(isl.x),
+        y: Math.round(isl.y),
+        width: Math.round(isl.width),
+        height: Math.round(isl.height),
+        trackName: isl.trackName,
+        frameIndex: isl.frameIndex,
+        pivot: isl.pivot || { x: 0.5, y: 1.0 },
+      }));
+
+      setMetaDoc((prev) => ({
+        ...prev,
+        slicing: {
+          ...(prev.slicing || { method: "auto_islands" }),
+          method: "auto_islands",
+          frames: bakedFrames,
+        },
+      }));
+
+      studioLogger.info(
+        `Baked ${bakedFrames.length} auto-island frames into static slicing frames`
+      );
+    },
+    [studioLogger]
+  );
+
+  // Phase 4: Delete Freeform Frame
+  const handleDeleteFreeformFrame = useCallback(
+    (id: string) => {
+      setMetaDoc((prev) => {
+        if (!Array.isArray(prev.slicing?.frames)) return prev;
+        return {
+          ...prev,
+          slicing: {
+            ...prev.slicing,
+            frames: prev.slicing.frames.filter((f) => f.id !== id),
+          },
+        };
+      });
+      studioLogger.info(`Deleted freeform frame: ${id}`);
+    },
+    [studioLogger]
+  );
+
+  // Phase 4: Assign Frames to Track
+  const handleAssignFramesToTrack = useCallback(
+    (frameIds: string[], trackName: string) => {
+      if (!trackName || frameIds.length === 0) return;
+
+      setMetaDoc((prev) => {
+        const currentFrames = Array.isArray(prev.slicing?.frames)
+          ? [...prev.slicing.frames]
+          : resolvedFrames.map((rf, idx) => ({
+              id: rf.id || `frame_${idx}`,
+              x: rf.x,
+              y: rf.y,
+              width: rf.width,
+              height: rf.height,
+              trackName: rf.trackName,
+              frameIndex: rf.frameIndex,
+              pivot: rf.pivot || { x: 0.5, y: 1.0 },
+            }));
+
+        let assignedIndex = 0;
+        const updated = currentFrames.map((f) => {
+          if (frameIds.includes(f.id!)) {
+            return {
+              ...f,
+              trackName,
+              frameIndex: assignedIndex++,
+            };
+          }
+          return f;
+        });
+
+        return {
+          ...prev,
+          slicing: {
+            ...(prev.slicing || { method: "freeform_rects" }),
+            frames: updated,
+          },
+        };
+      });
+
+      // Update or add track
+      setTracks((prev) => {
+        const exists = prev.find((t) => t.name === trackName);
+        if (exists) {
+          return prev.map((t) =>
+            t.name === trackName ? { ...t, frames: Math.max(t.frames, frameIds.length) } : t
+          );
+        }
+        return [
+          ...prev,
+          {
+            name: trackName,
+            row: Math.min(gridConfig.rows - 1, prev.length),
+            frames: frameIds.length,
+            fps: 8,
+            loop: true,
+          },
+        ];
+      });
+
+      setSelectedTrackName(trackName);
+      setSelectedFrameIndex(0);
+      studioLogger.info(`Assigned ${frameIds.length} frames to track '${trackName}'`);
+    },
+    [resolvedFrames, gridConfig.rows, studioLogger]
+  );
+
   return (
     <div
       id="subtab-content-atlas-slicer"
@@ -592,6 +751,8 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
             onToolChange={(tool) => setViewerTool(tool)}
             onError={handleErrorChange}
             onMetricsChange={handleMetricsChange}
+            onResolvedFramesChange={setResolvedFrames}
+            onAddFreeformFrame={handleAddFreeformFrame}
             onSelectCell={(info) => {
               setSelectedCellInfo(info);
               if (info.trackName) {
@@ -629,6 +790,7 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
               origin={origin}
               backgroundConfig={metaDoc.backgroundConfig}
               slicingConfig={metaDoc.slicing}
+              resolvedFrames={resolvedFrames}
               onGridConfigChange={setGridConfig}
               onTracksChange={setTracks}
               onSelectTrack={(name) => {
@@ -644,6 +806,10 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
               onRequestEyedropper={() => {
                 setViewerTool("eyedropper");
               }}
+              onBakeIslands={handleBakeIslands}
+              onAddFreeformFrame={handleAddFreeformFrame}
+              onDeleteFreeformFrame={handleDeleteFreeformFrame}
+              onAssignFramesToTrack={handleAssignFramesToTrack}
             />
           </div>
         )}

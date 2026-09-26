@@ -100,11 +100,14 @@ export interface IAutoIslandSlicingParams {
 }
 
 export interface IFreeformFrameRect {
+  id?: string;
   x: number;
   y: number;
   width: number;
   height: number;
   pivot?: { x: number; y: number };
+  trackName?: string;
+  frameIndex?: number;
 }
 
 export interface IAtlasSlicingConfig {
@@ -119,7 +122,8 @@ export interface IAtlasSlicingConfig {
     safeMargin?: number;
   };
   autoIslands?: IAutoIslandSlicingParams;
-  frames?: Record<string, IFreeformFrameRect>;
+  frames?: IFreeformFrameRect[] | Record<string, IFreeformFrameRect>;
+  freeformFrames?: IFreeformFrameRect[];
 }
 
 export interface ResolvedFrameRect {

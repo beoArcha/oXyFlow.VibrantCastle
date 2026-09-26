@@ -10,6 +10,7 @@ import {
   IAtlasBackgroundConfig,
   IAtlasSlicingConfig,
   AtlasInspectorTabId,
+  ResolvedFrameRect,
 } from "./types";
 import { AtlasAnimationPreview } from "./AtlasAnimationPreview";
 import { AtlasSlicingInspector } from "./AtlasSlicingInspector";
@@ -29,6 +30,7 @@ export interface AtlasInspectorDockProps {
   origin: AtlasOriginDefinition;
   backgroundConfig?: IAtlasBackgroundConfig;
   slicingConfig?: IAtlasSlicingConfig;
+  resolvedFrames?: ResolvedFrameRect[];
   onGridConfigChange: (grid: AtlasGridConfig) => void;
   onTracksChange: (tracks: AtlasAnimationTrackDefinition[]) => void;
   onSelectTrack: (trackName: string) => void;
@@ -39,6 +41,19 @@ export interface AtlasInspectorDockProps {
   onMetaDocChange: (doc: AtlasMetaDoc) => void;
   onResetDefaults: () => void;
   onRequestEyedropper: () => void;
+  onBakeIslands?: (islands: ResolvedFrameRect[]) => void;
+  onAddFreeformFrame?: (frame: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    id?: string;
+    trackName?: string;
+    pivot?: { x: number; y: number };
+  }) => void;
+  onUpdateFreeformFrame?: (id: string, updates: Partial<ResolvedFrameRect>) => void;
+  onDeleteFreeformFrame?: (id: string) => void;
+  onAssignFramesToTrack?: (frameIds: string[], trackName: string) => void;
 }
 
 export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
@@ -54,6 +69,7 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
   origin,
   backgroundConfig,
   slicingConfig,
+  resolvedFrames,
   onGridConfigChange,
   onTracksChange,
   onSelectTrack,
@@ -64,6 +80,11 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
   onMetaDocChange,
   onResetDefaults,
   onRequestEyedropper,
+  onBakeIslands,
+  onAddFreeformFrame,
+  onUpdateFreeformFrame,
+  onDeleteFreeformFrame,
+  onAssignFramesToTrack,
 }) => {
   const { t } = useI18n();
 
@@ -143,10 +164,18 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
             gridConfig={gridConfig}
             tracks={tracks}
             selectedTrackName={selectedTrackName}
+            selectedFrameIndex={selectedFrameIndex}
+            resolvedFrames={resolvedFrames}
             onSlicingConfigChange={onSlicingConfigChange}
             onGridConfigChange={onGridConfigChange}
             onTracksChange={onTracksChange}
             onSelectTrack={onSelectTrack}
+            onSelectFrame={onSelectFrame}
+            onBakeIslands={onBakeIslands}
+            onAddFreeformFrame={onAddFreeformFrame}
+            onUpdateFreeformFrame={onUpdateFreeformFrame}
+            onDeleteFreeformFrame={onDeleteFreeformFrame}
+            onAssignFramesToTrack={onAssignFramesToTrack}
           />
         )}
 
@@ -167,6 +196,8 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
             tracks={tracks}
             origin={origin}
             assetId={assetId}
+            slicingConfig={slicingConfig}
+            backgroundConfig={backgroundConfig}
             onMetaDocChange={onMetaDocChange}
             onResetDefaults={onResetDefaults}
           />

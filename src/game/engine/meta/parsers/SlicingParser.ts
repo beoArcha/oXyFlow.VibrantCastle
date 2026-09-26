@@ -1,5 +1,5 @@
 import { ISectionParser } from "./ISectionParser";
-import { IAtlasSlicingConfig, SlicingMethod } from "../types";
+import { IAtlasSlicingConfig, SlicingMethod, IFreeformFrameRect } from "../types";
 
 export class SlicingParser implements ISectionParser<IAtlasSlicingConfig | undefined> {
   public readonly sectionName = "slicing";
@@ -43,8 +43,55 @@ export class SlicingParser implements ISectionParser<IAtlasSlicingConfig | undef
       };
     }
 
+    if (slicing.autoIslands && typeof slicing.autoIslands === "object") {
+      config.autoIslands = {
+        minIslandPixels: Math.max(1, Number(slicing.autoIslands.minIslandPixels) || 8),
+        clusterYTolerance: Math.max(0, Number(slicing.autoIslands.clusterYTolerance) || 8),
+      };
+    }
+
     if (slicing.frames && typeof slicing.frames === "object") {
-      config.frames = slicing.frames;
+      const parsedFrames: Record<string, IFreeformFrameRect> = {};
+
+      if (Array.isArray(slicing.frames)) {
+        slicing.frames.forEach((item: any, idx: number) => {
+          if (!item || typeof item !== "object") return;
+          const id = String(item.id || `frame_${idx}`);
+          parsedFrames[id] = {
+            id,
+            x: Math.max(0, Number(item.x) || 0),
+            y: Math.max(0, Number(item.y) || 0),
+            width: Math.max(1, Number(item.width ?? item.w) || 1),
+            height: Math.max(1, Number(item.height ?? item.h) || 1),
+            pivot:
+              item.pivot && typeof item.pivot === "object"
+                ? { x: Number(item.pivot.x) || 0.5, y: Number(item.pivot.y) || 1.0 }
+                : undefined,
+            trackName: item.trackName ? String(item.trackName) : undefined,
+            frameIndex: item.frameIndex !== undefined ? Number(item.frameIndex) : idx,
+          };
+        });
+      } else {
+        Object.entries(slicing.frames).forEach(([key, item]: [string, any], idx: number) => {
+          if (!item || typeof item !== "object") return;
+          const id = String(item.id || key);
+          parsedFrames[key] = {
+            id,
+            x: Math.max(0, Number(item.x) || 0),
+            y: Math.max(0, Number(item.y) || 0),
+            width: Math.max(1, Number(item.width ?? item.w) || 1),
+            height: Math.max(1, Number(item.height ?? item.h) || 1),
+            pivot:
+              item.pivot && typeof item.pivot === "object"
+                ? { x: Number(item.pivot.x) || 0.5, y: Number(item.pivot.y) || 1.0 }
+                : undefined,
+            trackName: item.trackName ? String(item.trackName) : undefined,
+            frameIndex: item.frameIndex !== undefined ? Number(item.frameIndex) : idx,
+          };
+        });
+      }
+
+      config.frames = parsedFrames;
     }
 
     return config;

@@ -8,6 +8,7 @@ import {
   ISpriteSheetExtractor,
 } from "./ISpriteSheetExtractor";
 import { PixelBoundsScanner } from "./PixelBoundsScanner";
+import { defaultAtlasSlicingEngine } from "../meta/slicing/AtlasSlicingEngine";
 
 /**
  * Extractor for humanoid characters with multiple animation rows and variable slot spans.
@@ -33,8 +34,12 @@ export class HumanoidSpriteExtractor
     const baseColW = sheetW / totalCols;
     const baseRowH = sheetH / totalRows;
 
-    const variantScale = meta.variants?.[quality]?.scale ?? meta.scale ?? 1.0;
     const originNorm = meta.layout?.origin?.normalized ?? { x: 0.5, y: 1.0 };
+
+    // If metadata explicitly defines a slicing strategy, use unified AtlasSlicingEngine (pure math / zero flood-fill CPU overhead)
+    if (meta.slicing && meta.slicing.method) {
+      return this.extractFromSlicingEngine(meta, sheetW, sheetH, baseColW, originNorm);
+    }
 
     const tracks: Record<string, CharacterAnimationTrack> = {};
     const animDefinitions = meta.animations || {};
@@ -146,6 +151,118 @@ export class HumanoidSpriteExtractor
         supportsWide: frames.some((f) => f.isWide),
         frames,
       };
+    }
+
+    // Alias run <-> move
+    if (tracks.run && !tracks.move) {
+      tracks.move = { ...tracks.run, name: "move" as any };
+    }
+    if (tracks.move && !tracks.run) {
+      tracks.run = { ...tracks.move, name: "run" as any };
+    }
+
+    return tracks;
+  }
+
+  /**
+   * Slices animations using the unified AtlasSlicingEngine.
+   * Completely bypasses pixel scans at runtime (zero CPU flood-fill overhead).
+   */
+  private extractFromSlicingEngine(
+    meta: BaseExtractionMeta,
+    sheetW: number,
+    sheetH: number,
+    baseColW: number,
+    originNorm: { x: number; y: number }
+  ): Record<string, CharacterAnimationTrack> {
+    const resolvedFrames = defaultAtlasSlicingEngine.resolveFrames(meta, sheetW, sheetH);
+    const tracks: Record<string, CharacterAnimationTrack> = {};
+    const animDefinitions = meta.animations || {};
+
+    // Group resolved frames by trackName
+    const framesByTrack: Map<string, typeof resolvedFrames> = new Map();
+    resolvedFrames.forEach((rf) => {
+      const track = rf.trackName || "idle";
+      if (!framesByTrack.has(track)) {
+        framesByTrack.set(track, []);
+      }
+      framesByTrack.get(track)!.push(rf);
+    });
+
+    // 1. Process known animation tracks from meta.animations
+    for (const [animKey, animDef] of Object.entries(animDefinitions)) {
+      const trackResolved = framesByTrack.get(animKey) || [];
+      trackResolved.sort((a, b) => (a.frameIndex ?? 0) - (b.frameIndex ?? 0));
+
+      const fps = animDef.fps ?? (animKey === "idle" ? 5 : animKey === "dash" ? 10 : 7);
+      const frameDuration = Math.max(1, Math.round(60 / fps));
+      const loop = animDef.loop ?? (animKey === "idle" || animKey === "run" || animKey === "crouch");
+
+      const frames: CharacterAnimationFrame[] = trackResolved.map((rf) => {
+        const isWide = rf.width > baseColW * 1.15;
+        const originX = rf.pivot ? Math.round(rf.width * rf.pivot.x) : Math.round(rf.width * originNorm.x);
+        const originY = rf.pivot ? Math.round(rf.height * rf.pivot.y) : Math.round(rf.height * originNorm.y);
+
+        return {
+          x: rf.x,
+          y: rf.y,
+          w: rf.width,
+          h: rf.height,
+          originX,
+          originY,
+          isWide,
+          widthMultiplier: isWide ? rf.width / baseColW : 1,
+        };
+      });
+
+      tracks[animKey] = {
+        name: animKey as any,
+        frameCount: frames.length,
+        frameDuration,
+        loop,
+        row: animDef.row ?? 0,
+        fps,
+        supportsWide: frames.some((f) => f.isWide),
+        frames,
+      };
+    }
+
+    // 2. Also register any additional tracks found in resolvedFrames not present in meta.animations
+    for (const [trackName, trackResolved] of framesByTrack.entries()) {
+      if (!tracks[trackName] && trackResolved.length > 0) {
+        trackResolved.sort((a, b) => (a.frameIndex ?? 0) - (b.frameIndex ?? 0));
+        const fps = 8;
+        const frameDuration = Math.max(1, Math.round(60 / fps));
+        const loop = true;
+
+        const frames: CharacterAnimationFrame[] = trackResolved.map((rf) => {
+          const isWide = rf.width > baseColW * 1.15;
+          const originX = rf.pivot ? Math.round(rf.width * rf.pivot.x) : Math.round(rf.width * originNorm.x);
+          const originY = rf.pivot ? Math.round(rf.height * rf.pivot.y) : Math.round(rf.height * originNorm.y);
+
+          return {
+            x: rf.x,
+            y: rf.y,
+            w: rf.width,
+            h: rf.height,
+            originX,
+            originY,
+            isWide,
+            widthMultiplier: isWide ? rf.width / baseColW : 1,
+          };
+        });
+
+        tracks[trackName] = {
+          name: trackName as any,
+          frameCount: frames.length,
+          frameDuration,
+          loop,
+          row: trackResolved[0]?.row ?? 0,
+          fps,
+          supportsWide: frames.some((f) => f.isWide),
+          frames,
+        };
+      }
     }
 
     // Alias run <-> move

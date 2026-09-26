@@ -106,6 +106,14 @@ export class AtlasSlicingEngine {
         result = strategy.slice(context, metaDoc.slicing.frames);
       } else if (method === "by_count") {
         result = strategy.slice(context, metaDoc.slicing.grid || metaDoc.atlas);
+      } else if (method === "auto_islands") {
+        // If pre-computed bounding boxes exist in slicing.frames, use them directly (zero runtime CPU flood-fill!)
+        if (metaDoc.slicing.frames && Object.keys(metaDoc.slicing.frames).length > 0) {
+          const freeformStrategy = this.getStrategy("freeform_rects");
+          result = freeformStrategy.slice(context, metaDoc.slicing.frames);
+        } else {
+          result = strategy.slice(context, metaDoc.slicing.autoIslands || metaDoc.slicing);
+        }
       } else {
         result = strategy.slice(context, metaDoc.slicing);
       }

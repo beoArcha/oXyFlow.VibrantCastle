@@ -4,6 +4,7 @@ import {
   CharacterPortraitMood,
   CharacterSpriteQuality,
 } from "../spriteTypes";
+import { IAtlasSlicingConfig, IAtlasBackgroundConfig } from "../meta/types";
 
 /**
  * Common configuration for extracting sprites from an atlas sheet.
@@ -13,6 +14,8 @@ export interface BaseExtractionMeta {
   objectId?: string;
   entityType?: "humanoid" | "monster" | "animal" | "portrait" | "interactive_object" | "effect" | string;
   version?: string;
+  slicing?: IAtlasSlicingConfig;
+  backgroundConfig?: IAtlasBackgroundConfig;
   atlas?: {
     columns?: number;
     rows?: number;
