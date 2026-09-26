@@ -11,6 +11,7 @@
 import {
   ICharacterMetaDocument,
   ICreatureMetaDocument,
+  IPortraitMetaDocument,
   IStructureMetaDocument,
   IUniversalMetaDocument,
 } from "./types";
@@ -144,6 +145,57 @@ export class MetaParser {
       slicing: this.slicingParser.parse(raw),
       backgroundConfig: this.backgroundParser.parse(raw),
     };
+  }
+
+  /**
+   * Parses a portrait matrix document (e.g. Valen Portraits, Aurelia Portraits).
+   */
+  public parsePortrait(raw: unknown): IPortraitMetaDocument {
+    const parsedPortraits = this.portraitParser.parse(raw);
+    const atlas = this.atlasParser.parse(raw);
+
+    return {
+      info: this.infoParser.parse(raw),
+      atlas,
+      portraits: parsedPortraits || {
+        columns: atlas.columns || 5,
+        rows: atlas.rows || 5,
+        cellWidth: atlas.cellWidth || 232,
+        cellHeight: atlas.cellHeight || 270,
+        spacing: atlas.spacing || 0,
+        map: [],
+      },
+      animations: this.animationsParser.parse(raw),
+      layout: this.layoutParser.parse(raw),
+      constraints: this.constraintsParser.parse(raw),
+      slicing: this.slicingParser.parse(raw),
+      backgroundConfig: this.backgroundParser.parse(raw),
+    };
+  }
+
+  /**
+   * Automatically inspects entityType and dispatches to the specialized role parser (OCP & ISP).
+   */
+  public parseAuto(raw: unknown): IUniversalMetaDocument | ICharacterMetaDocument | ICreatureMetaDocument | IStructureMetaDocument | IPortraitMetaDocument {
+    if (typeof raw !== "object" || raw === null) {
+      return this.parseUniversal(raw);
+    }
+    const doc = raw as Record<string, any>;
+    const entityType = doc.entityType || doc.info?.entityType;
+
+    if (entityType === "portrait") {
+      return this.parsePortrait(raw);
+    }
+    if (entityType === "humanoid" || entityType === "character") {
+      return this.parseCharacter(raw);
+    }
+    if (entityType === "creature" || entityType === "monster" || entityType === "boss") {
+      return this.parseCreature(raw);
+    }
+    if (entityType === "structure" || entityType === "interactive_object" || entityType === "prop") {
+      return this.parseStructure(raw);
+    }
+    return this.parseUniversal(raw);
   }
 
   /**

@@ -11,6 +11,7 @@ import {
   ICharacterMetaDocument,
   ICreatureMetaDocument,
   IStructureMetaDocument,
+  IPortraitMetaDocument,
 } from "../types";
 
 export interface AtlasSlicingEngineDependencies {
@@ -58,7 +59,13 @@ export class AtlasSlicingEngine {
    * Resolves all frame bounding rectangles for any metadata document and actual texture size.
    */
   public resolveFrames(
-    metaDoc: IUniversalMetaDocument | ICharacterMetaDocument | ICreatureMetaDocument | IStructureMetaDocument | any,
+    metaDoc:
+      | IUniversalMetaDocument
+      | ICharacterMetaDocument
+      | ICreatureMetaDocument
+      | IStructureMetaDocument
+      | IPortraitMetaDocument
+      | any,
     textureWidth: number,
     textureHeight: number,
     pixelBuffer?: IPixelBuffer

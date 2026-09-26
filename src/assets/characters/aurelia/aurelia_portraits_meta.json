@@ -24,6 +24,20 @@
       "safeMargin": 0
     }
   },
+  "portraits": {
+    "columns": 5,
+    "rows": 5,
+    "cellWidth": 235,
+    "cellHeight": 268,
+    "spacing": 0,
+    "map": [
+      ["curious", "focused", "inquiring", "intrigued", "observant"],
+      ["radiant", "gentle_smile", "warm", "hopeful", "delighted"],
+      ["sorrow", "regret", "troubled", "pensive", "somber"],
+      ["determined", "combat_ready", "focused_spell", "resolute", "defiant"],
+      ["serene", "mystic", "aether_flow", "harmonious", "transcendent"]
+    ]
+  },
   "animations": {
     "row_0_curious_focused": { "row": 0, "frames": 5, "fps": 2, "loop": true },
     "row_1_radiant_smiling": { "row": 1, "frames": 5, "fps": 2, "loop": true },

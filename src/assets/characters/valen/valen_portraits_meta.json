@@ -24,6 +24,20 @@
       "safeMargin": 0
     }
   },
+  "portraits": {
+    "columns": 5,
+    "rows": 5,
+    "cellWidth": 232,
+    "cellHeight": 270,
+    "spacing": 0,
+    "map": [
+      ["neutral", "neutral_look", "curious", "skeptical_side", "skeptical"],
+      ["calm", "gentle", "concerned_light", "concerned", "troubled"],
+      ["serious", "stern", "annoyed", "angry", "distant"],
+      ["shocked", "worried", "tense", "profile_speaking", "profile_listening"],
+      ["stoic", "reflective", "pondering", "resolute", "pensive"]
+    ]
+  },
   "animations": {
     "row_0_neutral_to_skeptical": { "row": 0, "frames": 5, "fps": 2, "loop": true },
     "row_1_calm_to_concerned": { "row": 1, "frames": 5, "fps": 2, "loop": true },

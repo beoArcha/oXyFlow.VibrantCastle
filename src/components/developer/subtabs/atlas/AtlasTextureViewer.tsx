@@ -645,6 +645,14 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
               {gridConfig.columns} {t("atlasStudioColsShort")} × {gridConfig.rows} {t("atlasStudioRowsShort")}
             </Badge>
           )}
+          {slicingConfig?.method && (
+            <Badge variant="purple" className="text-[10px] font-mono uppercase">
+              {slicingConfig.method}
+            </Badge>
+          )}
+          <Badge variant="green" className="text-[10px]">
+            {resolvedFrames.length} {t("atlasStudioFrameInfo") || "klatek"}
+          </Badge>
         </div>
 
         {/* Top Control Bar */}

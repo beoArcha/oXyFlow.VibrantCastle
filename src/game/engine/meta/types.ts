@@ -201,6 +201,7 @@ export interface IPortraitMatrix {
   cellHeight: number;
   spacing: number;
   map: string[][];
+  expressions?: Record<string, { row: number; col: number; emotion?: string }>;
 }
 
 // ============================================================================
@@ -316,6 +317,21 @@ export interface IStructureMetaDocument {
   infoFrames?: IInfoFrames;
   interaction?: IInteractionConfig;
   render?: IRenderDirectives;
+  constraints?: IValidationConstraints;
+  slicing?: IAtlasSlicingConfig;
+  backgroundConfig?: IAtlasBackgroundConfig;
+}
+
+/**
+ * Portrait Metadata Document (e.g. Valen Portraits, Aurelia Portraits)
+ * Covers 5x5 dialogue & emotion matrices, expressive animations, and portrait slicing.
+ */
+export interface IPortraitMetaDocument {
+  info: IMetaInfo;
+  atlas: IAtlasGrid;
+  portraits: IPortraitMatrix;
+  animations?: IAnimationTracks;
+  layout?: ISpatialLayout;
   constraints?: IValidationConstraints;
   slicing?: IAtlasSlicingConfig;
   backgroundConfig?: IAtlasBackgroundConfig;

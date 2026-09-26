@@ -19,6 +19,7 @@ export type {
   ICharacterMetaDocument,
   ICreatureMetaDocument,
   IStructureMetaDocument,
+  IPortraitMetaDocument,
   IUniversalMetaDocument,
 } from "./meta";
 
