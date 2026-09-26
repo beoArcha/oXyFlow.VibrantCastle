@@ -19,6 +19,12 @@ export interface IStructureRenderer {
 export class StructureRenderer implements IStructureRenderer {
   private readonly atlasRenderer: IAtlasSpriteRenderer;
 
+  private readonly portalGradientCache: Map<string, CanvasGradient> = new Map();
+
+  public clearCaches(): void {
+    this.portalGradientCache.clear();
+  }
+
   constructor(atlasRenderer: IAtlasSpriteRenderer = defaultAtlasSpriteRenderer) {
     this.atlasRenderer = atlasRenderer;
   }
@@ -90,18 +96,29 @@ export class StructureRenderer implements IStructureRenderer {
       const outerColor = entity.portalColors?.outer || "#06b6d4";
       const borderColor = entity.portalColors?.border || "#d97706";
 
+      const baseRadius = Math.max(10, Math.round(entity.width / 2));
+      const cacheKey = `${innerColor}_${outerColor}_${baseRadius}`;
+
+      let gradient = this.portalGradientCache.get(cacheKey);
+      if (!gradient) {
+        gradient = ctx.createRadialGradient(0, 0, 2, 0, 0, baseRadius);
+        gradient.addColorStop(0, innerColor);
+        gradient.addColorStop(0.35, outerColor);
+        gradient.addColorStop(0.75, "#7c3aed");
+        gradient.addColorStop(1, "rgba(245, 158, 11, 0.05)");
+        this.portalGradientCache.set(cacheKey, gradient);
+      }
+
       const pulse = Math.sin((tickCount + entity.x) * 0.05) * 3;
-      const gradient = ctx.createRadialGradient(cx, cy, 2, cx, cy, entity.width / 2 + pulse);
-      gradient.addColorStop(0, innerColor);
-      gradient.addColorStop(0.35, outerColor);
-      gradient.addColorStop(0.75, "#7c3aed");
-      gradient.addColorStop(1, "rgba(245, 158, 11, 0.05)");
+
+      ctx.save();
+      ctx.translate(cx, cy);
 
       ctx.fillStyle = gradient;
       ctx.beginPath();
       ctx.ellipse(
-        cx,
-        cy,
+        0,
+        0,
         Math.max(10, entity.width / 2 + pulse),
         Math.max(10, entity.height / 2),
         Math.sin((tickCount + entity.x) * 0.03),
@@ -114,8 +131,10 @@ export class StructureRenderer implements IStructureRenderer {
       ctx.strokeStyle = borderColor;
       ctx.lineWidth = 4;
       ctx.beginPath();
-      ctx.ellipse(cx, cy, entity.width / 2 + 2, entity.height / 2 + 2, 0, Math.PI, 0);
+      ctx.ellipse(0, 0, entity.width / 2 + 2, entity.height / 2 + 2, 0, Math.PI, 0);
       ctx.stroke();
+
+      ctx.restore();
     }
 
     // 3. Floating Destination Label Badge

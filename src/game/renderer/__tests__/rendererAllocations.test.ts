@@ -15,6 +15,8 @@ import { getLocation } from "../../locations";
 function createMockContext() {
   let saveCalls = 0;
   let restoreCalls = 0;
+  let linearGradientCalls = 0;
+  let radialGradientCalls = 0;
 
   const ctx: any = {
     canvas: { width: 1000, height: 625 },
@@ -41,8 +43,14 @@ function createMockContext() {
     drawImage: () => {},
     fillText: () => {},
     measureText: (txt: string) => ({ width: txt.length * 6 }),
-    createLinearGradient: () => ({ addColorStop: () => {} }),
-    createRadialGradient: () => ({ addColorStop: () => {} }),
+    createLinearGradient: () => {
+      linearGradientCalls++;
+      return { addColorStop: () => {} };
+    },
+    createRadialGradient: () => {
+      radialGradientCalls++;
+      return { addColorStop: () => {} };
+    },
     roundRect: () => {},
     setLineDash: () => {},
     imageSmoothingEnabled: false,
@@ -56,6 +64,9 @@ function createMockContext() {
     getSaveBalance: () => saveCalls - restoreCalls,
     getSaveCount: () => saveCalls,
     getRestoreCount: () => restoreCalls,
+    getLinearGradientCount: () => linearGradientCalls,
+    getRadialGradientCount: () => radialGradientCalls,
+    getTotalGradientCount: () => linearGradientCalls + radialGradientCalls,
   };
 
   return ctx;
@@ -239,4 +250,84 @@ describe("Renderer Optimization & Zero GC Pressure (Faza 3)", () => {
       expect(ctx.getSaveBalance()).toBe(0);
     });
   });
+
+  describe("5. Gradient Caching & Zero Runtime Gradient Allocations (AGENT.md § 12.2)", () => {
+    it("guarantees zero gradient allocations in MultiLayerBackgroundSystem after frame 1", () => {
+      const ctx = createMockContext();
+      const multiLayer = new MultiLayerBackgroundSystem();
+      const loc = getLocation("courtyard");
+
+      // Frame 1 initializes gradient cache
+      multiLayer.render(ctx, loc, 2600, 650, 1000, 625, 0, 0, 1);
+      const gradsAfterFrame1 = ctx.getTotalGradientCount();
+      expect(gradsAfterFrame1).toBeGreaterThan(0);
+
+      // Subsequent 60 frames must not allocate any new gradients
+      for (let tick = 2; tick <= 60; tick++) {
+        multiLayer.render(ctx, loc, 2600, 650, 1000, 625, tick * 2, 0, tick);
+      }
+      expect(ctx.getTotalGradientCount()).toBe(gradsAfterFrame1);
+      expect(ctx.getSaveBalance()).toBe(0);
+    });
+
+    it("guarantees zero radial gradient allocations in FxRenderer for projectiles across frames", () => {
+      const ctx = createMockContext();
+      const fx = new FxRenderer();
+
+      // Frame 1 caches projectile gradient for color/radius key
+      fx.renderProjectiles(ctx, [mockProjectile]);
+      const initialRadialGrads = ctx.getRadialGradientCount();
+      expect(initialRadialGrads).toBe(1);
+
+      // Render 50 frames with same projectile characteristics
+      for (let i = 0; i < 50; i++) {
+        mockProjectile.x += mockProjectile.vx;
+        fx.renderProjectiles(ctx, [mockProjectile]);
+      }
+      expect(ctx.getRadialGradientCount()).toBe(initialRadialGrads);
+      expect(ctx.getSaveBalance()).toBe(0);
+    });
+
+    it("guarantees zero radial gradient allocations in StructureRenderer for goal portals across frames", () => {
+      const ctx = createMockContext();
+      const structureRenderer = new StructureRenderer();
+      const portalEntity: Entity = {
+        id: "portal_destination",
+        type: CollisionType.Goal,
+        x: 200,
+        y: 300,
+        width: 64,
+        height: 96,
+        structureId: "non_existent_atlas_force_procedural",
+      } as Entity;
+
+      // Frame 1 creates and caches portal gradient
+      structureRenderer.render(ctx, [portalEntity], "en", 1);
+      const initialRadialGrads = ctx.getRadialGradientCount();
+      expect(initialRadialGrads).toBe(1);
+
+      // Render 60 animated frames with pulsing ticks
+      for (let tick = 2; tick <= 60; tick++) {
+        structureRenderer.render(ctx, [portalEntity], "en", tick);
+      }
+      expect(ctx.getRadialGradientCount()).toBe(initialRadialGrads);
+      expect(ctx.getSaveBalance()).toBe(0);
+    });
+
+    it("verifies clearCaches resets caches in StructureRenderer and FxRenderer without leaking", () => {
+      const ctx = createMockContext();
+      const fx = new FxRenderer();
+      const structureRenderer = new StructureRenderer();
+
+      fx.renderProjectiles(ctx, [mockProjectile]);
+      expect(ctx.getRadialGradientCount()).toBe(1);
+
+      fx.clearCaches();
+      fx.renderProjectiles(ctx, [mockProjectile]);
+      expect(ctx.getRadialGradientCount()).toBe(2);
+
+      structureRenderer.clearCaches();
+    });
+  });
 });
+

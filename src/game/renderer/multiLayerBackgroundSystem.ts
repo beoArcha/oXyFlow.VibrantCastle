@@ -85,6 +85,7 @@ const DEFAULT_TIER_SPEEDS: Readonly<Record<BackgroundLayerTier, { readonly x: nu
  */
 export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
   private imageCache: Map<string, HTMLImageElement> = new Map();
+  private readonly gradientCache: Map<string, CanvasGradient> = new Map();
   private isPreloaded: boolean = false;
   private readonly tierBuckets: Record<BackgroundLayerTier, ParallaxLayerSchema[]> = {
     far: [],
@@ -96,6 +97,52 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
 
   constructor() {
     this.preload();
+  }
+
+  public clearGradientCache(): void {
+    this.gradientCache.clear();
+  }
+
+  private getOrCreateLinearGradient(
+    ctx: CanvasRenderingContext2D,
+    key: string,
+    x0: number,
+    y0: number,
+    x1: number,
+    y1: number,
+    stops: readonly [number, string][]
+  ): CanvasGradient {
+    let grad = this.gradientCache.get(key);
+    if (!grad) {
+      grad = ctx.createLinearGradient(x0, y0, x1, y1);
+      for (let i = 0; i < stops.length; i++) {
+        grad.addColorStop(stops[i][0], stops[i][1]);
+      }
+      this.gradientCache.set(key, grad);
+    }
+    return grad;
+  }
+
+  private getOrCreateRadialGradient(
+    ctx: CanvasRenderingContext2D,
+    key: string,
+    x0: number,
+    y0: number,
+    r0: number,
+    x1: number,
+    y1: number,
+    r1: number,
+    stops: readonly [number, string][]
+  ): CanvasGradient {
+    let grad = this.gradientCache.get(key);
+    if (!grad) {
+      grad = ctx.createRadialGradient(x0, y0, r0, x1, y1, r1);
+      for (let i = 0; i < stops.length; i++) {
+        grad.addColorStop(stops[i][0], stops[i][1]);
+      }
+      this.gradientCache.set(key, grad);
+    }
+    return grad;
   }
 
   /**
@@ -299,12 +346,21 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
   ): void {
     ctx.save();
 
-    // 1. Solid base gradient underneath image
-    const bgGrad = ctx.createLinearGradient(0, 0, 0, viewportHeight);
+    // 1. Solid base gradient underneath image (cached per location and height)
     const topColor = location.theme?.bgGradientTop || (location.id === "thorn_chasm" ? "#14041a" : "#2a150b");
     const bottomColor = location.theme?.bgGradientBottom || (location.id === "thorn_chasm" ? "#08010d" : "#0d0502");
-    bgGrad.addColorStop(0, topColor);
-    bgGrad.addColorStop(1, bottomColor);
+    const bgGrad = this.getOrCreateLinearGradient(
+      ctx,
+      `far_bg_${location.id}_${viewportHeight}`,
+      0,
+      0,
+      0,
+      viewportHeight,
+      [
+        [0, topColor],
+        [1, bottomColor],
+      ]
+    );
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, viewportWidth, viewportHeight);
 
@@ -443,16 +499,21 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
       mountainColor = "#1c0b05";
     }
 
-    const grad = ctx.createRadialGradient(
+    const key = `proc_far_${location.id}_${viewportWidth}_${viewportHeight}`;
+    const grad = this.getOrCreateRadialGradient(
+      ctx,
+      key,
       viewportWidth * 0.5,
       viewportHeight * 0.4,
       50,
       viewportWidth * 0.5,
       viewportHeight * 0.4,
-      viewportWidth * 0.7
+      viewportWidth * 0.7,
+      [
+        [0, glowColor],
+        [1, "rgba(0,0,0,0)"],
+      ]
     );
-    grad.addColorStop(0, glowColor);
-    grad.addColorStop(1, "rgba(0,0,0,0)");
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, viewportWidth, viewportHeight);
 
@@ -484,12 +545,23 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
     ctx.save();
     ctx.globalAlpha = 0.12;
     const waveOffset = Math.sin(tickCount * 0.02) * 15;
-    const mistGrad = ctx.createLinearGradient(0, viewportHeight * 0.6 + waveOffset, 0, viewportHeight);
-    mistGrad.addColorStop(0, "rgba(147, 51, 234, 0)");
-    mistGrad.addColorStop(0.5, "rgba(147, 51, 234, 0.25)");
-    mistGrad.addColorStop(1, "rgba(88, 28, 135, 0)");
+    const key = `chasm_mist_${viewportHeight}`;
+    const mistGrad = this.getOrCreateLinearGradient(
+      ctx,
+      key,
+      0,
+      viewportHeight * 0.6,
+      0,
+      viewportHeight,
+      [
+        [0, "rgba(147, 51, 234, 0)"],
+        [0.5, "rgba(147, 51, 234, 0.25)"],
+        [1, "rgba(88, 28, 135, 0)"],
+      ]
+    );
+    ctx.translate(0, waveOffset);
     ctx.fillStyle = mistGrad;
-    ctx.fillRect(0, viewportHeight * 0.6 + waveOffset, viewportWidth, viewportHeight * 0.4);
+    ctx.fillRect(0, viewportHeight * 0.6, viewportWidth, viewportHeight * 0.4);
     ctx.restore();
   }
 
@@ -504,10 +576,20 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
   ): void {
     ctx.save();
     ctx.globalAlpha = 0.08 + Math.sin(tickCount * 0.015) * 0.02;
-    const glowGrad = ctx.createLinearGradient(0, 0, viewportWidth, viewportHeight);
-    glowGrad.addColorStop(0, "rgba(251, 191, 36, 0.2)");
-    glowGrad.addColorStop(0.5, "rgba(245, 158, 11, 0.05)");
-    glowGrad.addColorStop(1, "rgba(180, 83, 9, 0)");
+    const key = `bastion_solar_${viewportWidth}_${viewportHeight}`;
+    const glowGrad = this.getOrCreateLinearGradient(
+      ctx,
+      key,
+      0,
+      0,
+      viewportWidth,
+      viewportHeight,
+      [
+        [0, "rgba(251, 191, 36, 0.2)"],
+        [0.5, "rgba(245, 158, 11, 0.05)"],
+        [1, "rgba(180, 83, 9, 0)"],
+      ]
+    );
     ctx.fillStyle = glowGrad;
     ctx.fillRect(0, 0, viewportWidth, viewportHeight);
     ctx.restore();
@@ -525,12 +607,23 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
     ctx.save();
     ctx.globalAlpha = 0.09 + Math.sin(tickCount * 0.02) * 0.02;
     const waveOffset = Math.sin(tickCount * 0.018) * 12;
-    const steamGrad = ctx.createLinearGradient(0, viewportHeight * 0.5 + waveOffset, 0, viewportHeight);
-    steamGrad.addColorStop(0, "rgba(217, 119, 6, 0)");
-    steamGrad.addColorStop(0.5, "rgba(245, 158, 11, 0.16)");
-    steamGrad.addColorStop(1, "rgba(180, 83, 9, 0.04)");
+    const key = `clocktower_steam_${viewportHeight}`;
+    const steamGrad = this.getOrCreateLinearGradient(
+      ctx,
+      key,
+      0,
+      viewportHeight * 0.5,
+      0,
+      viewportHeight,
+      [
+        [0, "rgba(217, 119, 6, 0)"],
+        [0.5, "rgba(245, 158, 11, 0.16)"],
+        [1, "rgba(180, 83, 9, 0.04)"],
+      ]
+    );
+    ctx.translate(0, waveOffset);
     ctx.fillStyle = steamGrad;
-    ctx.fillRect(0, viewportHeight * 0.5 + waveOffset, viewportWidth, viewportHeight * 0.5);
+    ctx.fillRect(0, viewportHeight * 0.5, viewportWidth, viewportHeight * 0.5);
     ctx.restore();
   }
 
@@ -545,17 +638,22 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
   ): void {
     ctx.save();
     ctx.globalAlpha = 0.10 + Math.sin(tickCount * 0.025) * 0.03;
-    const auraGrad = ctx.createRadialGradient(
+    const key = `aether_aura_${viewportWidth}_${viewportHeight}`;
+    const auraGrad = this.getOrCreateRadialGradient(
+      ctx,
+      key,
       viewportWidth * 0.5,
       viewportHeight * 0.35,
       60,
       viewportWidth * 0.5,
       viewportHeight * 0.35,
-      viewportWidth * 0.65
+      viewportWidth * 0.65,
+      [
+        [0, "rgba(56, 189, 248, 0.18)"],
+        [0.5, "rgba(99, 102, 241, 0.08)"],
+        [1, "rgba(15, 23, 42, 0)"],
+      ]
     );
-    auraGrad.addColorStop(0, "rgba(56, 189, 248, 0.18)");
-    auraGrad.addColorStop(0.5, "rgba(99, 102, 241, 0.08)");
-    auraGrad.addColorStop(1, "rgba(15, 23, 42, 0)");
     ctx.fillStyle = auraGrad;
     ctx.fillRect(0, 0, viewportWidth, viewportHeight);
     ctx.restore();
@@ -572,10 +670,20 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
   ): void {
     ctx.save();
     ctx.globalAlpha = 0.07 + Math.sin(tickCount * 0.012) * 0.015;
-    const hazeGrad = ctx.createLinearGradient(0, viewportHeight * 0.55, 0, viewportHeight);
-    hazeGrad.addColorStop(0, "rgba(234, 88, 12, 0)");
-    hazeGrad.addColorStop(0.5, "rgba(224, 108, 53, 0.12)");
-    hazeGrad.addColorStop(1, "rgba(120, 53, 15, 0.03)");
+    const key = `courtyard_haze_${viewportHeight}`;
+    const hazeGrad = this.getOrCreateLinearGradient(
+      ctx,
+      key,
+      0,
+      viewportHeight * 0.55,
+      0,
+      viewportHeight,
+      [
+        [0, "rgba(234, 88, 12, 0)"],
+        [0.5, "rgba(224, 108, 53, 0.12)"],
+        [1, "rgba(120, 53, 15, 0.03)"],
+      ]
+    );
     ctx.fillStyle = hazeGrad;
     ctx.fillRect(0, viewportHeight * 0.55, viewportWidth, viewportHeight * 0.45);
     ctx.restore();
@@ -588,9 +696,21 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
     viewportHeight: number
   ): void {
     ctx.save();
-    const grad = ctx.createLinearGradient(0, 0, 0, viewportHeight);
-    grad.addColorStop(0, location.theme?.bgGradientTop || "#1c0b05");
-    grad.addColorStop(1, location.theme?.bgGradientBottom || "#0a0301");
+    const key = `fallback_${location.id}_${viewportHeight}`;
+    const topColor = location.theme?.bgGradientTop || "#1c0b05";
+    const bottomColor = location.theme?.bgGradientBottom || "#0a0301";
+    const grad = this.getOrCreateLinearGradient(
+      ctx,
+      key,
+      0,
+      0,
+      0,
+      viewportHeight,
+      [
+        [0, topColor],
+        [1, bottomColor],
+      ]
+    );
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, viewportWidth, viewportHeight);
     ctx.restore();

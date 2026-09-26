@@ -13,30 +13,46 @@ export interface IFxRenderer {
  * Dedicated visual effects renderer for magic projectiles, glow cores, and particle simulations (SRP).
  */
 export class FxRenderer implements IFxRenderer {
+  private readonly projectileGradientCache: Map<string, CanvasGradient> = new Map();
+
+  public clearCaches(): void {
+    this.projectileGradientCache.clear();
+  }
+
   public renderProjectiles(ctx: CanvasRenderingContext2D, projectiles: Projectile[]): void {
     for (let i = 0; i < projectiles.length; i++) {
       const p = projectiles[i];
+      const r = p.radius || 8;
+      const key = `${p.color}_${r}`;
+
+      let grad = this.projectileGradientCache.get(key);
+      if (!grad) {
+        grad = ctx.createRadialGradient(0, 0, 2, 0, 0, r * 2);
+        grad.addColorStop(0, "#ffffff");
+        grad.addColorStop(0.4, p.color);
+        grad.addColorStop(1, "rgba(0,0,0,0)");
+        this.projectileGradientCache.set(key, grad);
+      }
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
 
       // Glowing outer aura
-      const grad = ctx.createRadialGradient(p.x, p.y, 2, p.x, p.y, p.radius * 2);
-      grad.addColorStop(0, "#ffffff");
-      grad.addColorStop(0.4, p.color);
-      grad.addColorStop(1, "rgba(0,0,0,0)");
-
       ctx.fillStyle = grad;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.radius * 2, 0, Math.PI * 2);
+      ctx.arc(0, 0, r * 2, 0, Math.PI * 2);
       ctx.fill();
 
       // Solid core missile
       ctx.fillStyle = p.color;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.arc(0, 0, r, 0, Math.PI * 2);
       ctx.fill();
 
       // Trailing tail spark
       ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-      ctx.fillRect(p.x - p.vx * 1.5, p.y - p.vy * 1.5, p.radius * 0.8, p.radius * 0.8);
+      ctx.fillRect(-p.vx * 1.5, -p.vy * 1.5, r * 0.8, r * 0.8);
+      ctx.restore();
     }
   }
 
@@ -45,6 +61,8 @@ export class FxRenderer implements IFxRenderer {
     particles: readonly Particle[],
     targetType: "dust" | "leaf" | "spark"
   ): void {
+    const prevAlpha = ctx.globalAlpha;
+
     for (let i = 0; i < particles.length; i++) {
       const p = particles[i];
       if (p.type !== targetType) continue;
@@ -58,13 +76,18 @@ export class FxRenderer implements IFxRenderer {
         ctx.ellipse(p.x, p.y, p.size * 1.5, p.size, p.life * 0.04, 0, Math.PI * 2);
         ctx.fill();
       } else {
-        const alpha = 1.0 - p.life / p.maxLife;
-        ctx.fillStyle = `rgba(253, 224, 71, ${alpha * 0.35})`;
+        // Dust particle: avoid string interpolation in render loop (AGENT.md § 12.2)
+        const alpha = Math.max(0, (1.0 - p.life / p.maxLife) * 0.35);
+        ctx.globalAlpha = prevAlpha * alpha;
+        ctx.fillStyle = "#fde047";
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();
+        ctx.globalAlpha = prevAlpha;
       }
     }
+
+    ctx.globalAlpha = prevAlpha;
   }
 }
 

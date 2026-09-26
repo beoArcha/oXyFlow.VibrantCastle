@@ -30,6 +30,34 @@ export interface IHitboxRenderer {
 
 export class HitboxRenderer implements IHitboxRenderer {
   private readonly profilerFlags: string[] = [];
+  private readonly entityTagCache: Map<string, string> = new Map();
+
+  public clearCaches(): void {
+    this.entityTagCache.clear();
+  }
+
+  private getEntityTag(entity: Entity): string {
+    const key = `${entity.type}_${entity.id || ""}_${entity.targetLocationId || ""}_${entity.triggerId || ""}`;
+    let tag = this.entityTagCache.get(key);
+    if (!tag) {
+      if (entity.type === CollisionType.Hazard) {
+        tag = "Hazard";
+      } else if (entity.type === CollisionType.OneWay) {
+        tag = "OneWay";
+      } else if (entity.type === CollisionType.Lever) {
+        tag = `Lever [${entity.id}]`;
+      } else if (entity.type === CollisionType.Goal) {
+        tag = `Portal -> ${entity.targetLocationId || "next"}`;
+      } else if (entity.type === CollisionType.Trigger) {
+        tag = `Trigger [${entity.triggerId || entity.id}]`;
+      } else {
+        tag = "Solid";
+      }
+      this.entityTagCache.set(key, tag);
+    }
+    return tag;
+  }
+
   public renderHitboxes(
     ctx: CanvasRenderingContext2D,
     players: Player[],
@@ -46,29 +74,25 @@ export class HitboxRenderer implements IHitboxRenderer {
 
       let strokeColor = "#38bdf8"; // solid platform
       let fillColor = "rgba(56, 189, 248, 0.15)";
-      let tag = "Solid";
 
       if (entity.type === CollisionType.Hazard) {
         strokeColor = "#ef4444";
         fillColor = "rgba(239, 68, 68, 0.25)";
-        tag = "Hazard";
       } else if (entity.type === CollisionType.OneWay) {
         strokeColor = "#f59e0b";
         fillColor = "rgba(245, 158, 11, 0.2)";
-        tag = "OneWay";
       } else if (entity.type === CollisionType.Lever) {
         strokeColor = "#eab308";
         fillColor = "rgba(234, 179, 8, 0.2)";
-        tag = `Lever [${entity.id}]`;
       } else if (entity.type === CollisionType.Goal) {
         strokeColor = "#c084fc";
         fillColor = "rgba(192, 132, 252, 0.25)";
-        tag = `Portal -> ${entity.targetLocationId || "next"}`;
       } else if (entity.type === CollisionType.Trigger) {
         strokeColor = "#10b981";
         fillColor = "rgba(16, 185, 129, 0.15)";
-        tag = `Trigger [${entity.triggerId || entity.id}]`;
       }
+
+      const tag = this.getEntityTag(entity);
 
       ctx.fillStyle = fillColor;
       ctx.strokeStyle = strokeColor;

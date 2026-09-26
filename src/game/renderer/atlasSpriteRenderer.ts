@@ -112,7 +112,14 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
     let animTrack: any = null;
     if ("animations" in meta && meta.animations) {
       const animsObj: any = "animations" in meta.animations ? (meta.animations as any).animations : meta.animations;
-      animTrack = animsObj?.[animKey] || (meta as any).layout?.[animKey] || (animsObj ? Object.values(animsObj)[0] : null);
+      let firstAnim: any = null;
+      if (animsObj && typeof animsObj === "object") {
+        for (const k in animsObj) {
+          firstAnim = animsObj[k];
+          break;
+        }
+      }
+      animTrack = animsObj?.[animKey] || (meta as any).layout?.[animKey] || firstAnim;
     }
 
     const trackFrames: number = animTrack?.frames ?? 1;

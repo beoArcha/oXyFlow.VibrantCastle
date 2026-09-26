@@ -96,6 +96,7 @@ describe("Phase 1: Renderer Determinism, Schema Immutability & Proxy Elimination
 
       const layer: ParallaxLayerSchema = {
         id: "test_far_image",
+        name: "Test Far Image",
         tier: "far",
         depth: 0.1,
         scrollSpeedX: 0.1,
@@ -137,6 +138,7 @@ describe("Phase 1: Renderer Determinism, Schema Immutability & Proxy Elimination
       const parallax = new ParallaxRenderer();
       const layer: ParallaxLayerSchema = {
         id: "preload_test",
+        name: "Preload Test",
         tier: "mid",
         depth: 0.5,
         scrollSpeedX: 0.4,
