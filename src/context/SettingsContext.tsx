@@ -16,6 +16,9 @@ import {
   SettingsContextValue,
   HudSettings,
 } from "./settingsTypes";
+import { getLogger } from "../lib/logger";
+
+const settingsLogger = getLogger("context:settings");
 
 const SETTINGS_STORAGE_KEY = "vibrant_castle_full_settings";
 const LEGACY_DISPLAY_STORAGE_KEY = "vibrant_castle_display_settings";
@@ -71,7 +74,7 @@ function loadInitialSettings(): GameSettingsState {
       }
     }
   } catch (err) {
-    console.warn("Failed to read settings from localStorage, using defaults:", err);
+    settingsLogger.warn("Failed to read settings from localStorage, using defaults:", undefined, err);
   }
 
   return DEFAULT_SETTINGS;
@@ -92,7 +95,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
         JSON.stringify(nextSettings.display)
       );
     } catch (e) {
-      console.error("Failed to write settings to localStorage:", e);
+      settingsLogger.error("Failed to write settings to localStorage:", undefined, e);
     }
   }, []);
 
@@ -182,7 +185,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
         persist(merged);
         return true;
       } catch (err) {
-        console.error("Failed to import settings JSON:", err);
+        settingsLogger.error("Failed to import settings JSON:", undefined, err);
         return false;
       }
     },

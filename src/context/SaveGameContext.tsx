@@ -11,6 +11,9 @@ import { gameSave } from "../game/logic/save";
 import { useI18n } from "./I18nContext";
 import { IContext } from "./IContext";
 import { useSafeTimeout } from "./useSafeTimeout";
+import { getLogger } from "../lib/logger";
+
+const saveContextLogger = getLogger("context:save");
 
 export interface SaveGameContextValue extends IContext<SaveState | null> {
   saveNotification: string;
@@ -138,7 +141,7 @@ export const SaveGameProvider: React.FC<{
           return false;
         }
       } catch (e) {
-        console.error("Failed to parse save JSON:", e);
+        saveContextLogger.error("Failed to parse save JSON:", undefined, e);
         showNotification(t("saveLoadError"));
         return false;
       }
@@ -168,7 +171,7 @@ export const SaveGameProvider: React.FC<{
         const text = await file.text();
         return importFromJson(text);
       } catch (err) {
-        console.error("Error loading save file:", err);
+        saveContextLogger.error("Error loading save file:", undefined, err);
         showNotification(t("saveLoadError"));
         return false;
       }

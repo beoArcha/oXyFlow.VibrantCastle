@@ -11,3 +11,4 @@ export * from "./ItemIcon";
 export * from "./ItemSlot";
 export * from "./ModalNavigationTabs";
 export * from "./LanguageSelector";
+export * from "./GameErrorBoundary";

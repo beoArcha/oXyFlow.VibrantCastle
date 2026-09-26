@@ -11,7 +11,7 @@ import { HUDOverlay } from "./components/hud/HUDOverlay";
 import { InventoryPanel } from "./components/inventory/InventoryPanel";
 import { SkillTreePanel } from "./components/skills/SkillTreePanel";
 import { Globe, Layers, Swords, Pause, Play, HelpCircle, Menu as MenuIcon } from "lucide-react";
-import { Button, Badge, KbdKey, ModalType } from "./components/ui";
+import { Button, Badge, KbdKey, ModalType, GameErrorBoundary } from "./components/ui";
 import { gameInputs } from "./game/loop/input";
 import { PlayerId, InputMap } from "./game/types";
 import { cn } from "./lib/utils";
@@ -405,10 +405,12 @@ function GameScreen() {
 
 export default function App() {
   return (
-    <I18nProvider>
-      <GameProvider>
-        <GameScreen />
-      </GameProvider>
-    </I18nProvider>
+    <GameErrorBoundary fallbackTitle="Vibrant Castle Critical Failure">
+      <I18nProvider>
+        <GameProvider>
+          <GameScreen />
+        </GameProvider>
+      </I18nProvider>
+    </GameErrorBoundary>
   );
 }
