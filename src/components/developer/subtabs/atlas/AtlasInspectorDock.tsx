@@ -67,25 +67,29 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
 }) => {
   const { t } = useI18n();
 
-  const tabs: { id: AtlasInspectorTabId; label: string; icon: React.ReactNode }[] = [
+  const tabs: { id: AtlasInspectorTabId; label: string; shortLabel: string; icon: React.ReactNode }[] = [
     {
       id: "preview",
       label: t("atlasStudioTabLivePreview"),
+      shortLabel: t("atlasStudioTabLivePreview").split(" ")[0] || "Podgląd",
       icon: <Sparkles size={13} className="text-cyan-400" />,
     },
     {
       id: "slicing",
       label: t("atlasStudioTabSlicing"),
+      shortLabel: t("atlasStudioTabSlicing").split(" ")[0] || "Cięcie",
       icon: <Grid size={13} className="text-amber-400" />,
     },
     {
       id: "background",
       label: t("atlasStudioTabBackground"),
+      shortLabel: t("atlasStudioTabBackground").split(" ")[0] || "Tło",
       icon: <Pipette size={13} className="text-rose-400" />,
     },
     {
       id: "json",
       label: t("atlasStudioTabExport"),
+      shortLabel: t("atlasStudioTabExport").split(" ")[0] || "Eksport",
       icon: <FileJson size={13} className="text-emerald-400" />,
     },
   ];
@@ -101,6 +105,7 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
               <button
                 key={tab.id}
                 onClick={() => onTabChange(tab.id)}
+                title={tab.label}
                 className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-bold transition-all ${
                   isActive
                     ? "bg-gradient-to-r from-amber-600 to-amber-700 text-white border border-amber-400 shadow-md shadow-amber-950/50"
@@ -108,7 +113,7 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
                 }`}
               >
                 {tab.icon}
-                <span className="hidden sm:inline truncate">{tab.label}</span>
+                <span className="truncate">{tab.shortLabel}</span>
               </button>
             );
           })}

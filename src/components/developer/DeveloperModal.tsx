@@ -29,6 +29,8 @@ export const DeveloperModal: React.FC<DeveloperModalProps> = ({
       icon={<Code2 className="w-5 h-5 text-amber-400" />}
       headerRight={<LanguageSelector />}
       maxWidthClass="max-w-5xl"
+      allowMaximize={true}
+      defaultMaximized={true}
     >
       <div className="flex flex-col gap-4">
         {onNavigateModal && onResume && (

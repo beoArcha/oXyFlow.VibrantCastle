@@ -59,6 +59,8 @@ export interface HudI18n {
   helpModalTitle: string;
   closeModal: string;
   closeModalHint: string;
+  modalMaximize: string;
+  modalRestore: string;
   quickPotions: string;
   primarySpell: string;
   secondarySpell: string;
@@ -342,6 +344,9 @@ export interface SettingsI18n {
   atlasStudioWarnCellSize: string;
   atlasStudioWarnRowExceeds: string;
   atlasStudioWarnColsExceeds: string;
+  atlasStudioToggleInspector: string;
+  atlasStudioCollapseInspector: string;
+  atlasStudioExpandInspector: string;
   gameMode: string;
   play1P: string;
   play2P: string;

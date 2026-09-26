@@ -9,6 +9,8 @@ import {
   FileJson,
   Layers,
   RotateCcw,
+  PanelRightClose,
+  PanelRightOpen,
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, Badge, Button } from "../../ui";
 import { useI18n } from "../../../hooks/useI18n";
@@ -76,6 +78,7 @@ export const AtlasMetaSubTab: React.FC = () => {
   // Studio Dock & Tool State
   const [activeInspectorTab, setActiveInspectorTab] = useState<AtlasInspectorTabId>("preview");
   const [viewerTool, setViewerTool] = useState<SlicerViewerTool>("select");
+  const [isInspectorOpen, setIsInspectorOpen] = useState<boolean>(true);
 
   // Helper to parse tracks from a metaDoc
   const parseTracksFromMeta = useCallback((doc: AtlasMetaDoc) => {
@@ -416,14 +419,42 @@ export const AtlasMetaSubTab: React.FC = () => {
             >
               <RotateCcw size={13} />
             </Button>
+
+            {/* Toggle Inspector Button */}
+            <Button
+              size="sm"
+              variant={isInspectorOpen ? "secondary" : "primary"}
+              onClick={() => setIsInspectorOpen((prev) => !prev)}
+              title={
+                isInspectorOpen
+                  ? t("atlasStudioCollapseInspector")
+                  : t("atlasStudioExpandInspector")
+              }
+              className="h-8 px-2.5 flex items-center gap-1.5"
+            >
+              {isInspectorOpen ? (
+                <PanelRightClose size={13} />
+              ) : (
+                <PanelRightOpen size={13} />
+              )}
+              <span className="hidden sm:inline text-xs font-semibold">
+                {isInspectorOpen
+                  ? t("atlasStudioCollapseInspector")
+                  : t("atlasStudioExpandInspector")}
+              </span>
+            </Button>
           </div>
         </CardHeader>
       </Card>
 
-      {/* 2. Unified Studio Workbench (Integrated 2-Column Split: 65% Viewport / 35% Inspector Dock) */}
+      {/* 2. Unified Studio Workbench (Collapsible 2-Column Split: Viewport / Inspector Dock) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5">
-        {/* Left Column: Texture & Grid Slicer Viewport (7 or 8 cols on desktop) */}
-        <div className="lg:col-span-7 xl:col-span-8 flex flex-col">
+        {/* Left Column: Texture & Grid Slicer Viewport (12 cols when inspector closed, 7-8 cols when open) */}
+        <div
+          className={`${
+            isInspectorOpen ? "lg:col-span-7 xl:col-span-8" : "lg:col-span-12"
+          } flex flex-col transition-all duration-200`}
+        >
           <AtlasTextureViewer
             imageSrc={imageSrc}
             gridConfig={gridConfig}
@@ -456,38 +487,40 @@ export const AtlasMetaSubTab: React.FC = () => {
           />
         </div>
 
-        {/* Right Column: Docked Inspector (5 or 4 cols on desktop) */}
-        <div className="lg:col-span-5 xl:col-span-4 flex flex-col">
-          <AtlasInspectorDock
-            activeTab={activeInspectorTab}
-            onTabChange={setActiveInspectorTab}
-            imageSrc={imageSrc}
-            assetId={activePreset.id}
-            metaDoc={metaDoc}
-            gridConfig={gridConfig}
-            tracks={tracks}
-            selectedTrackName={selectedTrackName}
-            selectedFrameIndex={selectedFrameIndex}
-            origin={origin}
-            backgroundConfig={metaDoc.backgroundConfig}
-            slicingConfig={metaDoc.slicing}
-            onGridConfigChange={setGridConfig}
-            onTracksChange={setTracks}
-            onSelectTrack={(name) => {
-              setSelectedTrackName(name);
-              setSelectedFrameIndex(0);
-            }}
-            onSelectFrame={(frameIdx) => setSelectedFrameIndex(frameIdx)}
-            onOriginChange={setOrigin}
-            onBackgroundConfigChange={handleBackgroundConfigChange}
-            onSlicingConfigChange={handleSlicingConfigChange}
-            onMetaDocChange={setMetaDoc}
-            onResetDefaults={handleResetDefaults}
-            onRequestEyedropper={() => {
-              setViewerTool("eyedropper");
-            }}
-          />
-        </div>
+        {/* Right Column: Docked Inspector (collapsible) */}
+        {isInspectorOpen && (
+          <div className="lg:col-span-5 xl:col-span-4 flex flex-col animate-in fade-in duration-150">
+            <AtlasInspectorDock
+              activeTab={activeInspectorTab}
+              onTabChange={setActiveInspectorTab}
+              imageSrc={imageSrc}
+              assetId={activePreset.id}
+              metaDoc={metaDoc}
+              gridConfig={gridConfig}
+              tracks={tracks}
+              selectedTrackName={selectedTrackName}
+              selectedFrameIndex={selectedFrameIndex}
+              origin={origin}
+              backgroundConfig={metaDoc.backgroundConfig}
+              slicingConfig={metaDoc.slicing}
+              onGridConfigChange={setGridConfig}
+              onTracksChange={setTracks}
+              onSelectTrack={(name) => {
+                setSelectedTrackName(name);
+                setSelectedFrameIndex(0);
+              }}
+              onSelectFrame={(frameIdx) => setSelectedFrameIndex(frameIdx)}
+              onOriginChange={setOrigin}
+              onBackgroundConfigChange={handleBackgroundConfigChange}
+              onSlicingConfigChange={handleSlicingConfigChange}
+              onMetaDocChange={setMetaDoc}
+              onResetDefaults={handleResetDefaults}
+              onRequestEyedropper={() => {
+                setViewerTool("eyedropper");
+              }}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
