@@ -3,6 +3,7 @@ import { statsManager } from "../logic/stats";
 import { ITEM_REGISTRY } from "../logic/inventory";
 import { SPELL_REGISTRY } from "../data/spells";
 import { BackgroundLayerTier } from "../locations/schema/locationSchema";
+import { debugLogger } from "../logger/gameLogger";
 
 export interface DebugState {
   godMode: boolean;
@@ -66,7 +67,7 @@ export class DebugManager {
       try {
         cb();
       } catch (err) {
-        console.error("Error in DebugManager listener:", err);
+        debugLogger.error("Error in DebugManager listener:", undefined, err);
       }
     });
   }

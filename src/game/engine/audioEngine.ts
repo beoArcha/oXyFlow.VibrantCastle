@@ -9,6 +9,7 @@ import {
   BgmSynthesizer,
   defaultBgmSynthesizer,
 } from "./audio/bgmSynthesizer";
+import { audioLogger } from "../logger/gameLogger";
 
 export type { ISfxSynthesizer, IBgmSynthesizer };
 export { SfxSynthesizer, BgmSynthesizer };
@@ -62,19 +63,24 @@ export class GameAudioEngine implements IGameAudioEngine {
       (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     if (!AudioContextClass) return;
 
-    this.ctx = new AudioContextClass();
+    try {
+      this.ctx = new AudioContextClass();
 
-    // SFX Gain Node
-    this.masterSFXNode = this.ctx.createGain();
-    this.masterSFXNode.gain.setValueAtTime(this.volumeSFX, this.ctx.currentTime);
-    this.masterSFXNode.connect(this.ctx.destination);
+      // SFX Gain Node
+      this.masterSFXNode = this.ctx.createGain();
+      this.masterSFXNode.gain.setValueAtTime(this.volumeSFX, this.ctx.currentTime);
+      this.masterSFXNode.connect(this.ctx.destination);
 
-    // BGM Gain Node
-    this.masterBGMNode = this.ctx.createGain();
-    this.masterBGMNode.gain.setValueAtTime(this.volumeBGM, this.ctx.currentTime);
-    this.masterBGMNode.connect(this.ctx.destination);
+      // BGM Gain Node
+      this.masterBGMNode = this.ctx.createGain();
+      this.masterBGMNode.gain.setValueAtTime(this.volumeBGM, this.ctx.currentTime);
+      this.masterBGMNode.connect(this.ctx.destination);
 
-    this.bgmSynth.start(this.ctx, this.masterBGMNode);
+      this.bgmSynth.start(this.ctx, this.masterBGMNode);
+      audioLogger.info("AudioContext and synthesizers initialized successfully");
+    } catch (err) {
+      audioLogger.warn("Failed to initialize AudioContext:", undefined, err);
+    }
   }
 
   public setSFXVolume(vol: number) {

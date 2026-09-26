@@ -34,6 +34,7 @@ import {
   ProceduralBackdropCache,
   defaultProceduralBackdropCache,
 } from "./proceduralBackdropCache";
+import { rendererLogger } from "../logger/gameLogger";
 
 const SCENERY_TREE_OFFSETS = [350, 1100, 1600, 2450, 3050, 3500] as const;
 const LEAF_COLORS = ["#b45309", "#d97706", "#f59e0b", "#fbbf24"] as const;
@@ -107,7 +108,7 @@ export class GameRenderer {
           willReadFrequently: false,
         });
       } catch (err) {
-        console.warn("Failed to acquire accelerated 2D context, falling back:", err);
+        rendererLogger.warn("Failed to acquire accelerated 2D context, falling back:", undefined, err);
       }
     }
     if (!context) {

@@ -1,4 +1,5 @@
 import { PlayerId } from "../types";
+import { statsLogger } from "../logger/gameLogger";
 
 /**
  * Detailed per-player combat and gameplay performance metrics.
@@ -122,7 +123,7 @@ export class StatsManager {
       try {
         listener();
       } catch (err) {
-        console.error("Error in stats subscriber:", err);
+        statsLogger.error("Error in stats subscriber:", undefined, err);
       }
     });
   }
@@ -145,7 +146,7 @@ export class StatsManager {
         return true;
       }
     } catch (e) {
-      console.warn("Failed to load game statistics from localStorage:", e);
+      statsLogger.warn("Failed to load game statistics from localStorage:", undefined, e);
     }
     return false;
   }
@@ -167,7 +168,7 @@ export class StatsManager {
       }
       return true;
     } catch (e) {
-      console.error("Failed to save game statistics to localStorage:", e);
+      statsLogger.error("Failed to save game statistics to localStorage:", undefined, e);
       return false;
     }
   }
@@ -194,7 +195,7 @@ export class StatsManager {
       try {
         localStorage.removeItem(StatsManager.STORAGE_KEY);
       } catch (e) {
-        console.error("Failed to remove game statistics from localStorage:", e);
+        statsLogger.error("Failed to remove game statistics from localStorage:", undefined, e);
       }
     }
     this.stats = createInitialSessionStats();

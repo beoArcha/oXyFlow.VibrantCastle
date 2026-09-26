@@ -13,6 +13,8 @@ export interface BoundingBox {
   originY?: number;
 }
 
+import { assetsLogger } from "../../logger/gameLogger";
+
 export class PixelBoundsScanner {
   private static canvas: HTMLCanvasElement | null = null;
   private static ctx: CanvasRenderingContext2D | null = null;
@@ -109,7 +111,8 @@ export class PixelBoundsScanner {
         footY: sy + maxY,
         hasContent: true,
       };
-    } catch {
+    } catch (err) {
+      assetsLogger.debug("PixelBoundsScanner.scanBounds fallback applied", undefined, err);
       return { x: Math.round(x0), y: Math.round(y0), w: Math.round(w), h: Math.round(h), hasContent: true };
     }
   }
@@ -216,7 +219,8 @@ export class PixelBoundsScanner {
 
       // Fallback
       return Array.from({ length: totalRows + 1 }, (_, i) => Math.round(i * nominalH));
-    } catch {
+    } catch (err) {
+      assetsLogger.debug("PixelBoundsScanner.findRowBoundaries fallback applied", undefined, err);
       const fallbackH = image.naturalHeight || 1024;
       const nominalH = fallbackH / totalRows;
       return Array.from({ length: totalRows + 1 }, (_, i) => Math.round(i * nominalH));
@@ -329,7 +333,8 @@ export class PixelBoundsScanner {
       }
 
       return boxes;
-    } catch {
+    } catch (err) {
+      assetsLogger.debug("PixelBoundsScanner.scanRowIslands fallback applied", undefined, err);
       return [];
     }
   }
@@ -476,7 +481,8 @@ export class PixelBoundsScanner {
       }
 
       return matrix;
-    } catch {
+    } catch (err) {
+      assetsLogger.debug("PixelBoundsScanner.scanMatrixIslands fallback applied", undefined, err);
       return [];
     }
   }

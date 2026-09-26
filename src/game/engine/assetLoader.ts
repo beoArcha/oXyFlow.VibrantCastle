@@ -16,6 +16,7 @@ import {
   ICreatureMetaDocument,
   IStructureMetaDocument,
 } from "./meta";
+import { assetsLogger } from "../logger/gameLogger";
 
 // Preloaded atlas assets for enemies and structures
 import dummyHighPng from "../../assets/enemies/training_dummy/training_dummy_high.png";
@@ -113,10 +114,10 @@ class AssetLoaderEngine {
     if (this.currentQuality !== quality) {
       this.currentQuality = quality;
       this.preloadCharacter("valen", quality).catch((err) =>
-        console.warn("[AssetLoader] Preload valen on quality change:", err)
+        assetsLogger.warn("Failed to preload valen on quality change", { quality }, err)
       );
       this.preloadCharacter("aurelia", quality).catch((err) =>
-        console.warn("[AssetLoader] Preload aurelia on quality change:", err)
+        assetsLogger.warn("Failed to preload aurelia on quality change", { quality }, err)
       );
       this.notifyListeners();
     }
@@ -205,7 +206,7 @@ class AssetLoaderEngine {
         resolve(img);
       };
       img.onerror = (err) => {
-        console.error(`[AssetLoader] Failed to load image asset: ${imageUrl}`, err);
+        assetsLogger.error(`Failed to load image asset: ${imageUrl}`, { imageUrl }, err);
         this.loadPromises.delete(imageUrl);
         reject(err);
       };

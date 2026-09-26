@@ -4,6 +4,7 @@ import {
   LocationJsonSchema,
   PortalDefinitionSchema,
 } from "../schema/locationSchema";
+import { engineLogger } from "../../logger/gameLogger";
 
 /**
  * Parser for Location JSON Blueprints.
@@ -209,8 +210,9 @@ export class LocationParser {
 
             const monsterDef = dictionaries.monsters[ep.monsterKey];
             if (!monsterDef) {
-              console.warn(
-                `Monster template '${ep.monsterKey}' not found in location '${id}' dictionaries!`
+              engineLogger.warn(
+                `Monster template '${ep.monsterKey}' not found in location '${id}' dictionaries!`,
+                { monsterKey: ep.monsterKey, locationId: id }
               );
               continue;
             }

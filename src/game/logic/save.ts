@@ -2,6 +2,7 @@ import { SaveState, Player, Enemy, Entity, SoundType } from "../types";
 import { gameAudio } from "../engine/audioEngine";
 import { statsManager } from "./stats";
 import { calculatePlayerDerivedStats } from "./inventory";
+import { saveLogger } from "../logger/gameLogger";
 
 /**
  * Game Save Manager.
@@ -92,7 +93,7 @@ export class GameSaveSystem {
     try {
       return JSON.parse(data) as SaveState;
     } catch (e) {
-      console.error("Failed to parse LocalStorage save:", e);
+      saveLogger.error("Failed to parse LocalStorage save:", undefined, e);
       return null;
     }
   }
@@ -177,7 +178,7 @@ export class GameSaveSystem {
 
       return true;
     } catch (e) {
-      console.error("Failed to apply save state:", e);
+      saveLogger.error("Failed to apply save state:", undefined, e);
       return false;
     }
   }

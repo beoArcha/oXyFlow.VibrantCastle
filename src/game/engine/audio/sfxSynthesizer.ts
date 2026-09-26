@@ -1,4 +1,5 @@
 import { SoundType } from "../../types";
+import { audioLogger } from "../../logger/gameLogger";
 
 export interface ISfxSynthesizer {
   playSFX(ctx: AudioContext, destination: AudioNode, type: SoundType): void;
@@ -242,8 +243,8 @@ export class SfxSynthesizer implements ISfxSynthesizer {
           break;
         }
       }
-    } catch {
-      // Ignore audio synthesis errors on interrupted or unsupported context
+    } catch (err) {
+      audioLogger.warn("Audio synthesis interrupted or failed", { type }, err);
     }
   }
 }

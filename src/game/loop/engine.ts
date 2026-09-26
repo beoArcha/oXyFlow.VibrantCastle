@@ -41,6 +41,9 @@ import { NarrationSystem, INarrationSystem } from "../engine/narrationSystem";
 import { PlayerController, IPlayerController, defaultPlayerController } from "../engine/playerController";
 import { debugManager } from "../debug/debugManager";
 import defaultSettingsJson from "../data/defaultSettings.json";
+import { engineLogger } from "../logger/gameLogger";
+import { LoopCircuitBreaker } from "./loopCircuitBreaker";
+import { ILogger } from "../../lib/logger";
 
 /**
  * Dependency container for GameEngine (Dependency Inversion Principle - DIP).
@@ -60,6 +63,8 @@ export interface IGameDependencies {
   playerCommands?: IPlayerCommandController;
   levelManager?: ILevelLifecycleManager;
   environmentCollisions?: IEnvironmentCollisionSystem;
+  logger?: ILogger;
+  circuitBreaker?: LoopCircuitBreaker;
 }
 
 /**
@@ -91,6 +96,16 @@ export class GameEngine {
   private readonly playerCommandController: IPlayerCommandController;
   private readonly levelLifecycleManager: ILevelLifecycleManager;
   private readonly environmentCollisionSystem: IEnvironmentCollisionSystem;
+  private readonly logger: ILogger;
+  private readonly circuitBreaker: LoopCircuitBreaker;
+
+  public get loopCircuitBreaker(): LoopCircuitBreaker {
+    return this.circuitBreaker;
+  }
+
+  public get engineLogger(): ILogger {
+    return this.logger;
+  }
 
   public get debugController(): DebugCheatsController {
     return this.debugCheats;
@@ -307,6 +322,17 @@ export class GameEngine {
     this.environmentCollisionSystem =
       deps.environmentCollisions || new EnvironmentCollisionSystem();
 
+    this.logger = deps.logger || engineLogger;
+    this.circuitBreaker =
+      deps.circuitBreaker ||
+      new LoopCircuitBreaker({
+        logger: this.logger,
+        onTrip: () => {
+          this.isPaused = true;
+          this.notifyReact();
+        },
+      });
+
     this.levelLifecycleManager.resetLevel("courtyard");
   }
 
@@ -342,7 +368,7 @@ export class GameEngine {
       try {
         cb();
       } catch (err) {
-        console.error("Error in engine state listener:", err);
+        this.logger.error("Error in engine state listener:", undefined, err);
       }
     });
   }
@@ -356,6 +382,11 @@ export class GameEngine {
     targetSpawnPoint?: { x: number; y: number },
     preservePlayerStats: boolean = true
   ) {
+    this.logger.info(`Loading location: ${locationId}`, {
+      locationId,
+      targetSpawnPoint,
+      preservePlayerStats,
+    });
     this.levelLifecycleManager.loadLocation(locationId, targetSpawnPoint, preservePlayerStats);
   }
 
@@ -401,6 +432,7 @@ export class GameEngine {
 
   public start() {
     if (this.isRunning) return;
+    this.logger.info("Starting GameEngine loop");
     this.isRunning = true;
 
     fpsManager.setTargetFps(this.settings.display.targetFps || 60);
@@ -422,19 +454,22 @@ export class GameEngine {
       lastTimestamp = timestamp;
 
       if (this.isPaused) {
-        this.renderFrame(1.0);
+        this.circuitBreaker.execute("renderFrame (paused)", () => this.renderFrame(1.0));
       } else {
         fpsManager.pushDelta(elapsed);
         const stepMultiplier = fpsManager.getStepMultiplier() * (debugManager.state.timeScale || 1.0);
 
         let updateSteps = 0;
         while (fpsManager.consumeFixedStep() && updateSteps < MAX_STEPS_PER_FRAME) {
-          this.fixedUpdate(stepMultiplier);
+          const success = this.circuitBreaker.execute("fixedUpdate", () => this.fixedUpdate(stepMultiplier));
+          if (!success) {
+            break;
+          }
           updateSteps++;
         }
 
         const alpha = fpsManager.getInterpolationAlpha();
-        this.renderFrame(alpha);
+        this.circuitBreaker.execute("renderFrame", () => this.renderFrame(alpha));
       }
 
       fpsManager.recordFrameRender(timestamp);
@@ -449,6 +484,7 @@ export class GameEngine {
   }
 
   public stop() {
+    this.logger.info("Stopping GameEngine loop");
     this.isRunning = false;
     if (this.animationId) {
       if (typeof cancelAnimationFrame !== "undefined") {
