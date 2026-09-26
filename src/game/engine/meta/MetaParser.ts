@@ -38,6 +38,10 @@ import {
   defaultRenderDirectivesParser,
   ConstraintsParser,
   defaultConstraintsParser,
+  SlicingParser,
+  defaultSlicingParser,
+  BackgroundParser,
+  defaultBackgroundParser,
 } from "./parsers";
 
 export interface IMetaParserDependencies {
@@ -52,6 +56,8 @@ export interface IMetaParserDependencies {
   interactionParser?: InteractionParser;
   renderParser?: RenderDirectivesParser;
   constraintsParser?: ConstraintsParser;
+  slicingParser?: SlicingParser;
+  backgroundParser?: BackgroundParser;
 }
 
 export class MetaParser {
@@ -66,6 +72,8 @@ export class MetaParser {
   private readonly interactionParser: InteractionParser;
   private readonly renderParser: RenderDirectivesParser;
   private readonly constraintsParser: ConstraintsParser;
+  private readonly slicingParser: SlicingParser;
+  private readonly backgroundParser: BackgroundParser;
 
   constructor(deps: IMetaParserDependencies = {}) {
     this.infoParser = deps.infoParser || defaultMetaInfoParser;
@@ -79,6 +87,8 @@ export class MetaParser {
     this.interactionParser = deps.interactionParser || defaultInteractionParser;
     this.renderParser = deps.renderParser || defaultRenderDirectivesParser;
     this.constraintsParser = deps.constraintsParser || defaultConstraintsParser;
+    this.slicingParser = deps.slicingParser || defaultSlicingParser;
+    this.backgroundParser = deps.backgroundParser || defaultBackgroundParser;
   }
 
   /**
@@ -93,6 +103,8 @@ export class MetaParser {
       layout: this.layoutParser.parse(raw),
       portraits: this.portraitParser.parse(raw),
       constraints: this.constraintsParser.parse(raw),
+      slicing: this.slicingParser.parse(raw),
+      backgroundConfig: this.backgroundParser.parse(raw),
     };
   }
 
@@ -109,6 +121,8 @@ export class MetaParser {
       states: this.stateParser.parse(raw),
       infoFrames: this.infoFramesParser.parse(raw),
       constraints: this.constraintsParser.parse(raw),
+      slicing: this.slicingParser.parse(raw),
+      backgroundConfig: this.backgroundParser.parse(raw),
     };
   }
 
@@ -127,6 +141,8 @@ export class MetaParser {
       interaction: this.interactionParser.parse(raw),
       render: this.renderParser.parse(raw),
       constraints: this.constraintsParser.parse(raw),
+      slicing: this.slicingParser.parse(raw),
+      backgroundConfig: this.backgroundParser.parse(raw),
     };
   }
 
@@ -147,6 +163,8 @@ export class MetaParser {
       interaction: this.interactionParser.parse(raw),
       render: this.renderParser.parse(raw),
       constraints: this.constraintsParser.parse(raw),
+      slicing: this.slicingParser.parse(raw),
+      backgroundConfig: this.backgroundParser.parse(raw),
     };
   }
 }

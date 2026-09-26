@@ -10,3 +10,5 @@ export * from "./InfoFramesParser";
 export * from "./InteractionParser";
 export * from "./RenderDirectivesParser";
 export * from "./ConstraintsParser";
+export * from "./SlicingParser";
+export * from "./BackgroundParser";

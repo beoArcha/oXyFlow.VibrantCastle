@@ -65,6 +65,63 @@ export interface IAtlasGrid {
 }
 
 // ============================================================================
+// 2b. Atlas Background & Transparency Configuration (Chroma Keying)
+// ============================================================================
+export type BackgroundMode = "transparent" | "color" | "solid";
+
+export interface IAtlasBackgroundConfig {
+  mode: BackgroundMode;
+  colorHex?: string; // e.g. "#000000", "#ffffff", "#00ff00"
+  tolerance?: number; // 0 - 100 threshold
+  removeAtRuntime?: boolean;
+}
+
+// ============================================================================
+// 2c. Slicing Configuration & Resolved Frame Geometry
+// ============================================================================
+export type SlicingMethod = "by_count" | "by_cell_size" | "freeform_rects" | "auto_islands";
+
+export interface ICellSizeSlicingParams {
+  cellWidth: number;
+  cellHeight: number;
+  offsetX?: number;
+  offsetY?: number;
+  spacingX?: number;
+  spacingY?: number;
+}
+
+export interface IFreeformFrameRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  pivot?: { x: number; y: number };
+}
+
+export interface IAtlasSlicingConfig {
+  method: SlicingMethod;
+  cellSize?: ICellSizeSlicingParams;
+  grid?: {
+    columns: number;
+    rows: number;
+  };
+  frames?: Record<string, IFreeformFrameRect>;
+}
+
+export interface ResolvedFrameRect {
+  id: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  col?: number;
+  row?: number;
+  trackName?: string;
+  frameIndex?: number;
+  pivot?: { x: number; y: number };
+}
+
+// ============================================================================
 // 3. Quality Variants & Resolution Scaling
 // ============================================================================
 export interface IVariantTier {
@@ -210,6 +267,8 @@ export interface ICharacterMetaDocument {
   layout: ISpatialLayout;
   portraits?: IPortraitMatrix;
   constraints?: IValidationConstraints;
+  slicing?: IAtlasSlicingConfig;
+  backgroundConfig?: IAtlasBackgroundConfig;
 }
 
 /**
@@ -225,6 +284,8 @@ export interface ICreatureMetaDocument {
   states?: IStateMapping;
   infoFrames?: IInfoFrames;
   constraints?: IValidationConstraints;
+  slicing?: IAtlasSlicingConfig;
+  backgroundConfig?: IAtlasBackgroundConfig;
 }
 
 /**
@@ -242,6 +303,8 @@ export interface IStructureMetaDocument {
   interaction?: IInteractionConfig;
   render?: IRenderDirectives;
   constraints?: IValidationConstraints;
+  slicing?: IAtlasSlicingConfig;
+  backgroundConfig?: IAtlasBackgroundConfig;
 }
 
 /**
@@ -260,4 +323,6 @@ export interface IUniversalMetaDocument {
   interaction?: IInteractionConfig;
   render?: IRenderDirectives;
   constraints?: IValidationConstraints;
+  slicing?: IAtlasSlicingConfig;
+  backgroundConfig?: IAtlasBackgroundConfig;
 }
