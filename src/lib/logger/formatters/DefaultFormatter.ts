@@ -4,11 +4,15 @@ export function serializeError(error: unknown): SerializedError | undefined {
   if (!error) return undefined;
 
   if (error instanceof Error) {
+    const errObj = error as any;
     return {
       name: error.name,
       message: error.message,
       stack: error.stack,
-      cause: (error as any).cause,
+      cause: errObj.cause,
+      code: typeof errObj.code === "string" ? errObj.code : undefined,
+      domain: typeof errObj.domain === "string" ? errObj.domain : undefined,
+      details: errObj.details && typeof errObj.details === "object" ? errObj.details : undefined,
     };
   }
 
@@ -20,6 +24,9 @@ export function serializeError(error: unknown): SerializedError | undefined {
         message: errObj.message || JSON.stringify(error),
         stack: errObj.stack,
         cause: errObj.cause,
+        code: typeof errObj.code === "string" ? errObj.code : undefined,
+        domain: typeof errObj.domain === "string" ? errObj.domain : undefined,
+        details: errObj.details && typeof errObj.details === "object" ? errObj.details : undefined,
       };
     } catch {
       return {
@@ -49,7 +56,7 @@ export class DefaultFormatter implements ILogFormatter {
       ? ` ${JSON.stringify(record.context)}`
       : "";
     const errorStr = record.error
-      ? `\n  Error [${record.error.name}]: ${record.error.message}${record.error.stack ? `\n${record.error.stack}` : ""}`
+      ? `\n  Error [${record.error.name}${record.error.code ? `:${record.error.code}` : ""}]: ${record.error.message}${record.error.stack ? `\n${record.error.stack}` : ""}`
       : "";
     return `[${record.timeFormatted}] [${record.levelName}] [${record.category}] ${record.message}${contextStr}${errorStr}`;
   }

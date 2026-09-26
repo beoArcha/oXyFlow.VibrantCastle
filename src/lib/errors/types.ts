@@ -1,0 +1,80 @@
+/**
+ * Standard error domain classification across the application.
+ */
+export type ErrorDomain =
+  | "ENGINE"
+  | "ASSET"
+  | "PARSER"
+  | "SAVE"
+  | "AUDIO"
+  | "REACT"
+  | "GAMEPLAY"
+  | "SYSTEM";
+
+/**
+ * Severity level of the error condition.
+ */
+export type ErrorSeverity = "FATAL" | "ERROR" | "WARN" | "INFO";
+
+/**
+ * Strongly typed error codes categorized by subsystem domain.
+ */
+export enum ErrorCode {
+  // Engine & Canvas
+  ENGINE_CANVAS_CONTEXT_LOST = "ENGINE_CANVAS_CONTEXT_LOST",
+  ENGINE_INITIALIZATION_FAILED = "ENGINE_INITIALIZATION_FAILED",
+  ENGINE_LOOP_FAILURE = "ENGINE_LOOP_FAILURE",
+  ENGINE_CIRCUIT_BREAKER_TRIGGERED = "ENGINE_CIRCUIT_BREAKER_TRIGGERED",
+
+  // Assets & Resources
+  ASSET_LOAD_FAILED = "ASSET_LOAD_FAILED",
+  ASSET_NOT_FOUND = "ASSET_NOT_FOUND",
+  ASSET_EXTRACTOR_NOT_FOUND = "ASSET_EXTRACTOR_NOT_FOUND",
+  ASSET_CORRUPTED = "ASSET_CORRUPTED",
+
+  // Parsers & Metadata
+  PARSER_LOCATION_SCHEMA_INVALID = "PARSER_LOCATION_SCHEMA_INVALID",
+  PARSER_CHARACTER_SCHEMA_INVALID = "PARSER_CHARACTER_SCHEMA_INVALID",
+  PARSER_INVALID_FORMAT = "PARSER_INVALID_FORMAT",
+
+  // Save System
+  SAVE_CORRUPTED_JSON = "SAVE_CORRUPTED_JSON",
+  SAVE_STORAGE_QUOTA_EXCEEDED = "SAVE_STORAGE_QUOTA_EXCEEDED",
+  SAVE_SLOT_EMPTY = "SAVE_SLOT_EMPTY",
+  SAVE_VERSION_MISMATCH = "SAVE_VERSION_MISMATCH",
+  SAVE_WRITE_FAILED = "SAVE_WRITE_FAILED",
+
+  // Gameplay & Domain Logic
+  GAMEPLAY_INSUFFICIENT_RESOURCE = "GAMEPLAY_INSUFFICIENT_RESOURCE",
+  GAMEPLAY_INSUFFICIENT_MANA = "GAMEPLAY_INSUFFICIENT_MANA",
+  GAMEPLAY_SLOT_LOCKED = "GAMEPLAY_SLOT_LOCKED",
+  GAMEPLAY_ITEM_NOT_FOUND = "GAMEPLAY_ITEM_NOT_FOUND",
+  GAMEPLAY_LEVEL_REQUIREMENT_NOT_MET = "GAMEPLAY_LEVEL_REQUIREMENT_NOT_MET",
+  GAMEPLAY_COOLDOWN_ACTIVE = "GAMEPLAY_COOLDOWN_ACTIVE",
+  GAMEPLAY_INVALID_ACTION = "GAMEPLAY_INVALID_ACTION",
+
+  // React & UI
+  REACT_MISSING_CONTEXT = "REACT_MISSING_CONTEXT",
+  UI_RENDER_FAILURE = "UI_RENDER_FAILURE",
+
+  // Audio
+  AUDIO_INIT_FAILED = "AUDIO_INIT_FAILED",
+  AUDIO_PLAYBACK_FAILED = "AUDIO_PLAYBACK_FAILED",
+
+  // Generic Fallback
+  UNKNOWN_ERROR = "UNKNOWN_ERROR",
+}
+
+/**
+ * Interface for any object or error carrying a standardized ErrorCode (ISP).
+ */
+export interface IHasErrorCode {
+  readonly code: ErrorCode;
+}
+
+/**
+ * Interface for errors that provide structured metadata for logging (DIP).
+ */
+export interface IHasLogContext {
+  toLogContext(): Record<string, unknown>;
+}

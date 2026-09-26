@@ -19,6 +19,9 @@ export interface SerializedError {
   message: string;
   stack?: string;
   cause?: unknown;
+  code?: string;
+  domain?: string;
+  details?: Record<string, unknown>;
 }
 
 /**
