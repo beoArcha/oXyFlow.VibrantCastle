@@ -17,26 +17,19 @@ export const DebugEntityTableCard: React.FC<DebugEntityTableProps> = ({
   const { t } = useI18n();
 
   const handleTeleportToEnemy = (enemy: Enemy) => {
+    if (!Number.isFinite(enemy.x) || !Number.isFinite(enemy.y)) return;
     gameEngine.teleportPlayer(PlayerId.Player1, Math.round(enemy.x), Math.round(enemy.y - 40));
     onActionComplete?.();
   };
 
-  const handleDamageEnemy = (enemy: Enemy) => {
-    enemy.health = Math.max(0, enemy.health - 50);
-    if (enemy.health <= 0) {
-      enemy.isDead = true;
-    }
-    gameEngine.notifyReact();
+  const handleDamageEnemy = (enemyId: string) => {
+    gameEngine.damageEnemy(enemyId, 50);
     onActionComplete?.();
   };
 
   const handleRemoveEnemy = (enemyId: string) => {
-    const idx = gameEngine.enemies.findIndex((e) => e.id === enemyId);
-    if (idx !== -1) {
-      gameEngine.enemies.splice(idx, 1);
-      gameEngine.notifyReact();
-      onActionComplete?.();
-    }
+    gameEngine.removeEnemy(enemyId);
+    onActionComplete?.();
   };
 
   return (
@@ -113,7 +106,7 @@ export const DebugEntityTableCard: React.FC<DebugEntityTableProps> = ({
                           size="sm"
                           variant="danger"
                           icon={<Zap size={11} />}
-                          onClick={() => handleDamageEnemy(enemy)}
+                          onClick={() => handleDamageEnemy(enemy.id)}
                           title={t("debugActionDamage")}
                           className="h-6 text-[10px] px-2 py-0"
                         >

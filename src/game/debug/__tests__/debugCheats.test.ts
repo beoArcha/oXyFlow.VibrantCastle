@@ -154,9 +154,53 @@ describe("DebugCheatsController (SRP & Clean Code)", () => {
       expect(mockPlayer.x).toBe(0);
       expect(mockPlayer.y).toBe(600 - mockPlayer.height);
     });
+
+    it("safely ignores non-finite and NaN destination coordinates", () => {
+      const origX = mockPlayer.x;
+      const origY = mockPlayer.y;
+
+      controller.teleportPlayer(PlayerId.Player1, NaN, 300);
+      expect(mockPlayer.x).toBe(origX);
+      expect(mockPlayer.y).toBe(origY);
+
+      controller.teleportPlayer(PlayerId.Player1, 300, Infinity);
+      expect(mockPlayer.x).toBe(origX);
+      expect(mockPlayer.y).toBe(origY);
+    });
   });
 
   describe("2. Enemy Management", () => {
+    it("damages single enemy and plays hit feedback", () => {
+      const initialHp = mockEnemy1.health;
+      const success = controller.damageEnemy("enemy_1", 30);
+
+      expect(success).toBe(true);
+      expect(mockEnemy1.health).toBe(initialHp - 30);
+      expect(mockEnemy1.isDead).toBe(false);
+      expect(sfxPlayed).toContain(SoundType.SFX_HIT);
+      expect(reactNotifications).toBe(1);
+    });
+
+    it("damages single enemy lethally, marks as dead, and records kill", () => {
+      const success = controller.damageEnemy("enemy_1", 999);
+
+      expect(success).toBe(true);
+      expect(mockEnemy1.health).toBe(0);
+      expect(mockEnemy1.isDead).toBe(true);
+      expect(recordedKills).toContainEqual({ playerId: PlayerId.Player1, enemyId: "enemy_1" });
+    });
+
+    it("removes enemy cleanly from collection and triggers notification", () => {
+      const success = controller.removeEnemy("enemy_1");
+
+      expect(success).toBe(true);
+      expect(mockContext.getEnemies().some((e) => e.id === "enemy_1")).toBe(false);
+      expect(reactNotifications).toBe(1);
+
+      // Subsequent remove of same enemy returns false
+      expect(controller.removeEnemy("enemy_1")).toBe(false);
+    });
+
     it("kills all living enemies, triggers bursts, and records kills", () => {
       controller.killAllEnemies();
 

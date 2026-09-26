@@ -859,6 +859,14 @@ export class GameEngine {
     this.debugCheats.killAllEnemies();
   }
 
+  public damageEnemy(enemyId: string, amount: number = 50): boolean {
+    return this.debugCheats.damageEnemy(enemyId, amount);
+  }
+
+  public removeEnemy(enemyId: string): boolean {
+    return this.debugCheats.removeEnemy(enemyId);
+  }
+
   public spawnEnemy(enemyType: string, customX?: number, customY?: number): Enemy {
     return this.debugCheats.spawnEnemy(enemyType, customX, customY);
   }

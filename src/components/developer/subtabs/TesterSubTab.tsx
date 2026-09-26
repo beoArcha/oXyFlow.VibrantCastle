@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import {
   MapPin,
   Shield,
@@ -68,13 +68,15 @@ export const TesterSubTab: React.FC = () => {
   // Selected enemy for spawner
   const [selectedEnemy, setSelectedEnemy] = useState<string>("court_sentinel");
 
-  // Update coords if player position is available on initial open
+  // Initialize coords only once when player position is available on initial open
+  const hasInitializedCoordsRef = useRef<boolean>(false);
   useEffect(() => {
-    if (p1) {
+    if (p1 && !hasInitializedCoordsRef.current) {
       setCustomX(Math.round(p1.x));
       setCustomY(Math.round(p1.y));
+      hasInitializedCoordsRef.current = true;
     }
-  }, [p1?.x, p1?.y]);
+  }, [p1]);
 
   const presets = useMemo(
     () => debugManager.getSpawnPresets(currentLocationId),
@@ -82,13 +84,17 @@ export const TesterSubTab: React.FC = () => {
   );
 
   const handleCustomTeleport = useCallback(() => {
-    gameEngine.teleportPlayer(PlayerId.Player1, customX, customY);
+    if (Number.isFinite(customX) && Number.isFinite(customY)) {
+      gameEngine.teleportPlayer(PlayerId.Player1, Math.round(customX), Math.round(customY));
+    }
   }, [customX, customY]);
 
   const handlePresetTeleport = useCallback((x: number, y: number) => {
-    setCustomX(x);
-    setCustomY(y);
-    gameEngine.teleportPlayer(PlayerId.Player1, x, y);
+    if (Number.isFinite(x) && Number.isFinite(y)) {
+      setCustomX(Math.round(x));
+      setCustomY(Math.round(y));
+      gameEngine.teleportPlayer(PlayerId.Player1, Math.round(x), Math.round(y));
+    }
   }, []);
 
   const getPresetLabel = useCallback(
@@ -151,7 +157,10 @@ export const TesterSubTab: React.FC = () => {
                 <input
                   type="number"
                   value={customX}
-                  onChange={(e) => setCustomX(Number(e.target.value))}
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    setCustomX(Number.isFinite(val) ? val : 0);
+                  }}
                   className="w-20 px-2 py-1 bg-stone-900 border border-stone-700 rounded text-xs font-mono text-amber-200 focus:outline-none focus:border-amber-500"
                 />
               </div>
@@ -160,7 +169,10 @@ export const TesterSubTab: React.FC = () => {
                 <input
                   type="number"
                   value={customY}
-                  onChange={(e) => setCustomY(Number(e.target.value))}
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    setCustomY(Number.isFinite(val) ? val : 0);
+                  }}
                   className="w-20 px-2 py-1 bg-stone-900 border border-stone-700 rounded text-xs font-mono text-amber-200 focus:outline-none focus:border-amber-500"
                 />
               </div>

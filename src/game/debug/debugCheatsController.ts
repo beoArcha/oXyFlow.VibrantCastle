@@ -29,6 +29,8 @@ export class DebugCheatsController {
   constructor(private readonly context: IDebugCheatsContext) {}
 
   public teleportPlayer(playerId: PlayerId = PlayerId.Player1, x: number, y: number): void {
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+
     const players = this.context.getPlayers();
     const player = players.find((p) => p.id === playerId) || players[0];
     if (!player) return;
@@ -47,6 +49,53 @@ export class DebugCheatsController {
     this.context.spawnBurst(player.x + player.width / 2, player.y + player.height / 2, "#a855f7", "magic", 16);
     this.context.playSFX(SoundType.SFX_UNLOCK);
     this.context.notifyReact();
+  }
+
+  public damageEnemy(enemyId: string, amount: number = 50): boolean {
+    const enemies = this.context.getEnemies();
+    const enemy = enemies.find((e) => e.id === enemyId);
+    if (!enemy || enemy.isDead) return false;
+
+    const damage = Math.max(1, Math.round(amount));
+    enemy.health = Math.max(0, enemy.health - damage);
+    this.context.spawnBurst(
+      enemy.x + enemy.width / 2,
+      enemy.y + enemy.height / 2,
+      "#f43f5e",
+      "spark",
+      8
+    );
+    this.context.playSFX(SoundType.SFX_HIT);
+
+    if (enemy.health <= 0) {
+      enemy.isDead = true;
+      if (this.context.recordKill) {
+        this.context.recordKill(PlayerId.Player1, enemy.id);
+      } else {
+        statsManager.recordKill(PlayerId.Player1, enemy.id);
+      }
+    }
+
+    this.context.notifyReact();
+    return true;
+  }
+
+  public removeEnemy(enemyId: string): boolean {
+    const enemies = this.context.getEnemies();
+    const idx = enemies.findIndex((e) => e.id === enemyId);
+    if (idx === -1) return false;
+
+    const enemy = enemies[idx];
+    this.context.spawnBurst(
+      enemy.x + enemy.width / 2,
+      enemy.y + enemy.height / 2,
+      "#78716c",
+      "dust",
+      10
+    );
+    enemies.splice(idx, 1);
+    this.context.notifyReact();
+    return true;
   }
 
   public killAllEnemies(): void {
