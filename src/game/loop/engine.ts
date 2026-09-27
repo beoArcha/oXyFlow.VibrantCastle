@@ -9,8 +9,8 @@ import {
   AssetQuality,
   PlayerId,
   EquipmentState,
-} from "../types";
-import { gameAudio, GameAudioEngine } from "../engine/audioEngine";
+} from "@game/types";
+import { gameAudio, GameAudioEngine } from "@game/engine/audioEngine";
 import { gameInputs, GameInputEngine } from "./input";
 import { gamePhysics, GamePhysicsEngine } from "../physics/physics";
 import { gameCollisions, ICollisionEngine } from "../physics/collisions";
@@ -43,7 +43,7 @@ import { debugManager } from "../debug/debugManager";
 import defaultSettingsJson from "../data/defaultSettings.json";
 import { engineLogger } from "../logger/gameLogger";
 import { LoopCircuitBreaker } from "./loopCircuitBreaker";
-import { ILogger } from "../../lib/logger";
+import { ILogger } from "@/lib/logger";
 
 /**
  * Dependency container for GameEngine (Dependency Inversion Principle - DIP).

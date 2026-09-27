@@ -1,5 +1,5 @@
-import { SaveState, Player, Enemy, Entity } from "../../types";
-import { Result, SaveError } from "../../../lib/errors";
+import { SaveState, Player, Enemy, Entity } from "@game/types";
+import { Result, SaveError } from "@lib/errors";
 
 /**
  * Storage abstraction interface for Dependency Inversion (DIP).

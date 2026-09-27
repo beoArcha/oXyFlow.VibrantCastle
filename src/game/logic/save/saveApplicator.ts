@@ -1,8 +1,8 @@
-import { SaveState, Player, Enemy, Entity } from "../../types";
+import { SaveState, Player, Enemy, Entity } from "@game/types";
 import { statsManager } from "../stats";
 import { calculatePlayerDerivedStats } from "../inventory";
-import { saveLogger } from "../../logger/gameLogger";
-import { Result, ok, err, SaveError, ErrorCode } from "../../../lib/errors";
+import { saveLogger } from "@game/logger/gameLogger";
+import { Result, ok, err, SaveError, ErrorCode } from "@lib/errors";
 import { ISaveApplicator } from "./saveTypes";
 
 /**

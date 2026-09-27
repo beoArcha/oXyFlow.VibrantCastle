@@ -1,7 +1,7 @@
-import { SaveState, SoundType } from "../../types";
-import { gameAudio } from "../../engine/audioEngine";
-import { saveLogger } from "../../logger/gameLogger";
-import { Result, ok, err, SaveError, ErrorCode } from "../../../lib/errors";
+import { SaveState, SoundType } from "@game/types";
+import { gameAudio } from "@game/engine/audioEngine";
+import { saveLogger } from "@game/logger/gameLogger";
+import { Result, ok, err, SaveError, ErrorCode } from "@lib/errors";
 import { ISaveExporter } from "./saveTypes";
 
 /**

@@ -1,8 +1,8 @@
-import { Projectile, Player, InputMap, SoundType } from "../types";
-import { gameAudio } from "../engine/audioEngine";
-import { SPELL_REGISTRY } from "../data/spells";
-import { Result, ok, err, GameplayError, ErrorCode } from "../../lib/errors";
-import { magicLogger } from "../logger/gameLogger";
+import { Projectile, Player, InputMap, SoundType } from "@game/types";
+import { gameAudio } from "@game/engine/audioEngine";
+import { SPELL_REGISTRY } from "@game/data/spells";
+import { Result, ok, err, GameplayError, ErrorCode } from "@lib/errors";
+import { magicLogger } from "@game/logger/gameLogger";
 
 // Re-export SPELL_REGISTRY for backward compatibility with existing UI components
 export { SPELL_REGISTRY };

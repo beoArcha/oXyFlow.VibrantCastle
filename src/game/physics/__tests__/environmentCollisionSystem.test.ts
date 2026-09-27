@@ -3,7 +3,7 @@ import {
   EnvironmentCollisionSystem,
   IEnvironmentCollisionContext,
 } from "../environmentCollisionSystem";
-import { Player, Entity, CollisionType, PlayerId } from "../../types";
+import { Player, Entity, CollisionType, PlayerId } from "@game/types";
 import { ICollisionEngine } from "../collisions";
 import { createMockPlayer } from "@test-utils";
 

@@ -1,4 +1,4 @@
-import { Player, Entity, CollisionType } from "../types";
+import { Player, Entity, CollisionType } from "@game/types";
 import { ICollisionEngine } from "./collisions";
 
 /**

@@ -9,7 +9,7 @@ import {
   GoalCollisionStrategy,
   ICollisionContext,
 } from "../collisions";
-import { Player, Entity, CollisionType } from "../../types";
+import { Player, Entity, CollisionType } from "@game/types";
 import { createMockPlayer } from "@test-utils/mockEntities";
 
 describe("Collision Geometry & Strategy Resolution", () => {

@@ -1,5 +1,5 @@
-import { SaveState } from "../../types";
-import { Result, ok, err, SaveError, ErrorCode } from "../../../lib/errors";
+import { SaveState } from "@game/types";
+import { Result, ok, err, SaveError, ErrorCode } from "@lib/errors";
 import { ISaveValidator } from "./saveTypes";
 
 /**

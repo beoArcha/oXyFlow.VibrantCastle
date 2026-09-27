@@ -1,4 +1,4 @@
-import { PlayerId } from "../../types";
+import { PlayerId } from "@game/types";
 
 /**
  * Detailed per-player combat and gameplay performance metrics.

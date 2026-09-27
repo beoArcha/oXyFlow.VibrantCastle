@@ -5,8 +5,8 @@ import {
   IStatsStorageProvider,
   createInitialSessionStats,
 } from "./statsTypes";
-import { statsLogger } from "../../logger/gameLogger";
-import { ILogger } from "../../../lib/logger";
+import { statsLogger } from "@game/logger/gameLogger";
+import { ILogger } from "@lib/logger";
 
 function sanitizeNumber(val: unknown, fallback: number = 0): number {
   return typeof val === "number" && Number.isFinite(val) ? val : fallback;
@@ -90,7 +90,7 @@ export class StatsStorage implements IStatsStorage {
     if (typeof localStorage !== "undefined") {
       return localStorage;
     }
-    return { getItem: () => null, setItem: () => {}, removeItem: () => {} };
+    return { getItem: () => null, setItem: () => { }, removeItem: () => { } };
   }
 
   public load(): GameSessionStats | null {

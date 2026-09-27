@@ -1,6 +1,6 @@
-import { Player, Entity, CollisionType, SoundType } from "../types";
-import { gameAudio } from "../engine/audioEngine";
-import { statsManager } from "../logic/stats";
+import { Player, Entity, CollisionType, SoundType } from "@game/types";
+import { gameAudio } from "@game/engine/audioEngine";
+import { statsManager } from "@game/logic/stats";
 
 export interface ICollisionContext {
   triggerNarration: (id: string) => void;
@@ -121,20 +121,20 @@ export class OneWayCollisionStrategy implements CollisionStrategy {
 export class HazardCollisionStrategy implements CollisionStrategy {
   handle(player: Player, entity: Entity, context: { triggerNarration: (id: string) => void }): void {
     if (player.isDead) return;
-    
+
     // Knocks back player away from hazard center
     const knockbackForceX = 6;
     const knockbackForceY = -5;
-    
+
     if (player.x + player.width / 2 < entity.x + entity.width / 2) {
       player.vx = -knockbackForceX;
     } else {
       player.vx = knockbackForceX;
     }
-    
+
     player.vy = knockbackForceY;
     player.isGrounded = false;
-    
+
     // Inflict Damage
     player.health = Math.max(0, player.health - 20);
     statsManager.recordDamageTaken(player.id, 20);
@@ -156,7 +156,7 @@ export class HazardCollisionStrategy implements CollisionStrategy {
 export class TriggerCollisionStrategy implements CollisionStrategy {
   handle(player: Player, entity: Entity, context: { triggerNarration: (id: string) => void }): void {
     if (entity.isActivated) return;
-    
+
     entity.isActivated = true;
     if (entity.triggerId) {
       context.triggerNarration(entity.triggerId);
@@ -171,7 +171,7 @@ export class TriggerCollisionStrategy implements CollisionStrategy {
 export class LeverCollisionStrategy implements CollisionStrategy {
   handle(player: Player, entity: Entity, context: ICollisionContext): void {
     if (entity.isActivated) return;
-    
+
     // Lever gets activated if player is in an active attack state overlapping it
     if (player.isAttacking) {
       entity.isActivated = true;
@@ -232,9 +232,9 @@ export class CollisionEngine implements ICollisionEngine {
    */
   public checkIntersection(p: { x: number; y: number; width: number; height: number }, e: Entity): boolean {
     return p.x < e.x + e.width &&
-           p.x + p.width > e.x &&
-           p.y < e.y + e.height &&
-           p.y + p.height > e.y;
+      p.x + p.width > e.x &&
+      p.y < e.y + e.height &&
+      p.y + p.height > e.y;
   }
 
   /**

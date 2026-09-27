@@ -1,6 +1,5 @@
-import { SaveState, Player, Enemy, Entity } from "../../types";
-import { Result } from "../../../lib/errors";
-import { SaveError } from "../../../lib/errors";
+import { SaveState, Player, Enemy, Entity } from "@game/types";
+import { Result, SaveError } from "@lib/errors";
 import {
   ISaveStorage,
   ISaveValidator,

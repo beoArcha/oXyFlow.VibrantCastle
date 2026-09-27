@@ -1,5 +1,5 @@
-import { PlayerId } from "../../types";
-import { statsLogger } from "../../logger/gameLogger";
+import { PlayerId } from "@game/types";
+import { statsLogger } from "@game/logger/gameLogger";
 import {
   GameSessionStats,
   PlayerPerformanceStats,

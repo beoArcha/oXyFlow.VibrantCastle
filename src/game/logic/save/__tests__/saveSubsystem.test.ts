@@ -7,7 +7,7 @@ import {
   SaveExporter,
   GameSaveSystem,
 } from "../index";
-import { Player, Enemy, Entity, SaveState, PlayerId } from "../../../types";
+import { Player, Enemy, Entity, SaveState, PlayerId } from "@game/types";
 import { ErrorCode } from "@lib/errors";
 import { createMockPlayer } from "@test-utils";
 

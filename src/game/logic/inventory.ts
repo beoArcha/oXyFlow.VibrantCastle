@@ -1,9 +1,9 @@
-import { Item, ItemType, InventoryState, EquipmentState, Player, SoundType } from "../types";
-import { gameAudio } from "../engine/audioEngine";
+import { Item, ItemType, InventoryState, EquipmentState, Player, SoundType } from "@game/types";
+import { gameAudio } from "@game/engine/audioEngine";
 import { statsManager } from "./stats";
-import itemsData from "../data/items.json";
-import { inventoryLogger } from "../logger/gameLogger";
-import { Result, ok, err, GameplayError, ErrorCode } from "../../lib/errors";
+import itemsData from "@game/data/items.json";
+import { inventoryLogger } from "@game/logger/gameLogger";
+import { Result, ok, err, GameplayError, ErrorCode } from "@lib/errors";
 
 /**
  * Master Registry of Items available in the game (loaded from JSON data).

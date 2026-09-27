@@ -1,6 +1,6 @@
-import { SaveState } from "../../types";
-import { saveLogger } from "../../logger/gameLogger";
-import { Result, ok, err, SaveError, ErrorCode } from "../../../lib/errors";
+import { SaveState } from "@game/types";
+import { saveLogger } from "@game/logger/gameLogger";
+import { Result, ok, err, SaveError, ErrorCode } from "@lib/errors";
 import { ISaveStorage, ISaveValidator } from "./saveTypes";
 import { defaultSaveValidator } from "./saveValidator";
 

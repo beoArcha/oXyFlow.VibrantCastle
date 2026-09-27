@@ -1,4 +1,4 @@
-import { Player, Enemy, Entity, InputMap, AnimationState, SoundType } from "../types";
+import { Player, Enemy, Entity, InputMap, AnimationState, SoundType } from "@game/types";
 
 /**
  * Audio interface for kinematic physics SFX (e.g. jump takeoff) (DIP).
@@ -39,7 +39,7 @@ export class GamePhysicsEngine {
   private slideSpeed: number = 10.5;
   private backstepSpeed: number = 7.5;
 
-  constructor(private audio?: IPhysicsAudio) {}
+  constructor(private audio?: IPhysicsAudio) { }
 
   /**
    * Applies kinematic movement, momentum, input forces, and jump feel.
