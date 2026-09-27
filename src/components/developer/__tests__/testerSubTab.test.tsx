@@ -13,17 +13,19 @@ import {
   MONSTER_ID_LIST,
 } from "../subtabs/tester";
 import { LoggerManager, LogLevel } from "../../../lib/logger";
-import { TestProviders } from "../../../test-utils";
+import { TestProviders, setupDomEnvironment, renderIntoDom, cleanupDom } from "../../../test-utils";
 
 describe("TesterSubTab & Interaction Domain Cards", () => {
   beforeEach(() => {
+    setupDomEnvironment();
     LoggerManager.resetInstance({
       mode: "development",
       defaultLevel: LogLevel.DEBUG,
     });
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    await cleanupDom();
     LoggerManager.resetInstance();
   });
 
@@ -168,5 +170,113 @@ describe("TesterSubTab & Interaction Domain Cards", () => {
       expect(html).toBeDefined();
     });
   });
-});
 
+  describe("Interactive Card Behaviors & Callbacks", () => {
+    it("dispatches cheat toggle and vitals callbacks on user clicks", async () => {
+      let godModeToggled = false;
+      let hpSet: number | null = null;
+      let vitalsRefilled = false;
+
+      const { container, click } = await renderIntoDom(
+        <TesterCheatsCard
+          godMode={false}
+          infiniteMana={false}
+          infiniteStamina={false}
+          noClip={false}
+          onToggleGodMode={() => { godModeToggled = true; }}
+          onToggleInfiniteMana={() => {}}
+          onToggleInfiniteStamina={() => {}}
+          onToggleNoClip={() => {}}
+          onSetPlayerHp={(val) => { hpSet = val; }}
+          onRefillVitals={() => { vitalsRefilled = true; }}
+        />
+      );
+
+      const buttons = Array.from(container.querySelectorAll("button"));
+
+      const godModeBtn = buttons.find((b) => b.textContent?.includes("God Mode"));
+      expect(godModeBtn).toBeDefined();
+      if (godModeBtn) await click(godModeBtn);
+      expect(godModeToggled).toBe(true);
+
+      const hp1Btn = buttons.find((b) => b.textContent?.includes("1 HP"));
+      expect(hp1Btn).toBeDefined();
+      if (hp1Btn) await click(hp1Btn);
+      expect(hpSet).toBe(1);
+
+      const refillBtn = buttons.find((b) => b.textContent?.includes("100%") || b.textContent?.includes("HP/MP/SP"));
+      expect(refillBtn).toBeDefined();
+      if (refillBtn) await click(refillBtn);
+      expect(vitalsRefilled).toBe(true);
+    });
+
+    it("dispatches combat actions and spawns selected monster type", async () => {
+      let enemiesKilled = false;
+      let aiFrozen = false;
+      let spawnedMonster: string | null = null;
+
+      const { container, click, changeSelect } = await renderIntoDom(
+        <TesterCombatCard
+          freezeAI={false}
+          onToggleFreezeAI={() => { aiFrozen = true; }}
+          onKillAllEnemies={() => { enemiesKilled = true; }}
+          onForceVictory={() => {}}
+          onForceDefeat={() => {}}
+          onSpawnEnemy={(enemyId) => { spawnedMonster = enemyId; }}
+        />
+      );
+
+      const buttons = Array.from(container.querySelectorAll("button"));
+
+      const killBtn = buttons.find((b) => b.textContent?.includes("Zabij") || b.textContent?.includes("Kill"));
+      expect(killBtn).toBeDefined();
+      if (killBtn) await click(killBtn);
+      expect(enemiesKilled).toBe(true);
+
+      const freezeBtn = buttons.find((b) => b.textContent?.includes("Zamroź") || b.textContent?.includes("Freeze"));
+      expect(freezeBtn).toBeDefined();
+      if (freezeBtn) await click(freezeBtn);
+      expect(aiFrozen).toBe(true);
+
+      const select = container.querySelector("select");
+      expect(select).toBeDefined();
+      if (select) {
+        await changeSelect(select as HTMLSelectElement, "training_dummy");
+      }
+
+      const spawnBtn = buttons.find((b) => b.textContent?.includes("Przywołaj") || b.textContent?.includes("Spawn"));
+      expect(spawnBtn).toBeDefined();
+      if (spawnBtn) await click(spawnBtn);
+      expect(spawnedMonster).toBe("training_dummy");
+    });
+
+    it("dispatches simulation speed changes on button click", async () => {
+      let selectedScale: number | null = null;
+      let frameStepped = false;
+
+      const { container, click } = await renderIntoDom(
+        <TesterTimeAndDiagnosticsCard
+          timeScale={1.0}
+          showHitboxes={false}
+          showProfiler={false}
+          onSetTimeScale={(s) => { selectedScale = s; }}
+          onStepSingleFrame={() => { frameStepped = true; }}
+          onToggleHitboxes={() => {}}
+          onToggleProfiler={() => {}}
+        />
+      );
+
+      const buttons = Array.from(container.querySelectorAll("button"));
+
+      const twoXBtn = buttons.find((b) => b.textContent?.trim() === "2x");
+      expect(twoXBtn).toBeDefined();
+      if (twoXBtn) await click(twoXBtn);
+      expect(selectedScale).toBe(2.0);
+
+      const stepBtn = buttons.find((b) => b.textContent?.includes("Klatka") || b.textContent?.includes("Step"));
+      expect(stepBtn).toBeDefined();
+      if (stepBtn) await click(stepBtn);
+      expect(frameStepped).toBe(true);
+    });
+  });
+});

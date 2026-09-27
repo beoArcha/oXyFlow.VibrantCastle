@@ -9,17 +9,19 @@ import {
   LogItemDrawer,
 } from "../subtabs/logs";
 import { LoggerManager, LogLevel, LogRecord } from "../../../lib/logger";
-import { TestProviders } from "../../../test-utils";
+import { TestProviders, setupDomEnvironment, renderIntoDom, cleanupDom } from "../../../test-utils";
 
 describe("LogsSubTab & Terminal Subcomponents", () => {
   beforeEach(() => {
+    setupDomEnvironment();
     LoggerManager.resetInstance({
       mode: "development",
       defaultLevel: LogLevel.DEBUG,
     });
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    await cleanupDom();
     LoggerManager.resetInstance();
   });
 
@@ -62,9 +64,9 @@ describe("LogsSubTab & Terminal Subcomponents", () => {
           <LogsFilterControls
             searchQuery="player"
             onSearchQueryChange={() => {}}
-            levelFilter="ALL"
+            levelFilter="all"
             onLevelFilterChange={() => {}}
-            categoryFilter="ALL"
+            categoryFilter="all"
             onCategoryFilterChange={() => {}}
             counts={{ fatal: 0, error: 2, warn: 3, info: 10, debug: 20, total: 35 }}
             availableCategories={["Engine", "Physics", "Combat", "Audio"]}
@@ -147,6 +149,108 @@ describe("LogsSubTab & Terminal Subcomponents", () => {
       expect(html).toContain("coords");
     });
   });
+
+  describe("Interactive Logs Behaviors & Callbacks", () => {
+    it("handles toolbar clicks for autoscroll, copy, and clear logs", async () => {
+      let autoScrollToggled = false;
+      let logsCleared = false;
+      let logsCopied = false;
+
+      const { container, click } = await renderIntoDom(
+        <LogsHeaderToolbar
+          totalCount={50}
+          filteredCount={25}
+          autoScroll={true}
+          copied={false}
+          onToggleAutoScroll={() => { autoScrollToggled = true; }}
+          onCopyLogs={() => { logsCopied = true; }}
+          onDownloadLogs={() => {}}
+          onClearLogs={() => { logsCleared = true; }}
+        />
+      );
+
+      const buttons = Array.from(container.querySelectorAll("button"));
+
+      const autoScrollBtn = buttons.find((b) => b.textContent?.includes("Auto") || b.title?.includes("Auto"));
+      expect(autoScrollBtn).toBeDefined();
+      if (autoScrollBtn) await click(autoScrollBtn);
+      expect(autoScrollToggled).toBe(true);
+
+      const copyBtn = buttons.find((b) => b.textContent?.includes("Kopiuj") || b.textContent?.includes("Copy"));
+      expect(copyBtn).toBeDefined();
+      if (copyBtn) await click(copyBtn);
+      expect(logsCopied).toBe(true);
+
+      const clearBtn = buttons.find((b) => b.textContent?.includes("Wyczyść") || b.textContent?.includes("Clear"));
+      expect(clearBtn).toBeDefined();
+      if (clearBtn) await click(clearBtn);
+      expect(logsCleared).toBe(true);
+    });
+
+    it("triggers filter callbacks when user switches level filters or types search query", async () => {
+      let changedLevel: string | null = null;
+      let searchedQuery: string | null = null;
+
+      const { container, click, changeInput } = await renderIntoDom(
+        <LogsFilterControls
+          searchQuery=""
+          onSearchQueryChange={(q) => { searchedQuery = q; }}
+          levelFilter="all"
+          onLevelFilterChange={(lvl) => { changedLevel = lvl; }}
+          categoryFilter="all"
+          onCategoryFilterChange={() => {}}
+          counts={{ fatal: 0, error: 3, warn: 5, info: 12, debug: 15, total: 35 }}
+          availableCategories={["Engine", "Physics"]}
+          globalLogLevel={LogLevel.DEBUG}
+          onChangeGlobalLevel={() => {}}
+        />
+      );
+
+      const buttons = Array.from(container.querySelectorAll("button"));
+
+      const warnBtn = buttons.find((b) => b.textContent?.includes("WARNS"));
+      expect(warnBtn).toBeDefined();
+      if (warnBtn) await click(warnBtn);
+      expect(changedLevel).toBe("warn");
+
+      const input = container.querySelector("input");
+      expect(input).toBeDefined();
+      if (input) {
+        await changeInput(input as HTMLInputElement, "critical crash");
+      }
+      expect(searchedQuery).toBe("critical crash");
+    });
+
+    it("toggles item expansion when clicking on expandable log entry", async () => {
+      let toggledId: string | null = null;
+
+      const mockLogs: LogRecord[] = [
+        {
+          id: "log_expandable",
+          level: LogLevel.ERROR,
+          levelName: "ERROR",
+          timeFormatted: "12:00:00.000",
+          category: "Engine",
+          message: "Unhandled exception in entity loop",
+          context: { entityId: "boss_dragon", health: 0 },
+          timestamp: 1700000000000,
+        },
+      ];
+
+      const { container, click } = await renderIntoDom(
+        <LogsTerminalList
+          logs={mockLogs}
+          expandedLogIds={new Set()}
+          onToggleExpand={(id) => { toggledId = id; }}
+          scrollContainerRef={{ current: null }}
+          hasSearchQuery={false}
+        />
+      );
+
+      const logRow = container.querySelector(".cursor-pointer");
+      expect(logRow).toBeDefined();
+      if (logRow) await click(logRow);
+      expect(toggledId).toBe("log_expandable");
+    });
+  });
 });
-
-

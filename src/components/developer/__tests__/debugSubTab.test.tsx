@@ -7,17 +7,20 @@ import { DebugPlayerInspectorCard } from "../subtabs/debug/DebugPlayerInspectorC
 import { DebugEntityTableCard } from "../subtabs/debug/DebugEntityTableCard";
 import { DebugStateDumpCard } from "../subtabs/debug/DebugStateDumpCard";
 import { LoggerManager, LogLevel } from "../../../lib/logger";
-import { TestProviders } from "../../../test-utils";
+import { TestProviders, setupDomEnvironment, renderIntoDom, cleanupDom } from "../../../test-utils";
+import gameEngine from "../../../game/loop/engine";
 
 describe("DebugSubTab & Telemetry Cards", () => {
   beforeEach(() => {
+    setupDomEnvironment();
     LoggerManager.resetInstance({
       mode: "development",
       defaultLevel: LogLevel.DEBUG,
     });
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    await cleanupDom();
     LoggerManager.resetInstance();
   });
 
@@ -128,5 +131,29 @@ describe("DebugSubTab & Telemetry Cards", () => {
       expect(html).toContain("godMode");
     });
   });
-});
 
+  describe("Interactive Debug Card Behaviors", () => {
+    it("dispatches actions on enemy row buttons in DebugEntityTableCard", async () => {
+      let actionCompleted = false;
+      const mockEnemies = [
+        { id: "target_dummy_99", type: "dummy", x: 200, y: 300, health: 50, maxHealth: 100 },
+      ];
+
+      const { container, click } = await renderIntoDom(
+        <DebugEntityTableCard
+          enemies={mockEnemies as any}
+          onActionComplete={() => { actionCompleted = true; }}
+        />
+      );
+
+      const buttons = Array.from(container.querySelectorAll("button"));
+      const damageBtn = buttons.find((b) => b.textContent?.includes("-50"));
+      expect(damageBtn).toBeDefined();
+
+      if (damageBtn) {
+        await click(damageBtn);
+      }
+      expect(actionCompleted).toBe(true);
+    });
+  });
+});

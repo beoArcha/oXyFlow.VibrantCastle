@@ -36,11 +36,7 @@ try {
 // Node / Bun fallback for server-side / unit test environments
 let nodeFs: any = null;
 let nodePath: any = null;
-if (
-  typeof window === "undefined" &&
-  typeof process !== "undefined" &&
-  typeof require !== "undefined"
-) {
+if (typeof process !== "undefined" && typeof require !== "undefined") {
   try {
     nodeFs = require("node:fs");
     nodePath = require("node:path");

@@ -15,6 +15,7 @@ describe("SOLID Logger Architecture", () => {
   let manager: LoggerManager;
 
   beforeEach(() => {
+    cleanupGlobalErrorHandlers();
     // Isolated instance for testing
     manager = LoggerManager.resetInstance({
       mode: "development",
