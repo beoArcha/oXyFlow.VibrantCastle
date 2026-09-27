@@ -1,17 +1,17 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
 import { ILoadableContext, IResettableContext } from "./IContext";
 import { useEngineSubscription } from "./useEngineSubscription";
-import { GameEngine } from "../game/loop/engine";
+import { GameEngine } from "@game/loop/engine";
 import {
   InventoryState,
   EquipmentState,
   Player,
   Item,
-} from "../game/types";
+} from "@game/types";
 import {
   calculatePlayerDerivedStats,
-} from "../game/logic/inventory";
-import { MissingContextProviderError } from "../lib/errors";
+} from "@game/logic/inventory";
+import { MissingContextProviderError } from "@lib/errors";
 
 export interface InventoryContextState {
   p1Inventory: InventoryState;

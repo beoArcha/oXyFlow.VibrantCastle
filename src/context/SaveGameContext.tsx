@@ -5,14 +5,14 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { SaveState, LocationId } from "../game/types";
-import gameEngine from "../game/loop/engine";
-import { gameSave } from "../game/logic/save";
+import { SaveState, LocationId } from "@game/types";
+import gameEngine from "@game/loop/engine";
+import { gameSave } from "@game/logic/save";
 import { useI18n } from "./I18nContext";
 import { IContext } from "./IContext";
 import { useSafeTimeout } from "./useSafeTimeout";
-import { getLogger } from "../lib/logger";
-import { MissingContextProviderError } from "../lib/errors";
+import { getLogger } from "@lib/logger";
+import { MissingContextProviderError } from "@lib/errors";
 
 const saveContextLogger = getLogger("context:save");
 

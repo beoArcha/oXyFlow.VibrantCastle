@@ -1,5 +1,5 @@
 import { GameSettingsState, DEFAULT_SETTINGS } from "../settingsTypes";
-import { getLogger, ILogger } from "../../lib/logger";
+import { getLogger, ILogger } from "@lib/logger";
 
 const settingsLogger = getLogger("context:settings");
 
@@ -24,9 +24,9 @@ export class SettingsStorage implements ISettingsStorage {
   constructor(
     private readonly storage: ISettingsStorageProvider = typeof window !== "undefined" && window.localStorage
       ? window.localStorage
-      : { getItem: () => null, setItem: () => {} },
+      : { getItem: () => null, setItem: () => { } },
     private readonly logger: ILogger = settingsLogger
-  ) {}
+  ) { }
 
   public load(): GameSettingsState {
     try {

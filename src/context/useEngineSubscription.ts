@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import gameEngine from "../game/loop/engine";
+import gameEngine from "@game/loop/engine";
 
 export interface EngineSubscribable {
   registerStateListener: (cb: () => void) => () => void;

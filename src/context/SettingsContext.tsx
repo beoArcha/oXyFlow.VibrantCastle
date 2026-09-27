@@ -5,8 +5,8 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { DisplaySettings } from "../game/types";
-import gameEngine from "../game/loop/engine";
+import { DisplaySettings } from "@game/types";
+import gameEngine from "@game/loop/engine";
 import {
   GameSettingsState,
   DEFAULT_SETTINGS,
@@ -18,7 +18,7 @@ import {
   defaultSettingsStorage,
   useSettingsSync,
 } from "./settings";
-import { MissingContextProviderError } from "../lib/errors";
+import { MissingContextProviderError } from "@lib/errors";
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 

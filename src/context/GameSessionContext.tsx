@@ -11,14 +11,14 @@ import {
   Player,
   LocationDefinition,
   LocationId,
-} from "../game/types";
-import gameEngine from "../game/loop/engine";
-import { gameAudio } from "../game/engine/audioEngine";
-import { getNextLocation, getLocation } from "../game/locations";
+} from "@game/types";
+import gameEngine from "@game/loop/engine";
+import { gameAudio } from "@game/engine/audioEngine";
+import { getNextLocation, getLocation } from "@game/locations";
 import { useI18n } from "./I18nContext";
 import { useEngineSubscription } from "./useEngineSubscription";
 import { useSafeTimeout } from "./useSafeTimeout";
-import { MissingContextProviderError } from "../lib/errors";
+import { MissingContextProviderError } from "@lib/errors";
 
 export interface GameSessionContextValue {
   // Live State

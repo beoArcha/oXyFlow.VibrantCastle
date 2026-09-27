@@ -1,4 +1,4 @@
-import { DisplaySettings } from "../game/types";
+import { DisplaySettings } from "@game/types";
 import { IContext } from "./IContext";
 
 export interface HudQuickKeysSettings {

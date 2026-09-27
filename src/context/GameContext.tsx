@@ -23,13 +23,13 @@ import {
   useInventory,
   InventoryContextValue,
 } from "./InventoryContext";
-import { MissingContextProviderError } from "../lib/errors";
+import { MissingContextProviderError } from "@lib/errors";
 import {
   SkillsProvider,
   useSkills,
   SkillsContextValue,
 } from "./SkillsContext";
-import gameEngine from "../game/loop/engine";
+import gameEngine from "@game/loop/engine";
 import {
   GameSettingsState,
   HudSettings,
@@ -37,7 +37,7 @@ import {
 import {
   InventoryState,
   EquipmentState,
-} from "../game/types";
+} from "@game/types";
 
 export interface GameContextValue {
   // Session & World State

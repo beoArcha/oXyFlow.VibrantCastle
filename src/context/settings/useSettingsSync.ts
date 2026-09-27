@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { GameSettingsState } from "../settingsTypes";
-import gameEngine from "../../game/loop/engine";
-import { gameAudio } from "../../game/engine/audioEngine";
+import gameEngine from "@game/loop/engine";
+import { gameAudio } from "@game/engine/audioEngine";
 import { useEngineSubscription } from "../useEngineSubscription";
 
 /**
