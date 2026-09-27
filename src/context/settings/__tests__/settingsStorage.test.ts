@@ -4,20 +4,14 @@ import {
   ISettingsStorageProvider,
 } from "../settingsStorage";
 import { DEFAULT_SETTINGS, GameSettingsState } from "../../settingsTypes";
+import { createMockStorageProvider, MockStorageProvider } from "../../../test-utils";
 
 describe("SettingsStorage Domain & Persistence Suite (Phase 3)", () => {
-  let memoryStore: Record<string, string> = {};
-  let mockStorage: ISettingsStorageProvider;
+  let mockStorage: MockStorageProvider;
   let settingsStorage: SettingsStorage;
 
   beforeEach(() => {
-    memoryStore = {};
-    mockStorage = {
-      getItem: (key: string) => memoryStore[key] ?? null,
-      setItem: (key: string, val: string) => {
-        memoryStore[key] = val;
-      },
-    };
+    mockStorage = createMockStorageProvider();
     settingsStorage = new SettingsStorage(mockStorage);
   });
 
@@ -43,7 +37,7 @@ describe("SettingsStorage Domain & Persistence Suite (Phase 3)", () => {
         },
       };
 
-      memoryStore[SettingsStorage.SETTINGS_STORAGE_KEY] = JSON.stringify(customSettings);
+      mockStorage.store[SettingsStorage.SETTINGS_STORAGE_KEY] = JSON.stringify(customSettings);
 
       const loaded = settingsStorage.load();
       expect(loaded.language).toBe("en");
@@ -64,7 +58,7 @@ describe("SettingsStorage Domain & Persistence Suite (Phase 3)", () => {
         hardwareAcceleration: false,
       };
 
-      memoryStore[SettingsStorage.LEGACY_DISPLAY_STORAGE_KEY] = JSON.stringify(legacyDisplay);
+      mockStorage.store[SettingsStorage.LEGACY_DISPLAY_STORAGE_KEY] = JSON.stringify(legacyDisplay);
 
       const loaded = settingsStorage.load();
       expect(loaded.display.aspectRatio).toBe("4:3");
@@ -76,7 +70,7 @@ describe("SettingsStorage Domain & Persistence Suite (Phase 3)", () => {
     });
 
     it("safely recovers with DEFAULT_SETTINGS when stored JSON is corrupted", () => {
-      memoryStore[SettingsStorage.SETTINGS_STORAGE_KEY] = "{ corrupt_json: true, ";
+      mockStorage.store[SettingsStorage.SETTINGS_STORAGE_KEY] = "{ corrupt_json: true, ";
 
       const loaded = settingsStorage.load();
       expect(loaded).toEqual(DEFAULT_SETTINGS);
@@ -94,13 +88,13 @@ describe("SettingsStorage Domain & Persistence Suite (Phase 3)", () => {
       const success = settingsStorage.save(custom);
       expect(success).toBe(true);
 
-      expect(memoryStore[SettingsStorage.SETTINGS_STORAGE_KEY]).toBeDefined();
-      const parsedFull = JSON.parse(memoryStore[SettingsStorage.SETTINGS_STORAGE_KEY]);
+      expect(mockStorage.store[SettingsStorage.SETTINGS_STORAGE_KEY]).toBeDefined();
+      const parsedFull = JSON.parse(mockStorage.store[SettingsStorage.SETTINGS_STORAGE_KEY]);
       expect(parsedFull.language).toBe("en");
       expect(parsedFull.volumeMusic).toBe(0.3);
 
-      expect(memoryStore[SettingsStorage.LEGACY_DISPLAY_STORAGE_KEY]).toBeDefined();
-      const parsedLegacy = JSON.parse(memoryStore[SettingsStorage.LEGACY_DISPLAY_STORAGE_KEY]);
+      expect(mockStorage.store[SettingsStorage.LEGACY_DISPLAY_STORAGE_KEY]).toBeDefined();
+      const parsedLegacy = JSON.parse(mockStorage.store[SettingsStorage.LEGACY_DISPLAY_STORAGE_KEY]);
       expect(parsedLegacy.aspectRatio).toBe(DEFAULT_SETTINGS.display.aspectRatio);
     });
 
@@ -142,7 +136,7 @@ describe("SettingsStorage Domain & Persistence Suite (Phase 3)", () => {
       expect(result?.language).toBe("pl"); // Preserved from defaults
 
       // Verifies it persisted into storage
-      const inStore = JSON.parse(memoryStore[SettingsStorage.SETTINGS_STORAGE_KEY]);
+      const inStore = JSON.parse(mockStorage.store[SettingsStorage.SETTINGS_STORAGE_KEY]);
       expect(inStore.volumeSFX).toBe(0.95);
     });
 

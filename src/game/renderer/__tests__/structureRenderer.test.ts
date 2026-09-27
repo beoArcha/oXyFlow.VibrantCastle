@@ -1,56 +1,7 @@
 import { describe, it, expect } from "bun:test";
 import { StructureRenderer, defaultStructureRenderer } from "../structureRenderer";
 import { Entity, CollisionType } from "../../types";
-
-function createMockContext() {
-  let saveCalls = 0;
-  let restoreCalls = 0;
-  let radialGradCalls = 0;
-  let fillRectCalls: any[] = [];
-  let ellipseCalls: any[] = [];
-
-  const ctx: any = {
-    save: () => {
-      saveCalls++;
-    },
-    restore: () => {
-      restoreCalls++;
-    },
-    translate: () => {},
-    beginPath: () => {},
-    closePath: () => {},
-    moveTo: () => {},
-    lineTo: () => {},
-    ellipse: (x: number, y: number, rx: number, ry: number) => {
-      ellipseCalls.push({ x, y, rx, ry });
-    },
-    arc: () => {},
-    rect: () => {},
-    fillRect: (x: number, y: number, w: number, h: number) => {
-      fillRectCalls.push({ x, y, w, h });
-    },
-    strokeRect: () => {},
-    roundRect: () => {},
-    fill: () => {},
-    stroke: () => {},
-    fillText: () => {},
-    measureText: (txt: string) => ({ width: txt.length * 6 }),
-    createRadialGradient: () => {
-      radialGradCalls++;
-      return { addColorStop: () => {} };
-    },
-    fillStyle: "#000000",
-    strokeStyle: "#000000",
-    lineWidth: 1,
-    font: "10px sans-serif",
-    textAlign: "left",
-    textBaseline: "top",
-    getSaveBalance: () => saveCalls - restoreCalls,
-    getRadialGradientCount: () => radialGradCalls,
-    getFillRectCalls: () => fillRectCalls,
-  };
-  return ctx;
-}
+import { createMockContext2D as createMockContext } from "../../../test-utils";
 
 describe("Podfaza 5.3: StructureRenderer Comprehensive Unit Tests", () => {
   it("renders goal portal via atlas when atlas is present", () => {

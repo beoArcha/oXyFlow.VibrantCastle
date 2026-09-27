@@ -4,7 +4,9 @@
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
     "module": "ESNext",
-    "types": ["vite/client"],
+    "types": [
+      "vite/client"
+    ],
     "lib": [
       "ES2022",
       "DOM",
@@ -19,7 +21,34 @@
     "paths": {
       "@/*": [
         "./*"
-      ]
+      ],
+      "@assets/*": [
+        "./assets/*"
+      ],
+      "@components/*": [
+        "./components/*"
+      ],
+      "@context/*": [
+        "./context/*"
+      ],
+      "@game/*": [
+        "./game/*"
+      ],
+      "@lib/*": [
+        "./lib/*"
+      ],
+      "@hooks/*": [
+        "./hooks/*"
+      ],
+      "@styles/*": [
+        "./styles/*"
+      ],
+      "@test-utils/*": [
+        "./test-utils/*"
+      ],
+      "@types/*": [
+        "./types/*"
+      ],
     },
     "allowImportingTsExtensions": true,
     "noEmit": true

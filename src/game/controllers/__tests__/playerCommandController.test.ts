@@ -4,8 +4,9 @@ import {
   IPlayerCommandContext,
 } from "../playerCommandController";
 import { Player, PlayerId } from "../../types";
-import { createDefaultInventory, ITEM_REGISTRY } from "../../logic/inventory";
+import { ITEM_REGISTRY } from "../../logic/inventory";
 import { getDefaultSkillsForCharacter } from "../../logic/skills";
+import { createMockPlayer } from "../../../test-utils";
 
 describe("PlayerCommandController (SOLID & SRP)", () => {
   let mockPlayer1: Player;
@@ -19,56 +20,38 @@ describe("PlayerCommandController (SOLID & SRP)", () => {
     stateChangedCount = 0;
 
     const p1Skills = getDefaultSkillsForCharacter("valen");
-    mockPlayer1 = {
+    mockPlayer1 = createMockPlayer({
       id: PlayerId.Player1,
-      name: "Valen",
+      characterName: "Valen",
       x: 100,
       y: 200,
-      vx: 0,
-      vy: 0,
-      width: 32,
-      height: 48,
-      health: 100,
-      maxHealth: 100,
       mana: 50,
       maxMana: 50,
       stamina: 80,
       maxStamina: 80,
-      isGrounded: true,
-      isDead: false,
-      facingLeft: false,
       skillPoints: 5,
       unlockedSkills: [...p1Skills.unlockedSkills],
       primarySpellId: p1Skills.primarySpellId,
       secondarySpellId: p1Skills.secondarySpellId,
-      inventory: createDefaultInventory(),
-    } as unknown as Player;
+    });
 
     const p2Skills = getDefaultSkillsForCharacter("aurelia");
-    mockPlayer2 = {
+    mockPlayer2 = createMockPlayer({
       id: PlayerId.Player2,
-      name: "Aurelia",
+      characterName: "Aurelia",
       x: 150,
       y: 200,
-      vx: 0,
-      vy: 0,
-      width: 32,
-      height: 48,
       health: 90,
       maxHealth: 90,
       mana: 80,
       maxMana: 80,
       stamina: 70,
       maxStamina: 70,
-      isGrounded: true,
-      isDead: false,
-      facingLeft: false,
       skillPoints: 3,
       unlockedSkills: [...p2Skills.unlockedSkills],
       primarySpellId: p2Skills.primarySpellId,
       secondarySpellId: p2Skills.secondarySpellId,
-      inventory: createDefaultInventory(),
-    } as unknown as Player;
+    });
 
     players = [mockPlayer1, mockPlayer2];
 

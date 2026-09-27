@@ -7,54 +7,7 @@ import { AtmosphericFogRenderer, defaultAtmosphericFogRenderer } from "../parall
 import { SceneryScaffoldRenderer, defaultSceneryScaffoldRenderer } from "../parallax/sceneryScaffoldRenderer";
 import { LocationDefinition } from "../../locations/types";
 import { ParallaxLayerSchema } from "../../locations/schema/locationSchema";
-
-function createMockContext() {
-  let saveCalls = 0;
-  let restoreCalls = 0;
-  let radialGradCalls = 0;
-  let linearGradCalls = 0;
-
-  const ctx: any = {
-    canvas: { width: 1000, height: 625 },
-    save: () => {
-      saveCalls++;
-    },
-    restore: () => {
-      restoreCalls++;
-    },
-    scale: () => {},
-    translate: () => {},
-    rotate: () => {},
-    beginPath: () => {},
-    closePath: () => {},
-    moveTo: () => {},
-    lineTo: () => {},
-    quadraticCurveTo: () => {},
-    arc: () => {},
-    rect: () => {},
-    fillRect: () => {},
-    strokeRect: () => {},
-    fill: () => {},
-    stroke: () => {},
-    drawImage: () => {},
-    createRadialGradient: () => {
-      radialGradCalls++;
-      return { addColorStop: () => {} };
-    },
-    createLinearGradient: () => {
-      linearGradCalls++;
-      return { addColorStop: () => {} };
-    },
-    fillStyle: "#000000",
-    strokeStyle: "#000000",
-    lineWidth: 1,
-    globalAlpha: 1.0,
-    getSaveBalance: () => saveCalls - restoreCalls,
-    getRadialGradientCount: () => radialGradCalls,
-    getLinearGradientCount: () => linearGradCalls,
-  };
-  return ctx;
-}
+import { createMockContext2D as createMockContext } from "../../../test-utils";
 
 const mockLocation: LocationDefinition = {
   id: "test_sanctuary",

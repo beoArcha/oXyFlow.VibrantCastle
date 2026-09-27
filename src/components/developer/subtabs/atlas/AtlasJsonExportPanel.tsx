@@ -32,6 +32,121 @@ export interface AtlasJsonExportPanelProps {
   onResetDefaults: () => void;
 }
 
+export function buildAtlasExportMetaDoc(params: {
+  metaDoc: AtlasMetaDoc;
+  gridConfig: AtlasGridConfig;
+  tracks: AtlasAnimationTrackDefinition[];
+  origin: AtlasOriginDefinition;
+  assetId: string;
+  slicingConfig?: IAtlasSlicingConfig;
+  backgroundConfig?: IAtlasBackgroundConfig;
+}): AtlasMetaDoc {
+  const { metaDoc, gridConfig, tracks, origin, assetId, slicingConfig, backgroundConfig } = params;
+
+  const animMap: Record<string, any> = {};
+  tracks.forEach((track) => {
+    animMap[track.name] = {
+      row: track.row,
+      frames: track.frames,
+      fps: track.fps,
+      loop: track.loop,
+      ...(track.wide ? { wide: true } : {}),
+      ...(track.slotSpan ? { slotSpan: track.slotSpan } : {}),
+      ...(track.cells ? { cells: track.cells } : {}),
+      ...(track.frameIndices ? { frameIndices: track.frameIndices } : {}),
+    };
+  });
+
+  const effectiveSlicing = slicingConfig || metaDoc.slicing;
+  const currentMethod = effectiveSlicing?.method || "by_count";
+
+  let resolvedSlicingSection: IAtlasSlicingConfig;
+  if (currentMethod === "auto_islands") {
+    resolvedSlicingSection = {
+      method: "auto_islands",
+      autoIslands: {
+        minIslandPixels: effectiveSlicing?.autoIslands?.minIslandPixels ?? 15,
+        clusterYTolerance: effectiveSlicing?.autoIslands?.clusterYTolerance ?? 10,
+      },
+      ...(effectiveSlicing?.frames ? { frames: effectiveSlicing.frames } : {}),
+    };
+  } else if (currentMethod === "freeform_rects") {
+    resolvedSlicingSection = {
+      method: "freeform_rects",
+      frames: effectiveSlicing?.frames || [],
+    };
+  } else if (currentMethod === "by_cell_size") {
+    resolvedSlicingSection = {
+      method: "by_cell_size",
+      cellSize: {
+        cellWidth: effectiveSlicing?.cellSize?.cellWidth ?? gridConfig.cellWidth,
+        cellHeight: effectiveSlicing?.cellSize?.cellHeight ?? gridConfig.cellHeight,
+        offsetX: effectiveSlicing?.cellSize?.offsetX ?? 0,
+        offsetY: effectiveSlicing?.cellSize?.offsetY ?? 0,
+        spacingX: effectiveSlicing?.cellSize?.spacingX ?? gridConfig.spacing,
+        spacingY: effectiveSlicing?.cellSize?.spacingY ?? gridConfig.spacing,
+      },
+    };
+  } else {
+    resolvedSlicingSection = {
+      method: "by_count",
+      grid: {
+        columns: gridConfig.columns,
+        rows: gridConfig.rows,
+        spacing: gridConfig.spacing,
+        safeMargin: gridConfig.safeMargin,
+        cellWidth: gridConfig.cellWidth,
+        cellHeight: gridConfig.cellHeight,
+      },
+    };
+  }
+
+  const effectiveBg = backgroundConfig || metaDoc.backgroundConfig;
+  const resolvedBgSection: IAtlasBackgroundConfig =
+    effectiveBg?.mode === "color"
+      ? {
+          mode: "color",
+          colorHex: effectiveBg.colorHex,
+          tolerance: effectiveBg.tolerance ?? 15,
+          removeAtRuntime: effectiveBg.removeAtRuntime ?? true,
+        }
+      : {
+          mode: "transparent",
+        };
+
+  return {
+    ...metaDoc,
+    characterId: metaDoc.characterId || assetId,
+    slicing: resolvedSlicingSection,
+    backgroundConfig: resolvedBgSection,
+    atlas: {
+      ...metaDoc.atlas,
+      columns: gridConfig.columns,
+      rows: gridConfig.rows,
+      spacing: gridConfig.spacing,
+      safeMargin: gridConfig.safeMargin,
+      cellWidth: gridConfig.cellWidth,
+      cellHeight: gridConfig.cellHeight,
+    },
+    variants: {
+      ...metaDoc.variants,
+      high: {
+        cellWidth: gridConfig.cellWidth,
+        cellHeight: gridConfig.cellHeight,
+        scale: metaDoc.variants?.high?.scale ?? 1.5,
+      },
+    },
+    animations: animMap,
+    layout: {
+      ...metaDoc.layout,
+      origin: {
+        type: origin.type || "feet",
+        normalized: origin.normalized,
+      },
+    },
+  };
+}
+
 export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
   metaDoc,
   gridConfig,
@@ -50,113 +165,19 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
   const [rawText, setRawText] = useState<string>("");
   const [syntaxError, setSyntaxError] = useState<string | null>(null);
 
-  // Generate current unified JSON object
-  const fullMetaJson = useMemo(() => {
-    const animMap: Record<string, any> = {};
-    tracks.forEach((track) => {
-      animMap[track.name] = {
-        row: track.row,
-        frames: track.frames,
-        fps: track.fps,
-        loop: track.loop,
-        ...(track.wide ? { wide: true } : {}),
-        ...(track.slotSpan ? { slotSpan: track.slotSpan } : {}),
-        ...(track.cells ? { cells: track.cells } : {}),
-        ...(track.frameIndices ? { frameIndices: track.frameIndices } : {}),
-      };
-    });
-
-    const effectiveSlicing = slicingConfig || metaDoc.slicing;
-    const currentMethod = effectiveSlicing?.method || "by_count";
-
-    let resolvedSlicingSection: IAtlasSlicingConfig;
-    if (currentMethod === "auto_islands") {
-      resolvedSlicingSection = {
-        method: "auto_islands",
-        autoIslands: {
-          minIslandPixels: effectiveSlicing?.autoIslands?.minIslandPixels ?? 15,
-          clusterYTolerance: effectiveSlicing?.autoIslands?.clusterYTolerance ?? 10,
-        },
-        ...(effectiveSlicing?.frames ? { frames: effectiveSlicing.frames } : {}),
-      };
-    } else if (currentMethod === "freeform_rects") {
-      resolvedSlicingSection = {
-        method: "freeform_rects",
-        frames: effectiveSlicing?.frames || [],
-      };
-    } else if (currentMethod === "by_cell_size") {
-      resolvedSlicingSection = {
-        method: "by_cell_size",
-        cellSize: {
-          cellWidth: effectiveSlicing?.cellSize?.cellWidth ?? gridConfig.cellWidth,
-          cellHeight: effectiveSlicing?.cellSize?.cellHeight ?? gridConfig.cellHeight,
-          offsetX: effectiveSlicing?.cellSize?.offsetX ?? 0,
-          offsetY: effectiveSlicing?.cellSize?.offsetY ?? 0,
-          spacingX: effectiveSlicing?.cellSize?.spacingX ?? gridConfig.spacing,
-          spacingY: effectiveSlicing?.cellSize?.spacingY ?? gridConfig.spacing,
-        },
-      };
-    } else {
-      resolvedSlicingSection = {
-        method: "by_count",
-        grid: {
-          columns: gridConfig.columns,
-          rows: gridConfig.rows,
-          spacing: gridConfig.spacing,
-          safeMargin: gridConfig.safeMargin,
-          cellWidth: gridConfig.cellWidth,
-          cellHeight: gridConfig.cellHeight,
-        },
-      };
-    }
-
-    const effectiveBg = backgroundConfig || metaDoc.backgroundConfig;
-    const resolvedBgSection: IAtlasBackgroundConfig =
-      effectiveBg?.mode === "color"
-        ? {
-            mode: "color",
-            colorHex: effectiveBg.colorHex,
-            tolerance: effectiveBg.tolerance ?? 15,
-            removeAtRuntime: effectiveBg.removeAtRuntime ?? true,
-          }
-        : {
-            mode: "transparent",
-          };
-
-    const doc: AtlasMetaDoc = {
-      ...metaDoc,
-      characterId: metaDoc.characterId || assetId,
-      slicing: resolvedSlicingSection,
-      backgroundConfig: resolvedBgSection,
-      atlas: {
-        ...metaDoc.atlas,
-        columns: gridConfig.columns,
-        rows: gridConfig.rows,
-        spacing: gridConfig.spacing,
-        safeMargin: gridConfig.safeMargin,
-        cellWidth: gridConfig.cellWidth,
-        cellHeight: gridConfig.cellHeight,
-      },
-      variants: {
-        ...metaDoc.variants,
-        high: {
-          cellWidth: gridConfig.cellWidth,
-          cellHeight: gridConfig.cellHeight,
-          scale: metaDoc.variants?.high?.scale ?? 1.5,
-        },
-      },
-      animations: animMap,
-      layout: {
-        ...metaDoc.layout,
-        origin: {
-          type: origin.type || "feet",
-          normalized: origin.normalized,
-        },
-      },
-    };
-
-    return doc;
-  }, [metaDoc, gridConfig, tracks, origin, assetId, slicingConfig, backgroundConfig]);
+  const fullMetaJson = useMemo(
+    () =>
+      buildAtlasExportMetaDoc({
+        metaDoc,
+        gridConfig,
+        tracks,
+        origin,
+        assetId,
+        slicingConfig,
+        backgroundConfig,
+      }),
+    [metaDoc, gridConfig, tracks, origin, assetId, slicingConfig, backgroundConfig]
+  );
 
   // Sync formatted rawText
   React.useEffect(() => {

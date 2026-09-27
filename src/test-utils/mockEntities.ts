@@ -1,0 +1,98 @@
+import {
+  Player,
+  Enemy,
+  Entity,
+  PlayerId,
+  AnimationState,
+  CollisionType,
+} from "../game/types";
+import { createDefaultInventory } from "../game/logic/inventory";
+
+export function createMockPlayer(overrides: Partial<Player> = {}): Player {
+  return {
+    id: PlayerId.Player1,
+    characterId: "valen",
+    characterName: "Valen",
+    characterTier: 1,
+    levelGroup: 1,
+    x: 100,
+    y: 100,
+    vx: 0,
+    vy: 0,
+    width: 32,
+    height: 48,
+    facingLeft: false,
+    isGrounded: true,
+    isCrouching: false,
+    isJumping: false,
+    wasGrounded: true,
+    coyoteTimer: 0,
+    jumpBufferTimer: 0,
+    jumpHoldTimer: 0,
+    squashStretchScaleX: 1.0,
+    squashStretchScaleY: 1.0,
+    standingPlatformId: null,
+    platformVelocityX: 0,
+    platformVelocityY: 0,
+    health: 100,
+    maxHealth: 100,
+    mana: 100,
+    maxMana: 100,
+    stamina: 100,
+    maxStamina: 100,
+    isDead: false,
+    attackCooldown: 0,
+    dashCooldown: 0,
+    isDashing: false,
+    isBackstepping: false,
+    dashTime: 0,
+    isAttacking: false,
+    attackTime: 0,
+    magicCooldown: 0,
+    isCasting: false,
+    castTime: 0,
+    shieldActiveTime: 0,
+    primarySpellId: "aether_bolt",
+    secondarySpellId: "solar_fireball",
+    skillPoints: 0,
+    score: 0,
+    unlockedSkills: [],
+    autoSkillTimer: 0,
+    inventory: createDefaultInventory(),
+    animationState: AnimationState.Idle,
+    ...overrides,
+  };
+}
+
+export function createMockEnemy(overrides: Partial<Enemy> = {}): Enemy {
+  return {
+    id: "enemy_1",
+    x: 200,
+    y: 100,
+    vx: 0,
+    vy: 0,
+    width: 32,
+    height: 48,
+    health: 50,
+    maxHealth: 50,
+    isDead: false,
+    patrolMinX: 100,
+    patrolMaxX: 300,
+    facingLeft: false,
+    isDummy: false,
+    damageTimer: 0,
+    ...overrides,
+  };
+}
+
+export function createMockEntity(overrides: Partial<Entity> = {}): Entity {
+  return {
+    id: "entity_1",
+    x: 150,
+    y: 100,
+    width: 32,
+    height: 32,
+    type: CollisionType.Solid,
+    ...overrides,
+  };
+}

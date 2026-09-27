@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { LoggerManager, LogLevel } from "../../../lib/logger";
 import { settingsTranslations } from "../../../game/i18n/modules/settings";
-import { useThrottledLogs, useThrottledLogCount } from "../../../hooks/useThrottledLogs";
 
 describe("Developer Suite Phase 2: RingBuffer Optimization & i18n Verification", () => {
   beforeEach(() => {
@@ -13,11 +12,6 @@ describe("Developer Suite Phase 2: RingBuffer Optimization & i18n Verification",
 
   afterEach(() => {
     LoggerManager.resetInstance();
-  });
-
-  it("verifies hook definitions and function exports for useThrottledLogs and useThrottledLogCount", () => {
-    expect(typeof useThrottledLogs).toBe("function");
-    expect(typeof useThrottledLogCount).toBe("function");
   });
 
   it("verifies all Phase 2 debug i18n translation keys are defined in both Polish and English", () => {

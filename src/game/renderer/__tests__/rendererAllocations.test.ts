@@ -8,69 +8,7 @@ import { StructureRenderer } from "../structureRenderer";
 import { HitboxRenderer } from "../hitboxRenderer";
 import { Player, Enemy, Entity, Projectile, Particle, PlayerId, CollisionType } from "../../types";
 import { getLocation } from "../../locations";
-
-/**
- * Creates a lightweight mock 2D canvas context with save/restore tracking.
- */
-function createMockContext() {
-  let saveCalls = 0;
-  let restoreCalls = 0;
-  let linearGradientCalls = 0;
-  let radialGradientCalls = 0;
-
-  const ctx: any = {
-    canvas: { width: 1000, height: 625 },
-    save: () => {
-      saveCalls++;
-    },
-    restore: () => {
-      restoreCalls++;
-    },
-    scale: () => {},
-    translate: () => {},
-    beginPath: () => {},
-    closePath: () => {},
-    moveTo: () => {},
-    lineTo: () => {},
-    arc: () => {},
-    ellipse: () => {},
-    rect: () => {},
-    fillRect: () => {},
-    strokeRect: () => {},
-    clearRect: () => {},
-    fill: () => {},
-    stroke: () => {},
-    drawImage: () => {},
-    fillText: () => {},
-    measureText: (txt: string) => ({ width: txt.length * 6 }),
-    createLinearGradient: () => {
-      linearGradientCalls++;
-      return { addColorStop: () => {} };
-    },
-    createRadialGradient: () => {
-      radialGradientCalls++;
-      return { addColorStop: () => {} };
-    },
-    roundRect: () => {},
-    setLineDash: () => {},
-    imageSmoothingEnabled: false,
-    fillStyle: "#000000",
-    strokeStyle: "#000000",
-    lineWidth: 1,
-    globalAlpha: 1.0,
-    font: "10px sans-serif",
-    textAlign: "left",
-    textBaseline: "top",
-    getSaveBalance: () => saveCalls - restoreCalls,
-    getSaveCount: () => saveCalls,
-    getRestoreCount: () => restoreCalls,
-    getLinearGradientCount: () => linearGradientCalls,
-    getRadialGradientCount: () => radialGradientCalls,
-    getTotalGradientCount: () => linearGradientCalls + radialGradientCalls,
-  };
-
-  return ctx;
-}
+import { createMockContext2D as createMockContext } from "../../../test-utils";
 
 describe("Renderer Optimization & Zero GC Pressure (Faza 3)", () => {
   let mockPlayer: Player;

@@ -5,6 +5,7 @@ import {
 } from "../environmentCollisionSystem";
 import { Player, Entity, CollisionType, PlayerId } from "../../types";
 import { ICollisionEngine } from "../collisions";
+import { createMockPlayer } from "../../../test-utils";
 
 describe("EnvironmentCollisionSystem (SOLID & Zero Allocation)", () => {
   let mockPlayer: Player;
@@ -28,29 +29,11 @@ describe("EnvironmentCollisionSystem (SOLID & Zero Allocation)", () => {
     noClipMode = false;
     levelTransitionPending = false;
 
-    mockPlayer = {
-      id: PlayerId.Player1,
-      name: "Valen",
-      x: 100,
-      y: 100,
-      vx: 0,
-      vy: 0,
-      width: 32,
-      height: 48,
-      health: 100,
-      maxHealth: 100,
-      mana: 50,
-      maxMana: 50,
-      stamina: 80,
-      maxStamina: 80,
+    mockPlayer = createMockPlayer({
       isGrounded: false,
-      isDead: false,
-      facingLeft: false,
-      shieldActiveTime: 0,
-      standingPlatformId: null,
-      platformVelocityX: 0,
-      platformVelocityY: 0,
-    } as unknown as Player;
+      mana: 50,
+      stamina: 80,
+    });
 
     players = [mockPlayer];
     entities = [];

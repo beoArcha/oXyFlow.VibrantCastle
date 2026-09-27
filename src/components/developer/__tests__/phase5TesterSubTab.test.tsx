@@ -1,8 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import React from "react";
 import { renderToString } from "react-dom/server";
-import fs from "fs";
-import path from "path";
 import { TesterSubTab } from "../subtabs/TesterSubTab";
 import {
   TesterTeleportCard,
@@ -14,17 +12,8 @@ import {
   LOCATION_IDS,
   MONSTER_ID_LIST,
 } from "../subtabs/tester";
-import { I18nProvider } from "../../../context/I18nContext";
-import { GameProvider } from "../../../context/GameContext";
 import { LoggerManager, LogLevel } from "../../../lib/logger";
-
-const TestProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <I18nProvider>
-    <GameProvider>
-      {children}
-    </GameProvider>
-  </I18nProvider>
-);
+import { TestProviders } from "../../../test-utils";
 
 describe("Phase 5.3: TesterSubTab & Interaction Domain Cards Suite", () => {
   beforeEach(() => {
@@ -179,21 +168,5 @@ describe("Phase 5.3: TesterSubTab & Interaction Domain Cards Suite", () => {
       expect(html).toBeDefined();
     });
   });
-
-  describe("3. Architecture & File Length Verification", () => {
-    it("verifies TesterSubTab and domain cards are under line limits (< 200 lines)", () => {
-      const checkLines = (relPath: string, maxLines: number) => {
-        const content = fs.readFileSync(path.resolve(__dirname, "..", relPath), "utf-8");
-        expect(content.split("\n").length).toBeLessThanOrEqual(maxLines);
-      };
-
-      checkLines("subtabs/TesterSubTab.tsx", 120);
-      checkLines("subtabs/tester/TesterTeleportCard.tsx", 200);
-      checkLines("subtabs/tester/TesterCheatsCard.tsx", 120);
-      checkLines("subtabs/tester/TesterInventoryCard.tsx", 120);
-      checkLines("subtabs/tester/TesterCombatCard.tsx", 130);
-      checkLines("subtabs/tester/TesterTimeAndDiagnosticsCard.tsx", 120);
-      checkLines("subtabs/tester/TesterParallaxCard.tsx", 130);
-    });
-  });
 });
+

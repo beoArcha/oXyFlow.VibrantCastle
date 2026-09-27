@@ -9,40 +9,7 @@ import {
 } from "../index";
 import { Player, Enemy, Entity, SaveState, PlayerId } from "../../../types";
 import { ErrorCode } from "../../../../lib/errors";
-
-function createMockPlayer(overrides: Partial<Player> = {}): Player {
-  return {
-    id: PlayerId.Player1,
-    name: "Valen",
-    x: 100,
-    y: 200,
-    vx: 0,
-    vy: 0,
-    width: 32,
-    height: 48,
-    health: 100,
-    maxHealth: 100,
-    mana: 100,
-    maxMana: 100,
-    stamina: 100,
-    maxStamina: 100,
-    score: 0,
-    skillPoints: 0,
-    unlockedSkills: [],
-    primarySpellId: "aether_bolt",
-    secondarySpellId: "solar_fireball",
-    isGrounded: true,
-    facingLeft: false,
-    isAttacking: false,
-    attackCooldown: 0,
-    attackFrame: 0,
-    magicCooldown: 0,
-    isCasting: false,
-    castTime: 0,
-    isDead: false,
-    ...overrides,
-  } as Player;
-}
+import { createMockPlayer } from "../../../../test-utils";
 
 describe("Decomposed Save Subsystem Suite (Phase 1)", () => {
   describe("1. SaveValidator (SRP: JSON validation & normalization)", () => {

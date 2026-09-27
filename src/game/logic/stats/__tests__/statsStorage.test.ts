@@ -10,24 +10,15 @@ import {
   IStatsStorage,
   GameSessionStats,
 } from "../statsTypes";
+import { createMockStorageProvider, MockStorageProvider } from "../../../../test-utils";
 
 describe("StatsStorage & StatsManager Domain Suite (Phase 4)", () => {
-  let memoryStore: Record<string, string> = {};
-  let mockStorageProvider: IStatsStorageProvider;
+  let mockStorage: MockStorageProvider;
   let statsStorage: StatsStorage;
 
   beforeEach(() => {
-    memoryStore = {};
-    mockStorageProvider = {
-      getItem: (key: string) => memoryStore[key] ?? null,
-      setItem: (key: string, val: string) => {
-        memoryStore[key] = val;
-      },
-      removeItem: (key: string) => {
-        delete memoryStore[key];
-      },
-    };
-    statsStorage = new StatsStorage(mockStorageProvider);
+    mockStorage = createMockStorageProvider();
+    statsStorage = new StatsStorage(mockStorage);
   });
 
   describe("1. StatsStorage - Loading & Sanitization", () => {
@@ -42,7 +33,7 @@ describe("StatsStorage & StatsManager Domain Suite (Phase 4)", () => {
       sampleStats.p1.damageDealt = 1250;
       sampleStats.levelsCompleted = 2;
 
-      memoryStore[StatsStorage.STORAGE_KEY] = JSON.stringify(sampleStats);
+      mockStorage.store[StatsStorage.STORAGE_KEY] = JSON.stringify(sampleStats);
 
       const loaded = statsStorage.load();
       expect(loaded).not.toBeNull();
@@ -68,7 +59,7 @@ describe("StatsStorage & StatsManager Domain Suite (Phase 4)", () => {
         },
       });
 
-      memoryStore[StatsStorage.STORAGE_KEY] = corruptedJson;
+      mockStorage.store[StatsStorage.STORAGE_KEY] = corruptedJson;
 
       const loaded = statsStorage.load();
       expect(loaded).not.toBeNull();
@@ -83,7 +74,7 @@ describe("StatsStorage & StatsManager Domain Suite (Phase 4)", () => {
     });
 
     it("returns null gracefully on malformed JSON without crashing", () => {
-      memoryStore[StatsStorage.STORAGE_KEY] = "{{ corrupted_json";
+      mockStorage.store[StatsStorage.STORAGE_KEY] = "{{ corrupted_json";
       const loaded = statsStorage.load();
       expect(loaded).toBeNull();
     });
@@ -97,7 +88,7 @@ describe("StatsStorage & StatsManager Domain Suite (Phase 4)", () => {
       const success = statsStorage.save(stats);
       expect(success).toBe(true);
 
-      const inStore = JSON.parse(memoryStore[StatsStorage.STORAGE_KEY]);
+      const inStore = JSON.parse(mockStorage.store[StatsStorage.STORAGE_KEY]);
       expect(inStore.p1.kills).toBe(5);
     });
 
@@ -110,22 +101,22 @@ describe("StatsStorage & StatsManager Domain Suite (Phase 4)", () => {
       statsStorage.scheduleSave(stats, 10000); // 10 second debounce
 
       // Memory store still has previous value (5) because debounce is active
-      const inStoreBeforeFlush = JSON.parse(memoryStore[StatsStorage.STORAGE_KEY]);
+      const inStoreBeforeFlush = JSON.parse(mockStorage.store[StatsStorage.STORAGE_KEY]);
       expect(inStoreBeforeFlush.p1.kills).toBe(5);
 
       statsStorage.flush();
-      const inStoreAfterFlush = JSON.parse(memoryStore[StatsStorage.STORAGE_KEY]);
+      const inStoreAfterFlush = JSON.parse(mockStorage.store[StatsStorage.STORAGE_KEY]);
       expect(inStoreAfterFlush.p1.kills).toBe(8);
     });
 
     it("clears storage and pending timers", () => {
       const stats = createInitialSessionStats();
       statsStorage.save(stats);
-      expect(memoryStore[StatsStorage.STORAGE_KEY]).toBeDefined();
+      expect(mockStorage.store[StatsStorage.STORAGE_KEY]).toBeDefined();
 
       const cleared = statsStorage.clear();
       expect(cleared).toBe(true);
-      expect(memoryStore[StatsStorage.STORAGE_KEY]).toBeUndefined();
+      expect(mockStorage.store[StatsStorage.STORAGE_KEY]).toBeUndefined();
     });
 
     it("handles storage exceptions gracefully", () => {

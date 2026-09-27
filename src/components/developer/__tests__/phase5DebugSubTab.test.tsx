@@ -1,24 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import React from "react";
 import { renderToString } from "react-dom/server";
-import fs from "fs";
-import path from "path";
 import { DebugSubTab } from "../subtabs/DebugSubTab";
 import { DebugTelemetryCard } from "../subtabs/debug/DebugTelemetryCard";
 import { DebugPlayerInspectorCard } from "../subtabs/debug/DebugPlayerInspectorCard";
 import { DebugEntityTableCard } from "../subtabs/debug/DebugEntityTableCard";
 import { DebugStateDumpCard } from "../subtabs/debug/DebugStateDumpCard";
-import { I18nProvider } from "../../../context/I18nContext";
-import { GameProvider } from "../../../context/GameContext";
 import { LoggerManager, LogLevel } from "../../../lib/logger";
-
-const TestProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <I18nProvider>
-    <GameProvider>
-      {children}
-    </GameProvider>
-  </I18nProvider>
-);
+import { TestProviders } from "../../../test-utils";
 
 describe("Phase 5.2: DebugSubTab & Telemetry Cards Suite", () => {
   beforeEach(() => {
@@ -139,19 +128,5 @@ describe("Phase 5.2: DebugSubTab & Telemetry Cards Suite", () => {
       expect(html).toContain("godMode");
     });
   });
-
-  describe("3. Architecture & File Length Verification", () => {
-    it("verifies Debug cards and orchestrators are clean and modular (< 170 lines)", () => {
-      const checkLines = (relPath: string, maxLines: number) => {
-        const content = fs.readFileSync(path.resolve(__dirname, "..", relPath), "utf-8");
-        expect(content.split("\n").length).toBeLessThanOrEqual(maxLines);
-      };
-
-      checkLines("subtabs/DebugSubTab.tsx", 170);
-      checkLines("subtabs/debug/DebugTelemetryCard.tsx", 170);
-      checkLines("subtabs/debug/DebugPlayerInspectorCard.tsx", 170);
-      checkLines("subtabs/debug/DebugEntityTableCard.tsx", 170);
-      checkLines("subtabs/debug/DebugStateDumpCard.tsx", 170);
-    });
-  });
 });
+

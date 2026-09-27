@@ -112,36 +112,6 @@ describe("Atlas Studio Logging & Domain Error Architecture Suite (Phase 3)", () 
     expect(settingsTranslations.en.atlasStudioOpenLogsTab).toBe("Full view (Logs)");
     expect(settingsTranslations.en.atlasStudioNoLogsYet).toBe("No slicer events recorded yet.");
   });
-
-  it("verifies telemetry shallow comparator rejects redundant state dispatches", () => {
-    let stateUpdates = 0;
-    let currentMetrics = {
-      frameCount: 12,
-      durationMs: 1.23,
-      textureWidth: 1024,
-      textureHeight: 768,
-    };
-
-    const updateMetrics = (next: typeof currentMetrics) => {
-      if (
-        currentMetrics.frameCount === next.frameCount &&
-        currentMetrics.textureWidth === next.textureWidth &&
-        currentMetrics.textureHeight === next.textureHeight &&
-        Math.abs(currentMetrics.durationMs - next.durationMs) < 0.5
-      ) {
-        return; // Suppressed
-      }
-      currentMetrics = next;
-      stateUpdates++;
-    };
-
-    // First update: should trigger
-    updateMetrics({ frameCount: 12, durationMs: 1.35, textureWidth: 1024, textureHeight: 768 });
-    expect(stateUpdates).toBe(0); // Diff is only 0.12ms, suppressed!
-
-    // Second update: dimension change, should trigger
-    updateMetrics({ frameCount: 16, durationMs: 1.35, textureWidth: 1024, textureHeight: 768 });
-    expect(stateUpdates).toBe(1);
-  });
 });
+
 

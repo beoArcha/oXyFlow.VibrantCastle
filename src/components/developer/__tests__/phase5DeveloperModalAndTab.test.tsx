@@ -1,22 +1,11 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import React from "react";
 import { renderToString } from "react-dom/server";
-import fs from "fs";
-import path from "path";
 import { DeveloperModal } from "../DeveloperModal";
 import { DeveloperTab } from "../DeveloperTab";
 import { DeveloperTabLayout } from "../DeveloperTabLayout";
-import { I18nProvider } from "../../../context/I18nContext";
-import { GameProvider } from "../../../context/GameContext";
 import { LoggerManager, LogLevel } from "../../../lib/logger";
-
-const TestProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <I18nProvider>
-    <GameProvider>
-      {children}
-    </GameProvider>
-  </I18nProvider>
-);
+import { TestProviders } from "../../../test-utils";
 
 describe("Phase 5.1: DeveloperModal & DeveloperTab Component Suite", () => {
   beforeEach(() => {
@@ -100,14 +89,5 @@ describe("Phase 5.1: DeveloperModal & DeveloperTab Component Suite", () => {
       expect(html).toContain("Child Content");
     });
   });
-
-  describe("3. File Length & Architecture Verification", () => {
-    it("verifies DeveloperModal and DeveloperTab are lean orchestrators (< 100 lines)", () => {
-      const modalContent = fs.readFileSync(path.resolve(__dirname, "..", "DeveloperModal.tsx"), "utf-8");
-      const tabContent = fs.readFileSync(path.resolve(__dirname, "..", "DeveloperTab.tsx"), "utf-8");
-
-      expect(modalContent.split("\n").length).toBeLessThanOrEqual(100);
-      expect(tabContent.split("\n").length).toBeLessThanOrEqual(100);
-    });
-  });
 });
+

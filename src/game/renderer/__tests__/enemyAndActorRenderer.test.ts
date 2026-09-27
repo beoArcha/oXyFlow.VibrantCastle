@@ -2,50 +2,7 @@ import { describe, it, expect } from "bun:test";
 import { EnemyRenderer } from "../enemyRenderer";
 import { ActorRenderer } from "../actorRenderer";
 import { Enemy, Player, PlayerId } from "../../types";
-
-function createMockContext() {
-  let saveCalls = 0;
-  let restoreCalls = 0;
-  let fillRectCalls: any[] = [];
-  let strokeRectCalls: any[] = [];
-  let arcCalls: any[] = [];
-
-  const ctx: any = {
-    save: () => {
-      saveCalls++;
-    },
-    restore: () => {
-      restoreCalls++;
-    },
-    translate: () => {},
-    scale: () => {},
-    rotate: () => {},
-    beginPath: () => {},
-    closePath: () => {},
-    moveTo: () => {},
-    lineTo: () => {},
-    arc: (x: number, y: number, r: number) => {
-      arcCalls.push({ x, y, r });
-    },
-    fillRect: (x: number, y: number, w: number, h: number) => {
-      fillRectCalls.push({ x, y, w, h });
-    },
-    strokeRect: (x: number, y: number, w: number, h: number) => {
-      strokeRectCalls.push({ x, y, w, h });
-    },
-    fill: () => {},
-    stroke: () => {},
-    drawImage: () => {},
-    fillStyle: "#000000",
-    strokeStyle: "#000000",
-    lineWidth: 1,
-    globalAlpha: 1.0,
-    getSaveBalance: () => saveCalls - restoreCalls,
-    getFillRectCalls: () => fillRectCalls,
-    getStrokeRectCalls: () => strokeRectCalls,
-  };
-  return ctx;
-}
+import { createMockContext2D as createMockContext } from "../../../test-utils";
 
 describe("Podfaza 5.2: EnemyRenderer & ActorRenderer Comprehensive Unit Tests", () => {
   describe("1. EnemyRenderer Logic & Branching", () => {

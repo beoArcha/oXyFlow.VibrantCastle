@@ -6,57 +6,7 @@ import { HitboxRenderer } from "../hitboxRenderer";
 import { GameRenderer } from "../renderer";
 import { getLocation } from "../../locations";
 import { Player, Enemy, Entity, Projectile, PlayerId, CollisionType } from "../../types";
-
-function createMockContext() {
-  let saveCalls = 0;
-  let restoreCalls = 0;
-  let linearGradCalls = 0;
-  let radialGradCalls = 0;
-
-  const ctx: any = {
-    canvas: { width: 1000, height: 625 },
-    save: () => {
-      saveCalls++;
-    },
-    restore: () => {
-      restoreCalls++;
-    },
-    scale: () => {},
-    translate: () => {},
-    beginPath: () => {},
-    closePath: () => {},
-    moveTo: () => {},
-    lineTo: () => {},
-    arc: () => {},
-    rect: () => {},
-    fillRect: () => {},
-    strokeRect: () => {},
-    fill: () => {},
-    stroke: () => {},
-    drawImage: () => {},
-    roundRect: () => {},
-    setLineDash: () => {},
-    fillText: () => {},
-    measureText: (txt: string) => ({ width: txt.length * 6 }),
-    createRadialGradient: () => {
-      radialGradCalls++;
-      return { addColorStop: () => {} };
-    },
-    createLinearGradient: () => {
-      linearGradCalls++;
-      return { addColorStop: () => {} };
-    },
-    fillStyle: "#000000",
-    strokeStyle: "#000000",
-    lineWidth: 1,
-    globalAlpha: 1.0,
-    getSaveBalance: () => saveCalls - restoreCalls,
-    getRadialGradientCount: () => radialGradCalls,
-    getLinearGradientCount: () => linearGradCalls,
-    getTotalGradientCount: () => linearGradCalls + radialGradCalls,
-  };
-  return ctx;
-}
+import { createMockContext2D as createMockContext } from "../../../test-utils";
 
 describe("Phase 4: MultiLayerBackgroundSystem Decomposition, AssetLoader & Profiler Suite", () => {
   describe("1. MultiLayerBackgroundSystem AssetLoader & Subsystem Integration", () => {

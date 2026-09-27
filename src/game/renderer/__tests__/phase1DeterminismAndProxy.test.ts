@@ -7,43 +7,14 @@ import { Entity, CollisionType } from "../../types";
 import { CameraState } from "../../engine/cameraManager";
 import { ParallaxLayerSchema } from "../../locations/schema/locationSchema";
 import gameEngine from "../../loop/engine";
-
-function createLightMockCanvas(): HTMLCanvasElement {
-  return {
-    getContext: () => ({
-      imageSmoothingEnabled: false,
-      save: () => {},
-      restore: () => {},
-      scale: () => {},
-      translate: () => {},
-      clearRect: () => {},
-      fillRect: () => {},
-      beginPath: () => {},
-      closePath: () => {},
-      moveTo: () => {},
-      lineTo: () => {},
-      arc: () => {},
-      ellipse: () => {},
-      fill: () => {},
-      stroke: () => {},
-      drawImage: () => {},
-      fillText: () => {},
-      measureText: () => ({ width: 40 }),
-      roundRect: () => {},
-      createLinearGradient: () => ({ addColorStop: () => {} }),
-      createRadialGradient: () => ({ addColorStop: () => {} }),
-    }),
-    width: 1000,
-    height: 625,
-  } as unknown as HTMLCanvasElement;
-}
+import { createMockCanvas } from "../../../test-utils";
 
 describe("Phase 1: Renderer Determinism, Schema Immutability & Proxy Elimination", () => {
   let mockCanvas: HTMLCanvasElement;
   let mockCamera: CameraState;
 
   beforeEach(() => {
-    mockCanvas = createLightMockCanvas();
+    mockCanvas = createMockCanvas().canvas;
     mockCamera = {
       x: 0,
       y: 0,
