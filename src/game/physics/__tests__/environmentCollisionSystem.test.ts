@@ -58,7 +58,7 @@ describe("EnvironmentCollisionSystem (SOLID & Zero Allocation)", () => {
           callbacks?.onLeverActivated?.(e.id);
         }
       },
-      registerStrategy: () => {},
+      registerStrategy: () => { },
     };
 
     context = {

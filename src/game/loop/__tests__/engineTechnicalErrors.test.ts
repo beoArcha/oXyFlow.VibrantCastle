@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { GameRenderer } from "../../renderer/renderer";
-import { LocationParser } from "../../locations/parser/locationParser";
-import { SpriteExtractorFactory } from "../../engine/extractors";
+import { GameRenderer } from "@game/renderer/renderer";
+import { LocationParser } from "@game/locations/parser/locationParser";
+import { SpriteExtractorFactory } from "@game/engine/extractors";
 import { LoopCircuitBreaker } from "../loopCircuitBreaker";
 import {
   AssetError,
@@ -9,8 +9,8 @@ import {
   ErrorCode,
   GameBaseError,
   ParserError,
-} from "../../../lib/errors";
-import { ILogger, LogLevel } from "../../../lib/logger";
+} from "@lib/errors";
+import { ILogger, LogLevel } from "@lib/logger";
 
 class MockLogger implements ILogger {
   public loggedRecords: Array<{ level: LogLevel; message: string; context?: Record<string, unknown>; error?: unknown }> = [];

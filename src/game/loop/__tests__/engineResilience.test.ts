@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { LoopCircuitBreaker } from "../loopCircuitBreaker";
 import { GameEngine } from "../engine";
-import { LoggerManager, LogLevel, ILogTransport, LogRecord } from "../../../lib/logger";
-import { gameSave } from "../../logic/save";
-import { statsManager } from "../../logic/stats";
+import { LoggerManager, LogLevel, ILogTransport, LogRecord } from "@lib/logger";
+import { gameSave } from "@game/logic/save";
+import { statsManager } from "@game/logic/stats";
 
 describe("GameEngine Error Resilience & Logging", () => {
   let records: LogRecord[] = [];
@@ -170,8 +170,8 @@ describe("GameEngine Error Resilience & Logging", () => {
       const origStorage = (globalThis as any).localStorage;
       const mockStorage = {
         getItem: () => "invalid-non-json{{{",
-        setItem: () => {},
-        removeItem: () => {},
+        setItem: () => { },
+        removeItem: () => { },
       };
       (globalThis as any).window = { localStorage: mockStorage };
       (globalThis as any).localStorage = mockStorage;
@@ -194,8 +194,8 @@ describe("GameEngine Error Resilience & Logging", () => {
       const origStorage = (globalThis as any).localStorage;
       const mockStorage = {
         getItem: () => "corrupt-json",
-        setItem: () => {},
-        removeItem: () => {},
+        setItem: () => { },
+        removeItem: () => { },
       };
       (globalThis as any).window = { localStorage: mockStorage };
       (globalThis as any).localStorage = mockStorage;
