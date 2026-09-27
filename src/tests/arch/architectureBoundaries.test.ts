@@ -101,5 +101,18 @@ describe("Architectural Boundary Rules (AGENT.md Sec. 1.1)", () => {
 
     expect(violations).toEqual([]);
   });
-});
 
+  it("enforces strict type checking and safety flags in tsconfig.json", () => {
+    const tsconfigPath = path.join(rootDir, "tsconfig.json");
+    expect(fs.existsSync(tsconfigPath)).toBe(true);
+
+    const rawContent = fs.readFileSync(tsconfigPath, "utf-8");
+    const sanitized = rawContent.replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "");
+    const tsconfig = JSON.parse(sanitized);
+
+    expect(tsconfig.compilerOptions).toBeDefined();
+    expect(tsconfig.compilerOptions.strict).toBe(true);
+    expect(tsconfig.compilerOptions.forceConsistentCasingInFileNames).toBe(true);
+    expect(tsconfig.compilerOptions.noFallthroughCasesInSwitch).toBe(true);
+  });
+});
