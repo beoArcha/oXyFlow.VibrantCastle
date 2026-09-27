@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
-import { PlayerId, InputMap } from "../game/types";
-import gameInputs from "../game/loop/input";
+import { PlayerId, InputMap } from "@game/types";
+import gameInputs from "@game/loop/input";
 
 export function useKeyboard(selectedPlayer: PlayerId) {
   const [refreshKey, setRefreshKey] = useState(0);

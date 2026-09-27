@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { PlayerId, GamepadBindingMap } from "../game/types";
-import gameInputs, { ConnectedGamepadInfo } from "../game/loop/input";
+import { PlayerId, GamepadBindingMap } from "@game/types";
+import gameInputs, { ConnectedGamepadInfo } from "@game/loop/input";
 
 export function useGamepad(selectedPlayer: PlayerId) {
   const [connectedPads, setConnectedPads] = useState<ConnectedGamepadInfo[]>([]);

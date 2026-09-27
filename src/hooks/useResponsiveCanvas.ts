@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState, useCallback } from "react";
-import { DisplaySettings } from "../game/types";
-import gameEngine from "../game/loop/engine";
+import { DisplaySettings } from "@game/types";
+import gameEngine from "@game/loop/engine";
 
 export interface ResponsiveCanvasResult {
   containerRef: React.RefObject<HTMLDivElement | null>;

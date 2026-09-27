@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { PlayerId, KeyAction } from "../game/types";
+import { PlayerId, KeyAction } from "@game/types";
 
 export type ActiveModal = "none" | "menu" | "help" | "inventory" | "skillTree" | "creation" | "rebindKey";
 
