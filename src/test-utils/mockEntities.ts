@@ -5,8 +5,8 @@ import {
   PlayerId,
   AnimationState,
   CollisionType,
-} from "../game/types";
-import { createDefaultInventory } from "../game/logic/inventory";
+} from "@game/types";
+import { createDefaultInventory } from "@game/logic/inventory";
 
 export function createMockPlayer(overrides: Partial<Player> = {}): Player {
   return {

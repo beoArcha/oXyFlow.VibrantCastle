@@ -1,7 +1,7 @@
 import { describe, it, expect } from "bun:test";
 import fs from "fs";
 import path from "path";
-import { IAtlasManifest } from "../../game/engine/meta/registry/types";
+import { IAtlasManifest } from "@game/engine/meta/registry/types";
 
 describe("Asset Integrity & Schema Contracts", () => {
   const rootDir = process.cwd();
