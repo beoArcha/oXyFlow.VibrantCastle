@@ -1,5 +1,4 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
-import React from "react";
 import { renderToString } from "react-dom/server";
 import { LogsSubTab } from "../subtabs/LogsSubTab";
 import {
@@ -8,8 +7,8 @@ import {
   LogsTerminalList,
   LogItemDrawer,
 } from "../subtabs/logs";
-import { LoggerManager, LogLevel, LogRecord } from "../../../lib/logger";
-import { TestProviders, setupDomEnvironment, renderIntoDom, cleanupDom } from "../../../test-utils";
+import { LoggerManager, LogLevel, LogRecord } from "@/lib/logger";
+import { TestProviders, setupDomEnvironment, renderIntoDom, cleanupDom } from "@test-utils";
 
 describe("LogsSubTab & Terminal Subcomponents", () => {
   beforeEach(() => {
@@ -46,10 +45,10 @@ describe("LogsSubTab & Terminal Subcomponents", () => {
             filteredCount={42}
             autoScroll={true}
             copied={false}
-            onToggleAutoScroll={() => {}}
-            onCopyLogs={() => {}}
-            onDownloadLogs={() => {}}
-            onClearLogs={() => {}}
+            onToggleAutoScroll={() => { }}
+            onCopyLogs={() => { }}
+            onDownloadLogs={() => { }}
+            onClearLogs={() => { }}
           />
         </TestProviders>
       );
@@ -63,15 +62,15 @@ describe("LogsSubTab & Terminal Subcomponents", () => {
         <TestProviders>
           <LogsFilterControls
             searchQuery="player"
-            onSearchQueryChange={() => {}}
+            onSearchQueryChange={() => { }}
             levelFilter="all"
-            onLevelFilterChange={() => {}}
+            onLevelFilterChange={() => { }}
             categoryFilter="all"
-            onCategoryFilterChange={() => {}}
+            onCategoryFilterChange={() => { }}
             counts={{ fatal: 0, error: 2, warn: 3, info: 10, debug: 20, total: 35 }}
             availableCategories={["Engine", "Physics", "Combat", "Audio"]}
             globalLogLevel={LogLevel.DEBUG}
-            onChangeGlobalLevel={() => {}}
+            onChangeGlobalLevel={() => { }}
           />
         </TestProviders>
       );
@@ -108,7 +107,7 @@ describe("LogsSubTab & Terminal Subcomponents", () => {
           <LogsTerminalList
             logs={mockRecords}
             expandedLogIds={new Set(["log_1"])}
-            onToggleExpand={() => {}}
+            onToggleExpand={() => { }}
             scrollContainerRef={{ current: null }}
             hasSearchQuery={false}
           />
@@ -123,7 +122,7 @@ describe("LogsSubTab & Terminal Subcomponents", () => {
           <LogsTerminalList
             logs={[]}
             expandedLogIds={new Set()}
-            onToggleExpand={() => {}}
+            onToggleExpand={() => { }}
             scrollContainerRef={{ current: null }}
             hasSearchQuery={false}
           />
@@ -164,7 +163,7 @@ describe("LogsSubTab & Terminal Subcomponents", () => {
           copied={false}
           onToggleAutoScroll={() => { autoScrollToggled = true; }}
           onCopyLogs={() => { logsCopied = true; }}
-          onDownloadLogs={() => {}}
+          onDownloadLogs={() => { }}
           onClearLogs={() => { logsCleared = true; }}
         />
       );
@@ -198,11 +197,11 @@ describe("LogsSubTab & Terminal Subcomponents", () => {
           levelFilter="all"
           onLevelFilterChange={(lvl) => { changedLevel = lvl; }}
           categoryFilter="all"
-          onCategoryFilterChange={() => {}}
+          onCategoryFilterChange={() => { }}
           counts={{ fatal: 0, error: 3, warn: 5, info: 12, debug: 15, total: 35 }}
           availableCategories={["Engine", "Physics"]}
           globalLogLevel={LogLevel.DEBUG}
-          onChangeGlobalLevel={() => {}}
+          onChangeGlobalLevel={() => { }}
         />
       );
 

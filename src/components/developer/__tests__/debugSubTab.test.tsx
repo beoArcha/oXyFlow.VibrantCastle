@@ -6,9 +6,8 @@ import { DebugTelemetryCard } from "../subtabs/debug/DebugTelemetryCard";
 import { DebugPlayerInspectorCard } from "../subtabs/debug/DebugPlayerInspectorCard";
 import { DebugEntityTableCard } from "../subtabs/debug/DebugEntityTableCard";
 import { DebugStateDumpCard } from "../subtabs/debug/DebugStateDumpCard";
-import { LoggerManager, LogLevel } from "../../../lib/logger";
-import { TestProviders, setupDomEnvironment, renderIntoDom, cleanupDom } from "../../../test-utils";
-import gameEngine from "../../../game/loop/engine";
+import { LoggerManager, LogLevel } from "@/lib/logger";
+import { TestProviders, setupDomEnvironment, renderIntoDom, cleanupDom } from "@test-utils";
 
 describe("DebugSubTab & Telemetry Cards", () => {
   beforeEach(() => {
@@ -105,7 +104,7 @@ describe("DebugSubTab & Telemetry Cards", () => {
         <TestProviders>
           <DebugEntityTableCard
             enemies={mockEnemies as any}
-            onActionComplete={() => {}}
+            onActionComplete={() => { }}
           />
         </TestProviders>
       );

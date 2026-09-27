@@ -4,7 +4,7 @@ import { DeveloperModal } from "../DeveloperModal";
 import { DeveloperTab } from "../DeveloperTab";
 import { DeveloperTabLayout } from "../DeveloperTabLayout";
 import { LoggerManager, LogLevel } from "@lib/logger";
-import { renderIntoDom, cleanupDom } from "../../../test-utils";
+import { renderIntoDom, cleanupDom } from "@test-utils";
 
 describe("DeveloperModal & DeveloperTab Behavioral DOM Interaction", () => {
   beforeEach(() => {

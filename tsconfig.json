@@ -40,11 +40,20 @@
       "@hooks/*": [
         "./src/hooks/*"
       ],
+      "@i18n/*": [
+        "./src/i18n/*"
+      ],
+      "@i18n": [
+        "./src/i18n/index.ts"
+      ],
       "@styles/*": [
         "./src/styles/*"
       ],
       "@test-utils/*": [
         "./src/test-utils/*"
+      ],
+      "@test-utils": [
+        "./src/test-utils/index.ts"
       ],
       "@types/*": [
         "./src/types/*"

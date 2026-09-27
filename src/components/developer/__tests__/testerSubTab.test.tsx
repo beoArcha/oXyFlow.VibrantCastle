@@ -1,5 +1,4 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
-import React from "react";
 import { renderToString } from "react-dom/server";
 import { TesterSubTab } from "../subtabs/TesterSubTab";
 import {
@@ -12,8 +11,8 @@ import {
   LOCATION_IDS,
   MONSTER_ID_LIST,
 } from "../subtabs/tester";
-import { LoggerManager, LogLevel } from "../../../lib/logger";
-import { TestProviders, setupDomEnvironment, renderIntoDom, cleanupDom } from "../../../test-utils";
+import { LoggerManager, LogLevel } from "@lib/logger";
+import { TestProviders, setupDomEnvironment, renderIntoDom, cleanupDom } from "@test-utils";
 
 describe("TesterSubTab & Interaction Domain Cards", () => {
   beforeEach(() => {
@@ -43,8 +42,8 @@ describe("TesterSubTab & Interaction Domain Cards", () => {
 
   describe("Individual Tester Cards Verification", () => {
     it("renders TesterTeleportCard with predefined location options", () => {
-      const onLoadLocation = () => {};
-      const onToggleClickToTeleport = () => {};
+      const onLoadLocation = () => { };
+      const onToggleClickToTeleport = () => { };
 
       const html = renderToString(
         <TestProviders>
@@ -73,12 +72,12 @@ describe("TesterSubTab & Interaction Domain Cards", () => {
             infiniteMana={true}
             infiniteStamina={false}
             noClip={false}
-            onToggleGodMode={() => {}}
-            onToggleInfiniteMana={() => {}}
-            onToggleInfiniteStamina={() => {}}
-            onToggleNoClip={() => {}}
-            onSetPlayerHp={() => {}}
-            onRefillVitals={() => {}}
+            onToggleGodMode={() => { }}
+            onToggleInfiniteMana={() => { }}
+            onToggleInfiniteStamina={() => { }}
+            onToggleNoClip={() => { }}
+            onSetPlayerHp={() => { }}
+            onRefillVitals={() => { }}
           />
         </TestProviders>
       );
@@ -92,11 +91,11 @@ describe("TesterSubTab & Interaction Domain Cards", () => {
       const html = renderToString(
         <TestProviders>
           <TesterInventoryCard
-            onGiveAllWeapons={() => {}}
-            onUnlockAllSkills={() => {}}
-            onGivePotions={() => {}}
-            onClearInventory={() => {}}
-            onAddGold={() => {}}
+            onGiveAllWeapons={() => { }}
+            onUnlockAllSkills={() => { }}
+            onGivePotions={() => { }}
+            onClearInventory={() => { }}
+            onAddGold={() => { }}
           />
         </TestProviders>
       );
@@ -106,17 +105,17 @@ describe("TesterSubTab & Interaction Domain Cards", () => {
     });
 
     it("renders TesterCombatCard with monster spawn options and kill button", () => {
-      const onKillAllEnemies = () => {};
-      const onSpawnMonster = () => {};
+      const onKillAllEnemies = () => { };
+      const onSpawnMonster = () => { };
 
       const html = renderToString(
         <TestProviders>
           <TesterCombatCard
             freezeAI={false}
-            onToggleFreezeAI={() => {}}
+            onToggleFreezeAI={() => { }}
             onKillAllEnemies={onKillAllEnemies}
-            onForceVictory={() => {}}
-            onForceDefeat={() => {}}
+            onForceVictory={() => { }}
+            onForceDefeat={() => { }}
             onSpawnEnemy={onSpawnMonster}
           />
         </TestProviders>
@@ -134,10 +133,10 @@ describe("TesterSubTab & Interaction Domain Cards", () => {
             timeScale={1.0}
             showHitboxes={true}
             showProfiler={false}
-            onSetTimeScale={() => {}}
-            onStepSingleFrame={() => {}}
-            onToggleHitboxes={() => {}}
-            onToggleProfiler={() => {}}
+            onSetTimeScale={() => { }}
+            onStepSingleFrame={() => { }}
+            onToggleHitboxes={() => { }}
+            onToggleProfiler={() => { }}
           />
         </TestProviders>
       );
@@ -158,9 +157,9 @@ describe("TesterSubTab & Interaction Domain Cards", () => {
               mid_close: false,
               close: true,
             }}
-            onToggleParallaxTier={() => {}}
-            onSetMusicIntensity={() => {}}
-            onTriggerParticleBurst={() => {}}
+            onToggleParallaxTier={() => { }}
+            onSetMusicIntensity={() => { }}
+            onTriggerParticleBurst={() => { }}
           />
         </TestProviders>
       );
@@ -184,9 +183,9 @@ describe("TesterSubTab & Interaction Domain Cards", () => {
           infiniteStamina={false}
           noClip={false}
           onToggleGodMode={() => { godModeToggled = true; }}
-          onToggleInfiniteMana={() => {}}
-          onToggleInfiniteStamina={() => {}}
-          onToggleNoClip={() => {}}
+          onToggleInfiniteMana={() => { }}
+          onToggleInfiniteStamina={() => { }}
+          onToggleNoClip={() => { }}
           onSetPlayerHp={(val) => { hpSet = val; }}
           onRefillVitals={() => { vitalsRefilled = true; }}
         />
@@ -220,8 +219,8 @@ describe("TesterSubTab & Interaction Domain Cards", () => {
           freezeAI={false}
           onToggleFreezeAI={() => { aiFrozen = true; }}
           onKillAllEnemies={() => { enemiesKilled = true; }}
-          onForceVictory={() => {}}
-          onForceDefeat={() => {}}
+          onForceVictory={() => { }}
+          onForceDefeat={() => { }}
           onSpawnEnemy={(enemyId) => { spawnedMonster = enemyId; }}
         />
       );
@@ -261,8 +260,8 @@ describe("TesterSubTab & Interaction Domain Cards", () => {
           showProfiler={false}
           onSetTimeScale={(s) => { selectedScale = s; }}
           onStepSingleFrame={() => { frameStepped = true; }}
-          onToggleHitboxes={() => {}}
-          onToggleProfiler={() => {}}
+          onToggleHitboxes={() => { }}
+          onToggleProfiler={() => { }}
         />
       );
 
