@@ -1,6 +1,6 @@
 import { describe, it, expect } from "bun:test";
-import { settingsTranslations } from "@/game/i18n/modules/settings";
-import { hudTranslations } from "@/game/i18n/modules/hud";
+import { settingsTranslations } from "@i18n/modules/settings";
+import { hudTranslations } from "@i18n/modules/hud";
 
 describe("Atlas Studio Layout Translations (i18n)", () => {
   it("verifies modal maximize and restore translations in both languages", () => {

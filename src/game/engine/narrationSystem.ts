@@ -1,4 +1,4 @@
-import { translations } from "../i18n";
+import { translations } from "@i18n";
 
 export interface INarrationSystem {
   trigger(key: string, language: "pl" | "en"): boolean;

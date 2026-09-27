@@ -1,4 +1,4 @@
-import type { GameTranslationDictionary } from "./i18n/types";
+import type { GameTranslationDictionary } from "@i18n/types";
 import type { GameSessionStats } from "./logic/stats";
 
 /**

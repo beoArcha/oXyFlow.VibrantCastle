@@ -20,31 +20,42 @@ function getAllSourceFiles(dir: string, extensionRegex = /\.(ts|tsx)$/): string[
   return results;
 }
 
+function findImportViolations(
+  files: string[],
+  forbiddenPattern: RegExp,
+  rootDir: string
+): { file: string; line: string }[] {
+  const violations: { file: string; line: string }[] = [];
+
+  for (const file of files) {
+    const content = fs.readFileSync(file, "utf-8");
+    const lines = content.split("\n");
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (forbiddenPattern.test(line)) {
+        violations.push({
+          file: path.relative(rootDir, file).replace(/\\/g, "/"),
+          line: line.trim(),
+        });
+      }
+    }
+  }
+
+  return violations;
+}
+
 describe("Architectural Boundary Rules (AGENT.md Sec. 1.1)", () => {
   const rootDir = process.cwd();
   const gameDir = path.join(rootDir, "src", "game");
   const physicsDir = path.join(gameDir, "physics");
+  const i18nDir = path.join(rootDir, "src", "i18n");
+  const srcDir = path.join(rootDir, "src");
 
   it("ensures zero production files in src/game import from UI components", () => {
     const gameFiles = getAllSourceFiles(gameDir).filter((file) => !file.includes("__tests__"));
     const forbiddenPattern = /from\s+["'](@\/components|\.\.?\/.*components|\/components)/;
-
-    const violations: { file: string; line: string }[] = [];
-
-    for (const file of gameFiles) {
-      const content = fs.readFileSync(file, "utf-8");
-      const lines = content.split("\n");
-
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        if (forbiddenPattern.test(line)) {
-          violations.push({
-            file: path.relative(rootDir, file).replace(/\\/g, "/"),
-            line: line.trim(),
-          });
-        }
-      }
-    }
+    const violations = findImportViolations(gameFiles, forbiddenPattern, rootDir);
 
     expect(violations).toEqual([]);
   });
@@ -52,23 +63,7 @@ describe("Architectural Boundary Rules (AGENT.md Sec. 1.1)", () => {
   it("ensures zero production files in src/game import from React Context", () => {
     const gameFiles = getAllSourceFiles(gameDir).filter((file) => !file.includes("__tests__"));
     const forbiddenPattern = /from\s+["'](@\/context|\.\.?\/.*context)/;
-
-    const violations: { file: string; line: string }[] = [];
-
-    for (const file of gameFiles) {
-      const content = fs.readFileSync(file, "utf-8");
-      const lines = content.split("\n");
-
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        if (forbiddenPattern.test(line)) {
-          violations.push({
-            file: path.relative(rootDir, file).replace(/\\/g, "/"),
-            line: line.trim(),
-          });
-        }
-      }
-    }
+    const violations = findImportViolations(gameFiles, forbiddenPattern, rootDir);
 
     expect(violations).toEqual([]);
   });
@@ -76,23 +71,7 @@ describe("Architectural Boundary Rules (AGENT.md Sec. 1.1)", () => {
   it("ensures physics domain is decoupled from game engine orchestrator and renderer", () => {
     const physicsFiles = getAllSourceFiles(physicsDir).filter((file) => !file.includes("__tests__"));
     const forbiddenPattern = /from\s+["'].*(loop\/engine|renderer|components).*["']/;
-
-    const violations: { file: string; line: string }[] = [];
-
-    for (const file of physicsFiles) {
-      const content = fs.readFileSync(file, "utf-8");
-      const lines = content.split("\n");
-
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        if (forbiddenPattern.test(line)) {
-          violations.push({
-            file: path.relative(rootDir, file).replace(/\\/g, "/"),
-            line: line.trim(),
-          });
-        }
-      }
-    }
+    const violations = findImportViolations(physicsFiles, forbiddenPattern, rootDir);
 
     expect(violations).toEqual([]);
   });
@@ -106,4 +85,21 @@ describe("Architectural Boundary Rules (AGENT.md Sec. 1.1)", () => {
     expect(content).not.toContain("from 'react'");
     expect(content).not.toContain("React.");
   });
+
+  it("ensures i18n horizontal domain has zero dependencies on game engine, UI components, or React context", () => {
+    const i18nFiles = getAllSourceFiles(i18nDir).filter((file) => !file.includes("__tests__"));
+    const forbiddenPattern = /from\s+["'](react|react-dom|@\/game|@game|\.\.?\/.*game|@\/components|@components|\.\.?\/.*components|@\/context|@context|\.\.?\/.*context)/;
+    const violations = findImportViolations(i18nFiles, forbiddenPattern, rootDir);
+
+    expect(violations).toEqual([]);
+  });
+
+  it("ensures zero files in src import from obsolete game/i18n directory", () => {
+    const allSrcFiles = getAllSourceFiles(srcDir);
+    const obsoletePattern = /(from|import)\s*\(?["'].*game\/i18n/;
+    const violations = findImportViolations(allSrcFiles, obsoletePattern, rootDir);
+
+    expect(violations).toEqual([]);
+  });
 });
+

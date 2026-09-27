@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useMemo } from "react";
-import { LanguageCode, GameTranslationDictionary, translations, t as translateFn, getDomainI18n } from "../game/i18n";
+import { LanguageCode, GameTranslationDictionary, translations, t as translateFn, getDomainI18n } from "@i18n";
 import gameEngine from "../game/loop/engine";
 import { useEngineSubscription } from "./useEngineSubscription";
 import { MissingContextProviderError } from "../lib/errors";

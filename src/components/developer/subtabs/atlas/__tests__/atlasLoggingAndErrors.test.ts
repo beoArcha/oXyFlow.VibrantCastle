@@ -3,7 +3,7 @@ import { defaultAtlasSlicingEngine } from "@/game/engine/meta/slicing/AtlasSlici
 import { AutoIslandSlicingStrategy } from "@/game/engine/meta/slicing/AutoIslandSlicingStrategy";
 import { LoggerManager, LogLevel } from "@/lib/logger";
 import { AssetError, ParserError, ErrorCode, GameBaseError } from "@/lib/errors";
-import { settingsTranslations } from "@/game/i18n/modules/settings";
+import { settingsTranslations } from "@i18n/modules/settings";
 
 describe("Atlas Studio - Logging & Domain Error Architecture", () => {
   beforeEach(() => {

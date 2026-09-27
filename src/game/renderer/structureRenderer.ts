@@ -1,5 +1,5 @@
 import { Entity, CollisionType } from "../types";
-import { LanguageCode, t } from "../i18n";
+import { LanguageCode, t } from "@i18n";
 import { IAtlasSpriteRenderer, defaultAtlasSpriteRenderer } from "./atlasSpriteRenderer";
 
 export interface IStructureRenderer {

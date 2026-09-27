@@ -2,7 +2,7 @@ import { Player, Enemy, Entity, Particle, Projectile, AssetQuality } from "../ty
 import { assetLoader } from "../engine/assetLoader";
 import { CameraState } from "../engine/cameraManager";
 import { LocationDefinition } from "../locations/types";
-import { LanguageCode } from "../i18n";
+import { LanguageCode } from "@i18n";
 import { ParallaxRenderer } from "./parallaxRenderer";
 import {
   IStructureRenderer,
