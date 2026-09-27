@@ -15,12 +15,12 @@ import {
   HardDrive,
   CheckCircle2,
 } from "lucide-react";
-import { statsManager } from "../../game/logic/stats";
-import { Card, CardHeader, CardTitle, CardContent, StatRow, Button, Badge, ProgressBar } from "../ui";
-import { useI18n } from "../../hooks/useI18n";
-import { useSettings, useGameSession, useSaveGame } from "../../hooks/useGame";
-import { ITEM_REGISTRY } from "../../game/logic/inventory";
-import { SPELL_REGISTRY } from "../../game/logic/magic";
+import { statsManager } from "@game/logic/stats";
+import { Card, CardHeader, CardTitle, CardContent, StatRow, Button, Badge, ProgressBar } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
+import { useSettings, useGameSession, useSaveGame } from "@hooks/useGame";
+import { ITEM_REGISTRY } from "@game/logic/inventory";
+import { SPELL_REGISTRY } from "@game/logic/magic";
 
 export const StatsPanel: React.FC = () => {
   const { t } = useI18n();

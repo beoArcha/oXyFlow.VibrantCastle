@@ -1,10 +1,10 @@
 import React from "react";
-import { PlayerId } from "../../game/types";
-import gameInputs from "../../game/loop/input";
-import { KbdKey, Badge } from "../ui";
-import { useI18n } from "../../hooks/useI18n";
+import { PlayerId } from "@game/types";
+import gameInputs from "@game/loop/input";
+import { KbdKey, Badge } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
 import { formatKeyLabel } from "./types";
-import { cn } from "../../lib/utils";
+import { cn } from "@lib/utils";
 
 export interface HelpControlsCardProps {
   playerId: PlayerId;
@@ -35,7 +35,7 @@ export const HelpControlsCard: React.FC<HelpControlsCardProps> = ({
   const borderColor = isCrimson ? "border-red-900/60" : "border-cyan-900/60";
   const headerBorder = isCrimson ? "border-red-950" : "border-cyan-950";
   const titleColor = isCrimson ? "text-red-400" : "text-cyan-400";
-  
+
   type KeyVariant = "amber" | "cyan" | "purple" | "stone";
   const keyVariant: KeyVariant = isCrimson ? "amber" : "cyan";
   const defaultMoveVariant: KeyVariant = isCrimson ? "stone" : "cyan";

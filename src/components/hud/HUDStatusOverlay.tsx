@@ -1,7 +1,7 @@
 import React from "react";
 import { Pause, Play, HelpCircle, Menu as MenuIcon, ArrowRight, RotateCcw, Backpack, BookOpen } from "lucide-react";
-import { Button } from "../ui";
-import { useI18n } from "../../hooks/useI18n";
+import { Button } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
 import { HUDStatusOverlayProps } from "./types";
 
 /**

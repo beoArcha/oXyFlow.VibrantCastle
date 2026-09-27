@@ -8,13 +8,13 @@ import {
   MapPin,
   BarChart3,
 } from "lucide-react";
-import { PlayerId, InputMap } from "../../game/types";
+import { PlayerId, InputMap } from "@game/types";
 import { Tabs } from "../ui";
 import KeyboardMapper from "../controls/KeyboardMapper";
 import GamepadMapper from "../controls/GamepadMapper";
 import StatsPanel from "./StatsPanel";
 import { GameplayTab, LocationsTab, DisplayTab, AudioTab } from "./tabs";
-import { useI18n } from "../../hooks/useI18n";
+import { useI18n } from "@hooks/useI18n";
 
 export interface MenuPanelProps {
   onStartRebind?: (action: keyof InputMap, player: PlayerId, label: string) => void;

@@ -2,8 +2,8 @@ import React from "react";
 import { Backpack as BackpackIcon, Shield, Sparkles } from "lucide-react";
 import { Modal, ModalNavigationTabs, ModalType, Card, CardHeader, CardTitle, CardContent, LanguageSelector } from "../ui";
 import { CharacterPortrait } from "../character";
-import { useGameSession, useSettings, useInventory } from "../../hooks/useGame";
-import { useI18n } from "../../hooks/useI18n";
+import { useGameSession, useSettings, useInventory } from "@hooks/useGame";
+import { useI18n } from "@hooks/useI18n";
 import { useInventorySelection } from "./useInventorySelection";
 
 import { InventoryPlayerTabs } from "./InventoryPlayerTabs";

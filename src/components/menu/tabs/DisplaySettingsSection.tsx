@@ -13,11 +13,11 @@ import {
   Flame,
   Cpu,
 } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "../../ui";
-import { useSettings } from "../../../hooks/useGame";
-import { useI18n } from "../../../hooks/useI18n";
-import { AspectRatioMode, ScalingFilterMode, TargetFps, AssetQuality } from "../../../game/types";
-import { cn } from "../../../lib/utils";
+import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@components/ui";
+import { useSettings } from "@hooks/useGame";
+import { useI18n } from "@hooks/useI18n";
+import { AspectRatioMode, ScalingFilterMode, TargetFps, AssetQuality } from "@game/types";
+import { cn } from "@lib/utils";
 
 export const DisplaySettingsSection: React.FC = () => {
   const { displaySettings, setDisplaySettings } = useSettings();
@@ -51,48 +51,48 @@ export const DisplaySettingsSection: React.FC = () => {
     subLabel: string;
     icon: React.ReactNode;
   }> = [
-    {
-      id: "auto",
-      label: t("aspectRatioAutoFill"),
-      subLabel: t("aspectRatioAutoFillDesc"),
-      icon: <Maximize2 size={15} />,
-    },
-    {
-      id: "16:9",
-      label: "16:9",
-      subLabel: t("aspectRatio169Desc"),
-      icon: <Tv size={15} />,
-    },
-    {
-      id: "16:10",
-      label: "16:10",
-      subLabel: t("aspectRatio1610Desc"),
-      icon: <Monitor size={15} />,
-    },
-    {
-      id: "4:3",
-      label: "4:3",
-      subLabel: t("aspectRatio43Desc"),
-      icon: <Layers size={15} />,
-    },
-  ];
+      {
+        id: "auto",
+        label: t("aspectRatioAutoFill"),
+        subLabel: t("aspectRatioAutoFillDesc"),
+        icon: <Maximize2 size={15} />,
+      },
+      {
+        id: "16:9",
+        label: "16:9",
+        subLabel: t("aspectRatio169Desc"),
+        icon: <Tv size={15} />,
+      },
+      {
+        id: "16:10",
+        label: "16:10",
+        subLabel: t("aspectRatio1610Desc"),
+        icon: <Monitor size={15} />,
+      },
+      {
+        id: "4:3",
+        label: "4:3",
+        subLabel: t("aspectRatio43Desc"),
+        icon: <Layers size={15} />,
+      },
+    ];
 
   const scalingModes: Array<{
     id: ScalingFilterMode;
     title: string;
     desc: string;
   }> = [
-    {
-      id: "pixel",
-      title: t("scalingPixelTitle"),
-      desc: t("scalingPixelDesc"),
-    },
-    {
-      id: "smooth",
-      title: t("scalingSmoothTitle"),
-      desc: t("scalingSmoothDesc"),
-    },
-  ];
+      {
+        id: "pixel",
+        title: t("scalingPixelTitle"),
+        desc: t("scalingPixelDesc"),
+      },
+      {
+        id: "smooth",
+        title: t("scalingSmoothTitle"),
+        desc: t("scalingSmoothDesc"),
+      },
+    ];
 
   const fpsTargets: Array<{
     fps: TargetFps;
@@ -100,11 +100,11 @@ export const DisplaySettingsSection: React.FC = () => {
     frameTime: string;
     multiplier: string;
   }> = [
-    { fps: 30, step: 2, frameTime: "33.3ms", multiplier: "2.00x" },
-    { fps: 60, step: 4, frameTime: "16.6ms", multiplier: "1.00x" },
-    { fps: 90, step: 6, frameTime: "11.1ms", multiplier: "0.67x" },
-    { fps: 120, step: 8, frameTime: "8.3ms", multiplier: "0.50x" },
-  ];
+      { fps: 30, step: 2, frameTime: "33.3ms", multiplier: "2.00x" },
+      { fps: 60, step: 4, frameTime: "16.6ms", multiplier: "1.00x" },
+      { fps: 90, step: 6, frameTime: "11.1ms", multiplier: "0.67x" },
+      { fps: 120, step: 8, frameTime: "8.3ms", multiplier: "0.50x" },
+    ];
 
   const assetQualities: Array<{
     id: AssetQuality;
@@ -112,25 +112,25 @@ export const DisplaySettingsSection: React.FC = () => {
     tierTag: string;
     descKey: string;
   }> = [
-    {
-      id: "low",
-      title: t("assetQualityLow"),
-      tierTag: "16-Bit Classic (36×52)",
-      descKey: "assetQualityLowDesc",
-    },
-    {
-      id: "mid",
-      title: t("assetQualityMid"),
-      tierTag: "16-Bit Mobile HD (52×66)",
-      descKey: "assetQualityMidDesc",
-    },
-    {
-      id: "high",
-      title: t("assetQualityHigh"),
-      tierTag: "HiPixel Masterclass (72×84)",
-      descKey: "assetQualityHighDesc",
-    },
-  ];
+      {
+        id: "low",
+        title: t("assetQualityLow"),
+        tierTag: "16-Bit Classic (36×52)",
+        descKey: "assetQualityLowDesc",
+      },
+      {
+        id: "mid",
+        title: t("assetQualityMid"),
+        tierTag: "16-Bit Mobile HD (52×66)",
+        descKey: "assetQualityMidDesc",
+      },
+      {
+        id: "high",
+        title: t("assetQualityHigh"),
+        tierTag: "HiPixel Masterclass (72×84)",
+        descKey: "assetQualityHighDesc",
+      },
+    ];
 
   return (
     <>

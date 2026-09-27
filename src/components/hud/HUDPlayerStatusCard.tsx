@@ -1,10 +1,10 @@
 import React from "react";
 import { Heart, Sparkles, Zap } from "lucide-react";
-import { ProgressBar, Badge } from "../ui";
-import { CharacterPortrait } from "../character";
-import { useI18n } from "../../hooks/useI18n";
+import { ProgressBar, Badge } from "@components/ui";
+import { CharacterPortrait } from "@components/character";
+import { useI18n } from "@hooks/useI18n";
 import { HUDPlayerStatusCardProps } from "./types";
-import { cn } from "../../lib/utils";
+import { cn } from "@lib/utils";
 
 /**
  * Generic Player Status Card for HUD (supports both P1 Valen and P2 Aurelia).

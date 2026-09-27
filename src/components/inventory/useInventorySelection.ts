@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Item, EquipmentState, InventoryState } from "../../game/types";
+import { Item, EquipmentState, InventoryState } from "@game/types";
 
 export interface InventorySelectionState {
   selectedItem: Item | null;

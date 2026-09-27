@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { RotateCcw, Check } from "lucide-react";
-import { Button } from "../../ui";
-import { useSettings } from "../../../hooks/useGame";
-import { useI18n } from "../../../hooks/useI18n";
-import { DEFAULT_SETTINGS } from "../../../context/settingsTypes";
+import { Button } from "@components/ui";
+import { useSettings } from "@hooks/useGame";
+import { useI18n } from "@hooks/useI18n";
+import { DEFAULT_SETTINGS } from "@context/settingsTypes";
 import { DisplaySettingsSection } from "./DisplaySettingsSection";
 import { CharacterStudioSection } from "./CharacterStudioSection";
 

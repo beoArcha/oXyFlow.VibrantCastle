@@ -1,4 +1,4 @@
-import { ICharacterIdentity, IVitalResources, InventoryState, MagicSkill } from "../../game/types";
+import { ICharacterIdentity, IVitalResources, InventoryState, MagicSkill } from "@game/types";
 
 export interface HUDOverlayProps {
   onOpenInventory: () => void;

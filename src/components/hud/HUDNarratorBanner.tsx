@@ -1,8 +1,8 @@
 import React from "react";
 import { Sparkles } from "lucide-react";
-import { useI18n } from "../../hooks/useI18n";
+import { useI18n } from "@hooks/useI18n";
 import { HUDNarratorBannerProps } from "./types";
-import { cn } from "../../lib/utils";
+import { cn } from "@lib/utils";
 
 /**
  * Bastion-style narrator subtitle card displayed at the bottom of the HUD.

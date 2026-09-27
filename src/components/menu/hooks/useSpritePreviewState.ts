@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AnimationName } from "../../../game/engine/spriteTypes";
+import { AnimationName } from "@game/engine/spriteTypes";
 
 export interface SpritePreviewState {
   previewCharacter: "valen" | "aurelia";

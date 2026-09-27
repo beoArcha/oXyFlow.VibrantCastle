@@ -1,7 +1,7 @@
 import React from "react";
-import { Item } from "../../game/types";
-import { ItemSlot, Button } from "../ui";
-import { useI18n } from "../../hooks/useI18n";
+import { Item } from "@game/types";
+import { ItemSlot, Button } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
 
 export interface InventoryQuickBeltProps {
   quickPotions: (Item | null)[];

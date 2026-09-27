@@ -1,7 +1,7 @@
 import React from "react";
 import { Sword, Shield, Heart, Sparkles, Zap } from "lucide-react";
-import { StatRow } from "../ui";
-import { useI18n } from "../../hooks/useI18n";
+import { StatRow } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
 
 export interface InventoryStatsProps {
   currentHp: number;

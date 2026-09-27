@@ -1,7 +1,7 @@
 import React from "react";
 import { Swords, Gamepad2 } from "lucide-react";
-import { PlayerId } from "../../game/types";
-import { useI18n } from "../../hooks/useI18n";
+import { PlayerId } from "@game/types";
+import { useI18n } from "@hooks/useI18n";
 import { HelpControlsCard } from "./HelpControlsCard";
 
 export interface HelpControlsSectionProps {

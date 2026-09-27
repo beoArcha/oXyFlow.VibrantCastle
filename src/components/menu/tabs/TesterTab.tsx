@@ -23,13 +23,13 @@ import {
   Coins,
   StepForward,
 } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "../../ui";
-import { useGameSession } from "../../../hooks/useGame";
-import { useI18n } from "../../../hooks/useI18n";
-import { debugManager } from "../../../game/debug/debugManager";
-import gameEngine from "../../../game/loop/engine";
-import { LocationId, PlayerId } from "../../../game/types";
-import { BackgroundLayerTier } from "../../../game/locations/schema/locationSchema";
+import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@components/ui";
+import { useGameSession } from "@hooks/useGame";
+import { useI18n } from "@hooks/useI18n";
+import { debugManager } from "@game/debug/debugManager";
+import gameEngine from "@game/loop/engine";
+import { LocationId, PlayerId } from "@game/types";
+import { BackgroundLayerTier } from "@game/locations/schema/locationSchema";
 
 const LOCATION_LIST: { id: LocationId; namePl: string; nameEn: string }[] = [
   { id: "courtyard", namePl: "Dziedziniec Treningowy", nameEn: "Training Courtyard" },
@@ -180,11 +180,10 @@ export const TesterTab: React.FC = () => {
                 <button
                   key={loc.id}
                   onClick={() => loadLocation(loc.id)}
-                  className={`px-2 py-1 text-[11px] font-bold rounded border transition-colors cursor-pointer ${
-                    currentLocationId === loc.id
+                  className={`px-2 py-1 text-[11px] font-bold rounded border transition-colors cursor-pointer ${currentLocationId === loc.id
                       ? "bg-amber-600 text-white border-amber-400"
                       : "bg-stone-900 text-stone-300 border-stone-800 hover:border-amber-700"
-                  }`}
+                    }`}
                 >
                   {isPl ? loc.namePl.split(" ")[0] : loc.nameEn.split(" ")[0]}
                 </button>

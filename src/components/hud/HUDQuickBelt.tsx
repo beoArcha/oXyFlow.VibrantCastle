@@ -1,9 +1,9 @@
 import React from "react";
 import { Sparkles, Shield, FlaskConical, Backpack, BookOpen } from "lucide-react";
-import { KbdKey } from "../ui";
-import { useI18n } from "../../hooks/useI18n";
+import { KbdKey } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
 import { HUDQuickBeltProps } from "./types";
-import { cn } from "../../lib/utils";
+import { cn } from "@lib/utils";
 
 /**
  * Left or Right flank action belt displaying active spells, quick potion slots, and RPG shortcuts.
@@ -114,8 +114,8 @@ export const HUDQuickBelt: React.FC<HUDQuickBeltProps> = React.memo(({
                       ? pot.healHp
                         ? "text-red-400"
                         : pot.healMana
-                        ? "text-cyan-400"
-                        : "text-amber-400"
+                          ? "text-cyan-400"
+                          : "text-amber-400"
                       : "text-stone-600"
                   }
                 />

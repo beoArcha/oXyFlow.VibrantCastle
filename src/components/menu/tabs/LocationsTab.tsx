@@ -1,10 +1,10 @@
 import React from "react";
 import { MapPin, Compass, Check } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "../../ui";
-import { getAllLocations } from "../../../game/locations";
-import { useGameSession } from "../../../hooks/useGame";
-import { useI18n } from "../../../hooks/useI18n";
-import { cn } from "../../../lib/utils";
+import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@components/ui";
+import { getAllLocations } from "@game/locations";
+import { useGameSession } from "@hooks/useGame";
+import { useI18n } from "@hooks/useI18n";
+import { cn } from "@lib/utils";
 
 export const LocationsTab: React.FC = () => {
   const { loadLocation, currentLocationId } = useGameSession();

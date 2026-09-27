@@ -1,6 +1,6 @@
 import React from "react";
-import { Item } from "../../game/types";
-import { ItemSlot } from "../ui";
+import { Item } from "@game/types";
+import { ItemSlot } from "@components/ui";
 
 export interface InventoryBackpackGridProps {
   backpack: (Item | null)[];

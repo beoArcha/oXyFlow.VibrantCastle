@@ -1,9 +1,9 @@
 import React from "react";
 import { HelpCircle, Pause, Play, Menu as MenuIcon, MapPin } from "lucide-react";
-import { KbdKey } from "../ui";
-import { useI18n } from "../../hooks/useI18n";
+import { KbdKey } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
 import { HUDTopControlsProps } from "./types";
-import { cn } from "../../lib/utils";
+import { cn } from "@lib/utils";
 
 /**
  * Center toolbar buttons for Hints, Pause, Menu, and Location indicator.

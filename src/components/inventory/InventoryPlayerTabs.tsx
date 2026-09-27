@@ -1,8 +1,8 @@
 import React from "react";
 import { Users, User } from "lucide-react";
-import { ICharacterIdentity } from "../../game/types";
+import { ICharacterIdentity } from "@game/types";
 import { CharacterPortrait } from "../character";
-import { cn } from "../../lib/utils";
+import { cn } from "@lib/utils";
 
 export interface InventoryPlayerTabsProps {
   p1: ICharacterIdentity;

@@ -1,8 +1,8 @@
 import React from "react";
 import { Keyboard, Swords, Compass, LayoutGrid } from "lucide-react";
-import { useI18n } from "../../hooks/useI18n";
+import { useI18n } from "@hooks/useI18n";
 import { HelpTab } from "./types";
-import { cn } from "../../lib/utils";
+import { cn } from "@lib/utils";
 
 export interface HelpNavigationProps {
   activeTab: HelpTab;
