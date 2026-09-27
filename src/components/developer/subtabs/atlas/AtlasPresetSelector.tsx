@@ -11,13 +11,13 @@ import {
   Check,
   Layers,
 } from "lucide-react";
-import { Badge } from "../../../ui";
-import { useI18n } from "../../../../hooks/useI18n";
+import { Badge } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
 import {
   defaultAtlasAssetRegistry,
   AtlasCategory,
   IAtlasAssetManifestItem,
-} from "../../../../game/engine/meta/registry";
+} from "@game/engine/meta/registry";
 
 export type AssetFilterType = AtlasCategory | "all" | "popular";
 
@@ -145,9 +145,8 @@ export const AtlasPresetSelector: React.FC<AtlasPresetSelectorProps> = ({
 
         <ChevronDown
           size={14}
-          className={`text-amber-400/80 transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
+          className={`text-amber-400/80 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+            }`}
         />
       </button>
 
@@ -179,22 +178,20 @@ export const AtlasPresetSelector: React.FC<AtlasPresetSelectorProps> = ({
           <div className="flex items-center gap-1 overflow-x-auto custom-scrollbar py-0.5 text-[11px]">
             <button
               onClick={() => setActiveFilter("all")}
-              className={`px-2 py-1 rounded-lg font-bold transition-all border ${
-                activeFilter === "all"
+              className={`px-2 py-1 rounded-lg font-bold transition-all border ${activeFilter === "all"
                   ? "bg-amber-600 text-white border-amber-400 shadow-sm"
                   : "bg-black/40 text-stone-400 border-stone-800 hover:text-stone-200"
-              }`}
+                }`}
             >
               {t("atlasStudioFilterAll")}
             </button>
 
             <button
               onClick={() => setActiveFilter("popular")}
-              className={`flex items-center gap-1 px-2 py-1 rounded-lg font-bold transition-all border ${
-                activeFilter === "popular"
+              className={`flex items-center gap-1 px-2 py-1 rounded-lg font-bold transition-all border ${activeFilter === "popular"
                   ? "bg-amber-600 text-white border-amber-400 shadow-sm"
                   : "bg-black/40 text-amber-300/80 border-stone-800 hover:text-amber-200"
-              }`}
+                }`}
             >
               <Star size={11} className="text-amber-300 fill-amber-300/60" />
               {t("atlasStudioFilterPopular")}
@@ -202,11 +199,10 @@ export const AtlasPresetSelector: React.FC<AtlasPresetSelectorProps> = ({
 
             <button
               onClick={() => setActiveFilter("character")}
-              className={`flex items-center gap-1 px-2 py-1 rounded-lg font-bold transition-all border ${
-                activeFilter === "character"
+              className={`flex items-center gap-1 px-2 py-1 rounded-lg font-bold transition-all border ${activeFilter === "character"
                   ? "bg-amber-600 text-white border-amber-400 shadow-sm"
                   : "bg-black/40 text-stone-400 border-stone-800 hover:text-stone-200"
-              }`}
+                }`}
             >
               <User size={11} />
               {t("atlasStudioFilterCharacters")}
@@ -214,11 +210,10 @@ export const AtlasPresetSelector: React.FC<AtlasPresetSelectorProps> = ({
 
             <button
               onClick={() => setActiveFilter("enemy")}
-              className={`flex items-center gap-1 px-2 py-1 rounded-lg font-bold transition-all border ${
-                activeFilter === "enemy"
+              className={`flex items-center gap-1 px-2 py-1 rounded-lg font-bold transition-all border ${activeFilter === "enemy"
                   ? "bg-amber-600 text-white border-amber-400 shadow-sm"
                   : "bg-black/40 text-stone-400 border-stone-800 hover:text-stone-200"
-              }`}
+                }`}
             >
               <Skull size={11} />
               {t("atlasStudioFilterEnemies")}
@@ -226,11 +221,10 @@ export const AtlasPresetSelector: React.FC<AtlasPresetSelectorProps> = ({
 
             <button
               onClick={() => setActiveFilter("structure")}
-              className={`flex items-center gap-1 px-2 py-1 rounded-lg font-bold transition-all border ${
-                activeFilter === "structure"
+              className={`flex items-center gap-1 px-2 py-1 rounded-lg font-bold transition-all border ${activeFilter === "structure"
                   ? "bg-amber-600 text-white border-amber-400 shadow-sm"
                   : "bg-black/40 text-stone-400 border-stone-800 hover:text-stone-200"
-              }`}
+                }`}
             >
               <Building size={11} />
               {t("atlasStudioFilterStructures")}
@@ -238,11 +232,10 @@ export const AtlasPresetSelector: React.FC<AtlasPresetSelectorProps> = ({
 
             <button
               onClick={() => setActiveFilter("portrait")}
-              className={`flex items-center gap-1 px-2 py-1 rounded-lg font-bold transition-all border ${
-                activeFilter === "portrait"
+              className={`flex items-center gap-1 px-2 py-1 rounded-lg font-bold transition-all border ${activeFilter === "portrait"
                   ? "bg-amber-600 text-white border-amber-400 shadow-sm"
                   : "bg-black/40 text-stone-400 border-stone-800 hover:text-stone-200"
-              }`}
+                }`}
             >
               <Sparkles size={11} />
               {t("atlasStudioFilterPortraits")}
@@ -267,11 +260,10 @@ export const AtlasPresetSelector: React.FC<AtlasPresetSelectorProps> = ({
                       onSelectPreset(asset.id);
                       setIsOpen(false);
                     }}
-                    className={`flex items-center justify-between p-2 rounded-xl border text-left transition-all group ${
-                      isSelected
+                    className={`flex items-center justify-between p-2 rounded-xl border text-left transition-all group ${isSelected
                         ? "bg-gradient-to-r from-amber-950/60 to-amber-900/40 border-amber-500/80 shadow-sm"
                         : "bg-black/40 border-stone-800/80 hover:bg-[#1a0c06] hover:border-amber-700/60"
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div className="w-7 h-7 rounded-lg bg-[#140804] border border-stone-800 flex items-center justify-center flex-shrink-0">
@@ -281,11 +273,10 @@ export const AtlasPresetSelector: React.FC<AtlasPresetSelectorProps> = ({
                       <div className="flex flex-col min-w-0">
                         <div className="flex items-center gap-1.5">
                           <span
-                            className={`text-xs font-bold truncate ${
-                              isSelected
+                            className={`text-xs font-bold truncate ${isSelected
                                 ? "text-amber-200"
                                 : "text-stone-300 group-hover:text-amber-200"
-                            }`}
+                              }`}
                           >
                             {asset.name}
                           </span>

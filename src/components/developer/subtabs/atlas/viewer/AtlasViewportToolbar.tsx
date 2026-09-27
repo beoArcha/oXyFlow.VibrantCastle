@@ -12,8 +12,8 @@ import {
   Hand,
   Sparkles,
 } from "lucide-react";
-import { Button, Badge } from "../../../../ui";
-import { useI18n } from "../../../../../hooks/useI18n";
+import { Button, Badge } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
 import { SlicerViewerTool } from "../types";
 
 export interface AtlasViewportToolbarProps {

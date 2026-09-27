@@ -10,9 +10,9 @@ import {
 import {
   defaultAtlasSlicingEngine,
   IPixelBuffer,
-} from "../../../../../game/engine/meta/slicing";
-import { LoggerManager } from "../../../../../lib/logger";
-import { AssetError, ErrorCode, GameBaseError } from "../../../../../lib/errors";
+} from "@game/engine/meta/slicing";
+import { LoggerManager } from "@lib/logger";
+import { AssetError, ErrorCode, GameBaseError } from "@lib/errors";
 
 export interface UseAtlasResolvedFramesParams {
   imageSrc: string;

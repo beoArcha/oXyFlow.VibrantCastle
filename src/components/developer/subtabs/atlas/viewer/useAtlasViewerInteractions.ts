@@ -9,7 +9,7 @@ import {
   defaultAtlasSlicingEngine,
   BackgroundProcessor,
   IPixelBuffer,
-} from "../../../../../game/engine/meta/slicing";
+} from "@game/engine/meta/slicing";
 
 export interface UseAtlasViewerInteractionsParams {
   image: HTMLImageElement | null;

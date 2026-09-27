@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Layers, Plus, Copy, Trash2 } from "lucide-react";
-import { Button } from "../../../../ui";
-import { useI18n } from "../../../../../hooks/useI18n";
+import { Button } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
 import { AtlasAnimationTrackDefinition } from "../types";
 
 export interface SlicingTracksManagerProps {
@@ -118,11 +118,10 @@ export const SlicingTracksManager: React.FC<SlicingTracksManagerProps> = ({
             key={tr.name}
             type="button"
             onClick={() => onSelectTrack(tr.name)}
-            className={`px-2 py-1 rounded-lg text-xs font-mono font-bold whitespace-nowrap transition-all border cursor-pointer ${
-              selectedTrackName === tr.name
+            className={`px-2 py-1 rounded-lg text-xs font-mono font-bold whitespace-nowrap transition-all border cursor-pointer ${selectedTrackName === tr.name
                 ? "bg-gradient-to-r from-amber-600 to-amber-700 text-white border-amber-400 shadow-sm shadow-amber-950/40"
                 : "bg-black/50 text-stone-400 border-stone-800 hover:text-stone-200 hover:border-stone-700"
-            }`}
+              }`}
           >
             {tr.name} (r{tr.row})
           </button>
@@ -254,11 +253,10 @@ export const SlicingTracksManager: React.FC<SlicingTracksManagerProps> = ({
                 return (
                   <div
                     key={fIdx}
-                    className={`flex flex-col items-center justify-between p-1.5 rounded-lg border text-center transition-all ${
-                      currentSpan > 1
+                    className={`flex flex-col items-center justify-between p-1.5 rounded-lg border text-center transition-all ${currentSpan > 1
                         ? "bg-amber-950/40 border-amber-500/80 text-amber-300"
                         : "bg-black/60 border-stone-800 text-stone-300"
-                    }`}
+                      }`}
                     style={{ minWidth: `${Math.max(54, currentSpan * 32)}px` }}
                   >
                     <span className="text-[10px] font-mono text-stone-400">

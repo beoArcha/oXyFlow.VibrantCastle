@@ -1,8 +1,8 @@
 import React from "react";
 import { Plus, Trash2, CheckSquare, Square } from "lucide-react";
-import { Button } from "../../../../ui";
-import { useI18n } from "../../../../../hooks/useI18n";
-import { IFreeformFrameRect } from "../../../../../game/engine/meta/types";
+import { Button } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
+import { IFreeformFrameRect } from "@game/engine/meta/types";
 
 export interface SlicingFreeformTableProps {
   frames: IFreeformFrameRect[];
@@ -91,9 +91,8 @@ export const SlicingFreeformTable: React.FC<SlicingFreeformTableProps> = ({
                 <tr
                   key={frameId}
                   onClick={() => onSelectFrame?.(idx)}
-                  className={`border-b border-stone-900/80 hover:bg-stone-900/40 transition-colors ${
-                    isSelected ? "bg-amber-950/25" : ""
-                  }`}
+                  className={`border-b border-stone-900/80 hover:bg-stone-900/40 transition-colors ${isSelected ? "bg-amber-950/25" : ""
+                    }`}
                 >
                   <td className="p-1.5 text-center" onClick={(e) => e.stopPropagation()}>
                     <button

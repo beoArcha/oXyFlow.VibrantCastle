@@ -11,11 +11,11 @@ import {
   Layers,
   X,
 } from "lucide-react";
-import { Badge, Button } from "../../../ui";
-import { useI18n } from "../../../../hooks/useI18n";
-import { useThrottledLogs } from "../../../../hooks/useThrottledLogs";
-import { LogLevel } from "../../../../lib/logger";
-import { GameBaseError } from "../../../../lib/errors";
+import { Badge, Button } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
+import { useThrottledLogs } from "@hooks/useThrottledLogs";
+import { LogLevel } from "@lib/logger";
+import { GameBaseError } from "@lib/errors";
 
 const ATLAS_LOG_CATEGORIES = ["AtlasStudio", "AtlasSlicing"];
 

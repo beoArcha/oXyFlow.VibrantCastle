@@ -1,7 +1,7 @@
 import React from "react";
 import { Sparkles, Check, Save } from "lucide-react";
-import { Button, Badge } from "../../../../ui";
-import { useI18n } from "../../../../../hooks/useI18n";
+import { Button, Badge } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
 import { IAtlasSlicingConfig, ResolvedFrameRect } from "../types";
 
 export interface SlicingAutoIslandsCardProps {

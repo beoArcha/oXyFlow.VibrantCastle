@@ -9,8 +9,8 @@ import {
   Code,
   Sliders,
 } from "lucide-react";
-import { Button, Badge } from "../../../ui";
-import { useI18n } from "../../../../hooks/useI18n";
+import { Button, Badge } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
 import {
   AtlasGridConfig,
   AtlasAnimationTrackDefinition,
@@ -105,14 +105,14 @@ export function buildAtlasExportMetaDoc(params: {
   const resolvedBgSection: IAtlasBackgroundConfig =
     effectiveBg?.mode === "color"
       ? {
-          mode: "color",
-          colorHex: effectiveBg.colorHex,
-          tolerance: effectiveBg.tolerance ?? 15,
-          removeAtRuntime: effectiveBg.removeAtRuntime ?? true,
-        }
+        mode: "color",
+        colorHex: effectiveBg.colorHex,
+        tolerance: effectiveBg.tolerance ?? 15,
+        removeAtRuntime: effectiveBg.removeAtRuntime ?? true,
+      }
       : {
-          mode: "transparent",
-        };
+        mode: "transparent",
+      };
 
   return {
     ...metaDoc,
@@ -281,21 +281,19 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
           <div className="flex items-center bg-black/60 p-0.5 rounded-lg border border-stone-800">
             <button
               onClick={() => setEditorMode("formatted")}
-              className={`px-1.5 py-0.5 rounded text-[11px] font-bold flex items-center gap-1 ${
-                editorMode === "formatted"
+              className={`px-1.5 py-0.5 rounded text-[11px] font-bold flex items-center gap-1 ${editorMode === "formatted"
                   ? "bg-amber-600 text-white"
                   : "text-stone-400 hover:text-stone-200"
-              }`}
+                }`}
             >
               <Code size={11} /> View
             </button>
             <button
               onClick={() => setEditorMode("raw")}
-              className={`px-1.5 py-0.5 rounded text-[11px] font-bold flex items-center gap-1 ${
-                editorMode === "raw"
+              className={`px-1.5 py-0.5 rounded text-[11px] font-bold flex items-center gap-1 ${editorMode === "raw"
                   ? "bg-amber-600 text-white"
                   : "text-stone-400 hover:text-stone-200"
-              }`}
+                }`}
             >
               <Sliders size={11} /> Edit
             </button>
@@ -392,11 +390,10 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
           value={rawText}
           onChange={handleRawChange}
           rows={14}
-          className={`w-full bg-[#0a0503] font-mono text-[11px] p-2.5 rounded-xl border leading-relaxed custom-scrollbar transition-all ${
-            editorMode === "raw"
+          className={`w-full bg-[#0a0503] font-mono text-[11px] p-2.5 rounded-xl border leading-relaxed custom-scrollbar transition-all ${editorMode === "raw"
               ? "border-amber-600/60 text-amber-200 focus:outline-none focus:border-amber-400"
               : "border-stone-800 text-stone-300 select-text"
-          }`}
+            }`}
           spellCheck={false}
         />
       </div>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Grid as GridIcon } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Badge } from "../../../ui";
-import { useI18n } from "../../../../hooks/useI18n";
+import { Card, CardHeader, CardTitle, CardContent, Badge } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
 import {
   AtlasGridConfig,
   AtlasAnimationTrackDefinition,
@@ -20,7 +20,7 @@ import {
   useAtlasViewerInteractions,
   useAtlasResolvedFrames,
 } from "./viewer";
-import { GameBaseError } from "../../../../lib/errors";
+import { GameBaseError } from "@lib/errors";
 
 export type { SlicerViewerTool };
 
@@ -216,13 +216,12 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
-          className={`relative flex-1 min-h-[360px] max-h-[580px] overflow-hidden rounded-lg border border-stone-800 bg-[#0c0806] custom-scrollbar p-2 flex items-center justify-center select-none ${
-            isPanning || activeTool === "pan" || isSpacePressed
-              ? "cursor-grab active:cursor-grabbing"
-              : activeTool === "eyedropper"
+          className={`relative flex-1 min-h-[360px] max-h-[580px] overflow-hidden rounded-lg border border-stone-800 bg-[#0c0806] custom-scrollbar p-2 flex items-center justify-center select-none ${isPanning || activeTool === "pan" || isSpacePressed
+            ? "cursor-grab active:cursor-grabbing"
+            : activeTool === "eyedropper"
               ? "cursor-crosshair"
               : "cursor-crosshair"
-          }`}
+            }`}
           style={{
             backgroundImage:
               "radial-gradient(#24140e 1px, transparent 1px), radial-gradient(#180a06 1px, #0a0402 1px)",

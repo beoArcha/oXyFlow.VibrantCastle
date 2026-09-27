@@ -6,7 +6,7 @@ import {
   SlicingMethod,
   ResolvedFrameRect,
 } from "./types";
-import { IFreeformFrameRect } from "../../../../game/engine/meta/types";
+import { IFreeformFrameRect } from "@game/engine/meta/types";
 import {
   SlicingMethodTabs,
   SlicingGridConfigCard,

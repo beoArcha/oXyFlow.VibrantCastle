@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid, Box, Sparkles, Layers } from "lucide-react";
-import { useI18n } from "../../../../../hooks/useI18n";
+import { useI18n } from "@hooks/useI18n";
 import { SlicingMethod } from "../types";
 
 export interface SlicingMethodTabsProps {
@@ -49,11 +49,10 @@ export const SlicingMethodTabs: React.FC<SlicingMethodTabsProps> = ({
             key={id}
             type="button"
             onClick={() => onMethodChange(id)}
-            className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-bold transition-all border cursor-pointer ${
-              currentMethod === id
+            className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-bold transition-all border cursor-pointer ${currentMethod === id
                 ? "bg-gradient-to-r from-amber-600 to-amber-700 text-white border-amber-400 shadow-sm"
                 : "bg-black/50 text-stone-400 border-stone-800 hover:text-stone-200 hover:border-stone-700"
-            }`}
+              }`}
           >
             {icon}
             <span>{t(labelKey)}</span>

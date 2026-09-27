@@ -13,8 +13,8 @@ import {
   ResolvedFrameRect,
 } from "./types";
 import { ATLAS_PRESETS } from "./assetPresets";
-import { LoggerManager } from "../../../../lib/logger";
-import { AssetError, ParserError, ErrorCode, GameBaseError } from "../../../../lib/errors";
+import { LoggerManager } from "@lib/logger";
+import { AssetError, ParserError, ErrorCode, GameBaseError } from "@lib/errors";
 
 export function useAtlasStudioState() {
   const studioLogger = useMemo(() => LoggerManager.getInstance().getLogger("AtlasStudio"), []);
@@ -568,15 +568,15 @@ export function useAtlasStudioState() {
         const currentFrames = Array.isArray(prev.slicing?.frames)
           ? [...prev.slicing.frames]
           : resolvedFrames.map((rf, idx) => ({
-              id: rf.id || `frame_${idx}`,
-              x: rf.x,
-              y: rf.y,
-              width: rf.width,
-              height: rf.height,
-              trackName: rf.trackName,
-              frameIndex: rf.frameIndex,
-              pivot: rf.pivot || { x: 0.5, y: 1.0 },
-            }));
+            id: rf.id || `frame_${idx}`,
+            x: rf.x,
+            y: rf.y,
+            width: rf.width,
+            height: rf.height,
+            trackName: rf.trackName,
+            frameIndex: rf.frameIndex,
+            pivot: rf.pivot || { x: 0.5, y: 1.0 },
+          }));
 
         let assignedIndex = 0;
         const updated = currentFrames.map((f) => {

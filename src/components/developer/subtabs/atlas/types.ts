@@ -7,7 +7,7 @@ import {
   AtlasAnimationTrackDefinition,
   AtlasOriginDefinition,
   AtlasGridConfig,
-} from "../../../../game/engine/meta/types";
+} from "@game/engine/meta/types";
 
 export type {
   IAtlasSlicingConfig,

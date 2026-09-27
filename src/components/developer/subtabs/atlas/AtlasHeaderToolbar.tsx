@@ -7,8 +7,8 @@ import {
   PanelRightClose,
   PanelRightOpen,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, Badge, Button } from "../../../ui";
-import { useI18n } from "../../../../hooks/useI18n";
+import { Card, CardHeader, CardTitle, Badge, Button } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
 import { AtlasPresetSelector } from "./AtlasPresetSelector";
 
 export interface AtlasHeaderToolbarProps {

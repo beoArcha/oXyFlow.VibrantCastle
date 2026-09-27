@@ -1,7 +1,7 @@
 import React from "react";
 import { Sparkles, Grid, Pipette, FileJson } from "lucide-react";
-import { Card, CardHeader, CardContent } from "../../../ui";
-import { useI18n } from "../../../../hooks/useI18n";
+import { Card, CardHeader, CardContent } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
 import {
   AtlasGridConfig,
   AtlasAnimationTrackDefinition,
@@ -127,11 +127,10 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
                 key={tab.id}
                 onClick={() => onTabChange(tab.id)}
                 title={tab.label}
-                className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-bold transition-all ${
-                  isActive
+                className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-bold transition-all ${isActive
                     ? "bg-gradient-to-r from-amber-600 to-amber-700 text-white border border-amber-400 shadow-md shadow-amber-950/50"
                     : "text-stone-400 hover:text-stone-200 hover:bg-stone-900/50"
-                }`}
+                  }`}
               >
                 {tab.icon}
                 <span className="truncate">{tab.shortLabel}</span>

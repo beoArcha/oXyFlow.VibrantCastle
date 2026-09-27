@@ -7,7 +7,7 @@ import {
 import {
   BackgroundProcessor,
   IPixelBuffer,
-} from "../../../../../game/engine/meta/slicing";
+} from "@game/engine/meta/slicing";
 
 export const TRACK_COLORS = [
   { stroke: "#38bdf8", fill: "rgba(56, 189, 248, 0.18)" }, // sky

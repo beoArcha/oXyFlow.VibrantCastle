@@ -1,6 +1,6 @@
 import React from "react";
 import { Plus, Check, Split, Box, X } from "lucide-react";
-import { useI18n } from "../../../../../hooks/useI18n";
+import { useI18n } from "@hooks/useI18n";
 import { AtlasGridConfig } from "../types";
 
 export interface AtlasSelectionFloatingActionProps {
