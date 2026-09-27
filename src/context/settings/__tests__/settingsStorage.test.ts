@@ -4,7 +4,7 @@ import {
   ISettingsStorageProvider,
 } from "../settingsStorage";
 import { DEFAULT_SETTINGS, GameSettingsState } from "../../settingsTypes";
-import { createMockStorageProvider, MockStorageProvider } from "../../../test-utils";
+import { createMockStorageProvider, MockStorageProvider } from "@test-utils";
 
 describe("SettingsStorage - Domain & Persistence", () => {
   let mockStorage: MockStorageProvider;

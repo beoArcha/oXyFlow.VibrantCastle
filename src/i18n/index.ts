@@ -8,7 +8,7 @@ import { locationsTranslations } from "./modules/locations";
 import { narrationsTranslations } from "./modules/narrations";
 import { dialoguesTranslations } from "./modules/dialogues";
 import { loreTranslations } from "./modules/lore";
-import { formatString } from "../lib/utils";
+import { formatString } from "@lib/utils";
 
 export * from "./types";
 export * from "./modules/hud";

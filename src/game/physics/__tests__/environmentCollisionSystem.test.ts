@@ -5,7 +5,7 @@ import {
 } from "../environmentCollisionSystem";
 import { Player, Entity, CollisionType, PlayerId } from "../../types";
 import { ICollisionEngine } from "../collisions";
-import { createMockPlayer } from "../../../test-utils";
+import { createMockPlayer } from "@test-utils";
 
 describe("EnvironmentCollisionSystem (SOLID & Zero Allocation)", () => {
   let mockPlayer: Player;

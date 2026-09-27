@@ -1,7 +1,7 @@
 import { describe, it, expect } from "bun:test";
 import { StructureRenderer, defaultStructureRenderer } from "../structureRenderer";
 import { Entity, CollisionType } from "../../types";
-import { createMockContext2D as createMockContext } from "../../../test-utils";
+import { createMockContext2D as createMockContext } from "@test-utils";
 
 describe("StructureRenderer", () => {
   it("renders goal portal via atlas when atlas is present", () => {

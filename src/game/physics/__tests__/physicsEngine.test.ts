@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { GamePhysicsEngine, IPhysicsAudio } from "../physics";
 import { Player, Enemy, Entity, InputMap, AnimationState, SoundType, PlayerId } from "@/game/types";
-import { createMockPlayer, createMockEnemy } from "@/test-utils/mockEntities";
+import { createMockPlayer, createMockEnemy } from "@test-utils/mockEntities";
 
 describe("GamePhysicsEngine & Kinematics", () => {
   let physics: GamePhysicsEngine;

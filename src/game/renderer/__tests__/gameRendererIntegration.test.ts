@@ -7,7 +7,7 @@ import { Player, Enemy, Entity, Projectile, Particle, PlayerId } from "../../typ
 import { CameraState } from "../../engine/cameraManager";
 import { LocationDefinition } from "../../locations/types";
 import { assetLoader } from "../../engine/assetLoader";
-import { createMockCanvas, createMockContext2D } from "../../../test-utils";
+import { createMockCanvas, createMockContext2D } from "@test-utils";
 
 describe("GameRenderer Integration & Verification", () => {
   beforeEach(() => {
@@ -56,9 +56,9 @@ describe("GameRenderer Integration & Verification", () => {
         resize: () => {
           resizeCalled = true;
         },
-        renderSky: () => {},
-        renderCastles: () => {},
-        renderTree: () => {},
+        renderSky: () => { },
+        renderCastles: () => { },
+        renderTree: () => { },
       };
 
       const renderer = new GameRenderer(canvas as any, {
@@ -134,13 +134,13 @@ describe("GameRenderer Integration & Verification", () => {
           renderPlayers: () => {
             actorRenderCalled = true;
           },
-          renderEnemies: () => {},
+          renderEnemies: () => { },
         } as any,
         fxRenderer: {
           renderParticles: () => {
             fxRenderCalled = true;
           },
-          renderProjectiles: () => {},
+          renderProjectiles: () => { },
         } as any,
       };
 
@@ -205,7 +205,7 @@ describe("GameRenderer Integration & Verification", () => {
         renderTree: () => {
           renderTreeCalled = true;
         },
-        resize: () => {},
+        resize: () => { },
       };
 
       const renderer = new GameRenderer(canvas as any, {
@@ -286,9 +286,9 @@ describe("GameRenderer Integration & Verification", () => {
         renderHitboxes: () => {
           hitboxesRendered = true;
         },
-        renderSensorRays: () => {},
-        renderTileWireframe: () => {},
-        renderProfiler: () => {},
+        renderSensorRays: () => { },
+        renderTileWireframe: () => { },
+        renderProfiler: () => { },
       };
 
       const renderer = new GameRenderer(canvas as any, {

@@ -8,7 +8,7 @@ import { StructureRenderer } from "../structureRenderer";
 import { HitboxRenderer } from "../hitboxRenderer";
 import { Player, Enemy, Entity, Projectile, Particle, PlayerId, CollisionType } from "../../types";
 import { getLocation } from "../../locations";
-import { createMockContext2D as createMockContext } from "../../../test-utils";
+import { createMockContext2D as createMockContext } from "@test-utils";
 
 describe("Renderer Optimization & Zero GC Pressure", () => {
   let mockPlayer: Player;

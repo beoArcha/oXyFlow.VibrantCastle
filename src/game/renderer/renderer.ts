@@ -41,7 +41,7 @@ import {
   IDebugProfilerOverlay,
   defaultDebugProfilerOverlay,
 } from "./debugProfilerOverlay";
-import { EngineError, ErrorCode } from "../../lib/errors";
+import { EngineError, ErrorCode } from "@lib/errors";
 
 const SCENERY_TREE_OFFSETS = [350, 1100, 1600, 2450, 3050, 3500] as const;
 

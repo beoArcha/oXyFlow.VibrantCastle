@@ -10,7 +10,7 @@ import {
   IStatsStorage,
   GameSessionStats,
 } from "../statsTypes";
-import { createMockStorageProvider, MockStorageProvider } from "../../../../test-utils";
+import { createMockStorageProvider, MockStorageProvider } from "@test-utils";
 
 describe("StatsStorage & StatsManager", () => {
   let mockStorage: MockStorageProvider;

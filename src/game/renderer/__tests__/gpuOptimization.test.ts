@@ -3,7 +3,7 @@ import defaultSettings from "../../data/defaultSettings.json";
 import { DEFAULT_SETTINGS } from "../../../context/settingsTypes";
 import { ProceduralBackdropCache } from "../proceduralBackdropCache";
 import { GameRenderer } from "../renderer";
-import { createMockCanvas } from "../../../test-utils";
+import { createMockCanvas } from "@test-utils";
 
 describe("Hardware GPU Acceleration Pipeline", () => {
   it("defaults hardwareAcceleration to true in defaultSettings.json", () => {

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { GameEngine } from "../engine";
 import { LoopCircuitBreaker } from "../loopCircuitBreaker";
 import { SoundType, PlayerId } from "@/game/types";
-import { createMockCanvas } from "@/test-utils/mockCanvas";
+import { createMockCanvas } from "@test-utils/mockCanvas";
 
 import { debugManager } from "../../debug/debugManager";
 

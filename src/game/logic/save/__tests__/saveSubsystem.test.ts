@@ -8,8 +8,8 @@ import {
   GameSaveSystem,
 } from "../index";
 import { Player, Enemy, Entity, SaveState, PlayerId } from "../../../types";
-import { ErrorCode } from "../../../../lib/errors";
-import { createMockPlayer } from "../../../../test-utils";
+import { ErrorCode } from "@lib/errors";
+import { createMockPlayer } from "@test-utils";
 
 describe("Save Subsystem (Decomposed Architecture)", () => {
   describe("SaveValidator (SRP: JSON validation & normalization)", () => {
@@ -185,7 +185,7 @@ describe("Save Subsystem (Decomposed Architecture)", () => {
           quotaErr.name = "QuotaExceededError";
           throw quotaErr;
         },
-        removeItem: () => {},
+        removeItem: () => { },
       };
 
       const storage = new SaveStorage("slot_quota", () => quotaStorage);

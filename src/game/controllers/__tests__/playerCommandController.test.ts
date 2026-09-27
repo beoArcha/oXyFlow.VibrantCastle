@@ -4,9 +4,8 @@ import {
   IPlayerCommandContext,
 } from "../playerCommandController";
 import { Player, PlayerId } from "../../types";
-import { ITEM_REGISTRY } from "../../logic/inventory";
 import { getDefaultSkillsForCharacter } from "../../logic/skills";
-import { createMockPlayer } from "../../../test-utils";
+import { createMockPlayer } from "@test-utils";
 
 describe("PlayerCommandController (SOLID & SRP)", () => {
   let mockPlayer1: Player;

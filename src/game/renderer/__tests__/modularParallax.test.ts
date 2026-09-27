@@ -7,7 +7,7 @@ import { AtmosphericFogRenderer, defaultAtmosphericFogRenderer } from "../parall
 import { SceneryScaffoldRenderer, defaultSceneryScaffoldRenderer } from "../parallax/sceneryScaffoldRenderer";
 import { LocationDefinition } from "../../locations/types";
 import { ParallaxLayerSchema } from "../../locations/schema/locationSchema";
-import { createMockContext2D as createMockContext } from "../../../test-utils";
+import { createMockContext2D as createMockContext } from "@test-utils";
 
 const mockLocation: LocationDefinition = {
   id: "test_sanctuary",
@@ -107,7 +107,7 @@ describe("Modular Parallax Subsystems", () => {
         render: () => {
           castleCalled = true;
         },
-        drawNeedleSpire: () => {},
+        drawNeedleSpire: () => { },
       };
       const mockMountain = {
         render: () => {
@@ -115,7 +115,7 @@ describe("Modular Parallax Subsystems", () => {
         },
       };
       const mockFog = {
-        renderSkyGradient: () => {},
+        renderSkyGradient: () => { },
         renderFogOverlay: () => {
           fogCalled = true;
         },

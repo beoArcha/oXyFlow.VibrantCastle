@@ -7,7 +7,7 @@ import { Entity, CollisionType } from "../../types";
 import { CameraState } from "../../engine/cameraManager";
 import { ParallaxLayerSchema } from "../../locations/schema/locationSchema";
 import gameEngine from "../../loop/engine";
-import { createMockCanvas } from "../../../test-utils";
+import { createMockCanvas } from "@test-utils";
 
 describe("GameRenderer - Determinism, Schema Immutability & Proxy Elimination", () => {
   let mockCanvas: HTMLCanvasElement;

@@ -10,8 +10,7 @@ import {
   ICollisionContext,
 } from "../collisions";
 import { Player, Entity, CollisionType } from "../../types";
-import { createMockPlayer } from "../../../test-utils/mockEntities";
-import { statsManager } from "../../logic/stats";
+import { createMockPlayer } from "@test-utils/mockEntities";
 
 describe("Collision Geometry & Strategy Resolution", () => {
   let engine: CollisionEngine;

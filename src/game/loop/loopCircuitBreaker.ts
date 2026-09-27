@@ -1,5 +1,5 @@
-import { ILogger } from "../../lib/logger";
-import { GameBaseError } from "../../lib/errors";
+import { ILogger } from "@lib/logger";
+import { GameBaseError } from "@lib/errors";
 
 export interface LoopCircuitBreakerOptions {
   maxConsecutiveErrors?: number;

@@ -6,7 +6,7 @@ import { HitboxRenderer } from "../hitboxRenderer";
 import { GameRenderer } from "../renderer";
 import { getLocation } from "../../locations";
 import { Player, Enemy, Entity, Projectile, PlayerId, CollisionType } from "../../types";
-import { createMockContext2D as createMockContext } from "../../../test-utils";
+import { createMockContext2D as createMockContext } from "@test-utils";
 
 describe("MultiLayerBackgroundSystem & DebugProfilerOverlay", () => {
   describe("MultiLayerBackgroundSystem AssetLoader & Subsystem Integration", () => {
@@ -35,7 +35,7 @@ describe("MultiLayerBackgroundSystem & DebugProfilerOverlay", () => {
         renderProceduralFarBackdrop: () => {
           proceduralCalled = true;
         },
-        clearCaches: () => {},
+        clearCaches: () => { },
       };
 
       const multiLayer = new MultiLayerBackgroundSystem({
