@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo } from "react";
-import { AssetQuality } from "../../game/types";
-import { CharacterProgressionTier } from "../../game/engine/spriteTypes";
+import { AssetQuality } from "@game/types";
+import { CharacterProgressionTier } from "@game/engine/spriteTypes";
 
 export interface CharacterContextValue {
   characterId: string;

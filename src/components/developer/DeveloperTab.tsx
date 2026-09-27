@@ -5,9 +5,9 @@ import { TesterSubTab } from "./subtabs/TesterSubTab";
 import { DebugSubTab } from "./subtabs/DebugSubTab";
 import { LogsSubTab } from "./subtabs/LogsSubTab";
 import { AtlasMetaSubTab } from "./subtabs/AtlasMetaSubTab";
-import { useI18n } from "../../hooks/useI18n";
-import { useThrottledLogCount } from "../../hooks/useThrottledLogs";
-import { TabItem } from "../ui/Tabs";
+import { useI18n } from "@hooks/useI18n";
+import { useThrottledLogCount } from "@hooks/useThrottledLogs";
+import { TabItem } from "@components/ui/Tabs";
 
 export type DeveloperSubTabId = "testing" | "debug" | "logs" | "atlas_slicer";
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { ListFilter, ChevronDown, ChevronRight } from "lucide-react";
-import { useI18n } from "../../../../hooks/useI18n";
-import { LogRecord, LogLevel } from "../../../../lib/logger";
+import { useI18n } from "@hooks/useI18n";
+import { LogRecord, LogLevel } from "@lib/logger";
 import { LogItemDrawer } from "./LogItemDrawer";
 
 export interface LogsTerminalListProps {
@@ -65,9 +65,8 @@ export const LogsTerminalList: React.FC<LogsTerminalListProps> = ({
               {/* Main line */}
               <div
                 onClick={() => hasDetails && onToggleExpand(entry.id)}
-                className={`flex items-start gap-2.5 p-2 select-text ${
-                  hasDetails ? "cursor-pointer" : ""
-                }`}
+                className={`flex items-start gap-2.5 p-2 select-text ${hasDetails ? "cursor-pointer" : ""
+                  }`}
               >
                 {/* Expand toggle icon */}
                 {hasDetails ? (
@@ -103,15 +102,14 @@ export const LogsTerminalList: React.FC<LogsTerminalListProps> = ({
 
                 {/* Message */}
                 <span
-                  className={`flex-1 break-words leading-tight ${
-                    entry.level >= LogLevel.ERROR
+                  className={`flex-1 break-words leading-tight ${entry.level >= LogLevel.ERROR
                       ? "text-rose-300 font-semibold"
                       : entry.level === LogLevel.WARN
-                      ? "text-amber-200"
-                      : entry.level === LogLevel.INFO
-                      ? "text-cyan-100"
-                      : "text-stone-300"
-                  }`}
+                        ? "text-amber-200"
+                        : entry.level === LogLevel.INFO
+                          ? "text-cyan-100"
+                          : "text-stone-300"
+                    }`}
                 >
                   {entry.message}
                 </span>

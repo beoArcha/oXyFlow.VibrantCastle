@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { AssetQuality } from "../../game/types";
-import { AnimationName, CharacterProgressionTier, SpriteFrame } from "../../game/engine/spriteTypes";
-import { assetLoader } from "../../game/engine/assetLoader";
-import { SpriteAnimator } from "../../game/engine/spriteAnimator";
+import { AssetQuality } from "@game/types";
+import { AnimationName, CharacterProgressionTier, SpriteFrame } from "@game/engine/spriteTypes";
+import { assetLoader } from "@game/engine/assetLoader";
+import { SpriteAnimator } from "@game/engine/spriteAnimator";
 import { useCharacterContext } from "./CharacterContext";
 
 export interface CharacterSpriteState {

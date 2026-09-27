@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Skull, Ghost, Trophy, AlertTriangle, Plus } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent } from "../../../ui";
-import { useI18n } from "../../../../hooks/useI18n";
+import { Button, Card, CardHeader, CardTitle, CardContent } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
 
 export const MONSTER_ID_LIST = [
   { id: "training_dummy", translationKey: "enemyTrainingDummy" },

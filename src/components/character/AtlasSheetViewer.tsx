@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { AssetQuality } from "../../game/types";
-import { AnimationName } from "../../game/engine/spriteTypes";
-import { assetLoader } from "../../game/engine/assetLoader";
-import { cn } from "../../lib/utils";
+import { AssetQuality } from "@game/types";
+import { AnimationName } from "@game/engine/spriteTypes";
+import { assetLoader } from "@game/engine/assetLoader";
+import { cn } from "@lib/utils";
 import { Grid, ZoomIn, ZoomOut, Layers, Check, Image as ImageIcon } from "lucide-react";
-import { useI18n } from "../../hooks/useI18n";
+import { useI18n } from "@hooks/useI18n";
 
 export interface AtlasSheetViewerProps {
   characterId: "valen" | "aurelia";

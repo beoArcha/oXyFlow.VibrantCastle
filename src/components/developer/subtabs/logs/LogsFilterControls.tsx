@@ -1,7 +1,7 @@
 import React from "react";
 import { Search, X, Cpu } from "lucide-react";
-import { useI18n } from "../../../../hooks/useI18n";
-import { LogLevel } from "../../../../lib/logger";
+import { useI18n } from "@hooks/useI18n";
+import { LogLevel } from "@lib/logger";
 
 export interface LogCounts {
   fatal: number;
@@ -76,11 +76,10 @@ export const LogsFilterControls: React.FC<LogsFilterControlsProps> = ({
               key={id}
               type="button"
               onClick={() => onLevelFilterChange(id)}
-              className={`px-2 py-0.5 rounded font-mono font-bold transition-all cursor-pointer flex items-center gap-1 ${
-                levelFilter === id
+              className={`px-2 py-0.5 rounded font-mono font-bold transition-all cursor-pointer flex items-center gap-1 ${levelFilter === id
                   ? "bg-amber-600 text-white shadow-sm"
                   : "text-stone-400 hover:text-stone-200"
-              }`}
+                }`}
             >
               <span>{label}</span>
               <span className={`text-[9px] ${levelFilter === id ? "text-white/80" : color || "text-stone-500"}`}>
@@ -122,11 +121,10 @@ export const LogsFilterControls: React.FC<LogsFilterControlsProps> = ({
               key={name}
               type="button"
               onClick={() => onChangeGlobalLevel(level)}
-              className={`px-1.5 py-0.5 rounded font-mono text-[10px] font-bold transition-all cursor-pointer ${
-                globalLogLevel === level
+              className={`px-1.5 py-0.5 rounded font-mono text-[10px] font-bold transition-all cursor-pointer ${globalLogLevel === level
                   ? "bg-amber-600 text-white shadow-sm"
                   : "text-stone-500 hover:text-stone-300"
-              }`}
+                }`}
             >
               {name}
             </button>

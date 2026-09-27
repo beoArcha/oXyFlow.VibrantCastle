@@ -4,10 +4,10 @@ import { DebugPlayerInspectorCard } from "./debug/DebugPlayerInspectorCard";
 import { DebugEntityTableCard } from "./debug/DebugEntityTableCard";
 import { DebugCollisionsCard } from "./debug/DebugCollisionsCard";
 import { DebugStateDumpCard } from "./debug/DebugStateDumpCard";
-import { useGameSession, useSettings } from "../../../hooks/useGame";
-import gameEngine from "../../../game/loop/engine";
-import { debugManager } from "../../../game/debug/debugManager";
-import fpsManager from "../../../game/engine/fpsManager";
+import { useGameSession, useSettings } from "@hooks/useGame";
+import gameEngine from "@game/loop/engine";
+import { debugManager } from "@game/debug/debugManager";
+import fpsManager from "@game/engine/fpsManager";
 
 export const DebugSubTab: React.FC = () => {
   const { p1, p2, currentLocationId } = useGameSession();
@@ -56,15 +56,15 @@ export const DebugSubTab: React.FC = () => {
       showHitboxes: debugState.showHitboxes,
       p1: p1
         ? {
-            x: Math.round(p1.x),
-            y: Math.round(p1.y),
-            health: p1.health,
-            mana: p1.mana,
-            stamina: p1.stamina,
-            isGrounded: p1.isGrounded,
-            facingLeft: p1.facingLeft,
-            activeAnimation: p1.animationState,
-          }
+          x: Math.round(p1.x),
+          y: Math.round(p1.y),
+          health: p1.health,
+          mana: p1.mana,
+          stamina: p1.stamina,
+          isGrounded: p1.isGrounded,
+          facingLeft: p1.facingLeft,
+          activeAnimation: p1.animationState,
+        }
         : null,
       enemiesCount: enemies.length,
       particlesCount: particleCount,

@@ -1,7 +1,7 @@
 import React from "react";
 import { AlertTriangle } from "lucide-react";
-import { useI18n } from "../../../../hooks/useI18n";
-import { SerializedError } from "../../../../lib/logger";
+import { useI18n } from "@hooks/useI18n";
+import { SerializedError } from "@lib/logger";
 
 export interface LogItemDrawerProps {
   context?: Record<string, unknown>;
@@ -13,7 +13,7 @@ export const LogItemDrawer: React.FC<LogItemDrawerProps> = ({ context, error }) 
 
   const handleCopyStack = () => {
     if (error?.stack && navigator.clipboard) {
-      navigator.clipboard.writeText(error.stack).catch(() => {});
+      navigator.clipboard.writeText(error.stack).catch(() => { });
     }
   };
 

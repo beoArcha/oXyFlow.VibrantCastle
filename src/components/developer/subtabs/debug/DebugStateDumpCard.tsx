@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FileJson, Copy, Check } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Button } from "../../../ui";
-import { useI18n } from "../../../../hooks/useI18n";
+import { Card, CardHeader, CardTitle, CardContent, Button } from "@/components/ui";
+import { useI18n } from "@/hooks/useI18n";
 
 export interface DebugStateDumpProps {
   stateObject: Record<string, unknown>;

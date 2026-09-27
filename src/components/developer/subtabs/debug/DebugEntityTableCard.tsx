@@ -1,9 +1,9 @@
 import React from "react";
 import { Skull, Crosshair, Zap, Trash2 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from "../../../ui";
-import { Enemy, PlayerId } from "../../../../game/types";
-import { useI18n } from "../../../../hooks/useI18n";
-import gameEngine from "../../../../game/loop/engine";
+import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from "@components/ui";
+import { Enemy, PlayerId } from "@game/types";
+import { useI18n } from "@hooks/useI18n";
+import gameEngine from "@game/loop/engine";
 
 export interface DebugEntityTableProps {
   enemies: Enemy[];
@@ -77,13 +77,12 @@ export const DebugEntityTableCard: React.FC<DebugEntityTableProps> = ({
                     {/* HP */}
                     <td className="py-2.5 px-3 whitespace-nowrap">
                       <span
-                        className={`font-bold ${
-                          enemy.health <= 0
-                            ? "text-stone-500"
-                            : enemy.health < enemy.maxHealth * 0.3
+                        className={`font-bold ${enemy.health <= 0
+                          ? "text-stone-500"
+                          : enemy.health < enemy.maxHealth * 0.3
                             ? "text-rose-400"
                             : "text-emerald-400"
-                        }`}
+                          }`}
                       >
                         {Math.round(enemy.health)} / {enemy.maxHealth}
                       </span>

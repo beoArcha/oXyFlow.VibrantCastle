@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { MapPin, Compass, Crosshair } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "../../../ui";
-import { useI18n } from "../../../../hooks/useI18n";
-import { debugManager, SpawnPreset } from "../../../../game/debug/debugManager";
-import gameEngine from "../../../../game/loop/engine";
-import { LocationId, PlayerId } from "../../../../game/types";
-import { getLocation } from "../../../../game/locations";
+import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
+import { debugManager, SpawnPreset } from "@game/debug/debugManager";
+import gameEngine from "@game/loop/engine";
+import { LocationId, PlayerId } from "@game/types";
+import { getLocation } from "@game/locations";
 
 export const LOCATION_IDS: LocationId[] = [
   "courtyard",
@@ -169,11 +169,10 @@ export const TesterTeleportCard: React.FC<TesterTeleportCardProps> = ({
                   key={locId}
                   type="button"
                   onClick={() => onLoadLocation(locId)}
-                  className={`px-2 py-1 text-[11px] font-bold rounded border transition-colors cursor-pointer ${
-                    currentLocationId === locId
+                  className={`px-2 py-1 text-[11px] font-bold rounded border transition-colors cursor-pointer ${currentLocationId === locId
                       ? "bg-amber-600 text-white border-amber-400"
                       : "bg-stone-900 text-stone-300 border-stone-800 hover:border-amber-700"
-                  }`}
+                    }`}
                 >
                   {shortName}
                 </button>

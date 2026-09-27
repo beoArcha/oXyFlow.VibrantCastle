@@ -1,7 +1,7 @@
 import React from "react";
 import { Swords, Sparkles, Heart, Trash2, Coins } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent } from "../../../ui";
-import { useI18n } from "../../../../hooks/useI18n";
+import { Button, Card, CardHeader, CardTitle, CardContent } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
 
 export interface TesterInventoryCardProps {
   onGiveAllWeapons: () => void;

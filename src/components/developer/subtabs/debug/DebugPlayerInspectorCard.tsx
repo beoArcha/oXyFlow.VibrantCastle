@@ -1,8 +1,8 @@
 import React from "react";
 import { User, Shield, Zap, Heart, Compass } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Badge, ProgressBar } from "../../../ui";
-import { Player } from "../../../../game/types";
-import { useI18n } from "../../../../hooks/useI18n";
+import { Card, CardHeader, CardTitle, CardContent, Badge, ProgressBar } from "@components/ui";
+import { Player } from "@game/types";
+import { useI18n } from "@hooks/useI18n";
 
 export interface DebugPlayerInspectorProps {
   p1: Player | null;
@@ -63,11 +63,10 @@ export const DebugPlayerInspectorCard: React.FC<DebugPlayerInspectorProps> = ({
             {player.animationState || "idle"}
           </span>
           <span
-            className={`px-1.5 py-0.5 rounded text-[10px] font-bold border ${
-              isGrounded
+            className={`px-1.5 py-0.5 rounded text-[10px] font-bold border ${isGrounded
                 ? "bg-emerald-950/60 text-emerald-300 border-emerald-700/60"
                 : "bg-amber-950/60 text-amber-300 border-amber-700/60"
-            }`}
+              }`}
           >
             {t("debugPlayerGrounded")}: {isGrounded ? t("debugYes") : t("debugNo")}
           </span>

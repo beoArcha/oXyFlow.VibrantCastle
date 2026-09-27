@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { assetLoader } from "../../game/engine/assetLoader";
+import { assetLoader } from "@game/engine/assetLoader";
 import { useCharacterContext } from "./CharacterContext";
 import { CharacterPortraitCrop } from "./types";
 
@@ -54,11 +54,11 @@ export function useCharacterPortrait(
   const crop: CharacterPortraitCrop | undefined = resolved.isMain
     ? undefined
     : {
-        x: resolved.sx,
-        y: resolved.sy,
-        width: resolved.sw,
-        height: resolved.sh,
-      };
+      x: resolved.sx,
+      y: resolved.sy,
+      width: resolved.sw,
+      height: resolved.sh,
+    };
 
   return {
     src: resolved.imageUrl,

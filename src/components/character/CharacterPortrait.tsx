@@ -1,8 +1,8 @@
 import React, { useRef, useEffect } from "react";
 import { useCharacterPortrait } from "./useCharacterPortrait";
 import { CharacterPortraitCrop } from "./types";
-import { AssetQuality } from "../../game/types";
-import { CharacterProgressionTier } from "../../game/engine/spriteTypes";
+import { AssetQuality } from "@game/types";
+import { CharacterProgressionTier } from "@game/engine/spriteTypes";
 
 export interface CharacterPortraitProps {
   /** Optional explicit image source URL (primitive mode) */

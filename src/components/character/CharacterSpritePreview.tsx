@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
-import { AssetQuality } from "../../game/types";
-import { AnimationName, CharacterProgressionTier, SpriteFrame } from "../../game/engine/spriteTypes";
+import { AssetQuality } from "@game/types";
+import { AnimationName, CharacterProgressionTier, SpriteFrame } from "@game/engine/spriteTypes";
 import { useCharacterSprite } from "./useCharacterSprite";
 import { useCharacterContext } from "./CharacterContext";
 

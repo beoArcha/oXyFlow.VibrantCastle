@@ -1,7 +1,7 @@
 import React from "react";
 import { ScrollText, ArrowDownCircle, Copy, Check, Download, Trash2 } from "lucide-react";
-import { Button } from "../../../ui";
-import { useI18n } from "../../../../hooks/useI18n";
+import { Button } from "@components/ui";
+import { useI18n } from "@hooks/useI18n";
 
 export interface LogsHeaderToolbarProps {
   filteredCount: number;
@@ -53,11 +53,10 @@ export const LogsHeaderToolbar: React.FC<LogsHeaderToolbarProps> = ({
         <button
           type="button"
           onClick={onToggleAutoScroll}
-          className={`flex items-center gap-1 px-2.5 py-1 rounded-lg border text-xs font-mono transition-all cursor-pointer ${
-            autoScroll
+          className={`flex items-center gap-1 px-2.5 py-1 rounded-lg border text-xs font-mono transition-all cursor-pointer ${autoScroll
               ? "bg-amber-600/30 border-amber-500 text-amber-200 shadow-sm"
               : "bg-stone-900/80 border-stone-800 text-stone-400 hover:text-stone-200"
-          }`}
+            }`}
           title={t("debugAutoScrollToggle")}
         >
           <ArrowDownCircle size={13} className={autoScroll ? "text-amber-400" : "text-stone-500"} />

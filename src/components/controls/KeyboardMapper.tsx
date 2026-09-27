@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Keyboard, RotateCcw } from "lucide-react";
-import { PlayerId, InputMap, GameTranslationDictionary } from "../../game/types";
+import { PlayerId, InputMap, GameTranslationDictionary } from "@game/types";
 import { Button, Card, CardHeader, CardTitle, CardContent, KbdKey } from "../ui";
-import { useI18n } from "../../hooks/useI18n";
-import { useKeyboard } from "../../hooks/useKeyboard";
-import { cn } from "../../lib/utils";
+import { useI18n } from "@hooks/useI18n";
+import { useKeyboard } from "@hooks/useKeyboard";
+import { cn } from "@lib/utils";
 
 export interface KeyboardMapperProps {
   onStartRebind: (action: keyof InputMap, player: PlayerId, label: string) => void;
@@ -93,9 +93,9 @@ export const KeyboardMapper: React.FC<KeyboardMapperProps> = ({ onStartRebind })
                         {k === "Space"
                           ? t("spaceKey")
                           : k
-                              .replace("Key", "")
-                              .replace("Digit", "")
-                              .replace("Arrow", "↑→↓←")}
+                            .replace("Key", "")
+                            .replace("Digit", "")
+                            .replace("Arrow", "↑→↓←")}
                       </KbdKey>
                     ))}
                   </div>
