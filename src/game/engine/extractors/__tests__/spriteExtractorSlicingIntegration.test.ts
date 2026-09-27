@@ -7,13 +7,13 @@ import { PortraitSpriteExtractor } from "../PortraitSpriteExtractor";
 import { defaultAtlasSlicingEngine } from "../../meta/slicing/AtlasSlicingEngine";
 import { BaseExtractionMeta } from "../ISpriteSheetExtractor";
 
-describe("Sprite Extractors & AtlasSlicingEngine Integration Suite (Phase 3)", () => {
+describe("Sprite Extractors & AtlasSlicingEngine Integration", () => {
   const humanoidExtractor = new HumanoidSpriteExtractor();
   const monsterExtractor = new MonsterSpriteExtractor();
   const objectExtractor = new ObjectSpriteExtractor();
   const portraitExtractor = new PortraitSpriteExtractor();
 
-  describe("1. HumanoidSpriteExtractor with Slicing Strategies", () => {
+  describe("HumanoidSpriteExtractor with slicing strategies", () => {
     it("slices humanoid tracks using 'by_count' slicing config matching AtlasSlicingEngine exactly", () => {
       const meta: BaseExtractionMeta = {
         characterId: "valen_test",
@@ -169,7 +169,7 @@ describe("Sprite Extractors & AtlasSlicingEngine Integration Suite (Phase 3)", (
     });
   });
 
-  describe("2. MonsterSpriteExtractor with Slicing Strategies", () => {
+  describe("MonsterSpriteExtractor with slicing strategies", () => {
     it("slices monster animations using 'by_count' slicing config", () => {
       const meta: BaseExtractionMeta = {
         characterId: "owl_gargoyle",
@@ -222,7 +222,7 @@ describe("Sprite Extractors & AtlasSlicingEngine Integration Suite (Phase 3)", (
     });
   });
 
-  describe("3. ObjectSpriteExtractor with Slicing Strategies", () => {
+  describe("ObjectSpriteExtractor with slicing strategies", () => {
     it("slices interactive object using 'by_count' slicing config", () => {
       const meta: BaseExtractionMeta = {
         objectId: "aether_gate",
@@ -269,7 +269,7 @@ describe("Sprite Extractors & AtlasSlicingEngine Integration Suite (Phase 3)", (
     });
   });
 
-  describe("4. PortraitSpriteExtractor with Slicing Strategies", () => {
+  describe("PortraitSpriteExtractor with slicing strategies", () => {
     it("slices portrait matrix using 'by_count' slicing config", () => {
       const meta: BaseExtractionMeta = {
         characterId: "valen_portraits",
@@ -330,7 +330,7 @@ describe("Sprite Extractors & AtlasSlicingEngine Integration Suite (Phase 3)", (
     });
   });
 
-  describe("5. Factory Dispatch & Overall Performance", () => {
+  describe("Factory dispatch & overall performance", () => {
     it("dispatches automatically via SpriteExtractorFactory.extract()", () => {
       const meta: BaseExtractionMeta = {
         characterId: "factory_humanoid",

@@ -7,8 +7,8 @@ import {
 } from "../index";
 import { defaultMetaParser } from "../../MetaParser";
 
-describe("Atlas Slicing Strategies & Engine (Phase 1)", () => {
-  describe("1. GridCountSlicingStrategy (by_count)", () => {
+describe("Atlas Slicing Strategies & Engine", () => {
+  describe("GridCountSlicingStrategy (by_count)", () => {
     const strategy = new GridCountSlicingStrategy();
 
     it("generates regular grid frames when no animations are present", () => {
@@ -144,7 +144,7 @@ describe("Atlas Slicing Strategies & Engine (Phase 1)", () => {
     });
   });
 
-  describe("2. CellSizeSlicingStrategy (by_cell_size)", () => {
+  describe("CellSizeSlicingStrategy (by_cell_size)", () => {
     const strategy = new CellSizeSlicingStrategy();
 
     it("calculates grid automatically from cell dimensions", () => {
@@ -214,7 +214,7 @@ describe("Atlas Slicing Strategies & Engine (Phase 1)", () => {
     });
   });
 
-  describe("3. FreeformRectSlicingStrategy (freeform_rects)", () => {
+  describe("FreeformRectSlicingStrategy (freeform_rects)", () => {
     const strategy = new FreeformRectSlicingStrategy();
 
     it("resolves arbitrary pixel bounding boxes and pivots", () => {
@@ -255,7 +255,7 @@ describe("Atlas Slicing Strategies & Engine (Phase 1)", () => {
     });
   });
 
-  describe("4. AtlasSlicingEngine (Composition & Auto-Selection)", () => {
+  describe("AtlasSlicingEngine (Composition & Auto-Selection)", () => {
     const engine = new AtlasSlicingEngine();
 
     it("falls back to grid count strategy when slicing config is omitted", () => {
@@ -313,7 +313,7 @@ describe("Atlas Slicing Strategies & Engine (Phase 1)", () => {
     });
   });
 
-  describe("5. MetaParser Integration & Backwards Compatibility", () => {
+  describe("MetaParser Integration & Backwards Compatibility", () => {
     it("parses character document with new slicing and backgroundConfig sections", () => {
       const raw = {
         id: "hero",

@@ -5,7 +5,7 @@ import { LoggerManager, LogLevel, ILogTransport, LogRecord } from "../../../lib/
 import { gameSave } from "../../logic/save";
 import { statsManager } from "../../logic/stats";
 
-describe("GameEngine Error Resilience & Logging - Phase 2 Suite", () => {
+describe("GameEngine Error Resilience & Logging", () => {
   let records: LogRecord[] = [];
   let testTransport: ILogTransport;
   let manager: LoggerManager;
@@ -23,7 +23,7 @@ describe("GameEngine Error Resilience & Logging - Phase 2 Suite", () => {
     });
   });
 
-  describe("1. LoopCircuitBreaker Unit Tests", () => {
+  describe("LoopCircuitBreaker", () => {
     it("successfully runs normal operations and resets error count on recovery", () => {
       const logger = manager.getLogger("test:circuit");
       const breaker = new LoopCircuitBreaker({ logger, maxConsecutiveErrors: 3 });
@@ -93,7 +93,7 @@ describe("GameEngine Error Resilience & Logging - Phase 2 Suite", () => {
     });
   });
 
-  describe("2. GameEngine DIP & Loop Error Trapping", () => {
+  describe("GameEngine DIP & Loop Error Trapping", () => {
     it("injects custom logger and loopCircuitBreaker via IGameDependencies (DIP)", () => {
       const customLogger = manager.getLogger("game:engine:custom");
       let onTripCalled = false;
@@ -164,7 +164,7 @@ describe("GameEngine Error Resilience & Logging - Phase 2 Suite", () => {
     });
   });
 
-  describe("3. Game Logic Subsystems Logging", () => {
+  describe("Game Logic Subsystems Logging", () => {
     it("logs error when save state parsing fails in save.ts", () => {
       const origWindow = (globalThis as any).window;
       const origStorage = (globalThis as any).localStorage;

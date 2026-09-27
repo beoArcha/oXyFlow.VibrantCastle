@@ -15,10 +15,10 @@ import {
   ErrorCode,
   EngineError,
 } from "../../lib/errors";
-import { GameErrorBoundary } from "../../components/ui/GameErrorBoundary";
+import { GameErrorBoundary } from "@components/ui/GameErrorBoundary";
 import { LoggerManager, LogLevel, ILogTransport, LogRecord } from "../../lib/logger";
 
-describe("React Context Safety & ErrorBoundary Suite (Phase 4)", () => {
+describe("React Context Safety & ErrorBoundary", () => {
   let records: LogRecord[] = [];
   let testTransport: ILogTransport;
   let manager: LoggerManager;
@@ -44,7 +44,7 @@ describe("React Context Safety & ErrorBoundary Suite (Phase 4)", () => {
     renderToString(React.createElement(Component));
   };
 
-  describe("1. MissingContextProviderError on Orphaned Context Hooks", () => {
+  describe("MissingContextProviderError on Orphaned Context Hooks", () => {
     it("throws MissingContextProviderError when useSettings is used outside SettingsProvider", () => {
       expect(() => renderWithHook(useSettings)).toThrow(MissingContextProviderError);
       try {
@@ -138,7 +138,7 @@ describe("React Context Safety & ErrorBoundary Suite (Phase 4)", () => {
     });
   });
 
-  describe("2. GameErrorBoundary with GameBaseError Integration", () => {
+  describe("GameErrorBoundary with GameBaseError Integration", () => {
     it("handles GameBaseError in componentDidCatch and attaches log context with code and domain", () => {
       const boundaryLogger = manager.getLogger("component:error-boundary");
       const boundary = new GameErrorBoundary({

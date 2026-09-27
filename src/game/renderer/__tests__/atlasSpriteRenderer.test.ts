@@ -43,7 +43,7 @@ function createMockTexture(width: number = 384, height: number = 256): HTMLImage
   } as unknown as HTMLImageElement;
 }
 
-describe("Podfaza 5.1: AtlasSpriteRenderer Comprehensive Unit Tests", () => {
+describe("AtlasSpriteRenderer", () => {
   it("identifies registered atlases via hasAtlas()", () => {
     const renderer = new AtlasSpriteRenderer();
 

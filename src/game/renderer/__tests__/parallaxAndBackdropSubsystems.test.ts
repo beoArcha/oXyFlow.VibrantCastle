@@ -58,8 +58,8 @@ function createMockImage(width: number = 800, height: number = 600): HTMLImageEl
   } as unknown as HTMLImageElement;
 }
 
-describe("Podfaza 5.4: Parallax Image, Scenery & Backdrop Subsystems Unit Tests", () => {
-  describe("1. ParallaxImageRenderer", () => {
+describe("Parallax Image, Scenery & Backdrop Subsystems", () => {
+  describe("ParallaxImageRenderer", () => {
     it("renders far static backdrop scaled to viewport with center anchoring", () => {
       const imgRenderer = new ParallaxImageRenderer();
       const ctx = createMockContext();
@@ -126,7 +126,7 @@ describe("Podfaza 5.4: Parallax Image, Scenery & Backdrop Subsystems Unit Tests"
     });
   });
 
-  describe("2. SceneryScaffoldRenderer Thematic Geometry", () => {
+  describe("SceneryScaffoldRenderer Thematic Geometry", () => {
     it("renders Clocktower mechanical shaft and rotating gears", () => {
       const scenery = new SceneryScaffoldRenderer();
       const ctx = createMockContext();
@@ -179,7 +179,7 @@ describe("Podfaza 5.4: Parallax Image, Scenery & Backdrop Subsystems Unit Tests"
     });
   });
 
-  describe("3. ProceduralBackdropCache", () => {
+  describe("ProceduralBackdropCache", () => {
     it("handles renderSky, renderCastles, and renderTree safely", () => {
       const cache = new ProceduralBackdropCache();
       const ctx = createMockContext();

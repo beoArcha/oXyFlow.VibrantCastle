@@ -11,8 +11,8 @@ import {
   UIError,
 } from "../index";
 
-describe("SOLID Error Hierarchy Suite (Phase 1)", () => {
-  describe("1. Liskov Substitution Principle & Inheritance", () => {
+describe("SOLID Error Hierarchy", () => {
+  describe("Liskov Substitution Principle & Inheritance", () => {
     it("subclasses must be instances of GameBaseError and native Error", () => {
       const err = new EngineError("Canvas context failed", ErrorCode.ENGINE_CANVAS_CONTEXT_LOST);
 
@@ -62,7 +62,7 @@ describe("SOLID Error Hierarchy Suite (Phase 1)", () => {
     });
   });
 
-  describe("2. Context Extraction & Cause Chaining (toLogContext)", () => {
+  describe("Context Extraction & Cause Chaining (toLogContext)", () => {
     it("generates structured log context with frozen details and timestamp", () => {
       const err = new ParserError("Missing required property 'width'", ErrorCode.PARSER_LOCATION_SCHEMA_INVALID, {
         details: { property: "width", locationId: "chamber_01" },

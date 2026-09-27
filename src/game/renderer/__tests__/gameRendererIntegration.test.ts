@@ -9,7 +9,7 @@ import { LocationDefinition } from "../../locations/types";
 import { assetLoader } from "../../engine/assetLoader";
 import { createMockCanvas, createMockContext2D } from "../../../test-utils";
 
-describe("Podfaza 5.5: GameRenderer Integration & Verification Suite", () => {
+describe("GameRenderer Integration & Verification", () => {
   beforeEach(() => {
     debugManager.state.showHitboxes = false;
     debugManager.state.showProfiler = false;
@@ -20,7 +20,7 @@ describe("Podfaza 5.5: GameRenderer Integration & Verification Suite", () => {
     debugManager.state.showProfiler = false;
   });
 
-  describe("1. Viewport, Resolution & Hardware Acceleration Configuration", () => {
+  describe("Viewport, Resolution & Hardware Acceleration Configuration", () => {
     it("computes accurate scale factor and viewport bounds based on 1000 baseline units", () => {
       const { canvas, ctx } = createMockCanvas(1920, 1080);
       const renderer = new GameRenderer(canvas as any);
@@ -110,7 +110,7 @@ describe("Podfaza 5.5: GameRenderer Integration & Verification Suite", () => {
     });
   });
 
-  describe("2. Full Scene Orchestration & Strict State Preservation", () => {
+  describe("Full Scene Orchestration & Strict State Preservation", () => {
     it("renders complete scene with parallax location without leaking canvas state", () => {
       const { canvas, ctx } = createMockCanvas(1000, 600);
 
@@ -245,7 +245,7 @@ describe("Podfaza 5.5: GameRenderer Integration & Verification Suite", () => {
     });
   });
 
-  describe("3. Debug & Profiler Overlays Integration", () => {
+  describe("Debug & Profiler Overlays Integration", () => {
     it("renders FPS counter overlay when showFps is true and profiler is inactive", () => {
       const { canvas, ctx } = createMockCanvas(1000, 600);
       const renderer = new GameRenderer(canvas as any);
@@ -357,7 +357,7 @@ describe("Podfaza 5.5: GameRenderer Integration & Verification Suite", () => {
     });
   });
 
-  describe("4. ProceduralBackdropCache & MultiLayer System Extended Coverage", () => {
+  describe("ProceduralBackdropCache & MultiLayer System Extended Coverage", () => {
     it("bakes textures and performs GPU quad blits in ProceduralBackdropCache", () => {
       // Mock global document with canvas support for offscreen bake buffers
       const origDoc = (globalThis as any).document;

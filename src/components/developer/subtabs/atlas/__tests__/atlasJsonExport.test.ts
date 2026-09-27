@@ -6,12 +6,12 @@ import {
   AtlasMetaDoc,
   ResolvedFrameRect,
 } from "../types";
-import { defaultAtlasSlicingEngine } from "../../../../../game/engine/meta/slicing";
-import { IFreeformFrameRect } from "../../../../../game/engine/meta/types";
+import { defaultAtlasSlicingEngine } from "@/game/engine/meta/slicing";
+import { IFreeformFrameRect } from "@/game/engine/meta/types";
 import { buildAtlasExportMetaDoc } from "../AtlasJsonExportPanel";
 
-describe("Atlas Studio Phase 4: Interactive Frame Assignment & JSON Export Suite", () => {
-  describe("1. Auto-Islands Frame Baking (Zero Runtime CPU Overhead)", () => {
+describe("Atlas Studio - JSON Export & Frame Baking", () => {
+  describe("Auto-Islands Frame Baking", () => {
     it("bakes detected islands into static slicing.frames and resolves via freeform at runtime in sub-millisecond", () => {
       const simulatedDetectedIslands: ResolvedFrameRect[] = [
         { id: "island_r0_c0", x: 12, y: 18, width: 44, height: 72, trackName: "walk", frameIndex: 0 },
@@ -54,7 +54,7 @@ describe("Atlas Studio Phase 4: Interactive Frame Assignment & JSON Export Suite
     });
   });
 
-  describe("2. JSON Generator & Export Validation", () => {
+  describe("JSON Generator & Export Validation", () => {
     const baseGrid: AtlasGridConfig = {
       columns: 12,
       rows: 8,

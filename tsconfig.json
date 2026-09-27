@@ -20,35 +20,35 @@
     "jsx": "react-jsx",
     "paths": {
       "@/*": [
-        "./*"
+        "./src/*"
       ],
       "@assets/*": [
-        "./assets/*"
+        "./src/assets/*"
       ],
       "@components/*": [
-        "./components/*"
+        "./src/components/*"
       ],
       "@context/*": [
-        "./context/*"
+        "./src/context/*"
       ],
       "@game/*": [
-        "./game/*"
+        "./src/game/*"
       ],
       "@lib/*": [
-        "./lib/*"
+        "./src/lib/*"
       ],
       "@hooks/*": [
-        "./hooks/*"
+        "./src/hooks/*"
       ],
       "@styles/*": [
-        "./styles/*"
+        "./src/styles/*"
       ],
       "@test-utils/*": [
-        "./test-utils/*"
+        "./src/test-utils/*"
       ],
       "@types/*": [
-        "./types/*"
-      ],
+        "./src/types/*"
+      ]
     },
     "allowImportingTsExtensions": true,
     "noEmit": true

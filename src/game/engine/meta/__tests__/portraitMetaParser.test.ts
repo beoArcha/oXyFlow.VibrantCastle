@@ -5,8 +5,8 @@ import { defaultAtlasSlicingEngine } from "../slicing/AtlasSlicingEngine";
 import valenPortraitsMeta from "../../../../assets/characters/valen/valen_portraits_meta.json";
 import aureliaPortraitsMeta from "../../../../assets/characters/aurelia/aurelia_portraits_meta.json";
 
-describe("Portrait Metadata & Multi-Strategy Slicing Suite (Phase 2)", () => {
-  describe("1. PortraitMatrixParser Resilience & Auto-Inference", () => {
+describe("Portrait Metadata & Multi-Strategy Slicing", () => {
+  describe("PortraitMatrixParser resilience & auto-inference", () => {
     it("parses explicit portraits matrix configuration", () => {
       const raw = {
         entityId: "test_portrait",
@@ -69,7 +69,7 @@ describe("Portrait Metadata & Multi-Strategy Slicing Suite (Phase 2)", () => {
     });
   });
 
-  describe("2. MetaParser.parsePortrait() & Role-Based Composite Documents", () => {
+  describe("MetaParser.parsePortrait() & composite documents", () => {
     it("accurately parses valen_portraits_meta.json as IPortraitMetaDocument", () => {
       const doc = defaultMetaParser.parsePortrait(valenPortraitsMeta);
 
@@ -103,7 +103,7 @@ describe("Portrait Metadata & Multi-Strategy Slicing Suite (Phase 2)", () => {
     });
   });
 
-  describe("3. MetaParser.parseAuto() Dynamic Dispatching (OCP & ISP)", () => {
+  describe("MetaParser.parseAuto() dynamic dispatching", () => {
     it("dispatches portrait documents to parsePortrait", () => {
       const doc = defaultMetaParser.parseAuto(valenPortraitsMeta);
       expect(doc.info.entityType).toBe("portrait");
@@ -141,7 +141,7 @@ describe("Portrait Metadata & Multi-Strategy Slicing Suite (Phase 2)", () => {
     });
   });
 
-  describe("4. AtlasSlicingEngine Integration with Portrait Matrix", () => {
+  describe("AtlasSlicingEngine integration with portrait matrix", () => {
     it("slices all 25 emotion frames (5x5) using GridCount strategy", () => {
       const doc = defaultMetaParser.parsePortrait(valenPortraitsMeta);
       const frames = defaultAtlasSlicingEngine.resolveFrames(doc, 1160, 1350);

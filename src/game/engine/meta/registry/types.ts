@@ -5,7 +5,7 @@
  * Follows SOLID (Interface Segregation Principle & Open-Closed Principle).
  */
 
-import { AtlasMetaDoc } from "../../../../components/developer/subtabs/atlas/types";
+import { AtlasMetaDoc } from "@/components/developer/subtabs/atlas/types";
 
 export type AtlasCategory =
   | "character"

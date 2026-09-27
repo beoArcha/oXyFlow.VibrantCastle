@@ -8,8 +8,8 @@ import { getLocation } from "../../locations";
 import { Player, Enemy, Entity, Projectile, PlayerId, CollisionType } from "../../types";
 import { createMockContext2D as createMockContext } from "../../../test-utils";
 
-describe("Phase 4: MultiLayerBackgroundSystem Decomposition, AssetLoader & Profiler Suite", () => {
-  describe("1. MultiLayerBackgroundSystem AssetLoader & Subsystem Integration", () => {
+describe("MultiLayerBackgroundSystem & DebugProfilerOverlay", () => {
+  describe("MultiLayerBackgroundSystem AssetLoader & Subsystem Integration", () => {
     it("renders all supported sectors cleanly without throwing", () => {
       const sectors = ["courtyard", "thorn_chasm", "clocktower", "aether_sanctuary", "grand_bastion"];
       const multiLayer = new MultiLayerBackgroundSystem();
@@ -50,7 +50,7 @@ describe("Phase 4: MultiLayerBackgroundSystem Decomposition, AssetLoader & Profi
     });
   });
 
-  describe("2. AtmosphericSectorRenderer Standalone Tests", () => {
+  describe("AtmosphericSectorRenderer Standalone Tests", () => {
     it("renders atmospheric mist for Thorn Chasm with cached linear gradients", () => {
       const ctx = createMockContext();
       const atmospheric = new AtmosphericSectorRenderer();
@@ -125,7 +125,7 @@ describe("Phase 4: MultiLayerBackgroundSystem Decomposition, AssetLoader & Profi
     });
   });
 
-  describe("3. DebugProfilerOverlay Standalone Tests", () => {
+  describe("DebugProfilerOverlay Standalone Tests", () => {
     it("renders complete profiler telemetry with balanced save/restore", () => {
       const ctx = createMockContext();
       const profiler = new DebugProfilerOverlay();

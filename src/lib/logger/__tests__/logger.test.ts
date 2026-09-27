@@ -11,7 +11,7 @@ import {
   cleanupGlobalErrorHandlers,
 } from "../index";
 
-describe("SOLID Logger Architecture - Phase 1 Suite", () => {
+describe("SOLID Logger Architecture", () => {
   let manager: LoggerManager;
 
   beforeEach(() => {
@@ -26,7 +26,7 @@ describe("SOLID Logger Architecture - Phase 1 Suite", () => {
     cleanupGlobalErrorHandlers();
   });
 
-  describe("1. Log Level Hierarchy & Filtering", () => {
+  describe("Log Level Hierarchy & Filtering", () => {
     it("filters records below the minimum configured level", () => {
       const records: LogRecord[] = [];
       const testTransport: ILogTransport = {
@@ -92,7 +92,7 @@ describe("SOLID Logger Architecture - Phase 1 Suite", () => {
     });
   });
 
-  describe("2. Modes and Environments", () => {
+  describe("Modes and Environments", () => {
     it("configures appropriate default levels per environment mode", () => {
       manager.setMode("production");
       expect(manager.defaultLevel).toBe(LogLevel.WARN);
@@ -105,7 +105,7 @@ describe("SOLID Logger Architecture - Phase 1 Suite", () => {
     });
   });
 
-  describe("3. Circular RingBufferTransport & Subscribers", () => {
+  describe("Circular RingBufferTransport & Subscribers", () => {
     it("maintains a maximum capacity and drops oldest logs in FIFO order", () => {
       const ringBuffer = new RingBufferTransport({ capacity: 5 });
 
@@ -190,7 +190,7 @@ describe("SOLID Logger Architecture - Phase 1 Suite", () => {
     });
   });
 
-  describe("4. Error Serialization & Formatting", () => {
+  describe("Error Serialization & Formatting", () => {
     it("safely serializes Native Errors with stack trace and context", () => {
       const formatter = new DefaultFormatter();
       const records: LogRecord[] = [];
@@ -238,7 +238,7 @@ describe("SOLID Logger Architecture - Phase 1 Suite", () => {
     });
   });
 
-  describe("5. Global Error Handling Interception", () => {
+  describe("Global Error Handling Interception", () => {
     it("attaches cleanly and catches simulated window error events", () => {
       const records: LogRecord[] = [];
       const testTransport: ILogTransport = {

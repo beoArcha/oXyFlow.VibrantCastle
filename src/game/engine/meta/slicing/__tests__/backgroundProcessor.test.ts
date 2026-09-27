@@ -5,8 +5,8 @@ import {
   AtlasSlicingEngine,
 } from "../index";
 
-describe("BackgroundProcessor & AutoIslandSlicingStrategy (Phase 2)", () => {
-  describe("1. BackgroundProcessor Color Math & Sampling", () => {
+describe("BackgroundProcessor & AutoIslandSlicingStrategy", () => {
+  describe("BackgroundProcessor Color Math & Sampling", () => {
     it("converts hex to RGB accurately", () => {
       expect(BackgroundProcessor.hexToRgb("#ffffff")).toEqual({ r: 255, g: 255, b: 255 });
       expect(BackgroundProcessor.hexToRgb("#000000")).toEqual({ r: 0, g: 0, b: 0 });
@@ -51,7 +51,7 @@ describe("BackgroundProcessor & AutoIslandSlicingStrategy (Phase 2)", () => {
     });
   });
 
-  describe("2. Chroma Keying (Background Removal)", () => {
+  describe("Chroma Keying (Background Removal)", () => {
     it("makes green background transparent while preserving non-green center", () => {
       // 10x10 green buffer
       const buffer = BackgroundProcessor.createPixelBuffer(10, 10, "#00ff00");
@@ -83,7 +83,7 @@ describe("BackgroundProcessor & AutoIslandSlicingStrategy (Phase 2)", () => {
     });
   });
 
-  describe("3. AutoIslandSlicingStrategy (Smart Slicing)", () => {
+  describe("AutoIslandSlicingStrategy (Smart Slicing)", () => {
     const strategy = new AutoIslandSlicingStrategy();
 
     it("detects distinct sprite islands on transparent background", () => {
@@ -172,7 +172,7 @@ describe("BackgroundProcessor & AutoIslandSlicingStrategy (Phase 2)", () => {
     });
   });
 
-  describe("4. AtlasSlicingEngine Integration with AutoIsland", () => {
+  describe("AtlasSlicingEngine Integration with AutoIsland", () => {
     const engine = new AtlasSlicingEngine();
 
     it("dispatches to auto_islands strategy through AtlasSlicingEngine", () => {

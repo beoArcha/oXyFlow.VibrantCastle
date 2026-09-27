@@ -6,10 +6,10 @@ import {
   LogRecord,
   getLogger,
 } from "../index";
-import { GameErrorBoundary } from "../../../components/ui/GameErrorBoundary";
+import { GameErrorBoundary } from "@components/ui/GameErrorBoundary";
 import React from "react";
 
-describe("Logging System Integration & E2E - Phase 4 Suite", () => {
+describe("Logging System Integration & E2E", () => {
   let records: LogRecord[] = [];
   let testTransport: ILogTransport;
   let manager: LoggerManager;
@@ -27,7 +27,7 @@ describe("Logging System Integration & E2E - Phase 4 Suite", () => {
     manager.addTransport(testTransport);
   });
 
-  describe("1. Dynamic Runtime Level Reconfiguration", () => {
+  describe("Dynamic Runtime Level Reconfiguration", () => {
     it("dynamically changes global level in runtime without recreating loggers", () => {
       const engineLogger = getLogger("game:engine");
       const saveLogger = getLogger("game:save");
@@ -77,7 +77,7 @@ describe("Logging System Integration & E2E - Phase 4 Suite", () => {
     });
   });
 
-  describe("2. End-to-End Error Flow & Crash Diagnostic Export", () => {
+  describe("End-to-End Error Flow & Crash Diagnostic Export", () => {
     it("captures component crash, logs FATAL, buffers in RingBuffer, and generates JSON/TXT dump", () => {
       const boundaryLogger = getLogger("component:error-boundary");
       const boundary = new GameErrorBoundary({

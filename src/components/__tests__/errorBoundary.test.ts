@@ -4,7 +4,7 @@ import { GameErrorBoundary } from "../ui/GameErrorBoundary";
 import { LoggerManager, LogLevel, ILogTransport, LogRecord } from "../../lib/logger";
 import { RingBufferTransport } from "../../lib/logger/transports/RingBufferTransport";
 
-describe("React ErrorBoundary & Developer UI - Phase 3 Suite", () => {
+describe("GameErrorBoundary Component", () => {
   let records: LogRecord[] = [];
   let testTransport: ILogTransport;
   let manager: LoggerManager;
@@ -22,7 +22,7 @@ describe("React ErrorBoundary & Developer UI - Phase 3 Suite", () => {
     });
   });
 
-  describe("1. GameErrorBoundary Lifecycle & Error Logging (SRP & DIP)", () => {
+  describe("Lifecycle & Error Logging", () => {
     it("instantiates cleanly with injected logger", () => {
       const customLogger = manager.getLogger("component:test-boundary");
       const boundary = new GameErrorBoundary({
@@ -68,7 +68,7 @@ describe("React ErrorBoundary & Developer UI - Phase 3 Suite", () => {
     });
   });
 
-  describe("2. Live RingBuffer & EventLog Integration", () => {
+  describe("Live RingBuffer & EventLog Integration", () => {
     it("buffers live events and provides formatted export for crash diagnostics", () => {
       const ringBuffer = new RingBufferTransport({ capacity: 50 });
 

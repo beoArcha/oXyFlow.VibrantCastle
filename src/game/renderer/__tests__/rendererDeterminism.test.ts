@@ -9,7 +9,7 @@ import { ParallaxLayerSchema } from "../../locations/schema/locationSchema";
 import gameEngine from "../../loop/engine";
 import { createMockCanvas } from "../../../test-utils";
 
-describe("Phase 1: Renderer Determinism, Schema Immutability & Proxy Elimination", () => {
+describe("GameRenderer - Determinism, Schema Immutability & Proxy Elimination", () => {
   let mockCanvas: HTMLCanvasElement;
   let mockCamera: CameraState;
 
@@ -23,7 +23,7 @@ describe("Phase 1: Renderer Determinism, Schema Immutability & Proxy Elimination
     };
   });
 
-  describe("1. Deterministic Tick Parameter & Decoupled Animation Time", () => {
+  describe("Deterministic Tick Parameter & Decoupled Animation Time", () => {
     it("sets currentTickCount deterministically to the passed tickCount parameter", () => {
       const renderer = new GameRenderer(mockCanvas);
       expect(renderer.currentTickCount).toBe(0);
@@ -60,7 +60,7 @@ describe("Phase 1: Renderer Determinism, Schema Immutability & Proxy Elimination
     });
   });
 
-  describe("2. Schema Immutability in ParallaxRenderer", () => {
+  describe("Schema Immutability in ParallaxRenderer", () => {
     it("does not mutate layer.imageElement during renderImageLayer", () => {
       const parallax = new ParallaxRenderer();
       const mockCtx = mockCanvas.getContext("2d") as unknown as CanvasRenderingContext2D;
@@ -123,7 +123,7 @@ describe("Phase 1: Renderer Determinism, Schema Immutability & Proxy Elimination
     });
   });
 
-  describe("3. Elimination of Redundant LevelEntityRenderer Proxy", () => {
+  describe("LevelEntityRenderer & StructureRenderer Unification", () => {
     it("verifies LevelEntityRenderer is an alias to StructureRenderer", () => {
       expect(LevelEntityRenderer).toBe(StructureRenderer);
       expect(defaultLevelEntityRenderer).toBe(defaultStructureRenderer);

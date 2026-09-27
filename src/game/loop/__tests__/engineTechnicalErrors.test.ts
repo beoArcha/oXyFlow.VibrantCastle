@@ -41,8 +41,8 @@ class MockLogger implements ILogger {
   }
 }
 
-describe("Technical Subsystems Error Architecture (Phase 2)", () => {
-  describe("1. Renderer Canvas Context Lost Protection", () => {
+describe("Technical Subsystems Error Architecture", () => {
+  describe("Renderer Canvas Context Lost Protection", () => {
     it("throws typed EngineError when canvas 2D context acquisition fails", () => {
       const mockCanvas = {
         width: 800,
@@ -68,7 +68,7 @@ describe("Technical Subsystems Error Architecture (Phase 2)", () => {
     });
   });
 
-  describe("2. Location Blueprint Schema Validation", () => {
+  describe("Location Blueprint Schema Validation", () => {
     it("throws ParserError when location blueprint is not an object", () => {
       expect(() => LocationParser.parse(null as any)).toThrow(ParserError);
       try {
@@ -102,7 +102,7 @@ describe("Technical Subsystems Error Architecture (Phase 2)", () => {
     });
   });
 
-  describe("3. SpriteExtractorFactory Error Handling", () => {
+  describe("SpriteExtractorFactory Error Handling", () => {
     it("throws AssetError when requesting an unregistered extractor type without default", () => {
       // Temporarily test getExtractor with an unregistered type when humanoid fallback is unmapped or customized
       let errorThrown: unknown = null;
@@ -121,7 +121,7 @@ describe("Technical Subsystems Error Architecture (Phase 2)", () => {
     });
   });
 
-  describe("4. LoopCircuitBreaker Integration with GameBaseError", () => {
+  describe("LoopCircuitBreaker Integration with GameBaseError", () => {
     it("extracts and enriches circuit breaker logs with GameBaseError metadata", () => {
       const mockLogger = new MockLogger();
       const breaker = new LoopCircuitBreaker({

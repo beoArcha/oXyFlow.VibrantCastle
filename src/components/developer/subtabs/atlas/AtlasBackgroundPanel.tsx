@@ -8,10 +8,10 @@ import {
   ShieldCheck,
   Eye,
 } from "lucide-react";
-import { Button, Slider, Badge } from "../../../ui";
-import { useI18n } from "../../../../hooks/useI18n";
+import { Button, Slider, Badge } from "@/components/ui";
+import { useI18n } from "@/hooks/useI18n";
 import { IAtlasBackgroundConfig } from "./types";
-import { BackgroundProcessor } from "../../../../game/engine/meta/slicing";
+import { BackgroundProcessor } from "@/game/engine/meta/slicing";
 
 export interface AtlasBackgroundPanelProps {
   imageSrc: string;
@@ -168,11 +168,10 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={() => handleModeChange("transparent")}
-            className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border text-xs font-bold transition-all ${
-              currentMode === "transparent"
+            className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border text-xs font-bold transition-all ${currentMode === "transparent"
                 ? "bg-emerald-950/40 border-emerald-500 text-emerald-200 shadow-sm shadow-emerald-950/40"
                 : "bg-black/50 border-stone-800 text-stone-400 hover:text-stone-200 hover:border-stone-700"
-            }`}
+              }`}
           >
             <ShieldCheck size={14} className="text-emerald-400" />
             <span>{t("atlasStudioBgTransparent")}</span>
@@ -180,11 +179,10 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
 
           <button
             onClick={() => handleModeChange("color")}
-            className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border text-xs font-bold transition-all ${
-              currentMode === "color"
+            className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border text-xs font-bold transition-all ${currentMode === "color"
                 ? "bg-amber-950/40 border-amber-500 text-amber-200 shadow-sm shadow-amber-950/40"
                 : "bg-black/50 border-stone-800 text-stone-400 hover:text-stone-200 hover:border-stone-700"
-            }`}
+              }`}
           >
             <Pipette size={14} className="text-amber-400" />
             <span>{t("atlasStudioBgColor")}</span>
@@ -244,11 +242,10 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
               <button
                 key={p.hex}
                 onClick={() => handleColorChange(p.hex)}
-                className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono border ${
-                  currentColor.toLowerCase() === p.hex.toLowerCase()
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono border ${currentColor.toLowerCase() === p.hex.toLowerCase()
                     ? "border-amber-400 bg-amber-950/50 text-amber-200 font-bold"
                     : "border-stone-800 bg-black/40 text-stone-400 hover:border-stone-700 hover:text-stone-300"
-                }`}
+                  }`}
               >
                 <span
                   className="w-2.5 h-2.5 rounded-full border border-stone-700"

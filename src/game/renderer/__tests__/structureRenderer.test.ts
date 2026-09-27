@@ -3,7 +3,7 @@ import { StructureRenderer, defaultStructureRenderer } from "../structureRendere
 import { Entity, CollisionType } from "../../types";
 import { createMockContext2D as createMockContext } from "../../../test-utils";
 
-describe("Podfaza 5.3: StructureRenderer Comprehensive Unit Tests", () => {
+describe("StructureRenderer", () => {
   it("renders goal portal via atlas when atlas is present", () => {
     let atlasCalled = false;
     const mockAtlasRenderer = {

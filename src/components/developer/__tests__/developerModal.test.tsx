@@ -7,7 +7,7 @@ import { DeveloperTabLayout } from "../DeveloperTabLayout";
 import { LoggerManager, LogLevel } from "../../../lib/logger";
 import { TestProviders } from "../../../test-utils";
 
-describe("Phase 5.1: DeveloperModal & DeveloperTab Component Suite", () => {
+describe("DeveloperModal & DeveloperTab Components", () => {
   beforeEach(() => {
     LoggerManager.resetInstance({
       mode: "development",
@@ -19,7 +19,7 @@ describe("Phase 5.1: DeveloperModal & DeveloperTab Component Suite", () => {
     LoggerManager.resetInstance();
   });
 
-  describe("1. DeveloperModal Rendering & Contracts", () => {
+  describe("DeveloperModal Rendering & Contracts", () => {
     it("renders modal structure with developer titles and language selector", () => {
       let closed = false;
       const html = renderToString(
@@ -53,7 +53,7 @@ describe("Phase 5.1: DeveloperModal & DeveloperTab Component Suite", () => {
     });
   });
 
-  describe("2. DeveloperTab Subtab Navigation & Dynamic Badges", () => {
+  describe("DeveloperTab Subtab Navigation & Dynamic Badges", () => {
     it("renders the 4 primary developer subtabs with appropriate icons and badges", () => {
       const html = renderToString(
         <TestProviders>

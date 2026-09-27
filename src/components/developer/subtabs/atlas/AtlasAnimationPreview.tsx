@@ -10,15 +10,15 @@ import {
   ArrowLeftRight,
   Minus,
 } from "lucide-react";
-import { Button, Badge, Slider } from "../../../ui";
-import { useI18n } from "../../../../hooks/useI18n";
+import { Button, Badge, Slider } from "@/components/ui";
+import { useI18n } from "@/hooks/useI18n";
 import {
   AtlasGridConfig,
   AtlasAnimationTrackDefinition,
   AtlasOriginDefinition,
   IAtlasBackgroundConfig,
 } from "./types";
-import { BackgroundProcessor } from "../../../../game/engine/meta/slicing";
+import { BackgroundProcessor } from "@/game/engine/meta/slicing";
 
 export interface AtlasAnimationPreviewProps {
   imageSrc: string;
@@ -325,23 +325,22 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
 
       {/* Main Animation Stage Viewport */}
       <div
-        className={`relative min-h-[220px] max-h-[280px] overflow-hidden rounded-xl border border-stone-800 flex items-center justify-center p-4 transition-colors select-none ${
-          bgMode === "dark"
+        className={`relative min-h-[220px] max-h-[280px] overflow-hidden rounded-xl border border-stone-800 flex items-center justify-center p-4 transition-colors select-none ${bgMode === "dark"
             ? "bg-[#0c0a09]"
             : bgMode === "castle"
-            ? "bg-[#180a06]"
-            : bgMode === "white"
-            ? "bg-stone-200"
-            : "bg-[#100b08]"
-        }`}
+              ? "bg-[#180a06]"
+              : bgMode === "white"
+                ? "bg-stone-200"
+                : "bg-[#100b08]"
+          }`}
         style={
           bgMode === "checker"
             ? {
-                backgroundImage:
-                  "linear-gradient(45deg, #180d08 25%, transparent 25%), linear-gradient(-45deg, #180d08 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #180d08 75%), linear-gradient(-45deg, transparent 75%, #180d08 75%)",
-                backgroundSize: "20px 20px",
-                backgroundPosition: "0 0, 0 10px, 10px -10px, -10px 0px",
-              }
+              backgroundImage:
+                "linear-gradient(45deg, #180d08 25%, transparent 25%), linear-gradient(-45deg, #180d08 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #180d08 75%), linear-gradient(-45deg, transparent 75%, #180d08 75%)",
+              backgroundSize: "20px 20px",
+              backgroundPosition: "0 0, 0 10px, 10px -10px, -10px 0px",
+            }
             : undefined
         }
       >
@@ -356,17 +355,16 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
             <button
               key={mode}
               onClick={() => setBgMode(mode)}
-              className={`px-1.5 py-0.5 rounded cursor-pointer ${
-                bgMode === mode ? "bg-amber-600 text-white font-bold" : "text-stone-400 hover:text-stone-200"
-              }`}
+              className={`px-1.5 py-0.5 rounded cursor-pointer ${bgMode === mode ? "bg-amber-600 text-white font-bold" : "text-stone-400 hover:text-stone-200"
+                }`}
             >
               {mode === "checker"
                 ? t("atlasStudioBgChecker")
                 : mode === "dark"
-                ? t("atlasStudioBgDark")
-                : mode === "castle"
-                ? t("atlasStudioBgCastle")
-                : t("atlasStudioBgWhite")}
+                  ? t("atlasStudioBgDark")
+                  : mode === "castle"
+                    ? t("atlasStudioBgCastle")
+                    : t("atlasStudioBgWhite")}
             </button>
           ))}
         </div>
@@ -480,11 +478,10 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
               <button
                 key={fIdx}
                 onClick={() => handleFrameChange(fIdx)}
-                className={`px-2 py-0.5 rounded text-xs font-mono font-bold transition-all border cursor-pointer ${
-                  currentFrame === fIdx
+                className={`px-2 py-0.5 rounded text-xs font-mono font-bold transition-all border cursor-pointer ${currentFrame === fIdx
                     ? "bg-gradient-to-r from-amber-600 to-amber-700 text-white border-amber-400 shadow-md shadow-amber-950/50"
                     : "bg-black/50 text-stone-400 border-stone-800 hover:text-stone-200 hover:border-stone-700"
-                }`}
+                  }`}
               >
                 #{fIdx}
               </button>
@@ -500,11 +497,10 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
               <button
                 key={s}
                 onClick={() => setSpeedMultiplier(s)}
-                className={`px-1.5 py-0.5 rounded text-[11px] font-mono font-bold cursor-pointer ${
-                  speedMultiplier === s
+                className={`px-1.5 py-0.5 rounded text-[11px] font-mono font-bold cursor-pointer ${speedMultiplier === s
                     ? "bg-amber-600 text-white"
                     : "bg-black/60 text-stone-400 hover:text-stone-200"
-                }`}
+                  }`}
               >
                 {s}x
               </button>
@@ -517,11 +513,10 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
               <button
                 key={s}
                 onClick={() => setScale(s)}
-                className={`px-1.5 py-0.5 rounded text-[11px] font-mono font-bold cursor-pointer ${
-                  scale === s
+                className={`px-1.5 py-0.5 rounded text-[11px] font-mono font-bold cursor-pointer ${scale === s
                     ? "bg-amber-600 text-white"
                     : "bg-black/60 text-stone-400 hover:text-stone-200"
-                }`}
+                  }`}
               >
                 {s}x
               </button>

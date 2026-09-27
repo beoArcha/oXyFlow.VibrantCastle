@@ -9,7 +9,7 @@ describe("Game Loop & 15-FPS Quantum Framerate Architecture", () => {
     fps = new FPSManager(60);
   });
 
-  describe("1. 15-FPS Quantum Multiples & Physics Normalization", () => {
+  describe("15-FPS quantum multiples & physics normalization", () => {
     it("supports only framerates that are multiples of 15 (30, 60, 90, 120 Hz)", () => {
       expect(FPSManager.SUPPORTED_FPS).toEqual([30, 60, 90, 120]);
       expect(FPSManager.BASE_QUANTUM).toBe(15);
@@ -58,7 +58,7 @@ describe("Game Loop & 15-FPS Quantum Framerate Architecture", () => {
     });
   });
 
-  describe("2. Fixed Timestep Accumulator & Interpolation", () => {
+  describe("Fixed timestep accumulator & interpolation", () => {
     it("accumulates elapsed time and consumes discrete fixed steps", () => {
       fps.setTargetFps(60); // 16.666 ms per step
       fps.pushDelta(16.67);
@@ -97,7 +97,7 @@ describe("Game Loop & 15-FPS Quantum Framerate Architecture", () => {
     });
   });
 
-  describe("3. GameEngine Decoupled Simulation & Rendering", () => {
+  describe("GameEngine decoupled simulation & rendering", () => {
     it("can run fixedUpdate independently without canvas attached", () => {
       const engine = new GameEngine();
       const p1 = engine.players[0];

@@ -9,7 +9,7 @@ import { DebugStateDumpCard } from "../subtabs/debug/DebugStateDumpCard";
 import { LoggerManager, LogLevel } from "../../../lib/logger";
 import { TestProviders } from "../../../test-utils";
 
-describe("Phase 5.2: DebugSubTab & Telemetry Cards Suite", () => {
+describe("DebugSubTab & Telemetry Cards", () => {
   beforeEach(() => {
     LoggerManager.resetInstance({
       mode: "development",
@@ -21,7 +21,7 @@ describe("Phase 5.2: DebugSubTab & Telemetry Cards Suite", () => {
     LoggerManager.resetInstance();
   });
 
-  describe("1. DebugSubTab Orchestrator Rendering", () => {
+  describe("DebugSubTab Orchestrator Rendering", () => {
     it("renders the unified debug subtab with all cards without crashing", () => {
       const html = renderToString(
         <TestProviders>
@@ -34,7 +34,7 @@ describe("Phase 5.2: DebugSubTab & Telemetry Cards Suite", () => {
     });
   });
 
-  describe("2. Individual Debug Cards Verification", () => {
+  describe("Individual Debug Cards Verification", () => {
     it("renders DebugTelemetryCard with formatted performance metrics", () => {
       const html = renderToString(
         <TestProviders>

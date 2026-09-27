@@ -82,8 +82,8 @@ const mockLocation: LocationDefinition = {
   },
 } as unknown as LocationDefinition;
 
-describe("Phase 3: Modular Parallax Decomposition Suite", () => {
-  describe("1. ParallaxRenderer Orchestrator Delegation & DIP", () => {
+describe("Modular Parallax Subsystems", () => {
+  describe("ParallaxRenderer Orchestrator Delegation & DIP", () => {
     it("renders complete parallax background without crashing and preserves save/restore balance", () => {
       const ctx = createMockContext();
       const parallax = new ParallaxRenderer();
@@ -138,7 +138,7 @@ describe("Phase 3: Modular Parallax Decomposition Suite", () => {
     });
   });
 
-  describe("2. CelestialRenderer Standalone Unit Tests", () => {
+  describe("CelestialRenderer", () => {
     it("renders celestial circle and caches gradient across frames", () => {
       const ctx = createMockContext();
       const celestial = new CelestialRenderer();
@@ -165,7 +165,7 @@ describe("Phase 3: Modular Parallax Decomposition Suite", () => {
     });
   });
 
-  describe("3. CastleSilhouetteRenderer Standalone Unit Tests", () => {
+  describe("CastleSilhouetteRenderer", () => {
     it("renders needle spires for distant layers and fortress bastions for mid layers", () => {
       const ctx = createMockContext();
       const castle = defaultCastleSilhouetteRenderer;
@@ -196,7 +196,7 @@ describe("Phase 3: Modular Parallax Decomposition Suite", () => {
     });
   });
 
-  describe("4. MountainRidgeRenderer Standalone Unit Tests", () => {
+  describe("MountainRidgeRenderer", () => {
     it("draws jagged polygons and crest rim highlights", () => {
       const ctx = createMockContext();
       const mountain = defaultMountainRidgeRenderer;
@@ -214,7 +214,7 @@ describe("Phase 3: Modular Parallax Decomposition Suite", () => {
     });
   });
 
-  describe("5. AtmosphericFogRenderer Standalone Unit Tests", () => {
+  describe("AtmosphericFogRenderer", () => {
     it("renders twinkling starfield and smooth mist ribbon", () => {
       const ctx = createMockContext();
       const fog = defaultAtmosphericFogRenderer;
@@ -244,7 +244,7 @@ describe("Phase 3: Modular Parallax Decomposition Suite", () => {
     });
   });
 
-  describe("6. SceneryScaffoldRenderer Standalone Unit Tests", () => {
+  describe("SceneryScaffoldRenderer", () => {
     it("renders trees, clockwork gears, and custom geometric shapes", () => {
       const ctx = createMockContext();
       const scenery = defaultSceneryScaffoldRenderer;

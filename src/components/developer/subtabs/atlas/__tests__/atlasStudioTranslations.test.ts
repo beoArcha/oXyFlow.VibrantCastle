@@ -1,8 +1,8 @@
 import { describe, it, expect } from "bun:test";
-import { settingsTranslations } from "../../../../../game/i18n/modules/settings";
-import { hudTranslations } from "../../../../../game/i18n/modules/hud";
+import { settingsTranslations } from "@/game/i18n/modules/settings";
+import { hudTranslations } from "@/game/i18n/modules/hud";
 
-describe("Atlas Studio Layout & Modal Responsive Suite (Phase 1)", () => {
+describe("Atlas Studio Layout Translations (i18n)", () => {
   it("verifies modal maximize and restore translations in both languages", () => {
     expect(hudTranslations.pl.modalMaximize).toBe("Powiększ okno");
     expect(hudTranslations.pl.modalRestore).toBe("Przywróć standardowy rozmiar");

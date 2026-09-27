@@ -11,8 +11,8 @@ import leverMetaJson from "../../../../assets/structures/chrono_lever/chrono_lev
 import portcullisMetaJson from "../../../../assets/structures/grand_portcullis/grand_portcullis_meta.json";
 import thornsMetaJson from "../../../../assets/structures/hazard_thorns/hazard_thorns_meta.json";
 
-describe("SOLID MetaParser & Section Parsers Suite", () => {
-  describe("1. Character Document Parsing (Valen & Aurelia)", () => {
+describe("MetaParser & Section Parsers", () => {
+  describe("Character document parsing (Valen & Aurelia)", () => {
     it("correctly parses Valen character metadata with portraits, wide frames and constraints", () => {
       const doc = defaultMetaParser.parseCharacter(valenMetaJson);
 
@@ -68,7 +68,7 @@ describe("SOLID MetaParser & Section Parsers Suite", () => {
     });
   });
 
-  describe("2. Creature / Monster Document Parsing (Gargoyle & Training Dummy)", () => {
+  describe("Creature / monster document parsing (Gargoyle & Training Dummy)", () => {
     it("correctly parses Clockwork Owl Gargoyle with center anchor and state machine", () => {
       const doc = defaultMetaParser.parseCreature(gargoyleMetaJson);
 
@@ -109,7 +109,7 @@ describe("SOLID MetaParser & Section Parsers Suite", () => {
     });
   });
 
-  describe("3. Structure Document Parsing (Aether Gate)", () => {
+  describe("Structure document parsing (Aether Gate)", () => {
     it("correctly parses Aether Gate with interaction, render directives and infoFrames", () => {
       const doc = defaultMetaParser.parseStructure(gateMetaJson);
 
@@ -189,7 +189,7 @@ describe("SOLID MetaParser & Section Parsers Suite", () => {
     });
   });
 
-  describe("4. Resilience & Fallback Defaults", () => {
+  describe("Resilience & fallback defaults", () => {
     it("safely handles null and empty inputs without crashing", () => {
       const docNull = defaultMetaParser.parseUniversal(null);
       expect(docNull.info.id).toBe("unknown");

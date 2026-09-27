@@ -6,7 +6,7 @@ import {
 import { DEFAULT_SETTINGS, GameSettingsState } from "../../settingsTypes";
 import { createMockStorageProvider, MockStorageProvider } from "../../../test-utils";
 
-describe("SettingsStorage Domain & Persistence Suite (Phase 3)", () => {
+describe("SettingsStorage - Domain & Persistence", () => {
   let mockStorage: MockStorageProvider;
   let settingsStorage: SettingsStorage;
 
@@ -15,7 +15,7 @@ describe("SettingsStorage Domain & Persistence Suite (Phase 3)", () => {
     settingsStorage = new SettingsStorage(mockStorage);
   });
 
-  describe("1. Settings Loading & Fallbacks", () => {
+  describe("Settings Loading & Fallbacks", () => {
     it("returns DEFAULT_SETTINGS when storage is completely empty", () => {
       const loaded = settingsStorage.load();
       expect(loaded).toEqual(DEFAULT_SETTINGS);
@@ -77,7 +77,7 @@ describe("SettingsStorage Domain & Persistence Suite (Phase 3)", () => {
     });
   });
 
-  describe("2. Settings Saving & Persistence", () => {
+  describe("Settings Saving & Persistence", () => {
     it("persists settings to both full settings and legacy display storage keys", () => {
       const custom: GameSettingsState = {
         ...DEFAULT_SETTINGS,
@@ -112,7 +112,7 @@ describe("SettingsStorage Domain & Persistence Suite (Phase 3)", () => {
     });
   });
 
-  describe("3. Export and Import Features", () => {
+  describe("Export and Import Features", () => {
     it("exports settings to valid formatted JSON string", () => {
       const jsonStr = settingsStorage.exportToJson(DEFAULT_SETTINGS);
       expect(typeof jsonStr).toBe("string");

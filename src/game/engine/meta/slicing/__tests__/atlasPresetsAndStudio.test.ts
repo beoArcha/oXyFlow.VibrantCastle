@@ -1,9 +1,9 @@
 import { describe, it, expect } from "bun:test";
-import { ATLAS_PRESETS } from "../../../../../components/developer/subtabs/atlas/assetPresets";
+import { ATLAS_PRESETS } from "@components/developer/subtabs/atlas/assetPresets";
 import { defaultAtlasSlicingEngine } from "../AtlasSlicingEngine";
 import { defaultMetaParser } from "../../MetaParser";
 
-describe("Atlas Presets & Studio Slicing Integration Suite (Phase 4)", () => {
+describe("Atlas Presets & Studio Slicing Integration", () => {
   it("includes all 10 standard game presets (characters, enemies, structures, portraits)", () => {
     expect(ATLAS_PRESETS.length).toBe(10);
 

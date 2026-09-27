@@ -1,5 +1,5 @@
 import { AtlasPresetItem } from "./types";
-import { defaultAtlasAssetRegistry } from "../../../../game/engine/meta/registry";
+import { defaultAtlasAssetRegistry } from "@game/engine/meta/registry";
 
 export { defaultAtlasAssetRegistry };
 

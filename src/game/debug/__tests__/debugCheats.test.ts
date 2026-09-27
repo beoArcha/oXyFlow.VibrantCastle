@@ -134,7 +134,7 @@ describe("DebugCheatsController (SRP & Clean Code)", () => {
     controller = new DebugCheatsController(mockContext);
   });
 
-  describe("1. Player Teleportation", () => {
+  describe("Player teleportation", () => {
     it("teleports player and clamps within level boundaries", () => {
       controller.teleportPlayer(PlayerId.Player1, 500, 300);
 
@@ -169,7 +169,7 @@ describe("DebugCheatsController (SRP & Clean Code)", () => {
     });
   });
 
-  describe("2. Enemy Management", () => {
+  describe("Enemy management", () => {
     it("damages single enemy and plays hit feedback", () => {
       const initialHp = mockEnemy1.health;
       const success = controller.damageEnemy("enemy_1", 30);
@@ -233,7 +233,7 @@ describe("DebugCheatsController (SRP & Clean Code)", () => {
     });
   });
 
-  describe("3. Vitals & Stats", () => {
+  describe("Vitals & stats", () => {
     it("refills player health, mana, stamina, and revives if dead", () => {
       mockPlayer.health = 0;
       mockPlayer.isDead = true;
@@ -260,7 +260,7 @@ describe("DebugCheatsController (SRP & Clean Code)", () => {
     });
   });
 
-  describe("4. Skills & Inventory Cheats", () => {
+  describe("Skills & inventory cheats", () => {
     it("unlocks all skills and grants skill points", () => {
       controller.unlockAllSkills(0);
 
@@ -304,7 +304,7 @@ describe("DebugCheatsController (SRP & Clean Code)", () => {
     });
   });
 
-  describe("5. Game Flow & Particle Debug Actions", () => {
+  describe("Game flow & particle debug actions", () => {
     it("forces victory and stops the game loop", () => {
       controller.forceVictory();
 
@@ -334,7 +334,7 @@ describe("DebugCheatsController (SRP & Clean Code)", () => {
     });
   });
 
-  describe("6. GameEngine Delegation Integration", () => {
+  describe("GameEngine delegation integration", () => {
     it("exposes debugController and delegates cheat methods seamlessly", () => {
       const engine = new GameEngine();
       expect(engine.debugController).toBeDefined();

@@ -10,7 +10,7 @@ import { Player, Enemy, Entity, Projectile, Particle, PlayerId, CollisionType } 
 import { getLocation } from "../../locations";
 import { createMockContext2D as createMockContext } from "../../../test-utils";
 
-describe("Renderer Optimization & Zero GC Pressure (Faza 3)", () => {
+describe("Renderer Optimization & Zero GC Pressure", () => {
   let mockPlayer: Player;
   let mockEnemy: Enemy;
   let mockEntity: Entity;
@@ -83,7 +83,7 @@ describe("Renderer Optimization & Zero GC Pressure (Faza 3)", () => {
     ];
   });
 
-  describe("1. Strict Canvas State Preservation (Save/Restore Balance)", () => {
+  describe("Strict Canvas State Preservation (Save/Restore Balance)", () => {
     it("guarantees perfectly balanced save() and restore() in ActorRenderer", () => {
       const ctx = createMockContext();
       const actorRenderer = new ActorRenderer();
@@ -136,7 +136,7 @@ describe("Renderer Optimization & Zero GC Pressure (Faza 3)", () => {
     });
   });
 
-  describe("2. Parallax Layer Cache & Zero Sort Allocations", () => {
+  describe("Parallax Layer Cache & Zero Sort Allocations", () => {
     it("caches depth-sorted layers across frames in ParallaxRenderer", () => {
       const ctx = createMockContext();
       const parallax = new ParallaxRenderer();
@@ -151,7 +151,7 @@ describe("Renderer Optimization & Zero GC Pressure (Faza 3)", () => {
     });
   });
 
-  describe("3. MultiLayerBackgroundSystem Zero Allocation Loop", () => {
+  describe("MultiLayerBackgroundSystem Zero Allocation Loop", () => {
     it("replaces per-frame dynamic array creation with preallocated tier buckets", () => {
       const ctx = createMockContext();
       const multiLayer = new MultiLayerBackgroundSystem();
@@ -168,7 +168,7 @@ describe("Renderer Optimization & Zero GC Pressure (Faza 3)", () => {
     });
   });
 
-  describe("4. Visual Effects & Particles Rendering Performance", () => {
+  describe("Visual Effects & Particles Rendering Performance", () => {
     it("renders projectiles without allocating closures or leaking state", () => {
       const ctx = createMockContext();
       const fxRenderer = new FxRenderer();
@@ -189,7 +189,7 @@ describe("Renderer Optimization & Zero GC Pressure (Faza 3)", () => {
     });
   });
 
-  describe("5. Gradient Caching & Zero Runtime Gradient Allocations (AGENT.md § 12.2)", () => {
+  describe("Gradient Caching & Zero Runtime Gradient Allocations", () => {
     it("guarantees zero gradient allocations in MultiLayerBackgroundSystem after frame 1", () => {
       const ctx = createMockContext();
       const multiLayer = new MultiLayerBackgroundSystem();

@@ -11,7 +11,7 @@ import {
 import { LoggerManager, LogLevel, LogRecord } from "../../../lib/logger";
 import { TestProviders } from "../../../test-utils";
 
-describe("Phase 5.4: LogsSubTab & Terminal Subcomponents Suite", () => {
+describe("LogsSubTab & Terminal Subcomponents", () => {
   beforeEach(() => {
     LoggerManager.resetInstance({
       mode: "development",
@@ -23,7 +23,7 @@ describe("Phase 5.4: LogsSubTab & Terminal Subcomponents Suite", () => {
     LoggerManager.resetInstance();
   });
 
-  describe("1. LogsSubTab Orchestrator Rendering", () => {
+  describe("LogsSubTab Orchestrator Rendering", () => {
     it("renders the logs subtab terminal workspace without crashing", () => {
       const html = renderToString(
         <TestProviders>
@@ -35,7 +35,7 @@ describe("Phase 5.4: LogsSubTab & Terminal Subcomponents Suite", () => {
     });
   });
 
-  describe("2. Individual Logs Components Verification", () => {
+  describe("Individual Logs Components Verification", () => {
     it("renders LogsHeaderToolbar with log counter and action controls", () => {
       const html = renderToString(
         <TestProviders>

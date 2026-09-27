@@ -1,7 +1,7 @@
 import { describe, it, expect } from "bun:test";
-import { defaultAtlasAssetRegistry } from "../../../../../game/engine/meta/registry";
+import { defaultAtlasAssetRegistry } from "../index";
 
-describe("AtlasPresetSelector & Filtering Domain Suite (Phase 2)", () => {
+describe("AtlasAssetRegistry - Search & Category Filtering", () => {
   it("resolves all assets when filter is 'all'", () => {
     const all = defaultAtlasAssetRegistry.search("", "all");
     expect(all.length).toBeGreaterThanOrEqual(10);

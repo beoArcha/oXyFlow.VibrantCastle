@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test";
-import { TRACK_COLORS } from "../subtabs/atlas/viewer";
+import { TRACK_COLORS } from "../viewer";
 
 describe("Atlas Viewer Configurations", () => {
   it("verifies track colors palette is defined and non-empty", () => {

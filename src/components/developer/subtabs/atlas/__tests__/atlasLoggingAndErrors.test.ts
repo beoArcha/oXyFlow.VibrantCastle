@@ -1,12 +1,16 @@
 import { describe, it, expect, beforeEach } from "bun:test";
-import { defaultAtlasSlicingEngine } from "../../../../../game/engine/meta/slicing/AtlasSlicingEngine";
-import { AutoIslandSlicingStrategy } from "../../../../../game/engine/meta/slicing/AutoIslandSlicingStrategy";
-import { LoggerManager, LogLevel } from "../../../../../lib/logger";
-import { AssetError, ParserError, ErrorCode, GameBaseError } from "../../../../../lib/errors";
-import { settingsTranslations } from "../../../../../game/i18n/modules/settings";
+import { defaultAtlasSlicingEngine } from "@/game/engine/meta/slicing/AtlasSlicingEngine";
+import { AutoIslandSlicingStrategy } from "@/game/engine/meta/slicing/AutoIslandSlicingStrategy";
+import { LoggerManager, LogLevel } from "@/lib/logger";
+import { AssetError, ParserError, ErrorCode, GameBaseError } from "@/lib/errors";
+import { settingsTranslations } from "@/game/i18n/modules/settings";
 
-describe("Atlas Studio Logging & Domain Error Architecture Suite (Phase 3)", () => {
+describe("Atlas Studio - Logging & Domain Error Architecture", () => {
   beforeEach(() => {
+    LoggerManager.resetInstance({
+      mode: "development",
+      defaultLevel: LogLevel.DEBUG,
+    });
     LoggerManager.getInstance().ringBuffer.clear();
   });
 

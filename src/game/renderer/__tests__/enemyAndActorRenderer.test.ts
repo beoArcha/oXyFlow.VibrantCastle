@@ -4,8 +4,8 @@ import { ActorRenderer } from "../actorRenderer";
 import { Enemy, Player, PlayerId } from "../../types";
 import { createMockContext2D as createMockContext } from "../../../test-utils";
 
-describe("Podfaza 5.2: EnemyRenderer & ActorRenderer Comprehensive Unit Tests", () => {
-  describe("1. EnemyRenderer Logic & Branching", () => {
+describe("EnemyRenderer & ActorRenderer", () => {
+  describe("EnemyRenderer Logic & Branching", () => {
     it("delegates to AtlasSpriteRenderer when atlas is registered", () => {
       let renderCalled = false;
       let passedOptions: any = null;
@@ -154,7 +154,7 @@ describe("Podfaza 5.2: EnemyRenderer & ActorRenderer Comprehensive Unit Tests", 
     });
   });
 
-  describe("2. ActorRenderer Logic & Visual States", () => {
+  describe("ActorRenderer Logic & Visual States", () => {
     it("renders player with crouch, attack reach, and shield active states cleanly", () => {
       const actorRenderer = new ActorRenderer();
       const ctx = createMockContext();

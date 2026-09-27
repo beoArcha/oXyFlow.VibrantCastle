@@ -12,7 +12,7 @@ import {
 } from "../statsTypes";
 import { createMockStorageProvider, MockStorageProvider } from "../../../../test-utils";
 
-describe("StatsStorage & StatsManager Domain Suite (Phase 4)", () => {
+describe("StatsStorage & StatsManager", () => {
   let mockStorage: MockStorageProvider;
   let statsStorage: StatsStorage;
 
@@ -21,7 +21,7 @@ describe("StatsStorage & StatsManager Domain Suite (Phase 4)", () => {
     statsStorage = new StatsStorage(mockStorage);
   });
 
-  describe("1. StatsStorage - Loading & Sanitization", () => {
+  describe("StatsStorage - Loading & Sanitization", () => {
     it("returns null when storage is empty", () => {
       const result = statsStorage.load();
       expect(result).toBeNull();
@@ -80,7 +80,7 @@ describe("StatsStorage & StatsManager Domain Suite (Phase 4)", () => {
     });
   });
 
-  describe("2. StatsStorage - Saving & Debouncing", () => {
+  describe("StatsStorage - Saving & Debouncing", () => {
     it("immediately saves stats and writes to storage key", () => {
       const stats = createInitialSessionStats();
       stats.p1.kills = 5;
@@ -136,7 +136,7 @@ describe("StatsStorage & StatsManager Domain Suite (Phase 4)", () => {
     });
   });
 
-  describe("3. StatsManager - Dependency Inversion & Domain Orchestration", () => {
+  describe("StatsManager - Dependency Inversion & Domain Orchestration", () => {
     let mockIStatsStorage: IStatsStorage;
     let savedInMock: GameSessionStats | null = null;
     let clearedMock = false;

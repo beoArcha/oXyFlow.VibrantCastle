@@ -68,7 +68,7 @@ const mockAudio = {
   playSFX: (_type: SoundType) => {},
 };
 
-describe("Domain Logging Suite (Phase 2)", () => {
+describe("Domain Logging", () => {
   let records: LogRecord[] = [];
   let testTransport: ILogTransport;
 

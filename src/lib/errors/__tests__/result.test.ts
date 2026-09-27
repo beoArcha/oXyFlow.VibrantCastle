@@ -19,8 +19,8 @@ import {
   wrapThrowable,
 } from "../index";
 
-describe("SOLID Result<T, E> Pattern Suite (Phase 1)", () => {
-  describe("1. Basic Construction & Type Narrowing", () => {
+describe("SOLID Result<T, E> Pattern", () => {
+  describe("Basic Construction & Type Narrowing", () => {
     it("creates Ok result with boolean discriminator ok = true", () => {
       const res = ok(42);
 
@@ -50,7 +50,7 @@ describe("SOLID Result<T, E> Pattern Suite (Phase 1)", () => {
     });
   });
 
-  describe("2. Unwrapping & Fallbacks", () => {
+  describe("Unwrapping & Fallbacks", () => {
     it("unwraps Ok value or returns fallback on Err", () => {
       const success: Result<number, string> = ok(100);
       const failure: Result<number, string> = err("failed");
@@ -72,7 +72,7 @@ describe("SOLID Result<T, E> Pattern Suite (Phase 1)", () => {
     });
   });
 
-  describe("3. Combinators, Method Chaining & Zero Allocations", () => {
+  describe("Combinators, Method Chaining & Zero Allocations", () => {
     it("maps Ok value and preserves Err instance without reallocating", () => {
       const success = ok(10);
       const mappedSuccess = success.map((x) => x * 2);
@@ -145,7 +145,7 @@ describe("SOLID Result<T, E> Pattern Suite (Phase 1)", () => {
     });
   });
 
-  describe("4. Exception Safety (tryCatch & wrapThrowable)", () => {
+  describe("Exception Safety (tryCatch & wrapThrowable)", () => {
     it("safely converts throwable operation to Result with tryCatch / fromThrowable", () => {
       const okRes = tryCatch(
         () => JSON.parse('{"mana":100}'),

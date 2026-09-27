@@ -46,7 +46,7 @@ function createMockPlayer(overrides: Partial<Player> = {}): Player {
   } as Player;
 }
 
-describe("Domain & Gameplay Result Pattern Suite (Phase 3)", () => {
+describe("Domain & Gameplay Result Pattern", () => {
   let memoryStore: Record<string, string> = {};
   const origStorage = (globalThis as any).localStorage;
 
@@ -71,7 +71,7 @@ describe("Domain & Gameplay Result Pattern Suite (Phase 3)", () => {
     (globalThis as any).localStorage = origStorage;
   });
 
-  describe("1. Save System (Result-based Outcomes)", () => {
+  describe("Save System (Result-based Outcomes)", () => {
     it("returns Err with SAVE_SLOT_EMPTY when no save exists in storage", () => {
       const result = gameSave.loadSaveResult();
       expect(result.ok).toBe(false);
@@ -238,7 +238,7 @@ describe("Domain & Gameplay Result Pattern Suite (Phase 3)", () => {
     });
   });
 
-  describe("2. Magic System (attemptCastSpell)", () => {
+  describe("Magic System (attemptCastSpell)", () => {
     const mockInputs = {
       left: false,
       right: false,
@@ -322,7 +322,7 @@ describe("Domain & Gameplay Result Pattern Suite (Phase 3)", () => {
     });
   });
 
-  describe("3. Inventory System (equipItem, unequipItem, consumePotion)", () => {
+  describe("Inventory System (equipItem, unequipItem, consumePotion)", () => {
     it("returns Err with GAMEPLAY_ITEM_NOT_FOUND when equipping from empty backpack slot", () => {
       const player = createMockPlayer();
       const res = equipItem(player, 15); // slot 15 is empty

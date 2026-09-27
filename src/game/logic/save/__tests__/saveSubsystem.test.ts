@@ -11,8 +11,8 @@ import { Player, Enemy, Entity, SaveState, PlayerId } from "../../../types";
 import { ErrorCode } from "../../../../lib/errors";
 import { createMockPlayer } from "../../../../test-utils";
 
-describe("Decomposed Save Subsystem Suite (Phase 1)", () => {
-  describe("1. SaveValidator (SRP: JSON validation & normalization)", () => {
+describe("Save Subsystem (Decomposed Architecture)", () => {
+  describe("SaveValidator (SRP: JSON validation & normalization)", () => {
     const validator = new SaveValidator();
 
     it("rejects non-string or empty input", () => {
@@ -57,7 +57,7 @@ describe("Decomposed Save Subsystem Suite (Phase 1)", () => {
     });
   });
 
-  describe("2. SaveCompiler (SRP: Pure compilation of game entities)", () => {
+  describe("SaveCompiler (SRP: Pure compilation of game entities)", () => {
     const compiler = new SaveCompiler();
 
     it("purely compiles Player and entity state into SaveState DTO", () => {
@@ -91,7 +91,7 @@ describe("Decomposed Save Subsystem Suite (Phase 1)", () => {
     });
   });
 
-  describe("3. SaveApplicator (SRP: Mutating active session objects)", () => {
+  describe("SaveApplicator (SRP: Mutating active session objects)", () => {
     const applicator = new SaveApplicator();
 
     it("applies SaveState DTO onto player and entities", () => {
@@ -133,7 +133,7 @@ describe("Decomposed Save Subsystem Suite (Phase 1)", () => {
     });
   });
 
-  describe("4. SaveStorage (SRP & DIP: Storage persistence)", () => {
+  describe("SaveStorage (SRP & DIP: Storage persistence)", () => {
     it("handles storage operations with custom storage provider", () => {
       const store: Record<string, string> = {};
       const mockStorage = {
@@ -197,7 +197,7 @@ describe("Decomposed Save Subsystem Suite (Phase 1)", () => {
     });
   });
 
-  describe("5. SaveExporter (SRP: DOM/Blob isolation)", () => {
+  describe("SaveExporter (SRP: DOM/Blob isolation)", () => {
     const exporter = new SaveExporter();
 
     it("returns Err with SAVE_WRITE_FAILED in headless/non-DOM environment without throwing", () => {
@@ -215,7 +215,7 @@ describe("Decomposed Save Subsystem Suite (Phase 1)", () => {
     });
   });
 
-  describe("6. GameSaveSystem (GoF Facade)", () => {
+  describe("GameSaveSystem (GoF Facade)", () => {
     it("coordinates all services via unified facade with custom storage", () => {
       const store: Record<string, string> = {};
       const mockStorage = {
