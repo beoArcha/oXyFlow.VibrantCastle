@@ -1,4 +1,4 @@
-import { Enemy } from "../types";
+import { Enemy } from "@game/types";
 import { IAtlasSpriteRenderer, defaultAtlasSpriteRenderer } from "./atlasSpriteRenderer";
 
 export interface IEnemyRenderer {

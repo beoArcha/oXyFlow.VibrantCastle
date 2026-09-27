@@ -1,4 +1,4 @@
-import { Projectile, Particle } from "../types";
+import { Projectile, Particle } from "@game/types";
 
 export interface IFxRenderer {
   renderProjectiles(ctx: CanvasRenderingContext2D, projectiles: Projectile[]): void;

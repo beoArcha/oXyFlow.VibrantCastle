@@ -2,11 +2,11 @@ import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { GameRenderer, IRendererDependencies } from "../renderer";
 import { ProceduralBackdropCache } from "../proceduralBackdropCache";
 import { MultiLayerBackgroundSystem } from "../multiLayerBackgroundSystem";
-import { debugManager } from "../../debug/debugManager";
-import { Player, Enemy, Entity, Projectile, Particle, PlayerId } from "../../types";
-import { CameraState } from "../../engine/cameraManager";
-import { LocationDefinition } from "../../locations/types";
-import { assetLoader } from "../../engine/assetLoader";
+import { debugManager } from "@game/debug/debugManager";
+import { Player, Enemy, Entity, Projectile, Particle, PlayerId } from "@game/types";
+import { CameraState } from "@game/engine/cameraManager";
+import { LocationDefinition } from "@game/locations/types";
+import { assetLoader } from "@game/engine/assetLoader";
 import { createMockCanvas, createMockContext2D } from "@test-utils";
 
 describe("GameRenderer Integration & Verification", () => {

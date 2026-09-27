@@ -1,6 +1,6 @@
 import { describe, it, expect } from "bun:test";
 import { StructureRenderer, defaultStructureRenderer } from "../structureRenderer";
-import { Entity, CollisionType } from "../../types";
+import { Entity, CollisionType } from "@game/types";
 import { createMockContext2D as createMockContext } from "@test-utils";
 
 describe("StructureRenderer", () => {

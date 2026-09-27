@@ -1,6 +1,6 @@
 import { describe, it, expect } from "bun:test";
 import { AtlasSpriteRenderer } from "../atlasSpriteRenderer";
-import { assetLoader } from "../../engine/assetLoader";
+import { assetLoader } from "@game/engine/assetLoader";
 
 function createMockContext() {
   let saveCalls = 0;
@@ -15,8 +15,8 @@ function createMockContext() {
     restore: () => {
       restoreCalls++;
     },
-    translate: () => {},
-    scale: () => {},
+    translate: () => { },
+    scale: () => { },
     drawImage: (img: any, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number) => {
       drawImageCalls.push({ img, sx, sy, sw, sh, dx, dy, dw, dh });
     },
@@ -352,13 +352,13 @@ describe("AtlasSpriteRenderer", () => {
         createElement: (tag: string) => {
           if (tag === "canvas") {
             const offscreenCtx = {
-              drawImage: () => {},
+              drawImage: () => { },
               getImageData: () => ({
                 data: new Uint8ClampedArray(100 * 100 * 4),
                 width: 100,
                 height: 100,
               }),
-              putImageData: () => {},
+              putImageData: () => { },
             };
             return {
               width: 100,

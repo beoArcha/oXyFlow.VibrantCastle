@@ -1,4 +1,4 @@
-import { Player, Enemy, Entity, Projectile, CollisionType } from "../types";
+import { Player, Enemy, Entity, Projectile, CollisionType } from "@game/types";
 import {
   IDebugProfilerOverlay,
   defaultDebugProfilerOverlay,

@@ -4,8 +4,8 @@ import { AtmosphericSectorRenderer, defaultAtmosphericSectorRenderer } from "../
 import { DebugProfilerOverlay, defaultDebugProfilerOverlay } from "../debugProfilerOverlay";
 import { HitboxRenderer } from "../hitboxRenderer";
 import { GameRenderer } from "../renderer";
-import { getLocation } from "../../locations";
-import { Player, Enemy, Entity, Projectile, PlayerId, CollisionType } from "../../types";
+import { getLocation } from "@game/locations";
+import { Player, Enemy, Entity, Projectile, PlayerId, CollisionType } from "@game/types";
 import { createMockContext2D as createMockContext } from "@test-utils";
 
 describe("MultiLayerBackgroundSystem & DebugProfilerOverlay", () => {

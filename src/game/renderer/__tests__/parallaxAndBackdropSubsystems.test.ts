@@ -2,8 +2,8 @@ import { describe, it, expect } from "bun:test";
 import { ParallaxImageRenderer } from "../parallax/parallaxImageRenderer";
 import { SceneryScaffoldRenderer } from "../parallax/sceneryScaffoldRenderer";
 import { ProceduralBackdropCache } from "../proceduralBackdropCache";
-import { ParallaxLayerSchema } from "../../locations/schema/locationSchema";
-import { LocationDefinition } from "../../locations/types";
+import { ParallaxLayerSchema } from "@game/locations/schema/locationSchema";
+import { LocationDefinition } from "@game/locations/types";
 
 function createMockContext() {
   let saveCalls = 0;
@@ -19,21 +19,21 @@ function createMockContext() {
     restore: () => {
       restoreCalls++;
     },
-    translate: () => {},
-    rotate: () => {},
-    beginPath: () => {},
-    closePath: () => {},
-    moveTo: () => {},
-    lineTo: () => {},
-    quadraticCurveTo: () => {},
-    arc: () => {},
-    rect: () => {},
+    translate: () => { },
+    rotate: () => { },
+    beginPath: () => { },
+    closePath: () => { },
+    moveTo: () => { },
+    lineTo: () => { },
+    quadraticCurveTo: () => { },
+    arc: () => { },
+    rect: () => { },
     fillRect: (x: number, y: number, w: number, h: number) => {
       fillRectCalls.push({ x, y, w, h });
     },
-    strokeRect: () => {},
-    fill: () => {},
-    stroke: () => {},
+    strokeRect: () => { },
+    fill: () => { },
+    stroke: () => { },
     drawImage: (img: any, dx: number, dy: number, dw: number, dh: number) => {
       drawImageCalls.push({ img, dx, dy, dw, dh });
     },

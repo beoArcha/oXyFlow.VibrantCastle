@@ -1,10 +1,10 @@
-import { LocationDefinition } from "../locations/types";
+import { LocationDefinition } from "@game/locations/types";
 import {
   BackgroundLayerTier,
   ParallaxLayerSchema,
-} from "../locations/schema/locationSchema";
-import { debugManager } from "../debug/debugManager";
-import { assetLoader } from "../engine/assetLoader";
+} from "@game/locations/schema/locationSchema";
+import { debugManager } from "@game/debug/debugManager";
+import { assetLoader } from "@game/engine/assetLoader";
 import {
   ISectorAtmosphericRenderer,
   defaultAtmosphericSectorRenderer,
@@ -124,7 +124,7 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
     for (let i = 0; i < layers.length; i++) {
       const url = layers[i].imageUrl;
       if (url && !assetLoader.isTextureLoaded(url)) {
-        assetLoader.loadTexture(url).catch(() => {});
+        assetLoader.loadTexture(url).catch(() => { });
       }
     }
   }
@@ -133,7 +133,7 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
     if (!url || typeof Image === "undefined") return null;
     const cached = assetLoader.getTexture(url);
     if (!cached) {
-      assetLoader.loadTexture(url).catch(() => {});
+      assetLoader.loadTexture(url).catch(() => { });
     }
     return cached;
   }
@@ -380,10 +380,10 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
         tier === "mid_far"
           ? "#38bdf8"
           : tier === "mid"
-          ? "#22c55e"
-          : tier === "mid_close"
-          ? "#eab308"
-          : "#ec4899";
+            ? "#22c55e"
+            : tier === "mid_close"
+              ? "#eab308"
+              : "#ec4899";
       ctx.lineWidth = 2;
       ctx.setLineDash([6, 6]);
       ctx.strokeRect(0, 0, viewportWidth, viewportHeight);

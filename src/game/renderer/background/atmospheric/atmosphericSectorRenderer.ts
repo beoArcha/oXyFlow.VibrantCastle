@@ -1,4 +1,4 @@
-import { LocationDefinition } from "../../../locations/types";
+import { LocationDefinition } from "@game/locations/types";
 
 export interface ISectorAtmosphericRenderer {
   renderSectorAtmosphere(

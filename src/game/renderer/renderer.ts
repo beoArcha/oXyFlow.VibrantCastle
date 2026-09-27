@@ -31,12 +31,12 @@ import {
   HitboxRenderer,
   defaultHitboxRenderer,
 } from "./hitboxRenderer";
-import { debugManager } from "../debug/debugManager";
+import { debugManager } from "@game/debug/debugManager";
 import {
   ProceduralBackdropCache,
   defaultProceduralBackdropCache,
 } from "./proceduralBackdropCache";
-import { rendererLogger } from "../logger/gameLogger";
+import { rendererLogger } from "@game/logger/gameLogger";
 import {
   IDebugProfilerOverlay,
   defaultDebugProfilerOverlay,

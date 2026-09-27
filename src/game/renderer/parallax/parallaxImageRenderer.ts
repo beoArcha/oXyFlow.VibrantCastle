@@ -1,4 +1,4 @@
-import { ParallaxLayerSchema } from "../../locations/schema/locationSchema";
+import { ParallaxLayerSchema } from "@game/locations/schema/locationSchema";
 
 export interface IParallaxImageRenderer {
   preload(layers?: readonly ParallaxLayerSchema[]): void;

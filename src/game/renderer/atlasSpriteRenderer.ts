@@ -1,12 +1,12 @@
-import { AssetQuality } from "../types";
+import { AssetQuality } from "@game/types";
 import {
   AtlasMetaDoc,
   IUniversalMetaDocument,
   ICreatureMetaDocument,
   IStructureMetaDocument,
-} from "../engine/spriteTypes";
-import { assetLoader } from "../engine/assetLoader";
-import { BackgroundProcessor } from "../engine/meta/slicing/BackgroundProcessor";
+} from "@game/engine/spriteTypes";
+import { assetLoader } from "@game/engine/assetLoader";
+import { BackgroundProcessor } from "@game/engine/meta/slicing/BackgroundProcessor";
 
 export interface RenderAtlasFrameOptions {
   atlasId: string;

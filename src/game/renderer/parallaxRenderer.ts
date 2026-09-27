@@ -1,8 +1,8 @@
-import { LocationDefinition } from "../locations/types";
+import { LocationDefinition } from "@game/locations/types";
 import {
   ParallaxBackgroundSchema,
   ParallaxLayerSchema,
-} from "../locations/schema/locationSchema";
+} from "@game/locations/schema/locationSchema";
 import {
   IMultiLayerBackgroundSystem,
   defaultMultiLayerBackgroundSystem,

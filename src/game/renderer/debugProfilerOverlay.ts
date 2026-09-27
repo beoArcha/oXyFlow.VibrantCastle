@@ -1,5 +1,5 @@
-import { Player, Enemy, Entity, Projectile } from "../types";
-import { debugManager } from "../debug/debugManager";
+import { Player, Enemy, Entity, Projectile } from "@game/types";
+import { debugManager } from "@game/debug/debugManager";
 
 export interface IDebugProfilerOverlay {
   render(

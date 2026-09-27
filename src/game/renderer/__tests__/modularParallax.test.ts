@@ -5,8 +5,8 @@ import { CastleSilhouetteRenderer, defaultCastleSilhouetteRenderer } from "../pa
 import { MountainRidgeRenderer, defaultMountainRidgeRenderer } from "../parallax/mountainRidgeRenderer";
 import { AtmosphericFogRenderer, defaultAtmosphericFogRenderer } from "../parallax/atmosphericFogRenderer";
 import { SceneryScaffoldRenderer, defaultSceneryScaffoldRenderer } from "../parallax/sceneryScaffoldRenderer";
-import { LocationDefinition } from "../../locations/types";
-import { ParallaxLayerSchema } from "../../locations/schema/locationSchema";
+import { LocationDefinition } from "@game/locations/types";
+import { ParallaxLayerSchema } from "@game/locations/schema/locationSchema";
 import { createMockContext2D as createMockContext } from "@test-utils";
 
 const mockLocation: LocationDefinition = {

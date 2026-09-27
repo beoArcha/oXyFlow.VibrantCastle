@@ -1,7 +1,7 @@
 import { describe, it, expect } from "bun:test";
 import { EnemyRenderer } from "../enemyRenderer";
 import { ActorRenderer } from "../actorRenderer";
-import { Enemy, Player, PlayerId } from "../../types";
+import { Enemy, Player, PlayerId } from "@game/types";
 import { createMockContext2D as createMockContext } from "@test-utils";
 
 describe("EnemyRenderer & ActorRenderer", () => {

@@ -1,5 +1,5 @@
-import { LocationDefinition } from "../../locations/types";
-import { ParallaxLayerSchema } from "../../locations/schema/locationSchema";
+import { LocationDefinition } from "@game/locations/types";
+import { ParallaxLayerSchema } from "@game/locations/schema/locationSchema";
 
 export interface IMountainRidgeRenderer {
   render(

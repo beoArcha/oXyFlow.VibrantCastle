@@ -3,10 +3,10 @@ import { GameRenderer } from "../renderer";
 import { ParallaxRenderer } from "../parallaxRenderer";
 import { StructureRenderer, defaultStructureRenderer } from "../structureRenderer";
 import { LevelEntityRenderer, defaultLevelEntityRenderer } from "../levelEntityRenderer";
-import { Entity, CollisionType } from "../../types";
-import { CameraState } from "../../engine/cameraManager";
-import { ParallaxLayerSchema } from "../../locations/schema/locationSchema";
-import gameEngine from "../../loop/engine";
+import { Entity, CollisionType } from "@game/types";
+import { CameraState } from "@game/engine/cameraManager";
+import { ParallaxLayerSchema } from "@game/locations/schema/locationSchema";
+import gameEngine from "@game/loop/engine";
 import { createMockCanvas } from "@test-utils";
 
 describe("GameRenderer - Determinism, Schema Immutability & Proxy Elimination", () => {

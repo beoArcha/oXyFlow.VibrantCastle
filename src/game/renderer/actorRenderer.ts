@@ -1,5 +1,5 @@
-import { Player, Enemy, AssetQuality } from "../types";
-import { SpriteAnimator } from "../engine/spriteAnimator";
+import { Player, Enemy, AssetQuality } from "@game/types";
+import { SpriteAnimator } from "@game/engine/spriteAnimator";
 import { IEnemyRenderer, defaultEnemyRenderer } from "./enemyRenderer";
 
 export interface IActorRenderer {

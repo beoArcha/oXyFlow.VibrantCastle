@@ -6,8 +6,8 @@ import { ActorRenderer } from "../actorRenderer";
 import { FxRenderer } from "../fxRenderer";
 import { StructureRenderer } from "../structureRenderer";
 import { HitboxRenderer } from "../hitboxRenderer";
-import { Player, Enemy, Entity, Projectile, Particle, PlayerId, CollisionType } from "../../types";
-import { getLocation } from "../../locations";
+import { Player, Enemy, Entity, Projectile, Particle, PlayerId, CollisionType } from "@game/types";
+import { getLocation } from "@game/locations";
 import { createMockContext2D as createMockContext } from "@test-utils";
 
 describe("Renderer Optimization & Zero GC Pressure", () => {

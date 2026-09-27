@@ -1,4 +1,4 @@
-import { Entity, CollisionType } from "../types";
+import { Entity, CollisionType } from "@game/types";
 import { LanguageCode, t } from "@i18n";
 import { IAtlasSpriteRenderer, defaultAtlasSpriteRenderer } from "./atlasSpriteRenderer";
 
