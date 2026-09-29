@@ -17,7 +17,7 @@ import {
   IStructureMetaDocument,
 } from "./meta";
 import { assetsLogger } from "../logger/gameLogger";
-import { AssetError, ErrorCode } from "../../lib/errors";
+import { AssetError, ErrorCode } from "@lib/errors";
 
 // Preloaded atlas assets for enemies and structures
 import dummyHighPng from "../../assets/enemies/training_dummy/training_dummy_high.png";

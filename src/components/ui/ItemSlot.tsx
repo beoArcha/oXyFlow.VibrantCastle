@@ -1,6 +1,6 @@
 import React from "react";
-import { Item } from "../../game/types";
-import { cn } from "../../lib/utils";
+import { Item } from "@game/types";
+import { cn } from "@lib/utils";
 import { ItemIcon } from "./ItemIcon";
 
 export interface ItemSlotProps {

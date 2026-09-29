@@ -4,7 +4,7 @@ import { CellSizeSlicingStrategy, defaultCellSizeSlicingStrategy } from "./CellS
 import { FreeformRectSlicingStrategy, defaultFreeformRectSlicingStrategy } from "./FreeformRectSlicingStrategy";
 import { AutoIslandSlicingStrategy, defaultAutoIslandSlicingStrategy } from "./AutoIslandSlicingStrategy";
 import { IPixelBuffer } from "./BackgroundProcessor";
-import { LoggerManager, ILogger } from "../../../../lib/logger";
+import { LoggerManager, ILogger } from "@lib/logger";
 import {
   SlicingMethod,
   ResolvedFrameRect,

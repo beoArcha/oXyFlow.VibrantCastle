@@ -14,7 +14,7 @@ import {
 } from "./types";
 import { defaultAtlasManifestParser } from "./AtlasManifestParser";
 
-import { LoggerManager } from "../../../../lib/logger";
+import { LoggerManager } from "@lib/logger";
 
 // Vite eager module globs (evaluated at build/serve time by Vite AST compiler)
 let viteImageModules: Record<string, string> = {};

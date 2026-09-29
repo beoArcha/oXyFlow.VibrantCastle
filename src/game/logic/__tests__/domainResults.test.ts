@@ -10,7 +10,7 @@ import {
   ITEM_REGISTRY,
 } from "../inventory";
 import { Player, ItemType, SaveState } from "../../types";
-import { ErrorCode, GameplayError, SaveError } from "../../../lib/errors";
+import { ErrorCode, GameplayError, SaveError } from "@lib/errors";
 
 function createMockPlayer(overrides: Partial<Player> = {}): Player {
   return {

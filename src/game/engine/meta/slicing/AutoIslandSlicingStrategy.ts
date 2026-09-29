@@ -1,7 +1,7 @@
 import { ISlicingStrategy, SlicingContext } from "./ISlicingStrategy";
 import { ResolvedFrameRect, SlicingMethod } from "../types";
 import { BackgroundProcessor, IPixelBuffer } from "./BackgroundProcessor";
-import { LoggerManager } from "../../../../lib/logger";
+import { LoggerManager } from "@lib/logger";
 
 export interface AutoIslandConfig {
   minWidth?: number;

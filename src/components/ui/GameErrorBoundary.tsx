@@ -1,6 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
-import { getLogger, ILogger, LoggerManager } from "../../lib/logger";
-import { GameBaseError } from "../../lib/errors";
+import { getLogger, ILogger, LoggerManager } from "@lib/logger";
+import { GameBaseError } from "@lib/errors";
 import { AlertTriangle, RefreshCw, Copy, Check } from "lucide-react";
 import { Button } from "./Button";
 

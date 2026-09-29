@@ -5,7 +5,7 @@ import {
   PortalDefinitionSchema,
 } from "../schema/locationSchema";
 import { engineLogger } from "../../logger/gameLogger";
-import { ErrorCode, ParserError } from "../../../lib/errors";
+import { ErrorCode, ParserError } from "@lib/errors";
 
 /**
  * Parser for Location JSON Blueprints.

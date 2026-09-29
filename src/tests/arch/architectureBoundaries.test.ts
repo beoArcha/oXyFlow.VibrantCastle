@@ -45,6 +45,50 @@ function findImportViolations(
   return violations;
 }
 
+function findCrossGroupRelativeImports(
+  rootDir: string,
+  allowedTargetGroups: Set<string> = new Set()
+): { file: string; lineNo: number; line: string; fromGroup: string; toGroup: string }[] {
+  const srcDir = path.join(rootDir, "src");
+  const allFiles = getAllSourceFiles(srcDir);
+  const topGroups = ["assets", "components", "context", "game", "i18n", "lib"];
+  const violations: { file: string; lineNo: number; line: string; fromGroup: string; toGroup: string }[] = [];
+
+  for (const file of allFiles) {
+    const relFile = path.relative(srcDir, file).replace(/\\/g, "/");
+    const fromGroup = relFile.split("/")[0];
+    if (!topGroups.includes(fromGroup)) continue;
+
+    const content = fs.readFileSync(file, "utf-8");
+    const lines = content.split("\n");
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const match = line.match(/(?:from|import)\s*\(?['"](\.[^'"]+)['"]/);
+      if (match) {
+        const importPath = match[1];
+        const resolvedTarget = path.normalize(path.join(path.dirname(file), importPath));
+        const relTarget = path.relative(srcDir, resolvedTarget).replace(/\\/g, "/");
+        const toGroup = relTarget.split("/")[0];
+
+        if (topGroups.includes(toGroup) && fromGroup !== toGroup) {
+          if (!allowedTargetGroups.has(toGroup)) {
+            violations.push({
+              file: relFile,
+              lineNo: i + 1,
+              line: line.trim(),
+              fromGroup,
+              toGroup,
+            });
+          }
+        }
+      }
+    }
+  }
+
+  return violations;
+}
+
 describe("Architectural Boundary Rules (AGENT.md Sec. 1.1)", () => {
   const rootDir = process.cwd();
   const gameDir = path.join(rootDir, "src", "game");
@@ -123,4 +167,58 @@ describe("Architectural Boundary Rules (AGENT.md Sec. 1.1)", () => {
     expect(tsconfig.compilerOptions.forceConsistentCasingInFileNames).toBe(true);
     expect(tsconfig.compilerOptions.noFallthroughCasesInSwitch).toBe(true);
   });
+
+  it("ensures game simulation core (physics, combat, logic) has zero direct dependencies on DOM globals outside known adapters", () => {
+    const knownBrowserAdapters = new Set([
+      "src/game/loop/input.ts",
+      "src/game/logic/save/saveExporter.ts",
+      "src/game/logic/stats/statsStorage.ts",
+    ]);
+
+    const simulationDirs = [
+      path.join(gameDir, "logic"),
+      path.join(gameDir, "physics"),
+      path.join(gameDir, "loop"),
+    ];
+    const files = simulationDirs
+      .flatMap((dir) => getAllSourceFiles(dir))
+      .filter((file) => {
+        const rel = path.relative(rootDir, file).replace(/\\/g, "/");
+        return !file.includes("__tests__") && !knownBrowserAdapters.has(rel);
+      });
+
+    const domGlobalPattern = /\b(window\.|document\.|localStorage\.|sessionStorage\.|HTMLElement)\b/;
+    const violations = findImportViolations(files, domGlobalPattern, rootDir);
+
+    expect(violations).toEqual([]);
+  });
+
+  it("ensures utility layer src/lib has zero dependencies on application layers (game, context, components, i18n)", () => {
+    const libDir = path.join(rootDir, "src", "lib");
+    const libFiles = getAllSourceFiles(libDir).filter((file) => !file.includes("__tests__"));
+    const forbiddenPattern = /from\s+["'].*(game|context|components|i18n)/;
+    const violations = findImportViolations(libFiles, forbiddenPattern, rootDir);
+
+    expect(violations).toEqual([]);
+  });
+
+  it("ensures React context layer src/context has zero dependencies on UI components", () => {
+    const contextDir = path.join(rootDir, "src", "context");
+    const contextFiles = getAllSourceFiles(contextDir).filter((file) => !file.includes("__tests__"));
+    const forbiddenPattern = /from\s+["'].*components/;
+    const violations = findImportViolations(contextFiles, forbiddenPattern, rootDir);
+
+    expect(violations).toEqual([]);
+  });
+
+  it("ensures cross-group imports between logical domains use path aliases instead of relative traversal", () => {
+    // Relative imports within the same group (e.g. game -> game, components -> components) are allowed.
+    // Cross-group imports (components -> lib, components -> game, game -> lib) must use configured @ aliases.
+    // In Phase 2, asset imports are allowlisted to prevent large-blast-radius edits until dedicated asset phase.
+    const allowedTargetGroups = new Set(["assets"]);
+    const violations = findCrossGroupRelativeImports(rootDir, allowedTargetGroups);
+
+    expect(violations).toEqual([]);
+  });
 });
+

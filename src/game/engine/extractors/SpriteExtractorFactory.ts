@@ -6,7 +6,7 @@ import { HumanoidSpriteExtractor } from "./HumanoidSpriteExtractor";
 import { PortraitSpriteExtractor } from "./PortraitSpriteExtractor";
 import { ObjectSpriteExtractor } from "./ObjectSpriteExtractor";
 import { MonsterSpriteExtractor } from "./MonsterSpriteExtractor";
-import { AssetError, ErrorCode } from "../../../lib/errors";
+import { AssetError, ErrorCode } from "@lib/errors";
 
 /**
  * Extensible factory for registering and resolving sprite extractors (SOLID / OCP).

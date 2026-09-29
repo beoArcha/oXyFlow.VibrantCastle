@@ -1,6 +1,6 @@
 import React from "react";
 import { Flame, Shield, Zap } from "lucide-react";
-import { SkillTreeNode, MagicCategory, MagicTriggerType } from "../../game/types";
+import { SkillTreeNode, MagicCategory, MagicTriggerType } from "@game/types";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui";
 import { SkillNodeItem } from "./SkillNodeItem";
 import { useI18n } from "@context/I18nContext";

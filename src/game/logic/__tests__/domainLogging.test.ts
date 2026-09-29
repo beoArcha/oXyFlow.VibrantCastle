@@ -4,7 +4,7 @@ import {
   LogLevel,
   ILogTransport,
   LogRecord,
-} from "../../../lib/logger";
+} from "@lib/logger";
 import {
   createDefaultInventory,
   equipItem,

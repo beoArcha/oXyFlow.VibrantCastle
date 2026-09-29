@@ -15,8 +15,8 @@ import {
   FlaskConical,
   Package,
 } from "lucide-react";
-import { ItemType } from "../../game/types";
-import { cn } from "../../lib/utils";
+import { ItemType } from "@game/types";
+import { cn } from "@lib/utils";
 
 export interface ItemIconProps {
   name: string;

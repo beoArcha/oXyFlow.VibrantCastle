@@ -1,4 +1,4 @@
-import { getLogger, ILogger } from "../../lib/logger";
+import { getLogger, ILogger } from "@lib/logger";
 
 /**
  * Domain-specific loggers for Game Engine subsystems.

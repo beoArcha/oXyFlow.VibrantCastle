@@ -1,6 +1,6 @@
 import React from "react";
 import { Sparkles, CheckCircle2, Zap } from "lucide-react";
-import { MagicTriggerType } from "../../game/types";
+import { MagicTriggerType } from "@game/types";
 import { Card, CardHeader, CardTitle, CardContent, Badge, Button, KbdKey } from "../ui";
 import { SkillIcon } from "./SkillIcon";
 import { SkillRestrictionsBox } from "./SkillRestrictionsBox";
