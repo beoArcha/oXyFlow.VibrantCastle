@@ -7,14 +7,10 @@ import React, {
   useRef,
   useMemo,
 } from "react";
-import {
-  Player,
-  LocationDefinition,
-  LocationId,
-} from "@game/types";
+import { Player } from "@game/types";
 import gameEngine from "@game/loop/engine";
 import { gameAudio } from "@game/engine/audioEngine";
-import { getNextLocation, getLocation } from "@game/locations";
+import { getNextLocation, getLocation, LocationDefinition, LocationId } from "@game/locations";
 import { useI18n } from "./I18nContext";
 import { useEngineSubscription } from "./hooks/useEngineSubscription";
 import { useSafeTimeout } from "./hooks/useSafeTimeout";

@@ -4,8 +4,8 @@ import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@compon
 import { useI18n } from "@context/I18nContext";
 import { debugManager, SpawnPreset } from "@game/debug/debugManager";
 import gameEngine from "@game/loop/engine";
-import { LocationId, PlayerId } from "@game/types";
-import { getLocation } from "@game/locations";
+import { PlayerId } from "@game/types";
+import { getLocation, LocationId } from "@game/locations";
 
 export const LOCATION_IDS: LocationId[] = [
   "courtyard",

@@ -28,7 +28,8 @@ import { useGameSession } from "@context/GameContext";
 import { useI18n } from "@context/I18nContext";
 import { debugManager } from "@game/debug/debugManager";
 import gameEngine from "@game/loop/engine";
-import { LocationId, PlayerId } from "@game/types";
+import { PlayerId } from "@game/types";
+import { LocationId } from "@game/locations";
 import { BackgroundLayerTier } from "@game/locations/schema/locationSchema";
 
 const LOCATION_LIST: { id: LocationId; namePl: string; nameEn: string }[] = [

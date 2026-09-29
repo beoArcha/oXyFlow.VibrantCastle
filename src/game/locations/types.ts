@@ -1,4 +1,4 @@
-import { Entity, Enemy, Vector2D } from "../types";
+import type { Entity, Enemy, Vector2D } from "../types";
 import {
   ParallaxBackgroundSchema,
   PortalDefinitionSchema,

@@ -1,7 +1,8 @@
-import { Player, Enemy, Entity, Projectile, PlayerId, LocationId, Vector2D } from "../types";
+import { Player, Enemy, Entity, Projectile, PlayerId, Vector2D } from "../types";
 import { statsManager } from "../logic/stats";
 import { ITEM_REGISTRY } from "../logic/inventory";
 import { SPELL_REGISTRY } from "../data/spells";
+import { LocationId } from "../locations";
 import { BackgroundLayerTier } from "../locations/schema/locationSchema";
 import { debugLogger } from "../logger/gameLogger";
 

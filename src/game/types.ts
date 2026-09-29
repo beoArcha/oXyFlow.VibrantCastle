@@ -1,5 +1,5 @@
 import type { GameTranslationDictionary } from "@i18n/types";
-import type { GameSessionStats } from "./logic/stats";
+import type { GameSessionStats } from "./logic/stats/statsTypes";
 
 /**
  * Shared types, interfaces, and enums for the 2D Game Engine.
@@ -428,8 +428,6 @@ export interface GameSettings {
 }
 
 export type KeyAction = keyof InputMap;
-
-export type { LocationId, LocationDefinition } from "./locations/types";
 
 export type TranslationDictionary = GameTranslationDictionary;
 export type { GameTranslationDictionary };
