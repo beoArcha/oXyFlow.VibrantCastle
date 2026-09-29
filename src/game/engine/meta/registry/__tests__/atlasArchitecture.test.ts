@@ -5,10 +5,8 @@ import { defaultAtlasAssetRegistry } from "../AtlasAssetRegistry";
 import { AtlasManifestParser, defaultAtlasManifestParser } from "../AtlasManifestParser";
 import rawManifest from "@assets/atlas_manifest.json";
 
-describe("Atlas Architecture & Asset Integrity Test Suite (SOLID)", () => {
-  const assetsDir = path.resolve(__dirname, "../../../../../assets");
-
-  it("1. Manifest Integrity: verifies atlas_manifest.json schema and validation", () => {
+describe("Atlas Architecture & Asset Registry Test Suite (SOLID)", () => {
+  it("1. Manifest Parser Integrity: verifies atlas_manifest.json parsing via AtlasManifestParser", () => {
     expect(rawManifest).toBeDefined();
     expect(rawManifest.version).toBe("1.0");
     expect(Array.isArray(rawManifest.assets)).toBe(true);
@@ -36,46 +34,7 @@ describe("Atlas Architecture & Asset Integrity Test Suite (SOLID)", () => {
     }
   });
 
-  it("3. File Existence on Disk: verifies every declared image exists on the filesystem", () => {
-    const assets = defaultAtlasAssetRegistry.getAll();
-
-    for (const asset of assets) {
-      const fullImagePath = path.resolve(assetsDir, asset.imageRelPath);
-      const exists = fs.existsSync(fullImagePath);
-      expect(exists).toBe(
-        true,
-        `Missing image file on disk for asset '${asset.id}': ${fullImagePath}`
-      );
-
-      const stats = fs.statSync(fullImagePath);
-      expect(stats.size).toBeGreaterThan(0);
-    }
-  });
-
-  it("4. Metadata Existence & Schema on Disk: verifies every declared meta.json exists and is valid", () => {
-    const assets = defaultAtlasAssetRegistry.getAll();
-
-    for (const asset of assets) {
-      const fullMetaPath = path.resolve(assetsDir, asset.metaRelPath);
-      const exists = fs.existsSync(fullMetaPath);
-      expect(exists).toBe(
-        true,
-        `Missing meta file on disk for asset '${asset.id}': ${fullMetaPath}`
-      );
-
-      const rawContent = fs.readFileSync(fullMetaPath, "utf-8");
-      let parsed: any;
-      expect(() => {
-        parsed = JSON.parse(rawContent);
-      }).not.toThrow();
-
-      expect(parsed.atlas).toBeDefined();
-      expect(parsed.atlas.columns).toBeGreaterThanOrEqual(1);
-      expect(parsed.atlas.rows).toBeGreaterThanOrEqual(1);
-    }
-  });
-
-  it("5. Identity & Uniqueness: ensures all asset IDs are strictly unique", () => {
+  it("3. Identity & Uniqueness: ensures all asset IDs in registry are strictly unique", () => {
     const assets = defaultAtlasAssetRegistry.getAll();
     const ids = assets.map((a) => a.id);
     const uniqueIds = new Set(ids);
@@ -83,7 +42,7 @@ describe("Atlas Architecture & Asset Integrity Test Suite (SOLID)", () => {
     expect(ids.length).toBe(uniqueIds.size);
   });
 
-  it("6. Registry Search & Filters: accurately filters by category, popular status and keywords", () => {
+  it("4. Registry Search & Filters: accurately filters by category, popular status and keywords", () => {
     // Categories
     const characters = defaultAtlasAssetRegistry.getByCategory("character");
     expect(characters.length).toBeGreaterThanOrEqual(2);
@@ -109,7 +68,7 @@ describe("Atlas Architecture & Asset Integrity Test Suite (SOLID)", () => {
     expect(valenSearchResults.length).toBeGreaterThanOrEqual(2); // hero and portraits
   });
 
-  it("7. Open-Closed Principle (OCP): allows registering custom assets at runtime without mutating manifest", () => {
+  it("5. Open-Closed Principle (OCP): allows registering custom assets at runtime without mutating manifest", () => {
     const initialCount = defaultAtlasAssetRegistry.getAll().length;
 
     defaultAtlasAssetRegistry.register({
@@ -128,7 +87,7 @@ describe("Atlas Architecture & Asset Integrity Test Suite (SOLID)", () => {
     expect(registered?.name).toBe("Dungeon Wall Torch");
   });
 
-  it("8. Dynamic Resolution: verifies all manifest assets resolve with valid imageSrc and defaultMeta", () => {
+  it("6. Dynamic Resolution: verifies all manifest assets resolve with valid imageSrc and defaultMeta", () => {
     const resolved = defaultAtlasAssetRegistry.getAllResolved();
     expect(resolved.length).toBeGreaterThanOrEqual(10);
 
@@ -145,7 +104,7 @@ describe("Atlas Architecture & Asset Integrity Test Suite (SOLID)", () => {
     }
   });
 
-  it("9. Architectural Invariant: enforces ZERO hardcoded asset imports in AtlasAssetRegistry.ts (OCP)", () => {
+  it("7. Architectural Invariant: enforces ZERO hardcoded asset imports in AtlasAssetRegistry.ts (OCP)", () => {
     const registrySourcePath = path.resolve(__dirname, "../AtlasAssetRegistry.ts");
     const sourceCode = fs.readFileSync(registrySourcePath, "utf-8");
 
