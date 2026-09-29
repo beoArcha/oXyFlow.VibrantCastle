@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useEffect, useState, useCallback, useMemo } from "react";
 import { DisplaySettings } from "@game/types";
 import gameEngine from "@game/loop/engine";
 
@@ -10,6 +10,21 @@ export interface ResponsiveCanvasResult {
   updateDimensions: () => void;
 }
 
+const ASPECT_RATIO_MAP: Record<string, number> = {
+  "16:9": 16 / 9,
+  "16:10": 16 / 10,
+  "4:3": 4 / 3,
+};
+
+function getTargetDpr(): number {
+  return Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, 2);
+}
+
+/**
+ * Custom React hook for responsive game canvas scaling.
+ * Computes letterbox/pillarbox aspect ratio constraints and notifies GameEngine of dimension changes.
+ * Capped at 2x DPR to preserve GPU memory per AGENT.md Sec. 12.
+ */
 export function useResponsiveCanvas(displaySettings: DisplaySettings): ResponsiveCanvasResult {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -24,14 +39,7 @@ export function useResponsiveCanvas(displaySettings: DisplaySettings): Responsiv
     let targetW = containerW;
     let targetH = containerH;
 
-    let targetRatio: number | null = null;
-    if (displaySettings.aspectRatio === "16:9") {
-      targetRatio = 16 / 9;
-    } else if (displaySettings.aspectRatio === "16:10") {
-      targetRatio = 16 / 10;
-    } else if (displaySettings.aspectRatio === "4:3") {
-      targetRatio = 4 / 3;
-    }
+    const targetRatio = ASPECT_RATIO_MAP[displaySettings.aspectRatio] ?? null;
 
     if (targetRatio !== null && containerW > 0 && containerH > 0) {
       const containerRatio = containerW / containerH;
@@ -52,16 +60,9 @@ export function useResponsiveCanvas(displaySettings: DisplaySettings): Responsiv
     };
   }, [displaySettings.aspectRatio]);
 
-  const updateDimensions = useCallback(() => {
-    const container = containerRef.current;
-    const canvas = canvasRef.current;
-    if (!container || !canvas) return;
-
-    const { clientWidth, clientHeight } = container;
-    if (clientWidth <= 0 || clientHeight <= 0) return;
-
-    const { targetW, targetH } = calculateTargetDimensions(clientWidth, clientHeight);
-    const dpr = Math.min(window.devicePixelRatio || 1, 2); // Cap at 2x for optimal canvas memory
+  const applyDimensions = useCallback((width: number, height: number) => {
+    const { targetW, targetH } = calculateTargetDimensions(width, height);
+    const dpr = getTargetDpr();
 
     setDimensions({ width: targetW, height: targetH, dpr });
 
@@ -73,7 +74,22 @@ export function useResponsiveCanvas(displaySettings: DisplaySettings): Responsiv
     );
   }, [calculateTargetDimensions, displaySettings.scalingFilter]);
 
-  // Handle ResizeObserver and window resize
+  const updateDimensions = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const { clientWidth, clientHeight } = container;
+    if (clientWidth <= 0 || clientHeight <= 0) return;
+
+    applyDimensions(clientWidth, clientHeight);
+  }, [applyDimensions]);
+
+  const applyDimensionsRef = useRef(applyDimensions);
+  useEffect(() => {
+    applyDimensionsRef.current = applyDimensions;
+  }, [applyDimensions]);
+
+  // Handle ResizeObserver - observer is persistent and not recreated on filter changes
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -86,35 +102,23 @@ export function useResponsiveCanvas(displaySettings: DisplaySettings): Responsiv
         const entry = entries[0];
         const { width, height } = entry.contentRect;
         if (width > 0 && height > 0) {
-          const { targetW, targetH } = calculateTargetDimensions(width, height);
-          const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-          setDimensions({ width: targetW, height: targetH, dpr });
-
-          gameEngine.setCanvasDimensions(
-            targetW,
-            targetH,
-            dpr,
-            displaySettings.scalingFilter
-          );
+          applyDimensionsRef.current(width, height);
         }
       });
     });
 
     observer.observe(container);
-    // Initial sync
     updateDimensions();
 
     return () => {
       if (frameId) cancelAnimationFrame(frameId);
       observer.disconnect();
     };
-  }, [calculateTargetDimensions, displaySettings.scalingFilter, updateDimensions]);
+  }, [updateDimensions]);
 
   const isGpu = displaySettings.hardwareAcceleration !== false;
 
-  // Compute CSS properties for the canvas
-  const canvasStyle: React.CSSProperties = {
+  const canvasStyle = useMemo<React.CSSProperties>(() => ({
     width: displaySettings.aspectRatio === "auto" ? "100%" : `${dimensions.width}px`,
     height: displaySettings.aspectRatio === "auto" ? "100%" : `${dimensions.height}px`,
     maxWidth: "100%",
@@ -124,7 +128,7 @@ export function useResponsiveCanvas(displaySettings: DisplaySettings): Responsiv
     transform: isGpu ? "translate3d(0, 0, 0)" : undefined,
     backfaceVisibility: isGpu ? "hidden" : undefined,
     willChange: isGpu ? "transform" : undefined,
-  };
+  }), [displaySettings.aspectRatio, displaySettings.scalingFilter, dimensions.width, dimensions.height, isGpu]);
 
   return {
     containerRef,
@@ -134,5 +138,3 @@ export function useResponsiveCanvas(displaySettings: DisplaySettings): Responsiv
     updateDimensions,
   };
 }
-
-export default useResponsiveCanvas;

@@ -1,30 +1,37 @@
 import { useState, useCallback } from "react";
-import { PlayerId, KeyAction } from "@game/types";
 
-export type ActiveModal = "none" | "menu" | "help" | "inventory" | "skillTree" | "creation" | "rebindKey";
+export type ActiveModal = "none" | "menu" | "help" | "inventory" | "skillTree" | "creation";
 
-export interface RebindTarget {
-  player: PlayerId;
-  action: KeyAction;
+export interface UseModalManagerResult {
+  activeModal: ActiveModal;
+  isMenuOpen: boolean;
+  isHelpOpen: boolean;
+  isInventoryOpen: boolean;
+  isSkillTreeOpen: boolean;
+  isCreationOpen: boolean;
+  openMenu: () => void;
+  openHelp: () => void;
+  openInventory: () => void;
+  openSkillTree: () => void;
+  openCreation: () => void;
+  closeModal: () => void;
 }
 
-export function useModalManager() {
+/**
+ * Custom React hook for managing the single active modal overlay in the application UI.
+ * Guarantees mutual exclusion (only one modal active at a time) and clean dismissal.
+ */
+export function useModalManager(): UseModalManagerResult {
   const [activeModal, setActiveModal] = useState<ActiveModal>("none");
-  const [rebindTarget, setRebindTarget] = useState<RebindTarget | null>(null);
 
   const openMenu = useCallback(() => setActiveModal("menu"), []);
   const openHelp = useCallback(() => setActiveModal("help"), []);
   const openInventory = useCallback(() => setActiveModal("inventory"), []);
   const openSkillTree = useCallback(() => setActiveModal("skillTree"), []);
   const openCreation = useCallback(() => setActiveModal("creation"), []);
-  const openRebind = useCallback((player: PlayerId, action: KeyAction) => {
-    setRebindTarget({ player, action });
-    setActiveModal("rebindKey");
-  }, []);
 
   const closeModal = useCallback(() => {
     setActiveModal("none");
-    setRebindTarget(null);
   }, []);
 
   return {
@@ -34,14 +41,11 @@ export function useModalManager() {
     isInventoryOpen: activeModal === "inventory",
     isSkillTreeOpen: activeModal === "skillTree",
     isCreationOpen: activeModal === "creation",
-    isRebindOpen: activeModal === "rebindKey",
-    rebindTarget,
     openMenu,
     openHelp,
     openInventory,
     openSkillTree,
     openCreation,
-    openRebind,
     closeModal,
   };
 }

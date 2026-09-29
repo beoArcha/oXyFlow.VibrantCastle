@@ -30,7 +30,7 @@ const ACTION_KEYS = Object.keys(ACTION_I18N_KEYS) as (keyof InputMap)[];
 export const KeyboardMapper: React.FC<KeyboardMapperProps> = ({ onStartRebind }) => {
   const { t } = useI18n();
   const [selectedPlayer, setSelectedPlayer] = useState<PlayerId>(PlayerId.Player1);
-  const { bindings, resetDefaults, refreshKey } = useKeyboard(selectedPlayer);
+  const { bindings, resetDefaults } = useKeyboard(selectedPlayer);
 
   const isP1 = selectedPlayer === PlayerId.Player1;
 
@@ -82,7 +82,7 @@ export const KeyboardMapper: React.FC<KeyboardMapperProps> = ({ onStartRebind })
 
             return (
               <div
-                key={`${selectedPlayer}-${action}-${refreshKey}`}
+                key={`${selectedPlayer}-${action}`}
                 className="p-2.5 rounded-lg bg-[#1c0c07] border border-[#4a200e] hover:border-[#8d4325] flex items-center justify-between transition-colors"
               >
                 <div className="flex flex-col">
