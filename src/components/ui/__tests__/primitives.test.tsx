@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import React from "react";
-import { setupDomEnvironment, renderIntoDom } from "../../../test-utils/domTestUtils";
+import { setupDomEnvironment, renderIntoDom } from "@test-utils/domTestUtils";
 import { Button, Badge, KbdKey, StatRow } from "../index";
 
 describe("Core UI Primitives (Button, Badge, KbdKey, StatRow)", () => {
