@@ -32,6 +32,7 @@ export const MenuModal: React.FC<MenuModalProps> = ({
       icon={<SlidersHorizontal className="w-5 h-5 text-amber-400" />}
       headerRight={<LanguageSelector />}
       maxWidthClass="max-w-4xl"
+      closeKeys={["Escape", "p", "P"]}
     >
       <div className="flex flex-col gap-4">
         {onNavigateModal && onResume && (

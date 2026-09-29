@@ -26,8 +26,9 @@ describe("DeveloperModal & DeveloperTab Behavioral DOM Interaction", () => {
         <DeveloperModal onClose={() => { closeCount++; }} />
       );
 
-      // Find close button by X icon or aria-label
-      const buttons = Array.from(container.querySelectorAll("button"));
+      // Find close button by X icon or aria-label (supporting portal rendering)
+      const targetRoot = container.querySelector("button") ? container : document.body;
+      const buttons = Array.from(targetRoot.querySelectorAll("button"));
       const closeBtn = buttons.find((btn) => btn.querySelector("svg.lucide-x") !== null || btn.getAttribute("aria-label")?.toLowerCase().includes("zamknij") || btn.getAttribute("aria-label")?.toLowerCase().includes("close"));
 
       expect(closeBtn).toBeDefined();
@@ -53,8 +54,9 @@ describe("DeveloperModal & DeveloperTab Behavioral DOM Interaction", () => {
         />
       );
 
-      // Modal navigation buttons rendered
-      const navButtons = Array.from(container.querySelectorAll("button"));
+      // Modal navigation buttons rendered (supporting portal rendering)
+      const targetRoot = container.querySelector("button") ? container : document.body;
+      const navButtons = Array.from(targetRoot.querySelectorAll("button"));
       expect(navButtons.length).toBeGreaterThan(0);
 
       // Find resume / return to game button if present
