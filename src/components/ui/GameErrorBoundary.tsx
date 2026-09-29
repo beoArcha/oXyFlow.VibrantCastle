@@ -23,6 +23,13 @@ export interface GameErrorBoundaryState {
  * Resilient React Error Boundary catching render lifecycle exceptions.
  * Logs fatal errors via ILogger and presents an in-game recovery interface.
  * Adheres to SRP & DIP.
+ *
+ * @example
+ * ```tsx
+ * <GameErrorBoundary fallbackTitle="Castle Anomaly">
+ *   <GameViewport />
+ * </GameErrorBoundary>
+ * ```
  */
 export class GameErrorBoundary extends Component<
   GameErrorBoundaryProps,
@@ -49,6 +56,15 @@ export class GameErrorBoundary extends Component<
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    const updater = (this as any).updater;
+    if (updater && typeof updater.isMounted === "function" && updater.isMounted(this)) {
+      this.setState({ componentStack: errorInfo.componentStack ?? null });
+    } else {
+      this.state = {
+        ...this.state,
+        componentStack: errorInfo.componentStack ?? null,
+      };
+    }
     this.logger.fatal(
       `Uncaught React component render crash: ${error.message || "Unknown error"}`,
       {

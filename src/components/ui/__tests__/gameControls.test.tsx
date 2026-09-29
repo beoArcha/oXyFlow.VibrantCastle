@@ -22,9 +22,6 @@ describe("Domain UI Components (ItemIcon, ItemSlot, KeyedTabs, ModalNavigationTa
     await cleanupDom();
   });
 
-  // ==========================================
-  // ItemIcon
-  // ==========================================
   describe("ItemIcon Component", () => {
     it("renders a standard known icon (e.g. Sword)", async () => {
       const { container } = await renderIntoDom(<ItemIcon name="Sword" size={24} />);
@@ -67,9 +64,6 @@ describe("Domain UI Components (ItemIcon, ItemSlot, KeyedTabs, ModalNavigationTa
     });
   });
 
-  // ==========================================
-  // ItemSlot
-  // ==========================================
   describe("ItemSlot Component", () => {
     const createMockItem = (overrides: Partial<Item> = {}): Item => ({
       id: "iron_sword",
@@ -192,9 +186,6 @@ describe("Domain UI Components (ItemIcon, ItemSlot, KeyedTabs, ModalNavigationTa
     });
   });
 
-  // ==========================================
-  // KeyedTabs
-  // ==========================================
   describe("KeyedTabs Component", () => {
     const items = [
       { id: "tab1", label: "First Tab", keyLabel: "1" },
@@ -271,9 +262,6 @@ describe("Domain UI Components (ItemIcon, ItemSlot, KeyedTabs, ModalNavigationTa
     });
   });
 
-  // ==========================================
-  // ModalNavigationTabs
-  // ==========================================
   describe("ModalNavigationTabs Component", () => {
     it("renders standard modal navigation tabs and handles navigation", async () => {
       const handleNavigate = mock((_m: ModalType) => {});

@@ -8,6 +8,7 @@ import {
   ModalBody,
   ModalFooter,
   ModalCloseButton,
+  ConfirmDialog,
 } from "@ui";
 import { renderIntoDom, cleanupDom } from "@test-utils/domTestUtils";
 
@@ -362,4 +363,86 @@ describe("Modal Component & Compound Dialogue Architecture", () => {
       expect(closeRef.current?.tagName.toLowerCase()).toBe("button");
     });
   });
+
+  describe("ConfirmDialog Component", () => {
+    it("renders nothing when isOpen is false", async () => {
+      const { container } = await renderIntoDom(
+        <ConfirmDialog
+          isOpen={false}
+          title="Reset Character?"
+          message="Are you sure you want to reset?"
+          onConfirm={() => {}}
+          onClose={() => {}}
+          usePortal={false}
+        />
+      );
+
+      expect(container.textContent).toBe("");
+    });
+
+    it("renders title, message, and action buttons when isOpen is true", async () => {
+      const handleClose = mock(() => {});
+      const handleConfirm = mock(() => {});
+
+      const { container, click } = await renderIntoDom(
+        <ConfirmDialog
+          isOpen={true}
+          title="Delete Save Slot"
+          message="This action is irreversible and will delete your save."
+          confirmLabel="Yes, Delete"
+          cancelLabel="No, Keep"
+          confirmVariant="danger"
+          onClose={handleClose}
+          onConfirm={handleConfirm}
+          usePortal={false}
+        />
+      );
+
+      expect(container.textContent).toContain("Delete Save Slot");
+      expect(container.textContent).toContain("This action is irreversible and will delete your save.");
+      expect(container.textContent).toContain("Yes, Delete");
+      expect(container.textContent).toContain("No, Keep");
+
+      const cancelBtn = Array.from(container.querySelectorAll("button")).find(
+        (b) => b.textContent?.includes("No, Keep")
+      );
+      expect(cancelBtn).toBeDefined();
+      await click(cancelBtn!);
+      expect(handleClose).toHaveBeenCalledTimes(1);
+
+      const confirmBtn = Array.from(container.querySelectorAll("button")).find(
+        (b) => b.textContent?.includes("Yes, Delete")
+      );
+      expect(confirmBtn).toBeDefined();
+      await click(confirmBtn!);
+      expect(handleConfirm).toHaveBeenCalledTimes(1);
+    });
+
+    it("disables cancel button and sets loading state on confirm button during isLoading", async () => {
+      const { container } = await renderIntoDom(
+        <ConfirmDialog
+          isOpen={true}
+          title="Processing Action"
+          message="Please wait while saving..."
+          isLoading={true}
+          confirmLabel="Confirm"
+          cancelLabel="Cancel"
+          onClose={() => {}}
+          onConfirm={() => {}}
+          usePortal={false}
+        />
+      );
+
+      const cancelBtn = Array.from(container.querySelectorAll("button")).find(
+        (b) => b.textContent?.includes("Cancel")
+      ) as HTMLButtonElement;
+      expect(cancelBtn.disabled).toBe(true);
+
+      const confirmBtn = Array.from(container.querySelectorAll("button")).find(
+        (b) => b.textContent?.includes("Confirm")
+      ) as HTMLButtonElement;
+      expect(confirmBtn.disabled).toBe(true);
+    });
+  });
 });
+
