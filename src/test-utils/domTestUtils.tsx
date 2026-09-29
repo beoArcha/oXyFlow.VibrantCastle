@@ -103,3 +103,52 @@ export async function cleanupDom() {
     document.body.innerHTML = "";
   }
 }
+
+export interface RenderHookResult<T, P> {
+  result: { current: T };
+  rerender: (newProps?: P) => Promise<void>;
+  unmount: () => Promise<void>;
+}
+
+/**
+ * Universal hook test runner for bun:test and happy-dom with act wrapping.
+ */
+export async function renderCustomHook<T, P = void>(
+  hookCallback: (props: P) => T,
+  initialProps?: P
+): Promise<RenderHookResult<T, P>> {
+  if (typeof document === "undefined" || !document.body) {
+    setupDomEnvironment();
+  }
+
+  const result = { current: undefined as unknown as T };
+
+  function TestHookComponent({ hookProps }: { hookProps: P }) {
+    result.current = hookCallback(hookProps);
+    return null;
+  }
+
+  const container = document.createElement("div");
+  document.body.appendChild(container);
+  const root = createRoot(container);
+
+  await act(async () => {
+    root.render(<TestHookComponent hookProps={initialProps as P} />);
+  });
+
+  return {
+    result,
+    rerender: async (newProps?: P) => {
+      await act(async () => {
+        root.render(<TestHookComponent hookProps={newProps !== undefined ? newProps : (initialProps as P)} />);
+      });
+    },
+    unmount: async () => {
+      await act(async () => {
+        root.unmount();
+      });
+      container.remove();
+    },
+  };
+}
+

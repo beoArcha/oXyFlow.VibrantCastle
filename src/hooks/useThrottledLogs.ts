@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { LogRecord, LoggerManager } from "@lib/logger";
 
 export interface UseThrottledLogsOptions {
@@ -49,16 +49,19 @@ function setupThrottledSubscription(
  */
 export function useThrottledLogs(options: UseThrottledLogsOptions = {}): UseThrottledLogsResult {
   const { throttleMs = 150, categories } = options;
-  const categoriesKey = categories ? categories.join(",") : "";
+  const categoriesKey = categories ? categories.slice().sort().join(",") : "";
+  const categoriesRef = useRef(categories);
+  categoriesRef.current = categories;
 
   const ringBuffer = LoggerManager.getInstance().ringBuffer;
 
   const getFilteredLogs = useCallback((): LogRecord[] => {
     const all = ringBuffer.getLogs() as LogRecord[];
-    if (!categories || categories.length === 0) return all;
-    const catSet = new Set(categories);
+    const cats = categoriesRef.current;
+    if (!cats || cats.length === 0) return all;
+    const catSet = new Set(cats);
     return all.filter((r) => r.category && catSet.has(r.category));
-  }, [ringBuffer, categories, categoriesKey]);
+  }, [ringBuffer, categoriesKey]);
 
   const [logs, setLogs] = useState<LogRecord[]>(getFilteredLogs);
   const [lastUpdated, setLastUpdated] = useState<number>(() => Date.now());
