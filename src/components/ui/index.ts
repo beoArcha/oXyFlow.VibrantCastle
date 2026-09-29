@@ -12,4 +12,8 @@ export * from "./ItemIcon";
 export * from "./ItemSlot";
 export * from "./ModalNavigationTabs";
 export * from "./LanguageSelector";
+export * from "./Input";
+export * from "./Switch";
+export * from "./Tooltip";
+export * from "./ConfirmDialog";
 export * from "./GameErrorBoundary";
