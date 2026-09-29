@@ -9,4 +9,6 @@ export type { CharacterPortraitProps } from "./CharacterPortrait";
 export type { CharacterSpritePreviewProps } from "./CharacterSpritePreview";
 export type { AtlasSheetViewerProps } from "./AtlasSheetViewer";
 export type { CharacterContextValue, CharacterProviderProps } from "./CharacterContext";
+export type { ResolvedPortraitData } from "./useCharacterPortrait";
+export type { CharacterSpriteState } from "./useCharacterSprite";
 export type { CharacterPortraitCrop } from "./types";

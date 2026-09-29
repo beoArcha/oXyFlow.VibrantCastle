@@ -110,8 +110,6 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
                   <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-amber-600/40 bg-stone-950/80 shadow-inner flex items-center justify-center">
                     <CharacterPortrait
                       characterId={activePlayer.characterId || (activePlayerIndex === 0 ? "valen" : "aurelia")}
-                      tier={activePlayer.characterTier || 1}
-                      quality={displaySettings.assetQuality}
                       className="w-full h-full object-cover"
                     />
                   </div>

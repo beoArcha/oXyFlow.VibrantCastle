@@ -7,7 +7,7 @@ import { Grid, ZoomIn, ZoomOut, Layers, Check, Image as ImageIcon } from "lucide
 import { useI18n } from "@context/I18nContext";
 
 export interface AtlasSheetViewerProps {
-  characterId: "valen" | "aurelia";
+  characterId: string;
   quality: AssetQuality;
   activeAnimation?: AnimationName;
   className?: string;

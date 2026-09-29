@@ -54,8 +54,6 @@ export const InventoryPlayerTabs: React.FC<InventoryPlayerTabsProps> = ({
         <div className="w-5 h-5 rounded overflow-hidden border border-red-500/40 bg-black/60 shrink-0">
           <CharacterPortrait
             characterId={p1.characterId || "valen"}
-            tier={p1.characterTier || 1}
-            quality={assetQuality}
             className="w-full h-full"
           />
         </div>
@@ -75,8 +73,6 @@ export const InventoryPlayerTabs: React.FC<InventoryPlayerTabsProps> = ({
         <div className="w-5 h-5 rounded overflow-hidden border border-cyan-500/40 bg-black/60 shrink-0">
           <CharacterPortrait
             characterId={p2.characterId || "aurelia"}
-            tier={p2.characterTier || 1}
-            quality={assetQuality}
             className="w-full h-full"
           />
         </div>

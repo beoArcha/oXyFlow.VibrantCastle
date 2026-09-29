@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { AssetQuality } from "@game/types";
 import { AnimationName, CharacterProgressionTier, SpriteFrame } from "@game/engine/spriteTypes";
 import { assetLoader } from "@game/engine/assetLoader";
@@ -9,12 +9,19 @@ export interface CharacterSpriteState {
   texture: HTMLImageElement | null;
   frame: SpriteFrame | null;
   characterId: string;
+  quality: AssetQuality;
+  tier: CharacterProgressionTier;
+  state: AnimationName;
   isLoaded: boolean;
+  getFrameForTick: (continuousTicks: number) => { frame: SpriteFrame | null; frameIndex: number };
 }
 
 /**
- * Hook extracting sprite animation frames and texture data from engine/context.
- * Completely isolates tick timing and sprite lookup logic from presentation components.
+ * Hook extracting character sprite textures, active animation configuration,
+ * and frame resolution logic from the engine and CharacterContext.
+ *
+ * Adheres strictly to AGENT.md Sec. 3.3 (zero per-frame React setState calls).
+ * React re-renders are only triggered when asset textures load or input parameters change.
  */
 export function useCharacterSprite(
   overrideCharacterId?: string,
@@ -28,56 +35,60 @@ export function useCharacterSprite(
   const quality = overrideQuality || context.quality || "high";
   const tier = overrideTier || context.tier || 1;
 
-  const [tick, setTick] = useState(0);
-  const animFrameRef = useRef<number>(0);
-  const continuousTicksRef = useRef<number>(0);
+  const [, setAssetTick] = useState(0);
+
+  // Subscribe to engine asset readiness (triggers re-render ONLY when assets finish loading)
+  useEffect(() => {
+    return assetLoader.subscribe(() => {
+      setAssetTick((t) => t + 1);
+    });
+  }, []);
 
   // Preload textures when parameters change
   useEffect(() => {
-    assetLoader.preloadCharacter(characterId, quality, tier);
+    assetLoader.preloadCharacter(characterId, quality, tier).catch(() => { });
   }, [characterId, quality, tier]);
 
-  // Animation playback tick loop
-  useEffect(() => {
-    let active = true;
-
-    const loop = () => {
-      if (!active) return;
-      continuousTicksRef.current += playbackSpeed;
-      setTick((t) => t + 1);
-      animFrameRef.current = requestAnimationFrame(loop);
-    };
-
-    animFrameRef.current = requestAnimationFrame(loop);
-
-    return () => {
-      active = false;
-      cancelAnimationFrame(animFrameRef.current);
-    };
-  }, [playbackSpeed, state, quality, tier, characterId]);
-
-  const frameIdx = SpriteAnimator.getFrameIndex(
-    characterId,
-    state,
-    continuousTicksRef.current,
-    quality,
-    tier
+  // Frame resolver function decoupled from React rendering cycle
+  const getFrameForTick = useCallback(
+    (continuousTicks: number) => {
+      const frameIdx = SpriteAnimator.getFrameIndex(
+        characterId,
+        state,
+        continuousTicks,
+        quality,
+        tier
+      );
+      const res = assetLoader.getFrame(
+        characterId,
+        state,
+        frameIdx,
+        quality,
+        tier
+      );
+      return {
+        frame: res.frame,
+        frameIndex: frameIdx,
+      };
+    },
+    [characterId, state, quality, tier]
   );
 
-  const { texture, frame } = assetLoader.getFrame(
-    characterId,
-    state,
-    frameIdx,
-    quality,
-    tier
-  );
-
+  const initial = assetLoader.getFrame(characterId, state, 0, quality, tier);
+  const texture = initial.texture;
   const isLoaded = Boolean(texture && texture.complete && texture.naturalWidth > 0);
 
-  return {
-    texture,
-    frame,
-    characterId,
-    isLoaded,
-  };
+  return useMemo(
+    () => ({
+      texture,
+      frame: initial.frame,
+      characterId,
+      quality,
+      tier,
+      state,
+      isLoaded,
+      getFrameForTick,
+    }),
+    [texture, initial.frame, characterId, quality, tier, state, isLoaded, getFrameForTick]
+  );
 }

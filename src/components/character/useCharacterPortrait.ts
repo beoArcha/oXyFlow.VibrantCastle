@@ -46,7 +46,9 @@ export function useCharacterPortrait(
   );
 
   const manifest = assetLoader.getCharacterManifest(characterId);
-  const charName = manifest?.name || (characterId === "valen" ? "Valen" : "Aurelia");
+  const charName =
+    manifest?.name ||
+    (characterId ? characterId.charAt(0).toUpperCase() + characterId.slice(1) : "Character");
   const alt = resolved.isMain
     ? `${charName} - ${manifest?.title || "Portrait"}`
     : `${charName} (${mood}) - ${resolved.description || "Mood"}`;

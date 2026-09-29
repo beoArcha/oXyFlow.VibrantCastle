@@ -52,7 +52,6 @@ export const HUDPlayerStatusCard: React.FC<HUDPlayerStatusCardProps> = React.mem
           >
             <CharacterPortrait
               characterId={player.characterId || (isRed ? "valen" : "aurelia")}
-              quality={assetQuality}
               className="w-full h-full"
             />
             <div
