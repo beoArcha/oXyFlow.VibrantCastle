@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid, ZoomIn, ZoomOut, Layers, Image as ImageIcon, RotateCcw } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
-import { Tabs, TabsList, TabsTrigger, Button } from "@components/ui";
+import { Tabs, TabsList, TabsTrigger, Button, Tooltip } from "@components/ui";
 
 export interface AtlasViewerToolbarProps {
   sheetType: "spritesheet" | "portraits";
@@ -18,7 +18,7 @@ export interface AtlasViewerToolbarProps {
 
 /**
  * Toolbar control for AtlasSheetViewer.
- * Employs Tabs for category switching and Buttons for zoom/grid controls.
+ * Employs Tabs for category switching and Buttons wrapped in Tooltips for zoom/grid controls.
  */
 export const AtlasViewerToolbar: React.FC<AtlasViewerToolbarProps> = React.memo(({
   sheetType,
@@ -62,68 +62,76 @@ export const AtlasViewerToolbar: React.FC<AtlasViewerToolbarProps> = React.memo(
       {/* View Controls: Zoom + Grid + Labels */}
       <div className="flex items-center gap-2">
         {/* Grid Toggle */}
-        <Button
-          size="sm"
-          variant={showGrid ? "primary" : "secondary"}
-          onClick={onToggleGrid}
-          leftIcon={<Grid size={13} />}
-          title={t("atlasToggleGrid")}
-          className="px-2 py-1 min-h-[30px]"
-        >
-          <span className="text-[10px] hidden sm:inline">Grid</span>
-        </Button>
+        <Tooltip content={t("atlasToggleGrid")}>
+          <Button
+            size="sm"
+            variant={showGrid ? "primary" : "secondary"}
+            onClick={onToggleGrid}
+            leftIcon={<Grid size={13} />}
+            aria-label={t("atlasToggleGrid")}
+            className="px-2 py-1 min-h-[30px]"
+          >
+            <span className="text-[10px] hidden sm:inline">Grid</span>
+          </Button>
+        </Tooltip>
 
         {/* Row Labels Toggle (only for spritesheet) */}
         {sheetType === "spritesheet" && (
-          <Button
-            size="sm"
-            variant={showLabels ? "primary" : "secondary"}
-            onClick={onToggleLabels}
-            title={t("atlasToggleRows")}
-            className="px-2 py-1 min-h-[30px]"
-          >
-            <span className="text-[10px]">Rows</span>
-          </Button>
+          <Tooltip content={t("atlasToggleRows")}>
+            <Button
+              size="sm"
+              variant={showLabels ? "primary" : "secondary"}
+              onClick={onToggleLabels}
+              aria-label={t("atlasToggleRows")}
+              className="px-2 py-1 min-h-[30px]"
+            >
+              <span className="text-[10px]">Rows</span>
+            </Button>
+          </Tooltip>
         )}
 
         {/* Zoom Controls */}
         <div className="flex items-center gap-1 bg-black/60 px-1.5 py-1 rounded-lg border border-stone-800">
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={onZoomOut}
-            title={t("atlasZoomOut")}
-            className="p-1 min-h-0 h-6 text-stone-400 hover:text-stone-200"
-            aria-label={t("atlasZoomOut")}
-          >
-            <ZoomOut size={13} />
-          </Button>
+          <Tooltip content={t("atlasZoomOut")}>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={onZoomOut}
+              className="p-1 min-h-0 h-6 text-stone-400 hover:text-stone-200"
+              aria-label={t("atlasZoomOut")}
+            >
+              <ZoomOut size={13} />
+            </Button>
+          </Tooltip>
 
           <span className="text-[10px] font-mono font-bold text-amber-400 w-10 text-center select-none">
             {Math.round(zoom * 100)}%
           </span>
 
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={onZoomIn}
-            title={t("atlasZoomIn")}
-            className="p-1 min-h-0 h-6 text-stone-400 hover:text-stone-200"
-            aria-label={t("atlasZoomIn")}
-          >
-            <ZoomIn size={13} />
-          </Button>
+          <Tooltip content={t("atlasZoomIn")}>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={onZoomIn}
+              className="p-1 min-h-0 h-6 text-stone-400 hover:text-stone-200"
+              aria-label={t("atlasZoomIn")}
+            >
+              <ZoomIn size={13} />
+            </Button>
+          </Tooltip>
 
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={onResetZoom}
-            title={t("atlasResetZoom")}
-            className="px-1.5 py-0.5 min-h-0 h-6 text-[9px] font-mono text-stone-400 hover:text-amber-300 border-l border-stone-800 rounded-none"
-            leftIcon={<RotateCcw size={10} />}
-          >
-            Reset
-          </Button>
+          <Tooltip content={t("atlasResetZoom")}>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={onResetZoom}
+              className="px-1.5 py-0.5 min-h-0 h-6 text-[9px] font-mono text-stone-400 hover:text-amber-300 border-l border-stone-800 rounded-none"
+              leftIcon={<RotateCcw size={10} />}
+              aria-label={t("atlasResetZoom")}
+            >
+              Reset
+            </Button>
+          </Tooltip>
         </div>
       </div>
     </div>

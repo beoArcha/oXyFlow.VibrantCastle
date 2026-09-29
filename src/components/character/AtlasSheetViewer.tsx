@@ -3,6 +3,7 @@ import { AssetQuality } from "@game/types";
 import { AnimationName } from "@game/engine/spriteTypes";
 import { assetLoader } from "@game/engine/assetLoader";
 import { cn } from "@lib/utils";
+import { Card } from "@components/ui";
 import { AtlasViewerToolbar } from "./AtlasViewerToolbar";
 import { AtlasCanvasView } from "./AtlasCanvasView";
 import { AtlasViewerFooter } from "./AtlasViewerFooter";
@@ -78,7 +79,7 @@ export const AtlasSheetViewer: React.FC<AtlasSheetViewerProps> = React.memo(({
   }, []);
 
   return (
-    <div className={cn("flex flex-col gap-2.5 bg-[#0e0402] p-3 rounded-xl border border-amber-900/40", className)}>
+    <Card variant="subtle" className={cn("flex flex-col gap-2.5 p-3", className)}>
       <AtlasViewerToolbar
         sheetType={sheetType}
         onSheetTypeChange={setSheetType}
@@ -115,7 +116,7 @@ export const AtlasSheetViewer: React.FC<AtlasSheetViewerProps> = React.memo(({
         rows={rows}
         quality={quality}
       />
-    </div>
+    </Card>
   );
 });
 

@@ -1,6 +1,10 @@
 import React, { useRef, useEffect } from "react";
+import { cn } from "@lib/utils";
 import { useCharacterPortrait } from "./useCharacterPortrait";
 import { CharacterPortraitCrop } from "./types";
+
+export type CharacterPortraitSize = "xs" | "sm" | "md" | "lg" | "xl" | "fill";
+export type CharacterPortraitVariant = "raw" | "framed" | "circle";
 
 export interface CharacterPortraitProps {
   /** Optional explicit image source URL (primitive mode) */
@@ -13,15 +17,35 @@ export interface CharacterPortraitProps {
   characterId?: string;
   /** Optional mood expression (e.g. 'main', 'neutral', 'serious', 'smile', etc.); if omitted, resolved from CharacterContext */
   mood?: string;
+  /** Semantic portrait dimension preset */
+  size?: CharacterPortraitSize;
+  /** Visual presentation style frame */
+  variant?: CharacterPortraitVariant;
   className?: string;
   children?: React.ReactNode;
 }
+
+const sizeClasses: Record<CharacterPortraitSize, string> = {
+  xs: "w-8 h-8",
+  sm: "w-12 h-12",
+  md: "w-16 h-16",
+  lg: "w-24 h-24",
+  xl: "w-32 h-32",
+  fill: "w-full h-full",
+};
+
+const variantClasses: Record<CharacterPortraitVariant, string> = {
+  raw: "",
+  framed: "rounded-lg border border-[#8d4325] bg-[#140602] shadow-md shadow-black/50",
+  circle: "rounded-full border-2 border-amber-500/60 bg-[#140602] shadow-md shadow-black/50",
+};
 
 /**
  * Generic Character Portrait Presentation Component
  *
  * Adheres strictly to separation of concerns:
  * - Presentation-only: renders the image or cropped sub-region that it is given.
+ * - Semantic sizing & styling: supports raw, framed, circle variants and standardized sizes.
  * - Context-driven: if direct source/crop are not provided, it consumes the resolved portrait from context/hook.
  * - Free of hardcoded character selection or business rules.
  */
@@ -34,7 +58,9 @@ export const CharacterPortrait = React.memo(
         alt: explicitAlt,
         characterId,
         mood,
-        className = "w-full h-full",
+        size = "fill",
+        variant = "raw",
+        className = "",
         children,
       },
       ref
@@ -80,10 +106,17 @@ export const CharacterPortrait = React.memo(
         img.src = effectiveSrc;
       }, [effectiveSrc, effectiveCrop]);
 
+      const containerClasses = cn(
+        "relative overflow-hidden",
+        sizeClasses[size],
+        variantClasses[variant],
+        className
+      );
+
       if (!effectiveCrop) {
         // Standard full portrait rendering (*_main.png)
         return (
-          <div ref={ref} className={`relative overflow-hidden ${className}`}>
+          <div ref={ref} className={containerClasses}>
             <img
               src={effectiveSrc}
               alt={effectiveAlt}
@@ -98,7 +131,7 @@ export const CharacterPortrait = React.memo(
 
       // Cropped mood expression rendering (*_portraits.png)
       return (
-        <div ref={ref} className={`relative overflow-hidden ${className}`}>
+        <div ref={ref} className={containerClasses}>
           <canvas
             ref={canvasRef}
             className="w-full h-full object-cover block"
