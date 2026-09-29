@@ -109,4 +109,34 @@ describe("SkillsContext & useSkills Hook", () => {
 
     await unmount();
   });
+
+  it("guarantees snapshot immutability so mutating activePlayer.unlockedSkills does not mutate engine state", async () => {
+    const { result, unmount } = await renderCustomHook(() => useSkills(), {
+      wrapper: createWrapper(),
+    });
+
+    const activePlayer = result.current.activePlayer;
+    expect(activePlayer).toBeDefined();
+
+    const originalCount = gameEngine.players[0].unlockedSkills.length;
+    activePlayer?.unlockedSkills.push("unauthorized_mutated_skill");
+
+    expect(gameEngine.players[0].unlockedSkills.length).toBe(originalCount);
+    expect(gameEngine.players[0].unlockedSkills.includes("unauthorized_mutated_skill")).toBe(false);
+
+    await unmount();
+  });
+
+  it("returns safe unlock evaluation for non-existent skill id", async () => {
+    const { result, unmount } = await renderCustomHook(() => useSkills(), {
+      wrapper: createWrapper(),
+    });
+
+    const evaluation = result.current.evaluateSkill("non_existent_skill_node_id");
+    expect(evaluation.canUnlock).toBe(false);
+    expect(evaluation.isUnlocked).toBe(false);
+    expect(evaluation.reasonKey).toBeDefined();
+
+    await unmount();
+  });
 });

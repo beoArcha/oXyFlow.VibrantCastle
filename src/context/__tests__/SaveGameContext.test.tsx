@@ -170,4 +170,77 @@ describe("SaveGameContext & useSaveGame Hook", () => {
 
     await unmount();
   });
+
+  it("handles broken File stream gracefully in importFromFile without crashing", async () => {
+    const { result, unmount } = await renderCustomHook(() => useSaveGame(), {
+      wrapper: createWrapper(),
+    });
+
+    const brokenFile = {
+      name: "broken_save.json",
+      size: 50,
+      type: "application/json",
+      text: () => Promise.reject(new Error("Disk read failure")),
+    } as unknown as File;
+
+    let success = true;
+    await act(async () => {
+      success = await result.current.importFromFile(brokenFile);
+    });
+
+    expect(success).toBe(false);
+    expect(result.current.saveNotification.length).toBeGreaterThan(0);
+
+    await unmount();
+  });
+
+  it("imports valid save state successfully from a File instance", async () => {
+    const { result, unmount } = await renderCustomHook(() => useSaveGame(), {
+      wrapper: createWrapper(),
+    });
+
+    const jsonStr = result.current.exportToJson();
+    const validFile = new File([jsonStr], "save.json", { type: "application/json" });
+
+    let success = false;
+    await act(async () => {
+      success = await result.current.importFromFile(validFile);
+    });
+
+    expect(success).toBe(true);
+
+    await unmount();
+  });
+
+  it("dispatches loadGame through File or event target correctly", async () => {
+    const { result, unmount } = await renderCustomHook(() => useSaveGame(), {
+      wrapper: createWrapper(),
+    });
+
+    const jsonStr = result.current.exportToJson();
+    const file = new File([jsonStr], "save.json", { type: "application/json" });
+
+    // Load via File object
+    await act(async () => {
+      result.current.loadGame(file);
+    });
+
+    // Load via mock change event
+    const mockEvent = {
+      target: {
+        files: [file],
+      },
+    } as unknown as React.ChangeEvent<HTMLInputElement>;
+
+    await act(async () => {
+      result.current.loadGame(mockEvent);
+    });
+
+    // Load with undefined (delegates to loadFromLocalStorage)
+    await act(async () => {
+      result.current.loadGame();
+    });
+
+    await unmount();
+  });
 });

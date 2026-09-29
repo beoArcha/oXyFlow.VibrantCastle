@@ -15,9 +15,9 @@ describe("InventoryContext & useInventory Hook", () => {
     await cleanupDom();
   });
 
-  const createWrapper = () => {
+  const createWrapper = (engineInstance = gameEngine) => {
     return function TestInventoryWrapper({ children }: { children: React.ReactNode }) {
-      return <InventoryProvider engine={gameEngine}>{children}</InventoryProvider>;
+      return <InventoryProvider engine={engineInstance as any}>{children}</InventoryProvider>;
     };
   };
 
@@ -119,6 +119,56 @@ describe("InventoryContext & useInventory Hook", () => {
     });
 
     expect(result.current.activePlayerIndex).toBe(0);
+
+    await unmount();
+  });
+
+  it("guarantees snapshot immutability so mutating activePlayer.inventory.backpack does not mutate engine state", async () => {
+    const { result, unmount } = await renderCustomHook(() => useInventory(), {
+      wrapper: createWrapper(),
+    });
+
+    const activePlayer = result.current.activePlayer;
+    expect(activePlayer?.inventory?.backpack).toBeDefined();
+
+    const originalLength = gameEngine.players[0].inventory.backpack.length;
+    activePlayer?.inventory?.backpack.push({
+      id: "unauthorized_item",
+      name: "Hacked Item",
+      type: "material",
+      rarity: "common",
+      icon: "item_hacked",
+      description: "Hacked",
+    } as any);
+
+    expect(gameEngine.players[0].inventory.backpack.length).toBe(originalLength);
+    expect(gameEngine.players[0].inventory.backpack.some((i: any) => i?.id === "unauthorized_item")).toBe(false);
+
+    await unmount();
+  });
+
+  it("returns fallback derived stats when activePlayer is undefined", async () => {
+    const mockEmptyEngine = {
+      players: [],
+      addListener: () => () => {},
+      removeListener: () => {},
+      subscribe: () => () => {},
+    };
+
+    const { result, unmount } = await renderCustomHook(() => useInventory(), {
+      wrapper: createWrapper(mockEmptyEngine as any),
+    });
+
+    expect(result.current.activePlayer).toBeUndefined();
+    expect(result.current.activeDerivedStats).toEqual({
+      totalAttack: 20,
+      totalDefense: 5,
+      maxHp: 100,
+      maxMana: 100,
+      maxStamina: 100,
+      manaRegen: 0.08,
+      staminaRegen: 0.25,
+    });
 
     await unmount();
   });
