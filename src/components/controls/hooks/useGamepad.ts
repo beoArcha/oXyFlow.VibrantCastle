@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { PlayerId, GamepadBindingMap } from "@game/types";
 import gameInputs, { ConnectedGamepadInfo } from "@game/loop/input";
 
@@ -80,13 +80,25 @@ export function useGamepad(selectedPlayer: PlayerId): UseGamepadResult {
     setListeningAction(null);
   }, [selectedPlayer]);
 
-  return {
-    connectedPads,
-    currentPad,
-    bindings,
-    listeningAction,
-    setListeningAction,
-    lastPressedButton,
-    resetDefaults,
-  };
+  return useMemo(
+    () => ({
+      connectedPads,
+      currentPad,
+      bindings,
+      listeningAction,
+      setListeningAction,
+      lastPressedButton,
+      resetDefaults,
+    }),
+    [
+      connectedPads,
+      currentPad,
+      bindings,
+      listeningAction,
+      lastPressedButton,
+      resetDefaults,
+    ]
+  );
 }
+
+export default useGamepad;
