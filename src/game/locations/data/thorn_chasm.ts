@@ -4,11 +4,11 @@ import { LocationJsonSchema } from "../schema/locationSchema";
 import thornChasmData from "./thorn_chasm.json";
 
 // High-quality parallax layer assets from assets/bg/thorn_chasm
-import bgChasmFarHighPng from "../../../assets/bg/thorn_chasm/thorn_chasm_far_high.png";
-import bgChasmMidFarHighPng from "../../../assets/bg/thorn_chasm/thorn_chasm_mid_far_high.png";
-import bgChasmMidHighPng from "../../../assets/bg/thorn_chasm/thorn_chasm_mid_high.png";
-import bgChasmCloseMidHighPng from "../../../assets/bg/thorn_chasm/thorn_chasm_close_mid_high.png";
-import bgChasmCloseHighPng from "../../../assets/bg/thorn_chasm/thorn_chasm_close_high.png";
+import bgChasmFarHighPng from "@assets/bg/thorn_chasm/thorn_chasm_far_high.png";
+import bgChasmMidFarHighPng from "@assets/bg/thorn_chasm/thorn_chasm_mid_far_high.png";
+import bgChasmMidHighPng from "@assets/bg/thorn_chasm/thorn_chasm_mid_high.png";
+import bgChasmCloseMidHighPng from "@assets/bg/thorn_chasm/thorn_chasm_close_mid_high.png";
+import bgChasmCloseHighPng from "@assets/bg/thorn_chasm/thorn_chasm_close_high.png";
 
 /**
  * Thorn Chasm Location parsed directly from thorn_chasm.json blueprint.

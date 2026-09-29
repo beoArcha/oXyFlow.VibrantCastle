@@ -5,7 +5,7 @@
  * Preloads registered assets from atlas_manifest.json and supports dynamic runtime additions.
  */
 
-import rawManifest from "../../../../assets/atlas_manifest.json";
+import rawManifest from "@assets/atlas_manifest.json";
 import {
   AtlasCategory,
   IAtlasAssetManifestItem,

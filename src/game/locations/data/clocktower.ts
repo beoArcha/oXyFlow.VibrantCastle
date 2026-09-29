@@ -4,11 +4,11 @@ import { LocationJsonSchema } from "../schema/locationSchema";
 import clocktowerData from "./clocktower.json";
 
 // High-quality parallax layer assets from assets/bg/clocktower
-import bgTowerFarHighPng from "../../../assets/bg/clocktower/clocktower_far_high.png";
-import bgTowerMidFarHighPng from "../../../assets/bg/clocktower/clocktower_mid_far_high.png";
-import bgTowerMidHighPng from "../../../assets/bg/clocktower/clocktower_mid_high.png";
-import bgTowerMidCloseHighPng from "../../../assets/bg/clocktower/clocktower_mid_close_high.png";
-import bgTowerCloseHighPng from "../../../assets/bg/clocktower/clocktower_close_high.png";
+import bgTowerFarHighPng from "@assets/bg/clocktower/clocktower_far_high.png";
+import bgTowerMidFarHighPng from "@assets/bg/clocktower/clocktower_mid_far_high.png";
+import bgTowerMidHighPng from "@assets/bg/clocktower/clocktower_mid_high.png";
+import bgTowerMidCloseHighPng from "@assets/bg/clocktower/clocktower_mid_close_high.png";
+import bgTowerCloseHighPng from "@assets/bg/clocktower/clocktower_close_high.png";
 
 /**
  * Clocktower Location parsed directly from clocktower.json blueprint.

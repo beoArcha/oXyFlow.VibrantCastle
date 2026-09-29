@@ -4,11 +4,11 @@ import { LocationJsonSchema } from "../schema/locationSchema";
 import aetherSanctuaryData from "./aether_sanctuary.json";
 
 // High-quality parallax layer assets from assets/bg/aether_sanctuary
-import bgAetherFarHighPng from "../../../assets/bg/aether_sanctuary/aether_sanctuary_far_high.png";
-import bgAetherMidFarHighPng from "../../../assets/bg/aether_sanctuary/aether_sanctuary_mid_far_high.png";
-import bgAetherMidHighPng from "../../../assets/bg/aether_sanctuary/aether_sanctuary_mid_high.png";
-import bgAetherMidCloseHighPng from "../../../assets/bg/aether_sanctuary/aether_sanctuary_mid_close_high.png";
-import bgAetherCloseHighPng from "../../../assets/bg/aether_sanctuary/aether_sanctuary_close_high.png";
+import bgAetherFarHighPng from "@assets/bg/aether_sanctuary/aether_sanctuary_far_high.png";
+import bgAetherMidFarHighPng from "@assets/bg/aether_sanctuary/aether_sanctuary_mid_far_high.png";
+import bgAetherMidHighPng from "@assets/bg/aether_sanctuary/aether_sanctuary_mid_high.png";
+import bgAetherMidCloseHighPng from "@assets/bg/aether_sanctuary/aether_sanctuary_mid_close_high.png";
+import bgAetherCloseHighPng from "@assets/bg/aether_sanctuary/aether_sanctuary_close_high.png";
 
 /**
  * Aether Sanctuary Location parsed directly from aether_sanctuary.json blueprint.

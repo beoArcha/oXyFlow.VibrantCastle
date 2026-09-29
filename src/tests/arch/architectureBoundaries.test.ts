@@ -213,9 +213,8 @@ describe("Architectural Boundary Rules (AGENT.md Sec. 1.1)", () => {
 
   it("ensures cross-group imports between logical domains use path aliases instead of relative traversal", () => {
     // Relative imports within the same group (e.g. game -> game, components -> components) are allowed.
-    // Cross-group imports (components -> lib, components -> game, game -> lib) must use configured @ aliases.
-    // In Phase 2, asset imports are allowlisted to prevent large-blast-radius edits until dedicated asset phase.
-    const allowedTargetGroups = new Set(["assets"]);
+    // Cross-group imports (components -> lib, components -> game, game -> lib, game -> assets) must use configured @ aliases.
+    const allowedTargetGroups = new Set<string>();
     const violations = findCrossGroupRelativeImports(rootDir, allowedTargetGroups);
 
     expect(violations).toEqual([]);

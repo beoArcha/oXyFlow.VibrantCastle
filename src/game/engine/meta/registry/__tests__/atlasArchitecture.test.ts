@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { defaultAtlasAssetRegistry } from "../AtlasAssetRegistry";
 import { AtlasManifestParser, defaultAtlasManifestParser } from "../AtlasManifestParser";
-import rawManifest from "../../../../../assets/atlas_manifest.json";
+import rawManifest from "@assets/atlas_manifest.json";
 
 describe("Atlas Architecture & Asset Integrity Test Suite (SOLID)", () => {
   const assetsDir = path.resolve(__dirname, "../../../../../assets");

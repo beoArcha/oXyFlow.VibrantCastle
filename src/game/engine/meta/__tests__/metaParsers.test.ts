@@ -2,14 +2,14 @@ import { describe, it, expect } from "bun:test";
 import { defaultMetaParser, MetaParser } from "../MetaParser";
 
 // Import real bundled asset metadata files
-import valenMetaJson from "../../../../assets/characters/valen/valen_meta.json";
-import aureliaMetaJson from "../../../../assets/characters/aurelia/aurelia_meta.json";
-import gargoyleMetaJson from "../../../../assets/enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_meta.json";
-import dummyMetaJson from "../../../../assets/enemies/training_dummy/training_dummy_meta.json";
-import gateMetaJson from "../../../../assets/structures/aether_gate/aether_gate_meta.json";
-import leverMetaJson from "../../../../assets/structures/chrono_lever/chrono_lever_meta.json";
-import portcullisMetaJson from "../../../../assets/structures/grand_portcullis/grand_portcullis_meta.json";
-import thornsMetaJson from "../../../../assets/structures/hazard_thorns/hazard_thorns_meta.json";
+import valenMetaJson from "@assets/characters/valen/valen_meta.json";
+import aureliaMetaJson from "@assets/characters/aurelia/aurelia_meta.json";
+import gargoyleMetaJson from "@assets/enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_meta.json";
+import dummyMetaJson from "@assets/enemies/training_dummy/training_dummy_meta.json";
+import gateMetaJson from "@assets/structures/aether_gate/aether_gate_meta.json";
+import leverMetaJson from "@assets/structures/chrono_lever/chrono_lever_meta.json";
+import portcullisMetaJson from "@assets/structures/grand_portcullis/grand_portcullis_meta.json";
+import thornsMetaJson from "@assets/structures/hazard_thorns/hazard_thorns_meta.json";
 
 describe("MetaParser & Section Parsers", () => {
   describe("Character document parsing (Valen & Aurelia)", () => {

@@ -20,12 +20,12 @@ import { assetsLogger } from "../logger/gameLogger";
 import { AssetError, ErrorCode } from "@lib/errors";
 
 // Preloaded atlas assets for enemies and structures
-import dummyHighPng from "../../assets/enemies/training_dummy/training_dummy_high.png";
-import dummyMetaJson from "../../assets/enemies/training_dummy/training_dummy_meta.json";
-import owlHighPng from "../../assets/enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_high.png";
-import owlMetaJson from "../../assets/enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_meta.json";
-import gateHighPng from "../../assets/structures/aether_gate/aether_gate_high.png";
-import gateMetaJson from "../../assets/structures/aether_gate/aether_gate_meta.json";
+import dummyHighPng from "@assets/enemies/training_dummy/training_dummy_high.png";
+import dummyMetaJson from "@assets/enemies/training_dummy/training_dummy_meta.json";
+import owlHighPng from "@assets/enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_high.png";
+import owlMetaJson from "@assets/enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_meta.json";
+import gateHighPng from "@assets/structures/aether_gate/aether_gate_high.png";
+import gateMetaJson from "@assets/structures/aether_gate/aether_gate_meta.json";
 
 export interface ResolvedPortrait {
   texture: HTMLImageElement | null;

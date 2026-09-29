@@ -12,19 +12,19 @@ import { AssetQuality } from "../types";
 import { SpriteExtractorFactory } from "./extractors";
 
 // Import Vite-bundled character assets from src/assets/characters (strictly immutable source)
-import valenMainPng from "../../assets/characters/valen/valen_main.png";
-import valenPortraitsPng from "../../assets/characters/valen/valen_portraits.png";
-import valenLowPng from "../../assets/characters/valen/valen_level_1_low.png";
-import valenMidPng from "../../assets/characters/valen/valen_level_1_mid.png";
-import valenHighPng from "../../assets/characters/valen/valen_level_1_high.png";
-import valenMetaJson from "../../assets/characters/valen/valen_meta.json";
+import valenMainPng from "@assets/characters/valen/valen_main.png";
+import valenPortraitsPng from "@assets/characters/valen/valen_portraits.png";
+import valenLowPng from "@assets/characters/valen/valen_level_1_low.png";
+import valenMidPng from "@assets/characters/valen/valen_level_1_mid.png";
+import valenHighPng from "@assets/characters/valen/valen_level_1_high.png";
+import valenMetaJson from "@assets/characters/valen/valen_meta.json";
 
-import aureliaMainPng from "../../assets/characters/aurelia/aurelia_main.png";
-import aureliaPortraitsPng from "../../assets/characters/aurelia/aurelia_portraits.png";
-import aureliaLowPng from "../../assets/characters/aurelia/aurelia_level_1_low.png";
-import aureliaMidPng from "../../assets/characters/aurelia/aurelia_level_1_mid.png";
-import aureliaHighPng from "../../assets/characters/aurelia/aurelia_level_1_high.png";
-import aureliaMetaJson from "../../assets/characters/aurelia/aurelia_meta.json";
+import aureliaMainPng from "@assets/characters/aurelia/aurelia_main.png";
+import aureliaPortraitsPng from "@assets/characters/aurelia/aurelia_portraits.png";
+import aureliaLowPng from "@assets/characters/aurelia/aurelia_level_1_low.png";
+import aureliaMidPng from "@assets/characters/aurelia/aurelia_level_1_mid.png";
+import aureliaHighPng from "@assets/characters/aurelia/aurelia_level_1_high.png";
+import aureliaMetaJson from "@assets/characters/aurelia/aurelia_meta.json";
 
 /**
  * Resolves exact atlas sheet dimensions based on bundled spritesheet asset characteristics

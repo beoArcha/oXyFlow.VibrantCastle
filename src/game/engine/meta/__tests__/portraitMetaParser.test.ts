@@ -2,8 +2,8 @@ import { describe, it, expect } from "bun:test";
 import { defaultMetaParser, MetaParser } from "../MetaParser";
 import { defaultPortraitMatrixParser } from "../parsers/PortraitMatrixParser";
 import { defaultAtlasSlicingEngine } from "../slicing/AtlasSlicingEngine";
-import valenPortraitsMeta from "../../../../assets/characters/valen/valen_portraits_meta.json";
-import aureliaPortraitsMeta from "../../../../assets/characters/aurelia/aurelia_portraits_meta.json";
+import valenPortraitsMeta from "@assets/characters/valen/valen_portraits_meta.json";
+import aureliaPortraitsMeta from "@assets/characters/aurelia/aurelia_portraits_meta.json";
 
 describe("Portrait Metadata & Multi-Strategy Slicing", () => {
   describe("PortraitMatrixParser resilience & auto-inference", () => {

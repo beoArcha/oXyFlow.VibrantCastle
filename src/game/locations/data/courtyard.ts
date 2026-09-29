@@ -4,11 +4,11 @@ import { LocationJsonSchema } from "../schema/locationSchema";
 import courtyardData from "./courtyard.json";
 
 // High-quality parallax layer assets from assets/bg/courtyard
-import bgFarHighPng from "../../../assets/bg/courtyard/courtyard_far_high.png";
-import bgMidFarHighPng from "../../../assets/bg/courtyard/courtyard_mid-far_high.png";
-import bgMidHighPng from "../../../assets/bg/courtyard/courtyard_mid_high.png";
-import bgMidCloseHighPng from "../../../assets/bg/courtyard/courtyard_mid-close_high.png";
-import bgCloseHighPng from "../../../assets/bg/courtyard/courtyard_close_high.png";
+import bgFarHighPng from "@assets/bg/courtyard/courtyard_far_high.png";
+import bgMidFarHighPng from "@assets/bg/courtyard/courtyard_mid-far_high.png";
+import bgMidHighPng from "@assets/bg/courtyard/courtyard_mid_high.png";
+import bgMidCloseHighPng from "@assets/bg/courtyard/courtyard_mid-close_high.png";
+import bgCloseHighPng from "@assets/bg/courtyard/courtyard_close_high.png";
 
 /**
  * Courtyard Location parsed directly from courtyard.json blueprint.

@@ -4,11 +4,11 @@ import { LocationJsonSchema } from "../schema/locationSchema";
 import grandBastionData from "./grand_bastion.json";
 
 // High-quality parallax layer assets from assets/bg/grand_bastion
-import bgBastionFarHighPng from "../../../assets/bg/grand_bastion/grand_bastion_far_high.png";
-import bgBastionMidFarHighPng from "../../../assets/bg/grand_bastion/grand_bastion_mid_far_high.png";
-import bgBastionMidHighPng from "../../../assets/bg/grand_bastion/grand_bastion_mid_high.png";
-import bgBastionMidCloseHighPng from "../../../assets/bg/grand_bastion/grand_bastion_mid_close_high.png";
-import bgBastionCloseHighPng from "../../../assets/bg/grand_bastion/grand_bastion_close_high.png";
+import bgBastionFarHighPng from "@assets/bg/grand_bastion/grand_bastion_far_high.png";
+import bgBastionMidFarHighPng from "@assets/bg/grand_bastion/grand_bastion_mid_far_high.png";
+import bgBastionMidHighPng from "@assets/bg/grand_bastion/grand_bastion_mid_high.png";
+import bgBastionMidCloseHighPng from "@assets/bg/grand_bastion/grand_bastion_mid_close_high.png";
+import bgBastionCloseHighPng from "@assets/bg/grand_bastion/grand_bastion_close_high.png";
 
 /**
  * Grand Bastion Location parsed directly from grand_bastion.json blueprint.
