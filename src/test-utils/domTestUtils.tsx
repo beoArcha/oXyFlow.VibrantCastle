@@ -110,16 +110,31 @@ export interface RenderHookResult<T, P> {
   unmount: () => Promise<void>;
 }
 
+export interface RenderHookOptions<P> {
+  initialProps?: P;
+  wrapper?: React.ComponentType<{ children: React.ReactNode }>;
+}
+
 /**
- * Universal hook test runner for bun:test and happy-dom with act wrapping.
+ * Universal hook test runner for bun:test and happy-dom with act wrapping and optional Provider wrapper.
  */
 export async function renderCustomHook<T, P = void>(
   hookCallback: (props: P) => T,
-  initialProps?: P
+  optionsOrProps?: RenderHookOptions<P> | P
 ): Promise<RenderHookResult<T, P>> {
   if (typeof document === "undefined" || !document.body) {
     setupDomEnvironment();
   }
+
+  const isOptions =
+    optionsOrProps !== null &&
+    typeof optionsOrProps === "object" &&
+    ("wrapper" in (optionsOrProps as object) || "initialProps" in (optionsOrProps as object));
+
+  const wrapper = isOptions ? (optionsOrProps as RenderHookOptions<P>).wrapper : undefined;
+  const initialProps = isOptions
+    ? (optionsOrProps as RenderHookOptions<P>).initialProps
+    : (optionsOrProps as P);
 
   const result = { current: undefined as unknown as T };
 
@@ -128,19 +143,28 @@ export async function renderCustomHook<T, P = void>(
     return null;
   }
 
+  function renderTree(props: P) {
+    const component = <TestHookComponent hookProps={props} />;
+    if (wrapper) {
+      const WrapperComponent = wrapper;
+      return <WrapperComponent>{component}</WrapperComponent>;
+    }
+    return component;
+  }
+
   const container = document.createElement("div");
   document.body.appendChild(container);
   const root = createRoot(container);
 
   await act(async () => {
-    root.render(<TestHookComponent hookProps={initialProps as P} />);
+    root.render(renderTree(initialProps as P));
   });
 
   return {
     result,
     rerender: async (newProps?: P) => {
       await act(async () => {
-        root.render(<TestHookComponent hookProps={newProps !== undefined ? newProps : (initialProps as P)} />);
+        root.render(renderTree(newProps !== undefined ? newProps : (initialProps as P)));
       });
     },
     unmount: async () => {
