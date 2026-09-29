@@ -36,17 +36,19 @@ const InventoryContext = createContext<InventoryContextValue | null>(null);
 
 export interface InventoryProviderProps extends EngineBoundProviderProps {}
 
+/**
+ * Context provider managing player inventory, equipment slots, potion usage,
+ * and derived combat attributes bound to the GameEngine instance.
+ */
 export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, engine }) => {
   const isLoaded = true;
   const [activePlayerIndex, setActivePlayerIndex] = useState(0);
   const [stateVersion, setStateVersion] = useState(0);
 
-  // Subscribe to engine state notifications so inventory UI updates reactively
   useEngineSubscription(() => {
     setStateVersion((v) => v + 1);
   }, engine);
 
-  // Provide an immutable snapshot copy of the active player entity (AGENT.md Sec. 1.2)
   const activePlayer = useMemo(() => {
     const raw = activePlayerIndex === 1 && engine.players[1] ? engine.players[1] : engine.players[0];
     if (!raw) return undefined;
@@ -149,10 +151,15 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   return <InventoryContext.Provider value={value}>{children}</InventoryContext.Provider>;
 };
 
-export const useInventory = (): InventoryContextValue => {
+/**
+ * Hook providing access to player inventory, equipment, item usage, and derived stats.
+ *
+ * @throws {MissingContextProviderError} when used outside an InventoryProvider.
+ */
+export function useInventory(): InventoryContextValue {
   const ctx = useContext(InventoryContext);
   if (!ctx) {
     throw new MissingContextProviderError("useInventory", "InventoryProvider");
   }
   return ctx;
-};
+}

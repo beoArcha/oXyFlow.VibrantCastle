@@ -42,22 +42,27 @@ const SkillsContext = createContext<SkillsContextValue | null>(null);
 
 export interface SkillsProviderProps extends EngineBoundProviderProps {}
 
+/**
+ * Context provider managing the character skill tree domain, unlock conditions,
+ * and active spell slots bound to the GameEngine instance.
+ */
 export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine }) => {
   const isLoaded = true;
   const [activePlayerIndex, setActivePlayerIndex] = useState(0);
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
   const [stateVersion, setStateVersion] = useState(0);
 
-  // Subscribe to engine tick/state notifications
   useEngineSubscription(() => {
     setStateVersion((v) => v + 1);
   }, engine);
 
   const activePlayer = useMemo(() => {
-    if (activePlayerIndex === 1 && engine.players[1]) {
-      return engine.players[1];
-    }
-    return engine.players[0];
+    const raw = activePlayerIndex === 1 && engine.players[1] ? engine.players[1] : engine.players[0];
+    if (!raw) return undefined;
+    return {
+      ...raw,
+      unlockedSkills: raw.unlockedSkills ? [...raw.unlockedSkills] : [],
+    };
   }, [engine.players, activePlayerIndex, stateVersion]);
 
   const activeCharacter = useMemo<"valen" | "aurelia">(() => {
@@ -68,7 +73,6 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
     return getSkillTreeNodesForCharacter(activeCharacter);
   }, [activeCharacter]);
 
-  // Set default selected skill on character switch or start
   useEffect(() => {
     if (skillTreeNodes.length > 0) {
       if (!selectedSkillId || !skillTreeNodes.some(n => n.id === selectedSkillId)) {
@@ -185,10 +189,15 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
   return <SkillsContext.Provider value={value}>{children}</SkillsContext.Provider>;
 };
 
-export const useSkills = (): SkillsContextValue => {
+/**
+ * Hook providing access to character skills, skill points, spell assignments, and skill tree actions.
+ *
+ * @throws {MissingContextProviderError} when used outside a SkillsProvider.
+ */
+export function useSkills(): SkillsContextValue {
   const ctx = useContext(SkillsContext);
   if (!ctx) {
     throw new MissingContextProviderError("useSkills", "SkillsProvider");
   }
   return ctx;
-};
+}

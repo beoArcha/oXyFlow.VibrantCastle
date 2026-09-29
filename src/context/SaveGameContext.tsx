@@ -23,11 +23,9 @@ export interface SaveGameContextValue extends IContext, INotifiableContext {
   setSaveNotification: (text: string) => void;
   showNotification: (msg: string, durationMs?: number) => void;
 
-  // Primary save actions
   saveGame: () => void;
   loadGame: (fileOrEvent?: File | React.ChangeEvent<HTMLInputElement>) => void;
 
-  // Dedicated file & storage helpers (IFilePersistenceContext implementation & aliases)
   exportToFile: () => void;
   importFromFile: (file: File) => Promise<boolean>;
   exportSaveToFile: () => void;
@@ -40,6 +38,10 @@ export interface SaveGameProviderProps extends BaseProviderProps {
   onStateApplied?: () => void;
 }
 
+/**
+ * Context provider managing game save state snapshots, browser persistence,
+ * JSON export/import, and file-based save backups.
+ */
 export const SaveGameProvider: React.FC<SaveGameProviderProps> = ({ children, onStateApplied }) => {
   const { t } = useI18n();
   const { setSafeTimeout } = useSafeTimeout();
@@ -208,6 +210,11 @@ export const SaveGameProvider: React.FC<SaveGameProviderProps> = ({ children, on
   );
 };
 
+/**
+ * Hook providing access to game saving/loading mechanisms, snapshots, and save file management.
+ *
+ * @throws {MissingContextProviderError} when used outside a SaveGameProvider.
+ */
 export function useSaveGame(): SaveGameContextValue {
   const context = useContext(SaveGameContext);
   if (!context) {

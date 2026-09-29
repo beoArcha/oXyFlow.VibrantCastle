@@ -7,7 +7,6 @@ import React, {
   useMemo,
 } from "react";
 import { DisplaySettings } from "@game/types";
-import gameEngine from "@game/loop/engine";
 import {
   GameSettingsState,
   DEFAULT_SETTINGS,
@@ -28,6 +27,10 @@ export interface SettingsProviderProps extends BaseProviderProps {
   storage?: ISettingsStorage;
 }
 
+/**
+ * Context provider managing persistent user preferences, audio levels, display settings,
+ * HUD configurations, and game options with decoupled storage strategies.
+ */
 export const SettingsProvider: React.FC<SettingsProviderProps> = ({
   children,
   storage = defaultSettingsStorage,
@@ -35,15 +38,12 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
   const [settings, setSettings] = useState<GameSettingsState>(() => storage.load());
   const isLoaded = true;
 
-  // Persist settings to storage whenever state updates
   useEffect(() => {
     storage.save(settings);
   }, [storage, settings]);
 
-  // Unidirectional sync of settings to gameEngine subsystems (AGENT.md Sec. 2.2)
   useSettingsSync(settings);
 
-  // Storage and import/export actions delegated to ISettingsStorage
   const saveToLocalStorage = useCallback(() => {
     storage.save(settings);
   }, [storage, settings]);
@@ -94,7 +94,6 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
     [storage]
   );
 
-  // Granular mutation actions
   const setDisplaySettings = useCallback((displayUpdates: Partial<DisplaySettings>) => {
     setSettings((prev) => ({
       ...prev,
@@ -114,7 +113,6 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
 
   const setTwoPlayer = useCallback((val: boolean) => {
     setSettings((prev) => ({ ...prev, isTwoPlayer: val }));
-    gameEngine.setTwoPlayerMode(val, true);
   }, []);
 
   const setHudSettings = useCallback((hudUpdates: Partial<HudSettings>) => {
@@ -178,6 +176,11 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
   );
 };
 
+/**
+ * Hook providing access to game settings, audio volume controls, display preferences, and persistence methods.
+ *
+ * @throws {MissingContextProviderError} when used outside a SettingsProvider.
+ */
 export function useSettings(): SettingsContextValue {
   const context = useContext(SettingsContext);
   if (!context) {

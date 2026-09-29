@@ -22,7 +22,6 @@ import { BaseProviderProps } from "./IContext";
 import { MissingContextProviderError } from "@lib/errors";
 
 export interface GameSessionContextValue {
-  // Live State
   p1: Player | undefined;
   p2: Player | undefined;
   isVictory: boolean;
@@ -34,7 +33,6 @@ export interface GameSessionContextValue {
   subAnim: boolean;
   isAudioInitialized: boolean;
 
-  // Session Actions
   setPaused: (paused: boolean) => void;
   togglePause: (forceState?: boolean) => boolean;
   restart: () => void;
@@ -50,6 +48,10 @@ export interface GameSessionProviderProps extends BaseProviderProps {
   onNotification?: (msg: string) => void;
 }
 
+/**
+ * Context provider managing live game session state, player entities (P1/P2),
+ * pause/resume flows, location progression, audio initialization, and subtitle animations.
+ */
 export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
   children,
   onNotification,
@@ -219,6 +221,11 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
   );
 };
 
+/**
+ * Hook providing access to live game session state, player instances, locations, and pause actions.
+ *
+ * @throws {MissingContextProviderError} when used outside a GameSessionProvider.
+ */
 export function useGameSession(): GameSessionContextValue {
   const context = useContext(GameSessionContext);
   if (!context) {

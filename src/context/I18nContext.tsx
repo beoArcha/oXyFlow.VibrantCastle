@@ -24,6 +24,10 @@ export interface I18nProviderProps extends BaseProviderProps {
   defaultLanguage?: LanguageCode;
 }
 
+/**
+ * Context provider managing game localization, translations, language state,
+ * and engine language synchronization.
+ */
 export const I18nProvider: React.FC<I18nProviderProps> = ({ children, defaultLanguage }) => {
   const [language, setLanguageState] = useState<LanguageCode>(
     defaultLanguage || gameEngine.settings.language || "pl"
@@ -66,6 +70,11 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children, defaultLan
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 };
 
+/**
+ * Hook providing access to translation functions, dictionary objects, and language switching.
+ *
+ * @throws {MissingContextProviderError} when used outside an I18nProvider.
+ */
 export function useI18n(): I18nContextValue {
   const context = useContext(I18nContext);
   if (!context) {
