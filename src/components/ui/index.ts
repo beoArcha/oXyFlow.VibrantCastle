@@ -7,6 +7,7 @@ export * from "./Slider";
 export * from "./KbdKey";
 export * from "./StatRow";
 export * from "./Tabs";
+export * from "./KeyedTabs";
 export * from "./ItemIcon";
 export * from "./ItemSlot";
 export * from "./ModalNavigationTabs";

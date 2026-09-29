@@ -1,20 +1,20 @@
 import React from "react";
-import { Item } from "@game/types";
+import { Item, ItemRarity } from "@game/types";
 import { cn } from "@lib/utils";
 import { ItemIcon } from "./ItemIcon";
 
-export interface ItemSlotProps {
+export interface ItemSlotProps extends React.HTMLAttributes<HTMLDivElement> {
   item: Item | null;
   label?: string;
   iconPlaceholder?: React.ReactNode;
   isSelected?: boolean;
   count?: number;
-  onClick?: () => void;
   size?: "sm" | "md" | "lg";
+  onClick?: () => void;
   className?: string;
 }
 
-const rarityBorders: Record<string, string> = {
+const rarityBorders: Record<ItemRarity, string> = {
   common: "border-stone-700",
   uncommon: "border-emerald-600/80 shadow-emerald-950/40",
   rare: "border-cyan-500/80 shadow-cyan-950/40",
@@ -33,64 +33,98 @@ const iconSizes: Record<"sm" | "md" | "lg", number> = {
   lg: 22,
 };
 
-export const ItemSlot: React.FC<ItemSlotProps> = React.memo(({
-  item,
-  label,
-  iconPlaceholder,
-  isSelected = false,
-  count,
-  onClick,
-  size = "md",
-  className,
-}) => {
-  const borderClass = item
-    ? rarityBorders[item.rarity] || "border-stone-700"
-    : "border-stone-800/80";
+/**
+ * Gothic Inventory Item Slot primitive representing equipped items or backpack cells.
+ * Adheres to WAI-ARIA role="button" semantics with keyboard activation (Enter/Space),
+ * strict ItemRarity typing, stack counter badges, and selection highlight rings.
+ */
+export const ItemSlot = React.memo(
+  React.forwardRef<HTMLDivElement, ItemSlotProps>(function ItemSlot(
+    {
+      item,
+      label,
+      iconPlaceholder,
+      isSelected = false,
+      count,
+      onClick,
+      onKeyDown,
+      size = "md",
+      className,
+      ...props
+    },
+    ref
+  ) {
+    const borderClass = item
+      ? rarityBorders[item.rarity] || "border-stone-700"
+      : "border-stone-800/80";
 
-  return (
-    <div
-      onClick={onClick}
-      className={cn(
-        "flex flex-col items-center justify-center p-1.5 rounded-xl border-2 transition-all cursor-pointer select-none relative",
-        isSelected
-          ? "border-amber-400 bg-amber-950/50 ring-2 ring-amber-400/60 scale-[1.02]"
-          : item
-          ? cn(borderClass, "bg-stone-900/90 hover:border-amber-400 hover:bg-stone-800/80 shadow-md")
-          : "border-stone-800/60 bg-stone-950/40 hover:border-stone-600 hover:bg-stone-900/40",
-        className
-      )}
-    >
-      {label && (
-        <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-1 flex items-center gap-1">
-          {iconPlaceholder}
-          {label}
-        </span>
-      )}
+    const effectiveCount = count ?? item?.count;
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      onKeyDown?.(e);
+      if (e.defaultPrevented) return;
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onClick?.();
+      }
+    };
+
+    const accessibleLabel = label ?? (item ? item.nameKey : "Empty slot");
+
+    return (
       <div
+        ref={ref}
+        role="button"
+        tabIndex={0}
+        aria-label={accessibleLabel}
+        aria-pressed={isSelected}
+        onClick={onClick}
+        onKeyDown={handleKeyDown}
         className={cn(
-          sizeClasses[size],
-          "rounded-lg border border-stone-800 bg-stone-950 flex items-center justify-center relative overflow-hidden"
+          "flex flex-col items-center justify-center p-1.5 rounded-xl border-2 transition-all cursor-pointer select-none relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400",
+          isSelected
+            ? "border-amber-400 bg-amber-950/50 ring-2 ring-amber-400/60 scale-[1.02]"
+            : item
+            ? cn(borderClass, "bg-stone-900/90 hover:border-amber-400 hover:bg-stone-800/80 shadow-md")
+            : "border-stone-800/60 bg-stone-950/40 hover:border-stone-600 hover:bg-stone-900/40",
+          className
         )}
+        {...props}
       >
-        {item ? (
-          <>
-            <ItemIcon
-              name={item.icon}
-              size={iconSizes[size]}
-              className="text-amber-200 drop-shadow-sm transition-transform hover:scale-110"
-            />
-            {count !== undefined && count > 1 && (
-              <span className="absolute bottom-0.5 right-0.5 text-[9px] font-mono font-bold bg-amber-950/90 text-amber-200 px-1 rounded border border-amber-600/60 leading-none">
-                x{count}
-              </span>
-            )}
-          </>
-        ) : (
-          <span className="text-stone-700 text-xs italic font-mono">-</span>
+        {label && (
+          <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-1 flex items-center gap-1">
+            {iconPlaceholder}
+            {label}
+          </span>
         )}
+        <div
+          className={cn(
+            sizeClasses[size],
+            "rounded-lg border border-stone-800 bg-stone-950 flex items-center justify-center relative overflow-hidden"
+          )}
+        >
+          {item ? (
+            <>
+              <ItemIcon
+                name={item.icon}
+                size={iconSizes[size]}
+                className="text-amber-200 drop-shadow-sm transition-transform hover:scale-110"
+              />
+              {effectiveCount !== undefined && effectiveCount > 1 && (
+                <span className="absolute bottom-0.5 right-0.5 text-[9px] font-mono font-bold bg-amber-950/90 text-amber-200 px-1 rounded border border-amber-600/60 leading-none">
+                  x{effectiveCount}
+                </span>
+              )}
+            </>
+          ) : (
+            <span className="text-stone-700 text-xs italic font-mono">-</span>
+          )}
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  })
+);
+
+ItemSlot.displayName = "ItemSlot";
 
 export default ItemSlot;

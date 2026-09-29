@@ -18,13 +18,33 @@ import {
 import { ItemType } from "@game/types";
 import { cn } from "@lib/utils";
 
-export interface ItemIconProps {
-  name: string;
-  className?: string;
+export type KnownItemIconName =
+  | "Sword"
+  | "Zap"
+  | "Wand"
+  | "Shield"
+  | "BookOpen"
+  | "Crown"
+  | "HardHat"
+  | "Shirt"
+  | "Sparkles"
+  | "CircleDot"
+  | "Heart"
+  | "Flame"
+  | "FlaskConical"
+  | "Package";
+
+export type ItemIconName = KnownItemIconName | (string & {});
+
+export interface ItemIconProps extends React.HTMLAttributes<HTMLSpanElement> {
+  name: ItemIconName;
   size?: number;
+  className?: string;
 }
 
-const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+export type IconComponentType = React.ComponentType<{ size?: number; className?: string }>;
+
+const initialIconMap: Record<KnownItemIconName, IconComponentType> = {
   Sword,
   Zap,
   Wand,
@@ -41,15 +61,52 @@ const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: 
   Package,
 };
 
-export const ItemIcon: React.FC<ItemIconProps> = React.memo(({ name, className, size = 18 }) => {
-  const IconComponent = ICON_MAP[name] || Package;
-  return <IconComponent size={size} className={cn("shrink-0", className)} />;
-});
+/**
+ * Extensible icon registry conforming to the Open/Closed Principle (OCP).
+ * Enables runtime registration of custom item icons without modifying core code.
+ */
+export const itemIconRegistry = new Map<string, IconComponentType>(
+  Object.entries(initialIconMap)
+);
+
+/**
+ * Registers or overrides an icon component in the registry.
+ */
+export function registerItemIcon(name: string, component: IconComponentType): void {
+  itemIconRegistry.set(name, component);
+}
+
+/**
+ * Retrieves an icon component from registry with Package fallback.
+ */
+export function getItemIcon(name: string): IconComponentType {
+  return itemIconRegistry.get(name) || Package;
+}
+
+/**
+ * Standard item sprite/icon primitive with extensible registry and forwardRef support.
+ */
+export const ItemIcon = React.memo(
+  React.forwardRef<HTMLSpanElement, ItemIconProps>(function ItemIcon(
+    { name, className, size = 18, ...props },
+    ref
+  ) {
+    const IconComponent = getItemIcon(name);
+
+    return (
+      <span ref={ref} className={cn("inline-flex items-center shrink-0", className)} {...props}>
+        <IconComponent size={size} className="shrink-0" />
+      </span>
+    );
+  })
+);
+
+ItemIcon.displayName = "ItemIcon";
 
 /**
  * Returns default icon name for a given item type.
  */
-export function getDefaultIconNameForType(type: ItemType): string {
+export function getDefaultIconNameForType(type: ItemType): ItemIconName {
   switch (type) {
     case ItemType.Weapon:
       return "Sword";
