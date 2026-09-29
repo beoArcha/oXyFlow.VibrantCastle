@@ -17,8 +17,8 @@ import {
 } from "lucide-react";
 import { statsManager } from "@game/logic/stats";
 import { Card, CardHeader, CardTitle, CardContent, StatRow, Button, Badge, ProgressBar } from "@components/ui";
-import { useI18n } from "@hooks/useI18n";
-import { useSettings, useGameSession, useSaveGame } from "@hooks/useGame";
+import { useI18n } from "@context/I18nContext";
+import { useSettings, useGameSession, useSaveGame } from "@context/GameContext";
 import { ITEM_REGISTRY } from "@game/logic/inventory";
 import { SPELL_REGISTRY } from "@game/logic/magic";
 

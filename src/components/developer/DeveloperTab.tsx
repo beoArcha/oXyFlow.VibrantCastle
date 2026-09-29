@@ -5,7 +5,7 @@ import { TesterSubTab } from "./subtabs/TesterSubTab";
 import { DebugSubTab } from "./subtabs/DebugSubTab";
 import { LogsSubTab } from "./subtabs/LogsSubTab";
 import { AtlasMetaSubTab } from "./subtabs/AtlasMetaSubTab";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 import { useThrottledLogCount } from "@hooks/useThrottledLogs";
 import { TabItem } from "@components/ui/Tabs";
 

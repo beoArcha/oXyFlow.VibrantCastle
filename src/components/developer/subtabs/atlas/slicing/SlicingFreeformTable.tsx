@@ -1,7 +1,7 @@
 import React from "react";
 import { Plus, Trash2, CheckSquare, Square } from "lucide-react";
 import { Button } from "@components/ui";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 import { IFreeformFrameRect } from "@game/engine/meta/types";
 
 export interface SlicingFreeformTableProps {

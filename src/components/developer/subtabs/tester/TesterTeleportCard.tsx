@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { MapPin, Compass, Crosshair } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@components/ui";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 import { debugManager, SpawnPreset } from "@game/debug/debugManager";
 import gameEngine from "@game/loop/engine";
 import { LocationId, PlayerId } from "@game/types";

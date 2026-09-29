@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Gamepad as GamepadIcon, RotateCcw, Check, Sparkles } from "lucide-react";
 import { PlayerId, GamepadBindingMap, GameTranslationDictionary } from "@game/types";
 import { Button, Card, CardHeader, CardTitle, CardContent, Badge, KbdKey } from "../ui";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 import { useGamepad } from "@hooks/useGamepad";
 import { cn } from "@lib/utils";
 

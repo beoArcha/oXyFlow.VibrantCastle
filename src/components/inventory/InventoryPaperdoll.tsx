@@ -2,7 +2,7 @@ import React from "react";
 import { Sparkles, Sword, Shirt, Shield, Sparkle, CircleDot } from "lucide-react";
 import { EquipmentState, Item } from "@game/types";
 import { ItemSlot } from "@components/ui";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 
 export interface InventoryPaperdollProps {
   equipment: EquipmentState;

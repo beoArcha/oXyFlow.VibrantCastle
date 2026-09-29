@@ -1,7 +1,7 @@
 import React from "react";
 import { Activity, Gauge, Zap, Sparkles, Crosshair, Map, Video } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent, Badge, BadgeVariant } from "@components/ui";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 
 export interface DebugTelemetryProps {
   measuredFps: number;

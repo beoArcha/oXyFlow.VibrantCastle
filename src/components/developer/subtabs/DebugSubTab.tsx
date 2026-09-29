@@ -4,7 +4,7 @@ import { DebugPlayerInspectorCard } from "./debug/DebugPlayerInspectorCard";
 import { DebugEntityTableCard } from "./debug/DebugEntityTableCard";
 import { DebugCollisionsCard } from "./debug/DebugCollisionsCard";
 import { DebugStateDumpCard } from "./debug/DebugStateDumpCard";
-import { useGameSession, useSettings } from "@hooks/useGame";
+import { useGameSession, useSettings } from "@context/GameContext";
 import gameEngine from "@game/loop/engine";
 import { debugManager } from "@game/debug/debugManager";
 import fpsManager from "@game/engine/fpsManager";

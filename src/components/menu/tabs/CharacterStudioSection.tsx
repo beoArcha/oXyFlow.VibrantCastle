@@ -10,8 +10,8 @@ import {
 import { Button, Card, CardHeader, CardTitle, CardContent } from "@components/ui";
 import { CharacterPortrait, CharacterSpritePreview, AtlasSheetViewer, CharacterProvider } from "@components/character";
 import { AnimationName } from "@game/engine/spriteTypes";
-import { useSettings } from "@hooks/useGame";
-import { useI18n } from "@hooks/useI18n";
+import { useSettings } from "@context/GameContext";
+import { useI18n } from "@context/I18nContext";
 import { useSpritePreviewState } from "../hooks/useSpritePreviewState";
 import { cn } from "@lib/utils";
 

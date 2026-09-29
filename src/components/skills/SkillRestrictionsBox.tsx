@@ -1,8 +1,8 @@
 import React from "react";
 import { ShieldAlert, CheckCircle2, XCircle, UserCheck, AlertTriangle } from "lucide-react";
-import { SkillTreeNode } from "../../game/types";
-import { useI18n } from "../../hooks/useI18n";
-import { useSkills } from "../../hooks/useGame";
+import { SkillTreeNode } from "@game/types";
+import { useI18n } from "@context/I18nContext";
+import { useSkills } from "@context/GameContext";
 import { Badge } from "../ui";
 
 export interface SkillRestrictionsBoxProps {

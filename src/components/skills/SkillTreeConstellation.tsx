@@ -3,8 +3,8 @@ import { Flame, Shield, Zap } from "lucide-react";
 import { SkillTreeNode, MagicCategory, MagicTriggerType } from "../../game/types";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui";
 import { SkillNodeItem } from "./SkillNodeItem";
-import { useI18n } from "../../hooks/useI18n";
-import { useSkills } from "../../hooks/useGame";
+import { useI18n } from "@context/I18nContext";
+import { useSkills } from "@context/GameContext";
 
 export interface SkillTreeConstellationProps {
   className?: string;

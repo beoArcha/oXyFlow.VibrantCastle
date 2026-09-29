@@ -1,7 +1,7 @@
 import React from "react";
 import { Eye, Activity, Crosshair, Ghost } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent, Button } from "@/components/ui";
-import { useI18n } from "@/hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 import { debugManager } from "@/game/debug/debugManager";
 
 export interface DebugCollisionsProps {

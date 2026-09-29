@@ -2,7 +2,7 @@ import React from "react";
 import { PlayerId } from "@game/types";
 import gameInputs from "@game/loop/input";
 import { KbdKey, Badge } from "@components/ui";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 import { formatKeyLabel } from "./types";
 import { cn } from "@lib/utils";
 

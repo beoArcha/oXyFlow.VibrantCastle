@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo } from "react";
 import { SPELL_REGISTRY } from "@game/logic/magic";
 import { useQuickPotion, calculatePlayerDerivedStats } from "@game/logic/inventory";
-import { useGameSession, useSettings } from "@hooks/useGame";
-import { useI18n } from "@hooks/useI18n";
+import { useGameSession, useSettings } from "@context/GameContext";
+import { useI18n } from "@context/I18nContext";
 import { HUDOverlayLayout } from "./HUDOverlayLayout";
 import { HUDViewportCanvas } from "./HUDViewportCanvas";
 import { HUDStatusOverlay } from "./HUDStatusOverlay";

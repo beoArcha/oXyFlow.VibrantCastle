@@ -11,7 +11,7 @@ import {
   Minus,
 } from "lucide-react";
 import { Button, Badge, Slider } from "@/components/ui";
-import { useI18n } from "@/hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 import {
   AtlasGridConfig,
   AtlasAnimationTrackDefinition,

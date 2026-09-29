@@ -4,8 +4,8 @@ import { MagicTriggerType } from "../../game/types";
 import { Card, CardHeader, CardTitle, CardContent, Badge, Button, KbdKey } from "../ui";
 import { SkillIcon } from "./SkillIcon";
 import { SkillRestrictionsBox } from "./SkillRestrictionsBox";
-import { useI18n } from "../../hooks/useI18n";
-import { useSkills } from "../../hooks/useGame";
+import { useI18n } from "@context/I18nContext";
+import { useSkills } from "@context/GameContext";
 
 export interface SkillDetailsCardProps {
   className?: string;

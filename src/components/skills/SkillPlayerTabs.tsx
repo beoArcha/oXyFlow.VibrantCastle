@@ -1,8 +1,8 @@
 import React from "react";
 import { Sparkles, Swords, Wand2 } from "lucide-react";
-import { cn } from "../../lib/utils";
-import { useI18n } from "../../hooks/useI18n";
-import { useSkills } from "../../hooks/useGame";
+import { cn } from "@lib/utils";
+import { useI18n } from "@context/I18nContext";
+import { useSkills } from "@context/GameContext";
 
 export interface SkillPlayerTabsProps {
   className?: string;

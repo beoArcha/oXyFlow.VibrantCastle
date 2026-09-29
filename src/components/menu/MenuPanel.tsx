@@ -14,7 +14,7 @@ import KeyboardMapper from "../controls/KeyboardMapper";
 import GamepadMapper from "../controls/GamepadMapper";
 import StatsPanel from "./StatsPanel";
 import { GameplayTab, LocationsTab, DisplayTab, AudioTab } from "./tabs";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 
 export interface MenuPanelProps {
   onStartRebind?: (action: keyof InputMap, player: PlayerId, label: string) => void;

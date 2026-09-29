@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Grid as GridIcon } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent, Badge } from "@components/ui";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 import {
   AtlasGridConfig,
   AtlasAnimationTrackDefinition,

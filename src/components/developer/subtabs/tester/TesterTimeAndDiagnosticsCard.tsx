@@ -1,7 +1,7 @@
 import React from "react";
 import { FastForward, StepForward, Eye, Activity } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@components/ui";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 
 export interface TesterTimeAndDiagnosticsCardProps {
   timeScale: number;

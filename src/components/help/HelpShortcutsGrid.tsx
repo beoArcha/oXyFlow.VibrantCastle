@@ -1,7 +1,7 @@
 import React from "react";
 import { Keyboard, Backpack, BookOpen } from "lucide-react";
 import { KbdKey, Badge } from "@components/ui";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 import { ShortcutEntry } from "./types";
 
 export interface HelpShortcutsGridProps {

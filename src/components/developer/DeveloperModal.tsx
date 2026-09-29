@@ -2,7 +2,7 @@ import React from "react";
 import { Code2 } from "lucide-react";
 import { Modal, ModalNavigationTabs, ModalType, LanguageSelector } from "@components/ui";
 import { DeveloperTab } from "./DeveloperTab";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 
 export interface DeveloperModalProps {
   onClose: () => void;

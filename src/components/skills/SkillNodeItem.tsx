@@ -1,11 +1,11 @@
 import React from "react";
 import { CheckCircle2, Lock, Sparkles } from "lucide-react";
-import { SkillTreeNode } from "../../game/types";
+import { SkillTreeNode } from "@game/types";
 import { SkillIcon } from "./SkillIcon";
 import { Badge, KbdKey } from "../ui";
-import { useI18n } from "../../hooks/useI18n";
-import { useSkills } from "../../hooks/useGame";
-import { cn } from "../../lib/utils";
+import { useI18n } from "@context/I18nContext";
+import { useSkills } from "@context/GameContext";
+import { cn } from "@lib/utils";
 
 export interface SkillNodeItemProps {
   node: SkillTreeNode;
@@ -33,10 +33,10 @@ export const SkillNodeItem: React.FC<SkillNodeItemProps> = ({ node, isSelected, 
         isSelected
           ? "border-amber-400 bg-amber-950/70 ring-2 ring-amber-400/50 scale-[1.03] shadow-lg shadow-amber-950/50 z-10"
           : isUnlocked
-          ? "border-[#854d0e] bg-stone-900/90 hover:border-amber-400 hover:bg-stone-800"
-          : isUnlockable
-          ? "border-purple-500/70 bg-purple-950/40 hover:border-purple-300 animate-pulse"
-          : "border-stone-800/80 bg-stone-950/60 opacity-55 hover:opacity-75"
+            ? "border-[#854d0e] bg-stone-900/90 hover:border-amber-400 hover:bg-stone-800"
+            : isUnlockable
+              ? "border-purple-500/70 bg-purple-950/40 hover:border-purple-300 animate-pulse"
+              : "border-stone-800/80 bg-stone-950/60 opacity-55 hover:opacity-75"
       )}
     >
       {/* Equipped Key Badges in Top Corners */}
@@ -58,10 +58,10 @@ export const SkillNodeItem: React.FC<SkillNodeItemProps> = ({ node, isSelected, 
           isSelected
             ? "bg-amber-900/40 border-amber-400/70 shadow-inner"
             : isUnlocked
-            ? "bg-stone-900 border-amber-600/50"
-            : isUnlockable
-            ? "bg-purple-950/60 border-purple-400/50"
-            : "bg-stone-950 border-stone-800"
+              ? "bg-stone-900 border-amber-600/50"
+              : isUnlockable
+                ? "bg-purple-950/60 border-purple-400/50"
+                : "bg-stone-950 border-stone-800"
         )}
       >
         <SkillIcon name={node.skill.iconName} size={22} />

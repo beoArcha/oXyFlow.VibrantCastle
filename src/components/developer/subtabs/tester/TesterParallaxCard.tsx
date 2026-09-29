@@ -1,7 +1,7 @@
 import React from "react";
 import { Layers, Music, Sparkles } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent } from "@components/ui";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 import { BackgroundLayerTier } from "@game/locations/schema/locationSchema";
 
 const PARALLAX_TIERS: BackgroundLayerTier[] = ["far", "mid_far", "mid", "mid_close", "close"];

@@ -1,7 +1,7 @@
 import React from "react";
 import { Sparkles, Shield, FlaskConical, Backpack, BookOpen } from "lucide-react";
 import { KbdKey } from "@components/ui";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 import { HUDQuickBeltProps } from "./types";
 import { cn } from "@lib/utils";
 

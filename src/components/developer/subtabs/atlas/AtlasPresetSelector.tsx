@@ -12,7 +12,7 @@ import {
   Layers,
 } from "lucide-react";
 import { Badge } from "@components/ui";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 import {
   defaultAtlasAssetRegistry,
   AtlasCategory,

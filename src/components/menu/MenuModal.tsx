@@ -2,7 +2,7 @@ import React from "react";
 import { SlidersHorizontal } from "lucide-react";
 import { Modal, ModalNavigationTabs, ModalType, LanguageSelector } from "@components/ui";
 import { MenuPanel, MenuPanelProps } from "./MenuPanel";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 
 export interface MenuModalProps extends MenuPanelProps {
   onClose: () => void;

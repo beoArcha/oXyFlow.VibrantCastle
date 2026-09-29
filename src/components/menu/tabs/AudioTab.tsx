@@ -1,8 +1,8 @@
 import React from "react";
 import { Music, Volume2, VolumeX, Sparkles, Play } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent, Slider, Button, Badge } from "@components/ui";
-import { useSettings } from "@hooks/useGame";
-import { useI18n } from "@hooks/useI18n";
+import { useSettings } from "@context/GameContext";
+import { useI18n } from "@context/I18nContext";
 import gameEngine from "@game/loop/engine";
 import { SoundType } from "@game/types";
 import { cn } from "@lib/utils";

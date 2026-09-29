@@ -1,7 +1,7 @@
 import React from "react";
 import { Swords, Wind, VolumeX } from "lucide-react";
 import { Badge } from "@components/ui";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 
 export interface HUDControlsHintProps {
   isAudioInitialized: boolean;

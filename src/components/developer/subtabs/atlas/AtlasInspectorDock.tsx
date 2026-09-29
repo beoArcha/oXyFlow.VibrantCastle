@@ -1,7 +1,7 @@
 import React from "react";
 import { Sparkles, Grid, Pipette, FileJson } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@components/ui";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 import {
   AtlasGridConfig,
   AtlasAnimationTrackDefinition,

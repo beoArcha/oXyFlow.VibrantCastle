@@ -16,8 +16,8 @@ import {
   Compass,
 } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@components/ui";
-import { useGame } from "@hooks/useGame";
-import { useI18n } from "@hooks/useI18n";
+import { useGame } from "@context/GameContext";
+import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 
 export const GameplayTab: React.FC = () => {

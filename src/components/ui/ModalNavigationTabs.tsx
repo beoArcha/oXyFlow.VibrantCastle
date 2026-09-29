@@ -1,6 +1,6 @@
 import { Menu as MenuIcon, HelpCircle, Backpack, BookOpen, Play, Layers } from "lucide-react";
-import { useI18n } from "../../hooks/useI18n";
-import { cn } from "../../lib/utils";
+import { useI18n } from "@context/I18nContext";
+import { cn } from "@lib/utils";
 
 export type ModalType = "menu" | "help" | "inventory" | "skillTree" | "creation";
 
@@ -27,31 +27,31 @@ export const ModalNavigationTabs: React.FC<ModalNavigationTabsProps> = ({
     keyLabel: string;
     icon: React.ReactNode;
   }[] = [
-    {
-      id: "menu",
-      label: t("menu"),
-      keyLabel: "M",
-      icon: <MenuIcon size={14} className="text-amber-400" />,
-    },
-    {
-      id: "help",
-      label: t("hints"),
-      keyLabel: "H",
-      icon: <HelpCircle size={14} className="text-amber-400" />,
-    },
-    {
-      id: "inventory",
-      label: t("inventoryBtn"),
-      keyLabel: "I",
-      icon: <Backpack size={14} className="text-amber-400" />,
-    },
-    {
-      id: "skillTree",
-      label: t("skillTreeBtn"),
-      keyLabel: "K",
-      icon: <BookOpen size={14} className="text-purple-400" />,
-    },
-  ];
+      {
+        id: "menu",
+        label: t("menu"),
+        keyLabel: "M",
+        icon: <MenuIcon size={14} className="text-amber-400" />,
+      },
+      {
+        id: "help",
+        label: t("hints"),
+        keyLabel: "H",
+        icon: <HelpCircle size={14} className="text-amber-400" />,
+      },
+      {
+        id: "inventory",
+        label: t("inventoryBtn"),
+        keyLabel: "I",
+        icon: <Backpack size={14} className="text-amber-400" />,
+      },
+      {
+        id: "skillTree",
+        label: t("skillTreeBtn"),
+        keyLabel: "K",
+        icon: <BookOpen size={14} className="text-purple-400" />,
+      },
+    ];
 
   if (showCreation) {
     items.push({

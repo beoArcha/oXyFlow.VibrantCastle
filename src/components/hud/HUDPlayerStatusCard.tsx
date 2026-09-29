@@ -2,7 +2,7 @@ import React from "react";
 import { Heart, Sparkles, Zap } from "lucide-react";
 import { ProgressBar, Badge } from "@components/ui";
 import { CharacterPortrait } from "@components/character";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 import { HUDPlayerStatusCardProps } from "./types";
 import { cn } from "@lib/utils";
 

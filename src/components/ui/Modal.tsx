@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { X, Maximize2, Minimize2 } from "lucide-react";
-import { cn } from "../../lib/utils";
-import { useI18n } from "../../hooks/useI18n";
+import { cn } from "@lib/utils";
+import { useI18n } from "@context/I18nContext";
 
 export interface ModalProps {
   isOpen: boolean;

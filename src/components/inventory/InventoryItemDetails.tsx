@@ -3,7 +3,7 @@ import { CheckCircle, ArrowDownToDot, Trash2, Zap, Heart, Shield, Sword } from "
 import { Item, EquipmentState, ItemType } from "@game/types";
 import { Card, Button, Badge } from "@components/ui";
 import { ItemIcon } from "./ItemIcon";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 
 export interface InventoryItemDetailsProps {
   item: Item;

@@ -24,8 +24,8 @@ import {
   StepForward,
 } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@components/ui";
-import { useGameSession } from "@hooks/useGame";
-import { useI18n } from "@hooks/useI18n";
+import { useGameSession } from "@context/GameContext";
+import { useI18n } from "@context/I18nContext";
 import { debugManager } from "@game/debug/debugManager";
 import gameEngine from "@game/loop/engine";
 import { LocationId, PlayerId } from "@game/types";

@@ -2,7 +2,7 @@ import React from "react";
 import { Skull, Crosshair, Zap, Trash2 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from "@components/ui";
 import { Enemy, PlayerId } from "@game/types";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 import gameEngine from "@game/loop/engine";
 
 export interface DebugEntityTableProps {

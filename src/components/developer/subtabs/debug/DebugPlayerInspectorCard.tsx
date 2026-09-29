@@ -2,7 +2,7 @@ import React from "react";
 import { User, Shield, Zap, Heart, Compass } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent, Badge, ProgressBar } from "@components/ui";
 import { Player } from "@game/types";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 
 export interface DebugPlayerInspectorProps {
   p1: Player | null;

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Keyboard, RotateCcw } from "lucide-react";
 import { PlayerId, InputMap, GameTranslationDictionary } from "@game/types";
 import { Button, Card, CardHeader, CardTitle, CardContent, KbdKey } from "../ui";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 import { useKeyboard } from "@hooks/useKeyboard";
 import { cn } from "@lib/utils";
 

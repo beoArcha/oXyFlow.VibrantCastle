@@ -14,8 +14,8 @@ import {
   Cpu,
 } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@components/ui";
-import { useSettings } from "@hooks/useGame";
-import { useI18n } from "@hooks/useI18n";
+import { useSettings } from "@context/GameContext";
+import { useI18n } from "@context/I18nContext";
 import { AspectRatioMode, ScalingFilterMode, TargetFps, AssetQuality } from "@game/types";
 import { cn } from "@lib/utils";
 

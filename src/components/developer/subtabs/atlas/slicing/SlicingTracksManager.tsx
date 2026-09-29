@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Layers, Plus, Copy, Trash2 } from "lucide-react";
 import { Button } from "@components/ui";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 import { AtlasAnimationTrackDefinition } from "../types";
 
 export interface SlicingTracksManagerProps {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useGameSession } from "@hooks/useGame";
+import { useGameSession } from "@context/GameContext";
 import { debugManager } from "@game/debug/debugManager";
 import gameEngine from "@game/loop/engine";
 import {

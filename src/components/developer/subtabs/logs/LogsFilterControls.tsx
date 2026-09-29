@@ -1,6 +1,6 @@
 import React from "react";
 import { Search, X, Cpu } from "lucide-react";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 import { LogLevel } from "@lib/logger";
 
 export interface LogCounts {

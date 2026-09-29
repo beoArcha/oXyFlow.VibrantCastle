@@ -1,6 +1,6 @@
 import React from "react";
 import { Keyboard, Swords, Compass, LayoutGrid } from "lucide-react";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 import { HelpTab } from "./types";
 import { cn } from "@lib/utils";
 

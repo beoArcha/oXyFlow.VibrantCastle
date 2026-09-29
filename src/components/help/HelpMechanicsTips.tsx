@@ -1,6 +1,6 @@
 import React from "react";
 import { Compass, CheckCircle2 } from "lucide-react";
-import { useI18n } from "@hooks/useI18n";
+import { useI18n } from "@context/I18nContext";
 
 export interface HelpMechanicsTipsProps {
   className?: string;
