@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { I18nProvider, useI18n } from "./context/I18nContext";
 import { GameProvider, useGameSession } from "./context/GameContext";
 import { useModalManager } from "./components/menu/hooks/useModalManager";
@@ -8,60 +8,26 @@ import { DeveloperModal } from "./components/developer";
 import { HUDOverlay } from "./components/hud/HUDOverlay";
 import { InventoryPanel } from "./components/inventory/InventoryPanel";
 import { SkillTreePanel } from "./components/skills/SkillTreePanel";
-import { Globe, Layers, Swords, Pause, Play, HelpCircle, Menu as MenuIcon } from "lucide-react";
+import { Globe, Layers, Swords, HelpCircle, Menu as MenuIcon } from "lucide-react";
 import { Button, Badge, KbdKey, ModalType, GameErrorBoundary } from "./components/ui";
-import { gameInputs } from "./game/loop/input";
-import { PlayerId, InputMap } from "./game/types";
+import { useAppHotkeys, useKeyRebind } from "./components/layout/hooks";
 import { cn } from "./lib/utils";
 
 function GameScreen() {
   const { t, language, setLanguage } = useI18n();
-  const { initializeAudio, isPaused, setPaused, togglePause } = useGameSession();
+  const { initializeAudio, setPaused, togglePause } = useGameSession();
   const modalManager = useModalManager();
-
-  const [bindingTarget, setBindingTarget] = useState<{
-    player: PlayerId;
-    action: keyof InputMap;
-    label: string;
-  } | null>(null);
 
   const [toastMessage, setToastMessage] = useState<string>("");
 
-  const showToast = (msg: string) => {
+  const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(""), 4000);
-  };
+  }, []);
 
-  // Keyboard rebind listener
-  useEffect(() => {
-    if (!bindingTarget) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      const keyCode = e.code;
-      const keyName = e.key;
-
-      const keysToBind = [keyCode, keyName, keyName.toLowerCase()].filter(
-        (v, i, arr) => v && arr.indexOf(v) === i
-      );
-
-      gameInputs.setKeyboardBinding(bindingTarget.player, bindingTarget.action, keysToBind);
-
-      const keyDisplayName = keyName === " " ? t("spaceKey") : keyName;
-      showToast(
-        language === "pl"
-          ? `Pomyślnie przypisano "${keyDisplayName}" dla akcji "${bindingTarget.label}"!`
-          : `Successfully bound "${keyDisplayName}" to "${bindingTarget.label}"!`
-      );
-
-      setBindingTarget(null);
-    };
-
-    window.addEventListener("keydown", handleKeyDown, true);
-    return () => window.removeEventListener("keydown", handleKeyDown, true);
-  }, [bindingTarget, language, t]);
+  const { bindingTarget, isRebinding, startRebind, cancelRebind } = useKeyRebind({
+    onSuccess: showToast,
+  });
 
   // Modal Openers with automatic pause management
   const handleOpenMenu = useCallback(() => {
@@ -121,98 +87,17 @@ function GameScreen() {
     [modalManager, setPaused]
   );
 
-  // Global hotkeys for Menu [M], Help [H/?], Pause [P], Inventory [I] and Skill Tree [K]
-  useEffect(() => {
-    const handleGlobalKeys = (e: KeyboardEvent) => {
-      if (bindingTarget) return;
-
-      const target = e.target as HTMLElement;
-      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA")) {
-        return;
-      }
-
-      // Help Modal shortcut: 'h', 'H', '?', 'F1'
-      if (e.key === "h" || e.key === "H" || e.key === "?" || e.key === "F1") {
-        e.preventDefault();
-        if (modalManager.isHelpOpen) {
-          handleCloseModal();
-        } else {
-          handleOpenHelp();
-        }
-        return;
-      }
-
-      // Menu Modal shortcut: 'm' or 'M'
-      if (e.key === "m" || e.key === "M") {
-        e.preventDefault();
-        if (modalManager.isMenuOpen) {
-          handleCloseModal();
-        } else {
-          handleOpenMenu();
-        }
-        return;
-      }
-
-      // Creation / Developer Modal shortcut: 'c' or 'C'
-      if (e.key === "c" || e.key === "C") {
-        e.preventDefault();
-        if (modalManager.isCreationOpen) {
-          handleCloseModal();
-        } else {
-          handleOpenCreation();
-        }
-        return;
-      }
-
-      // Pause toggle: 'p' or 'P' (closes active modal or toggles game pause)
-      if (e.key === "p" || e.key === "P") {
-        e.preventDefault();
-        handleTogglePause();
-        return;
-      }
-
-      // Inventory shortcut: 'i' or 'I' (does NOT pause game)
-      if (e.key === "i" || e.key === "I") {
-        if (modalManager.isInventoryOpen) {
-          modalManager.closeModal();
-        } else {
-          modalManager.openInventory();
-        }
-        return;
-      }
-
-      // Skill tree shortcut: 'k' or 'K' (does NOT pause game)
-      if (e.key === "k" || e.key === "K") {
-        if (modalManager.isSkillTreeOpen) {
-          modalManager.closeModal();
-        } else {
-          modalManager.openSkillTree();
-        }
-        return;
-      }
-
-      // Escape key: closes open modal, or opens menu with pause
-      if (e.key === "Escape") {
-        e.preventDefault();
-        if (modalManager.activeModal !== "none") {
-          handleCloseModal();
-          setBindingTarget(null);
-        } else {
-          handleOpenMenu();
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleGlobalKeys);
-    return () => window.removeEventListener("keydown", handleGlobalKeys);
-  }, [
-    bindingTarget,
+  // Global hotkeys for Menu [M], Help [H/?], Pause [P], Inventory [I], Skill Tree [K], Escape
+  useAppHotkeys({
     modalManager,
-    handleOpenMenu,
-    handleOpenHelp,
-    handleCloseModal,
-    togglePause,
-  ]);
+    onOpenHelp: handleOpenHelp,
+    onOpenMenu: handleOpenMenu,
+    onOpenCreation: handleOpenCreation,
+    onCloseModal: handleCloseModal,
+    onTogglePause: handleTogglePause,
+    isRebinding,
+    onCancelRebind: cancelRebind,
+  });
 
   return (
     <div
@@ -336,7 +221,7 @@ function GameScreen() {
         <MenuModal
           onClose={handleCloseModal}
           onStartRebind={(action, player, label) =>
-            setBindingTarget({ action, player, label })
+            startRebind({ action, player, label })
           }
           onNavigateModal={handleNavigateModal}
           onResume={handleResumeGame}
@@ -390,7 +275,7 @@ function GameScreen() {
               id="cancel-rebind-btn"
               variant="danger"
               size="sm"
-              onClick={() => setBindingTarget(null)}
+              onClick={cancelRebind}
             >
               {t("cancel")}
             </Button>
