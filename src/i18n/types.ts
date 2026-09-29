@@ -408,6 +408,8 @@ export interface SettingsI18n {
   loadGame: string;
   restartLocation: string;
   resetDefaultBindings: string;
+  confirmResetControls: string;
+  confirmResetControlsPrompt: string;
   remapKey: string;
   rebindTitle: string;
   rebindPrompt: string;

@@ -1,14 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Keyboard, RotateCcw } from "lucide-react";
 import { PlayerId, InputMap, GameTranslationDictionary } from "@game/types";
-import { Button, Card, CardHeader, CardTitle, CardContent, KbdKey } from "@components/ui";
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  ConfirmDialog,
+  KbdKey,
+} from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { useKeyboard } from "./hooks/useKeyboard";
 import { formatKeyLabel } from "./formatKeyLabel";
-import { cn } from "@lib/utils";
+import { ControlBindingRow } from "./ControlBindingRow";
+import { PlayerTabSelector } from "./PlayerTabSelector";
 
 export interface KeyboardMapperProps {
+  /** Callback fired to begin key rebind for an action */
   onStartRebind: (action: keyof InputMap, player: PlayerId, label: string) => void;
+  /** Optional container class name */
+  className?: string;
 }
 
 const ACTION_I18N_KEYS: Record<keyof InputMap, keyof GameTranslationDictionary> = {
@@ -28,89 +40,99 @@ const ACTION_I18N_KEYS: Record<keyof InputMap, keyof GameTranslationDictionary> 
 
 const ACTION_KEYS = Object.keys(ACTION_I18N_KEYS) as (keyof InputMap)[];
 
-export const KeyboardMapper: React.FC<KeyboardMapperProps> = ({ onStartRebind }) => {
-  const { t } = useI18n();
-  const [selectedPlayer, setSelectedPlayer] = useState<PlayerId>(PlayerId.Player1);
-  const { bindings, resetDefaults } = useKeyboard(selectedPlayer);
+/**
+ * Keyboard control binding configuration panel.
+ * Composes PlayerTabSelector, ControlBindingRow, and ConfirmDialog primitives.
+ *
+ * @example
+ * ```tsx
+ * <KeyboardMapper onStartRebind={handleStartRebind} />
+ * ```
+ */
+export const KeyboardMapper: React.FC<KeyboardMapperProps> = React.memo(
+  function KeyboardMapper({ onStartRebind, className }) {
+    const { t } = useI18n();
+    const [selectedPlayer, setSelectedPlayer] = useState<PlayerId>(PlayerId.Player1);
+    const [isConfirmResetOpen, setIsConfirmResetOpen] = useState(false);
+    const { bindings, resetDefaults } = useKeyboard(selectedPlayer);
 
-  const isP1 = selectedPlayer === PlayerId.Player1;
+    const isP1 = selectedPlayer === PlayerId.Player1;
 
-  return (
-    <Card variant="subtle" className="w-full">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle icon={<Keyboard className="w-5 h-5 text-amber-400" />}>
-            {t("tabKeyboard")}
-          </CardTitle>
-          <Button variant="ghost" size="sm" icon={<RotateCcw size={12} />} onClick={resetDefaults}>
-            {t("resetDefaultBindings")}
-          </Button>
-        </div>
-      </CardHeader>
+    const handleConfirmReset = useCallback(() => {
+      resetDefaults();
+      setIsConfirmResetOpen(false);
+    }, [resetDefaults]);
 
-      <CardContent className="gap-4">
-        {/* Player Tabs */}
-        <div className="flex gap-2">
-          <button
-            onClick={() => setSelectedPlayer(PlayerId.Player1)}
-            className={cn(
-              "flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer select-none",
-              isP1
-                ? "bg-amber-700 text-white shadow-md border border-amber-500"
-                : "bg-stone-900 text-stone-400 hover:text-stone-200 border border-transparent"
-            )}
+    return (
+      <Card variant="subtle" className={className ?? "w-full"}>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle icon={<Keyboard className="w-5 h-5 text-amber-400" />}>
+              {t("tabKeyboard")}
+            </CardTitle>
+            <Button
+              id="reset-keyboard-bindings-btn"
+              variant="ghost"
+              size="sm"
+              icon={<RotateCcw size={12} />}
+              onClick={() => setIsConfirmResetOpen(true)}
+            >
+              {t("resetDefaultBindings")}
+            </Button>
+          </div>
+        </CardHeader>
+
+        <CardContent className="gap-4">
+          {/* Player Tabs */}
+          <PlayerTabSelector
+            selectedPlayer={selectedPlayer}
+            onSelectPlayer={setSelectedPlayer}
+          />
+
+          {/* Bindings List */}
+          <div
+            id="keyboard-bindings-grid"
+            className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-80 overflow-y-auto pr-1"
           >
-            {t("p1Tag")}
-          </button>
-          <button
-            onClick={() => setSelectedPlayer(PlayerId.Player2)}
-            className={cn(
-              "flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer select-none",
-              !isP1
-                ? "bg-cyan-800 text-white shadow-md border border-cyan-500"
-                : "bg-stone-900 text-stone-400 hover:text-stone-200 border border-transparent"
-            )}
-          >
-            {t("p2Tag")}
-          </button>
-        </div>
+            {ACTION_KEYS.map((action) => {
+              const keys = bindings[action] || [];
+              const actionLabel = t(ACTION_I18N_KEYS[action]);
 
-        {/* Bindings List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-80 overflow-y-auto pr-1">
-          {ACTION_KEYS.map((action) => {
-            const keys = bindings[action] || [];
-            const actionLabel = t(ACTION_I18N_KEYS[action]);
-
-            return (
-              <div
-                key={`${selectedPlayer}-${action}`}
-                className="p-2.5 rounded-lg bg-[#1c0c07] border border-[#4a200e] hover:border-[#8d4325] flex items-center justify-between transition-colors"
-              >
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold text-[#fed7aa]">{actionLabel}</span>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {keys.slice(0, 2).map((k) => (
-                      <KbdKey key={k} variant={isP1 ? "amber" : "cyan"}>
-                        {formatKeyLabel(k, t("spaceKey"))}
-                      </KbdKey>
-                    ))}
-                  </div>
-                </div>
-
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  onClick={() => onStartRebind(action, selectedPlayer, actionLabel)}
+              return (
+                <ControlBindingRow
+                  key={`${selectedPlayer}-${action}`}
+                  id={`key-binding-${selectedPlayer}-${action}`}
+                  label={actionLabel}
+                  rebindLabel={t("remapKey")}
+                  onRebind={() => onStartRebind(action, selectedPlayer, actionLabel)}
                 >
-                  {t("remapKey")}
-                </Button>
-              </div>
-            );
-          })}
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
+                  {keys.slice(0, 2).map((k) => (
+                    <KbdKey key={k} variant={isP1 ? "amber" : "cyan"}>
+                      {formatKeyLabel(k, t("spaceKey"))}
+                    </KbdKey>
+                  ))}
+                </ControlBindingRow>
+              );
+            })}
+          </div>
+        </CardContent>
+
+        {/* Reset Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={isConfirmResetOpen}
+          onClose={() => setIsConfirmResetOpen(false)}
+          onConfirm={handleConfirmReset}
+          title={t("confirmResetControls")}
+          message={t("confirmResetControlsPrompt")}
+          confirmLabel={t("resetDefaultBindings")}
+          cancelLabel={t("cancel")}
+          confirmVariant="danger"
+        />
+      </Card>
+    );
+  }
+);
+
+KeyboardMapper.displayName = "KeyboardMapper";
 
 export default KeyboardMapper;

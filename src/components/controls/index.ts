@@ -2,6 +2,8 @@
 export * from "./GamepadMapper";
 export * from "./KeyboardMapper";
 export * from "./KeyRebindDialog";
+export * from "./ControlBindingRow";
+export * from "./PlayerTabSelector";
 
 // Utilities
 export * from "./formatKeyLabel";
