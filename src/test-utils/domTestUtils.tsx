@@ -2,6 +2,7 @@ import React, { act } from "react";
 import { createRoot, Root } from "react-dom/client";
 import { GlobalWindow } from "happy-dom";
 import { TestProviders } from "./testProviders";
+import { createMockContext2D } from "./mockCanvas";
 
 let activeRoot: Root | null = null;
 let activeContainer: HTMLElement | null = null;
@@ -28,6 +29,28 @@ export function setupDomEnvironment() {
   (globalThis as any).ErrorEvent = (win as any).ErrorEvent || globalThis.ErrorEvent;
   (globalThis as any).requestAnimationFrame = win.requestAnimationFrame.bind(win);
   (globalThis as any).cancelAnimationFrame = win.cancelAnimationFrame.bind(win);
+  (globalThis as any).ResizeObserver =
+    (win as any).ResizeObserver ||
+    class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    };
+  if (win.HTMLCanvasElement) {
+    const origGetContext = (win.HTMLCanvasElement.prototype as any).getContext;
+    (win.HTMLCanvasElement.prototype as any).getContext = function (type: string, ...args: any[]) {
+      if (type === "2d") {
+        return (
+          (this as any)._mockCtx ||
+          ((this as any)._mockCtx = createMockContext2D(
+            (this as HTMLCanvasElement).width || 300,
+            (this as HTMLCanvasElement).height || 150
+          ))
+        );
+      }
+      return origGetContext ? origGetContext.apply(this, [type, ...args]) : null;
+    };
+  }
   return win;
 }
 

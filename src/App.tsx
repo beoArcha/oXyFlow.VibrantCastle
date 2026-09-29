@@ -1,25 +1,24 @@
 import React, { useCallback } from "react";
-import { I18nProvider, useI18n } from "./context/I18nContext";
-import { GameProvider, useGameSession } from "./context/GameContext";
-import { useModalManager } from "./components/menu/hooks/useModalManager";
-import { MenuModal } from "./components/menu/MenuModal";
-import { HelpModal } from "./components/help/HelpModal";
-import { DeveloperModal } from "./components/developer";
-import { HUDOverlay } from "./components/hud/HUDOverlay";
-import { InventoryPanel } from "./components/inventory/InventoryPanel";
-import { SkillTreePanel } from "./components/skills/SkillTreePanel";
-import { Layers, Swords, HelpCircle, Menu as MenuIcon } from "lucide-react";
+import { I18nProvider, useI18n } from "@context/I18nContext";
+import { GameProvider, useGameSession } from "@context/GameContext";
+import { useModalManager } from "@components/menu/hooks/useModalManager";
+import { HUDOverlay } from "@components/hud/HUDOverlay";
+import { Swords, HelpCircle, Menu as MenuIcon } from "lucide-react";
 import {
   Badge,
-  KbdKey,
   ModalType,
   GameErrorBoundary,
   LanguageSelector,
   Toast,
   useToast,
-} from "./components/ui";
-import { KeyRebindDialog } from "./components/controls";
-import { useAppHotkeys, useKeyRebind } from "./components/layout/hooks";
+} from "@ui";
+import { KeyRebindDialog } from "@components/controls";
+import {
+  GameLayout,
+  GameModalHost,
+  useAppHotkeys,
+  useKeyRebind,
+} from "@components/layout";
 
 function GameScreen() {
   const { t } = useI18n();
@@ -102,71 +101,36 @@ function GameScreen() {
   });
 
   return (
-    <div
-      id="game-root-container"
-      onClick={initializeAudio}
-      onKeyDown={initializeAudio}
-      className="h-screen w-screen max-w-full max-h-full bg-[#120602] text-[#fef3c7] font-sans antialiased flex flex-col justify-between overflow-hidden"
-    >
-      {/* 1. Header Bar: Compact, High-Contrast with branding and language switch */}
-      <header
-        id="game-header"
-        className="border-b border-[#3a1a0f] bg-[#140602]/95 px-3 md:px-5 py-2 flex justify-between items-center z-10 shrink-0"
-      >
-        <div className="flex items-center gap-3">
-          <Layers className="text-[#f59e0b] animate-pulse shrink-0" size={22} />
-          <div>
-            <h1
-              id="app-title"
-              className="text-base md:text-lg font-serif font-black tracking-tight text-[#f59e0b] drop-shadow-md leading-none"
-            >
-              {t("title")}
-            </h1>
-            <p id="app-description" className="text-[11px] text-[#d97706] font-medium hidden sm:block">
-              {t("subtitle")}
-            </p>
-          </div>
-        </div>
-
-        {/* Action Controls & Languages */}
-        <div className="flex items-center gap-2">
-          {/* Quick Hotkey Indicator Badges */}
-          <div className="hidden md:flex items-center gap-2 text-xs text-stone-400 mr-2">
-            <button
+    <GameLayout.Root onInteract={initializeAudio}>
+      <GameLayout.Header>
+        <GameLayout.Brand title={t("title")} subtitle={t("subtitle")} />
+        <GameLayout.Actions>
+          <GameLayout.HotkeyGroup>
+            <GameLayout.HotkeyHint
+              hotkey="H"
+              label={t("hints")}
+              icon={<HelpCircle size={13} />}
               onClick={handleOpenHelp}
-              className="flex items-center gap-1 hover:text-amber-300 transition-colors cursor-pointer"
-            >
-              <HelpCircle size={13} className="text-amber-400" />
-              <span>{t("hints")}</span>
-              <KbdKey variant="amber">H</KbdKey>
-            </button>
-            <button
+            />
+            <GameLayout.HotkeyHint
+              hotkey="M"
+              label={t("menu")}
+              icon={<MenuIcon size={13} />}
               onClick={handleOpenMenu}
-              className="flex items-center gap-1 hover:text-amber-300 transition-colors cursor-pointer ml-1"
-            >
-              <MenuIcon size={13} className="text-amber-400" />
-              <span>{t("menu")}</span>
-              <KbdKey variant="amber">M</KbdKey>
-            </button>
-          </div>
+            />
+          </GameLayout.HotkeyGroup>
 
           <Badge variant="amber" className="text-[10px] hidden sm:inline-flex" icon={<Swords size={11} />}>
             {t("styleBadge")}
           </Badge>
 
-          {/* Localization Toggle */}
           <LanguageSelector variant="pills" />
-        </div>
-      </header>
+        </GameLayout.Actions>
+      </GameLayout.Header>
 
-      {/* Toast Notification */}
       <Toast message={toastMessage} />
 
-      {/* 2. Main Game Viewport Occupying 100% Available Area */}
-      <main
-        id="game-main-content"
-        className="flex-1 w-full h-full relative overflow-hidden flex flex-col"
-      >
+      <GameLayout.Main>
         <HUDOverlay
           onOpenInventory={modalManager.openInventory}
           onOpenSkillTree={modalManager.openSkillTree}
@@ -175,60 +139,20 @@ function GameScreen() {
           onOpenCreation={handleOpenCreation}
           onTogglePause={handleTogglePause}
         />
-      </main>
+      </GameLayout.Main>
 
-      {/* 3. Modals with Seamless Inter-Modal Navigation */}
-      {/* Help / Tips Modal */}
-      {modalManager.isHelpOpen && (
-        <HelpModal
-          onClose={handleCloseModal}
-          onNavigateModal={handleNavigateModal}
-          onResume={handleResumeGame}
-        />
-      )}
+      <GameModalHost
+        modalManager={modalManager}
+        onClose={handleCloseModal}
+        onNavigateModal={handleNavigateModal}
+        onResume={handleResumeGame}
+        onStartRebind={(action, player, label) =>
+          startRebind({ action, player, label })
+        }
+      />
 
-      {/* Menu / Settings Modal */}
-      {modalManager.isMenuOpen && (
-        <MenuModal
-          onClose={handleCloseModal}
-          onStartRebind={(action, player, label) =>
-            startRebind({ action, player, label })
-          }
-          onNavigateModal={handleNavigateModal}
-          onResume={handleResumeGame}
-        />
-      )}
-
-      {/* Inventory Modal */}
-      {modalManager.isInventoryOpen && (
-        <InventoryPanel
-          onClose={handleCloseModal}
-          onNavigateModal={handleNavigateModal}
-          onResume={handleResumeGame}
-        />
-      )}
-
-      {/* Skill Tree Modal */}
-      {modalManager.isSkillTreeOpen && (
-        <SkillTreePanel
-          onClose={handleCloseModal}
-          onNavigateModal={handleNavigateModal}
-          onResume={handleResumeGame}
-        />
-      )}
-
-      {/* Developer / Creation Modal */}
-      {modalManager.isCreationOpen && (
-        <DeveloperModal
-          onClose={handleCloseModal}
-          onNavigateModal={handleNavigateModal}
-          onResume={handleResumeGame}
-        />
-      )}
-
-      {/* Rebind Key Overlay */}
       <KeyRebindDialog target={bindingTarget} onCancel={cancelRebind} />
-    </div>
+    </GameLayout.Root>
   );
 }
 
