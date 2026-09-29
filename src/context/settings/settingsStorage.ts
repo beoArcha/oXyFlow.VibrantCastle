@@ -1,4 +1,4 @@
-import { GameSettingsState, DEFAULT_SETTINGS, HudSettings, HudQuickKeysSettings } from "../settingsTypes";
+import { GameSettingsState, DEFAULT_SETTINGS, HudSettings, HudQuickKeysSettings } from "./settingsTypes";
 import { DisplaySettings } from "@game/types";
 import { getLogger, ILogger } from "@lib/logger";
 

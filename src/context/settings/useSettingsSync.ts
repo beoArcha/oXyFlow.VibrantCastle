@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { GameSettingsState } from "../settingsTypes";
+import { GameSettingsState } from "./settingsTypes";
 import gameEngine from "@game/loop/engine";
 
 /**

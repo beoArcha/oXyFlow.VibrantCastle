@@ -3,7 +3,7 @@ import {
   SettingsStorage,
   ISettingsStorageProvider,
 } from "../settingsStorage";
-import { DEFAULT_SETTINGS, GameSettingsState } from "../../settingsTypes";
+import { DEFAULT_SETTINGS, GameSettingsState } from "../settingsTypes";
 import { createMockStorageProvider, MockStorageProvider } from "@test-utils";
 
 describe("SettingsStorage - Domain & Persistence", () => {
