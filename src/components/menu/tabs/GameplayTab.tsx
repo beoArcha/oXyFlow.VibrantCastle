@@ -16,7 +16,9 @@ import {
   Compass,
 } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@components/ui";
-import { useGame } from "@context/GameContext";
+import { useSettings } from "@context/SettingsContext";
+import { useGameSession } from "@context/GameSessionContext";
+import { useSaveGame } from "@context/SaveGameContext";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 
@@ -27,17 +29,21 @@ export const GameplayTab: React.FC = () => {
   const {
     isTwoPlayer,
     setTwoPlayer,
-    restart,
-    saveGame,
-    loadGame,
-    saveToLocalStorage,
-    loadFromLocalStorage,
     hudSettings,
     setHudSettings,
     exportSettingsToFile,
     importSettingsFromFile,
-    resetSettingsToDefaults,
-  } = useGame();
+    resetToDefaults: resetSettingsToDefaults,
+  } = useSettings();
+
+  const { restart } = useGameSession();
+
+  const {
+    saveGame,
+    loadGame,
+    saveToLocalStorage,
+    loadFromLocalStorage,
+  } = useSaveGame();
 
   const { t, language } = useI18n();
   const isPl = language === "pl";

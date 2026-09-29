@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
 import { ILoadableContext, IResettableContext } from "./IContext";
-import { useEngineSubscription } from "./useEngineSubscription";
+import { useEngineSubscription } from "./hooks/useEngineSubscription";
 import { GameEngine } from "@game/loop/engine";
 import { Player, SkillTreeNode } from "@game/types";
 import {

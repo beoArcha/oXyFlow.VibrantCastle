@@ -8,15 +8,16 @@ import {
   useInventory,
   useSkills,
   useGameSession,
-  useGame,
+  GameProvider,
+  I18nProvider,
 } from "../index";
 import {
   MissingContextProviderError,
   ErrorCode,
   EngineError,
-} from "../../lib/errors";
+} from "@lib/errors";
 import { GameErrorBoundary } from "@components/ui/GameErrorBoundary";
-import { LoggerManager, LogLevel, ILogTransport, LogRecord } from "../../lib/logger";
+import { LoggerManager, LogLevel, ILogTransport, LogRecord } from "@lib/logger";
 
 describe("React Context Safety & ErrorBoundary", () => {
   let records: LogRecord[] = [];
@@ -124,17 +125,20 @@ describe("React Context Safety & ErrorBoundary", () => {
       }
     });
 
-    it("throws MissingContextProviderError when useGame is used outside GameProvider", () => {
-      expect(() => renderWithHook(useGame)).toThrow(MissingContextProviderError);
-      try {
-        renderWithHook(useGame);
-      } catch (err: any) {
-        expect(err).toBeInstanceOf(MissingContextProviderError);
-        expect(err.code).toBe(ErrorCode.REACT_MISSING_CONTEXT);
-        expect(err.domain).toBe("REACT");
-        expect(err.hookName).toBe("useGame");
-        expect(err.providerName).toBe("GameProvider");
-      }
+    it("renders children cleanly within GameProvider hierarchy", () => {
+      const html = renderToString(
+        React.createElement(
+          I18nProvider,
+          null,
+          React.createElement(
+            GameProvider,
+            null,
+            React.createElement("div", { id: "test-child" }, "Child Content")
+          )
+        )
+      );
+      expect(html).toContain("test-child");
+      expect(html).toContain("Child Content");
     });
   });
 

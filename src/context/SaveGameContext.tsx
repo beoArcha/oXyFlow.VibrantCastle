@@ -5,12 +5,12 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { SaveState, LocationId } from "@game/types";
+import { SaveState } from "@game/types";
 import gameEngine from "@game/loop/engine";
 import { gameSave } from "@game/logic/save";
 import { useI18n } from "./I18nContext";
 import { IContext } from "./IContext";
-import { useSafeTimeout } from "./useSafeTimeout";
+import { useSafeTimeout } from "./hooks/useSafeTimeout";
 import { getLogger } from "@lib/logger";
 import { MissingContextProviderError } from "@lib/errors";
 
@@ -25,7 +25,7 @@ export interface SaveGameContextValue extends IContext {
 
   // Primary save actions
   saveGame: () => void;
-  loadGame: (fileEvent?: React.ChangeEvent<HTMLInputElement>) => void;
+  loadGame: (fileOrEvent?: File | React.ChangeEvent<HTMLInputElement>) => void;
 
   // Dedicated file & storage helpers
   exportSaveToFile: () => void;
@@ -52,12 +52,8 @@ export const SaveGameProvider: React.FC<{
   }, [setSafeTimeout]);
 
   const saveToLocalStorage = useCallback(() => {
-    const state = gameSave.compileSaveState(
-      gameEngine.players,
-      gameEngine.enemies,
-      gameEngine.entities,
-      gameEngine.currentLocationId
-    );
+    const state = gameEngine.createSaveSnapshot();
+    gameSave.saveStateToStorage(state);
     setLastSavedState(state);
     showNotification(t("saveSuccess"));
   }, [showNotification, t]);
@@ -69,17 +65,7 @@ export const SaveGameProvider: React.FC<{
       return false;
     }
 
-    if (saved.levelId && saved.levelId !== gameEngine.currentLocationId) {
-      gameEngine.loadLocation(saved.levelId as LocationId);
-    }
-
-    const ok = gameSave.applySaveState(
-      saved,
-      gameEngine.players,
-      gameEngine.enemies,
-      gameEngine.entities
-    );
-
+    const ok = gameEngine.restoreFromSnapshot(saved);
     if (ok) {
       setLastSavedState(saved);
       if (onStateApplied) onStateApplied();
@@ -100,14 +86,7 @@ export const SaveGameProvider: React.FC<{
   }, [onStateApplied, showNotification, t]);
 
   const exportToJson = useCallback((): string => {
-    const state =
-      lastSavedState ||
-      gameSave.compileSaveState(
-        gameEngine.players,
-        gameEngine.enemies,
-        gameEngine.entities,
-        gameEngine.currentLocationId
-      );
+    const state = lastSavedState || gameEngine.createSaveSnapshot();
     return JSON.stringify(state, null, 2);
   }, [lastSavedState]);
 
@@ -115,22 +94,17 @@ export const SaveGameProvider: React.FC<{
     (jsonString: string): boolean => {
       const parseResult = gameSave.parseSaveJson(jsonString);
       if (!parseResult.ok) {
-        saveContextLogger.error("Failed to parse imported save JSON", parseResult.error.toLogContext(), parseResult.error);
+        saveContextLogger.error(
+          "Failed to parse imported save JSON",
+          parseResult.error.toLogContext(),
+          parseResult.error
+        );
         showNotification(t("invalidSaveFormat"));
         return false;
       }
 
       const parsed = parseResult.value;
-      if (parsed.levelId !== gameEngine.currentLocationId) {
-        gameEngine.loadLocation(parsed.levelId as LocationId);
-      }
-
-      const ok = gameSave.applySaveState(
-        parsed,
-        gameEngine.players,
-        gameEngine.enemies,
-        gameEngine.entities
-      );
+      const ok = gameEngine.restoreFromSnapshot(parsed);
 
       if (ok) {
         setLastSavedState(parsed);
@@ -147,12 +121,7 @@ export const SaveGameProvider: React.FC<{
   );
 
   const exportSaveToFile = useCallback(() => {
-    const state = gameSave.compileSaveState(
-      gameEngine.players,
-      gameEngine.enemies,
-      gameEngine.entities,
-      gameEngine.currentLocationId
-    );
+    const state = gameEngine.createSaveSnapshot();
     setLastSavedState(state);
     gameSave.exportToFile(state);
     showNotification(t("saveSuccess"));
@@ -168,7 +137,11 @@ export const SaveGameProvider: React.FC<{
         const text = await file.text();
         return importFromJson(text);
       } catch (err) {
-        saveContextLogger.error("Error loading save file:", { fileName: file.name, fileSize: file.size, fileType: file.type }, err);
+        saveContextLogger.error(
+          "Error loading save file:",
+          { fileName: file.name, fileSize: file.size, fileType: file.type },
+          err
+        );
         showNotification(t("saveLoadError"));
         return false;
       }
@@ -177,10 +150,11 @@ export const SaveGameProvider: React.FC<{
   );
 
   const loadGame = useCallback(
-    (fileEvent?: React.ChangeEvent<HTMLInputElement>) => {
-      if (fileEvent && fileEvent.target.files && fileEvent.target.files[0]) {
-        const file = fileEvent.target.files[0];
-        importSaveFromFile(file);
+    (fileOrEvent?: File | React.ChangeEvent<HTMLInputElement>) => {
+      if (fileOrEvent instanceof File) {
+        importSaveFromFile(fileOrEvent);
+      } else if (fileOrEvent && "target" in fileOrEvent && fileOrEvent.target.files?.[0]) {
+        importSaveFromFile(fileOrEvent.target.files[0]);
       } else {
         loadFromLocalStorage();
       }

@@ -437,6 +437,44 @@ export class GameEngine {
     this.notifyReact();
   }
 
+  /**
+   * Applies partial game settings to the engine, synchronizing audio, display, and modes.
+   */
+  public applySettings(settings: Partial<GameSettings>): void {
+    if (settings.volumeMusic !== undefined) {
+      this.settings.volumeMusic = settings.volumeMusic;
+      this.audio.setBGMVolume(settings.volumeMusic);
+    }
+    if (settings.volumeSFX !== undefined) {
+      this.settings.volumeSFX = settings.volumeSFX;
+      this.audio.setSFXVolume(settings.volumeSFX);
+    }
+    if (settings.language !== undefined) {
+      this.settings.language = settings.language;
+      this.narrationSystem.setLanguage(settings.language);
+    }
+    if (settings.display) {
+      if (settings.display.targetFps !== undefined) {
+        this.setTargetFps(settings.display.targetFps);
+      }
+      if (settings.display.showFpsCounter !== undefined) {
+        this.setShowFpsCounter(settings.display.showFpsCounter);
+      }
+      if (settings.display.hardwareAcceleration !== undefined) {
+        this.setHardwareAcceleration(settings.display.hardwareAcceleration);
+      }
+      this.settings.display = { ...this.settings.display, ...settings.display };
+    }
+    if (settings.isTwoPlayer !== undefined) {
+      if (settings.isTwoPlayer && this.players.length === 1) {
+        this.setTwoPlayerMode(true, true);
+      } else if (!settings.isTwoPlayer && this.players.length > 1) {
+        this.setTwoPlayerMode(false, true);
+      }
+    }
+    this.notifyReact();
+  }
+
   public start() {
     if (this.isRunning) return;
     this.logger.info("Starting GameEngine loop");
@@ -502,13 +540,41 @@ export class GameEngine {
     this.audio.stopBGM();
   }
 
-  public saveGame() {
-    const state = this.save.compileSaveState(
+  /**
+   * Compiles an immutable snapshot of current game state across all subsystems.
+   */
+  public createSaveSnapshot(): SaveState {
+    return this.save.compileSaveState(
       this.players,
       this.enemies,
       this.entities,
       this.currentLocationId
     );
+  }
+
+  /**
+   * Restores game world and entities from a SaveState snapshot.
+   */
+  public restoreFromSnapshot(state: SaveState): boolean {
+    if (state.levelId && (state.levelId as LocationId) in LOCATION_REGISTRY) {
+      this.currentLocationId = state.levelId as LocationId;
+    }
+    this.resetLevel(this.currentLocationId);
+
+    const success = this.save.applySaveState(state, this.players, this.enemies, this.entities);
+    if (success) {
+      const hasP2InSave = state.p2Health > 0;
+      this.settings.isTwoPlayer = hasP2InSave;
+      this.isDefeat = false;
+      this.isVictory = false;
+      this.notifyReact();
+      return true;
+    }
+    return false;
+  }
+
+  public saveGame() {
+    const state = this.createSaveSnapshot();
     this.save.exportToFile(state);
     this.triggerNarration("saveSuccess");
     this.notifyReact();
@@ -520,20 +586,9 @@ export class GameEngine {
       this.triggerNarration("noSaveFound");
       return;
     }
-
-    const hasP2InSave = state.p2Health > 0;
-    this.settings.isTwoPlayer = hasP2InSave;
-    if (state.levelId && (state.levelId as LocationId) in LOCATION_REGISTRY) {
-      this.currentLocationId = state.levelId as LocationId;
-    }
-    this.resetLevel(this.currentLocationId);
-
-    const success = this.save.applySaveState(state, this.players, this.enemies, this.entities);
+    const success = this.restoreFromSnapshot(state);
     if (success) {
-      this.isDefeat = false;
-      this.isVictory = false;
       this.triggerNarration("loadSuccess");
-      this.notifyReact();
     }
   }
 

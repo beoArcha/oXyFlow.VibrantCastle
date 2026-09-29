@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
 import { ILoadableContext, IResettableContext } from "./IContext";
-import { useEngineSubscription } from "./useEngineSubscription";
+import { useEngineSubscription } from "./hooks/useEngineSubscription";
 import { GameEngine } from "@game/loop/engine";
 import {
   InventoryState,
@@ -52,11 +52,21 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
     setStateVersion((v) => v + 1);
   }, engine);
 
+  // Provide an immutable snapshot copy of the active player entity (AGENT.md Sec. 1.2)
   const activePlayer = useMemo(() => {
-    if (activePlayerIndex === 1 && engine.players[1]) {
-      return engine.players[1];
-    }
-    return engine.players[0];
+    const raw = activePlayerIndex === 1 && engine.players[1] ? engine.players[1] : engine.players[0];
+    if (!raw) return undefined;
+    return {
+      ...raw,
+      inventory: raw.inventory
+        ? {
+            ...raw.inventory,
+            backpack: [...raw.inventory.backpack],
+            equipment: { ...raw.inventory.equipment },
+            quickPotions: [...raw.inventory.quickPotions],
+          }
+        : raw.inventory,
+    };
   }, [engine.players, activePlayerIndex, stateVersion]);
 
   const activeInventory = useMemo(() => {

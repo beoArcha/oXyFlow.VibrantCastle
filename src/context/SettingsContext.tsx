@@ -40,17 +40,8 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
     storage.save(settings);
   }, [storage, settings]);
 
-  // Sync settings with external subsystems (engine, audio, 2-player state)
-  const handleEngineTwoPlayerChange = useCallback((engineIs2P: boolean) => {
-    setSettings((prev) => {
-      if (prev.isTwoPlayer !== engineIs2P) {
-        return { ...prev, isTwoPlayer: engineIs2P };
-      }
-      return prev;
-    });
-  }, []);
-
-  useSettingsSync(settings, handleEngineTwoPlayerChange);
+  // Unidirectional sync of settings to gameEngine subsystems (AGENT.md Sec. 2.2)
+  useSettingsSync(settings);
 
   // Storage and import/export actions delegated to ISettingsStorage
   const saveToLocalStorage = useCallback(() => {

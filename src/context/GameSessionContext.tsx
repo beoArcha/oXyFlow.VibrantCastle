@@ -16,8 +16,8 @@ import gameEngine from "@game/loop/engine";
 import { gameAudio } from "@game/engine/audioEngine";
 import { getNextLocation, getLocation } from "@game/locations";
 import { useI18n } from "./I18nContext";
-import { useEngineSubscription } from "./useEngineSubscription";
-import { useSafeTimeout } from "./useSafeTimeout";
+import { useEngineSubscription } from "./hooks/useEngineSubscription";
+import { useSafeTimeout } from "./hooks/useSafeTimeout";
 import { MissingContextProviderError } from "@lib/errors";
 
 export interface GameSessionContextValue {

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { act } from "react";
 import { renderCustomHook, cleanupDom } from "@test-utils/domTestUtils";
-import { useEngineSubscription, EngineSubscribable } from "../useEngineSubscription";
+import { useEngineSubscription, EngineSubscribable } from "../hooks/useEngineSubscription";
 
 describe("useEngineSubscription Hook", () => {
   let listeners: Set<() => void>;

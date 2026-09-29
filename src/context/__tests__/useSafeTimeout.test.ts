@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { act } from "react";
 import { renderCustomHook, cleanupDom } from "@test-utils/domTestUtils";
-import { useSafeTimeout } from "../useSafeTimeout";
+import { useSafeTimeout } from "../hooks/useSafeTimeout";
 
 describe("useSafeTimeout Hook", () => {
   beforeEach(async () => {
