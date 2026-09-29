@@ -17,26 +17,32 @@ const badgeStyles: Record<BadgeVariant, string> = {
   stone: "bg-stone-900/90 text-stone-300 border-stone-700",
 };
 
-export const Badge: React.FC<BadgeProps> = React.memo(({
-  children,
-  variant = "amber",
-  icon,
-  className,
-  ...props
-}) => {
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] md:text-xs font-semibold border whitespace-nowrap select-none",
-        badgeStyles[variant],
-        className
-      )}
-      {...props}
-    >
-      {icon && <span className="flex items-center shrink-0">{icon}</span>}
-      <span>{children}</span>
-    </span>
-  );
-});
+/**
+ * Visual status tag and badge primitive.
+ * Supports forwardRef, semantic color variants, and optional icon slots.
+ */
+export const Badge = React.memo(
+  React.forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
+    { children, variant = "amber", icon, className, ...props },
+    ref
+  ) {
+    return (
+      <span
+        ref={ref}
+        className={cn(
+          "inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] md:text-xs font-semibold border whitespace-nowrap select-none",
+          badgeStyles[variant],
+          className
+        )}
+        {...props}
+      >
+        {icon && <span className="flex items-center shrink-0">{icon}</span>}
+        <span>{children}</span>
+      </span>
+    );
+  })
+);
+
+Badge.displayName = "Badge";
 
 export default Badge;

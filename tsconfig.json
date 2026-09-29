@@ -57,6 +57,12 @@
       ],
       "@types/*": [
         "./src/types/*"
+      ],
+      "@ui/*": [
+        "./src/components/ui/*"
+      ],
+      "@ui": [
+        "./src/components/ui/index.ts"
       ]
     },
     "allowImportingTsExtensions": true,
