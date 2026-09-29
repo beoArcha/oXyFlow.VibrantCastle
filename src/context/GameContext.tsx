@@ -52,7 +52,6 @@ export interface GameContextValue {
   narration: string;
   subAnim: boolean;
   isAudioInitialized: boolean;
-  tick: number;
 
   // Settings Slice
   settings: GameSettingsState;
@@ -160,7 +159,6 @@ const GameContextBridge: React.FC<{ children: React.ReactNode }> = ({ children }
       narration: session.narration,
       subAnim: session.subAnim,
       isAudioInitialized: session.isAudioInitialized,
-      tick: session.tick,
       setPaused: session.setPaused,
       togglePause: session.togglePause,
       restart: session.restart,
@@ -224,7 +222,6 @@ const GameContextBridge: React.FC<{ children: React.ReactNode }> = ({ children }
     session.narration,
     session.subAnim,
     session.isAudioInitialized,
-    session.tick,
     session.setPaused,
     session.togglePause,
     session.restart,

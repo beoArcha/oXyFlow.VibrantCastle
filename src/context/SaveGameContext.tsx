@@ -16,7 +16,7 @@ import { MissingContextProviderError } from "@lib/errors";
 
 const saveContextLogger = getLogger("context:save");
 
-export interface SaveGameContextValue extends IContext<SaveState | null> {
+export interface SaveGameContextValue extends IContext {
   saveNotification: string;
   lastSavedState: SaveState | null;
 
@@ -44,7 +44,7 @@ export const SaveGameProvider: React.FC<{
   const [lastSavedState, setLastSavedState] = useState<SaveState | null>(() => {
     return gameSave.loadFromLocalStorage();
   });
-  const [isLoaded, setIsLoaded] = useState(true);
+  const isLoaded = true;
 
   const showNotification = useCallback((msg: string) => {
     setSaveNotification(msg);
@@ -206,7 +206,6 @@ export const SaveGameProvider: React.FC<{
       importSaveFromFile,
     }),
     [
-      isLoaded,
       saveNotification,
       lastSavedState,
       showNotification,

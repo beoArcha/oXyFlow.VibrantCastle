@@ -6,19 +6,15 @@ import {
   InventoryState,
   EquipmentState,
   Player,
-  Item,
 } from "@game/types";
 import {
   calculatePlayerDerivedStats,
 } from "@game/logic/inventory";
 import { MissingContextProviderError } from "@lib/errors";
 
-export interface InventoryContextState {
-  p1Inventory: InventoryState;
-  p2Inventory?: InventoryState;
-  activePlayerIndex: number;
-}
-
+/**
+ * Public contract for inventory domain UI state and actions.
+ */
 export interface InventoryContextValue extends ILoadableContext, IResettableContext {
   activePlayerIndex: number;
   setActivePlayerIndex: (idx: number) => void;
@@ -47,13 +43,9 @@ export interface InventoryProviderProps {
 }
 
 export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, engine }) => {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const isLoaded = true;
   const [activePlayerIndex, setActivePlayerIndex] = useState(0);
   const [stateVersion, setStateVersion] = useState(0);
-
-  useEffect(() => {
-    setIsLoaded(true);
-  }, []);
 
   // Subscribe to engine state notifications so inventory UI updates reactively
   useEngineSubscription(() => {
@@ -89,11 +81,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   const equipItem = useCallback(
     (backpackIndex: number, playerIndex?: number): boolean => {
       const pIdx = playerIndex !== undefined ? playerIndex : activePlayerIndex;
-      const success = engine.equipPlayerItem(pIdx, backpackIndex);
-      if (success) {
-        setStateVersion((v) => v + 1);
-      }
-      return success;
+      return engine.equipPlayerItem(pIdx, backpackIndex);
     },
     [engine, activePlayerIndex]
   );
@@ -101,11 +89,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   const unequipItem = useCallback(
     (slot: keyof EquipmentState, playerIndex?: number): boolean => {
       const pIdx = playerIndex !== undefined ? playerIndex : activePlayerIndex;
-      const success = engine.unequipPlayerItem(pIdx, slot);
-      if (success) {
-        setStateVersion((v) => v + 1);
-      }
-      return success;
+      return engine.unequipPlayerItem(pIdx, slot);
     },
     [engine, activePlayerIndex]
   );
@@ -113,11 +97,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   const usePotion = useCallback(
     (slotIndex: number, playerIndex?: number): boolean => {
       const pIdx = playerIndex !== undefined ? playerIndex : activePlayerIndex;
-      const success = engine.usePlayerPotion(pIdx, slotIndex);
-      if (success) {
-        setStateVersion((v) => v + 1);
-      }
-      return success;
+      return engine.usePlayerPotion(pIdx, slotIndex);
     },
     [engine, activePlayerIndex]
   );
@@ -125,20 +105,14 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   const discardItem = useCallback(
     (backpackIndex: number, playerIndex?: number): boolean => {
       const pIdx = playerIndex !== undefined ? playerIndex : activePlayerIndex;
-      const success = engine.discardPlayerItem(pIdx, backpackIndex);
-      if (success) {
-        setStateVersion((v) => v + 1);
-      }
-      return success;
+      return engine.discardPlayerItem(pIdx, backpackIndex);
     },
     [engine, activePlayerIndex]
   );
 
-  // Capability methods (IResettableContext)
   const resetToDefaults = useCallback(() => {
     engine.resetPlayerInventoryToDefaults();
     setActivePlayerIndex(0);
-    setStateVersion((v) => v + 1);
   }, [engine]);
 
   const value = useMemo<InventoryContextValue>(
@@ -156,7 +130,6 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
       discardItem,
     }),
     [
-      isLoaded,
       resetToDefaults,
       activePlayerIndex,
       activePlayer,
@@ -179,5 +152,3 @@ export const useInventory = (): InventoryContextValue => {
   }
   return ctx;
 };
-
-export default InventoryContext;

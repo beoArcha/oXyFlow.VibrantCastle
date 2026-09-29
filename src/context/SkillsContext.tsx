@@ -7,22 +7,9 @@ import {
   getSkillTreeNodesForCharacter,
   getSkillNodeById,
   checkSkillUnlockConditions,
-  getCharacterKey
-} from "../game/logic/skills";
-import { MissingContextProviderError } from "../lib/errors";
-
-export interface SkillsCharacterState {
-  unlockedSkills: string[];
-  skillPoints: number;
-  primarySpellId: string;
-  secondarySpellId: string;
-}
-
-export interface SkillsContextState {
-  p1Skills: SkillsCharacterState;
-  p2Skills?: SkillsCharacterState;
-  activePlayerIndex: number;
-}
+  getCharacterKey,
+} from "@game/logic/skills";
+import { MissingContextProviderError } from "@lib/errors";
 
 export interface SkillUnlockEvaluation {
   canUnlock: boolean;
@@ -33,6 +20,9 @@ export interface SkillUnlockEvaluation {
   reasonKey?: string;
 }
 
+/**
+ * Public contract for skill tree domain UI state and actions.
+ */
 export interface SkillsContextValue extends ILoadableContext, IResettableContext {
   activePlayerIndex: number;
   setActivePlayerIndex: (idx: number) => void;
@@ -59,14 +49,10 @@ export interface SkillsProviderProps {
 }
 
 export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine }) => {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const isLoaded = true;
   const [activePlayerIndex, setActivePlayerIndex] = useState(0);
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
   const [stateVersion, setStateVersion] = useState(0);
-
-  useEffect(() => {
-    setIsLoaded(true);
-  }, []);
 
   // Subscribe to engine tick/state notifications
   useEngineSubscription(() => {
@@ -146,11 +132,7 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
   const unlockSkill = useCallback(
     (nodeId: string, playerIndex?: number): { success: boolean; messageKey?: string } => {
       const pIdx = typeof playerIndex === "number" ? playerIndex : activePlayerIndex;
-      const result = engine.unlockPlayerSkill(pIdx, nodeId);
-      if (result.success) {
-        setStateVersion((v) => v + 1);
-      }
-      return result;
+      return engine.unlockPlayerSkill(pIdx, nodeId);
     },
     [engine, activePlayerIndex]
   );
@@ -158,20 +140,14 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
   const assignSpell = useCallback(
     (spellId: string, slot: "primary" | "secondary", playerIndex?: number): boolean => {
       const pIdx = typeof playerIndex === "number" ? playerIndex : activePlayerIndex;
-      const success = engine.assignPlayerSpell(pIdx, spellId, slot);
-      if (success) {
-        setStateVersion((v) => v + 1);
-      }
-      return success;
+      return engine.assignPlayerSpell(pIdx, spellId, slot);
     },
     [engine, activePlayerIndex]
   );
 
-  // === Capability methods (IResettableContext) ===
   const resetToDefaults = useCallback(() => {
     engine.resetPlayerSkillsToDefaults();
     setActivePlayerIndex(0);
-    setStateVersion((v) => v + 1);
   }, [engine]);
 
   const value = useMemo<SkillsContextValue>(
@@ -192,10 +168,9 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
       secondarySpellId,
       unlockSkill,
       assignSpell,
-      evaluateSkill
+      evaluateSkill,
     }),
     [
-      isLoaded,
       resetToDefaults,
       activePlayerIndex,
       activePlayer,
@@ -209,7 +184,7 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
       secondarySpellId,
       unlockSkill,
       assignSpell,
-      evaluateSkill
+      evaluateSkill,
     ]
   );
 
@@ -223,5 +198,3 @@ export const useSkills = (): SkillsContextValue => {
   }
   return ctx;
 };
-
-export default SkillsContext;

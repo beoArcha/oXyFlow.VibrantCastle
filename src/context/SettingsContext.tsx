@@ -2,6 +2,7 @@ import React, {
   createContext,
   useContext,
   useState,
+  useEffect,
   useCallback,
   useMemo,
 } from "react";
@@ -32,22 +33,22 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
   storage = defaultSettingsStorage,
 }) => {
   const [settings, setSettings] = useState<GameSettingsState>(() => storage.load());
-  const [isLoaded] = useState(true);
+  const isLoaded = true;
+
+  // Persist settings to storage whenever state updates
+  useEffect(() => {
+    storage.save(settings);
+  }, [storage, settings]);
 
   // Sync settings with external subsystems (engine, audio, 2-player state)
-  const handleEngineTwoPlayerChange = useCallback(
-    (engineIs2P: boolean) => {
-      setSettings((prev) => {
-        if (prev.isTwoPlayer !== engineIs2P) {
-          const next = { ...prev, isTwoPlayer: engineIs2P };
-          storage.save(next);
-          return next;
-        }
-        return prev;
-      });
-    },
-    [storage]
-  );
+  const handleEngineTwoPlayerChange = useCallback((engineIs2P: boolean) => {
+    setSettings((prev) => {
+      if (prev.isTwoPlayer !== engineIs2P) {
+        return { ...prev, isTwoPlayer: engineIs2P };
+      }
+      return prev;
+    });
+  }, []);
 
   useSettingsSync(settings, handleEngineTwoPlayerChange);
 
@@ -68,8 +69,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
 
   const resetToDefaults = useCallback(() => {
     setSettings(DEFAULT_SETTINGS);
-    storage.save(DEFAULT_SETTINGS);
-  }, [storage]);
+  }, []);
 
   const exportToJson = useCallback((): string => {
     return storage.exportToJson(settings);
@@ -104,80 +104,38 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
   );
 
   // Granular mutation actions
-  const setDisplaySettings = useCallback(
-    (displayUpdates: Partial<DisplaySettings>) => {
-      setSettings((prev) => {
-        const next: GameSettingsState = {
-          ...prev,
-          display: { ...prev.display, ...displayUpdates },
-        };
-        storage.save(next);
-        return next;
-      });
-    },
-    [storage]
-  );
+  const setDisplaySettings = useCallback((displayUpdates: Partial<DisplaySettings>) => {
+    setSettings((prev) => ({
+      ...prev,
+      display: { ...prev.display, ...displayUpdates },
+    }));
+  }, []);
 
-  const setVolumeMusic = useCallback(
-    (val: number) => {
-      const clamped = Math.max(0, Math.min(1, val));
-      setSettings((prev) => {
-        const next: GameSettingsState = { ...prev, volumeMusic: clamped };
-        storage.save(next);
-        return next;
-      });
-    },
-    [storage]
-  );
+  const setVolumeMusic = useCallback((val: number) => {
+    const clamped = Math.max(0, Math.min(1, val));
+    setSettings((prev) => ({ ...prev, volumeMusic: clamped }));
+  }, []);
 
-  const setVolumeSFX = useCallback(
-    (val: number) => {
-      const clamped = Math.max(0, Math.min(1, val));
-      setSettings((prev) => {
-        const next: GameSettingsState = { ...prev, volumeSFX: clamped };
-        storage.save(next);
-        return next;
-      });
-    },
-    [storage]
-  );
+  const setVolumeSFX = useCallback((val: number) => {
+    const clamped = Math.max(0, Math.min(1, val));
+    setSettings((prev) => ({ ...prev, volumeSFX: clamped }));
+  }, []);
 
-  const setTwoPlayer = useCallback(
-    (val: boolean) => {
-      setSettings((prev) => {
-        const next: GameSettingsState = { ...prev, isTwoPlayer: val };
-        storage.save(next);
-        return next;
-      });
-      gameEngine.setTwoPlayerMode(val, true);
-    },
-    [storage]
-  );
+  const setTwoPlayer = useCallback((val: boolean) => {
+    setSettings((prev) => ({ ...prev, isTwoPlayer: val }));
+    gameEngine.setTwoPlayerMode(val, true);
+  }, []);
 
-  const setHudSettings = useCallback(
-    (hudUpdates: Partial<HudSettings>) => {
-      setSettings((prev) => {
-        const next: GameSettingsState = {
-          ...prev,
-          hud: { ...prev.hud, ...hudUpdates },
-        };
-        storage.save(next);
-        return next;
-      });
-    },
-    [storage]
-  );
+  const setHudSettings = useCallback((hudUpdates: Partial<HudSettings>) => {
+    setSettings((prev) => ({
+      ...prev,
+      hud: { ...prev.hud, ...hudUpdates },
+    }));
+  }, []);
 
-  const updateSettings = useCallback(
-    (partial: Partial<GameSettingsState>) => {
-      setSettings((prev) => {
-        const next: GameSettingsState = { ...prev, ...partial };
-        storage.save(next);
-        return next;
-      });
-    },
-    [storage]
-  );
+  const updateSettings = useCallback((partial: Partial<GameSettingsState>) => {
+    setSettings((prev) => ({ ...prev, ...partial }));
+  }, []);
 
   const value = useMemo<SettingsContextValue>(
     () => ({
@@ -203,7 +161,6 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
       importSettingsFromFile,
     }),
     [
-      isLoaded,
       settings,
       setDisplaySettings,
       setVolumeMusic,

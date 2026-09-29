@@ -1,4 +1,5 @@
-import { GameSettingsState, DEFAULT_SETTINGS } from "../settingsTypes";
+import { GameSettingsState, DEFAULT_SETTINGS, HudSettings, HudQuickKeysSettings } from "../settingsTypes";
+import { DisplaySettings } from "@game/types";
 import { getLogger, ILogger } from "@lib/logger";
 
 const settingsLogger = getLogger("context:settings");
@@ -131,22 +132,35 @@ export class SettingsStorage implements ISettingsStorage {
     }
   }
 
-  private mergeWithDefaults(parsed: Record<string, any>): GameSettingsState {
+  private mergeWithDefaults(parsed: unknown): GameSettingsState {
+    if (!parsed || typeof parsed !== "object") {
+      return DEFAULT_SETTINGS;
+    }
+    const data = parsed as Record<string, unknown>;
+    const display = (data.display && typeof data.display === "object" ? data.display : {}) as Partial<DisplaySettings>;
+    const rawHud = data.hud && typeof data.hud === "object" ? (data.hud as Record<string, unknown>) : {};
+    const p1Quick = rawHud.p1QuickKeys && typeof rawHud.p1QuickKeys === "object" ? (rawHud.p1QuickKeys as Partial<HudQuickKeysSettings>) : {};
+    const p2Quick = rawHud.p2QuickKeys && typeof rawHud.p2QuickKeys === "object" ? (rawHud.p2QuickKeys as Partial<HudQuickKeysSettings>) : {};
+
+    const hud: Partial<HudSettings> = {
+      ...(rawHud as Partial<HudSettings>),
+      p1QuickKeys: {
+        ...DEFAULT_SETTINGS.hud.p1QuickKeys,
+        ...p1Quick,
+      },
+      p2QuickKeys: {
+        ...DEFAULT_SETTINGS.hud.p2QuickKeys,
+        ...p2Quick,
+      },
+    };
+
     return {
       ...DEFAULT_SETTINGS,
-      ...parsed,
-      display: { ...DEFAULT_SETTINGS.display, ...(parsed.display || {}) },
+      ...(data as Partial<GameSettingsState>),
+      display: { ...DEFAULT_SETTINGS.display, ...display },
       hud: {
         ...DEFAULT_SETTINGS.hud,
-        ...(parsed.hud || {}),
-        p1QuickKeys: {
-          ...DEFAULT_SETTINGS.hud.p1QuickKeys,
-          ...(parsed.hud?.p1QuickKeys || {}),
-        },
-        p2QuickKeys: {
-          ...DEFAULT_SETTINGS.hud.p2QuickKeys,
-          ...(parsed.hud?.p2QuickKeys || {}),
-        },
+        ...hud,
       },
     };
   }

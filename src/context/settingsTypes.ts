@@ -75,7 +75,7 @@ export const DEFAULT_SETTINGS: GameSettingsState = {
 /**
  * Settings Context Value interface extending IContext.
  */
-export interface SettingsContextValue extends IContext<GameSettingsState> {
+export interface SettingsContextValue extends IContext {
   settings: GameSettingsState;
   displaySettings: DisplaySettings;
   volumeMusic: number;

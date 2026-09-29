@@ -34,6 +34,6 @@ export interface ISerializableContext {
 }
 
 /**
- * Composite context interface maintained for backward compatibility.
+ * Composite context interface combining persistence and serialization capabilities.
  */
-export interface IContext<T = unknown> extends IPersistentContext, ISerializableContext {}
+export interface IContext extends IPersistentContext, ISerializableContext {}

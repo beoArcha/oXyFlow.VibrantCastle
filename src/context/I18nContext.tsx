@@ -4,10 +4,13 @@ import gameEngine from "@game/loop/engine";
 import { useEngineSubscription } from "./useEngineSubscription";
 import { MissingContextProviderError } from "@lib/errors";
 
+/**
+ * Context value interface for localization and string translations.
+ */
 export interface I18nContextValue {
   language: LanguageCode;
   setLanguage: (lang: LanguageCode) => void;
-  t: (key: keyof GameTranslationDictionary | string, params?: Record<string, string | number>) => string;
+  t: (key: (keyof GameTranslationDictionary) | (string & {}), params?: Record<string, string | number>) => string;
   dictionary: GameTranslationDictionary;
   domains: ReturnType<typeof getDomainI18n>;
   isPl: boolean;
@@ -34,7 +37,7 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const domains = useMemo(() => getDomainI18n(language), [language]);
 
   const t = useCallback(
-    (key: keyof GameTranslationDictionary | string, params?: Record<string, string | number>) => {
+    (key: (keyof GameTranslationDictionary) | (string & {}), params?: Record<string, string | number>) => {
       return translateFn(language, key, params);
     },
     [language]

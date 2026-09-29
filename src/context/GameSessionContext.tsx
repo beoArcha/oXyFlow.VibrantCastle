@@ -32,7 +32,6 @@ export interface GameSessionContextValue {
   narration: string;
   subAnim: boolean;
   isAudioInitialized: boolean;
-  tick: number;
 
   // Session Actions
   setPaused: (paused: boolean) => void;
@@ -184,7 +183,6 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
       narration: currentNarration,
       subAnim,
       isAudioInitialized,
-      tick,
       setPaused,
       togglePause,
       restart,
@@ -195,25 +193,7 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
     }),
     [
       p1,
-      p1?.health,
-      p1?.maxHealth,
-      p1?.mana,
-      p1?.maxMana,
-      p1?.stamina,
-      p1?.maxStamina,
-      p1?.skillPoints,
-      p1?.primarySpellId,
-      p1?.secondarySpellId,
       p2,
-      p2?.health,
-      p2?.maxHealth,
-      p2?.mana,
-      p2?.maxMana,
-      p2?.stamina,
-      p2?.maxStamina,
-      p2?.skillPoints,
-      p2?.primarySpellId,
-      p2?.secondarySpellId,
       isVictory,
       isDefeat,
       isPaused,
