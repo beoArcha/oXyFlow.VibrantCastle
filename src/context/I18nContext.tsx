@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useCallback, useMemo } from
 import { LanguageCode, GameTranslationDictionary, translations, t as translateFn, getDomainI18n } from "@i18n";
 import gameEngine from "@game/loop/engine";
 import { useEngineSubscription } from "./hooks/useEngineSubscription";
+import { BaseProviderProps } from "./IContext";
 import { MissingContextProviderError } from "@lib/errors";
 
 /**
@@ -19,8 +20,14 @@ export interface I18nContextValue {
 
 const I18nContext = createContext<I18nContextValue | null>(null);
 
-export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguageState] = useState<LanguageCode>(gameEngine.settings.language || "pl");
+export interface I18nProviderProps extends BaseProviderProps {
+  defaultLanguage?: LanguageCode;
+}
+
+export const I18nProvider: React.FC<I18nProviderProps> = ({ children, defaultLanguage }) => {
+  const [language, setLanguageState] = useState<LanguageCode>(
+    defaultLanguage || gameEngine.settings.language || "pl"
+  );
 
   const setLanguage = useCallback((lang: LanguageCode) => {
     setLanguageState(lang);

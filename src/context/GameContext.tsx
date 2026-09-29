@@ -5,10 +5,9 @@ import { SaveGameProvider } from "./SaveGameContext";
 import { GameSessionProvider } from "./GameSessionContext";
 import { InventoryProvider } from "./InventoryContext";
 import { SkillsProvider } from "./SkillsContext";
+import { BaseProviderProps } from "./IContext";
 
-export interface GameProviderProps {
-  children: React.ReactNode;
-}
+export interface GameProviderProps extends BaseProviderProps {}
 
 /**
  * Main GameProvider composing modular domain-specific providers hierarchically:

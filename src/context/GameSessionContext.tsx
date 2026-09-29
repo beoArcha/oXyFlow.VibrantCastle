@@ -18,6 +18,7 @@ import { getNextLocation, getLocation } from "@game/locations";
 import { useI18n } from "./I18nContext";
 import { useEngineSubscription } from "./hooks/useEngineSubscription";
 import { useSafeTimeout } from "./hooks/useSafeTimeout";
+import { BaseProviderProps } from "./IContext";
 import { MissingContextProviderError } from "@lib/errors";
 
 export interface GameSessionContextValue {
@@ -45,8 +46,7 @@ export interface GameSessionContextValue {
 
 const GameSessionContext = createContext<GameSessionContextValue | null>(null);
 
-export interface GameSessionProviderProps {
-  children: React.ReactNode;
+export interface GameSessionProviderProps extends BaseProviderProps {
   onNotification?: (msg: string) => void;
 }
 

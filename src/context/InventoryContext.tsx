@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
-import { ILoadableContext, IResettableContext } from "./IContext";
+import { IPlayerScopedContext, EngineBoundProviderProps } from "./IContext";
 import { useEngineSubscription } from "./hooks/useEngineSubscription";
 import { GameEngine } from "@game/loop/engine";
 import {
@@ -15,10 +15,7 @@ import { MissingContextProviderError } from "@lib/errors";
 /**
  * Public contract for inventory domain UI state and actions.
  */
-export interface InventoryContextValue extends ILoadableContext, IResettableContext {
-  activePlayerIndex: number;
-  setActivePlayerIndex: (idx: number) => void;
-  activePlayer: Player | undefined;
+export interface InventoryContextValue extends IPlayerScopedContext {
   activeInventory: InventoryState | null;
   activeDerivedStats: {
     totalAttack: number;
@@ -37,10 +34,7 @@ export interface InventoryContextValue extends ILoadableContext, IResettableCont
 
 const InventoryContext = createContext<InventoryContextValue | null>(null);
 
-export interface InventoryProviderProps {
-  children: React.ReactNode;
-  engine: GameEngine;
-}
+export interface InventoryProviderProps extends EngineBoundProviderProps {}
 
 export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, engine }) => {
   const isLoaded = true;

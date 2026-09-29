@@ -91,7 +91,9 @@ export interface SettingsContextValue extends IContext {
   setHudSettings: (hud: Partial<HudSettings>) => void;
   updateSettings: (partial: Partial<GameSettingsState>) => void;
 
-  // File I/O for settings
+  // File I/O for settings (IFilePersistenceContext implementation & domain aliases)
+  exportToFile: () => void;
+  importFromFile: (file: File) => Promise<boolean>;
   exportSettingsToFile: () => void;
   importSettingsFromFile: (file: File) => Promise<boolean>;
 }

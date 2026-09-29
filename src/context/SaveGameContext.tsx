@@ -9,35 +9,38 @@ import { SaveState } from "@game/types";
 import gameEngine from "@game/loop/engine";
 import { gameSave } from "@game/logic/save";
 import { useI18n } from "./I18nContext";
-import { IContext } from "./IContext";
+import { IContext, INotifiableContext, BaseProviderProps } from "./IContext";
 import { useSafeTimeout } from "./hooks/useSafeTimeout";
 import { getLogger } from "@lib/logger";
 import { MissingContextProviderError } from "@lib/errors";
 
 const saveContextLogger = getLogger("context:save");
 
-export interface SaveGameContextValue extends IContext {
+export interface SaveGameContextValue extends IContext, INotifiableContext {
   saveNotification: string;
   lastSavedState: SaveState | null;
 
   setSaveNotification: (text: string) => void;
-  showNotification: (msg: string) => void;
+  showNotification: (msg: string, durationMs?: number) => void;
 
   // Primary save actions
   saveGame: () => void;
   loadGame: (fileOrEvent?: File | React.ChangeEvent<HTMLInputElement>) => void;
 
-  // Dedicated file & storage helpers
+  // Dedicated file & storage helpers (IFilePersistenceContext implementation & aliases)
+  exportToFile: () => void;
+  importFromFile: (file: File) => Promise<boolean>;
   exportSaveToFile: () => void;
   importSaveFromFile: (file: File) => Promise<boolean>;
 }
 
 const SaveGameContext = createContext<SaveGameContextValue | null>(null);
 
-export const SaveGameProvider: React.FC<{
-  children: React.ReactNode;
+export interface SaveGameProviderProps extends BaseProviderProps {
   onStateApplied?: () => void;
-}> = ({ children, onStateApplied }) => {
+}
+
+export const SaveGameProvider: React.FC<SaveGameProviderProps> = ({ children, onStateApplied }) => {
   const { t } = useI18n();
   const { setSafeTimeout } = useSafeTimeout();
   const [saveNotification, setSaveNotification] = useState("");
@@ -46,9 +49,9 @@ export const SaveGameProvider: React.FC<{
   });
   const isLoaded = true;
 
-  const showNotification = useCallback((msg: string) => {
+  const showNotification = useCallback((msg: string, durationMs: number = 3500) => {
     setSaveNotification(msg);
-    setSafeTimeout(() => setSaveNotification(""), 3500);
+    setSafeTimeout(() => setSaveNotification(""), durationMs);
   }, [setSafeTimeout]);
 
   const saveToLocalStorage = useCallback(() => {
@@ -165,6 +168,7 @@ export const SaveGameProvider: React.FC<{
   const value = useMemo<SaveGameContextValue>(
     () => ({
       isLoaded,
+      notification: saveNotification,
       saveNotification,
       lastSavedState,
       setSaveNotification,
@@ -178,6 +182,8 @@ export const SaveGameProvider: React.FC<{
       importFromJson,
       exportSaveToFile,
       importSaveFromFile,
+      exportToFile: exportSaveToFile,
+      importFromFile: importSaveFromFile,
     }),
     [
       saveNotification,

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
-import { ILoadableContext, IResettableContext } from "./IContext";
+import { IPlayerScopedContext, EngineBoundProviderProps } from "./IContext";
 import { useEngineSubscription } from "./hooks/useEngineSubscription";
 import { GameEngine } from "@game/loop/engine";
 import { Player, SkillTreeNode } from "@game/types";
@@ -23,10 +23,7 @@ export interface SkillUnlockEvaluation {
 /**
  * Public contract for skill tree domain UI state and actions.
  */
-export interface SkillsContextValue extends ILoadableContext, IResettableContext {
-  activePlayerIndex: number;
-  setActivePlayerIndex: (idx: number) => void;
-  activePlayer: Player | undefined;
+export interface SkillsContextValue extends IPlayerScopedContext {
   activeCharacter: "valen" | "aurelia";
   skillTreeNodes: SkillTreeNode[];
   selectedSkillId: string | null;
@@ -43,10 +40,7 @@ export interface SkillsContextValue extends ILoadableContext, IResettableContext
 
 const SkillsContext = createContext<SkillsContextValue | null>(null);
 
-export interface SkillsProviderProps {
-  children: React.ReactNode;
-  engine: GameEngine;
-}
+export interface SkillsProviderProps extends EngineBoundProviderProps {}
 
 export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine }) => {
   const isLoaded = true;

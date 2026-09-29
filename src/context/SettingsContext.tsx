@@ -20,11 +20,11 @@ import {
   useSettingsSync,
 } from "./settings";
 import { MissingContextProviderError } from "@lib/errors";
+import { BaseProviderProps } from "./IContext";
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 
-export interface SettingsProviderProps {
-  children: React.ReactNode;
+export interface SettingsProviderProps extends BaseProviderProps {
   storage?: ISettingsStorage;
 }
 
@@ -150,6 +150,8 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
       importFromJson,
       exportSettingsToFile,
       importSettingsFromFile,
+      exportToFile: exportSettingsToFile,
+      importFromFile: importSettingsFromFile,
     }),
     [
       settings,
