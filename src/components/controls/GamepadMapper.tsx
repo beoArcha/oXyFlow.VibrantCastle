@@ -3,7 +3,7 @@ import { Gamepad as GamepadIcon, RotateCcw, Check, Sparkles } from "lucide-react
 import { PlayerId, GamepadBindingMap, GameTranslationDictionary } from "@game/types";
 import { Button, Card, CardHeader, CardTitle, CardContent, Badge, KbdKey } from "../ui";
 import { useI18n } from "@context/I18nContext";
-import { useGamepad } from "@hooks/useGamepad";
+import { useGamepad } from "./hooks/useGamepad";
 import { cn } from "@lib/utils";
 
 const ACTION_I18N_KEYS: Record<keyof GamepadBindingMap, keyof GameTranslationDictionary> = {

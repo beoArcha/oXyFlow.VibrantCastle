@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { Badge, Button } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
-import { useThrottledLogs } from "@hooks/useThrottledLogs";
+import { useThrottledLogs } from "../../hooks/useThrottledLogs";
 import { LogLevel } from "@lib/logger";
 import { GameBaseError } from "@lib/errors";
 

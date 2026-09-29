@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useResponsiveCanvas } from "@hooks/useResponsiveCanvas";
+import { useResponsiveCanvas } from "./hooks/useResponsiveCanvas";
 import gameEngine from "@game/loop/engine";
 import { DisplaySettings, PlayerId } from "@game/types";
 import { debugManager } from "@game/debug/debugManager";

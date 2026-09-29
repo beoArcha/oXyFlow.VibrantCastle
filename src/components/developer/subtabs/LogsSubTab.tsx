@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { useThrottledLogs } from "@hooks/useThrottledLogs";
+import { useThrottledLogs } from "../hooks/useThrottledLogs";
 import { LogRecord, LogLevel, LoggerManager } from "@lib/logger";
 import {
   LogsHeaderToolbar,

@@ -102,6 +102,14 @@ describe("Architectural Boundary Rules (AGENT.md Sec. 1.1)", () => {
     expect(violations).toEqual([]);
   });
 
+  it("ensures zero files in src import from obsolete root hooks directory or @hooks alias", () => {
+    const allSrcFiles = getAllSourceFiles(srcDir);
+    const obsoletePattern = /(from|import)\s*\(?["'](@hooks\/|@\/hooks\/)/;
+    const violations = findImportViolations(allSrcFiles, obsoletePattern, rootDir);
+
+    expect(violations).toEqual([]);
+  });
+
   it("enforces strict type checking and safety flags in tsconfig.json", () => {
     const tsconfigPath = path.join(rootDir, "tsconfig.json");
     expect(fs.existsSync(tsconfigPath)).toBe(true);

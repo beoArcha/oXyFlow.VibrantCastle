@@ -1,9 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { I18nProvider } from "./context/I18nContext";
-import { GameProvider } from "./context/GameContext";
-import { useI18n } from "./context/I18nContext";
-import { useGameSession } from "./context/GameContext";
-import { useModalManager } from "./hooks/useModalManager";
+import { I18nProvider, useI18n } from "./context/I18nContext";
+import { GameProvider, useGameSession } from "./context/GameContext";
+import { useModalManager } from "./components/menu/hooks/useModalManager";
 import { MenuModal } from "./components/menu/MenuModal";
 import { HelpModal } from "./components/help/HelpModal";
 import { DeveloperModal } from "./components/developer";
