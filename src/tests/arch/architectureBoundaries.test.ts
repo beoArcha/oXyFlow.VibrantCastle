@@ -1,93 +1,12 @@
 import { describe, it, expect } from "bun:test";
 import fs from "fs";
 import path from "path";
-
-function getAllSourceFiles(dir: string, extensionRegex = /\.(ts|tsx)$/): string[] {
-  let results: string[] = [];
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      if (entry.name !== "node_modules" && entry.name !== ".git" && entry.name !== "dist") {
-        results = results.concat(getAllSourceFiles(fullPath, extensionRegex));
-      }
-    } else if (entry.isFile() && extensionRegex.test(entry.name)) {
-      results.push(fullPath);
-    }
-  }
-
-  return results;
-}
-
-function findImportViolations(
-  files: string[],
-  forbiddenPattern: RegExp,
-  rootDir: string
-): { file: string; line: string }[] {
-  const violations: { file: string; line: string }[] = [];
-
-  for (const file of files) {
-    const content = fs.readFileSync(file, "utf-8");
-    const lines = content.split("\n");
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      if (forbiddenPattern.test(line)) {
-        violations.push({
-          file: path.relative(rootDir, file).replace(/\\/g, "/"),
-          line: line.trim(),
-        });
-      }
-    }
-  }
-
-  return violations;
-}
-
-function findCrossGroupRelativeImports(
-  rootDir: string,
-  allowedTargetGroups: Set<string> = new Set()
-): { file: string; lineNo: number; line: string; fromGroup: string; toGroup: string }[] {
-  const srcDir = path.join(rootDir, "src");
-  const allFiles = getAllSourceFiles(srcDir);
-  const topGroups = ["assets", "components", "context", "game", "i18n", "lib"];
-  const violations: { file: string; lineNo: number; line: string; fromGroup: string; toGroup: string }[] = [];
-
-  for (const file of allFiles) {
-    const relFile = path.relative(srcDir, file).replace(/\\/g, "/");
-    const fromGroup = relFile.split("/")[0];
-    if (!topGroups.includes(fromGroup)) continue;
-
-    const content = fs.readFileSync(file, "utf-8");
-    const lines = content.split("\n");
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      const match = line.match(/(?:from|import)\s*\(?['"](\.[^'"]+)['"]/);
-      if (match) {
-        const importPath = match[1];
-        const resolvedTarget = path.normalize(path.join(path.dirname(file), importPath));
-        const relTarget = path.relative(srcDir, resolvedTarget).replace(/\\/g, "/");
-        const toGroup = relTarget.split("/")[0];
-
-        if (topGroups.includes(toGroup) && fromGroup !== toGroup) {
-          if (!allowedTargetGroups.has(toGroup)) {
-            violations.push({
-              file: relFile,
-              lineNo: i + 1,
-              line: line.trim(),
-              fromGroup,
-              toGroup,
-            });
-          }
-        }
-      }
-    }
-  }
-
-  return violations;
-}
+import {
+  getAllSourceFiles,
+  findImportViolations,
+  findCrossGroupRelativeImports,
+  stripComments,
+} from "./helpers/archScanner";
 
 describe("Architectural Boundary Rules (AGENT.md Sec. 1.1)", () => {
   const rootDir = process.cwd();
@@ -124,7 +43,7 @@ describe("Architectural Boundary Rules (AGENT.md Sec. 1.1)", () => {
     const typesFile = path.join(gameDir, "types.ts");
     expect(fs.existsSync(typesFile)).toBe(true);
 
-    const content = fs.readFileSync(typesFile, "utf-8");
+    const content = stripComments(fs.readFileSync(typesFile, "utf-8"));
     expect(content).not.toContain("from \"react\"");
     expect(content).not.toContain("from 'react'");
     expect(content).not.toContain("React.");
@@ -159,7 +78,7 @@ describe("Architectural Boundary Rules (AGENT.md Sec. 1.1)", () => {
     expect(fs.existsSync(tsconfigPath)).toBe(true);
 
     const rawContent = fs.readFileSync(tsconfigPath, "utf-8");
-    const sanitized = rawContent.replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "");
+    const sanitized = stripComments(rawContent);
     const tsconfig = JSON.parse(sanitized);
 
     expect(tsconfig.compilerOptions).toBeDefined();
@@ -169,6 +88,10 @@ describe("Architectural Boundary Rules (AGENT.md Sec. 1.1)", () => {
   });
 
   it("ensures game simulation core (physics, combat, logic) has zero direct dependencies on DOM globals outside known adapters", () => {
+    // Explicit list of permitted browser adapters on the periphery of the game engine:
+    // - loop/input.ts: Browser window/document keyboard event listeners
+    // - logic/save/saveExporter.ts: Triggers file download via document.createElement('a')
+    // - logic/stats/statsStorage.ts: Persists gameplay statistics to window.localStorage
     const knownBrowserAdapters = new Set([
       "src/game/loop/input.ts",
       "src/game/logic/save/saveExporter.ts",
