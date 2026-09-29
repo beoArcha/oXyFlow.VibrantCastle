@@ -1,5 +1,13 @@
-import React from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { cn } from "@lib/utils";
+import {
+  TabsContext,
+  TabsContextValue,
+  TabsOrientation,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "./tabs/index";
 
 export interface TabItem {
   id: string;
@@ -8,63 +16,122 @@ export interface TabItem {
   badge?: string | number;
 }
 
-export interface TabsProps {
-  items: TabItem[];
-  activeId: string;
-  onChange: (id: string) => void;
-  className?: string;
+export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
+  /** Controlled active tab value */
+  value?: string;
+  /** Uncontrolled default active tab value */
+  defaultValue?: string;
+  /** Callback fired when active tab changes */
+  onValueChange?: (value: string) => void;
+  /** Tab orientation (default: "horizontal") */
+  orientation?: TabsOrientation;
+  /** Legacy array of tab items for 100% backward compatibility */
+  items?: TabItem[];
+  /** Legacy active tab ID for 100% backward compatibility */
+  activeId?: string;
+  /** Legacy change callback for 100% backward compatibility */
+  onChange?: (id: string) => void;
 }
 
-export const Tabs: React.FC<TabsProps> = ({
-  items,
-  activeId,
-  onChange,
-  className,
-}) => {
-  return (
-    <div
-      role="tablist"
-      className={cn(
-        "shrink-0 flex flex-wrap items-center gap-1.5 p-1.5 bg-[#120502]/95 border border-amber-500/30 rounded-xl shadow-inner",
-        className
-      )}
-    >
-      {items.map((tab) => {
-        const isActive = tab.id === activeId;
-        return (
-          <button
-            key={tab.id}
-            role="tab"
-            aria-selected={isActive}
-            onClick={() => onChange(tab.id)}
-            className={cn(
-              "flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer select-none whitespace-nowrap",
-              isActive
-                ? "bg-gradient-to-r from-amber-600 to-amber-700 text-white shadow-md shadow-amber-950/60 border border-amber-400 font-black"
-                : "bg-black/40 text-stone-300 hover:text-amber-200 hover:bg-[#240e06] border border-stone-800/80 hover:border-amber-700/50"
-            )}
-          >
-            {tab.icon && (
-              <span className={cn("flex items-center shrink-0", isActive ? "text-amber-200" : "text-amber-400/80")}>
-                {tab.icon}
-              </span>
-            )}
-            <span>{tab.label}</span>
-            {tab.badge !== undefined && (
-              <span
-                className={cn(
-                  "px-1.5 py-0.2 rounded-full text-[10px] font-mono",
-                  isActive ? "bg-black/40 text-amber-200" : "bg-stone-800 text-stone-400"
-                )}
-              >
-                {tab.badge}
-              </span>
-            )}
-          </button>
-        );
-      })}
-    </div>
-  );
-};
+/**
+ * Gothic Tabs composite component orchestrating active tab selection,
+ * roving keyboard navigation, and tabpanel visibility.
+ *
+ * Supports both modern Compound Component composition (<Tabs.List>, <Tabs.Trigger>, <Tabs.Content>)
+ * and backward-compatible legacy array mode (items={...}).
+ */
+const TabsRoot = React.memo(
+  React.forwardRef<HTMLDivElement, TabsProps>(function Tabs(
+    {
+      value: controlledValue,
+      defaultValue,
+      onValueChange,
+      orientation = "horizontal",
+      items,
+      activeId,
+      onChange,
+      children,
+      className,
+      ...props
+    },
+    ref
+  ) {
+    // Legacy Array Mode: compose TabsList and TabsTrigger primitives without code duplication
+    if (items && items.length > 0) {
+      const currentActive = activeId ?? items[0]?.id;
+      const legacyContextValue: TabsContextValue = {
+        activeValue: currentActive,
+        setActiveValue: (newVal: string) => onChange?.(newVal),
+        orientation,
+      };
 
+      return (
+        <TabsContext.Provider value={legacyContextValue}>
+          <TabsList ref={ref} className={className} {...props}>
+            {items.map((tab) => (
+              <TabsTrigger
+                key={tab.id}
+                value={tab.id}
+                icon={tab.icon}
+                badge={tab.badge}
+              >
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </TabsContext.Provider>
+      );
+    }
+
+    // Compound Component Mode: manage controlled/uncontrolled state via TabsContext
+    const [internalValue, setInternalValue] = useState<string>(defaultValue ?? "");
+    const isControlled = controlledValue !== undefined;
+    const activeValue = isControlled ? controlledValue : internalValue;
+
+    const setActiveValue = useCallback(
+      (newVal: string) => {
+        if (!isControlled) {
+          setInternalValue(newVal);
+        }
+        onValueChange?.(newVal);
+      },
+      [isControlled, onValueChange]
+    );
+
+    const contextValue = useMemo<TabsContextValue>(
+      () => ({
+        activeValue,
+        setActiveValue,
+        orientation,
+      }),
+      [activeValue, setActiveValue, orientation]
+    );
+
+    return (
+      <TabsContext.Provider value={contextValue}>
+        <div ref={ref} className={cn("flex flex-col gap-2", className)} {...props}>
+          {children}
+        </div>
+      </TabsContext.Provider>
+    );
+  })
+);
+
+TabsRoot.displayName = "Tabs";
+
+export interface TabsComponent
+  extends React.MemoExoticComponent<
+    React.ForwardRefExoticComponent<TabsProps & React.RefAttributes<HTMLDivElement>>
+  > {
+  List: typeof TabsList;
+  Trigger: typeof TabsTrigger;
+  Content: typeof TabsContent;
+}
+
+export const Tabs = TabsRoot as unknown as TabsComponent;
+Tabs.List = TabsList;
+Tabs.Trigger = TabsTrigger;
+Tabs.Content = TabsContent;
+
+export * from "./tabs/index";
 export default Tabs;
