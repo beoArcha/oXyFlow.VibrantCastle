@@ -189,7 +189,10 @@ describe("React Context Safety & ErrorBoundary", () => {
 
       const rendered = boundary.render() as React.ReactElement;
       expect(rendered).toBeDefined();
-      expect(rendered.type).toBe("div");
+      const html = renderToString(rendered);
+      expect(html).toContain('role="alert"');
+      expect(html).toContain("[REACT]");
+      expect(html).toContain(ErrorCode.REACT_MISSING_CONTEXT);
     });
   });
 });

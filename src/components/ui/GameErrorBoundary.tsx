@@ -1,15 +1,29 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { getLogger, ILogger, LoggerManager } from "@lib/logger";
 import { GameBaseError } from "@lib/errors";
-import { AlertTriangle, RefreshCw, Copy, Check } from "lucide-react";
-import { Button } from "./Button";
+import {
+  GameErrorContext,
+  GameErrorContextValue,
+  GameErrorContainer,
+  GameErrorIcon,
+  GameErrorTitle,
+  GameErrorDescription,
+  GameErrorDetails,
+  GameErrorActions,
+  GameErrorRetryButton,
+  GameErrorCopyButton,
+  GameErrorReloadButton,
+  DefaultGameErrorFallback,
+} from "./error-boundary/index";
 
 export interface GameErrorBoundaryProps {
   children: ReactNode;
+  fallback?: ReactNode | ((context: GameErrorContextValue) => ReactNode);
   fallbackTitle?: string;
   fallbackMessage?: string;
   onReset?: () => void;
   logger?: ILogger;
+  className?: string;
 }
 
 export interface GameErrorBoundaryState {
@@ -20,14 +34,31 @@ export interface GameErrorBoundaryState {
 }
 
 /**
- * Resilient React Error Boundary catching render lifecycle exceptions.
- * Logs fatal errors via ILogger and presents an in-game recovery interface.
- * Adheres to SRP & DIP.
+ * Resilient React Error Boundary composite component.
+ * Catches render exceptions, logs fatal crashes via ILogger, captures component stacks,
+ * and renders either a custom fallback or a standard gothic crash recovery interface.
  *
- * @example
+ * @example Default usage
  * ```tsx
  * <GameErrorBoundary fallbackTitle="Castle Anomaly">
  *   <GameViewport />
+ * </GameErrorBoundary>
+ * ```
+ *
+ * @example Compound composition usage
+ * ```tsx
+ * <GameErrorBoundary
+ *   fallback={
+ *     <GameErrorBoundary.Container>
+ *       <GameErrorBoundary.Icon />
+ *       <GameErrorBoundary.Title>Inventory Crashed</GameErrorBoundary.Title>
+ *       <GameErrorBoundary.Actions>
+ *         <GameErrorBoundary.RetryButton>Reload Inventory</GameErrorBoundary.RetryButton>
+ *       </GameErrorBoundary.Actions>
+ *     </GameErrorBoundary.Container>
+ *   }
+ * >
+ *   <InventoryPanel />
  * </GameErrorBoundary>
  * ```
  */
@@ -35,6 +66,17 @@ export class GameErrorBoundary extends Component<
   GameErrorBoundaryProps,
   GameErrorBoundaryState
 > {
+  public static Container = GameErrorContainer;
+  public static Icon = GameErrorIcon;
+  public static Title = GameErrorTitle;
+  public static Description = GameErrorDescription;
+  public static Details = GameErrorDetails;
+  public static Actions = GameErrorActions;
+  public static RetryButton = GameErrorRetryButton;
+  public static CopyButton = GameErrorCopyButton;
+  public static ReloadButton = GameErrorReloadButton;
+  public static DefaultFallback = DefaultGameErrorFallback;
+
   private readonly logger: ILogger;
 
   constructor(props: GameErrorBoundaryProps) {
@@ -65,6 +107,7 @@ export class GameErrorBoundary extends Component<
         componentStack: errorInfo.componentStack ?? null,
       };
     }
+
     this.logger.fatal(
       `Uncaught React component render crash: ${error.message || "Unknown error"}`,
       {
@@ -119,7 +162,7 @@ export class GameErrorBoundary extends Component<
         .filter(Boolean)
         .join("\n");
 
-      if (navigator.clipboard) {
+      if (typeof navigator !== "undefined" && navigator.clipboard) {
         await navigator.clipboard.writeText(diagnosticReport);
       }
       this.setState({ copied: true });
@@ -135,86 +178,39 @@ export class GameErrorBoundary extends Component<
     }
 
     const {
+      fallback,
       fallbackTitle = "An Unexpected Castle Anomaly Occurred",
       fallbackMessage = "The interface encountered a fatal rendering failure. Your save data is safe.",
+      className,
     } = this.props;
 
-    const gameError = this.state.error instanceof GameBaseError ? this.state.error : null;
+    const contextValue: GameErrorContextValue = {
+      error: this.state.error,
+      componentStack: this.state.componentStack,
+      isCopied: this.state.copied,
+      fallbackTitle,
+      fallbackMessage,
+      onRetry: this.handleRetry,
+      onReload: this.handleReload,
+      onCopyReport: this.handleCopyDiagnosticLog,
+    };
+
+    let content: ReactNode;
+    if (typeof fallback === "function") {
+      content = fallback(contextValue);
+    } else if (fallback) {
+      content = fallback;
+    } else {
+      content = <DefaultGameErrorFallback className={className} />;
+    }
 
     return (
-      <div className="w-full h-full min-h-[300px] flex items-center justify-center p-6 bg-[#0c0302] text-stone-200">
-        <div className="max-w-xl w-full p-6 rounded-2xl bg-[#170603] border-2 border-red-900/60 shadow-2xl shadow-red-950/40 flex flex-col gap-4 text-center items-center font-sans">
-          <div className="w-14 h-14 rounded-full bg-red-950/80 border border-red-700/60 flex items-center justify-center text-red-400 animate-pulse">
-            <AlertTriangle size={28} />
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <h2 className="text-xl font-black text-red-300 tracking-wide uppercase font-serif">
-              {fallbackTitle}
-            </h2>
-            <p className="text-xs text-stone-400 max-w-md mx-auto leading-relaxed">
-              {fallbackMessage}
-            </p>
-          </div>
-
-          {gameError && (
-            <div className="flex flex-wrap items-center gap-2 justify-center">
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-red-900/60 text-red-200 border border-red-700/50">
-                [{gameError.domain}]
-              </span>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold tracking-wider uppercase bg-stone-900/80 text-amber-300 border border-amber-500/30">
-                {gameError.code}
-              </span>
-            </div>
-          )}
-
-          {this.state.error && (
-            <div className="w-full text-left p-3 rounded-xl bg-[#090201] border border-red-950/80 text-[11px] font-mono text-red-200/90 overflow-x-auto max-h-36 custom-scrollbar flex flex-col gap-1.5">
-              <div>
-                <span className="font-bold text-red-400">
-                  {this.state.error.name}:
-                </span>{" "}
-                {this.state.error.message}
-              </div>
-              {gameError?.details && Object.keys(gameError.details).length > 0 && (
-                <div className="text-[10px] text-stone-400 pt-1.5 border-t border-stone-800/80">
-                  <span className="text-stone-500 font-sans font-semibold">Details: </span>
-                  {JSON.stringify(gameError.details)}
-                </div>
-              )}
-            </div>
-          )}
-
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <Button
-              variant="primary"
-              size="md"
-              icon={<RefreshCw size={14} />}
-              onClick={this.handleRetry}
-            >
-              Retry Interface
-            </Button>
-
-            <Button
-              variant="secondary"
-              size="md"
-              icon={this.state.copied ? <Check size={14} /> : <Copy size={14} />}
-              onClick={this.handleCopyDiagnosticLog}
-            >
-              {this.state.copied ? "Report Copied!" : "Copy Diagnostic Log"}
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={this.handleReload}
-              className="text-stone-400 hover:text-stone-200"
-            >
-              Reload Game
-            </Button>
-          </div>
-        </div>
-      </div>
+      <GameErrorContext.Provider value={contextValue}>
+        {content}
+      </GameErrorContext.Provider>
     );
   }
 }
+
+export * from "./error-boundary/index";
+export default GameErrorBoundary;
