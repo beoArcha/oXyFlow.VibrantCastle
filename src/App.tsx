@@ -12,12 +12,11 @@ import {
   Toast,
   useToast,
 } from "@ui";
-import { KeyRebindDialog } from "@components/controls";
+import { KeyRebindDialog, useKeyRebind } from "@components/controls";
 import {
   GameLayout,
   GameModalHost,
   useAppHotkeys,
-  useKeyRebind,
 } from "@components/layout";
 
 function GameScreen() {

@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { PlayerId, InputMap } from "@game/types";
 import gameInputs from "@game/loop/input";
 
@@ -10,21 +10,26 @@ export interface UseKeyboardResult {
 /**
  * Custom React hook for inspecting and resetting player keyboard bindings.
  * Interacts directly with the GameInputEngine singleton.
+ *
+ * @param selectedPlayer Player whose bindings are being inspected/reset
  */
 export function useKeyboard(selectedPlayer: PlayerId): UseKeyboardResult {
   const [, setTick] = useState(0);
-
-  useEffect(() => {
-    setTick((prev) => prev + 1);
-  }, [selectedPlayer]);
 
   const resetDefaults = useCallback(() => {
     gameInputs.resetToDefaults(selectedPlayer);
     setTick((prev) => prev + 1);
   }, [selectedPlayer]);
 
-  return {
-    bindings: gameInputs.getKeyboardBindings(selectedPlayer),
-    resetDefaults,
-  };
+  const bindings = gameInputs.getKeyboardBindings(selectedPlayer);
+
+  return useMemo(
+    () => ({
+      bindings,
+      resetDefaults,
+    }),
+    [bindings, resetDefaults]
+  );
 }
+
+export default useKeyboard;

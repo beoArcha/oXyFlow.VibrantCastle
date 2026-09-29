@@ -2,7 +2,7 @@ import React from "react";
 import { Keyboard } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
 import { Button, Dialog } from "@ui";
-import { KeyBindingTarget } from "@components/layout/hooks/useKeyRebind";
+import { KeyBindingTarget } from "./hooks/useKeyRebind";
 
 export interface KeyRebindDialogProps {
   target: KeyBindingTarget | null;

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Keyboard, RotateCcw } from "lucide-react";
 import { PlayerId, InputMap, GameTranslationDictionary } from "@game/types";
-import { Button, Card, CardHeader, CardTitle, CardContent, KbdKey } from "../ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, KbdKey } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { useKeyboard } from "./hooks/useKeyboard";
+import { formatKeyLabel } from "./formatKeyLabel";
 import { cn } from "@lib/utils";
 
 export interface KeyboardMapperProps {
@@ -90,12 +91,7 @@ export const KeyboardMapper: React.FC<KeyboardMapperProps> = ({ onStartRebind })
                   <div className="flex flex-wrap gap-1 mt-1">
                     {keys.slice(0, 2).map((k) => (
                       <KbdKey key={k} variant={isP1 ? "amber" : "cyan"}>
-                        {k === "Space"
-                          ? t("spaceKey")
-                          : k
-                            .replace("Key", "")
-                            .replace("Digit", "")
-                            .replace("Arrow", "↑→↓←")}
+                        {formatKeyLabel(k, t("spaceKey"))}
                       </KbdKey>
                     ))}
                   </div>
