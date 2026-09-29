@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useCallback } from "react";
 import { I18nProvider, useI18n } from "./context/I18nContext";
 import { GameProvider, useGameSession } from "./context/GameContext";
 import { useModalManager } from "./components/menu/hooks/useModalManager";
@@ -8,22 +8,24 @@ import { DeveloperModal } from "./components/developer";
 import { HUDOverlay } from "./components/hud/HUDOverlay";
 import { InventoryPanel } from "./components/inventory/InventoryPanel";
 import { SkillTreePanel } from "./components/skills/SkillTreePanel";
-import { Globe, Layers, Swords, HelpCircle, Menu as MenuIcon } from "lucide-react";
-import { Button, Badge, KbdKey, ModalType, GameErrorBoundary } from "./components/ui";
+import { Layers, Swords, HelpCircle, Menu as MenuIcon } from "lucide-react";
+import {
+  Badge,
+  KbdKey,
+  ModalType,
+  GameErrorBoundary,
+  LanguageSelector,
+  Toast,
+  useToast,
+} from "./components/ui";
+import { KeyRebindDialog } from "./components/controls";
 import { useAppHotkeys, useKeyRebind } from "./components/layout/hooks";
-import { cn } from "./lib/utils";
 
 function GameScreen() {
-  const { t, language, setLanguage } = useI18n();
+  const { t } = useI18n();
   const { initializeAudio, setPaused, togglePause } = useGameSession();
   const modalManager = useModalManager();
-
-  const [toastMessage, setToastMessage] = useState<string>("");
-
-  const showToast = useCallback((msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(""), 4000);
-  }, []);
+  const { toastMessage, showToast } = useToast();
 
   const { bindingTarget, isRebinding, startRebind, cancelRebind } = useKeyRebind({
     onSuccess: showToast,
@@ -153,43 +155,12 @@ function GameScreen() {
           </Badge>
 
           {/* Localization Toggle */}
-          <div className="flex bg-[#26120b] rounded-lg p-0.5 border border-[#5c2d18]">
-            <button
-              id="lang-pl"
-              onClick={() => setLanguage("pl")}
-              className={cn(
-                "flex items-center gap-1 px-2 py-0.5 text-xs font-bold rounded-md transition-all cursor-pointer select-none",
-                language === "pl"
-                  ? "bg-[#d97706] text-white shadow-md"
-                  : "text-[#fed7aa] hover:bg-[#3d1b0e]"
-              )}
-            >
-              <Globe size={12} />
-              PL
-            </button>
-            <button
-              id="lang-en"
-              onClick={() => setLanguage("en")}
-              className={cn(
-                "flex items-center gap-1 px-2 py-0.5 text-xs font-bold rounded-md transition-all cursor-pointer select-none",
-                language === "en"
-                  ? "bg-[#d97706] text-white shadow-md"
-                  : "text-[#fed7aa] hover:bg-[#3d1b0e]"
-              )}
-            >
-              <Globe size={12} />
-              EN
-            </button>
-          </div>
+          <LanguageSelector variant="pills" />
         </div>
       </header>
 
       {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-amber-600 text-white rounded-xl shadow-2xl text-xs font-bold border border-amber-400 animate-in fade-in">
-          {toastMessage}
-        </div>
-      )}
+      <Toast message={toastMessage} />
 
       {/* 2. Main Game Viewport Occupying 100% Available Area */}
       <main
@@ -256,32 +227,7 @@ function GameScreen() {
       )}
 
       {/* Rebind Key Overlay */}
-      {bindingTarget && (
-        <div className="fixed inset-0 bg-black/90 flex flex-col items-center justify-center text-center p-6 z-50 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-[#26120b] border-2 border-[#fbbf24] rounded-2xl p-6 max-w-sm shadow-2xl flex flex-col items-center gap-4">
-            <div className="text-[10px] font-bold tracking-widest text-[#d97706] uppercase">
-              {t("rebindTitle")}
-            </div>
-            <h3 className="text-2xl font-black text-[#fbbf24] tracking-wide">
-              {bindingTarget.label}
-            </h3>
-            <div className="w-14 h-14 rounded-full border border-[#fbbf24]/50 bg-[#1c0c07] flex items-center justify-center text-2xl animate-pulse">
-              ⌨️
-            </div>
-            <p className="text-xs text-[#fed7aa] leading-relaxed max-w-xs">
-              {t("rebindPrompt")}
-            </p>
-            <Button
-              id="cancel-rebind-btn"
-              variant="danger"
-              size="sm"
-              onClick={cancelRebind}
-            >
-              {t("cancel")}
-            </Button>
-          </div>
-        </div>
-      )}
+      <KeyRebindDialog target={bindingTarget} onCancel={cancelRebind} />
     </div>
   );
 }

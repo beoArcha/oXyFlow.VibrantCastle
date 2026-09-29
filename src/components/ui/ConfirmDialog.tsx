@@ -1,6 +1,6 @@
 import React from "react";
 import { AlertTriangle } from "lucide-react";
-import { Modal } from "./Modal";
+import { Dialog } from "./Dialog";
 import { Button, ButtonVariant } from "./Button";
 
 export interface ConfirmDialogProps {
@@ -20,7 +20,7 @@ export interface ConfirmDialogProps {
 
 /**
  * Compact confirmation dialog for critical or destructive user actions.
- * Composes composite Modal and Button primitives with accessibility and focus management.
+ * Composes composite Dialog and Button primitives with accessibility and focus management.
  */
 export const ConfirmDialog: React.FC<ConfirmDialogProps> = React.memo(
   function ConfirmDialog({
@@ -45,7 +45,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = React.memo(
       );
 
     return (
-      <Modal
+      <Dialog
         isOpen={isOpen}
         onClose={onClose}
         maxWidthClass={maxWidthClass}
@@ -54,20 +54,20 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = React.memo(
         closeOnEscape={!isLoading}
         usePortal={usePortal}
       >
-        <Modal.Header>
+        <Dialog.Header>
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-black/60 border border-stone-800 shrink-0">
               {icon ?? defaultIcon}
             </div>
-            <Modal.Title>{title}</Modal.Title>
+            <Dialog.Title>{title}</Dialog.Title>
           </div>
-        </Modal.Header>
+        </Dialog.Header>
 
-        <Modal.Body className="py-4 text-stone-300 text-sm leading-relaxed">
+        <Dialog.Body className="py-4 text-stone-300 text-sm leading-relaxed">
           {typeof message === "string" ? <p>{message}</p> : message}
-        </Modal.Body>
+        </Dialog.Body>
 
-        <Modal.Footer className="flex items-center justify-end gap-2.5">
+        <Dialog.Footer className="flex items-center justify-end gap-2.5">
           <Button
             type="button"
             variant="secondary"
@@ -84,8 +84,8 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = React.memo(
           >
             {confirmLabel}
           </Button>
-        </Modal.Footer>
-      </Modal>
+        </Dialog.Footer>
+      </Dialog>
     );
   }
 );
