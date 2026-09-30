@@ -16,6 +16,17 @@ const SPECIAL_KEY_MAP: Record<string, string> = {
   Enter: "Enter",
   Tab: "Tab",
   Backspace: "Backspace",
+  Slash: "/",
+  Comma: ",",
+  Period: ".",
+  BracketLeft: "[",
+  BracketRight: "]",
+  Backquote: "`",
+  Minus: "-",
+  Equal: "=",
+  Semicolon: ";",
+  Quote: "'",
+  Backslash: "\\",
 };
 
 /**

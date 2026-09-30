@@ -50,6 +50,20 @@ describe("formatKeyLabel", () => {
     expect(formatKeyLabel("Backspace")).toBe("Backspace");
   });
 
+  it("formats punctuation and bracket keys to standard symbols", () => {
+    expect(formatKeyLabel("Slash")).toBe("/");
+    expect(formatKeyLabel("Comma")).toBe(",");
+    expect(formatKeyLabel("Period")).toBe(".");
+    expect(formatKeyLabel("BracketLeft")).toBe("[");
+    expect(formatKeyLabel("BracketRight")).toBe("]");
+    expect(formatKeyLabel("Minus")).toBe("-");
+    expect(formatKeyLabel("Equal")).toBe("=");
+    expect(formatKeyLabel("Semicolon")).toBe(";");
+    expect(formatKeyLabel("Quote")).toBe("'");
+    expect(formatKeyLabel("Backquote")).toBe("`");
+    expect(formatKeyLabel("Backslash")).toBe("\\");
+  });
+
   it("returns original string as fallback for unknown keys", () => {
     expect(formatKeyLabel("F1")).toBe("F1");
     expect(formatKeyLabel("PageUp")).toBe("PageUp");
