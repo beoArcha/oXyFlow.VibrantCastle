@@ -151,6 +151,7 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
             selectedFrameIndex={selectedFrameIndex}
             origin={origin}
             backgroundConfig={backgroundConfig}
+            resolvedFrames={resolvedFrames}
             onSelectTrack={onSelectTrack}
             onSelectFrame={onSelectFrame}
             onOriginChange={onOriginChange}

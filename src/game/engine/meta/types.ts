@@ -361,8 +361,11 @@ export interface IUniversalMetaDocument {
   backgroundConfig?: IAtlasBackgroundConfig;
 }
 
+export type AtlasTrackType = "grid" | "freeform" | "indexed";
+
 export interface AtlasAnimationTrackDefinition {
   name: string;
+  type?: AtlasTrackType;
   row: number;
   frames: number;
   fps: number;

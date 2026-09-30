@@ -17,6 +17,7 @@ import {
   AtlasAnimationTrackDefinition,
   AtlasOriginDefinition,
   IAtlasBackgroundConfig,
+  ResolvedFrameRect,
 } from "./types";
 import { BackgroundProcessor } from "@/game/engine/meta/slicing";
 
@@ -28,6 +29,7 @@ export interface AtlasAnimationPreviewProps {
   selectedFrameIndex: number | null;
   origin: AtlasOriginDefinition;
   backgroundConfig?: IAtlasBackgroundConfig;
+  resolvedFrames?: ResolvedFrameRect[];
   onSelectTrack: (trackName: string) => void;
   onSelectFrame: (frameIndex: number) => void;
   onOriginChange?: (origin: AtlasOriginDefinition) => void;
@@ -51,6 +53,7 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
   selectedFrameIndex,
   origin,
   backgroundConfig,
+  resolvedFrames,
   onSelectTrack,
   onSelectFrame,
   onOriginChange,
@@ -113,31 +116,58 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
 
-      let col = 0;
-      let span = 1;
+      // 1. Check if the active track has matching resolved frames (e.g. from auto_islands or freeform_rects)
+      const matchingTrackFrames = resolvedFrames
+        ? resolvedFrames
+            .filter((rf) => rf.trackName === currentTrack.name)
+            .sort((a, b) => (a.frameIndex ?? 0) - (b.frameIndex ?? 0))
+        : [];
 
-      if (currentTrack.frameIndices && currentTrack.frameIndices[frameIdx] !== undefined) {
-        col = currentTrack.frameIndices[frameIdx];
-      } else if (currentTrack.slotSpan) {
-        col = 0;
-        for (let i = 0; i < frameIdx; i++) {
-          col += currentTrack.slotSpan[i] || 1;
+      let sx = 0;
+      let sy = 0;
+      let sw = 0;
+      let sh = 0;
+      let effectiveOrigin = origin;
+
+      if (matchingTrackFrames.length > 0) {
+        const frameData = matchingTrackFrames[frameIdx % matchingTrackFrames.length];
+        sx = frameData.x;
+        sy = frameData.y;
+        sw = Math.max(1, frameData.width);
+        sh = Math.max(1, frameData.height);
+        if (frameData.pivot) {
+          effectiveOrigin = {
+            type: origin?.type || "feet",
+            normalized: frameData.pivot,
+          };
         }
-        span = currentTrack.slotSpan[frameIdx] || 1;
-      } else if (currentTrack.cells) {
-        col = 0;
-        for (let i = 0; i < frameIdx; i++) {
-          col += currentTrack.cells[i] || 1;
-        }
-        span = currentTrack.cells[frameIdx] || 1;
       } else {
-        col = frameIdx;
-      }
+        let col = 0;
+        let span = 1;
 
-      const sx = col * gridConfig.cellWidth;
-      const sy = currentTrack.row * gridConfig.cellHeight;
-      const sw = span * gridConfig.cellWidth;
-      const sh = gridConfig.cellHeight;
+        if (currentTrack.frameIndices && currentTrack.frameIndices[frameIdx] !== undefined) {
+          col = currentTrack.frameIndices[frameIdx];
+        } else if (currentTrack.slotSpan) {
+          col = 0;
+          for (let i = 0; i < frameIdx; i++) {
+            col += currentTrack.slotSpan[i] || 1;
+          }
+          span = currentTrack.slotSpan[frameIdx] || 1;
+        } else if (currentTrack.cells) {
+          col = 0;
+          for (let i = 0; i < frameIdx; i++) {
+            col += currentTrack.cells[i] || 1;
+          }
+          span = currentTrack.cells[frameIdx] || 1;
+        } else {
+          col = frameIdx;
+        }
+
+        sx = col * gridConfig.cellWidth;
+        sy = currentTrack.row * gridConfig.cellHeight;
+        sw = span * gridConfig.cellWidth;
+        sh = gridConfig.cellHeight;
+      }
 
       const dw = Math.round(sw * scale);
       const dh = Math.round(sh * scale);
@@ -194,8 +224,8 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
       }
 
       // Draw Ground Baseline if enabled
-      if (showGroundLine && origin?.normalized) {
-        const gy = Math.round(origin.normalized.y * dh);
+      if (showGroundLine && effectiveOrigin?.normalized) {
+        const gy = Math.round(effectiveOrigin.normalized.y * dh);
         ctx.save();
         ctx.strokeStyle = "#f59e0b";
         ctx.lineWidth = 1.5;
@@ -208,10 +238,10 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
       }
 
       // Draw Pivot / Anchor crosshair
-      if (showPivot && origin?.normalized) {
-        const normX = flipX ? 1.0 - origin.normalized.x : origin.normalized.x;
+      if (showPivot && effectiveOrigin?.normalized) {
+        const normX = flipX ? 1.0 - effectiveOrigin.normalized.x : effectiveOrigin.normalized.x;
         const px = Math.round(normX * dw);
-        const py = Math.round(origin.normalized.y * dh);
+        const py = Math.round(effectiveOrigin.normalized.y * dh);
 
         ctx.save();
         ctx.strokeStyle = "#f43f5e";
@@ -232,12 +262,16 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
         ctx.restore();
       }
     },
-    [image, currentTrack, gridConfig, scale, showPivot, showGroundLine, flipX, origin, backgroundConfig]
+    [image, currentTrack, gridConfig, scale, showPivot, showGroundLine, flipX, origin, backgroundConfig, resolvedFrames]
   );
 
   // High-performance requestAnimationFrame playback loop
   useEffect(() => {
-    if (!isPlaying || !currentTrack || currentTrack.frames <= 1) {
+    const totalFrames = currentTrack
+      ? (resolvedFrames?.filter((rf) => rf.trackName === currentTrack.name).length || currentTrack.frames)
+      : 0;
+
+    if (!isPlaying || !currentTrack || totalFrames <= 1) {
       drawFrame(currentFrameRef.current);
       return;
     }
@@ -261,8 +295,8 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
         accumulatedTime %= frameDuration;
 
         let nextFrame = currentFrameRef.current + framesToAdvance;
-        if (nextFrame >= currentTrack.frames) {
-          nextFrame = loop ? nextFrame % currentTrack.frames : currentTrack.frames - 1;
+        if (nextFrame >= totalFrames) {
+          nextFrame = loop ? nextFrame % totalFrames : totalFrames - 1;
         }
 
         if (nextFrame !== currentFrameRef.current) {

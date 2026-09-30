@@ -20,6 +20,8 @@ export type {
   AtlasGridConfig,
 };
 
+export type AtlasTrackType = "grid" | "freeform" | "indexed";
+
 export type AtlasInspectorTabId = "preview" | "slicing" | "background" | "json";
 
 export type SlicerViewerTool = "select" | "pan" | "eyedropper";
@@ -41,4 +43,29 @@ export interface SelectedCellInfo {
   height: number;
   trackName?: string;
   frameIndex?: number;
+}
+
+export interface CreateTrackSelectionParams {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  row?: number;
+  framesCount?: number;
+}
+
+export interface AssignSelectionParams {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  row?: number;
+}
+
+export interface MergeWideParams {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  span: number;
 }
