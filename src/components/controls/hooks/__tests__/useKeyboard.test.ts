@@ -55,8 +55,10 @@ describe("useKeyboard Hook", () => {
   it("restores default bindings when resetDefaults is called", async () => {
     const { result, unmount } = await renderCustomHook(() => useKeyboard(PlayerId.Player1));
 
-    // Manually mutate binding in gameInputs
-    gameInputs.setKeyboardBinding(PlayerId.Player1, "jump", ["KeyZ"]);
+    // Manually mutate binding in gameInputs inside act
+    await act(async () => {
+      gameInputs.setKeyboardBinding(PlayerId.Player1, "jump", ["KeyZ"]);
+    });
     expect(gameInputs.getKeyboardBindings(PlayerId.Player1).jump).toEqual(["KeyZ"]);
 
     // Call resetDefaults through hook
@@ -66,6 +68,20 @@ describe("useKeyboard Hook", () => {
 
     expect(result.current.bindings.jump).toContain("Space");
     expect(gameInputs.getKeyboardBindings(PlayerId.Player1).jump).toContain("Space");
+
+    await unmount();
+  });
+
+  it("reactively updates bindings when gameInputs.setKeyboardBinding is called externally", async () => {
+    const { result, unmount } = await renderCustomHook(() => useKeyboard(PlayerId.Player1));
+
+    expect(result.current.bindings.jump).toContain("Space");
+
+    await act(async () => {
+      gameInputs.setKeyboardBinding(PlayerId.Player1, "jump", ["KeyW", "KeyK"]);
+    });
+
+    expect(result.current.bindings.jump).toEqual(["KeyW", "KeyK"]);
 
     await unmount();
   });

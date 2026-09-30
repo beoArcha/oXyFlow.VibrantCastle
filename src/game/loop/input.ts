@@ -15,6 +15,7 @@ export interface ConnectedGamepadInfo {
 export class GameInputEngine {
   private activeKeys: Set<string> = new Set();
   private gamepadListeners: ((connected: boolean, pad: ConnectedGamepadInfo) => void)[] = [];
+  private bindingsListeners: (() => void)[] = [];
 
   // Ergonomic separated keyboard bindings loaded from JSON
   private defaultKeyboardBindings: Record<PlayerId, Record<keyof InputMap, string[]>> = {
@@ -100,8 +101,19 @@ export class GameInputEngine {
     };
   }
 
-  private notifyGamepadListeners(connected: boolean, pad: ConnectedGamepadInfo) {
+  public notifyGamepadListeners(connected: boolean, pad: ConnectedGamepadInfo) {
     this.gamepadListeners.forEach(l => l(connected, pad));
+  }
+
+  public onBindingsChange(listener: () => void): () => void {
+    this.bindingsListeners.push(listener);
+    return () => {
+      this.bindingsListeners = this.bindingsListeners.filter(l => l !== listener);
+    };
+  }
+
+  private notifyBindingsListeners() {
+    this.bindingsListeners.forEach(l => l());
   }
 
   public getConnectedGamepads(): Gamepad[] {
@@ -120,7 +132,11 @@ export class GameInputEngine {
   }
 
   public setKeyboardBinding(playerId: PlayerId, action: keyof InputMap, keys: string[]) {
-    this.keyboardBindings[playerId][action] = keys;
+    this.keyboardBindings[playerId] = {
+      ...this.keyboardBindings[playerId],
+      [action]: keys,
+    };
+    this.notifyBindingsListeners();
   }
 
   public getGamepadBindings(playerId: PlayerId): GamepadBindingMap {
@@ -128,7 +144,11 @@ export class GameInputEngine {
   }
 
   public setGamepadBinding(playerId: PlayerId, action: keyof GamepadBindingMap, buttonIndex: number) {
-    this.gamepadBindings[playerId][action] = buttonIndex;
+    this.gamepadBindings[playerId] = {
+      ...this.gamepadBindings[playerId],
+      [action]: buttonIndex,
+    };
+    this.notifyBindingsListeners();
   }
 
   public resetToDefaults(playerId?: PlayerId) {
@@ -139,6 +159,7 @@ export class GameInputEngine {
       this.keyboardBindings = JSON.parse(JSON.stringify(this.defaultKeyboardBindings));
       this.gamepadBindings = JSON.parse(JSON.stringify(this.defaultGamepadBindings));
     }
+    this.notifyBindingsListeners();
   }
 
   /**

@@ -36,35 +36,51 @@ export function useGamepad(selectedPlayer: PlayerId): UseGamepadResult {
   const activePadIndex = selectedPlayer === PlayerId.Player1 ? 0 : 1;
   const currentPad = connectedPads.find((p) => p.index === activePadIndex);
 
-  // Event-driven gamepad connection updates (zero idle polling overhead)
+  // Event-driven gamepad connection updates and disconnect safeguard
   useEffect(() => {
     setConnectedPads(getConnectedPadInfos());
-    const unsub = gameInputs.onGamepadChange(() => {
+    const unsub = gameInputs.onGamepadChange((connected, pad) => {
       setConnectedPads(getConnectedPadInfos());
+      // Automatically cancel remapping if active gamepad was disconnected
+      if (!connected && pad.index === activePadIndex) {
+        setListeningAction(null);
+      }
     });
     return unsub;
-  }, []);
+  }, [activePadIndex]);
 
-  // Synchronize bindings when player changes
+  // Synchronize bindings when player changes or when bindings are updated externally
   useEffect(() => {
     setBindings({ ...gameInputs.getGamepadBindings(selectedPlayer) });
     setListeningAction(null);
+
+    const unsub = gameInputs.onBindingsChange(() => {
+      setBindings({ ...gameInputs.getGamepadBindings(selectedPlayer) });
+    });
+    return unsub;
   }, [selectedPlayer]);
 
-  // Poll button presses ONLY when listening for a rebind action
+  // Poll button presses ONLY when listening for a rebind action (50ms interval balances latency and CPU)
   useEffect(() => {
     if (!listeningAction) return;
 
     const interval = setInterval(() => {
       const rawPads = gameInputs.getConnectedGamepads();
       const pad = rawPads[activePadIndex];
-      if (!pad) return;
+      // If controller disconnected during listening, cancel listening
+      if (!pad) {
+        setListeningAction(null);
+        return;
+      }
 
       for (let i = 0; i < pad.buttons.length; i++) {
-        if (pad.buttons[i].pressed || pad.buttons[i].value > 0.5) {
+        const btn = pad.buttons[i];
+        if (!btn) continue;
+
+        // Triggers and standard buttons: register when pressed or analog value crosses threshold
+        if (btn.pressed || btn.value > 0.5) {
           setLastPressedButton(i);
           gameInputs.setGamepadBinding(selectedPlayer, listeningAction, i);
-          setBindings({ ...gameInputs.getGamepadBindings(selectedPlayer) });
           setListeningAction(null);
           break;
         }
@@ -76,7 +92,6 @@ export function useGamepad(selectedPlayer: PlayerId): UseGamepadResult {
 
   const resetDefaults = useCallback(() => {
     gameInputs.resetToDefaults(selectedPlayer);
-    setBindings({ ...gameInputs.getGamepadBindings(selectedPlayer) });
     setListeningAction(null);
   }, [selectedPlayer]);
 

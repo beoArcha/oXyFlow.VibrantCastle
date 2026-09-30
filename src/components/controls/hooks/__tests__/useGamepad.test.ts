@@ -84,7 +84,9 @@ describe("useGamepad Hook", () => {
   it("restores default gamepad bindings via resetDefaults", async () => {
     const { result, unmount } = await renderCustomHook(() => useGamepad(PlayerId.Player1));
 
-    gameInputs.setGamepadBinding(PlayerId.Player1, "jump", 99);
+    await act(async () => {
+      gameInputs.setGamepadBinding(PlayerId.Player1, "jump", 99);
+    });
     expect(gameInputs.getGamepadBindings(PlayerId.Player1).jump).toBe(99);
 
     await act(async () => {
@@ -93,6 +95,63 @@ describe("useGamepad Hook", () => {
 
     expect(result.current.bindings.jump).not.toBe(99);
     expect(gameInputs.getGamepadBindings(PlayerId.Player1).jump).not.toBe(99);
+
+    await unmount();
+  });
+
+  it("automatically cancels listeningAction when active gamepad disconnects", async () => {
+    const mockGamepad = {
+      id: "Active Gamepad",
+      index: 0,
+      connected: true,
+      timestamp: Date.now(),
+      mapping: "standard",
+      axes: [0, 0],
+      buttons: [
+        { pressed: false, touched: false, value: 0 },
+      ],
+      vibrationActuator: null as any,
+    } as unknown as Gamepad;
+
+    const originalGetGamepads = navigator.getGamepads;
+    (navigator as any).getGamepads = () => [mockGamepad];
+
+    const { result, unmount } = await renderCustomHook(() => useGamepad(PlayerId.Player1));
+
+    await act(async () => {
+      result.current.setListeningAction("jump");
+    });
+    expect(result.current.listeningAction).toBe("jump");
+
+    // Trigger gamepad disconnect event on active pad (index 0)
+    (navigator as any).getGamepads = () => [];
+
+    await act(async () => {
+      gameInputs.notifyGamepadListeners(false, {
+        index: 0,
+        id: "Active Gamepad",
+        buttonsCount: 1,
+        axesCount: 0,
+      });
+    });
+
+    expect(result.current.listeningAction).toBeNull();
+
+    (navigator as any).getGamepads = originalGetGamepads;
+    await unmount();
+  });
+
+  it("reactively updates bindings when gameInputs.setGamepadBinding is called externally", async () => {
+    const { result, unmount } = await renderCustomHook(() => useGamepad(PlayerId.Player1));
+
+    const initialJump = result.current.bindings.jump;
+
+    await act(async () => {
+      gameInputs.setGamepadBinding(PlayerId.Player1, "jump", 7);
+    });
+
+    expect(result.current.bindings.jump).toBe(7);
+    expect(result.current.bindings.jump).not.toBe(initialJump);
 
     await unmount();
   });
