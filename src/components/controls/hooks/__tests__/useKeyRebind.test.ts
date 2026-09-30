@@ -143,4 +143,126 @@ describe("useKeyRebind Hook", () => {
       gameInputs.setKeyboardBinding = originalSetKeyboardBinding;
     }
   });
+
+  it("cancels rebinding without modifying bindings when Escape is pressed", async () => {
+    const onSuccess = mock((_msg: string) => {});
+    const originalSetKeyboardBinding = gameInputs.setKeyboardBinding;
+    const mockSetKeyboardBinding = mock(() => {});
+    gameInputs.setKeyboardBinding = mockSetKeyboardBinding as any;
+
+    try {
+      const { result, unmount } = await renderCustomHook(() => useKeyRebind({ onSuccess }), {
+        wrapper: TestProviders,
+      });
+
+      await act(async () => {
+        result.current.startRebind({
+          player: PlayerId.Player1,
+          action: "jump",
+          label: "Skok",
+        });
+      });
+
+      expect(result.current.isRebinding).toBe(true);
+
+      const escapeEvent = new KeyboardEvent("keydown", {
+        code: "Escape",
+        key: "Escape",
+        bubbles: true,
+        cancelable: true,
+      });
+
+      await act(async () => {
+        window.dispatchEvent(escapeEvent);
+      });
+
+      // Escape should cancel, not bind!
+      expect(mockSetKeyboardBinding).not.toHaveBeenCalled();
+      expect(onSuccess).not.toHaveBeenCalled();
+      expect(result.current.bindingTarget).toBeNull();
+      expect(result.current.isRebinding).toBe(false);
+
+      await unmount();
+    } finally {
+      gameInputs.setKeyboardBinding = originalSetKeyboardBinding;
+    }
+  });
+
+  it("ignores reserved system and function keys like Tab, F1, and Meta", async () => {
+    const onSuccess = mock((_msg: string) => {});
+    const originalSetKeyboardBinding = gameInputs.setKeyboardBinding;
+    const mockSetKeyboardBinding = mock(() => {});
+    gameInputs.setKeyboardBinding = mockSetKeyboardBinding as any;
+
+    try {
+      const { result, unmount } = await renderCustomHook(() => useKeyRebind({ onSuccess }), {
+        wrapper: TestProviders,
+      });
+
+      await act(async () => {
+        result.current.startRebind({
+          player: PlayerId.Player1,
+          action: "action1",
+          label: "Atak",
+        });
+      });
+
+      // Press Tab (reserved)
+      const tabEvent = new KeyboardEvent("keydown", {
+        code: "Tab",
+        key: "Tab",
+        bubbles: true,
+        cancelable: true,
+      });
+      await act(async () => {
+        window.dispatchEvent(tabEvent);
+      });
+
+      // Press F5 (reserved)
+      const f5Event = new KeyboardEvent("keydown", {
+        code: "F5",
+        key: "F5",
+        bubbles: true,
+        cancelable: true,
+      });
+      await act(async () => {
+        window.dispatchEvent(f5Event);
+      });
+
+      // Press MetaLeft (reserved)
+      const metaEvent = new KeyboardEvent("keydown", {
+        code: "MetaLeft",
+        key: "Meta",
+        bubbles: true,
+        cancelable: true,
+      });
+      await act(async () => {
+        window.dispatchEvent(metaEvent);
+      });
+
+      // None of the reserved keys should trigger rebinding or close the dialog
+      expect(mockSetKeyboardBinding).not.toHaveBeenCalled();
+      expect(onSuccess).not.toHaveBeenCalled();
+      expect(result.current.isRebinding).toBe(true);
+
+      // Now press a valid key (e.g. 'X')
+      const validEvent = new KeyboardEvent("keydown", {
+        code: "KeyX",
+        key: "x",
+        bubbles: true,
+        cancelable: true,
+      });
+      await act(async () => {
+        window.dispatchEvent(validEvent);
+      });
+
+      expect(mockSetKeyboardBinding).toHaveBeenCalledTimes(1);
+      expect(onSuccess).toHaveBeenCalledTimes(1);
+      expect(result.current.isRebinding).toBe(false);
+
+      await unmount();
+    } finally {
+      gameInputs.setKeyboardBinding = originalSetKeyboardBinding;
+    }
+  });
 });
