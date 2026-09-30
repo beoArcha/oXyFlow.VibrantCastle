@@ -86,13 +86,11 @@ export const GamepadMapper: React.FC<GamepadMapperProps> = React.memo(
         </CardHeader>
 
         <CardContent className="gap-4">
-          {/* Player Tabs */}
           <PlayerTabSelector
             selectedPlayer={selectedPlayer}
             onSelectPlayer={setSelectedPlayer}
           />
 
-          {/* Status of Gamepad */}
           <div
             id="gamepad-status-card"
             className="p-3 rounded-xl bg-[#140602] border border-[#5c2d18] flex flex-wrap items-center justify-between gap-2"
@@ -115,7 +113,6 @@ export const GamepadMapper: React.FC<GamepadMapperProps> = React.memo(
             )}
           </div>
 
-          {/* Listening Rebind Overlay Banner */}
           {listeningAction && (
             <div
               id="gamepad-listening-banner"
@@ -135,7 +132,6 @@ export const GamepadMapper: React.FC<GamepadMapperProps> = React.memo(
             </div>
           )}
 
-          {/* Gamepad Bindings List */}
           <div
             id="gamepad-bindings-grid"
             className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-80 overflow-y-auto pr-1"
@@ -165,7 +161,6 @@ export const GamepadMapper: React.FC<GamepadMapperProps> = React.memo(
           </div>
         </CardContent>
 
-        {/* Reset Confirmation Dialog */}
         <ConfirmDialog
           isOpen={isConfirmResetOpen}
           onClose={() => setIsConfirmResetOpen(false)}

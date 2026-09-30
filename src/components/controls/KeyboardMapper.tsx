@@ -8,7 +8,7 @@ import {
   CardTitle,
   CardContent,
   ConfirmDialog,
-  KbdKey,
+  KbdGroup,
 } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { useKeyboard } from "./hooks/useKeyboard";
@@ -42,12 +42,7 @@ const ACTION_KEYS = Object.keys(ACTION_I18N_KEYS) as (keyof InputMap)[];
 
 /**
  * Keyboard control binding configuration panel.
- * Composes PlayerTabSelector, ControlBindingRow, and ConfirmDialog primitives.
- *
- * @example
- * ```tsx
- * <KeyboardMapper onStartRebind={handleStartRebind} />
- * ```
+ * Composes PlayerTabSelector, ControlBindingRow, KbdGroup, and ConfirmDialog primitives.
  */
 export const KeyboardMapper: React.FC<KeyboardMapperProps> = React.memo(
   function KeyboardMapper({ onStartRebind, className }) {
@@ -83,13 +78,11 @@ export const KeyboardMapper: React.FC<KeyboardMapperProps> = React.memo(
         </CardHeader>
 
         <CardContent className="gap-4">
-          {/* Player Tabs */}
           <PlayerTabSelector
             selectedPlayer={selectedPlayer}
             onSelectPlayer={setSelectedPlayer}
           />
 
-          {/* Bindings List */}
           <div
             id="keyboard-bindings-grid"
             className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-80 overflow-y-auto pr-1"
@@ -106,18 +99,18 @@ export const KeyboardMapper: React.FC<KeyboardMapperProps> = React.memo(
                   rebindLabel={t("remapKey")}
                   onRebind={() => onStartRebind(action, selectedPlayer, actionLabel)}
                 >
-                  {keys.slice(0, 2).map((k) => (
-                    <KbdKey key={k} variant={isP1 ? "amber" : "cyan"}>
-                      {formatKeyLabel(k, t("spaceKey"))}
-                    </KbdKey>
-                  ))}
+                  <KbdGroup
+                    keys={keys}
+                    maxKeys={2}
+                    variant={isP1 ? "amber" : "cyan"}
+                    formatLabel={(k) => formatKeyLabel(k, t("spaceKey"))}
+                  />
                 </ControlBindingRow>
               );
             })}
           </div>
         </CardContent>
 
-        {/* Reset Confirmation Dialog */}
         <ConfirmDialog
           isOpen={isConfirmResetOpen}
           onClose={() => setIsConfirmResetOpen(false)}

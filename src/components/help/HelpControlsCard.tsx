@@ -1,7 +1,7 @@
 import React from "react";
 import { PlayerId } from "@game/types";
 import gameInputs from "@game/loop/input";
-import { KbdKey, Badge } from "@components/ui";
+import { KbdGroup, Badge } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { formatKeyLabel } from "./types";
 import { cn } from "@lib/utils";
@@ -117,16 +117,12 @@ export const HelpControlsCard: React.FC<HelpControlsCardProps> = ({
         {controlRows.map((row) => (
           <div key={row.label} className="flex justify-between items-center gap-2">
             <span className="text-stone-300">{row.label}</span>
-            <div className="flex items-center gap-1 shrink-0">
-              {row.keys.map((k, idx) => (
-                <React.Fragment key={`${row.label}-${k}-${idx}`}>
-                  <KbdKey variant={row.variant}>{k}</KbdKey>
-                  {row.separator && idx < row.keys.length - 1 && (
-                    <span className="text-[10px] text-stone-500">{row.separator}</span>
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
+            <KbdGroup
+              keys={row.keys}
+              variant={row.variant}
+              separator={row.separator}
+              className="gap-1 shrink-0"
+            />
           </div>
         ))}
       </div>

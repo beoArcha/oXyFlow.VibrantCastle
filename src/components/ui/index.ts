@@ -2,6 +2,7 @@
 export * from "./Button";
 export * from "./Badge";
 export * from "./KbdKey";
+export * from "./KbdGroup";
 export * from "./StatRow";
 
 // Containers & Visual Controls
