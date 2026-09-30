@@ -22,6 +22,13 @@ export interface UseAtlasViewerInteractionsParams {
   onSelectTrack?: (trackName: string) => void;
   onSelectFrame?: (frameIndex: number) => void;
   onSelectCell?: (info: SelectedCellInfo) => void;
+  onToggleSequenceFrame?: (target: {
+    hit?: ResolvedFrameRect | null;
+    col: number;
+    row: number;
+    x: number;
+    y: number;
+  }) => void;
 }
 
 export function useAtlasViewerInteractions({
@@ -35,6 +42,7 @@ export function useAtlasViewerInteractions({
   onSelectTrack,
   onSelectFrame,
   onSelectCell,
+  onToggleSequenceFrame,
 }: UseAtlasViewerInteractionsParams) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -205,12 +213,40 @@ export function useAtlasViewerInteractions({
       return;
     }
 
+    if (e.button === 0 && activeTool === "sequence") {
+      const { x, y } = getTextureCoords(e);
+      const hit = defaultAtlasSlicingEngine.findFrameAt(x, y, resolvedFrames);
+      const cellW = gridConfig?.cellWidth || 64;
+      const cellH = gridConfig?.cellHeight || 64;
+      const col = Math.floor(x / cellW);
+      const row = Math.floor(y / cellH);
+
+      onToggleSequenceFrame?.({
+        hit,
+        col,
+        row,
+        x,
+        y,
+      });
+      return;
+    }
+
     if (e.button === 0 && activeTool === "select") {
       const { x, y } = getTextureCoords(e);
       setDragStart({ x, y });
       setDragCurrent({ x, y });
     }
-  }, [isSpacePressed, activeTool, panOffset, pixelBuffer, getTextureCoords, onSampleBackgroundColor]);
+  }, [
+    isSpacePressed,
+    activeTool,
+    panOffset,
+    pixelBuffer,
+    getTextureCoords,
+    onSampleBackgroundColor,
+    resolvedFrames,
+    gridConfig,
+    onToggleSequenceFrame,
+  ]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (isPanning) {

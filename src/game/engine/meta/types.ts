@@ -167,6 +167,8 @@ export interface IAnimationTrackMeta {
   startCol?: number;
   widthCells?: number;
   description?: string;
+  pingPong?: boolean;
+  frameDelays?: number[];
 }
 
 export interface IAnimationTracks {
@@ -374,6 +376,8 @@ export interface AtlasAnimationTrackDefinition {
   slotSpan?: number[];
   cells?: number[];
   frameIndices?: number[];
+  pingPong?: boolean;
+  frameDelays?: number[];
 }
 
 export interface AtlasOriginDefinition {

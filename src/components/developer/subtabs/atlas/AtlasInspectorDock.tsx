@@ -1,5 +1,5 @@
 import React from "react";
-import { Sparkles, Grid, Pipette, FileJson } from "lucide-react";
+import { Grid, Pipette, FileJson } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import {
@@ -12,7 +12,6 @@ import {
   AtlasInspectorTabId,
   ResolvedFrameRect,
 } from "./types";
-import { AtlasAnimationPreview } from "./AtlasAnimationPreview";
 import { AtlasSlicingInspector } from "./AtlasSlicingInspector";
 import { AtlasBackgroundPanel } from "./AtlasBackgroundPanel";
 import { AtlasJsonExportPanel } from "./AtlasJsonExportPanel";
@@ -42,6 +41,7 @@ export interface AtlasInspectorDockProps {
   onResetDefaults: () => void;
   onRequestEyedropper: () => void;
   onBakeIslands?: (islands: ResolvedFrameRect[]) => void;
+  onClusterRowsIntoTracks?: () => void;
   onAddFreeformFrame?: (frame: {
     x: number;
     y: number;
@@ -81,6 +81,7 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
   onResetDefaults,
   onRequestEyedropper,
   onBakeIslands,
+  onClusterRowsIntoTracks,
   onAddFreeformFrame,
   onUpdateFreeformFrame,
   onDeleteFreeformFrame,
@@ -89,12 +90,6 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
   const { t } = useI18n();
 
   const tabs: { id: AtlasInspectorTabId; label: string; shortLabel: string; icon: React.ReactNode }[] = [
-    {
-      id: "preview",
-      label: t("atlasStudioTabLivePreview"),
-      shortLabel: t("atlasStudioTabLivePreview").split(" ")[0] || "Podgląd",
-      icon: <Sparkles size={13} className="text-cyan-400" />,
-    },
     {
       id: "slicing",
       label: t("atlasStudioTabSlicing"),
@@ -116,12 +111,12 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
   ];
 
   return (
-    <Card variant="default" className="flex flex-col flex-1 h-full min-h-[580px]">
+    <Card variant="default" className="flex flex-col flex-1 h-full min-h-[480px]">
       {/* Dock Tabs Header */}
       <CardHeader className="p-2 border-b border-stone-800">
-        <div className="grid grid-cols-4 gap-1 w-full bg-black/60 p-1 rounded-xl border border-stone-800">
+        <div className="grid grid-cols-3 gap-1 w-full bg-black/60 p-1 rounded-xl border border-stone-800">
           {tabs.map((tab) => {
-            const isActive = activeTab === tab.id;
+            const isActive = activeTab === tab.id || (activeTab === "preview" && tab.id === "slicing");
             return (
               <button
                 key={tab.id}
@@ -142,23 +137,7 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
 
       {/* Dock Content Body */}
       <CardContent className="p-3 overflow-y-auto custom-scrollbar flex-1 max-h-[750px]">
-        {activeTab === "preview" && (
-          <AtlasAnimationPreview
-            imageSrc={imageSrc}
-            gridConfig={gridConfig}
-            tracks={tracks}
-            selectedTrackName={selectedTrackName}
-            selectedFrameIndex={selectedFrameIndex}
-            origin={origin}
-            backgroundConfig={backgroundConfig}
-            resolvedFrames={resolvedFrames}
-            onSelectTrack={onSelectTrack}
-            onSelectFrame={onSelectFrame}
-            onOriginChange={onOriginChange}
-          />
-        )}
-
-        {activeTab === "slicing" && (
+        {(activeTab === "slicing" || activeTab === "preview") && (
           <AtlasSlicingInspector
             slicingConfig={slicingConfig}
             gridConfig={gridConfig}
@@ -172,6 +151,7 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
             onSelectTrack={onSelectTrack}
             onSelectFrame={onSelectFrame}
             onBakeIslands={onBakeIslands}
+            onClusterRowsIntoTracks={onClusterRowsIntoTracks}
             onAddFreeformFrame={onAddFreeformFrame}
             onUpdateFreeformFrame={onUpdateFreeformFrame}
             onDeleteFreeformFrame={onDeleteFreeformFrame}

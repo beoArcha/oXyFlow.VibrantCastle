@@ -9,6 +9,7 @@ import {
 } from "../types";
 import { LoggerManager } from "@lib/logger";
 import { GameBaseError } from "@lib/errors";
+import { AutoIslandSlicingStrategy } from "@game/engine/meta/slicing";
 
 export interface FreeformFrameInput {
   x: number;
@@ -24,7 +25,7 @@ export interface UseAtlasSlicingConfigOptions {
   metaDoc: AtlasMetaDoc;
   setMetaDoc: React.Dispatch<React.SetStateAction<AtlasMetaDoc>>;
   setTracks: React.Dispatch<React.SetStateAction<AtlasAnimationTrackDefinition[]>>;
-  setSelectedTrackName: (name: string) => void;
+  setSelectedTrackName: (name: string | null) => void;
   setSelectedFrameIndex: (idx: number) => void;
   setActiveInspectorTab: (tab: AtlasInspectorTabId) => void;
   setErrorState: (err: GameBaseError | null) => void;
@@ -184,6 +185,54 @@ export function useAtlasSlicingConfig({
     [setMetaDoc, studioLogger]
   );
 
+  const handleClusterIslandsIntoTracks = useCallback(
+    (detectedIslands: ResolvedFrameRect[]) => {
+      if (detectedIslands.length === 0) return;
+      const clusters = AutoIslandSlicingStrategy.clusterIslandsIntoRows(detectedIslands);
+      if (clusters.length === 0) return;
+
+      const newTracks: AtlasAnimationTrackDefinition[] = clusters.map((c) => ({
+        name: c.trackName,
+        type: "freeform",
+        row: c.row,
+        frames: c.frames.length,
+        fps: 8,
+        loop: true,
+      }));
+
+      const allClusterFrames = clusters.flatMap((c) =>
+        c.frames.map((f) => ({
+          id: f.id,
+          x: Math.round(f.x),
+          y: Math.round(f.y),
+          width: Math.round(f.width),
+          height: Math.round(f.height),
+          trackName: f.trackName,
+          frameIndex: f.frameIndex,
+          pivot: f.pivot || { x: 0.5, y: 1.0 },
+        }))
+      );
+
+      setTracks(newTracks);
+      setSelectedTrackName(newTracks[0]?.name || null);
+      setSelectedFrameIndex(0);
+
+      setMetaDoc((prev) => ({
+        ...prev,
+        slicing: {
+          ...(prev.slicing || { method: "auto_islands" }),
+          method: "auto_islands",
+          frames: allClusterFrames,
+        },
+      }));
+
+      studioLogger.info(
+        `Clustered ${detectedIslands.length} islands into ${newTracks.length} animation tracks`
+      );
+    },
+    [setTracks, setSelectedTrackName, setSelectedFrameIndex, setMetaDoc, studioLogger]
+  );
+
   const handleDeleteFreeformFrame = useCallback(
     (id: string) => {
       setMetaDoc((prev) => {
@@ -277,6 +326,7 @@ export function useAtlasSlicingConfig({
     handleBackgroundConfigChange,
     handleAddFreeformFrame,
     handleBakeIslands,
+    handleClusterIslandsIntoTracks,
     handleDeleteFreeformFrame,
     handleAssignFramesToTrack,
   };

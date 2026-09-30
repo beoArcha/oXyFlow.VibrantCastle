@@ -3,6 +3,7 @@ import {
   AtlasGridConfig,
   ResolvedFrameRect,
   IAtlasBackgroundConfig,
+  AtlasAnimationTrackDefinition,
 } from "../types";
 import {
   BackgroundProcessor,
@@ -35,6 +36,7 @@ export interface AtlasTextureCanvasProps {
   showFrames: boolean;
   gridConfig?: AtlasGridConfig;
   resolvedFrames: ResolvedFrameRect[];
+  tracks?: AtlasAnimationTrackDefinition[];
   selectedTrackName: string | null;
   selectedFrameIndex: number | null;
   dragStart: { x: number; y: number } | null;
@@ -57,6 +59,7 @@ export const AtlasTextureCanvas: React.FC<AtlasTextureCanvasProps> = ({
   showFrames,
   gridConfig,
   resolvedFrames,
+  tracks,
   selectedTrackName,
   selectedFrameIndex,
   dragStart,
@@ -197,7 +200,82 @@ export const AtlasTextureCanvas: React.FC<AtlasTextureCanvasProps> = ({
           ctx.fillText(label, rx + 4, ry + Math.min(14, rh - 4));
           ctx.shadowBlur = 0;
         }
+
+        // Sequence badge indicator ([1], [2], [3]...)
+        if (isCurrentTrack && rect.frameIndex !== undefined) {
+          const badgeNum = (rect.frameIndex + 1).toString();
+          const badgeRadius = Math.max(9, Math.round(10 * Math.min(1.5, zoom)));
+          const bx = rx + rw - badgeRadius - 3;
+          const by = ry + badgeRadius + 3;
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(bx, by, badgeRadius, 0, Math.PI * 2);
+          ctx.fillStyle = isCurrentFrame ? "#f59e0b" : "#b45309";
+          ctx.fill();
+          ctx.strokeStyle = "#fef3c7";
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          ctx.font = `bold ${Math.max(9, Math.round(10 * Math.min(1.5, zoom)))}px sans-serif`;
+          ctx.fillStyle = "#ffffff";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(badgeNum, bx, by);
+          ctx.restore();
+        }
       });
+
+      // If active track is a regular grid track with no matching resolved frames, render its frames
+      const activeTrack = tracks?.find((tr) => tr.name === selectedTrackName);
+      const hasResolvedForTrack = resolvedFrames.some((rf) => rf.trackName === selectedTrackName);
+
+      if (activeTrack && !hasResolvedForTrack && gridConfig) {
+        const row = activeTrack.row;
+        const total = activeTrack.frames;
+        for (let f = 0; f < total; f++) {
+          let col = f;
+          if (activeTrack.frameIndices && activeTrack.frameIndices[f] !== undefined) {
+            col = activeTrack.frameIndices[f];
+          }
+          const isCurFrame = f === selectedFrameIndex;
+          const cellW = gridConfig.cellWidth;
+          const cellH = gridConfig.cellHeight;
+          const fx = Math.round(col * cellW * zoom);
+          const fy = Math.round(row * cellH * zoom);
+          const fw = Math.round(cellW * zoom);
+          const fh = Math.round(cellH * zoom);
+
+          // Track highlight overlay
+          ctx.fillStyle = isCurFrame ? "rgba(251, 191, 36, 0.4)" : "rgba(251, 191, 36, 0.18)";
+          ctx.fillRect(fx, fy, fw, fh);
+          ctx.strokeStyle = isCurFrame ? "#fbbf24" : "#f59e0b";
+          ctx.lineWidth = isCurFrame ? 2.5 : 1.5;
+          ctx.strokeRect(fx, fy, fw, fh);
+
+          // Sequence badge
+          const badgeNum = (f + 1).toString();
+          const badgeRadius = Math.max(9, Math.round(10 * Math.min(1.5, zoom)));
+          const bx = fx + fw - badgeRadius - 3;
+          const by = fy + badgeRadius + 3;
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(bx, by, badgeRadius, 0, Math.PI * 2);
+          ctx.fillStyle = isCurFrame ? "#f59e0b" : "#b45309";
+          ctx.fill();
+          ctx.strokeStyle = "#fef3c7";
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          ctx.font = `bold ${Math.max(9, Math.round(10 * Math.min(1.5, zoom)))}px sans-serif`;
+          ctx.fillStyle = "#ffffff";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(badgeNum, bx, by);
+          ctx.restore();
+        }
+      }
     }
 
     // 5. Draw Active / Dragging Marquee Box Selection
@@ -250,6 +328,7 @@ export const AtlasTextureCanvas: React.FC<AtlasTextureCanvasProps> = ({
     showFrames,
     gridConfig,
     resolvedFrames,
+    tracks,
     selectedTrackName,
     selectedFrameIndex,
     dragStart,

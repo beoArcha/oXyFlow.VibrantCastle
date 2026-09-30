@@ -10,6 +10,12 @@ export interface AutoIslandConfig {
   rowThresholdRatio?: number;
 }
 
+export interface IslandRowCluster {
+  row: number;
+  trackName: string;
+  frames: ResolvedFrameRect[];
+}
+
 /**
  * AutoIslandSlicingStrategy: Smart algorithmic slicing (Connected Components Bounding Box).
  * Scans pixel buffer, ignores background (transparent alpha or chroma color with tolerance),
@@ -207,6 +213,53 @@ export class AutoIslandSlicingStrategy implements ISlicingStrategy {
       }
     }
     return null;
+  }
+
+  /**
+   * Clusters detected sprite islands into ordered row tracks by baseline Y.
+   * Useful for 1-click animation track generation from irregular sprite sheets.
+   */
+  public static clusterIslandsIntoRows(
+    islands: readonly ResolvedFrameRect[],
+    toleranceRatio: number = 0.5
+  ): IslandRowCluster[] {
+    if (islands.length === 0) return [];
+
+    const sortedByY = [...islands].sort((a, b) => a.y - b.y);
+    const avgHeight =
+      sortedByY.reduce((sum, b) => sum + b.height, 0) / Math.max(1, sortedByY.length);
+    const rowTolerance = avgHeight * toleranceRatio;
+
+    const rowGroups: { y: number; frames: ResolvedFrameRect[] }[] = [];
+
+    sortedByY.forEach((frame) => {
+      const centerY = frame.y + frame.height / 2;
+      let targetRow = rowGroups.find((r) => Math.abs(r.y - centerY) <= rowTolerance);
+
+      if (!targetRow) {
+        targetRow = { y: centerY, frames: [] };
+        rowGroups.push(targetRow);
+      }
+      targetRow.frames.push(frame);
+    });
+
+    rowGroups.sort((a, b) => a.y - b.y);
+
+    return rowGroups.map((group, rIdx) => {
+      const sortedX = [...group.frames].sort((a, b) => a.x - b.x);
+      const trackName = `row_${rIdx}_anim`;
+      const framesWithTrack = sortedX.map((f, fIdx) => ({
+        ...f,
+        trackName,
+        frameIndex: fIdx,
+      }));
+
+      return {
+        row: rIdx,
+        trackName,
+        frames: framesWithTrack,
+      };
+    });
   }
 
   private normalizeConfig(rawConfig?: unknown): Required<AutoIslandConfig> {

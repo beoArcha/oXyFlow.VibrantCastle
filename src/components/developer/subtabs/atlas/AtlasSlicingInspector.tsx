@@ -29,6 +29,7 @@ export interface AtlasSlicingInspectorProps {
   onSelectTrack: (trackName: string) => void;
   onSelectFrame?: (frameIdx: number) => void;
   onBakeIslands?: (islands: ResolvedFrameRect[]) => void;
+  onClusterRowsIntoTracks?: () => void;
   onAddFreeformFrame?: (frame: {
     x: number;
     y: number;
@@ -63,6 +64,7 @@ export const AtlasSlicingInspector: React.FC<AtlasSlicingInspectorProps> = ({
   onSelectTrack,
   onSelectFrame,
   onBakeIslands,
+  onClusterRowsIntoTracks,
   onAddFreeformFrame,
   onUpdateFreeformFrame,
   onDeleteFreeformFrame,
@@ -258,6 +260,7 @@ export const AtlasSlicingInspector: React.FC<AtlasSlicingInspectorProps> = ({
           detectedIslands={detectedIslands}
           bakeSuccess={bakeSuccess}
           onBakeAllIslands={handleBakeAllIslands}
+          onClusterRowsIntoTracks={onClusterRowsIntoTracks}
           onSlicingConfigChange={onSlicingConfigChange}
         />
       )}

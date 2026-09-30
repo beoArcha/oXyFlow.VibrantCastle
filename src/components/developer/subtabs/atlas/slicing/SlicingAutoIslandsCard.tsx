@@ -9,6 +9,7 @@ export interface SlicingAutoIslandsCardProps {
   detectedIslands: ResolvedFrameRect[];
   bakeSuccess: boolean;
   onBakeAllIslands: () => void;
+  onClusterRowsIntoTracks?: () => void;
   onSlicingConfigChange: (config: IAtlasSlicingConfig) => void;
 }
 
@@ -17,6 +18,7 @@ export const SlicingAutoIslandsCard: React.FC<SlicingAutoIslandsCardProps> = ({
   detectedIslands,
   bakeSuccess,
   onBakeAllIslands,
+  onClusterRowsIntoTracks,
   onSlicingConfigChange,
 }) => {
   const { t } = useI18n();
@@ -82,16 +84,31 @@ export const SlicingAutoIslandsCard: React.FC<SlicingAutoIslandsCardProps> = ({
         <p className="text-[11px] text-stone-400">
           {t("atlasStudioBakeIslandsDesc")}
         </p>
-        <Button
-          size="sm"
-          variant={bakeSuccess ? "primary" : "secondary"}
-          icon={bakeSuccess ? <Check size={13} className="text-emerald-400" /> : <Save size={13} />}
-          onClick={onBakeAllIslands}
-          disabled={detectedIslands.length === 0}
-          className="text-xs"
-        >
-          {bakeSuccess ? t("atlasStudioBakeSuccess") : t("atlasStudioBakeIslandsBtn")}
-        </Button>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {onClusterRowsIntoTracks && (
+            <Button
+              size="sm"
+              variant="secondary"
+              icon={<Sparkles size={13} className="text-yellow-400" />}
+              onClick={onClusterRowsIntoTracks}
+              disabled={detectedIslands.length === 0}
+              className="text-xs"
+            >
+              {t("atlasStudioClusterRowsBtn")}
+            </Button>
+          )}
+
+          <Button
+            size="sm"
+            variant={bakeSuccess ? "primary" : "secondary"}
+            icon={bakeSuccess ? <Check size={13} className="text-emerald-400" /> : <Save size={13} />}
+            onClick={onBakeAllIslands}
+            disabled={detectedIslands.length === 0}
+            className="text-xs"
+          >
+            {bakeSuccess ? t("atlasStudioBakeSuccess") : t("atlasStudioBakeIslandsBtn")}
+          </Button>
+        </div>
       </div>
     </div>
   );

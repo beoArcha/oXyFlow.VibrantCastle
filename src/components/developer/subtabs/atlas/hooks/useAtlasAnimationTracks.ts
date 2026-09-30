@@ -152,6 +152,177 @@ export function useAtlasAnimationTracks() {
     [selectedTrackName, selectedFrameIndex]
   );
 
+  const handleToggleSequenceFrame = useCallback(
+    (target: { col: number; row: number }) => {
+      if (!selectedTrackName) return;
+      setTracks((prev) =>
+        prev.map((tr) => {
+          if (tr.name !== selectedTrackName) return tr;
+          const currentIndices = tr.frameIndices
+            ? [...tr.frameIndices]
+            : Array.from({ length: tr.frames }, (_, i) => i);
+
+          const existingIdx = currentIndices.lastIndexOf(target.col);
+          if (existingIdx !== -1 && currentIndices.length > 1) {
+            currentIndices.splice(existingIdx, 1);
+          } else {
+            currentIndices.push(target.col);
+          }
+
+          return {
+            ...tr,
+            type: "indexed" as AtlasTrackType,
+            row: tr.row ?? target.row,
+            frames: currentIndices.length,
+            frameIndices: currentIndices,
+          };
+        })
+      );
+    },
+    [selectedTrackName]
+  );
+
+  const handleReorderTrackFrames = useCallback(
+    (fromIdx: number, toIdx: number) => {
+      if (!selectedTrackName) return;
+      setTracks((prev) =>
+        prev.map((tr) => {
+          if (tr.name !== selectedTrackName) return tr;
+          const list = tr.frameIndices
+            ? [...tr.frameIndices]
+            : Array.from({ length: tr.frames }, (_, i) => i);
+          if (fromIdx < 0 || fromIdx >= list.length || toIdx < 0 || toIdx >= list.length) {
+            return tr;
+          }
+          const [moved] = list.splice(fromIdx, 1);
+          list.splice(toIdx, 0, moved);
+          return {
+            ...tr,
+            frames: list.length,
+            frameIndices: list,
+          };
+        })
+      );
+    },
+    [selectedTrackName]
+  );
+
+  const handleRemoveTrackFrame = useCallback(
+    (frameIdx: number) => {
+      if (!selectedTrackName) return;
+      setTracks((prev) =>
+        prev.map((tr) => {
+          if (tr.name !== selectedTrackName) return tr;
+          const list = tr.frameIndices
+            ? [...tr.frameIndices]
+            : Array.from({ length: tr.frames }, (_, i) => i);
+          if (frameIdx < 0 || frameIdx >= list.length) return tr;
+          list.splice(frameIdx, 1);
+          return {
+            ...tr,
+            frames: Math.max(1, list.length),
+            frameIndices: list.length > 0 ? list : [0],
+          };
+        })
+      );
+    },
+    [selectedTrackName]
+  );
+
+  const handleDuplicateTrackFrame = useCallback(
+    (frameIdx: number) => {
+      if (!selectedTrackName) return;
+      setTracks((prev) =>
+        prev.map((tr) => {
+          if (tr.name !== selectedTrackName) return tr;
+          const list = tr.frameIndices
+            ? [...tr.frameIndices]
+            : Array.from({ length: tr.frames }, (_, i) => i);
+          if (frameIdx < 0 || frameIdx >= list.length) return tr;
+          const val = list[frameIdx];
+          list.splice(frameIdx + 1, 0, val);
+          return {
+            ...tr,
+            frames: list.length,
+            frameIndices: list,
+          };
+        })
+      );
+    },
+    [selectedTrackName]
+  );
+
+  const handleReverseTrack = useCallback(() => {
+    if (!selectedTrackName) return;
+    setTracks((prev) =>
+      prev.map((tr) => {
+        if (tr.name !== selectedTrackName) return tr;
+        const list = tr.frameIndices
+          ? [...tr.frameIndices]
+          : Array.from({ length: tr.frames }, (_, i) => i);
+        list.reverse();
+        return {
+          ...tr,
+          frames: list.length,
+          frameIndices: list,
+        };
+      })
+    );
+  }, [selectedTrackName]);
+
+  const handlePingPongTrack = useCallback(() => {
+    if (!selectedTrackName) return;
+    setTracks((prev) =>
+      prev.map((tr) => {
+        if (tr.name !== selectedTrackName) return tr;
+        const base = tr.frameIndices
+          ? [...tr.frameIndices]
+          : Array.from({ length: tr.frames }, (_, i) => i);
+        if (base.length <= 1) return tr;
+        const middleReversed = base.slice(1, -1).reverse();
+        const pingPongList = [...base, ...middleReversed];
+        return {
+          ...tr,
+          pingPong: !tr.pingPong,
+          frames: pingPongList.length,
+          frameIndices: pingPongList,
+        };
+      })
+    );
+  }, [selectedTrackName]);
+
+  const handleClearTrackFrames = useCallback(() => {
+    if (!selectedTrackName) return;
+    setTracks((prev) =>
+      prev.map((tr) => {
+        if (tr.name !== selectedTrackName) return tr;
+        return {
+          ...tr,
+          frames: 1,
+          frameIndices: [0],
+        };
+      })
+    );
+  }, [selectedTrackName]);
+
+  const handleFrameDelayChange = useCallback(
+    (frameIdx: number, delayMs: number) => {
+      if (!selectedTrackName) return;
+      setTracks((prev) =>
+        prev.map((tr) => {
+          if (tr.name !== selectedTrackName) return tr;
+          const delays = tr.frameDelays ? [...tr.frameDelays] : Array(tr.frames).fill(0);
+          delays[frameIdx] = delayMs;
+          return {
+            ...tr,
+            frameDelays: delays,
+          };
+        })
+      );
+    },
+    [selectedTrackName]
+  );
+
   return {
     tracks,
     selectedTrackName,
@@ -163,6 +334,14 @@ export function useAtlasAnimationTracks() {
     handleCreateTrackFromSelection,
     handleAssignSelectionToActiveTrack,
     handleMergeSelectionAsWide,
+    handleToggleSequenceFrame,
+    handleReorderTrackFrames,
+    handleRemoveTrackFrame,
+    handleDuplicateTrackFrame,
+    handleReverseTrack,
+    handlePingPongTrack,
+    handleClearTrackFrames,
+    handleFrameDelayChange,
   };
 }
 

@@ -9,6 +9,9 @@ import {
   Sparkles,
   ArrowLeftRight,
   Minus,
+  Layers,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 import { Button, Badge, Slider, Select } from "@/components/ui";
 import { useI18n } from "@context/I18nContext";
@@ -76,6 +79,9 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
   const [showPivot, setShowPivot] = useState<boolean>(true);
   const [showGroundLine, setShowGroundLine] = useState<boolean>(true);
   const [flipX, setFlipX] = useState<boolean>(false);
+  const [onionSkinning, setOnionSkinning] = useState<boolean>(false);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
+  const [isDraggingPivot, setIsDraggingPivot] = useState<boolean>(false);
 
   // Load image
   useEffect(() => {
@@ -123,50 +129,59 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
             .sort((a, b) => (a.frameIndex ?? 0) - (b.frameIndex ?? 0))
         : [];
 
-      let sx = 0;
-      let sy = 0;
-      let sw = 0;
-      let sh = 0;
-      let effectiveOrigin = origin;
-
-      if (matchingTrackFrames.length > 0) {
-        const frameData = matchingTrackFrames[frameIdx % matchingTrackFrames.length];
-        sx = frameData.x;
-        sy = frameData.y;
-        sw = Math.max(1, frameData.width);
-        sh = Math.max(1, frameData.height);
-        if (frameData.pivot) {
-          effectiveOrigin = {
-            type: origin?.type || "feet",
-            normalized: frameData.pivot,
+      const getFrameCoordinates = (fIdx: number) => {
+        if (matchingTrackFrames.length > 0) {
+          const frameData = matchingTrackFrames[fIdx % matchingTrackFrames.length];
+          return {
+            x: frameData.x,
+            y: frameData.y,
+            w: Math.max(1, frameData.width),
+            h: Math.max(1, frameData.height),
+            pivot: frameData.pivot,
           };
         }
-      } else {
+
         let col = 0;
         let span = 1;
 
-        if (currentTrack.frameIndices && currentTrack.frameIndices[frameIdx] !== undefined) {
-          col = currentTrack.frameIndices[frameIdx];
+        if (currentTrack.frameIndices && currentTrack.frameIndices[fIdx] !== undefined) {
+          col = currentTrack.frameIndices[fIdx];
         } else if (currentTrack.slotSpan) {
           col = 0;
-          for (let i = 0; i < frameIdx; i++) {
+          for (let i = 0; i < fIdx; i++) {
             col += currentTrack.slotSpan[i] || 1;
           }
-          span = currentTrack.slotSpan[frameIdx] || 1;
+          span = currentTrack.slotSpan[fIdx] || 1;
         } else if (currentTrack.cells) {
           col = 0;
-          for (let i = 0; i < frameIdx; i++) {
+          for (let i = 0; i < fIdx; i++) {
             col += currentTrack.cells[i] || 1;
           }
-          span = currentTrack.cells[frameIdx] || 1;
+          span = currentTrack.cells[fIdx] || 1;
         } else {
-          col = frameIdx;
+          col = fIdx;
         }
 
-        sx = col * gridConfig.cellWidth;
-        sy = currentTrack.row * gridConfig.cellHeight;
-        sw = span * gridConfig.cellWidth;
-        sh = gridConfig.cellHeight;
+        return {
+          x: col * gridConfig.cellWidth,
+          y: currentTrack.row * gridConfig.cellHeight,
+          w: span * gridConfig.cellWidth,
+          h: gridConfig.cellHeight,
+          pivot: undefined,
+        };
+      };
+
+      const curCoords = getFrameCoordinates(frameIdx);
+      const sx = curCoords.x;
+      const sy = curCoords.y;
+      const sw = curCoords.w;
+      const sh = curCoords.h;
+      let effectiveOrigin = origin;
+      if (curCoords.pivot) {
+        effectiveOrigin = {
+          type: origin?.type || "feet",
+          normalized: curCoords.pivot,
+        };
       }
 
       const dw = Math.round(sw * scale);
@@ -212,6 +227,24 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
           } catch {
             // Fallback to unmodified frame
           }
+        }
+
+        // Onion Skinning: Draw previous frame with faint cyan overlay behind current frame
+        const totalFramesCount = matchingTrackFrames.length > 0
+          ? matchingTrackFrames.length
+          : (currentTrack.frameIndices ? currentTrack.frameIndices.length : currentTrack.frames);
+
+        if (onionSkinning && totalFramesCount > 1) {
+          const prevIdx = (frameIdx - 1 + totalFramesCount) % totalFramesCount;
+          const prevCoords = getFrameCoordinates(prevIdx);
+          ctx.save();
+          ctx.globalAlpha = 0.35;
+          if (flipX) {
+            ctx.translate(dw, 0);
+            ctx.scale(-1, 1);
+          }
+          ctx.drawImage(image, prevCoords.x, prevCoords.y, prevCoords.w, prevCoords.h, 0, 0, dw, dh);
+          ctx.restore();
         }
 
         ctx.save();
@@ -262,13 +295,66 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
         ctx.restore();
       }
     },
-    [image, currentTrack, gridConfig, scale, showPivot, showGroundLine, flipX, origin, backgroundConfig, resolvedFrames]
+    [
+      image,
+      currentTrack,
+      gridConfig,
+      scale,
+      showPivot,
+      showGroundLine,
+      flipX,
+      origin,
+      backgroundConfig,
+      resolvedFrames,
+      onionSkinning,
+    ]
   );
+
+  const updatePivotFromEvent = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const cx = e.clientX - rect.left;
+      const cy = e.clientY - rect.top;
+      let normX = Math.max(0, Math.min(1, cx / rect.width));
+      if (flipX) normX = 1 - normX;
+      const normY = Math.max(0, Math.min(1, cy / rect.height));
+
+      onOriginChange?.({
+        type: "custom",
+        normalized: {
+          x: Number(normX.toFixed(2)),
+          y: Number(normY.toFixed(2)),
+        },
+      });
+    },
+    [flipX, onOriginChange]
+  );
+
+  const handleCanvasMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (showPivot) {
+      setIsDraggingPivot(true);
+      updatePivotFromEvent(e);
+    }
+  };
+
+  const handleCanvasMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (isDraggingPivot && showPivot) {
+      updatePivotFromEvent(e);
+    }
+  };
+
+  const handleCanvasMouseUp = () => {
+    setIsDraggingPivot(false);
+  };
 
   // High-performance requestAnimationFrame playback loop
   useEffect(() => {
     const totalFrames = currentTrack
-      ? (resolvedFrames?.filter((rf) => rf.trackName === currentTrack.name).length || currentTrack.frames)
+      ? (resolvedFrames?.filter((rf) => rf.trackName === currentTrack.name).length ||
+          currentTrack.frameIndices?.length ||
+          currentTrack.frames)
       : 0;
 
     if (!isPlaying || !currentTrack || totalFrames <= 1) {
@@ -343,19 +429,34 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
           )}
         </div>
 
-        {/* Track Selector Dropdown */}
-        <Select
-          size="sm"
-          variant="castle"
-          value={currentTrack?.name || ""}
-          onChange={(e) => onSelectTrack(e.target.value)}
-          options={tracks.map((tr) => ({
-            value: tr.name,
-            label: `${tr.name} (row ${tr.row}, ${tr.frames}f)`,
-          }))}
-          className="font-mono text-xs font-bold"
-        />
+        <div className="flex items-center gap-1.5">
+          {/* Track Selector Dropdown */}
+          <Select
+            size="sm"
+            variant="castle"
+            value={currentTrack?.name || ""}
+            onChange={(e) => onSelectTrack(e.target.value)}
+            options={tracks.map((tr) => ({
+              value: tr.name,
+              label: `${tr.name} (row ${tr.row}, ${tr.frames}f)`,
+            }))}
+            className="font-mono text-xs font-bold"
+          />
+
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setIsCollapsed((c) => !c)}
+            title={isCollapsed ? t("atlasStudioExpandPreview") : t("atlasStudioCollapsePreview")}
+            className="h-7 w-7 p-0 text-stone-400 hover:text-white"
+          >
+            {isCollapsed ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+          </Button>
+        </div>
       </div>
+
+      {!isCollapsed && (
+        <>
 
       {/* Main Animation Stage Viewport */}
       <div
@@ -380,7 +481,13 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
       >
         <canvas
           ref={canvasRef}
-          className="shadow-2xl rounded border border-black/40 filter drop-shadow-md"
+          onMouseDown={handleCanvasMouseDown}
+          onMouseMove={handleCanvasMouseMove}
+          onMouseUp={handleCanvasMouseUp}
+          className={`shadow-2xl rounded border border-black/40 filter drop-shadow-md select-none ${
+            showPivot ? "cursor-crosshair" : ""
+          }`}
+          title={showPivot ? "Przeciągnij myszką, aby ustawić punkt zakotwiczenia (Pivot)" : undefined}
         />
 
         {/* Background Switcher Floating Pill */}
@@ -502,6 +609,17 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
               <Crosshair size={11} className="mr-1 text-rose-400" />
               {t("atlasStudioPivotShort")}
             </Button>
+
+            <Button
+              size="sm"
+              variant={onionSkinning ? "primary" : "secondary"}
+              onClick={() => setOnionSkinning((o) => !o)}
+              title={t("atlasStudioOnionSkinning")}
+              className="h-7 px-2 text-[11px]"
+            >
+              <Layers size={11} className="mr-1 text-cyan-400" />
+              {t("atlasStudioOnionSkinning")}
+            </Button>
           </div>
         </div>
 
@@ -619,6 +737,8 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
           </div>
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 };

@@ -11,6 +11,7 @@ import {
   MousePointer,
   Hand,
   Sparkles,
+  ListOrdered,
 } from "lucide-react";
 import { Button, Badge } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
@@ -96,6 +97,17 @@ export const AtlasViewportToolbar: React.FC<AtlasViewportToolbarProps> = ({
         >
           <Pipette size={12} className="mr-1 text-cyan-400" />
           <span className="text-[11px]">{t("atlasStudioToolEyedropper")}</span>
+        </Button>
+
+        <Button
+          size="sm"
+          variant={activeTool === "sequence" ? "primary" : "secondary"}
+          onClick={() => onToolChange("sequence")}
+          title={t("atlasStudioToolSequence")}
+          className="h-7 px-2"
+        >
+          <ListOrdered size={12} className="mr-1 text-amber-400" />
+          <span className="text-[11px]">{t("atlasStudioToolSequence")}</span>
         </Button>
       </div>
 

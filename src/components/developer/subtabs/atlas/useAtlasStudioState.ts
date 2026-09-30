@@ -34,6 +34,14 @@ export function useAtlasStudioState() {
     handleCreateTrackFromSelection: createTrackSelection,
     handleAssignSelectionToActiveTrack: assignSelectionToTrack,
     handleMergeSelectionAsWide: mergeSelectionAsWide,
+    handleToggleSequenceFrame,
+    handleReorderTrackFrames,
+    handleRemoveTrackFrame,
+    handleDuplicateTrackFrame,
+    handleReverseTrack,
+    handlePingPongTrack,
+    handleClearTrackFrames,
+    handleFrameDelayChange,
   } = useAtlasAnimationTracks();
 
   // 2. Presets & Texture Assets Slice
@@ -67,7 +75,7 @@ export function useAtlasStudioState() {
   });
 
   // 3. UI Layout & Tooling State Slice
-  const [activeInspectorTab, setActiveInspectorTab] = useState<AtlasInspectorTabId>("preview");
+  const [activeInspectorTab, setActiveInspectorTab] = useState<AtlasInspectorTabId>("slicing");
   const [viewerTool, setViewerTool] = useState<SlicerViewerTool>("select");
   const [isInspectorOpen, setIsInspectorOpen] = useState<boolean>(true);
   const [selectedCellInfo, setSelectedCellInfo] = useState<SelectedCellInfo | null>(null);
@@ -84,6 +92,7 @@ export function useAtlasStudioState() {
     handleBackgroundConfigChange,
     handleAddFreeformFrame,
     handleBakeIslands,
+    handleClusterIslandsIntoTracks,
     handleDeleteFreeformFrame,
     handleAssignFramesToTrack,
   } = useAtlasSlicingConfig({
@@ -165,8 +174,17 @@ export function useAtlasStudioState() {
     handleBackgroundConfigChange,
     handleAddFreeformFrame,
     handleBakeIslands,
+    handleClusterIslandsIntoTracks,
     handleDeleteFreeformFrame,
     handleAssignFramesToTrack,
+    handleToggleSequenceFrame,
+    handleReorderTrackFrames,
+    handleRemoveTrackFrame,
+    handleDuplicateTrackFrame,
+    handleReverseTrack,
+    handlePingPongTrack,
+    handleClearTrackFrames,
+    handleFrameDelayChange,
   };
 }
 

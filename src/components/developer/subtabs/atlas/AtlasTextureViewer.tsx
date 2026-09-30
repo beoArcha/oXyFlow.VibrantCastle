@@ -37,6 +37,13 @@ export interface AtlasTextureViewerProps {
   onSelectTrack?: (trackName: string) => void;
   onSelectFrame?: (frameIndex: number) => void;
   onSampleBackgroundColor?: (hex: string) => void;
+  onToggleSequenceFrame?: (target: {
+    hit?: ResolvedFrameRect | null;
+    col: number;
+    row: number;
+    x: number;
+    y: number;
+  }) => void;
   onCreateTrackFromSelection?: (selection: {
     x: number;
     y: number;
@@ -93,6 +100,7 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
   onSelectTrack,
   onSelectFrame,
   onSampleBackgroundColor,
+  onToggleSequenceFrame,
   onCreateTrackFromSelection,
   onAssignSelectionToActiveTrack,
   onMergeSelectionAsWide,
@@ -158,6 +166,7 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
     onSelectTrack,
     onSelectFrame,
     onSelectCell,
+    onToggleSequenceFrame,
   });
 
   return (
@@ -220,7 +229,9 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
             ? "cursor-grab active:cursor-grabbing"
             : activeTool === "eyedropper"
               ? "cursor-crosshair"
-              : "cursor-crosshair"
+              : activeTool === "sequence"
+                ? "cursor-pointer"
+                : "cursor-crosshair"
             }`}
           style={{
             backgroundImage:
@@ -244,6 +255,7 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
             showFrames={showFrames}
             gridConfig={gridConfig}
             resolvedFrames={resolvedFrames}
+            tracks={tracks}
             selectedTrackName={selectedTrackName}
             selectedFrameIndex={selectedFrameIndex}
             dragStart={dragStart}

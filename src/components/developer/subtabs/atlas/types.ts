@@ -24,7 +24,7 @@ export type AtlasTrackType = "grid" | "freeform" | "indexed";
 
 export type AtlasInspectorTabId = "preview" | "slicing" | "background" | "json";
 
-export type SlicerViewerTool = "select" | "pan" | "eyedropper";
+export type SlicerViewerTool = "select" | "pan" | "eyedropper" | "sequence";
 
 export interface AtlasPresetItem {
   id: string;

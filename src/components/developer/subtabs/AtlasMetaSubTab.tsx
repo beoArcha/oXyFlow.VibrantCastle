@@ -1,6 +1,8 @@
 import React from "react";
 import {
   AtlasTextureViewer,
+  AtlasAnimationPreview,
+  AtlasAnimationFilmstrip,
   AtlasInspectorDock,
   AtlasStatusBar,
   AtlasHeaderToolbar,
@@ -44,7 +46,7 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
         onToggleInspector={() => state.setIsInspectorOpen((prev) => !prev)}
       />
 
-      {/* 2. Unified Studio Workbench (Collapsible 2-Column Split: Viewport / Inspector Dock) */}
+      {/* 2. Unified Studio Workbench (Top Split: Left Viewport / Right Live Preview + Inspector) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5">
         {/* Left Column: Texture & Grid Slicer Viewport */}
         <div
@@ -67,6 +69,7 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
             onMetricsChange={state.handleMetricsChange}
             onResolvedFramesChange={state.setResolvedFrames}
             onAddFreeformFrame={state.handleAddFreeformFrame}
+            onToggleSequenceFrame={(target) => state.handleToggleSequenceFrame(target)}
             onSelectCell={(info) => {
               state.setSelectedCellInfo(info);
               if (info.trackName) {
@@ -88,9 +91,28 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
           />
         </div>
 
-        {/* Right Column: Docked Inspector (collapsible) */}
+        {/* Right Column: Docked Live Animation Preview & Inspector */}
         {state.isInspectorOpen && (
-          <div className="lg:col-span-5 xl:col-span-4 flex flex-col animate-in fade-in duration-150">
+          <div className="lg:col-span-5 xl:col-span-4 flex flex-col gap-3 animate-in fade-in duration-150">
+            {/* Live Animation Preview Player */}
+            <AtlasAnimationPreview
+              imageSrc={state.imageSrc}
+              gridConfig={state.gridConfig}
+              tracks={state.tracks}
+              selectedTrackName={state.selectedTrackName}
+              selectedFrameIndex={state.selectedFrameIndex}
+              origin={state.origin}
+              backgroundConfig={state.metaDoc.backgroundConfig}
+              resolvedFrames={state.resolvedFrames}
+              onSelectTrack={(name) => {
+                state.setSelectedTrackName(name);
+                state.setSelectedFrameIndex(0);
+              }}
+              onSelectFrame={(frameIdx) => state.setSelectedFrameIndex(frameIdx)}
+              onOriginChange={state.setOrigin}
+            />
+
+            {/* Technical Inspector Dock (Tabs: Slicing, Background, JSON) */}
             <AtlasInspectorDock
               activeTab={state.activeInspectorTab}
               onTabChange={state.setActiveInspectorTab}
@@ -121,6 +143,9 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
                 state.setViewerTool("eyedropper");
               }}
               onBakeIslands={state.handleBakeIslands}
+              onClusterRowsIntoTracks={() =>
+                state.handleClusterIslandsIntoTracks(state.resolvedFrames)
+              }
               onAddFreeformFrame={state.handleAddFreeformFrame}
               onDeleteFreeformFrame={state.handleDeleteFreeformFrame}
               onAssignFramesToTrack={state.handleAssignFramesToTrack}
@@ -129,7 +154,25 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
         )}
       </div>
 
-      {/* 3. Studio Telemetry & Status Bar */}
+      {/* 3. Bottom Zone: Animation Filmstrip & Sequence Timeline */}
+      <AtlasAnimationFilmstrip
+        imageSrc={state.imageSrc}
+        tracks={state.tracks}
+        selectedTrackName={state.selectedTrackName}
+        selectedFrameIndex={state.selectedFrameIndex}
+        gridConfig={state.gridConfig}
+        resolvedFrames={state.resolvedFrames}
+        onSelectFrame={(frameIdx) => state.setSelectedFrameIndex(frameIdx)}
+        onReorderFrames={state.handleReorderTrackFrames}
+        onRemoveFrame={state.handleRemoveTrackFrame}
+        onDuplicateFrame={state.handleDuplicateTrackFrame}
+        onReverseTrack={state.handleReverseTrack}
+        onPingPongTrack={state.handlePingPongTrack}
+        onClearTrackFrames={state.handleClearTrackFrames}
+        onFrameDelayChange={state.handleFrameDelayChange}
+      />
+
+      {/* 4. Studio Telemetry & Status Bar */}
       <AtlasStatusBar
         assetId={state.activePreset.id}
         assetName={state.activePreset.name}

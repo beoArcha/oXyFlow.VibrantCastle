@@ -9,4 +9,5 @@ export * from "./AtlasInspectorDock";
 export * from "./AtlasPresetSelector";
 export * from "./AtlasStatusBar";
 export * from "./AtlasHeaderToolbar";
+export * from "./filmstrip";
 export * from "./useAtlasStudioState";
