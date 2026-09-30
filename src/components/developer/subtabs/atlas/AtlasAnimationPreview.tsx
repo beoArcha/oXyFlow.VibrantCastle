@@ -10,7 +10,7 @@ import {
   ArrowLeftRight,
   Minus,
 } from "lucide-react";
-import { Button, Badge, Slider } from "@/components/ui";
+import { Button, Badge, Slider, Select } from "@/components/ui";
 import { useI18n } from "@context/I18nContext";
 import {
   AtlasGridConfig,
@@ -310,17 +310,17 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
         </div>
 
         {/* Track Selector Dropdown */}
-        <select
+        <Select
+          size="sm"
+          variant="castle"
           value={currentTrack?.name || ""}
           onChange={(e) => onSelectTrack(e.target.value)}
-          className="bg-[#120603] text-stone-200 text-xs font-mono rounded-lg px-2 py-1 border border-amber-600/40 focus:outline-none focus:border-amber-400 font-bold cursor-pointer"
-        >
-          {tracks.map((tr) => (
-            <option key={tr.name} value={tr.name}>
-              {tr.name} (row {tr.row}, {tr.frames}f)
-            </option>
-          ))}
-        </select>
+          options={tracks.map((tr) => ({
+            value: tr.name,
+            label: `${tr.name} (row ${tr.row}, ${tr.frames}f)`,
+          }))}
+          className="font-mono text-xs font-bold"
+        />
       </div>
 
       {/* Main Animation Stage Viewport */}

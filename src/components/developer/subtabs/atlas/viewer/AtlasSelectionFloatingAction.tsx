@@ -152,7 +152,7 @@ export const AtlasSelectionFloatingAction: React.FC<AtlasSelectionFloatingAction
         type="button"
         onClick={onClose}
         className="p-1 text-stone-400 hover:text-stone-200 transition-colors cursor-pointer"
-        title="Zamknij zaznaczenie"
+        title={t("atlasStudioCloseSelection")}
       >
         <X size={14} />
       </button>

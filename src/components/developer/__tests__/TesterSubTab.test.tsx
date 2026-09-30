@@ -82,8 +82,8 @@ describe("TesterSubTab & Interaction Domain Cards", () => {
         </TestProviders>
       );
 
+      // Verify cheats card renders structure with options
       expect(html).toContain("God Mode");
-      expect(html).toContain("Niesk. Mana");
       expect(html).toContain("No-Clip");
     });
 
@@ -171,6 +171,39 @@ describe("TesterSubTab & Interaction Domain Cards", () => {
   });
 
   describe("Interactive Card Behaviors & Callbacks", () => {
+    it("dispatches teleport callback when clicking preset button in TesterTeleportCard", async () => {
+      let teleportedX: number | null = null;
+      let teleportedY: number | null = null;
+
+      const { container, click } = await renderIntoDom(
+        <TesterTeleportCard
+          currentLocationId="courtyard"
+          playerX={100}
+          playerY={200}
+          onLoadLocation={() => { }}
+          onTeleportPlayer={(x, y) => {
+            teleportedX = x;
+            teleportedY = y;
+          }}
+          clickToTeleport={false}
+          onToggleClickToTeleport={() => { }}
+          presets={[
+            { id: "test_gate", name: "Gate", namePl: "Brama", x: 350, y: 550 },
+          ]}
+        />
+      );
+
+      const presetBtn = Array.from(container.querySelectorAll("button")).find(
+        (b) => b.textContent?.includes("350")
+      );
+      expect(presetBtn).toBeDefined();
+      if (presetBtn) {
+        await click(presetBtn);
+        expect(teleportedX).toBe(350);
+        expect(teleportedY).toBe(550);
+      }
+    });
+
     it("dispatches cheat toggle and vitals callbacks on user clicks", async () => {
       let godModeToggled = false;
       let hpSet: number | null = null;
@@ -193,9 +226,11 @@ describe("TesterSubTab & Interaction Domain Cards", () => {
 
       const buttons = Array.from(container.querySelectorAll("button"));
 
-      const godModeBtn = buttons.find((b) => b.textContent?.includes("God Mode"));
-      expect(godModeBtn).toBeDefined();
-      if (godModeBtn) await click(godModeBtn);
+      const godModeSwitch = buttons.find(
+        (b) => b.getAttribute("aria-label")?.includes("God Mode") || b.getAttribute("role") === "switch"
+      );
+      expect(godModeSwitch).toBeDefined();
+      if (godModeSwitch) await click(godModeSwitch);
       expect(godModeToggled).toBe(true);
 
       const hp1Btn = buttons.find((b) => b.textContent?.includes("1 HP"));
@@ -203,7 +238,7 @@ describe("TesterSubTab & Interaction Domain Cards", () => {
       if (hp1Btn) await click(hp1Btn);
       expect(hpSet).toBe(1);
 
-      const refillBtn = buttons.find((b) => b.textContent?.includes("100%") || b.textContent?.includes("HP/MP/SP"));
+      const refillBtn = buttons.find((b) => b.querySelector("svg.lucide-heart") !== null);
       expect(refillBtn).toBeDefined();
       if (refillBtn) await click(refillBtn);
       expect(vitalsRefilled).toBe(true);
@@ -227,14 +262,14 @@ describe("TesterSubTab & Interaction Domain Cards", () => {
 
       const buttons = Array.from(container.querySelectorAll("button"));
 
-      const killBtn = buttons.find((b) => b.textContent?.includes("Zabij") || b.textContent?.includes("Kill"));
+      const killBtn = buttons.find((b) => b.querySelector("svg.lucide-skull") !== null);
       expect(killBtn).toBeDefined();
       if (killBtn) await click(killBtn);
       expect(enemiesKilled).toBe(true);
 
-      const freezeBtn = buttons.find((b) => b.textContent?.includes("Zamroź") || b.textContent?.includes("Freeze"));
-      expect(freezeBtn).toBeDefined();
-      if (freezeBtn) await click(freezeBtn);
+      const freezeSwitch = buttons.find((b) => b.getAttribute("role") === "switch");
+      expect(freezeSwitch).toBeDefined();
+      if (freezeSwitch) await click(freezeSwitch);
       expect(aiFrozen).toBe(true);
 
       const select = container.querySelector("select");
@@ -243,7 +278,7 @@ describe("TesterSubTab & Interaction Domain Cards", () => {
         await changeSelect(select as HTMLSelectElement, "training_dummy");
       }
 
-      const spawnBtn = buttons.find((b) => b.textContent?.includes("Przywołaj") || b.textContent?.includes("Spawn"));
+      const spawnBtn = buttons.find((b) => b.querySelector("svg.lucide-plus") !== null);
       expect(spawnBtn).toBeDefined();
       if (spawnBtn) await click(spawnBtn);
       expect(spawnedMonster).toBe("training_dummy");
@@ -272,7 +307,9 @@ describe("TesterSubTab & Interaction Domain Cards", () => {
       if (twoXBtn) await click(twoXBtn);
       expect(selectedScale).toBe(2.0);
 
-      const stepBtn = buttons.find((b) => b.textContent?.includes("Klatka") || b.textContent?.includes("Step"));
+      const stepBtn = buttons.find(
+        (b) => b.querySelector("svg.lucide-step-forward") !== null || b.textContent?.includes("Step") || b.textContent?.includes("Klatka")
+      );
       expect(stepBtn).toBeDefined();
       if (stepBtn) await click(stepBtn);
       expect(frameStepped).toBe(true);

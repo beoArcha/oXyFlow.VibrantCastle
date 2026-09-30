@@ -1,5 +1,6 @@
 import React from "react";
 import { Search, X, Cpu } from "lucide-react";
+import { Select } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { LogLevel } from "@lib/logger";
 
@@ -91,18 +92,17 @@ export const LogsFilterControls: React.FC<LogsFilterControlsProps> = ({
 
         {/* Category Dropdown Filter */}
         {availableCategories.length > 0 && (
-          <select
+          <Select
+            size="sm"
+            variant="castle"
             value={categoryFilter}
             onChange={(e) => onCategoryFilterChange(e.target.value)}
-            className="bg-black/60 border border-stone-800 text-stone-300 text-xs rounded-lg px-2 py-1 font-mono outline-none focus:border-amber-500/70 cursor-pointer"
-          >
-            <option value="all">{t("debugAllCategories")}</option>
-            {availableCategories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
+            options={[
+              { value: "all", label: t("debugAllCategories") },
+              ...availableCategories.map((cat) => ({ value: cat, label: cat })),
+            ]}
+            className="font-mono text-xs min-w-32"
+          />
         )}
       </div>
 

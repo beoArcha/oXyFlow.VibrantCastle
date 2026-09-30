@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Skull, Ghost, Trophy, AlertTriangle, Plus } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent } from "@components/ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, Select, Switch } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 
 export const MONSTER_ID_LIST = [
@@ -42,7 +42,7 @@ export const TesterCombatCard: React.FC<TesterCombatCardProps> = ({
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         {/* Combat actions */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 items-center">
           <Button
             variant="secondary"
             icon={<Skull size={14} />}
@@ -51,14 +51,18 @@ export const TesterCombatCard: React.FC<TesterCombatCardProps> = ({
           >
             {t("testerKillEnemiesBtn")}
           </Button>
-          <Button
-            variant={freezeAI ? "primary" : "secondary"}
-            icon={<Ghost size={14} />}
-            onClick={onToggleFreezeAI}
-          >
-            {t("testerFreezeAiLabel")}{" "}
-            {freezeAI ? t("testerStatusOn") : t("testerStatusOff")}
-          </Button>
+          <div className="flex items-center justify-between px-3 py-1.5 bg-stone-900/70 border border-stone-800 rounded-lg h-9">
+            <div className="flex items-center gap-1.5">
+              <Ghost size={14} className={freezeAI ? "text-amber-400" : "text-stone-400"} />
+              <span className="text-xs font-semibold text-stone-200">{t("testerFreezeAiLabel")}</span>
+            </div>
+            <Switch
+              checked={freezeAI}
+              onCheckedChange={onToggleFreezeAI}
+              size="sm"
+              aria-label={t("testerFreezeAiLabel")}
+            />
+          </div>
           <Button
             variant="secondary"
             icon={<Trophy size={14} />}
@@ -86,17 +90,17 @@ export const TesterCombatCard: React.FC<TesterCombatCardProps> = ({
             </span>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
-            <select
+            <Select
+              size="sm"
+              variant="castle"
               value={selectedEnemy}
               onChange={(e) => setSelectedEnemy(e.target.value)}
-              className="bg-stone-900 border border-stone-700 text-stone-200 text-xs rounded px-2.5 py-1.5 focus:outline-none focus:border-amber-500 font-semibold cursor-pointer"
-            >
-              {MONSTER_ID_LIST.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {t(m.translationKey)}
-                </option>
-              ))}
-            </select>
+              options={MONSTER_ID_LIST.map((m) => ({
+                value: m.id,
+                label: t(m.translationKey),
+              }))}
+              className="w-48 font-semibold text-xs"
+            />
             <Button
               size="sm"
               variant="primary"

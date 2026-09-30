@@ -1,6 +1,6 @@
 import React from "react";
 import { FastForward, StepForward, Eye, Activity } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@components/ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, Badge, Switch } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 
 export interface TesterTimeAndDiagnosticsCardProps {
@@ -67,22 +67,30 @@ export const TesterTimeAndDiagnosticsCard: React.FC<TesterTimeAndDiagnosticsCard
           </CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Button
-            variant={showHitboxes ? "primary" : "secondary"}
-            icon={<Eye size={14} />}
-            onClick={onToggleHitboxes}
-          >
-            {t("testerHitboxesLabel")}{" "}
-            {showHitboxes ? t("testerStatusOn") : t("testerStatusOff")}
-          </Button>
-          <Button
-            variant={showProfiler ? "primary" : "secondary"}
-            icon={<Activity size={14} />}
-            onClick={onToggleProfiler}
-          >
-            {t("testerProfilerLabel")}{" "}
-            {showProfiler ? t("testerStatusOn") : t("testerStatusOff")}
-          </Button>
+          <div className="flex items-center justify-between p-2.5 bg-stone-900/60 border border-stone-800 rounded-lg hover:border-stone-700 transition-colors">
+            <div className="flex items-center gap-2">
+              <Eye size={14} className={showHitboxes ? "text-amber-400" : "text-stone-400"} />
+              <span className="text-xs font-semibold text-stone-200">{t("testerHitboxesLabel")}</span>
+            </div>
+            <Switch
+              checked={showHitboxes}
+              onCheckedChange={onToggleHitboxes}
+              size="sm"
+              aria-label={t("testerHitboxesLabel")}
+            />
+          </div>
+          <div className="flex items-center justify-between p-2.5 bg-stone-900/60 border border-stone-800 rounded-lg hover:border-stone-700 transition-colors">
+            <div className="flex items-center gap-2">
+              <Activity size={14} className={showProfiler ? "text-amber-400" : "text-stone-400"} />
+              <span className="text-xs font-semibold text-stone-200">{t("testerProfilerLabel")}</span>
+            </div>
+            <Switch
+              checked={showProfiler}
+              onCheckedChange={onToggleProfiler}
+              size="sm"
+              aria-label={t("testerProfilerLabel")}
+            />
+          </div>
         </CardContent>
       </Card>
     </div>

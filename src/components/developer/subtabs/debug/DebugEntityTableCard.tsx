@@ -1,34 +1,39 @@
 import React from "react";
 import { Skull, Crosshair, Zap, Trash2 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from "@components/ui";
-import { Enemy, PlayerId } from "@game/types";
+import { Enemy } from "@game/types";
 import { useI18n } from "@context/I18nContext";
-import gameEngine from "@game/loop/engine";
 
 export interface DebugEntityTableProps {
   enemies: Enemy[];
+  onTeleportToEnemy?: (enemy: Enemy) => void;
+  onDamageEnemy?: (enemyId: string, amount: number) => void;
+  onRemoveEnemy?: (enemyId: string) => void;
   onActionComplete?: () => void;
 }
 
 export const DebugEntityTableCard: React.FC<DebugEntityTableProps> = ({
   enemies,
+  onTeleportToEnemy,
+  onDamageEnemy,
+  onRemoveEnemy,
   onActionComplete,
 }) => {
   const { t } = useI18n();
 
   const handleTeleportToEnemy = (enemy: Enemy) => {
     if (!Number.isFinite(enemy.x) || !Number.isFinite(enemy.y)) return;
-    gameEngine.teleportPlayer(PlayerId.Player1, Math.round(enemy.x), Math.round(enemy.y - 40));
+    onTeleportToEnemy?.(enemy);
     onActionComplete?.();
   };
 
   const handleDamageEnemy = (enemyId: string) => {
-    gameEngine.damageEnemy(enemyId, 50);
+    onDamageEnemy?.(enemyId, 50);
     onActionComplete?.();
   };
 
   const handleRemoveEnemy = (enemyId: string) => {
-    gameEngine.removeEnemy(enemyId);
+    onRemoveEnemy?.(enemyId);
     onActionComplete?.();
   };
 

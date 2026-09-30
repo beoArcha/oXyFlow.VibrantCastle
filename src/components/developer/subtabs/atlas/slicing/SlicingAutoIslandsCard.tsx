@@ -64,7 +64,7 @@ export const SlicingAutoIslandsCard: React.FC<SlicingAutoIslandsCardProps> = ({
 
         <div className="flex flex-col gap-1">
           <label className="text-[10px] text-stone-400 font-mono">
-            Cluster Y Tolerance (px)
+            {t("atlasStudioClusterYTolerance")}
           </label>
           <input
             type="number"

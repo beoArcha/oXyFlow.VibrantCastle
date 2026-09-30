@@ -12,6 +12,7 @@ export * from "./Slider";
 
 // Form Controls
 export * from "./Input";
+export * from "./Select";
 export * from "./Switch";
 
 // Navigation

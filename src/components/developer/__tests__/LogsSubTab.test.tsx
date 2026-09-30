@@ -80,7 +80,7 @@ describe("LogsSubTab & Terminal Subcomponents", () => {
       expect(html).toContain("Combat");
     });
 
-    it("renders LogsTerminalList with colored entries and handles empty state", () => {
+    it("renders LogsTerminalList with colored entries and handles empty state smoothly", () => {
       const mockRecords: LogRecord[] = [
         {
           id: "log_1",
@@ -175,12 +175,12 @@ describe("LogsSubTab & Terminal Subcomponents", () => {
       if (autoScrollBtn) await click(autoScrollBtn);
       expect(autoScrollToggled).toBe(true);
 
-      const copyBtn = buttons.find((b) => b.textContent?.includes("Kopiuj") || b.textContent?.includes("Copy"));
+      const copyBtn = buttons.find((b) => b.querySelector("svg.lucide-copy") !== null || b.textContent?.toLowerCase().includes("copy"));
       expect(copyBtn).toBeDefined();
       if (copyBtn) await click(copyBtn);
       expect(logsCopied).toBe(true);
 
-      const clearBtn = buttons.find((b) => b.textContent?.includes("Wyczyść") || b.textContent?.includes("Clear"));
+      const clearBtn = buttons.find((b) => b.querySelector("svg.lucide-trash2") !== null || b.textContent?.toLowerCase().includes("clear"));
       expect(clearBtn).toBeDefined();
       if (clearBtn) await click(clearBtn);
       expect(logsCleared).toBe(true);

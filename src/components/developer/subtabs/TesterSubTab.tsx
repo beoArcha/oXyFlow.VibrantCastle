@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useGameSession } from "@context/GameContext";
 import { debugManager } from "@game/debug/debugManager";
 import gameEngine from "@game/loop/engine";
+import { PlayerId } from "@game/types";
 import {
   TesterTeleportCard,
   TesterCheatsCard,
@@ -36,6 +37,7 @@ export const TesterSubTab: React.FC = () => {
       <TesterTeleportCard
         currentLocationId={currentLocationId}
         onLoadLocation={loadLocation}
+        onTeleportPlayer={(x, y) => gameEngine.teleportPlayer(PlayerId.Player1, x, y)}
         playerX={p1?.x}
         playerY={p1?.y}
         clickToTeleport={debugState.clickToTeleport}

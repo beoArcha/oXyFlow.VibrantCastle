@@ -1,6 +1,6 @@
 import React from "react";
 import { Shield, Zap, FastForward, Ghost, Heart } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent } from "@components/ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, Switch } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 
 export interface TesterCheatsCardProps {
@@ -30,6 +30,37 @@ export const TesterCheatsCard: React.FC<TesterCheatsCardProps> = ({
 }) => {
   const { t } = useI18n();
 
+  const cheatToggles = [
+    {
+      id: "godMode",
+      label: t("testerGodModeLabel"),
+      icon: <Shield size={14} className={godMode ? "text-amber-400" : "text-stone-400"} />,
+      checked: godMode,
+      onToggle: onToggleGodMode,
+    },
+    {
+      id: "infiniteMana",
+      label: t("testerInfManaLabel"),
+      icon: <Zap size={14} className={infiniteMana ? "text-cyan-400" : "text-stone-400"} />,
+      checked: infiniteMana,
+      onToggle: onToggleInfiniteMana,
+    },
+    {
+      id: "infiniteStamina",
+      label: t("testerInfStaminaLabel"),
+      icon: <FastForward size={14} className={infiniteStamina ? "text-emerald-400" : "text-stone-400"} />,
+      checked: infiniteStamina,
+      onToggle: onToggleInfiniteStamina,
+    },
+    {
+      id: "noClip",
+      label: t("testerNoClipLabel"),
+      icon: <Ghost size={14} className={noClip ? "text-purple-400" : "text-stone-400"} />,
+      checked: noClip,
+      onToggle: onToggleNoClip,
+    },
+  ];
+
   return (
     <Card variant="default">
       <CardHeader>
@@ -40,38 +71,23 @@ export const TesterCheatsCard: React.FC<TesterCheatsCardProps> = ({
       <CardContent className="flex flex-col gap-3">
         {/* Cheat Toggles */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          <Button
-            variant={godMode ? "primary" : "secondary"}
-            icon={<Shield size={14} />}
-            onClick={onToggleGodMode}
-          >
-            {t("testerGodModeLabel")}{" "}
-            {godMode ? t("testerStatusOn") : t("testerStatusOff")}
-          </Button>
-          <Button
-            variant={infiniteMana ? "primary" : "secondary"}
-            icon={<Zap size={14} />}
-            onClick={onToggleInfiniteMana}
-          >
-            {t("testerInfManaLabel")}{" "}
-            {infiniteMana ? t("testerStatusOn") : t("testerStatusOff")}
-          </Button>
-          <Button
-            variant={infiniteStamina ? "primary" : "secondary"}
-            icon={<FastForward size={14} />}
-            onClick={onToggleInfiniteStamina}
-          >
-            {t("testerInfStaminaLabel")}{" "}
-            {infiniteStamina ? t("testerStatusOn") : t("testerStatusOff")}
-          </Button>
-          <Button
-            variant={noClip ? "primary" : "secondary"}
-            icon={<Ghost size={14} />}
-            onClick={onToggleNoClip}
-          >
-            {t("testerNoClipLabel")}{" "}
-            {noClip ? t("testerStatusOn") : t("testerStatusOff")}
-          </Button>
+          {cheatToggles.map((cheat) => (
+            <div
+              key={cheat.id}
+              className="flex items-center justify-between p-2.5 bg-stone-900/60 border border-stone-800 rounded-lg hover:border-stone-700 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                {cheat.icon}
+                <span className="text-xs font-semibold text-stone-200">{cheat.label}</span>
+              </div>
+              <Switch
+                checked={cheat.checked}
+                onCheckedChange={cheat.onToggle}
+                size="sm"
+                aria-label={cheat.label}
+              />
+            </div>
+          ))}
         </div>
 
         {/* Vitals Quick Restores */}

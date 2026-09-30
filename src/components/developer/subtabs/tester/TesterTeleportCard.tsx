@@ -2,9 +2,8 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { MapPin, Compass, Crosshair } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
-import { debugManager, SpawnPreset } from "@game/debug/debugManager";
-import gameEngine from "@game/loop/engine";
-import { PlayerId } from "@game/types";
+import { SpawnPreset } from "@game/debug/debugManager";
+import { debugManager } from "@game/debug/debugManager";
 import { getLocation, LocationId } from "@game/locations";
 
 export const LOCATION_IDS: LocationId[] = [
@@ -18,19 +17,23 @@ export const LOCATION_IDS: LocationId[] = [
 export interface TesterTeleportCardProps {
   currentLocationId: LocationId;
   onLoadLocation: (locId: LocationId) => void;
+  onTeleportPlayer?: (x: number, y: number) => void;
   playerX?: number;
   playerY?: number;
   clickToTeleport: boolean;
   onToggleClickToTeleport: () => void;
+  presets?: SpawnPreset[];
 }
 
 export const TesterTeleportCard: React.FC<TesterTeleportCardProps> = ({
   currentLocationId,
   onLoadLocation,
+  onTeleportPlayer,
   playerX,
   playerY,
   clickToTeleport,
   onToggleClickToTeleport,
+  presets: externalPresets,
 }) => {
   const { t } = useI18n();
 
@@ -42,23 +45,23 @@ export const TesterTeleportCard: React.FC<TesterTeleportCardProps> = ({
   );
 
   const presets = useMemo(
-    () => debugManager.getSpawnPresets(currentLocationId),
-    [currentLocationId]
+    () => externalPresets || debugManager.getSpawnPresets(currentLocationId),
+    [externalPresets, currentLocationId]
   );
 
   const handleCustomTeleport = useCallback(() => {
     if (Number.isFinite(customX) && Number.isFinite(customY)) {
-      gameEngine.teleportPlayer(PlayerId.Player1, Math.round(customX), Math.round(customY));
+      onTeleportPlayer?.(Math.round(customX), Math.round(customY));
     }
-  }, [customX, customY]);
+  }, [customX, customY, onTeleportPlayer]);
 
   const handlePresetTeleport = useCallback((x: number, y: number) => {
     if (Number.isFinite(x) && Number.isFinite(y)) {
       setCustomX(Math.round(x));
       setCustomY(Math.round(y));
-      gameEngine.teleportPlayer(PlayerId.Player1, Math.round(x), Math.round(y));
+      onTeleportPlayer?.(Math.round(x), Math.round(y));
     }
-  }, []);
+  }, [onTeleportPlayer]);
 
   const getPresetLabel = useCallback(
     (preset: SpawnPreset): string => {

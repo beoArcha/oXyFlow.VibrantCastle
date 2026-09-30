@@ -6,8 +6,9 @@ import { DebugCollisionsCard } from "./debug/DebugCollisionsCard";
 import { DebugStateDumpCard } from "./debug/DebugStateDumpCard";
 import { useGameSession, useSettings } from "@context/GameContext";
 import gameEngine from "@game/loop/engine";
-import { debugManager } from "@game/debug/debugManager";
 import fpsManager from "@game/engine/fpsManager";
+import { debugManager } from "@game/debug/debugManager";
+import { PlayerId } from "@game/types";
 
 export const DebugSubTab: React.FC = () => {
   const { p1, p2, currentLocationId } = useGameSession();
@@ -106,11 +107,24 @@ export const DebugSubTab: React.FC = () => {
         showProfiler={debugState.showProfiler}
         clickToTeleport={debugState.clickToTeleport}
         freezeAI={debugState.freezeAI}
+        onToggleHitboxes={() => debugManager.toggleHitboxes()}
+        onToggleProfiler={() => debugManager.toggleProfiler()}
+        onToggleClickToTeleport={() => debugManager.toggleClickToTeleport()}
+        onToggleFreezeAI={() => debugManager.toggleFreezeAI()}
       />
 
       {/* 4. Active Entities and Enemies Table */}
       <DebugEntityTableCard
         enemies={enemies}
+        onTeleportToEnemy={(enemy) => {
+          gameEngine.teleportPlayer(PlayerId.Player1, Math.round(enemy.x), Math.round(enemy.y - 40));
+        }}
+        onDamageEnemy={(enemyId, amount) => {
+          gameEngine.damageEnemy(enemyId, amount);
+        }}
+        onRemoveEnemy={(enemyId) => {
+          gameEngine.removeEnemy(enemyId);
+        }}
         onActionComplete={() => setTick((t) => t + 1)}
       />
 

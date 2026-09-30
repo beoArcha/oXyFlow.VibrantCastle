@@ -26,10 +26,15 @@ describe("DeveloperModal & DeveloperTab Behavioral DOM Interaction", () => {
         <DeveloperModal onClose={() => { closeCount++; }} />
       );
 
-      // Find close button by X icon or aria-label (supporting portal rendering)
+      // Find close button by close icon or aria-label
       const targetRoot = container.querySelector("button") ? container : document.body;
       const buttons = Array.from(targetRoot.querySelectorAll("button"));
-      const closeBtn = buttons.find((btn) => btn.querySelector("svg.lucide-x") !== null || btn.getAttribute("aria-label")?.toLowerCase().includes("zamknij") || btn.getAttribute("aria-label")?.toLowerCase().includes("close"));
+      const closeBtn = buttons.find(
+        (btn) =>
+          btn.querySelector("svg.lucide-x") !== null ||
+          btn.getAttribute("aria-label")?.toLowerCase().includes("close") ||
+          btn.getAttribute("aria-label")?.toLowerCase().includes("zamknij")
+      );
 
       expect(closeBtn).toBeDefined();
       if (closeBtn) {
@@ -42,7 +47,7 @@ describe("DeveloperModal & DeveloperTab Behavioral DOM Interaction", () => {
       expect(closeCount).toBe(2);
     });
 
-    it("invokes onNavigateModal when clicking a navigation tab", async () => {
+    it("invokes onNavigateModal and onResume when clicking navigation controls", async () => {
       let navigatedTo: string | null = null;
       let resumed = false;
 
@@ -54,17 +59,28 @@ describe("DeveloperModal & DeveloperTab Behavioral DOM Interaction", () => {
         />
       );
 
-      // Modal navigation buttons rendered (supporting portal rendering)
       const targetRoot = container.querySelector("button") ? container : document.body;
       const navButtons = Array.from(targetRoot.querySelectorAll("button"));
       expect(navButtons.length).toBeGreaterThan(0);
 
-      // Find resume / return to game button if present
-      const resumeBtn = navButtons.find((btn) => btn.textContent?.includes("Powrót") || btn.textContent?.includes("Resume") || btn.textContent?.includes("Play"));
+      // First action button in navigation tabs triggers return to game (onResume)
+      const resumeBtn = navButtons.find(
+        (btn) =>
+          btn.querySelector("svg.lucide-play") !== null ||
+          btn.textContent?.includes("Resume") ||
+          btn.textContent?.includes("Powrót")
+      );
       if (resumeBtn) {
         await click(resumeBtn);
         expect(resumed).toBe(true);
       }
+    });
+
+    it("renders smoothly without optional navigation callbacks", async () => {
+      const { container } = await renderIntoDom(
+        <DeveloperModal onClose={() => { }} />
+      );
+      expect(container.querySelector("#tab-content-developer")).toBeDefined();
     });
   });
 
@@ -73,34 +89,36 @@ describe("DeveloperModal & DeveloperTab Behavioral DOM Interaction", () => {
       const { container, click } = await renderIntoDom(<DeveloperTab />);
 
       // Initial tab is "testing"
-      expect(container.querySelector("[data-testid='subtab-content-tester'], div:has(button)")).toBeDefined();
+      expect(container.querySelector("#subtab-content-tester")).toBeDefined();
 
-      // Find all tab buttons
       const tabButtons = Array.from(container.querySelectorAll("button"));
-      const debugTabBtn = tabButtons.find((btn) => btn.textContent?.toLowerCase().includes("debug") || btn.textContent?.includes("Diagnostyka"));
-      const logsTabBtn = tabButtons.find((btn) => btn.textContent?.toLowerCase().includes("log") || btn.textContent?.includes("Dziennik"));
-      const atlasTabBtn = tabButtons.find((btn) => btn.textContent?.toLowerCase().includes("atlas") || btn.textContent?.includes("Kreator"));
+      const debugTabBtn = tabButtons.find(
+        (btn) => btn.querySelector("svg.lucide-activity") !== null || btn.textContent?.toLowerCase().includes("debug")
+      );
+      const logsTabBtn = tabButtons.find(
+        (btn) => btn.querySelector("svg.lucide-scroll-text") !== null || btn.textContent?.toLowerCase().includes("log")
+      );
+      const atlasTabBtn = tabButtons.find(
+        (btn) => btn.querySelector("svg.lucide-grid") !== null || btn.textContent?.toLowerCase().includes("atlas")
+      );
 
       expect(debugTabBtn).toBeDefined();
 
       // Click Debug tab
       if (debugTabBtn) {
         await click(debugTabBtn);
-        // DOM should now show Debug view
         expect(container.innerHTML).toContain("subtab-content-debug");
       }
 
       // Click Logs tab
       if (logsTabBtn) {
         await click(logsTabBtn);
-        // DOM should now show Logs view
         expect(container.innerHTML).toContain("subtab-content-logs");
       }
 
       // Click Atlas Slicer tab
       if (atlasTabBtn) {
         await click(atlasTabBtn);
-        // DOM should now show Atlas view
         expect(container.innerHTML).toContain("subtab-content-atlas-slicer");
       }
     });

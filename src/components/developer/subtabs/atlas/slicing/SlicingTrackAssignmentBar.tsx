@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowRight, Plus, X } from "lucide-react";
-import { Button, Badge } from "@components/ui";
+import { Button, Badge, Select } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasAnimationTrackDefinition } from "../types";
 
@@ -50,24 +50,22 @@ export const SlicingTrackAssignmentBar: React.FC<SlicingTrackAssignmentBarProps>
             <span className="text-[11px] text-stone-300 font-medium">
               {t("atlasStudioAssignToTrack")}:
             </span>
-            <select
+            <Select
+              size="sm"
+              variant="castle"
+              placeholder={t("atlasStudioSelectTrackPlaceholder")}
+              value=""
               onChange={(e) => {
                 if (e.target.value) {
                   onAssignSelectedToTrack(e.target.value);
                 }
               }}
-              defaultValue=""
-              className="bg-black/60 border border-stone-800 text-stone-200 text-xs rounded px-2 py-1 outline-none focus:border-amber-500 font-mono cursor-pointer"
-            >
-              <option value="" disabled>
-                {t("atlasStudioSelectTrackPlaceholder")}
-              </option>
-              {tracks.map((tr) => (
-                <option key={tr.name} value={tr.name}>
-                  {tr.name}
-                </option>
-              ))}
-            </select>
+              options={tracks.map((tr) => ({
+                value: tr.name,
+                label: tr.name,
+              }))}
+              className="font-mono text-xs w-36"
+            />
           </div>
         )}
 

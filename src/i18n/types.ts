@@ -308,6 +308,8 @@ export interface SettingsI18n {
   atlasStudioAssignSelection: string;
   atlasStudioMergeWide: string;
   atlasStudioSelectionSize: string;
+  atlasStudioCloseSelection: string;
+  atlasStudioClusterYTolerance: string;
   atlasStudioSelectTrack: string;
   atlasStudioPlay: string;
   atlasStudioPause: string;
