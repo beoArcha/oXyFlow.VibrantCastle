@@ -1,6 +1,6 @@
 import React from "react";
 import { Sparkles, Check, Save } from "lucide-react";
-import { Button, Badge } from "@components/ui";
+import { Button, Badge, Input } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { IAtlasSlicingConfig, ResolvedFrameRect } from "../types";
 
@@ -50,33 +50,27 @@ export const SlicingAutoIslandsCard: React.FC<SlicingAutoIslandsCardProps> = ({
 
       {/* Island Parameters Grid */}
       <div className="grid grid-cols-2 gap-2">
-        <div className="flex flex-col gap-1">
-          <label className="text-[10px] text-stone-400 font-mono">
-            {t("atlasStudioIslandMinPixels")}
-          </label>
-          <input
-            type="number"
-            min={2}
-            max={500}
-            value={autoConfig.minIslandPixels ?? 15}
-            onChange={(e) => handleUpdateAutoParam("minIslandPixels", parseInt(e.target.value, 10) || 15)}
-            className="bg-stone-950 border border-stone-800 rounded px-2 py-1 text-xs font-mono text-emerald-300 outline-none focus:border-amber-500"
-          />
-        </div>
+        <Input
+          type="number"
+          min={2}
+          max={500}
+          value={autoConfig.minIslandPixels ?? 15}
+          onChange={(e) => handleUpdateAutoParam("minIslandPixels", parseInt(e.target.value, 10) || 15)}
+          label={t("atlasStudioIslandMinPixels")}
+          className="font-mono text-xs text-emerald-300 py-1 px-2 h-7"
+          containerClassName="gap-0.5"
+        />
 
-        <div className="flex flex-col gap-1">
-          <label className="text-[10px] text-stone-400 font-mono">
-            {t("atlasStudioClusterYTolerance")}
-          </label>
-          <input
-            type="number"
-            min={1}
-            max={50}
-            value={autoConfig.clusterYTolerance ?? 10}
-            onChange={(e) => handleUpdateAutoParam("clusterYTolerance", parseInt(e.target.value, 10) || 10)}
-            className="bg-stone-950 border border-stone-800 rounded px-2 py-1 text-xs font-mono text-emerald-300 outline-none focus:border-amber-500"
-          />
-        </div>
+        <Input
+          type="number"
+          min={1}
+          max={50}
+          value={autoConfig.clusterYTolerance ?? 10}
+          onChange={(e) => handleUpdateAutoParam("clusterYTolerance", parseInt(e.target.value, 10) || 10)}
+          label={t("atlasStudioClusterYTolerance")}
+          className="font-mono text-xs text-emerald-300 py-1 px-2 h-7"
+          containerClassName="gap-0.5"
+        />
       </div>
 
       {/* Bake Island Action Bar */}

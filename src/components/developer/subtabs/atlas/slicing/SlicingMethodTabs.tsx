@@ -1,5 +1,6 @@
 import React from "react";
 import { Grid, Box, Sparkles, Layers } from "lucide-react";
+import { SegmentedControl } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { SlicingMethod } from "../types";
 
@@ -14,25 +15,25 @@ export const SlicingMethodTabs: React.FC<SlicingMethodTabsProps> = ({
 }) => {
   const { t } = useI18n();
 
-  const methods: { id: SlicingMethod; labelKey: string; icon: React.ReactNode }[] = [
+  const options = [
     {
-      id: "by_count",
-      labelKey: "atlasStudioMethodByCount",
+      value: "by_count" as const,
+      label: t("atlasStudioMethodByCount"),
       icon: <Grid size={13} />,
     },
     {
-      id: "by_cell_size",
-      labelKey: "atlasStudioMethodByCellSize",
+      value: "by_cell_size" as const,
+      label: t("atlasStudioMethodByCellSize"),
       icon: <Box size={13} />,
     },
     {
-      id: "auto_islands",
-      labelKey: "atlasStudioMethodAutoIslands",
+      value: "auto_islands" as const,
+      label: t("atlasStudioMethodAutoIslands"),
       icon: <Sparkles size={13} className="text-yellow-400" />,
     },
     {
-      id: "freeform_rects",
-      labelKey: "atlasStudioMethodFreeform",
+      value: "freeform_rects" as const,
+      label: t("atlasStudioMethodFreeform"),
       icon: <Layers size={13} />,
     },
   ];
@@ -43,22 +44,14 @@ export const SlicingMethodTabs: React.FC<SlicingMethodTabsProps> = ({
         <Layers size={13} className="text-amber-400" />
         <span>{t("atlasStudioSlicingStrategyLabel")}</span>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-        {methods.map(({ id, labelKey, icon }) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => onMethodChange(id)}
-            className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-bold transition-all border cursor-pointer ${currentMethod === id
-                ? "bg-gradient-to-r from-amber-600 to-amber-700 text-white border-amber-400 shadow-sm"
-                : "bg-black/50 text-stone-400 border-stone-800 hover:text-stone-200 hover:border-stone-700"
-              }`}
-          >
-            {icon}
-            <span>{t(labelKey)}</span>
-          </button>
-        ))}
-      </div>
+      <SegmentedControl<SlicingMethod>
+        options={options}
+        value={currentMethod}
+        onChange={onMethodChange}
+        gridCols={4}
+        fullWidth
+        size="sm"
+      />
     </div>
   );
 };

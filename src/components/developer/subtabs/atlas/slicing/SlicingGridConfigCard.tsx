@@ -1,5 +1,6 @@
 import React from "react";
 import { Grid } from "lucide-react";
+import { Input } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasGridConfig, SlicingMethod } from "../types";
 
@@ -34,88 +35,70 @@ export const SlicingGridConfigCard: React.FC<SlicingGridConfigCardProps> = ({
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {/* Columns */}
-        <div className="flex flex-col gap-1">
-          <label className="text-[10px] text-stone-400 font-mono uppercase">
-            {t("atlasStudioGridCols")}
-          </label>
-          <input
-            type="number"
-            min={1}
-            value={gridConfig.columns}
-            onChange={(e) => handleFieldChange("columns", parseInt(e.target.value, 10))}
-            className="w-full bg-stone-950 border border-stone-800 rounded px-2 py-1 text-xs font-mono text-amber-200 outline-none focus:border-amber-500"
-          />
-        </div>
+        <Input
+          type="number"
+          min={1}
+          value={gridConfig.columns}
+          onChange={(e) => handleFieldChange("columns", parseInt(e.target.value, 10))}
+          label={t("atlasStudioGridCols")}
+          className="font-mono text-xs text-amber-200 py-1 px-2 h-7"
+          containerClassName="gap-0.5"
+        />
 
         {/* Rows */}
-        <div className="flex flex-col gap-1">
-          <label className="text-[10px] text-stone-400 font-mono uppercase">
-            {t("atlasStudioGridRows")}
-          </label>
-          <input
-            type="number"
-            min={1}
-            value={gridConfig.rows}
-            onChange={(e) => handleFieldChange("rows", parseInt(e.target.value, 10))}
-            className="w-full bg-stone-950 border border-stone-800 rounded px-2 py-1 text-xs font-mono text-amber-200 outline-none focus:border-amber-500"
-          />
-        </div>
+        <Input
+          type="number"
+          min={1}
+          value={gridConfig.rows}
+          onChange={(e) => handleFieldChange("rows", parseInt(e.target.value, 10))}
+          label={t("atlasStudioGridRows")}
+          className="font-mono text-xs text-amber-200 py-1 px-2 h-7"
+          containerClassName="gap-0.5"
+        />
 
         {/* Cell Width */}
-        <div className="flex flex-col gap-1">
-          <label className="text-[10px] text-stone-400 font-mono uppercase">
-            {t("atlasStudioGridCellWidth")}
-          </label>
-          <input
-            type="number"
-            min={8}
-            value={gridConfig.cellWidth}
-            onChange={(e) => handleFieldChange("cellWidth", parseInt(e.target.value, 10))}
-            className="w-full bg-stone-950 border border-stone-800 rounded px-2 py-1 text-xs font-mono text-amber-200 outline-none focus:border-amber-500"
-          />
-        </div>
+        <Input
+          type="number"
+          min={8}
+          value={gridConfig.cellWidth}
+          onChange={(e) => handleFieldChange("cellWidth", parseInt(e.target.value, 10))}
+          label={t("atlasStudioGridCellWidth")}
+          className="font-mono text-xs text-amber-200 py-1 px-2 h-7"
+          containerClassName="gap-0.5"
+        />
 
         {/* Cell Height */}
-        <div className="flex flex-col gap-1">
-          <label className="text-[10px] text-stone-400 font-mono uppercase">
-            {t("atlasStudioGridCellHeight")}
-          </label>
-          <input
-            type="number"
-            min={8}
-            value={gridConfig.cellHeight}
-            onChange={(e) => handleFieldChange("cellHeight", parseInt(e.target.value, 10))}
-            className="w-full bg-stone-950 border border-stone-800 rounded px-2 py-1 text-xs font-mono text-amber-200 outline-none focus:border-amber-500"
-          />
-        </div>
+        <Input
+          type="number"
+          min={8}
+          value={gridConfig.cellHeight}
+          onChange={(e) => handleFieldChange("cellHeight", parseInt(e.target.value, 10))}
+          label={t("atlasStudioGridCellHeight")}
+          className="font-mono text-xs text-amber-200 py-1 px-2 h-7"
+          containerClassName="gap-0.5"
+        />
 
         {/* Spacing */}
-        <div className="flex flex-col gap-1">
-          <label className="text-[10px] text-stone-400 font-mono uppercase">
-            {t("atlasStudioGridSpacing")}
-          </label>
-          <input
-            type="number"
-            min={0}
-            value={gridConfig.spacing}
-            onChange={(e) => handleFieldChange("spacing", parseInt(e.target.value, 10))}
-            className="w-full bg-stone-950 border border-stone-800 rounded px-2 py-1 text-xs font-mono text-amber-200 outline-none focus:border-amber-500"
-          />
-        </div>
+        <Input
+          type="number"
+          min={0}
+          value={gridConfig.spacing}
+          onChange={(e) => handleFieldChange("spacing", parseInt(e.target.value, 10))}
+          label={t("atlasStudioGridSpacing")}
+          className="font-mono text-xs text-amber-200 py-1 px-2 h-7"
+          containerClassName="gap-0.5"
+        />
 
         {/* Safe Margin */}
-        <div className="flex flex-col gap-1">
-          <label className="text-[10px] text-stone-400 font-mono uppercase">
-            {t("atlasStudioGridSafeMargin")}
-          </label>
-          <input
-            type="number"
-            min={0}
-            value={gridConfig.safeMargin}
-            onChange={(e) => handleFieldChange("safeMargin", parseInt(e.target.value, 10))}
-            className="w-full bg-stone-950 border border-stone-800 rounded px-2 py-1 text-xs font-mono text-amber-200 outline-none focus:border-amber-500"
-          />
-        </div>
+        <Input
+          type="number"
+          min={0}
+          value={gridConfig.safeMargin}
+          onChange={(e) => handleFieldChange("safeMargin", parseInt(e.target.value, 10))}
+          label={t("atlasStudioGridSafeMargin")}
+          className="font-mono text-xs text-amber-200 py-1 px-2 h-7"
+          containerClassName="gap-0.5"
+        />
       </div>
     </div>
   );

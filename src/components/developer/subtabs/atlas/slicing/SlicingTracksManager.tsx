@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Layers, Plus, Copy, Trash2 } from "lucide-react";
-import { Button } from "@components/ui";
+import { Button, Input } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasAnimationTrackDefinition } from "../types";
 
@@ -161,79 +161,67 @@ export const SlicingTracksManager: React.FC<SlicingTracksManagerProps> = ({
 
           {/* Inputs: Name, Row, Frames, FPS */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <div>
-              <label className="text-[10px] text-stone-400 block mb-0.5 font-mono">
-                {t("atlasStudioTrackName")}
-              </label>
-              <input
-                type="text"
-                value={activeTrack.name}
-                onChange={(e) =>
-                  handleUpdateTrack(activeTrackIndex, "name", e.target.value)
-                }
-                className="w-full bg-black/70 border border-stone-800 rounded px-2 py-1 text-xs text-amber-200 font-mono"
-              />
-            </div>
+            <Input
+              type="text"
+              value={activeTrack.name}
+              onChange={(e) =>
+                handleUpdateTrack(activeTrackIndex, "name", e.target.value)
+              }
+              label={t("atlasStudioTrackName")}
+              className="font-mono text-xs text-amber-200 py-1 px-2 h-7"
+              containerClassName="gap-0.5"
+            />
 
-            <div>
-              <label className="text-[10px] text-stone-400 block mb-0.5 font-mono">
-                {t("atlasStudioTrackRow")}
-              </label>
-              <input
-                type="number"
-                value={activeTrack.row}
-                min={0}
-                max={maxRows - 1}
-                onChange={(e) =>
-                  handleUpdateTrack(
-                    activeTrackIndex,
-                    "row",
-                    parseInt(e.target.value, 10) || 0
-                  )
-                }
-                className="w-full bg-black/70 border border-stone-800 rounded px-2 py-1 text-xs text-amber-200 font-mono"
-              />
-            </div>
+            <Input
+              type="number"
+              value={activeTrack.row}
+              min={0}
+              max={maxRows - 1}
+              onChange={(e) =>
+                handleUpdateTrack(
+                  activeTrackIndex,
+                  "row",
+                  parseInt(e.target.value, 10) || 0
+                )
+              }
+              label={t("atlasStudioTrackRow")}
+              className="font-mono text-xs text-amber-200 py-1 px-2 h-7"
+              containerClassName="gap-0.5"
+            />
 
-            <div>
-              <label className="text-[10px] text-stone-400 block mb-0.5 font-mono">
-                {t("atlasStudioTrackFrames")}
-              </label>
-              <input
-                type="number"
-                value={activeTrack.frames}
-                min={1}
-                max={64}
-                onChange={(e) =>
-                  handleUpdateTrack(
-                    activeTrackIndex,
-                    "frames",
-                    parseInt(e.target.value, 10) || 1
-                  )
-                }
-                className="w-full bg-black/70 border border-stone-800 rounded px-2 py-1 text-xs text-amber-200 font-mono"
-              />
-            </div>
+            <Input
+              type="number"
+              value={activeTrack.frames}
+              min={1}
+              max={64}
+              onChange={(e) =>
+                handleUpdateTrack(
+                  activeTrackIndex,
+                  "frames",
+                  parseInt(e.target.value, 10) || 1
+                )
+              }
+              label={t("atlasStudioTrackFrames")}
+              className="font-mono text-xs text-amber-200 py-1 px-2 h-7"
+              containerClassName="gap-0.5"
+            />
 
-            <div>
-              <label className="text-[10px] text-stone-400 block mb-0.5 font-mono">
-                {t("atlasStudioTrackFps")}
-              </label>
-              <input
-                type="number"
-                value={activeTrack.fps}
-                min={1}
-                max={60}
-                onChange={(e) =>
-                  handleUpdateTrack(
-                    activeTrackIndex,
-                    "fps",
-                    parseInt(e.target.value, 10) || 8
-                  )
-                }
-                className="w-full bg-black/70 border border-stone-800 rounded px-2 py-1 text-xs text-amber-200 font-mono"
-              />
-            </div>
+            <Input
+              type="number"
+              value={activeTrack.fps}
+              min={1}
+              max={60}
+              onChange={(e) =>
+                handleUpdateTrack(
+                  activeTrackIndex,
+                  "fps",
+                  parseInt(e.target.value, 10) || 8
+                )
+              }
+              label={t("atlasStudioTrackFps")}
+              className="font-mono text-xs text-amber-200 py-1 px-2 h-7"
+              containerClassName="gap-0.5"
+            />
           </div>
 
           {/* Visual slotSpan Frame Tiles Editor */}

@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid, Pipette, FileJson } from "lucide-react";
-import { Card, CardHeader, CardContent } from "@components/ui";
+import { Card, CardHeader, CardContent, SegmentedControl } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import {
   AtlasGridConfig,
@@ -116,25 +116,19 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
     <Card variant="default" className="flex flex-col flex-1 h-full min-h-[480px]">
       {/* Dock Tabs Header */}
       <CardHeader className="p-2 border-b border-stone-800">
-        <div className="grid grid-cols-3 gap-1 w-full bg-black/60 p-1 rounded-xl border border-stone-800">
-          {tabs.map((tab) => {
-            const isActive = activeTab === tab.id || (activeTab === "preview" && tab.id === "slicing");
-            return (
-              <button
-                key={tab.id}
-                onClick={() => onTabChange(tab.id)}
-                title={tab.label}
-                className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-bold transition-all ${isActive
-                    ? "bg-gradient-to-r from-amber-600 to-amber-700 text-white border border-amber-400 shadow-md shadow-amber-950/50"
-                    : "text-stone-400 hover:text-stone-200 hover:bg-stone-900/50"
-                  }`}
-              >
-                {tab.icon}
-                <span className="truncate">{tab.shortLabel}</span>
-              </button>
-            );
-          })}
-        </div>
+        <SegmentedControl<AtlasInspectorTabId>
+          options={tabs.map((tab) => ({
+            value: tab.id,
+            label: tab.shortLabel,
+            icon: tab.icon,
+            title: tab.label,
+          }))}
+          value={activeTab === "preview" ? "slicing" : activeTab}
+          onChange={(val) => onTabChange(val)}
+          gridCols={3}
+          fullWidth
+          size="sm"
+        />
       </CardHeader>
 
       {/* Dock Content Body */}

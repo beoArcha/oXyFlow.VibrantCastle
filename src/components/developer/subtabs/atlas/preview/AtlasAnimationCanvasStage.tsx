@@ -1,4 +1,5 @@
 import React from "react";
+import { SegmentedControl } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { PreviewBackground } from "./types";
 
@@ -57,27 +58,18 @@ export const AtlasAnimationCanvasStage: React.FC<AtlasAnimationCanvasStageProps>
       />
 
       {/* Background Switcher Floating Pill */}
-      <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/75 p-1 rounded-lg border border-stone-800 text-[10px]">
-        {(["checker", "dark", "castle", "white"] as PreviewBackground[]).map((mode) => (
-          <button
-            key={mode}
-            type="button"
-            onClick={() => setBgMode(mode)}
-            className={`px-1.5 py-0.5 rounded cursor-pointer ${
-              bgMode === mode
-                ? "bg-amber-600 text-white font-bold"
-                : "text-stone-400 hover:text-stone-200"
-            }`}
-          >
-            {mode === "checker"
-              ? t("atlasStudioBgChecker")
-              : mode === "dark"
-                ? t("atlasStudioBgDark")
-                : mode === "castle"
-                  ? t("atlasStudioBgCastle")
-                  : t("atlasStudioBgWhite")}
-          </button>
-        ))}
+      <div className="absolute top-2 right-2">
+        <SegmentedControl<PreviewBackground>
+          options={[
+            { value: "checker", label: t("atlasStudioBgChecker") },
+            { value: "dark", label: t("atlasStudioBgDark") },
+            { value: "castle", label: t("atlasStudioBgCastle") },
+            { value: "white", label: t("atlasStudioBgWhite") },
+          ]}
+          value={bgMode}
+          onChange={setBgMode}
+          size="sm"
+        />
       </div>
     </div>
   );

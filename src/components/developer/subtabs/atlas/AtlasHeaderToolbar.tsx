@@ -7,7 +7,7 @@ import {
   PanelRightClose,
   PanelRightOpen,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, Badge, Button } from "@components/ui";
+import { Card, CardHeader, CardTitle, Badge, Button, FileUploadButton } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasPresetSelector } from "./AtlasPresetSelector";
 
@@ -50,27 +50,19 @@ export const AtlasHeaderToolbar: React.FC<AtlasHeaderToolbarProps> = ({
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
-          <label className="flex items-center gap-1.5 px-2.5 py-1.5 bg-black/60 hover:bg-[#1f0d06] text-stone-300 hover:text-amber-200 border border-stone-800 hover:border-amber-700 rounded-xl text-xs font-bold cursor-pointer transition-all shadow-sm">
-            <Upload size={12} />
-            <span>{t("atlasStudioUploadImage")}</span>
-            <input
-              type="file"
-              accept="image/png,image/jpeg"
-              onChange={onImageUpload}
-              className="hidden"
-            />
-          </label>
+          <FileUploadButton
+            accept="image/png,image/jpeg"
+            onChange={onImageUpload}
+            icon={<Upload size={12} />}
+            label={t("atlasStudioUploadImage")}
+          />
 
-          <label className="flex items-center gap-1.5 px-2.5 py-1.5 bg-black/60 hover:bg-[#1f0d06] text-stone-300 hover:text-amber-200 border border-stone-800 hover:border-amber-700 rounded-xl text-xs font-bold cursor-pointer transition-all shadow-sm">
-            <FileJson size={12} />
-            <span>{t("atlasStudioLoadJsonFile")}</span>
-            <input
-              type="file"
-              accept="application/json,.json"
-              onChange={onJsonUpload}
-              className="hidden"
-            />
-          </label>
+          <FileUploadButton
+            accept="application/json,.json"
+            onChange={onJsonUpload}
+            icon={<FileJson size={12} />}
+            label={t("atlasStudioLoadJsonFile")}
+          />
 
           <Button
             size="sm"

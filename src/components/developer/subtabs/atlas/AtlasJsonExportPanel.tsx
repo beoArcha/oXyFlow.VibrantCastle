@@ -9,7 +9,7 @@ import {
   Code,
   Sliders,
 } from "lucide-react";
-import { Button, Badge } from "@components/ui";
+import { Button, Badge, SegmentedControl } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import {
   AtlasGridConfig,
@@ -289,26 +289,23 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
         {/* Action Buttons */}
         <div className="flex items-center gap-1">
           {/* Mode Switcher */}
-          <div className="flex items-center bg-black/60 p-0.5 rounded-lg border border-stone-800">
-            <button
-              onClick={() => setEditorMode("formatted")}
-              className={`px-1.5 py-0.5 rounded text-[11px] font-bold flex items-center gap-1 ${editorMode === "formatted"
-                  ? "bg-amber-600 text-white"
-                  : "text-stone-400 hover:text-stone-200"
-                }`}
-            >
-              <Code size={11} /> {t("atlasStudioViewMode")}
-            </button>
-            <button
-              onClick={() => setEditorMode("raw")}
-              className={`px-1.5 py-0.5 rounded text-[11px] font-bold flex items-center gap-1 ${editorMode === "raw"
-                  ? "bg-amber-600 text-white"
-                  : "text-stone-400 hover:text-stone-200"
-                }`}
-            >
-              <Sliders size={11} /> {t("atlasStudioEditMode")}
-            </button>
-          </div>
+          <SegmentedControl<"formatted" | "raw">
+            options={[
+              {
+                value: "formatted",
+                label: t("atlasStudioViewMode"),
+                icon: <Code size={11} />,
+              },
+              {
+                value: "raw",
+                label: t("atlasStudioEditMode"),
+                icon: <Sliders size={11} />,
+              },
+            ]}
+            value={editorMode}
+            onChange={setEditorMode}
+            size="sm"
+          />
 
           {editorMode === "raw" && (
             <Button

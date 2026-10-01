@@ -8,7 +8,7 @@ import {
   ShieldCheck,
   Eye,
 } from "lucide-react";
-import { Button, Slider, Badge } from "@/components/ui";
+import { Button, Slider, Badge, Switch, SegmentedControl, ColorPickerInput } from "@/components/ui";
 import { useI18n } from "@context/I18nContext";
 import { IAtlasBackgroundConfig } from "./types";
 import { BackgroundProcessor } from "@/game/engine/meta/slicing";
@@ -45,6 +45,7 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
   const [bakedSuccess, setBakedSuccess] = useState<boolean>(false);
 
   const currentMode = backgroundConfig?.mode || "transparent";
+  const activeMode: "transparent" | "color" = currentMode === "color" || currentMode === "solid" ? "color" : "transparent";
   const currentColor = backgroundConfig?.colorHex || "#000000";
   const currentTolerance = backgroundConfig?.tolerance ?? 15;
   const currentRemoveRuntime = backgroundConfig?.removeAtRuntime ?? true;
@@ -177,30 +178,25 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
           </Badge>
         </span>
 
-        {/* Mode Buttons */}
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            onClick={() => handleModeChange("transparent")}
-            className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border text-xs font-bold transition-all ${currentMode === "transparent"
-                ? "bg-emerald-950/40 border-emerald-500 text-emerald-200 shadow-sm shadow-emerald-950/40"
-                : "bg-black/50 border-stone-800 text-stone-400 hover:text-stone-200 hover:border-stone-700"
-              }`}
-          >
-            <ShieldCheck size={14} className="text-emerald-400" />
-            <span>{t("atlasStudioBgTransparent")}</span>
-          </button>
-
-          <button
-            onClick={() => handleModeChange("color")}
-            className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border text-xs font-bold transition-all ${currentMode === "color"
-                ? "bg-amber-950/40 border-amber-500 text-amber-200 shadow-sm shadow-amber-950/40"
-                : "bg-black/50 border-stone-800 text-stone-400 hover:text-stone-200 hover:border-stone-700"
-              }`}
-          >
-            <Pipette size={14} className="text-amber-400" />
-            <span>{t("atlasStudioBgColor")}</span>
-          </button>
-        </div>
+        {/* Mode Switcher */}
+        <SegmentedControl<"transparent" | "color">
+          options={[
+            {
+              value: "transparent",
+              label: t("atlasStudioBgTransparent"),
+              icon: <ShieldCheck size={14} className="text-emerald-400" />,
+            },
+            {
+              value: "color",
+              label: t("atlasStudioBgColor"),
+              icon: <Pipette size={14} className="text-amber-400" />,
+            },
+          ]}
+          value={activeMode}
+          onChange={handleModeChange}
+          fullWidth
+          size="md"
+        />
       </div>
 
       {/* 2. Color Sampling & Tolerance Controls (when mode === 'color') */}
@@ -224,29 +220,13 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
           </div>
 
           {/* Color Hex Input & Swatch */}
-          <div className="flex items-center gap-2">
-            <div
-              className="w-8 h-8 rounded-lg border-2 border-stone-700 shadow-inner flex-shrink-0"
-              style={{ backgroundColor: currentColor }}
-              title={`${t("atlasStudioCurrentColorSampled")} ${currentColor}`}
-            />
-            <div className="flex-1 flex items-center gap-1.5">
-              <input
-                type="text"
-                value={currentColor}
-                onChange={(e) => handleColorChange(e.target.value)}
-                placeholder="#000000"
-                className="w-full bg-black/70 border border-stone-800 rounded px-2.5 py-1 text-xs text-amber-200 font-mono font-bold"
-              />
-              <input
-                type="color"
-                value={currentColor.startsWith("#") && currentColor.length === 7 ? currentColor : "#000000"}
-                onChange={(e) => handleColorChange(e.target.value)}
-                className="w-8 h-7 bg-transparent border-0 cursor-pointer rounded"
-                title={t("atlasStudioColorPickerTitle")}
-              />
-            </div>
-          </div>
+          <ColorPickerInput
+            value={currentColor}
+            onChange={handleColorChange}
+            placeholder="#000000"
+            sampleTitle={`${t("atlasStudioCurrentColorSampled")} ${currentColor}`}
+            colorPickerTitle={t("atlasStudioColorPickerTitle")}
+          />
 
           {/* Quick Presets Swatches */}
           <div className="flex items-center gap-1.5 flex-wrap">
@@ -282,16 +262,19 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
             />
           </div>
 
-          {/* Remove at runtime checkbox */}
-          <label className="flex items-center gap-2 text-xs text-stone-300 cursor-pointer pt-1 select-none">
-            <input
-              type="checkbox"
+          {/* Remove at runtime toggle */}
+          <div className="pt-1">
+            <Switch
               checked={currentRemoveRuntime}
-              onChange={(e) => handleRuntimeToggle(e.target.checked)}
-              className="accent-amber-500 rounded"
+              onCheckedChange={handleRuntimeToggle}
+              label={
+                <span className="text-[11px] text-stone-300 font-medium select-none">
+                  {t("atlasStudioBgRemoveRuntime")}
+                </span>
+              }
+              size="sm"
             />
-            <span className="text-[11px]">{t("atlasStudioBgRemoveRuntime")}</span>
-          </label>
+          </div>
         </div>
       )}
 

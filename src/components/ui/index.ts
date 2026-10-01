@@ -14,10 +14,13 @@ export * from "./Slider";
 export * from "./Input";
 export * from "./Select";
 export * from "./Switch";
+export * from "./FileUploadButton";
+export * from "./ColorPickerInput";
 
 // Navigation
 export * from "./Tabs";
 export * from "./KeyedTabs";
+export * from "./SegmentedControl";
 export * from "./LanguageSelector";
 
 // Modals & Overlays
