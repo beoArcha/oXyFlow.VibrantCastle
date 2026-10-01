@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import {
   AtlasGridConfig,
   AtlasAnimationTrackDefinition,
@@ -11,11 +11,13 @@ import {
   defaultAtlasSlicingEngine,
   IPixelBuffer,
 } from "@game/engine/meta/slicing";
-import { LoggerManager } from "@lib/logger";
-import { AssetError, ErrorCode, GameBaseError } from "@lib/errors";
+import { GameBaseError } from "@lib/errors";
+import { useAtlasTexture } from "../hooks/useAtlasTexture";
 
 export interface UseAtlasResolvedFramesParams {
   imageSrc: string;
+  image?: HTMLImageElement | null;
+  pixelBuffer?: IPixelBuffer | null;
   gridConfig?: AtlasGridConfig;
   tracks?: AtlasAnimationTrackDefinition[];
   slicingConfig?: IAtlasSlicingConfig;
@@ -33,6 +35,8 @@ export interface UseAtlasResolvedFramesParams {
 
 export function useAtlasResolvedFrames({
   imageSrc,
+  image: externalImage,
+  pixelBuffer: externalPixelBuffer,
   gridConfig,
   tracks = [],
   slicingConfig,
@@ -42,8 +46,9 @@ export function useAtlasResolvedFrames({
   onResolvedFramesChange,
   onError,
 }: UseAtlasResolvedFramesParams) {
-  const [image, setImage] = useState<HTMLImageElement | null>(null);
-  const [pixelBuffer, setPixelBuffer] = useState<IPixelBuffer | null>(null);
+  const fallbackTexture = useAtlasTexture(externalImage !== undefined ? "" : imageSrc);
+  const image = externalImage !== undefined ? externalImage : fallbackTexture.image;
+  const pixelBuffer = externalPixelBuffer !== undefined ? externalPixelBuffer : fallbackTexture.pixelBuffer;
 
   const onMetricsChangeRef = useRef(onMetricsChange);
   useEffect(() => {
@@ -55,55 +60,20 @@ export function useAtlasResolvedFrames({
     onErrorRef.current = onError;
   }, [onError]);
 
+  useEffect(() => {
+    if (externalImage === undefined) {
+      if (fallbackTexture.error) {
+        onErrorRef.current?.(fallbackTexture.error);
+      } else if (fallbackTexture.image) {
+        onErrorRef.current?.(null);
+      }
+    }
+  }, [externalImage, fallbackTexture.error, fallbackTexture.image]);
+
   const onResolvedFramesChangeRef = useRef(onResolvedFramesChange);
   useEffect(() => {
     onResolvedFramesChangeRef.current = onResolvedFramesChange;
   }, [onResolvedFramesChange]);
-
-  // Load image & extract pure pixel buffer
-  useEffect(() => {
-    const img = new Image();
-    img.src = imageSrc;
-
-    img.onerror = () => {
-      const err = new AssetError(
-        `Failed to load atlas texture from source: ${imageSrc.slice(0, 80)}`,
-        ErrorCode.ASSET_LOAD_FAILED,
-        { details: { imageSrc: imageSrc.slice(0, 100) } }
-      );
-      LoggerManager.getInstance()
-        .getLogger("AtlasStudio")
-        .error(err.message, { code: err.code, details: err.details });
-      onErrorRef.current?.(err);
-    };
-
-    img.onload = () => {
-      setImage(img);
-      onErrorRef.current?.(null);
-      LoggerManager.getInstance()
-        .getLogger("AtlasStudio")
-        .info(
-          `Atlas texture loaded successfully: ${img.naturalWidth}x${img.naturalHeight}px`,
-          { width: img.naturalWidth, height: img.naturalHeight }
-        );
-
-      if (typeof document !== "undefined") {
-        const off = document.createElement("canvas");
-        off.width = img.naturalWidth;
-        off.height = img.naturalHeight;
-        const ctx = off.getContext("2d");
-        if (ctx) {
-          ctx.drawImage(img, 0, 0);
-          const imgData = ctx.getImageData(0, 0, off.width, off.height);
-          setPixelBuffer({
-            width: imgData.width,
-            height: imgData.height,
-            data: imgData.data,
-          });
-        }
-      }
-    };
-  }, [imageSrc]);
 
   // Compute resolved frame rects using AtlasSlicingEngine
   const { resolvedFrames, sliceDuration } = useMemo(() => {

@@ -20,6 +20,7 @@ export interface AtlasInspectorDockProps {
   activeTab: AtlasInspectorTabId;
   onTabChange: (tab: AtlasInspectorTabId) => void;
   imageSrc: string;
+  image?: HTMLImageElement | null;
   assetId: string;
   metaDoc: AtlasMetaDoc;
   gridConfig: AtlasGridConfig;
@@ -60,6 +61,7 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
   activeTab,
   onTabChange,
   imageSrc,
+  image,
   assetId,
   metaDoc,
   gridConfig,
@@ -162,6 +164,7 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
         {activeTab === "background" && (
           <AtlasBackgroundPanel
             imageSrc={imageSrc}
+            image={image}
             assetId={assetId}
             backgroundConfig={backgroundConfig}
             onBackgroundConfigChange={onBackgroundConfigChange}

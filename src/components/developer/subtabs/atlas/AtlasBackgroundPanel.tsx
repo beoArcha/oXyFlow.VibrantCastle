@@ -12,9 +12,11 @@ import { Button, Slider, Badge } from "@/components/ui";
 import { useI18n } from "@context/I18nContext";
 import { IAtlasBackgroundConfig } from "./types";
 import { BackgroundProcessor } from "@/game/engine/meta/slicing";
+import { LoggerManager } from "@lib/logger";
 
 export interface AtlasBackgroundPanelProps {
   imageSrc: string;
+  image?: HTMLImageElement | null;
   assetId: string;
   backgroundConfig?: IAtlasBackgroundConfig;
   onBackgroundConfigChange: (config: IAtlasBackgroundConfig) => void;
@@ -31,6 +33,7 @@ const COMMON_PRESETS = [
 
 export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
   imageSrc,
+  image,
   assetId,
   backgroundConfig,
   onBackgroundConfigChange,
@@ -96,15 +99,21 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
     setBakedSuccess(false);
 
     try {
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.src = imageSrc;
+      let img: HTMLImageElement;
+      if (image && image.complete && image.naturalWidth > 0) {
+        img = image;
+      } else {
+        const fallbackImg = new Image();
+        fallbackImg.crossOrigin = "anonymous";
+        fallbackImg.src = imageSrc;
 
-      await new Promise<void>((resolve, reject) => {
-        if (img.complete) return resolve();
-        img.onload = () => resolve();
-        img.onerror = () => reject(new Error("Failed to load image for baking"));
-      });
+        await new Promise<void>((resolve, reject) => {
+          if (fallbackImg.complete) return resolve();
+          fallbackImg.onload = () => resolve();
+          fallbackImg.onerror = () => reject(new Error("Failed to load image for baking"));
+        });
+        img = fallbackImg;
+      }
 
       const canvas = document.createElement("canvas");
       canvas.width = img.naturalWidth || img.width;
@@ -145,7 +154,11 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
         setTimeout(() => setBakedSuccess(false), 3000);
       }, "image/png");
     } catch (err) {
-      console.error("Failed to bake clean PNG", err);
+      LoggerManager.getInstance()
+        .getLogger("AtlasStudio")
+        .error("Failed to bake clean PNG", {
+          error: err instanceof Error ? err.message : String(err),
+        });
       setIsBaking(false);
     }
   };

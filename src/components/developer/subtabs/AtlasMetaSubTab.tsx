@@ -56,6 +56,8 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
         >
           <AtlasTextureViewer
             imageSrc={state.imageSrc}
+            image={state.image}
+            pixelBuffer={state.pixelBuffer}
             gridConfig={state.gridConfig}
             tracks={state.tracks}
             slicingConfig={state.metaDoc.slicing}
@@ -97,6 +99,7 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
             {/* Live Animation Preview Player */}
             <AtlasAnimationPreview
               imageSrc={state.imageSrc}
+              image={state.image}
               gridConfig={state.gridConfig}
               tracks={state.tracks}
               selectedTrackName={state.selectedTrackName}
@@ -117,6 +120,7 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
               activeTab={state.activeInspectorTab}
               onTabChange={state.setActiveInspectorTab}
               imageSrc={state.imageSrc}
+              image={state.image}
               assetId={state.activePreset.id}
               metaDoc={state.metaDoc}
               gridConfig={state.gridConfig}
@@ -157,6 +161,7 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
       {/* 3. Bottom Zone: Animation Filmstrip & Sequence Timeline */}
       <AtlasAnimationFilmstrip
         imageSrc={state.imageSrc}
+        image={state.image}
         tracks={state.tracks}
         selectedTrackName={state.selectedTrackName}
         selectedFrameIndex={state.selectedFrameIndex}

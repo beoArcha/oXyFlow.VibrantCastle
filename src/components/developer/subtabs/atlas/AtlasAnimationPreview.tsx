@@ -24,8 +24,11 @@ import {
 } from "./types";
 import { BackgroundProcessor } from "@/game/engine/meta/slicing";
 
+import { useAtlasTexture } from "./hooks/useAtlasTexture";
+
 export interface AtlasAnimationPreviewProps {
   imageSrc: string;
+  image?: HTMLImageElement | null;
   gridConfig: AtlasGridConfig;
   tracks: AtlasAnimationTrackDefinition[];
   selectedTrackName: string | null;
@@ -50,6 +53,7 @@ type PreviewBackground = "checker" | "dark" | "castle" | "white";
  */
 export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
   imageSrc,
+  image: externalImage,
   gridConfig,
   tracks,
   selectedTrackName,
@@ -65,7 +69,9 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const offscreenCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  const [image, setImage] = useState<HTMLImageElement | null>(null);
+  const fallbackTexture = useAtlasTexture(externalImage !== undefined ? "" : imageSrc);
+  const image = externalImage !== undefined ? externalImage : fallbackTexture.image;
+
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [currentFrame, setCurrentFrame] = useState<number>(0);
   const currentFrameRef = useRef<number>(0);
@@ -82,13 +88,6 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
   const [onionSkinning, setOnionSkinning] = useState<boolean>(false);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const [isDraggingPivot, setIsDraggingPivot] = useState<boolean>(false);
-
-  // Load image
-  useEffect(() => {
-    const img = new Image();
-    img.src = imageSrc;
-    img.onload = () => setImage(img);
-  }, [imageSrc]);
 
   // Selected track definition
   const currentTrack = useMemo(() => {

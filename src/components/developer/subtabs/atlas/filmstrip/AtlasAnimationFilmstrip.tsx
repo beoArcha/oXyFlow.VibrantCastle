@@ -19,9 +19,11 @@ import {
   AtlasAnimationTrackDefinition,
   ResolvedFrameRect,
 } from "../types";
+import { useAtlasTexture } from "../hooks/useAtlasTexture";
 
 export interface AtlasAnimationFilmstripProps {
   imageSrc: string;
+  image?: HTMLImageElement | null;
   tracks: AtlasAnimationTrackDefinition[];
   selectedTrackName: string | null;
   selectedFrameIndex: number | null;
@@ -190,6 +192,7 @@ const FrameThumbnail: React.FC<FrameThumbnailProps> = ({
 
 export const AtlasAnimationFilmstrip: React.FC<AtlasAnimationFilmstripProps> = ({
   imageSrc,
+  image: externalImage,
   tracks,
   selectedTrackName,
   selectedFrameIndex,
@@ -204,13 +207,9 @@ export const AtlasAnimationFilmstrip: React.FC<AtlasAnimationFilmstripProps> = (
   onClearTrackFrames,
 }) => {
   const { t } = useI18n();
-  const [image, setImage] = useState<HTMLImageElement | null>(null);
 
-  useEffect(() => {
-    const img = new Image();
-    img.src = imageSrc;
-    img.onload = () => setImage(img);
-  }, [imageSrc]);
+  const fallbackTexture = useAtlasTexture(externalImage !== undefined ? "" : imageSrc);
+  const image = externalImage !== undefined ? externalImage : fallbackTexture.image;
 
   // Selected track
   const currentTrack = useMemo(() => {

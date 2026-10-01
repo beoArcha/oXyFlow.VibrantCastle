@@ -181,7 +181,33 @@ export function useAtlasViewerInteractions({
     return () => {
       container.removeEventListener("wheel", handleWheel);
     };
-  }, []);
+  }, [image]);
+
+  // Global window listeners during active panning (prevents cursor drag lock when mouse exits viewport)
+  useEffect(() => {
+    if (!isPanning) return;
+
+    const handleWindowMouseMove = (e: MouseEvent) => {
+      const dx = e.clientX - panStartRef.current.mouseX;
+      const dy = e.clientY - panStartRef.current.mouseY;
+      setPanOffset({
+        x: panStartRef.current.initialPanX + dx,
+        y: panStartRef.current.initialPanY + dy,
+      });
+    };
+
+    const handleWindowMouseUp = () => {
+      setIsPanning(false);
+    };
+
+    window.addEventListener("mousemove", handleWindowMouseMove);
+    window.addEventListener("mouseup", handleWindowMouseUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handleWindowMouseMove);
+      window.removeEventListener("mouseup", handleWindowMouseUp);
+    };
+  }, [isPanning]);
 
   const getTextureCoords = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!canvasRef.current || !image) return { x: 0, y: 0 };

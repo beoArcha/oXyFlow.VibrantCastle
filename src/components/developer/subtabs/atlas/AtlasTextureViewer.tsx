@@ -22,10 +22,14 @@ import {
 } from "./viewer";
 import { GameBaseError } from "@lib/errors";
 
+import { IPixelBuffer } from "@game/engine/meta/slicing";
+
 export type { SlicerViewerTool };
 
 export interface AtlasTextureViewerProps {
   imageSrc: string;
+  image?: HTMLImageElement | null;
+  pixelBuffer?: IPixelBuffer | null;
   gridConfig?: AtlasGridConfig;
   tracks?: AtlasAnimationTrackDefinition[];
   slicingConfig?: IAtlasSlicingConfig;
@@ -89,6 +93,8 @@ export interface AtlasTextureViewerProps {
 
 export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
   imageSrc,
+  image: externalImage,
+  pixelBuffer: externalPixelBuffer,
   gridConfig,
   tracks = [],
   slicingConfig,
@@ -123,6 +129,8 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
   // Hook managing texture image loading and frame slicing resolution
   const { image, pixelBuffer, resolvedFrames } = useAtlasResolvedFrames({
     imageSrc,
+    image: externalImage,
+    pixelBuffer: externalPixelBuffer,
     gridConfig,
     tracks,
     slicingConfig,
