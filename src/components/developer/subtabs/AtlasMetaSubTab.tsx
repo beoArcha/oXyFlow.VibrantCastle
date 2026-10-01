@@ -117,42 +117,14 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
 
             {/* Technical Inspector Dock (Tabs: Slicing, Background, JSON) */}
             <AtlasInspectorDock
-              activeTab={state.activeInspectorTab}
-              onTabChange={state.setActiveInspectorTab}
-              imageSrc={state.imageSrc}
-              image={state.image}
-              assetId={state.activePreset.id}
-              metaDoc={state.metaDoc}
-              gridConfig={state.gridConfig}
-              tracks={state.tracks}
-              selectedTrackName={state.selectedTrackName}
-              selectedFrameIndex={state.selectedFrameIndex}
-              origin={state.origin}
-              backgroundConfig={state.metaDoc.backgroundConfig}
-              slicingConfig={state.metaDoc.slicing}
-              resolvedFrames={state.resolvedFrames}
-              onGridConfigChange={state.setGridConfig}
-              onTracksChange={state.setTracks}
-              onSelectTrack={(name) => {
-                state.setSelectedTrackName(name);
-                state.setSelectedFrameIndex(0);
-              }}
-              onSelectFrame={(frameIdx) => state.setSelectedFrameIndex(frameIdx)}
-              onOriginChange={state.setOrigin}
-              onBackgroundConfigChange={state.handleBackgroundConfigChange}
-              onSlicingConfigChange={state.handleSlicingConfigChange}
-              onMetaDocChange={state.setMetaDoc}
-              onResetDefaults={state.handleResetDefaults}
+              tracksSlice={state.tracksSlice}
+              presetSlice={state.presetSlice}
+              slicingSlice={state.slicingSlice}
+              textureSlice={state.textureSlice}
+              uiSlice={state.uiSlice}
               onRequestEyedropper={() => {
                 state.setViewerTool("eyedropper");
               }}
-              onBakeIslands={state.handleBakeIslands}
-              onClusterRowsIntoTracks={() =>
-                state.handleClusterIslandsIntoTracks(state.resolvedFrames)
-              }
-              onAddFreeformFrame={state.handleAddFreeformFrame}
-              onDeleteFreeformFrame={state.handleDeleteFreeformFrame}
-              onAssignFramesToTrack={state.handleAssignFramesToTrack}
             />
           </div>
         )}

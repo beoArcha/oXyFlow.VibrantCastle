@@ -21,6 +21,13 @@ export interface FreeformFrameInput {
   pivot?: { x: number; y: number };
 }
 
+export interface ISliceMetrics {
+  frameCount: number;
+  durationMs: number;
+  textureWidth?: number;
+  textureHeight?: number;
+}
+
 export interface UseAtlasSlicingConfigOptions {
   metaDoc: AtlasMetaDoc;
   setMetaDoc: React.Dispatch<React.SetStateAction<AtlasMetaDoc>>;
@@ -48,23 +55,13 @@ export function useAtlasSlicingConfig({
   const studioLogger = useMemo(() => LoggerManager.getInstance().getLogger("AtlasStudio"), []);
 
   const [resolvedFrames, setResolvedFrames] = useState<ResolvedFrameRect[]>([]);
-  const [sliceMetrics, setSliceMetrics] = useState<{
-    frameCount: number;
-    durationMs: number;
-    textureWidth?: number;
-    textureHeight?: number;
-  }>({
+  const [sliceMetrics, setSliceMetrics] = useState<ISliceMetrics>({
     frameCount: 0,
     durationMs: 0,
   });
 
   const handleMetricsChange = useCallback(
-    (metrics: {
-      frameCount: number;
-      durationMs: number;
-      textureWidth?: number;
-      textureHeight?: number;
-    }) => {
+    (metrics: ISliceMetrics) => {
       setSliceMetrics((prev) => {
         if (
           prev.frameCount === metrics.frameCount &&
@@ -157,8 +154,9 @@ export function useAtlasSlicingConfig({
   );
 
   const handleBakeIslands = useCallback(
-    (islands: ResolvedFrameRect[]) => {
-      const bakedFrames = islands.map((isl, idx) => ({
+    (islands?: ResolvedFrameRect[]) => {
+      const targetIslands = islands || resolvedFrames;
+      const bakedFrames = targetIslands.map((isl, idx) => ({
         id: isl.id || `island_${idx}`,
         x: Math.round(isl.x),
         y: Math.round(isl.y),
@@ -182,13 +180,14 @@ export function useAtlasSlicingConfig({
         `Baked ${bakedFrames.length} auto-island frames into static slicing frames`
       );
     },
-    [setMetaDoc, studioLogger]
+    [resolvedFrames, setMetaDoc, studioLogger]
   );
 
   const handleClusterIslandsIntoTracks = useCallback(
-    (detectedIslands: ResolvedFrameRect[]) => {
-      if (detectedIslands.length === 0) return;
-      const clusters = AutoIslandSlicingStrategy.clusterIslandsIntoRows(detectedIslands);
+    (detectedIslands?: ResolvedFrameRect[]) => {
+      const islands = detectedIslands || resolvedFrames;
+      if (islands.length === 0) return;
+      const clusters = AutoIslandSlicingStrategy.clusterIslandsIntoRows(islands);
       if (clusters.length === 0) return;
 
       const newTracks: AtlasAnimationTrackDefinition[] = clusters.map((c) => ({
@@ -227,10 +226,10 @@ export function useAtlasSlicingConfig({
       }));
 
       studioLogger.info(
-        `Clustered ${detectedIslands.length} islands into ${newTracks.length} animation tracks`
+        `Clustered ${islands.length} islands into ${newTracks.length} animation tracks`
       );
     },
-    [setTracks, setSelectedTrackName, setSelectedFrameIndex, setMetaDoc, studioLogger]
+    [resolvedFrames, setTracks, setSelectedTrackName, setSelectedFrameIndex, setMetaDoc, studioLogger]
   );
 
   const handleDeleteFreeformFrame = useCallback(

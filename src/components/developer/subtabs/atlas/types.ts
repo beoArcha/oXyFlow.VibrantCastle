@@ -34,6 +34,8 @@ export interface AtlasPresetItem {
   defaultMeta: AtlasMetaDoc;
 }
 
+export type AtlasAssetPreset = AtlasPresetItem;
+
 export interface SelectedCellInfo {
   row: number;
   col: number;

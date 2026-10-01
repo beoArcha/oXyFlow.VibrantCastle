@@ -200,6 +200,23 @@ describe("Atlas Studio Decomposed Slices & Animation Preview Bridge", () => {
       expect(typeof result.current.handleAddFreeformFrame).toBe("function");
       expect(typeof result.current.handleBakeIslands).toBe("function");
       expect(typeof result.current.handleAssignFramesToTrack).toBe("function");
+
+      // Verify domain slices
+      expect(result.current.tracksSlice).toBeDefined();
+      expect(result.current.tracksSlice.tracks.length).toBeGreaterThan(0);
+      expect(typeof result.current.tracksSlice.handleCreateTrackFromSelection).toBe("function");
+
+      expect(result.current.presetSlice).toBeDefined();
+      expect(result.current.presetSlice.selectedPresetId).toBe("valen");
+
+      expect(result.current.textureSlice).toBeDefined();
+      expect(typeof result.current.textureSlice.isTextureLoading).toBe("boolean");
+
+      expect(result.current.slicingSlice).toBeDefined();
+      expect(typeof result.current.slicingSlice.handleBakeIslands).toBe("function");
+
+      expect(result.current.uiSlice).toBeDefined();
+      expect(result.current.uiSlice.activeInspectorTab).toBe("slicing");
     });
   });
 });

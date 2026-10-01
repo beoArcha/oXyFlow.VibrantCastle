@@ -4,12 +4,14 @@ import { SegmentedControl } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { SlicingMethod } from "../types";
 
-export interface SlicingMethodTabsProps {
+export interface AtlasSlicingMethodTabsProps {
   currentMethod: SlicingMethod;
   onMethodChange: (method: SlicingMethod) => void;
 }
 
-export const SlicingMethodTabs: React.FC<SlicingMethodTabsProps> = ({
+export type SlicingMethodTabsProps = AtlasSlicingMethodTabsProps;
+
+export const AtlasSlicingMethodTabs: React.FC<AtlasSlicingMethodTabsProps> = ({
   currentMethod,
   onMethodChange,
 }) => {
@@ -56,4 +58,5 @@ export const SlicingMethodTabs: React.FC<SlicingMethodTabsProps> = ({
   );
 };
 
-export default SlicingMethodTabs;
+export const SlicingMethodTabs = AtlasSlicingMethodTabs;
+export default AtlasSlicingMethodTabs;

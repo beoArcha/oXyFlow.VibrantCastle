@@ -4,7 +4,7 @@ import { Button, Input } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasAnimationTrackDefinition } from "../types";
 
-export interface SlicingTracksManagerProps {
+export interface AtlasSlicingTracksManagerProps {
   tracks: AtlasAnimationTrackDefinition[];
   selectedTrackName: string | null;
   maxRows: number;
@@ -12,7 +12,9 @@ export interface SlicingTracksManagerProps {
   onSelectTrack: (name: string) => void;
 }
 
-export const SlicingTracksManager: React.FC<SlicingTracksManagerProps> = ({
+export type SlicingTracksManagerProps = AtlasSlicingTracksManagerProps;
+
+export const AtlasSlicingTracksManager: React.FC<AtlasSlicingTracksManagerProps> = ({
   tracks,
   selectedTrackName,
   maxRows,
@@ -285,4 +287,5 @@ export const SlicingTracksManager: React.FC<SlicingTracksManagerProps> = ({
   );
 };
 
-export default SlicingTracksManager;
+export const SlicingTracksManager = AtlasSlicingTracksManager;
+export default AtlasSlicingTracksManager;

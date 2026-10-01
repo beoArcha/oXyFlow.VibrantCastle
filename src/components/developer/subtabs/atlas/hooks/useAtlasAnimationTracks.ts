@@ -3,32 +3,12 @@ import {
   AtlasAnimationTrackDefinition,
   AtlasMetaDoc,
   AtlasTrackType,
+  CreateTrackSelectionParams,
+  AssignSelectionParams,
+  MergeWideParams,
 } from "../types";
 
-export interface CreateTrackSelectionParams {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  row?: number;
-  framesCount?: number;
-}
-
-export interface AssignSelectionParams {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  row?: number;
-}
-
-export interface MergeWideParams {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  span: number;
-}
+export type ToggleFrameTarget = { col: number; row: number };
 
 /**
  * Parses animation tracks from an AtlasMetaDoc safely without `any` casts.

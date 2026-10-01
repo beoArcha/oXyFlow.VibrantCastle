@@ -4,7 +4,7 @@ import { Button } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { IFreeformFrameRect } from "@game/engine/meta/types";
 
-export interface SlicingFreeformTableProps {
+export interface AtlasSlicingFreeformTableProps {
   frames: IFreeformFrameRect[];
   selectedFrameIds: string[];
   onToggleSelectFrame: (id: string) => void;
@@ -20,7 +20,9 @@ export interface SlicingFreeformTableProps {
   onSelectFrame?: (frameIdx: number) => void;
 }
 
-export const SlicingFreeformTable: React.FC<SlicingFreeformTableProps> = ({
+export type SlicingFreeformTableProps = AtlasSlicingFreeformTableProps;
+
+export const AtlasSlicingFreeformTable: React.FC<AtlasSlicingFreeformTableProps> = ({
   frames,
   selectedFrameIds,
   onToggleSelectFrame,
@@ -180,4 +182,5 @@ export const SlicingFreeformTable: React.FC<SlicingFreeformTableProps> = ({
   );
 };
 
-export default SlicingFreeformTable;
+export const SlicingFreeformTable = AtlasSlicingFreeformTable;
+export default AtlasSlicingFreeformTable;

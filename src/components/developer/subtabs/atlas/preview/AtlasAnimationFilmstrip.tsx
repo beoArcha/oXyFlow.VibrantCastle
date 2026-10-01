@@ -1,7 +1,6 @@
-import React, { useRef, useEffect, useMemo, useState } from "react";
+import React, { useRef, useEffect, useMemo } from "react";
 import {
   Film,
-  Play,
   Repeat,
   ArrowLeftRight,
   ChevronLeft,
@@ -9,7 +8,6 @@ import {
   Copy,
   Trash2,
   Clock,
-  Sparkles,
   Info,
 } from "lucide-react";
 import { Button, Badge } from "@components/ui";

@@ -16,33 +16,49 @@ import { AtlasSlicingInspector } from "./AtlasSlicingInspector";
 import { AtlasBackgroundPanel } from "./AtlasBackgroundPanel";
 import { AtlasJsonExportPanel } from "./AtlasJsonExportPanel";
 
+import {
+  AtlasTracksSlice,
+  AtlasPresetSlice,
+  AtlasTextureSlice,
+  AtlasSlicingSlice,
+  AtlasUiSlice,
+} from "./hooks/useAtlasStudioState";
+
 export interface AtlasInspectorDockProps {
-  activeTab: AtlasInspectorTabId;
-  onTabChange: (tab: AtlasInspectorTabId) => void;
-  imageSrc: string;
+  // Domain Slices (Structured Architecture)
+  tracksSlice?: AtlasTracksSlice;
+  presetSlice?: AtlasPresetSlice;
+  slicingSlice?: AtlasSlicingSlice;
+  textureSlice?: AtlasTextureSlice;
+  uiSlice?: AtlasUiSlice;
+
+  // Individual props (optional when slices provided, backward compatible)
+  activeTab?: AtlasInspectorTabId;
+  onTabChange?: (tab: AtlasInspectorTabId) => void;
+  imageSrc?: string;
   image?: HTMLImageElement | null;
-  assetId: string;
-  metaDoc: AtlasMetaDoc;
-  gridConfig: AtlasGridConfig;
-  tracks: AtlasAnimationTrackDefinition[];
-  selectedTrackName: string | null;
-  selectedFrameIndex: number | null;
-  origin: AtlasOriginDefinition;
+  assetId?: string;
+  metaDoc?: AtlasMetaDoc;
+  gridConfig?: AtlasGridConfig;
+  tracks?: AtlasAnimationTrackDefinition[];
+  selectedTrackName?: string | null;
+  selectedFrameIndex?: number | null;
+  origin?: AtlasOriginDefinition;
   backgroundConfig?: IAtlasBackgroundConfig;
   slicingConfig?: IAtlasSlicingConfig;
   resolvedFrames?: ResolvedFrameRect[];
-  onGridConfigChange: (grid: AtlasGridConfig) => void;
-  onTracksChange: (tracks: AtlasAnimationTrackDefinition[]) => void;
-  onSelectTrack: (trackName: string) => void;
-  onSelectFrame: (frameIdx: number) => void;
-  onOriginChange: (origin: AtlasOriginDefinition) => void;
-  onBackgroundConfigChange: (config: IAtlasBackgroundConfig) => void;
-  onSlicingConfigChange: (config: IAtlasSlicingConfig) => void;
-  onMetaDocChange: (doc: AtlasMetaDoc) => void;
-  onResetDefaults: () => void;
-  onRequestEyedropper: () => void;
-  onBakeIslands?: (islands: ResolvedFrameRect[]) => void;
-  onClusterRowsIntoTracks?: () => void;
+  onGridConfigChange?: (grid: AtlasGridConfig) => void;
+  onTracksChange?: (tracks: AtlasAnimationTrackDefinition[]) => void;
+  onSelectTrack?: (trackName: string) => void;
+  onSelectFrame?: (frameIdx: number) => void;
+  onOriginChange?: (origin: AtlasOriginDefinition) => void;
+  onBackgroundConfigChange?: (config: IAtlasBackgroundConfig) => void;
+  onSlicingConfigChange?: (config: IAtlasSlicingConfig) => void;
+  onMetaDocChange?: (doc: AtlasMetaDoc) => void;
+  onResetDefaults?: () => void;
+  onRequestEyedropper?: () => void;
+  onBakeIslands?: (islands?: ResolvedFrameRect[]) => void;
+  onClusterRowsIntoTracks?: (detectedIslands?: ResolvedFrameRect[]) => void;
   onAddFreeformFrame?: (frame: {
     x: number;
     y: number;
@@ -58,6 +74,11 @@ export interface AtlasInspectorDockProps {
 }
 
 export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
+  tracksSlice,
+  presetSlice,
+  slicingSlice,
+  textureSlice,
+  uiSlice,
   activeTab,
   onTabChange,
   imageSrc,
@@ -91,6 +112,64 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
 }) => {
   const { t } = useI18n();
 
+  // Resolve values from slices or direct props
+  const effTab = activeTab ?? uiSlice?.activeInspectorTab ?? "slicing";
+  const effOnTabChange = onTabChange ?? uiSlice?.setActiveInspectorTab ?? (() => {});
+
+  const effTracks = tracks ?? tracksSlice?.tracks ?? [];
+  const effSelectedTrackName = selectedTrackName !== undefined ? selectedTrackName : (tracksSlice?.selectedTrackName ?? null);
+  const effSelectedFrameIndex = selectedFrameIndex !== undefined ? selectedFrameIndex : (tracksSlice?.selectedFrameIndex ?? null);
+  const effOnTracksChange = onTracksChange ?? tracksSlice?.setTracks ?? (() => {});
+  const effOnSelectTrack = onSelectTrack ?? tracksSlice?.setSelectedTrackName ?? (() => {});
+  const effOnSelectFrame = onSelectFrame ?? tracksSlice?.setSelectedFrameIndex ?? (() => {});
+
+  const effAssetId = assetId ?? presetSlice?.activePreset?.id ?? "";
+  const effMetaDoc: AtlasMetaDoc = metaDoc ?? presetSlice?.metaDoc ?? {
+    characterId: effAssetId,
+    entityType: "humanoid",
+    version: "1.0",
+    description: "",
+    atlas: {
+      columns: 1,
+      rows: 1,
+      cellWidth: 32,
+      cellHeight: 32,
+      spacing: 0,
+      safeMargin: 0,
+      background: "transparent",
+    },
+    animations: {},
+  };
+  const effOrigin: AtlasOriginDefinition = origin ?? presetSlice?.origin ?? {
+    type: "center",
+    normalized: { x: 0.5, y: 0.5 },
+  };
+  const effOnMetaDocChange = onMetaDocChange ?? presetSlice?.setMetaDoc ?? (() => {});
+  const effOnResetDefaults = onResetDefaults ?? presetSlice?.handleResetDefaults ?? (() => {});
+
+  const effImageSrc = imageSrc ?? presetSlice?.imageSrc ?? "";
+  const effImage = image !== undefined ? image : (textureSlice?.image ?? null);
+
+  const effGridConfig: AtlasGridConfig = gridConfig ?? slicingSlice?.gridConfig ?? {
+    columns: 1,
+    rows: 1,
+    cellWidth: 32,
+    cellHeight: 32,
+    spacing: 0,
+    safeMargin: 0,
+  };
+  const effSlicingConfig = slicingConfig ?? effMetaDoc.slicing;
+  const effBackgroundConfig = backgroundConfig ?? effMetaDoc.backgroundConfig;
+  const effResolvedFrames = resolvedFrames ?? slicingSlice?.resolvedFrames ?? [];
+  const effOnGridConfigChange = onGridConfigChange ?? slicingSlice?.setGridConfig ?? (() => {});
+  const effOnSlicingConfigChange = onSlicingConfigChange ?? slicingSlice?.handleSlicingConfigChange ?? (() => {});
+  const effOnBackgroundConfigChange = onBackgroundConfigChange ?? slicingSlice?.handleBackgroundConfigChange ?? (() => {});
+  const effOnBakeIslands = onBakeIslands ?? slicingSlice?.handleBakeIslands;
+  const effOnClusterRowsIntoTracks = onClusterRowsIntoTracks ?? slicingSlice?.handleClusterIslandsIntoTracks;
+  const effOnAddFreeformFrame = onAddFreeformFrame ?? slicingSlice?.handleAddFreeformFrame;
+  const effOnDeleteFreeformFrame = onDeleteFreeformFrame ?? slicingSlice?.handleDeleteFreeformFrame;
+  const effOnAssignFramesToTrack = onAssignFramesToTrack ?? slicingSlice?.handleAssignFramesToTrack;
+
   const tabs: { id: AtlasInspectorTabId; label: string; shortLabel: string; icon: React.ReactNode }[] = [
     {
       id: "slicing",
@@ -123,8 +202,8 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
             icon: tab.icon,
             title: tab.label,
           }))}
-          value={activeTab === "preview" ? "slicing" : activeTab}
-          onChange={(val) => onTabChange(val)}
+          value={effTab === "preview" ? "slicing" : effTab}
+          onChange={(val) => effOnTabChange(val)}
           gridCols={3}
           fullWidth
           size="sm"
@@ -133,50 +212,50 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
 
       {/* Dock Content Body */}
       <CardContent className="p-3 overflow-y-auto custom-scrollbar flex-1 max-h-[750px]">
-        {(activeTab === "slicing" || activeTab === "preview") && (
+        {(effTab === "slicing" || effTab === "preview") && (
           <AtlasSlicingInspector
-            slicingConfig={slicingConfig}
-            gridConfig={gridConfig}
-            tracks={tracks}
-            selectedTrackName={selectedTrackName}
-            selectedFrameIndex={selectedFrameIndex}
-            resolvedFrames={resolvedFrames}
-            onSlicingConfigChange={onSlicingConfigChange}
-            onGridConfigChange={onGridConfigChange}
-            onTracksChange={onTracksChange}
-            onSelectTrack={onSelectTrack}
-            onSelectFrame={onSelectFrame}
-            onBakeIslands={onBakeIslands}
-            onClusterRowsIntoTracks={onClusterRowsIntoTracks}
-            onAddFreeformFrame={onAddFreeformFrame}
+            slicingConfig={effSlicingConfig}
+            gridConfig={effGridConfig}
+            tracks={effTracks}
+            selectedTrackName={effSelectedTrackName}
+            selectedFrameIndex={effSelectedFrameIndex}
+            resolvedFrames={effResolvedFrames}
+            onSlicingConfigChange={effOnSlicingConfigChange}
+            onGridConfigChange={effOnGridConfigChange}
+            onTracksChange={effOnTracksChange}
+            onSelectTrack={effOnSelectTrack}
+            onSelectFrame={effOnSelectFrame}
+            onBakeIslands={effOnBakeIslands}
+            onClusterRowsIntoTracks={effOnClusterRowsIntoTracks}
+            onAddFreeformFrame={effOnAddFreeformFrame}
             onUpdateFreeformFrame={onUpdateFreeformFrame}
-            onDeleteFreeformFrame={onDeleteFreeformFrame}
-            onAssignFramesToTrack={onAssignFramesToTrack}
+            onDeleteFreeformFrame={effOnDeleteFreeformFrame}
+            onAssignFramesToTrack={effOnAssignFramesToTrack}
           />
         )}
 
-        {activeTab === "background" && (
+        {effTab === "background" && (
           <AtlasBackgroundPanel
-            imageSrc={imageSrc}
-            image={image}
-            assetId={assetId}
-            backgroundConfig={backgroundConfig}
-            onBackgroundConfigChange={onBackgroundConfigChange}
-            onRequestEyedropper={onRequestEyedropper}
+            imageSrc={effImageSrc}
+            image={effImage}
+            assetId={effAssetId}
+            backgroundConfig={effBackgroundConfig}
+            onBackgroundConfigChange={effOnBackgroundConfigChange}
+            onRequestEyedropper={onRequestEyedropper ?? (() => {})}
           />
         )}
 
-        {activeTab === "json" && (
+        {effTab === "json" && (
           <AtlasJsonExportPanel
-            metaDoc={metaDoc}
-            gridConfig={gridConfig}
-            tracks={tracks}
-            origin={origin}
-            assetId={assetId}
-            slicingConfig={slicingConfig}
-            backgroundConfig={backgroundConfig}
-            onMetaDocChange={onMetaDocChange}
-            onResetDefaults={onResetDefaults}
+            metaDoc={effMetaDoc}
+            gridConfig={effGridConfig}
+            tracks={effTracks}
+            origin={effOrigin}
+            assetId={effAssetId}
+            slicingConfig={effSlicingConfig}
+            backgroundConfig={effBackgroundConfig}
+            onMetaDocChange={effOnMetaDocChange}
+            onResetDefaults={effOnResetDefaults}
           />
         )}
       </CardContent>

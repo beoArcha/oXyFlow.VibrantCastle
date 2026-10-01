@@ -8,12 +8,12 @@ import {
 } from "./types";
 import { IFreeformFrameRect } from "@game/engine/meta/types";
 import {
-  SlicingMethodTabs,
-  SlicingGridConfigCard,
-  SlicingAutoIslandsCard,
-  SlicingTrackAssignmentBar,
-  SlicingFreeformTable,
-  SlicingTracksManager,
+  AtlasSlicingMethodTabs,
+  AtlasSlicingGridConfigCard,
+  AtlasSlicingAutoIslandsCard,
+  AtlasSlicingTrackAssignmentBar,
+  AtlasSlicingFreeformTable,
+  AtlasSlicingTracksManager,
 } from "./slicing";
 
 export interface AtlasSlicingInspectorProps {
@@ -28,8 +28,8 @@ export interface AtlasSlicingInspectorProps {
   onTracksChange: (tracks: AtlasAnimationTrackDefinition[]) => void;
   onSelectTrack: (trackName: string) => void;
   onSelectFrame?: (frameIdx: number) => void;
-  onBakeIslands?: (islands: ResolvedFrameRect[]) => void;
-  onClusterRowsIntoTracks?: () => void;
+  onBakeIslands?: (islands?: ResolvedFrameRect[]) => void;
+  onClusterRowsIntoTracks?: (detectedIslands?: ResolvedFrameRect[]) => void;
   onAddFreeformFrame?: (frame: {
     x: number;
     y: number;
@@ -244,14 +244,14 @@ export const AtlasSlicingInspector: React.FC<AtlasSlicingInspectorProps> = ({
   return (
     <div className="flex flex-col gap-3.5">
       {/* 1. Slicing Strategy Tabs */}
-      <SlicingMethodTabs
+      <AtlasSlicingMethodTabs
         currentMethod={currentMethod}
         onMethodChange={handleMethodChange}
       />
 
       {/* 2. Strategy-Specific Config Panel */}
       {(currentMethod === "by_count" || currentMethod === "by_cell_size") && (
-        <SlicingGridConfigCard
+        <AtlasSlicingGridConfigCard
           gridConfig={gridConfig}
           method={currentMethod}
           onGridConfigChange={onGridConfigChange}
@@ -259,18 +259,18 @@ export const AtlasSlicingInspector: React.FC<AtlasSlicingInspectorProps> = ({
       )}
 
       {currentMethod === "auto_islands" && (
-        <SlicingAutoIslandsCard
+        <AtlasSlicingAutoIslandsCard
           slicingConfig={slicingConfig}
           detectedIslands={detectedIslands}
           bakeSuccess={bakeSuccess}
           onBakeAllIslands={handleBakeAllIslands}
-          onClusterRowsIntoTracks={onClusterRowsIntoTracks}
+          onClusterRowsIntoTracks={onClusterRowsIntoTracks ? () => onClusterRowsIntoTracks(detectedIslands) : undefined}
           onSlicingConfigChange={onSlicingConfigChange}
         />
       )}
 
       {currentMethod === "freeform_rects" && (
-        <SlicingFreeformTable
+        <AtlasSlicingFreeformTable
           frames={freeformFramesList}
           selectedFrameIds={selectedFrameIds}
           onToggleSelectFrame={(id) =>
@@ -288,7 +288,7 @@ export const AtlasSlicingInspector: React.FC<AtlasSlicingInspectorProps> = ({
       )}
 
       {/* 3. Floating Track Assignment Bar (shown when frames are selected) */}
-      <SlicingTrackAssignmentBar
+      <AtlasSlicingTrackAssignmentBar
         selectedFrameIds={selectedFrameIds}
         tracks={tracks}
         newTrackName={newTrackName}
@@ -299,7 +299,7 @@ export const AtlasSlicingInspector: React.FC<AtlasSlicingInspectorProps> = ({
       />
 
       {/* 4. Animation Tracks Manager */}
-      <SlicingTracksManager
+      <AtlasSlicingTracksManager
         tracks={tracks}
         selectedTrackName={selectedTrackName}
         maxRows={gridConfig.rows}

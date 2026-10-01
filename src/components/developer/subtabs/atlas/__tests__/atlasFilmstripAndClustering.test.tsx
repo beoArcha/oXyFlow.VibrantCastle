@@ -3,7 +3,7 @@ import React from "react";
 import { AutoIslandSlicingStrategy } from "@game/engine/meta/slicing";
 import { ResolvedFrameRect } from "../types";
 import { useAtlasAnimationTracks } from "../hooks/useAtlasAnimationTracks";
-import { AtlasAnimationFilmstrip } from "../filmstrip/AtlasAnimationFilmstrip";
+import { AtlasAnimationFilmstrip } from "../preview/AtlasAnimationFilmstrip";
 import {
   renderCustomHook,
   renderIntoDom,

@@ -4,13 +4,15 @@ import { Input } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasGridConfig, SlicingMethod } from "../types";
 
-export interface SlicingGridConfigCardProps {
+export interface AtlasSlicingGridConfigCardProps {
   gridConfig: AtlasGridConfig;
   method: SlicingMethod;
   onGridConfigChange: (grid: AtlasGridConfig) => void;
 }
 
-export const SlicingGridConfigCard: React.FC<SlicingGridConfigCardProps> = ({
+export type SlicingGridConfigCardProps = AtlasSlicingGridConfigCardProps;
+
+export const AtlasSlicingGridConfigCard: React.FC<AtlasSlicingGridConfigCardProps> = ({
   gridConfig,
   method,
   onGridConfigChange,
@@ -104,4 +106,5 @@ export const SlicingGridConfigCard: React.FC<SlicingGridConfigCardProps> = ({
   );
 };
 
-export default SlicingGridConfigCard;
+export const SlicingGridConfigCard = AtlasSlicingGridConfigCard;
+export default AtlasSlicingGridConfigCard;

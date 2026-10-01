@@ -4,7 +4,7 @@ import { Button, Badge, Select } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasAnimationTrackDefinition } from "../types";
 
-export interface SlicingTrackAssignmentBarProps {
+export interface AtlasSlicingTrackAssignmentBarProps {
   selectedFrameIds: string[];
   tracks: AtlasAnimationTrackDefinition[];
   newTrackName: string;
@@ -14,7 +14,9 @@ export interface SlicingTrackAssignmentBarProps {
   onClearSelection: () => void;
 }
 
-export const SlicingTrackAssignmentBar: React.FC<SlicingTrackAssignmentBarProps> = ({
+export type SlicingTrackAssignmentBarProps = AtlasSlicingTrackAssignmentBarProps;
+
+export const AtlasSlicingTrackAssignmentBar: React.FC<AtlasSlicingTrackAssignmentBarProps> = ({
   selectedFrameIds,
   tracks,
   newTrackName,
@@ -93,4 +95,5 @@ export const SlicingTrackAssignmentBar: React.FC<SlicingTrackAssignmentBarProps>
   );
 };
 
-export default SlicingTrackAssignmentBar;
+export const SlicingTrackAssignmentBar = AtlasSlicingTrackAssignmentBar;
+export default AtlasSlicingTrackAssignmentBar;

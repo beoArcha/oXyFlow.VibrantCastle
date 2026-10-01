@@ -5,3 +5,4 @@ export * from "./AtlasAnimationPlaybackControls";
 export * from "./AtlasAnimationFrameScrubber";
 export * from "./AtlasAnimationSpeedScale";
 export * from "./AtlasAnimationAnchorPresets";
+export * from "./AtlasAnimationFilmstrip";

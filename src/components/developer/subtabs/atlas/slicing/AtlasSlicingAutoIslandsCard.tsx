@@ -4,7 +4,7 @@ import { Button, Badge, Input } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { IAtlasSlicingConfig, ResolvedFrameRect } from "../types";
 
-export interface SlicingAutoIslandsCardProps {
+export interface AtlasSlicingAutoIslandsCardProps {
   slicingConfig?: IAtlasSlicingConfig;
   detectedIslands: ResolvedFrameRect[];
   bakeSuccess: boolean;
@@ -13,7 +13,9 @@ export interface SlicingAutoIslandsCardProps {
   onSlicingConfigChange: (config: IAtlasSlicingConfig) => void;
 }
 
-export const SlicingAutoIslandsCard: React.FC<SlicingAutoIslandsCardProps> = ({
+export type SlicingAutoIslandsCardProps = AtlasSlicingAutoIslandsCardProps;
+
+export const AtlasSlicingAutoIslandsCard: React.FC<AtlasSlicingAutoIslandsCardProps> = ({
   slicingConfig,
   detectedIslands,
   bakeSuccess,
@@ -108,4 +110,5 @@ export const SlicingAutoIslandsCard: React.FC<SlicingAutoIslandsCardProps> = ({
   );
 };
 
-export default SlicingAutoIslandsCard;
+export const SlicingAutoIslandsCard = AtlasSlicingAutoIslandsCard;
+export default AtlasSlicingAutoIslandsCard;
