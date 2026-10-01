@@ -26,6 +26,28 @@ export function setupDomEnvironment() {
   globalThis.CustomEvent = win.CustomEvent as any;
   globalThis.MouseEvent = win.MouseEvent as any;
   globalThis.KeyboardEvent = win.KeyboardEvent as any;
+  globalThis.FileReader =
+    globalThis.FileReader ||
+    (class MockFileReader {
+      onload: ((e: any) => void) | null = null;
+      onerror: ((e: any) => void) | null = null;
+      readAsText(file: any) {
+        if (typeof file?.text === "function") {
+          file
+            .text()
+            .then((text: string) => {
+              this.onload?.({ target: { result: text } } as any);
+            })
+            .catch((err: any) => {
+              this.onerror?.(err);
+            });
+        } else {
+          setTimeout(() => {
+            this.onload?.({ target: { result: String(file) } } as any);
+          }, 0);
+        }
+      }
+    } as any);
   (globalThis as any).ErrorEvent = (win as any).ErrorEvent || globalThis.ErrorEvent;
   (globalThis as any).requestAnimationFrame = win.requestAnimationFrame.bind(win);
   (globalThis as any).cancelAnimationFrame = win.cancelAnimationFrame.bind(win);
