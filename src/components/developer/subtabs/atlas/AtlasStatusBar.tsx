@@ -79,12 +79,12 @@ export const AtlasStatusBar: React.FC<AtlasStatusBarProps> = ({
           {error ? (
             <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-red-950/60 border border-red-700/80 text-rose-300 font-semibold animate-pulse">
               <AlertCircle size={13} className="text-red-400" />
-              <span>{t("atlasStudioStatusError") || "Błąd"}</span>
+              <span>{t("atlasStudioStatusError") || "Error"}</span>
             </div>
           ) : (
             <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-950/40 border border-emerald-700/60 text-emerald-300 font-semibold">
               <CheckCircle2 size={13} className="text-emerald-400" />
-              <span>{t("atlasStudioStatusReady") || "Gotowy"}</span>
+              <span>{t("atlasStudioStatusReady") || "Ready"}</span>
             </div>
           )}
 
@@ -108,7 +108,7 @@ export const AtlasStatusBar: React.FC<AtlasStatusBarProps> = ({
 
             <span className="text-[11px] text-stone-400">
               <strong className="text-emerald-400">{frameCount}</strong>{" "}
-              {t("atlasStudioFrameInfo") || "klatek"}
+              {t("atlasStudioFrameInfo") || "frames"}
             </span>
 
             {textureWidth && textureHeight && (
@@ -133,7 +133,7 @@ export const AtlasStatusBar: React.FC<AtlasStatusBarProps> = ({
               onClick={onClearError}
               className="text-[11px] text-red-400 hover:text-red-200 underline cursor-pointer"
             >
-              {t("atlasStudioDismissError") || "Zamknij błąd"}
+              {t("atlasStudioDismissError") || "Dismiss error"}
             </button>
           )}
 
@@ -142,10 +142,10 @@ export const AtlasStatusBar: React.FC<AtlasStatusBarProps> = ({
             variant={isLogsOpen ? "primary" : "secondary"}
             onClick={() => setIsLogsOpen((prev) => !prev)}
             className="h-6 px-2 text-[11px] flex items-center gap-1.5"
-            title={t("atlasStudioToggleLogs") || "Podgląd logów slicera"}
+            title={t("atlasStudioToggleLogs") || "Slicer event log"}
           >
             <ScrollText size={12} />
-            <span>{t("atlasStudioLogs") || "Dziennik"}</span>
+            <span>{t("atlasStudioLogs") || "Logs"}</span>
             <span className="px-1 py-0 bg-black/60 rounded text-[9px] text-amber-300 font-mono">
               {atlasLogs.length}
             </span>
@@ -182,7 +182,7 @@ export const AtlasStatusBar: React.FC<AtlasStatusBarProps> = ({
           <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-stone-800/80 text-[11px]">
             <span className="text-stone-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
               <Activity size={12} className="text-amber-400" />
-              {t("atlasStudioRecentLogs") || "Ostatnie zdarzenia slicera"}
+              {t("atlasStudioRecentLogs") || "Recent slicer events"}
             </span>
 
             <div className="flex items-center gap-2">
@@ -192,7 +192,7 @@ export const AtlasStatusBar: React.FC<AtlasStatusBarProps> = ({
                   className="flex items-center gap-1 text-[10px] text-cyan-400 hover:text-cyan-200 cursor-pointer"
                 >
                   <ExternalLink size={10} />
-                  <span>{t("atlasStudioOpenLogsTab") || "Pełny podgląd (Logs)"}</span>
+                  <span>{t("atlasStudioOpenLogsTab") || "Full view (Logs)"}</span>
                 </button>
               )}
             </div>
@@ -200,7 +200,7 @@ export const AtlasStatusBar: React.FC<AtlasStatusBarProps> = ({
 
           {atlasLogs.length === 0 ? (
             <div className="py-4 text-center text-xs text-stone-600">
-              {t("atlasStudioNoLogsYet") || "Brak zarejestrowanych zdarzeń slicera."}
+              {t("atlasStudioNoLogsYet") || "No slicer events recorded yet."}
             </div>
           ) : (
             <div className="flex flex-col gap-1 font-mono text-[10px]">

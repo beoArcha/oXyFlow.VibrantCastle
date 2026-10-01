@@ -34,7 +34,6 @@ export interface AtlasAnimationFilmstripProps {
   onReverseTrack: () => void;
   onPingPongTrack: () => void;
   onClearTrackFrames: () => void;
-  onFrameDelayChange?: (frameIndex: number, delayMs: number) => void;
 }
 
 interface FrameThumbnailProps {
@@ -70,6 +69,7 @@ const FrameThumbnail: React.FC<FrameThumbnailProps> = ({
   onDuplicate,
   onRemove,
 }) => {
+  const { t } = useI18n();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -152,7 +152,7 @@ const FrameThumbnail: React.FC<FrameThumbnailProps> = ({
         <button
           onClick={onMoveLeft}
           disabled={frameIndex === 0}
-          title="Move Left"
+          title={t("atlasStudioFilmstripMoveLeft")}
           className="text-stone-400 hover:text-white disabled:opacity-20 cursor-pointer p-0.5"
         >
           <ChevronLeft size={11} />
@@ -160,7 +160,7 @@ const FrameThumbnail: React.FC<FrameThumbnailProps> = ({
 
         <button
           onClick={onDuplicate}
-          title="Duplicate"
+          title={t("atlasStudioFilmstripDuplicate")}
           className="text-amber-400 hover:text-amber-200 cursor-pointer p-0.5"
         >
           <Copy size={10} />
@@ -169,7 +169,7 @@ const FrameThumbnail: React.FC<FrameThumbnailProps> = ({
         <button
           onClick={onRemove}
           disabled={totalFrames <= 1}
-          title="Remove"
+          title={t("atlasStudioFilmstripDelete")}
           className="text-rose-400 hover:text-rose-200 disabled:opacity-20 cursor-pointer p-0.5"
         >
           <Trash2 size={10} />
@@ -178,7 +178,7 @@ const FrameThumbnail: React.FC<FrameThumbnailProps> = ({
         <button
           onClick={onMoveRight}
           disabled={frameIndex === totalFrames - 1}
-          title="Move Right"
+          title={t("atlasStudioFilmstripMoveRight")}
           className="text-stone-400 hover:text-white disabled:opacity-20 cursor-pointer p-0.5"
         >
           <ChevronRight size={11} />

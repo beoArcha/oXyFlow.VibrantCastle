@@ -183,16 +183,16 @@ export const AtlasViewportToolbar: React.FC<AtlasViewportToolbarProps> = ({
           {Math.round(zoom * 100)}%
         </Badge>
 
-        <Button size="sm" variant="ghost" onClick={onZoomOut} className="h-7 px-1.5">
+        <Button size="sm" variant="ghost" onClick={onZoomOut} className="h-7 px-1.5" title={t("atlasStudioZoom")}>
           <ZoomOut size={13} />
         </Button>
-        <Button size="sm" variant="ghost" onClick={onZoomIn} className="h-7 px-1.5">
+        <Button size="sm" variant="ghost" onClick={onZoomIn} className="h-7 px-1.5" title={t("atlasStudioZoom")}>
           <ZoomIn size={13} />
         </Button>
-        <Button size="sm" variant="ghost" onClick={onZoomFit} className="h-7 px-1.5" title="Fit">
+        <Button size="sm" variant="ghost" onClick={onZoomFit} className="h-7 px-1.5" title={t("atlasStudioZoomFit")}>
           <Maximize2 size={13} />
         </Button>
-        <Button size="sm" variant="ghost" onClick={onZoomReset} className="h-7 px-1.5" title="Reset">
+        <Button size="sm" variant="ghost" onClick={onZoomReset} className="h-7 px-1.5" title={t("atlasStudioZoomReset")}>
           <RotateCcw size={13} />
         </Button>
       </div>

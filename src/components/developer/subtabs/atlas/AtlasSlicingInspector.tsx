@@ -212,9 +212,13 @@ export const AtlasSlicingInspector: React.FC<AtlasSlicingInspectorProps> = ({
     setSelectedFrameIds((prev) => prev.filter((item) => item !== id));
   };
 
-  const handleUpdateFrameField = (id: string, field: keyof IFreeformFrameRect, val: any) => {
+  const handleUpdateFrameField = <K extends keyof IFreeformFrameRect>(
+    id: string,
+    field: K,
+    val: IFreeformFrameRect[K]
+  ) => {
     if (onUpdateFreeformFrame) {
-      onUpdateFreeformFrame(id, { [field]: val });
+      onUpdateFreeformFrame(id, { [field]: val } as Partial<ResolvedFrameRect>);
     } else {
       const updated = freeformFramesList.map((f) => {
         if (f.id === id) {

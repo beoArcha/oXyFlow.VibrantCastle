@@ -11,7 +11,11 @@ export interface SlicingFreeformTableProps {
   onSelectAll: (ids: string[]) => void;
   onDeselectAll: () => void;
   onAddFrame: () => void;
-  onUpdateFrameField: (id: string, field: keyof IFreeformFrameRect, val: any) => void;
+  onUpdateFrameField: <K extends keyof IFreeformFrameRect>(
+    id: string,
+    field: K,
+    val: IFreeformFrameRect[K]
+  ) => void;
   onDeleteFrame: (id: string) => void;
   onSelectFrame?: (frameIdx: number) => void;
 }

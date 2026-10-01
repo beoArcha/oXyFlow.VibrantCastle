@@ -487,7 +487,7 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
           className={`shadow-2xl rounded border border-black/40 filter drop-shadow-md select-none ${
             showPivot ? "cursor-crosshair" : ""
           }`}
-          title={showPivot ? "Przeciągnij myszką, aby ustawić punkt zakotwiczenia (Pivot)" : undefined}
+          title={showPivot ? t("atlasStudioPivotDragTooltip") : undefined}
         />
 
         {/* Background Switcher Floating Pill */}

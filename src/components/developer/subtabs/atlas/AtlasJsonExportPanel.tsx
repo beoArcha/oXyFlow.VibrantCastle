@@ -32,6 +32,17 @@ export interface AtlasJsonExportPanelProps {
   onResetDefaults: () => void;
 }
 
+interface AtlasTrackExportEntry {
+  row: number;
+  frames: number;
+  fps: number;
+  loop: boolean;
+  wide?: boolean;
+  slotSpan?: number[];
+  cells?: number[];
+  frameIndices?: number[];
+}
+
 export function buildAtlasExportMetaDoc(params: {
   metaDoc: AtlasMetaDoc;
   gridConfig: AtlasGridConfig;
@@ -43,7 +54,7 @@ export function buildAtlasExportMetaDoc(params: {
 }): AtlasMetaDoc {
   const { metaDoc, gridConfig, tracks, origin, assetId, slicingConfig, backgroundConfig } = params;
 
-  const animMap: Record<string, any> = {};
+  const animMap: Record<string, AtlasTrackExportEntry> = {};
   tracks.forEach((track) => {
     animMap[track.name] = {
       row: track.row,
@@ -254,8 +265,8 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
       const parsed = JSON.parse(text);
       setSyntaxError(null);
       onMetaDocChange(parsed);
-    } catch (err: any) {
-      setSyntaxError(err.message || "Invalid JSON syntax");
+    } catch (err: unknown) {
+      setSyntaxError(err instanceof Error ? err.message : "Invalid JSON syntax");
     }
   };
 
@@ -286,7 +297,7 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
                   : "text-stone-400 hover:text-stone-200"
                 }`}
             >
-              <Code size={11} /> View
+              <Code size={11} /> {t("atlasStudioViewMode")}
             </button>
             <button
               onClick={() => setEditorMode("raw")}
@@ -295,7 +306,7 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
                   : "text-stone-400 hover:text-stone-200"
                 }`}
             >
-              <Sliders size={11} /> Edit
+              <Sliders size={11} /> {t("atlasStudioEditMode")}
             </button>
           </div>
 
@@ -308,8 +319,8 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
                   const parsed = JSON.parse(rawText);
                   setRawText(JSON.stringify(parsed, null, 2));
                   setSyntaxError(null);
-                } catch (e: any) {
-                  setSyntaxError(e.message || "Invalid JSON syntax");
+                } catch (e: unknown) {
+                  setSyntaxError(e instanceof Error ? e.message : "Invalid JSON syntax");
                 }
               }}
               title={t("atlasStudioFormatJson")}
@@ -379,7 +390,7 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
       {/* Syntax Error Alert */}
       {syntaxError && (
         <div className="p-2 bg-rose-950/50 border border-rose-600 rounded-lg text-rose-300 text-xs font-mono">
-          Syntax Error: {syntaxError}
+          {t("atlasStudioSyntaxErrorPrefix")} {syntaxError}
         </div>
       )}
 

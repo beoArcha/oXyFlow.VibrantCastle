@@ -27,9 +27,9 @@ export const AtlasViewerStatusBar: React.FC<AtlasViewerStatusBarProps> = ({
         {hoverInfo ? (
           <span className="flex items-center gap-2">
             <span>
-              Cursor: X: <strong className="text-amber-300">{hoverInfo.x}</strong> Y:{" "}
-              <strong className="text-amber-300">{hoverInfo.y}</strong> | Col:{" "}
-              <strong className="text-cyan-300">{hoverInfo.col}</strong> Row:{" "}
+              {t("atlasStudioCursorX")} <strong className="text-amber-300">{hoverInfo.x}</strong> {t("atlasStudioCursorY")}{" "}
+              <strong className="text-amber-300">{hoverInfo.y}</strong> | {t("atlasStudioCursorCol")}{" "}
+              <strong className="text-cyan-300">{hoverInfo.col}</strong> {t("atlasStudioCursorRow")}{" "}
               <strong className="text-cyan-300">{hoverInfo.row}</strong>
             </span>
             {hoverInfo.hex && (
@@ -62,7 +62,7 @@ export const AtlasViewerStatusBar: React.FC<AtlasViewerStatusBarProps> = ({
         )}
         {frameCount > 0 && (
           <span>
-            Klatki: <strong className="text-emerald-400">{frameCount}</strong>
+            {t("atlasStudioFrameInfo")}: <strong className="text-emerald-400">{frameCount}</strong>
           </span>
         )}
       </div>

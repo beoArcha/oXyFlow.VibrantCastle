@@ -123,7 +123,19 @@ export function useAtlasResolvedFrames({
       backgroundConfig: backgroundConfig || metaDoc?.backgroundConfig,
     };
 
-    const animMap: Record<string, any> = {};
+    const animMap: Record<
+      string,
+      {
+        row: number;
+        frames: number;
+        fps: number;
+        loop: boolean;
+        wide?: boolean;
+        slotSpan?: number[];
+        cells?: number[];
+        frameIndices?: number[];
+      }
+    > = {};
     tracks.forEach((tr) => {
       animMap[tr.name] = {
         row: tr.row,

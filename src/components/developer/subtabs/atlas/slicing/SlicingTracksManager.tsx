@@ -63,10 +63,10 @@ export const SlicingTracksManager: React.FC<SlicingTracksManagerProps> = ({
     onSelectTrack(copy.name);
   };
 
-  const handleUpdateTrack = (
+  const handleUpdateTrack = <K extends keyof AtlasAnimationTrackDefinition>(
     index: number,
-    field: keyof AtlasAnimationTrackDefinition,
-    value: any
+    field: K,
+    value: AtlasAnimationTrackDefinition[K]
   ) => {
     if (index < 0 || index >= tracks.length) return;
     const updated = [...tracks];
@@ -140,7 +140,7 @@ export const SlicingTracksManager: React.FC<SlicingTracksManagerProps> = ({
                 size="sm"
                 variant="ghost"
                 onClick={() => handleDuplicateTrack(activeTrack)}
-                title="Duplicate Track"
+                title={t("atlasStudioDuplicateTrack")}
                 className="h-6 px-1.5 text-stone-400 hover:text-stone-200"
               >
                 <Copy size={12} />
@@ -239,9 +239,9 @@ export const SlicingTracksManager: React.FC<SlicingTracksManagerProps> = ({
           {/* Visual slotSpan Frame Tiles Editor */}
           <div className="flex flex-col gap-1.5 pt-1.5 border-t border-stone-800/80">
             <span className="text-[10px] text-stone-400 font-bold uppercase tracking-wider flex items-center justify-between">
-              <span>{t("atlasStudioTrackSlotSpan")} (Frame Widths)</span>
+              <span>{t("atlasStudioTrackSlotSpan")}</span>
               <span className="text-[9px] text-amber-400/90 font-normal">
-                Click + / - to resize cell spans
+                {t("atlasStudioResizeSpansHint")}
               </span>
             </span>
 

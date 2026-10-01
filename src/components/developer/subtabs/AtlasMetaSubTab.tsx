@@ -169,7 +169,6 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
         onReverseTrack={state.handleReverseTrack}
         onPingPongTrack={state.handlePingPongTrack}
         onClearTrackFrames={state.handleClearTrackFrames}
-        onFrameDelayChange={state.handleFrameDelayChange}
       />
 
       {/* 4. Studio Telemetry & Status Bar */}

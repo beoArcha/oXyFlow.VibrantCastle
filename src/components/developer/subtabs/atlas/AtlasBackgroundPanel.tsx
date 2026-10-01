@@ -196,7 +196,7 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-stone-300 uppercase tracking-wider flex items-center gap-1.5">
               <Pipette size={13} className="text-amber-400" />
-              Chroma Key & Eyedropper
+              {t("atlasStudioChromaKeyTitle")}
             </span>
 
             <Button
@@ -215,7 +215,7 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
             <div
               className="w-8 h-8 rounded-lg border-2 border-stone-700 shadow-inner flex-shrink-0"
               style={{ backgroundColor: currentColor }}
-              title={`Current sampled color: ${currentColor}`}
+              title={`${t("atlasStudioCurrentColorSampled")} ${currentColor}`}
             />
             <div className="flex-1 flex items-center gap-1.5">
               <input
@@ -230,14 +230,14 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
                 value={currentColor.startsWith("#") && currentColor.length === 7 ? currentColor : "#000000"}
                 onChange={(e) => handleColorChange(e.target.value)}
                 className="w-8 h-7 bg-transparent border-0 cursor-pointer rounded"
-                title="Open system color picker"
+                title={t("atlasStudioColorPickerTitle")}
               />
             </div>
           </div>
 
           {/* Quick Presets Swatches */}
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[10px] text-stone-400 mr-1 font-medium">Presets:</span>
+            <span className="text-[10px] text-stone-400 mr-1 font-medium">{t("atlasStudioPresetsLabel")}</span>
             {COMMON_PRESETS.map((p) => (
               <button
                 key={p.hex}
@@ -287,17 +287,17 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
             <Sparkles size={13} className="text-amber-400" />
-            Asset Slicer & Alpha Baker
+            {t("atlasStudioAlphaBakerTitle")}
           </span>
           {bakedSuccess && (
             <Badge variant="green">
-              <Check size={10} className="mr-0.5 inline" /> Downloaded
+              <Check size={10} className="mr-0.5 inline" /> {t("atlasStudioDownloadedBadge")}
             </Badge>
           )}
         </div>
 
         <p className="text-[11px] text-stone-400 leading-relaxed">
-          Bake chroma transparency permanently into a standalone PNG asset, ready for game engines or production export.
+          {t("atlasStudioAlphaBakerDesc")}
         </p>
 
         <Button
