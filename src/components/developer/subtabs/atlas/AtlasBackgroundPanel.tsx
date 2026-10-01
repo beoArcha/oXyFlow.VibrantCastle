@@ -13,6 +13,7 @@ import { useI18n } from "@context/I18nContext";
 import { IAtlasBackgroundConfig } from "./types";
 import { BackgroundProcessor } from "@/game/engine/meta/slicing";
 import { LoggerManager } from "@lib/logger";
+import { downloadBlob, formatAtlasExportFileName } from "./utils";
 
 export interface AtlasBackgroundPanelProps {
   imageSrc: string;
@@ -141,14 +142,8 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
           setIsBaking(false);
           return;
         }
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${assetId}_cleaned.png`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        const filename = formatAtlasExportFileName(assetId, "cleaned", "png");
+        downloadBlob(filename, blob);
 
         setIsBaking(false);
         setBakedSuccess(true);

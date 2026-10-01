@@ -24,39 +24,27 @@ import {
   AtlasUiSlice,
 } from "./hooks/useAtlasStudioState";
 
-export interface AtlasInspectorDockProps {
-  // Domain Slices (Structured Architecture)
+export interface AtlasInspectorDockSlicesProps {
   tracksSlice?: AtlasTracksSlice;
   presetSlice?: AtlasPresetSlice;
   slicingSlice?: AtlasSlicingSlice;
   textureSlice?: AtlasTextureSlice;
   uiSlice?: AtlasUiSlice;
+}
 
-  // Individual props (optional when slices provided, backward compatible)
+export interface AtlasInspectorDockViewProps {
   activeTab?: AtlasInspectorTabId;
   onTabChange?: (tab: AtlasInspectorTabId) => void;
-  imageSrc?: string;
-  image?: HTMLImageElement | null;
-  assetId?: string;
-  metaDoc?: AtlasMetaDoc;
+  onRequestEyedropper?: () => void;
+  onResetDefaults?: () => void;
+}
+
+export interface AtlasInspectorSlicingProps {
   gridConfig?: AtlasGridConfig;
-  tracks?: AtlasAnimationTrackDefinition[];
-  selectedTrackName?: string | null;
-  selectedFrameIndex?: number | null;
-  origin?: AtlasOriginDefinition;
-  backgroundConfig?: IAtlasBackgroundConfig;
   slicingConfig?: IAtlasSlicingConfig;
   resolvedFrames?: ResolvedFrameRect[];
   onGridConfigChange?: (grid: AtlasGridConfig) => void;
-  onTracksChange?: (tracks: AtlasAnimationTrackDefinition[]) => void;
-  onSelectTrack?: (trackName: string) => void;
-  onSelectFrame?: (frameIdx: number) => void;
-  onOriginChange?: (origin: AtlasOriginDefinition) => void;
-  onBackgroundConfigChange?: (config: IAtlasBackgroundConfig) => void;
   onSlicingConfigChange?: (config: IAtlasSlicingConfig) => void;
-  onMetaDocChange?: (doc: AtlasMetaDoc) => void;
-  onResetDefaults?: () => void;
-  onRequestEyedropper?: () => void;
   onBakeIslands?: (islands?: ResolvedFrameRect[]) => void;
   onClusterRowsIntoTracks?: (detectedIslands?: ResolvedFrameRect[]) => void;
   onAddFreeformFrame?: (frame: {
@@ -72,6 +60,41 @@ export interface AtlasInspectorDockProps {
   onDeleteFreeformFrame?: (id: string) => void;
   onAssignFramesToTrack?: (frameIds: string[], trackName: string) => void;
 }
+
+export interface AtlasInspectorTracksProps {
+  tracks?: AtlasAnimationTrackDefinition[];
+  selectedTrackName?: string | null;
+  selectedFrameIndex?: number | null;
+  onTracksChange?: (tracks: AtlasAnimationTrackDefinition[]) => void;
+  onSelectTrack?: (trackName: string) => void;
+  onSelectFrame?: (frameIdx: number) => void;
+}
+
+export interface AtlasInspectorBackgroundProps {
+  backgroundConfig?: IAtlasBackgroundConfig;
+  onBackgroundConfigChange?: (config: IAtlasBackgroundConfig) => void;
+}
+
+export interface AtlasInspectorDocumentProps {
+  imageSrc?: string;
+  image?: HTMLImageElement | null;
+  assetId?: string;
+  metaDoc?: AtlasMetaDoc;
+  origin?: AtlasOriginDefinition;
+  onOriginChange?: (origin: AtlasOriginDefinition) => void;
+  onMetaDocChange?: (doc: AtlasMetaDoc) => void;
+}
+
+/**
+ * Composite props for AtlasInspectorDock adhering to ISP (Interface Segregation Principle).
+ */
+export interface AtlasInspectorDockProps
+  extends AtlasInspectorDockSlicesProps,
+    AtlasInspectorDockViewProps,
+    AtlasInspectorSlicingProps,
+    AtlasInspectorTracksProps,
+    AtlasInspectorBackgroundProps,
+    AtlasInspectorDocumentProps {}
 
 export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
   tracksSlice,

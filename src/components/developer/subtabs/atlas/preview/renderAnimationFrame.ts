@@ -6,6 +6,7 @@ import {
   ResolvedFrameRect,
 } from "../types";
 import { BackgroundProcessor } from "@game/engine/meta/slicing";
+import { resolveAnimationSourceRect } from "./animationGeometry";
 
 export interface RenderAnimationFrameOptions {
   frameIdx: number;
@@ -28,44 +29,13 @@ export function getFrameCoordinates(
   gridConfig: AtlasGridConfig,
   matchingTrackFrames: ResolvedFrameRect[]
 ): { x: number; y: number; w: number; h: number; pivot?: { x: number; y: number } } {
-  if (matchingTrackFrames.length > 0) {
-    const frameData = matchingTrackFrames[fIdx % matchingTrackFrames.length];
-    return {
-      x: frameData.x,
-      y: frameData.y,
-      w: Math.max(1, frameData.width),
-      h: Math.max(1, frameData.height),
-      pivot: frameData.pivot,
-    };
-  }
-
-  let col = 0;
-  let span = 1;
-
-  if (track.frameIndices && track.frameIndices[fIdx] !== undefined) {
-    col = track.frameIndices[fIdx];
-  } else if (track.slotSpan) {
-    col = 0;
-    for (let i = 0; i < fIdx; i++) {
-      col += track.slotSpan[i] || 1;
-    }
-    span = track.slotSpan[fIdx] || 1;
-  } else if (track.cells) {
-    col = 0;
-    for (let i = 0; i < fIdx; i++) {
-      col += track.cells[i] || 1;
-    }
-    span = track.cells[fIdx] || 1;
-  } else {
-    col = fIdx;
-  }
-
+  const rect = resolveAnimationSourceRect(track, fIdx, gridConfig, matchingTrackFrames);
   return {
-    x: col * gridConfig.cellWidth,
-    y: track.row * gridConfig.cellHeight,
-    w: span * gridConfig.cellWidth,
-    h: gridConfig.cellHeight,
-    pivot: undefined,
+    x: rect.x,
+    y: rect.y,
+    w: rect.width,
+    h: rect.height,
+    pivot: rect.pivot,
   };
 }
 

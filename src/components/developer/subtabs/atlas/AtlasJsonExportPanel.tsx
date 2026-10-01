@@ -19,6 +19,7 @@ import {
   IAtlasSlicingConfig,
   IAtlasBackgroundConfig,
 } from "./types";
+import { downloadJsonFile, formatAtlasExportFileName } from "./utils";
 
 export interface AtlasJsonExportPanelProps {
   metaDoc: AtlasMetaDoc;
@@ -246,15 +247,8 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
 
   // Download JSON file
   const handleDownloadJson = () => {
-    const blob = new Blob([rawText], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${assetId}_meta.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    const filename = formatAtlasExportFileName(assetId, "meta", "json");
+    downloadJsonFile(filename, rawText);
   };
 
   // Handle raw editing

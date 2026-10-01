@@ -162,4 +162,121 @@ describe("Atlas Studio - Component Rendering & UI Integration", () => {
       expect(finalConfig?.removeAtRuntime).toBe(false);
     });
   });
+
+  describe("AtlasPresetSelector Decomposed Rendering", () => {
+    it("renders trigger button and toggles dropdown popover", async () => {
+      let selectedId = "valen";
+      const { AtlasPresetSelector } = await import("../AtlasPresetSelector");
+
+      const { container, click } = await renderIntoDom(
+        <AtlasPresetSelector
+          selectedPresetId={selectedId}
+          onSelectPreset={(id) => {
+            selectedId = id;
+          }}
+        />
+      );
+
+      const triggerBtn = container.querySelector("button");
+      expect(triggerBtn).not.toBeNull();
+      expect(triggerBtn?.textContent).toContain("Valen");
+
+      // Click to open dropdown
+      if (triggerBtn) {
+        await click(triggerBtn);
+      }
+
+      // Popover should be visible with search input
+      const searchInput = container.querySelector('input[type="text"]');
+      expect(searchInput).not.toBeNull();
+    });
+  });
+
+  describe("AtlasStatusBar Decomposed Rendering", () => {
+    it("renders status metrics and dismisses errors cleanly", async () => {
+      let errorDismissed = false;
+      const { AtlasStatusBar } = await import("../AtlasStatusBar");
+
+      const mockError = {
+        name: "AssetError",
+        code: "ASSET_CORRUPTED",
+        message: "Failed to decode texture buffer",
+      } as any;
+
+      const { container, click } = await renderIntoDom(
+        <AtlasStatusBar
+          assetId="hero"
+          assetName="Valen"
+          category="character"
+          slicingMethod="by_count"
+          frameCount={12}
+          textureWidth={512}
+          textureHeight={512}
+          durationMs={0.42}
+          error={mockError}
+          onClearError={() => {
+            errorDismissed = true;
+          }}
+        />
+      );
+
+      // Verify error banner is rendered
+      expect(container.textContent).toContain("ASSET_CORRUPTED");
+      expect(container.textContent).toContain("Failed to decode texture buffer");
+
+      // Click dismiss button
+      const dismissBtn = container.querySelector("button.underline");
+      expect(dismissBtn).not.toBeNull();
+      if (dismissBtn) {
+        await click(dismissBtn);
+      }
+      expect(errorDismissed).toBe(true);
+    });
+  });
+
+  describe("animationGeometry - resolveAnimationSourceRect", () => {
+    it("resolves regular grid frames, slotSpan frames, and irregular resolved frames accurately", async () => {
+      const { resolveAnimationSourceRect } = await import("../preview/animationGeometry");
+
+      const track: AtlasAnimationTrackDefinition = {
+        name: "slash",
+        row: 1,
+        frames: 3,
+        fps: 8,
+        loop: false,
+        slotSpan: [1, 2, 1],
+      };
+
+      const grid: AtlasGridConfig = {
+        columns: 4,
+        rows: 4,
+        cellWidth: 32,
+        cellHeight: 32,
+        spacing: 0,
+        safeMargin: 0,
+      };
+
+      // Frame 0: col 0, span 1 -> width 32
+      const f0 = resolveAnimationSourceRect(track, 0, grid);
+      expect(f0).toEqual({ x: 0, y: 32, width: 32, height: 32, pivot: undefined });
+
+      // Frame 1: col 1, span 2 -> width 64
+      const f1 = resolveAnimationSourceRect(track, 1, grid);
+      expect(f1).toEqual({ x: 32, y: 32, width: 64, height: 32, pivot: undefined });
+
+      // Frame 2: col 3, span 1 -> width 32
+      const f2 = resolveAnimationSourceRect(track, 2, grid);
+      expect(f2).toEqual({ x: 96, y: 32, width: 32, height: 32, pivot: undefined });
+
+      // Resolved frames override
+      const resolved = [
+        { id: "f0", x: 10, y: 15, width: 48, height: 50, trackName: "slash", frameIndex: 0 },
+      ];
+      const fResolved = resolveAnimationSourceRect(track, 0, grid, resolved);
+      expect(fResolved.x).toBe(10);
+      expect(fResolved.y).toBe(15);
+      expect(fResolved.width).toBe(48);
+      expect(fResolved.height).toBe(50);
+    });
+  });
 });

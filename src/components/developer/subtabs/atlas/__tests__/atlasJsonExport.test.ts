@@ -169,4 +169,26 @@ describe("Atlas Studio - JSON Export & Frame Baking", () => {
       expect(exported.backgroundConfig?.removeAtRuntime).toBe(true);
     });
   });
+
+  describe("Atlas Export Utilities (atlasExportUtils)", () => {
+    it("formats clean export filenames with sanitization and extensions", async () => {
+      const { formatAtlasExportFileName } = await import("../utils");
+
+      expect(formatAtlasExportFileName("Valen Hero", "meta", "json")).toBe("valen_hero_meta.json");
+      expect(formatAtlasExportFileName("test-asset#1", "cleaned", "png")).toBe("test-asset_1_cleaned.png");
+      expect(formatAtlasExportFileName(undefined, "meta", "json")).toBe("atlas_meta.json");
+    });
+
+    it("safely handles downloadJsonFile and downloadBlob without throwing in test environment", async () => {
+      const { downloadJsonFile, downloadBlob } = await import("../utils");
+
+      expect(() => {
+        downloadBlob("test.json", new Blob(["{}"], { type: "application/json" }));
+      }).not.toThrow();
+
+      expect(() => {
+        downloadJsonFile("test.json", { test: 123 });
+      }).not.toThrow();
+    });
+  });
 });

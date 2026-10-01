@@ -18,6 +18,7 @@ import {
   ResolvedFrameRect,
 } from "../types";
 import { useAtlasTexture } from "../hooks/useAtlasTexture";
+import { resolveAnimationSourceRect } from "./animationGeometry";
 
 export interface AtlasAnimationFilmstripProps {
   imageSrc: string;
@@ -226,30 +227,16 @@ export const AtlasAnimationFilmstrip: React.FC<AtlasAnimationFilmstripProps> = (
   const frameItems = useMemo(() => {
     if (!currentTrack) return [];
 
-    if (trackResolvedFrames.length > 0) {
-      return trackResolvedFrames.map((rf, fIdx) => ({
-        index: fIdx,
-        col: rf.x,
-        row: rf.y,
-        width: rf.width,
-        height: rf.height,
-        delayMs: currentTrack.frameDelays?.[fIdx],
-      }));
-    }
-
-    const count = currentTrack.frames;
+    const count = trackResolvedFrames.length > 0 ? trackResolvedFrames.length : currentTrack.frames;
     const items = [];
     for (let i = 0; i < count; i++) {
-      let col = i;
-      if (currentTrack.frameIndices && currentTrack.frameIndices[i] !== undefined) {
-        col = currentTrack.frameIndices[i];
-      }
+      const rect = resolveAnimationSourceRect(currentTrack, i, gridConfig, trackResolvedFrames);
       items.push({
         index: i,
-        col: col * gridConfig.cellWidth,
-        row: currentTrack.row * gridConfig.cellHeight,
-        width: gridConfig.cellWidth,
-        height: gridConfig.cellHeight,
+        col: rect.x,
+        row: rect.y,
+        width: rect.width,
+        height: rect.height,
         delayMs: currentTrack.frameDelays?.[i],
       });
     }
