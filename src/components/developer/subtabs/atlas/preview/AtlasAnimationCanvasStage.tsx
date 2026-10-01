@@ -26,7 +26,7 @@ export const AtlasAnimationCanvasStage: React.FC<AtlasAnimationCanvasStageProps>
 
   return (
     <div
-      className={`relative min-h-[220px] max-h-[280px] overflow-hidden rounded-xl border border-stone-800 flex items-center justify-center p-4 transition-colors select-none ${
+      className={`relative min-h-[240px] max-h-[300px] overflow-hidden rounded-xl border border-stone-800 flex items-center justify-center p-2 transition-colors select-none ${
         bgMode === "dark"
           ? "bg-[#0c0a09]"
           : bgMode === "castle"
@@ -51,7 +51,8 @@ export const AtlasAnimationCanvasStage: React.FC<AtlasAnimationCanvasStageProps>
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
-        className={`shadow-2xl rounded border border-black/40 filter drop-shadow-md select-none ${
+        style={{ imageRendering: "pixelated" }}
+        className={`shadow-2xl rounded border border-black/40 filter drop-shadow-md select-none max-w-full max-h-full ${
           showPivot ? "cursor-crosshair" : ""
         }`}
         title={showPivot ? t("atlasStudioPivotDragTooltip") : undefined}

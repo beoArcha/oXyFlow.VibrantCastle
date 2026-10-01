@@ -12,7 +12,9 @@ import {
   renderIntoDom,
   cleanupDom,
   setupDomEnvironment,
+  createMockContext2D,
 } from "@test-utils";
+import { t } from "@/i18n";
 import { AtlasAnimationTrackDefinition, AtlasGridConfig, ResolvedFrameRect } from "../types";
 
 describe("AtlasAnimationPreview Decomposition & Math", () => {
@@ -206,6 +208,133 @@ describe("AtlasAnimationPreview Decomposition & Math", () => {
 
       buttons[3].click(); // loop
       expect(onToggleLoop).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("renderAnimationFrame execution & resilience", () => {
+    const gridConfig: AtlasGridConfig = {
+      columns: 12,
+      rows: 8,
+      cellWidth: 128,
+      cellHeight: 128,
+      spacing: 0,
+      safeMargin: 0,
+    };
+
+    const track: AtlasAnimationTrackDefinition = {
+      name: "idle",
+      row: 0,
+      frames: 6,
+      fps: 8,
+      loop: true,
+    };
+
+    it("renders sprite frame even when offscreenCanvas is null (direct draw fallback)", () => {
+      const mockCanvas = document.createElement("canvas");
+      const mockCtx = createMockContext2D(256, 256);
+      mockCanvas.getContext = () => mockCtx as any;
+
+      const mockImage = {
+        width: 1536,
+        height: 1024,
+      } as HTMLImageElement;
+
+      renderAnimationFrame(mockCanvas, null, {
+        frameIdx: 0,
+        image: mockImage,
+        track,
+        gridConfig,
+        scale: 2,
+        showPivot: true,
+        showGroundLine: true,
+        flipX: false,
+        origin: { type: "feet", normalized: { x: 0.5, y: 1.0 } },
+        onionSkinning: false,
+      });
+
+      // Canvas dimensions must be scaled (128 * 2 = 256)
+      expect(mockCanvas.width).toBe(256);
+      expect(mockCanvas.height).toBe(256);
+
+      // Verify that drawImage was actually called to draw the character sprite
+      const drawCalls = mockCtx.getDrawImageCalls();
+      expect(drawCalls.length).toBeGreaterThanOrEqual(1);
+      const firstCallArgs = drawCalls[0];
+      expect(firstCallArgs[0]).toBe(mockImage);
+      expect(firstCallArgs[1]).toBe(0); // sx
+      expect(firstCallArgs[2]).toBe(0); // sy
+      expect(firstCallArgs[3]).toBe(128); // sw
+      expect(firstCallArgs[4]).toBe(128); // sh
+      expect(firstCallArgs[5]).toBe(0); // dx
+      expect(firstCallArgs[6]).toBe(0); // dy
+      expect(firstCallArgs[7]).toBe(256); // dw
+      expect(firstCallArgs[8]).toBe(256); // dh
+    });
+
+    it("renders onion skinning when enabled", () => {
+      const mockCanvas = document.createElement("canvas");
+      const mockCtx = createMockContext2D(256, 256);
+      mockCanvas.getContext = () => mockCtx as any;
+
+      const mockImage = {
+        width: 1536,
+        height: 1024,
+      } as HTMLImageElement;
+
+      renderAnimationFrame(mockCanvas, null, {
+        frameIdx: 1,
+        image: mockImage,
+        track,
+        gridConfig,
+        scale: 2,
+        showPivot: false,
+        showGroundLine: false,
+        flipX: false,
+        onionSkinning: true,
+      });
+
+      const drawCalls = mockCtx.getDrawImageCalls();
+      // Should have at least 2 draw calls: 1 for previous frame (onion skin) and 1 for current frame
+      expect(drawCalls.length).toBe(2);
+    });
+
+    it("verifies all atlas toolbar and studio keys are properly translated without exposing raw keys", () => {
+      const keysToCheck = [
+        "atlasStudioGridShort",
+        "atlasStudioTracksShort",
+        "atlasStudioFramesShort",
+        "atlasStudioToggleChroma",
+        "atlasStudioChromaShort",
+        "atlasStudioAutoIslandsTitle",
+        "atlasStudioBakeIslandsDesc",
+        "atlasStudioBakeSuccess",
+        "atlasStudioBakeIslandsBtn",
+        "atlasStudioFreeformFramesTitle",
+        "atlasStudioAddFrameBtn",
+        "atlasStudioFrameColId",
+        "atlasStudioFrameColTrack",
+        "atlasStudioGridConfigTitle",
+        "atlasStudioGridCellWidth",
+        "atlasStudioGridCellHeight",
+        "atlasStudioGridSpacing",
+        "atlasStudioGridSafeMargin",
+        "atlasStudioSlicingStrategyLabel",
+        "atlasStudioFramesSelected",
+        "atlasStudioSelectTrackPlaceholder",
+        "atlasStudioNewTrackNamePlaceholder",
+        "atlasStudioCreateTrackBtn",
+      ];
+
+      for (const key of keysToCheck) {
+        const plTranslation = t("pl", key);
+        const enTranslation = t("en", key);
+
+        // Neither Polish nor English should return the raw key
+        expect(plTranslation).not.toBe(key);
+        expect(enTranslation).not.toBe(key);
+        expect(plTranslation.length).toBeGreaterThan(0);
+        expect(enTranslation.length).toBeGreaterThan(0);
+      }
     });
   });
 });

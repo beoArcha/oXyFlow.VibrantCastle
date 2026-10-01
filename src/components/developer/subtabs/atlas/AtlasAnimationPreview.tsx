@@ -111,8 +111,25 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
     }
   }, [selectedFrameIndex]);
 
+  useEffect(() => {
+    if (!offscreenCanvasRef.current && typeof document !== "undefined") {
+      try {
+        offscreenCanvasRef.current = document.createElement("canvas");
+      } catch {
+        // ignore in non-browser env
+      }
+    }
+  }, []);
+
   const drawFrame = useCallback(
     (frameIdx: number) => {
+      if (!offscreenCanvasRef.current && typeof document !== "undefined") {
+        try {
+          offscreenCanvasRef.current = document.createElement("canvas");
+        } catch {
+          // ignore in non-browser env
+        }
+      }
       renderAnimationFrame(canvasRef.current, offscreenCanvasRef.current, {
         frameIdx,
         image,

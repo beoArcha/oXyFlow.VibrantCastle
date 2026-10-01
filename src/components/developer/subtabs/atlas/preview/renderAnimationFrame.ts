@@ -128,52 +128,62 @@ export function renderAnimationFrame(
   ctx.imageSmoothingEnabled = false;
   ctx.clearRect(0, 0, dw, dh);
 
-  if (offscreenCanvas) {
-    if (offscreenCanvas.width !== sw || offscreenCanvas.height !== sh) {
-      offscreenCanvas.width = sw;
-      offscreenCanvas.height = sh;
+  let effectiveOffscreen = offscreenCanvas;
+  if (!effectiveOffscreen && typeof document !== "undefined") {
+    try {
+      effectiveOffscreen = document.createElement("canvas");
+    } catch {
+      effectiveOffscreen = null;
     }
-    const offCtx = offscreenCanvas.getContext("2d");
+  }
+
+  // Onion Skinning: Draw previous frame with faint cyan overlay behind current frame
+  const totalFramesCount = matchingTrackFrames.length > 0
+    ? matchingTrackFrames.length
+    : (track.frameIndices ? track.frameIndices.length : track.frames);
+
+  if (onionSkinning && totalFramesCount > 1) {
+    const prevIdx = (frameIdx - 1 + totalFramesCount) % totalFramesCount;
+    const prevCoords = getFrameCoordinates(prevIdx, track, gridConfig, matchingTrackFrames);
+    ctx.save();
+    ctx.globalAlpha = 0.35;
+    if (flipX) {
+      ctx.translate(dw, 0);
+      ctx.scale(-1, 1);
+    }
+    ctx.drawImage(image, prevCoords.x, prevCoords.y, prevCoords.w, prevCoords.h, 0, 0, dw, dh);
+    ctx.restore();
+  }
+
+  const needsChroma =
+    backgroundConfig?.mode === "color" &&
+    Boolean(backgroundConfig.colorHex) &&
+    backgroundConfig.removeAtRuntime !== false;
+
+  let renderedViaOffscreen = false;
+
+  if (needsChroma && effectiveOffscreen) {
+    if (effectiveOffscreen.width !== sw || effectiveOffscreen.height !== sh) {
+      effectiveOffscreen.width = sw;
+      effectiveOffscreen.height = sh;
+    }
+    const offCtx = effectiveOffscreen.getContext("2d");
 
     if (offCtx) {
       offCtx.clearRect(0, 0, sw, sh);
       offCtx.drawImage(image, sx, sy, sw, sh, 0, 0, sw, sh);
 
-      if (
-        backgroundConfig?.mode === "color" &&
-        backgroundConfig.colorHex &&
-        backgroundConfig.removeAtRuntime !== false
-      ) {
-        try {
-          const frameImgData = offCtx.getImageData(0, 0, sw, sh);
-          const keyed = BackgroundProcessor.applyChromaKey(
-            frameImgData,
-            backgroundConfig.colorHex,
-            backgroundConfig.tolerance ?? 15
-          );
-          frameImgData.data.set(keyed.data);
-          offCtx.putImageData(frameImgData, 0, 0);
-        } catch {
-          // Fallback to unmodified frame
-        }
-      }
-
-      // Onion Skinning: Draw previous frame with faint cyan overlay behind current frame
-      const totalFramesCount = matchingTrackFrames.length > 0
-        ? matchingTrackFrames.length
-        : (track.frameIndices ? track.frameIndices.length : track.frames);
-
-      if (onionSkinning && totalFramesCount > 1) {
-        const prevIdx = (frameIdx - 1 + totalFramesCount) % totalFramesCount;
-        const prevCoords = getFrameCoordinates(prevIdx, track, gridConfig, matchingTrackFrames);
-        ctx.save();
-        ctx.globalAlpha = 0.35;
-        if (flipX) {
-          ctx.translate(dw, 0);
-          ctx.scale(-1, 1);
-        }
-        ctx.drawImage(image, prevCoords.x, prevCoords.y, prevCoords.w, prevCoords.h, 0, 0, dw, dh);
-        ctx.restore();
+      try {
+        const frameImgData = offCtx.getImageData(0, 0, sw, sh);
+        const keyed = BackgroundProcessor.applyChromaKey(
+          frameImgData,
+          backgroundConfig.colorHex!,
+          backgroundConfig.tolerance ?? 15
+        );
+        frameImgData.data.set(keyed.data);
+        offCtx.putImageData(frameImgData, 0, 0);
+      } catch {
+        // Fallback to unmodified frame
       }
 
       ctx.save();
@@ -181,9 +191,21 @@ export function renderAnimationFrame(
         ctx.translate(dw, 0);
         ctx.scale(-1, 1);
       }
-      ctx.drawImage(offscreenCanvas, 0, 0, sw, sh, 0, 0, dw, dh);
+      ctx.drawImage(effectiveOffscreen, 0, 0, sw, sh, 0, 0, dw, dh);
       ctx.restore();
+      renderedViaOffscreen = true;
     }
+  }
+
+  // Direct render if chroma keying wasn't active or offscreen canvas context was unavailable
+  if (!renderedViaOffscreen) {
+    ctx.save();
+    if (flipX) {
+      ctx.translate(dw, 0);
+      ctx.scale(-1, 1);
+    }
+    ctx.drawImage(image, sx, sy, sw, sh, 0, 0, dw, dh);
+    ctx.restore();
   }
 
   // Draw Ground Baseline if enabled
