@@ -4,7 +4,7 @@ import {
   parseTracksFromMeta,
   useAtlasAnimationTracks,
 } from "../hooks/useAtlasAnimationTracks";
-import { useAtlasStudioState } from "../useAtlasStudioState";
+import { useAtlasStudioState } from "../hooks";
 import { AtlasAnimationPreview } from "../AtlasAnimationPreview";
 import {
   renderCustomHook,

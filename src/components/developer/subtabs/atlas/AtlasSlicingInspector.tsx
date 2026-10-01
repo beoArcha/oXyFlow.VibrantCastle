@@ -50,7 +50,6 @@ export interface AtlasSlicingInspectorProps {
  * Responsibilities:
  * - Orchestrates modular slicing strategies (Grid, Auto-Islands, Freeform).
  * - Manages frame selection state and track assignment.
- * - Conforms to SRP (<200 lines).
  */
 export const AtlasSlicingInspector: React.FC<AtlasSlicingInspectorProps> = ({
   slicingConfig,

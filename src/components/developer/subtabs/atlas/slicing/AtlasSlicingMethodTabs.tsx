@@ -9,8 +9,6 @@ export interface AtlasSlicingMethodTabsProps {
   onMethodChange: (method: SlicingMethod) => void;
 }
 
-export type SlicingMethodTabsProps = AtlasSlicingMethodTabsProps;
-
 export const AtlasSlicingMethodTabs: React.FC<AtlasSlicingMethodTabsProps> = ({
   currentMethod,
   onMethodChange,
@@ -58,5 +56,4 @@ export const AtlasSlicingMethodTabs: React.FC<AtlasSlicingMethodTabsProps> = ({
   );
 };
 
-export const SlicingMethodTabs = AtlasSlicingMethodTabs;
 export default AtlasSlicingMethodTabs;

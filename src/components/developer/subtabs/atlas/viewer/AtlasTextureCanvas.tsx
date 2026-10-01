@@ -91,6 +91,10 @@ export const AtlasTextureCanvas: React.FC<AtlasTextureCanvasProps> = ({
         4
       );
       if (typeof document !== "undefined") {
+        // Two-step chroma pipeline:
+        // BackgroundProcessor returns raw Uint8ClampedArray RGBA pixels.
+        // We put raw pixel data into a 1:1 offscreen canvas, then blit it scaled via ctx.drawImage
+        // to maintain crisp nearest-neighbor display with zero mutation of original source textures.
         const off = document.createElement("canvas");
         off.width = image.naturalWidth;
         off.height = image.naturalHeight;

@@ -10,8 +10,6 @@ export interface AtlasSlicingGridConfigCardProps {
   onGridConfigChange: (grid: AtlasGridConfig) => void;
 }
 
-export type SlicingGridConfigCardProps = AtlasSlicingGridConfigCardProps;
-
 export const AtlasSlicingGridConfigCard: React.FC<AtlasSlicingGridConfigCardProps> = ({
   gridConfig,
   method,
@@ -106,5 +104,4 @@ export const AtlasSlicingGridConfigCard: React.FC<AtlasSlicingGridConfigCardProp
   );
 };
 
-export const SlicingGridConfigCard = AtlasSlicingGridConfigCard;
 export default AtlasSlicingGridConfigCard;

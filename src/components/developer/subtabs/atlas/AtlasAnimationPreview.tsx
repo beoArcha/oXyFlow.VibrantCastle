@@ -39,8 +39,8 @@ export interface AtlasAnimationPreviewProps {
  * AtlasAnimationPreview Component.
  *
  * Orchestrates live animation playback for selected tracks.
- * Decomposed into focused presentational components under preview/ (SRP).
- * Canvas drawing loop runs via requestAnimationFrame without GC pressure.
+ * Uses focused presentational components under preview/.
+ * Canvas drawing loop runs via requestAnimationFrame without GC pressure or per-frame React updates.
  */
 export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
   imageSrc,
@@ -59,6 +59,7 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
   const { t } = useI18n();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const offscreenCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const frameBadgeRef = useRef<HTMLSpanElement | null>(null);
 
   const fallbackTexture = useAtlasTexture(externalImage !== undefined ? "" : imageSrc);
   const image = externalImage !== undefined ? externalImage : fallbackTexture.image;
@@ -66,7 +67,6 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [currentFrame, setCurrentFrame] = useState<number>(0);
   const currentFrameRef = useRef<number>(0);
-  currentFrameRef.current = currentFrame;
 
   const [fps, setFps] = useState<number>(8);
   const [speedMultiplier, setSpeedMultiplier] = useState<number>(1.0);
@@ -100,6 +100,9 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
       setLoop(currentTrack.loop !== undefined ? currentTrack.loop : true);
       setCurrentFrame(0);
       currentFrameRef.current = 0;
+      if (frameBadgeRef.current) {
+        frameBadgeRef.current.textContent = "1";
+      }
     }
   }, [currentTrack?.name]);
 
@@ -108,6 +111,9 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
     if (selectedFrameIndex !== null && selectedFrameIndex !== undefined) {
       setCurrentFrame(selectedFrameIndex);
       currentFrameRef.current = selectedFrameIndex;
+      if (frameBadgeRef.current) {
+        frameBadgeRef.current.textContent = String(selectedFrameIndex + 1);
+      }
     }
   }, [selectedFrameIndex]);
 
@@ -214,7 +220,10 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
 
         if (nextFrame !== currentFrameRef.current) {
           currentFrameRef.current = nextFrame;
-          setCurrentFrame(nextFrame);
+          // Update frame badge directly in DOM to eliminate per-frame React re-renders (AGENT.md § 3.3)
+          if (frameBadgeRef.current) {
+            frameBadgeRef.current.textContent = String(nextFrame + 1);
+          }
         }
       }
 
@@ -233,11 +242,27 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
     (frameIdx: number) => {
       currentFrameRef.current = frameIdx;
       setCurrentFrame(frameIdx);
+      if (frameBadgeRef.current) {
+        frameBadgeRef.current.textContent = String(frameIdx + 1);
+      }
       onSelectFrame(frameIdx);
       drawFrame(frameIdx);
     },
     [onSelectFrame, drawFrame]
   );
+
+  const handleTogglePlay = useCallback(() => {
+    setIsPlaying((prev) => {
+      const nextPlaying = !prev;
+      if (!nextPlaying) {
+        // Pausing: synchronize React state with where RAF playback stopped
+        const pausedFrame = currentFrameRef.current;
+        setCurrentFrame(pausedFrame);
+        onSelectFrame(pausedFrame);
+      }
+      return nextPlaying;
+    });
+  }, [onSelectFrame]);
 
   return (
     <div className="flex flex-col gap-3">
@@ -250,7 +275,7 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
           </span>
           {currentTrack && (
             <Badge variant="cyan">
-              {currentTrack.name} ({currentFrame + 1}/{totalFrames || currentTrack.frames})
+              {currentTrack.name} (<span ref={frameBadgeRef}>{currentFrame + 1}</span>/{totalFrames || currentTrack.frames})
             </Badge>
           )}
         </div>
@@ -304,7 +329,7 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
           <div className="flex flex-col gap-2 p-2.5 bg-[#120603] rounded-xl border border-stone-800">
             <AtlasAnimationPlaybackControls
               isPlaying={isPlaying}
-              onTogglePlay={() => setIsPlaying((p) => !p)}
+              onTogglePlay={handleTogglePlay}
               loop={loop}
               onToggleLoop={() => setLoop((l) => !l)}
               flipX={flipX}
@@ -318,12 +343,14 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
               onStepPrev={() => {
                 if (!currentTrack) return;
                 const framesCount = totalFrames || currentTrack.frames;
-                handleFrameChange(currentFrame <= 0 ? framesCount - 1 : currentFrame - 1);
+                const cur = currentFrameRef.current;
+                handleFrameChange(cur <= 0 ? framesCount - 1 : cur - 1);
               }}
               onStepNext={() => {
                 if (!currentTrack) return;
                 const framesCount = totalFrames || currentTrack.frames;
-                handleFrameChange(currentFrame >= framesCount - 1 ? 0 : currentFrame + 1);
+                const cur = currentFrameRef.current;
+                handleFrameChange(cur >= framesCount - 1 ? 0 : cur + 1);
               }}
             />
 

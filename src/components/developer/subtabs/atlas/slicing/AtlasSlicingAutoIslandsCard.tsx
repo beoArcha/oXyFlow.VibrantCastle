@@ -13,8 +13,6 @@ export interface AtlasSlicingAutoIslandsCardProps {
   onSlicingConfigChange: (config: IAtlasSlicingConfig) => void;
 }
 
-export type SlicingAutoIslandsCardProps = AtlasSlicingAutoIslandsCardProps;
-
 export const AtlasSlicingAutoIslandsCard: React.FC<AtlasSlicingAutoIslandsCardProps> = ({
   slicingConfig,
   detectedIslands,
@@ -110,5 +108,4 @@ export const AtlasSlicingAutoIslandsCard: React.FC<AtlasSlicingAutoIslandsCardPr
   );
 };
 
-export const SlicingAutoIslandsCard = AtlasSlicingAutoIslandsCard;
 export default AtlasSlicingAutoIslandsCard;

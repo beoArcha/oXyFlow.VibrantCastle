@@ -12,8 +12,6 @@ export interface AtlasSlicingTracksManagerProps {
   onSelectTrack: (name: string) => void;
 }
 
-export type SlicingTracksManagerProps = AtlasSlicingTracksManagerProps;
-
 export const AtlasSlicingTracksManager: React.FC<AtlasSlicingTracksManagerProps> = ({
   tracks,
   selectedTrackName,
@@ -287,5 +285,4 @@ export const AtlasSlicingTracksManager: React.FC<AtlasSlicingTracksManagerProps>
   );
 };
 
-export const SlicingTracksManager = AtlasSlicingTracksManager;
 export default AtlasSlicingTracksManager;

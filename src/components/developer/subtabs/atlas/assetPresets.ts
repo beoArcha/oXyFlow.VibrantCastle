@@ -4,7 +4,7 @@ import { defaultAtlasAssetRegistry } from "@game/engine/meta/registry";
 export { defaultAtlasAssetRegistry };
 
 /**
- * Global presets populated directly from the centralized AtlasAssetRegistry (SOLID & OCP).
+ * Global presets populated directly from the centralized AtlasAssetRegistry.
  */
 export const ATLAS_PRESETS: AtlasPresetItem[] = defaultAtlasAssetRegistry
   .getAllResolved()

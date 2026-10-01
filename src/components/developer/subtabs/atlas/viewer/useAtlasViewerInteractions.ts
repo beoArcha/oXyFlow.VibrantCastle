@@ -152,6 +152,16 @@ export function useAtlasViewerInteractions({
     const container = containerRef.current;
     if (!container) return;
 
+    /**
+     * Handles wheel-based zoom centered on the current cursor position.
+     *
+     * Mathematical rationale:
+     * Let `(mouseX, mouseY)` be cursor position in viewport coordinates.
+     * The vector from viewport origin to cursor relative to the pan offset is `dx = mouseX - prevPan.x`.
+     * To keep the world point beneath the cursor stationary during scale change `scaleChange = nextZoom / prevZoom`:
+     *   mouseX - nextPan.x = dx * scaleChange
+     *   nextPan.x = mouseX - dx * scaleChange
+     */
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
       const rect = container.getBoundingClientRect();

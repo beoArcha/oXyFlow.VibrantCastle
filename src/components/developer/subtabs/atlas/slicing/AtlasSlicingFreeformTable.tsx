@@ -20,8 +20,6 @@ export interface AtlasSlicingFreeformTableProps {
   onSelectFrame?: (frameIdx: number) => void;
 }
 
-export type SlicingFreeformTableProps = AtlasSlicingFreeformTableProps;
-
 export const AtlasSlicingFreeformTable: React.FC<AtlasSlicingFreeformTableProps> = ({
   frames,
   selectedFrameIds,
@@ -182,5 +180,4 @@ export const AtlasSlicingFreeformTable: React.FC<AtlasSlicingFreeformTableProps>
   );
 };
 
-export const SlicingFreeformTable = AtlasSlicingFreeformTable;
 export default AtlasSlicingFreeformTable;

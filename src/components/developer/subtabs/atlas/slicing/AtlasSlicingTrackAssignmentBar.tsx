@@ -14,8 +14,6 @@ export interface AtlasSlicingTrackAssignmentBarProps {
   onClearSelection: () => void;
 }
 
-export type SlicingTrackAssignmentBarProps = AtlasSlicingTrackAssignmentBarProps;
-
 export const AtlasSlicingTrackAssignmentBar: React.FC<AtlasSlicingTrackAssignmentBarProps> = ({
   selectedFrameIds,
   tracks,
@@ -95,5 +93,4 @@ export const AtlasSlicingTrackAssignmentBar: React.FC<AtlasSlicingTrackAssignmen
   );
 };
 
-export const SlicingTrackAssignmentBar = AtlasSlicingTrackAssignmentBar;
 export default AtlasSlicingTrackAssignmentBar;
