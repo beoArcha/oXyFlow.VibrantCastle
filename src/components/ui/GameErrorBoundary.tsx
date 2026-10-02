@@ -1,6 +1,5 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
-import { getLogger, ILogger, LoggerManager } from "@lib/logger";
-import { GameBaseError } from "@lib/errors";
+import { getLogger, ILogger } from "@lib/logger";
 import {
   GameErrorContext,
   GameErrorContextValue,
@@ -24,6 +23,8 @@ export interface GameErrorBoundaryProps {
   onReset?: () => void;
   logger?: ILogger;
   className?: string;
+  /** Optional diagnostic report generator function injected by application adapters */
+  reportCollector?: (error: Error | null, componentStack: string | null) => Promise<string>;
 }
 
 export interface GameErrorBoundaryState {
@@ -141,26 +142,22 @@ export class GameErrorBoundary extends Component<
 
   private handleCopyDiagnosticLog = async () => {
     try {
-      const ringBuffer = LoggerManager.getInstance().ringBuffer;
-      const logs = ringBuffer.exportAsText();
-      const err = this.state.error;
-      const gameError = err instanceof GameBaseError ? err : null;
-
-      const diagnosticReport = [
-        "=== VIBRANT CASTLE CRASH REPORT ===",
-        `Timestamp: ${new Date().toISOString()}`,
-        `Error: ${err?.name || "Error"}: ${err?.message || "Unknown"}`,
-        gameError ? `Domain: ${gameError.domain}` : null,
-        gameError ? `Code: ${gameError.code}` : null,
-        gameError?.details ? `Details: ${JSON.stringify(gameError.details, null, 2)}` : null,
-        gameError ? `Log Context: ${JSON.stringify(gameError.toLogContext(), null, 2)}` : null,
-        `Stack: ${err?.stack || "No stack"}`,
-        `Component Stack: ${this.state.componentStack || "No component stack"}`,
-        "\n=== RECENT GAME LOGS ===",
-        logs || "No logs in ring buffer",
-      ]
-        .filter(Boolean)
-        .join("\n");
+      let diagnosticReport: string;
+      if (this.props.reportCollector) {
+        diagnosticReport = await this.props.reportCollector(
+          this.state.error,
+          this.state.componentStack
+        );
+      } else {
+        const err = this.state.error;
+        diagnosticReport = [
+          "=== APPLICATION CRASH REPORT ===",
+          `Timestamp: ${new Date().toISOString()}`,
+          `Error: ${err?.name || "Error"}: ${err?.message || "Unknown"}`,
+          `Stack: ${err?.stack || "No stack"}`,
+          `Component Stack: ${this.state.componentStack || "No component stack"}`,
+        ].join("\n");
+      }
 
       if (typeof navigator !== "undefined" && navigator.clipboard) {
         await navigator.clipboard.writeText(diagnosticReport);
@@ -213,4 +210,6 @@ export class GameErrorBoundary extends Component<
 }
 
 export * from "./error-boundary/index";
+export const ErrorBoundary = GameErrorBoundary;
+export type ErrorBoundaryProps = GameErrorBoundaryProps;
 export default GameErrorBoundary;

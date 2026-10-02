@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { HelpCircle } from "lucide-react";
-import { Modal, LanguageSelector } from "../ui";
+import { Modal } from "../ui";
+import { LanguageSelector } from "@components/adapters";
 import { ModalNavigationTabs, ModalType } from "@components/modal";
 import { useI18n } from "@context/I18nContext";
 import { HelpModalLayout } from "./HelpModalLayout";

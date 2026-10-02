@@ -7,7 +7,6 @@ import { Swords, HelpCircle, Menu as MenuIcon } from "lucide-react";
 import {
   Badge,
   GameErrorBoundary,
-  LanguageSelector,
   Toast,
   useToast,
 } from "@ui";
@@ -18,6 +17,7 @@ import {
   GameModalHost,
   useAppHotkeys,
 } from "@components/layout";
+import { formatGameDiagnosticReport, LanguageSelector } from "@components/adapters";
 
 function GameScreen() {
   const { t } = useI18n();
@@ -157,7 +157,10 @@ function GameScreen() {
 
 export default function App() {
   return (
-    <GameErrorBoundary fallbackTitle="Vibrant Castle Critical Failure">
+    <GameErrorBoundary
+      fallbackTitle="Vibrant Castle Critical Failure"
+      reportCollector={formatGameDiagnosticReport}
+    >
       <I18nProvider>
         <GameProvider>
           <GameScreen />

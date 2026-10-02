@@ -1,6 +1,7 @@
 import React from "react";
 import { Code2 } from "lucide-react";
-import { Modal, LanguageSelector } from "@components/ui";
+import { Modal } from "@components/ui";
+import { LanguageSelector } from "@components/adapters";
 import { ModalNavigationTabs, ModalType } from "@components/modal";
 import { DeveloperTab } from "./DeveloperTab";
 import { useI18n } from "@context/I18nContext";
