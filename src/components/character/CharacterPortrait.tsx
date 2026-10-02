@@ -2,10 +2,13 @@ import React, { useRef, useEffect, useState } from "react";
 import { User } from "lucide-react";
 import { cn } from "@lib/utils";
 import { useCharacterPortrait } from "./useCharacterPortrait";
-import { CharacterPortraitCrop } from "./types";
+import {
+  CharacterPortraitCrop,
+  CharacterPortraitSize,
+  CharacterPortraitVariant,
+} from "./types";
 
-export type CharacterPortraitSize = "xs" | "sm" | "md" | "lg" | "xl" | "fill";
-export type CharacterPortraitVariant = "raw" | "framed" | "circle";
+export type { CharacterPortraitCrop, CharacterPortraitSize, CharacterPortraitVariant };
 
 export interface CharacterPortraitProps {
   /** Optional explicit image source URL (primitive mode) */

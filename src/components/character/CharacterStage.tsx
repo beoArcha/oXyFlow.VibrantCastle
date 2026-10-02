@@ -5,28 +5,28 @@ import { Badge } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { resolveCharacterProfileVM } from "@components/adapters";
 import { cn } from "@lib/utils";
+import {
+  AnimationPlaybackProps,
+  ViewportScaleProps,
+  AnimationTrackSelectionProps,
+} from "./types";
 import { CharacterProvider } from "./CharacterContext";
 import { CharacterPortrait } from "./CharacterPortrait";
 import { CharacterSpritePreview } from "./CharacterSpritePreview";
 import { CharacterStageControls } from "./CharacterStageControls";
 
-export interface CharacterStageProps {
+export interface CharacterStageBaseProps {
   readonly characterId: string;
   readonly mood?: string;
   readonly quality: AssetQuality;
   readonly scalingFilter?: string;
-  readonly activeAction?: AnimationName;
-  readonly onActionChange?: (action: AnimationName) => void;
-  readonly playbackSpeed?: number;
-  readonly onSpeedChange?: (speed: number) => void;
-  readonly scale?: number;
-  readonly onScaleChange?: (scale: number) => void;
-  readonly flipHorizontal?: boolean;
-  readonly onToggleFlip?: () => void;
-  readonly isPlaying?: boolean;
-  readonly onTogglePlay?: () => void;
   readonly className?: string;
 }
+
+export type CharacterStageProps = CharacterStageBaseProps &
+  Partial<AnimationPlaybackProps> &
+  Partial<ViewportScaleProps> &
+  Partial<AnimationTrackSelectionProps>;
 
 /**
  * Character animation stage featuring playback controls,

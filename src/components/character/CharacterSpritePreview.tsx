@@ -5,8 +5,9 @@ import { useCharacterSprite } from "./useCharacterSprite";
 import { useCharacterContext } from "./CharacterContext";
 import { renderSpritePreviewFrame } from "./renderSpritePreviewFrame";
 import { useCanvasDpr } from "./useCanvasDpr";
+import { SpriteStageVisualProps } from "./types";
 
-export interface CharacterSpritePreviewProps {
+export interface CharacterSpritePreviewProps extends SpriteStageVisualProps {
   /** Optional explicit texture for pure presentation primitive mode */
   readonly texture?: HTMLImageElement | null;
   /** Optional explicit frame slice for pure presentation primitive mode */
@@ -21,14 +22,6 @@ export interface CharacterSpritePreviewProps {
   readonly tier?: CharacterProgressionTier;
   /** Playback speed factor. If 0, animation loop is halted. */
   readonly playbackSpeed?: number;
-  /** Visual scale */
-  readonly scale?: number;
-  /** Optional flip horizontally */
-  readonly flipHorizontal?: boolean;
-  /** Optional custom canvas background color/gradient */
-  readonly backgroundGradient?: [string, string];
-  /** Optional ground accent line color */
-  readonly accentColor?: string;
   readonly className?: string;
   readonly ariaLabel?: string;
 }

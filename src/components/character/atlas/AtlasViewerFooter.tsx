@@ -2,9 +2,10 @@ import React from "react";
 import { AssetQuality } from "@game/types";
 import { useI18n } from "@context/I18nContext";
 import { Badge } from "@components/ui";
+import { ImageDimensions } from "../types";
 
 export interface AtlasViewerFooterProps {
-  readonly imageDimensions: { readonly width: number; readonly height: number };
+  readonly imageDimensions: ImageDimensions;
   readonly cellWidth: number;
   readonly cellHeight: number;
   readonly columns?: number;

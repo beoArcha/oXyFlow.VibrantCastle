@@ -4,6 +4,8 @@ import { AnimationName } from "@game/engine/spriteTypes";
 import { resolveAtlasSheetMetaVM } from "@components/adapters";
 import { cn } from "@lib/utils";
 import { Card } from "@components/ui";
+import { ImageDimensions } from "../types";
+import { AtlasSheetType } from "./types";
 import { AtlasViewerToolbar } from "./AtlasViewerToolbar";
 import { AtlasCanvasView } from "./AtlasCanvasView";
 import { AtlasViewerFooter } from "./AtlasViewerFooter";
@@ -25,11 +27,11 @@ export const AtlasSheetViewer: React.FC<AtlasSheetViewerProps> = React.memo(({
   activeAnimation = "idle",
   className = "",
 }) => {
-  const [sheetType, setSheetType] = useState<"spritesheet" | "portraits">("spritesheet");
+  const [sheetType, setSheetType] = useState<AtlasSheetType>("spritesheet");
   const [zoom, setZoom] = useState<number>(0.75); // 0.75x default fits comfortably
   const [showGrid, setShowGrid] = useState<boolean>(true);
   const [showLabels, setShowLabels] = useState<boolean>(true);
-  const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number }>({
+  const [imageDimensions, setImageDimensions] = useState<ImageDimensions>({
     width: 0,
     height: 0,
   });

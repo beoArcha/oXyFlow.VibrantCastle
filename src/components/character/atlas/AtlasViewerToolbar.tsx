@@ -2,18 +2,17 @@ import React from "react";
 import { Grid, ZoomIn, ZoomOut, Layers, Image as ImageIcon, RotateCcw } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
 import { Tabs, TabsList, TabsTrigger, Button, Tooltip } from "@components/ui";
+import {
+  AtlasSheetType,
+  AtlasZoomControlsProps,
+  AtlasOverlayTogglesProps,
+} from "./types";
 
-export interface AtlasViewerToolbarProps {
-  readonly sheetType: "spritesheet" | "portraits";
-  readonly onSheetTypeChange: (type: "spritesheet" | "portraits") => void;
-  readonly showGrid: boolean;
-  readonly onToggleGrid: () => void;
-  readonly showLabels: boolean;
-  readonly onToggleLabels: () => void;
-  readonly zoom: number;
-  readonly onZoomIn: () => void;
-  readonly onZoomOut: () => void;
-  readonly onResetZoom: () => void;
+export interface AtlasViewerToolbarProps
+  extends AtlasZoomControlsProps,
+    AtlasOverlayTogglesProps {
+  readonly sheetType: AtlasSheetType;
+  readonly onSheetTypeChange: (type: AtlasSheetType) => void;
 }
 
 /**

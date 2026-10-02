@@ -1,14 +1,11 @@
 import { SpriteFrame } from "@game/engine/spriteTypes";
+import { SpriteStageVisualProps } from "./types";
 
-export interface RenderSpritePreviewOptions {
-  canvas: HTMLCanvasElement;
-  ctx: CanvasRenderingContext2D;
-  frame: SpriteFrame | null;
-  texture: HTMLImageElement | null;
-  scale?: number;
-  flipHorizontal?: boolean;
-  backgroundGradient?: [string, string];
-  accentColor?: string;
+export interface RenderSpritePreviewOptions extends SpriteStageVisualProps {
+  readonly canvas: HTMLCanvasElement;
+  readonly ctx: CanvasRenderingContext2D;
+  readonly frame: SpriteFrame | null;
+  readonly texture: HTMLImageElement | null;
 }
 
 /**

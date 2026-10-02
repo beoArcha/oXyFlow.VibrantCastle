@@ -9,15 +9,23 @@ export { CharacterProvider, useCharacterContext } from "./CharacterContext";
 export { useCharacterPortrait } from "./useCharacterPortrait";
 export { useCharacterSprite } from "./useCharacterSprite";
 
-// Character Types
-export type { CharacterPortraitProps, CharacterPortraitSize, CharacterPortraitVariant } from "./CharacterPortrait";
+export type { CharacterPortraitProps } from "./CharacterPortrait";
 export type { CharacterSpritePreviewProps } from "./CharacterSpritePreview";
 export type { CharacterStageProps } from "./CharacterStage";
 export type { CharacterStageControlsProps } from "./CharacterStageControls";
 export type { CharacterContextValue, CharacterProviderProps } from "./CharacterContext";
 export type { ResolvedPortraitData } from "./useCharacterPortrait";
 export type { CharacterSpriteState } from "./useCharacterSprite";
-export type { CharacterPortraitCrop } from "./types";
+export type {
+  ImageDimensions,
+  CharacterPortraitCrop,
+  CharacterPortraitSize,
+  CharacterPortraitVariant,
+  AnimationPlaybackProps,
+  ViewportScaleProps,
+  AnimationTrackSelectionProps,
+  SpriteStageVisualProps,
+} from "./types";
 
 // Atlas Submodule
 export * from "./atlas";

@@ -3,11 +3,9 @@ import { cn } from "@lib/utils";
 import { useI18n } from "@context/I18nContext";
 import { AnimationName } from "@game/engine/spriteTypes";
 
-export interface RowAnimationKey {
-  readonly row: number;
-  readonly name: AnimationName;
-  readonly labelKey: string;
-}
+import { RowAnimationKey } from "./types";
+
+export type { RowAnimationKey };
 
 export interface AtlasRowLabelsProps {
   readonly rows: readonly RowAnimationKey[];

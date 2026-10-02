@@ -13,3 +13,4 @@ export type { AtlasGridOverlayProps } from "./AtlasGridOverlay";
 export type { AtlasRowHighlightProps } from "./AtlasRowHighlight";
 export type { AtlasRowLabelsProps, RowAnimationKey } from "./AtlasRowLabels";
 export type { AtlasViewerFooterProps } from "./AtlasViewerFooter";
+export * from "./types";

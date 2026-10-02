@@ -4,18 +4,16 @@ import { Button, Tooltip, PlaybackSpeedScaleControl } from "@components/ui";
 import { AnimationName } from "@game/engine/spriteTypes";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
+import {
+  AnimationPlaybackProps,
+  ViewportScaleProps,
+  AnimationTrackSelectionProps,
+} from "./types";
 
-export interface CharacterStageControlsProps {
-  readonly activeAction: AnimationName;
-  readonly onActionChange: (action: AnimationName) => void;
-  readonly isPlaying: boolean;
-  readonly onTogglePlay: () => void;
-  readonly flipHorizontal: boolean;
-  readonly onToggleFlip: () => void;
-  readonly playbackSpeed: number;
-  readonly onSpeedChange: (speed: number) => void;
-  readonly scale: number;
-  readonly onScaleChange: (scale: number) => void;
+export interface CharacterStageControlsProps
+  extends AnimationPlaybackProps,
+    ViewportScaleProps,
+    AnimationTrackSelectionProps {
   readonly className?: string;
 }
 

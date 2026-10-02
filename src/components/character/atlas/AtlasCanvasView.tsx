@@ -7,6 +7,8 @@ import {
   ANIMATION_ROW_MAP,
   resolveAnimationRowIndex,
 } from "@components/adapters";
+import { ImageDimensions } from "../types";
+import { AtlasSheetType } from "./types";
 import { AtlasGridOverlay } from "./AtlasGridOverlay";
 import { AtlasRowHighlight } from "./AtlasRowHighlight";
 import { AtlasRowLabels } from "./AtlasRowLabels";
@@ -17,11 +19,11 @@ export const ROW_ANIMATION_KEYS = DEFAULT_ANIMATION_ROWS;
 
 export interface AtlasCanvasViewProps {
   readonly activeUrl: string;
-  readonly sheetType: "spritesheet" | "portraits";
+  readonly sheetType: AtlasSheetType;
   readonly zoom: number;
   readonly showGrid: boolean;
   readonly showLabels: boolean;
-  readonly imageDimensions: { readonly width: number; readonly height: number };
+  readonly imageDimensions: ImageDimensions;
   readonly activeAnimation?: AnimationName;
   readonly columns?: number;
   readonly rows?: number;
