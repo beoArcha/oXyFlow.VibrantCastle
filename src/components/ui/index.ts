@@ -1,5 +1,6 @@
 // Core Primitives
 export * from "./Button";
+export * from "./IconButton";
 export * from "./Badge";
 export * from "./KbdKey";
 export * from "./KbdGroup";
@@ -10,9 +11,14 @@ export * from "./Card";
 export * from "./ProgressBar";
 export * from "./Slider";
 export * from "./ActionBar";
+export * from "./Alert";
+export * from "./EmptyState";
+export * from "./Table";
 
 // Form Controls
 export * from "./Input";
+export * from "./Textarea";
+export * from "./SearchInput";
 export * from "./Select";
 export * from "./Switch";
 export * from "./FileUploadButton";
