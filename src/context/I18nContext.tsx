@@ -29,9 +29,13 @@ export interface I18nProviderProps extends BaseProviderProps {
  * and engine language synchronization.
  */
 export const I18nProvider: React.FC<I18nProviderProps> = ({ children, defaultLanguage }) => {
-  const [language, setLanguageState] = useState<LanguageCode>(
-    defaultLanguage || gameEngine.settings.language || "pl"
-  );
+  const [language, setLanguageState] = useState<LanguageCode>(() => {
+    if (defaultLanguage) {
+      gameEngine.setLanguage(defaultLanguage);
+      return defaultLanguage;
+    }
+    return gameEngine.settings.language || "pl";
+  });
 
   const setLanguage = useCallback((lang: LanguageCode) => {
     setLanguageState(lang);
