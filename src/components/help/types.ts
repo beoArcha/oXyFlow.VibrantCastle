@@ -1,6 +1,7 @@
 import React from "react";
 import { PlayerId } from "@game/types";
 import { ModalType } from "@components/modal";
+import type { PlayerTheme } from "@styles/theme";
 
 export type HelpTab = "all" | "shortcuts" | "controls" | "mechanics";
 
@@ -36,7 +37,7 @@ export interface HelpControlsCardProps {
   readonly title: string;
   readonly icon: React.ReactNode;
   readonly flankBadge: string;
-  readonly theme: "crimson" | "cyan";
+  readonly theme: PlayerTheme;
   readonly className?: string;
 }
 

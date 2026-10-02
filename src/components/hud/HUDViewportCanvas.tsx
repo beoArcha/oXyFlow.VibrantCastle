@@ -1,13 +1,11 @@
 import React, { useEffect } from "react";
 import { useResponsiveCanvas } from "./hooks/useResponsiveCanvas";
 import gameEngine from "@game/loop/engine";
-import { DisplaySettings, PlayerId } from "@game/types";
+import { PlayerId } from "@game/types";
 import { debugManager } from "@game/debug/debugManager";
+import { HUDViewportCanvasProps } from "./types";
 
-export interface HUDViewportCanvasProps {
-  displaySettings: DisplaySettings;
-  children?: React.ReactNode;
-}
+export type { HUDViewportCanvasProps };
 
 /**
  * Encapsulates the responsive game canvas rendering viewport and engine lifecycle binding.

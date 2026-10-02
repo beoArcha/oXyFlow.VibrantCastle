@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { I18nProvider, useI18n } from "@context/I18nContext";
 import { GameProvider, useGameSession } from "@context/GameContext";
 import { useModalManager } from "@components/menu/hooks/useModalManager";
-import { HUDOverlay } from "@components/hud/HUDOverlay";
+import { HUDOverlay } from "@components/hud";
 import { Swords, HelpCircle, Menu as MenuIcon } from "lucide-react";
 import {
   Badge,

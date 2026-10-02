@@ -2,11 +2,9 @@ import React from "react";
 import { Swords, Wind, VolumeX } from "lucide-react";
 import { Badge } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
+import { HUDControlsHintProps } from "./types";
 
-export interface HUDControlsHintProps {
-  isAudioInitialized: boolean;
-  onInitializeAudio: () => void;
-}
+export type { HUDControlsHintProps };
 
 /**
  * Clean control reminders and audio enablement widget for single player mode.

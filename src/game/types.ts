@@ -1,5 +1,6 @@
 import type { GameTranslationDictionary } from "@i18n/types";
 import type { GameSessionStats } from "./logic/stats/statsTypes";
+import type { AssetQuality } from "../types/assets";
 
 /**
  * Shared types, interfaces, and enums for the 2D Game Engine.
@@ -405,9 +406,9 @@ export interface GamepadBindingMap {
   potion3: number; // Potion 3 (default 7 - RT / R2)
 }
 
+export type { AssetQuality };
 export type AspectRatioMode = "16:10" | "16:9" | "4:3" | "auto";
 export type ScalingFilterMode = "smooth" | "pixel";
-export type AssetQuality = "low" | "mid" | "high";
 export type TargetFps = 30 | 60 | 90 | 120;
 
 export interface DisplaySettings {
