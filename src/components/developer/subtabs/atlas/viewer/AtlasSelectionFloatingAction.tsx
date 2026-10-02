@@ -1,6 +1,6 @@
 import React from "react";
 import { Plus, Check, Split, Box, X } from "lucide-react";
-import { Button, Tooltip } from "@components/ui";
+import { Button, ActionBar, IconButton } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasGridConfig } from "../types";
 
@@ -60,8 +60,12 @@ export const AtlasSelectionFloatingAction: React.FC<AtlasSelectionFloatingAction
   const { t } = useI18n();
 
   return (
-    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-[#120603]/95 border border-amber-500/70 p-1.5 rounded-xl shadow-2xl shadow-black animate-in fade-in slide-in-from-top-2 duration-150">
-      <span className="text-[11px] font-mono text-amber-300 font-bold px-2 border-r border-stone-800">
+    <ActionBar
+      variant="banner"
+      bordered={false}
+      className="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex-nowrap items-center gap-2 p-1.5 shadow-2xl shadow-black animate-in fade-in slide-in-from-top-2 duration-150"
+    >
+      <span className="text-[11px] font-mono text-amber-300 font-bold px-2 border-r border-stone-800 shrink-0">
         {t("atlasStudioSelectionSize")}: {Math.round(activeSelection.width)}×{Math.round(activeSelection.height)}px
       </span>
 
@@ -153,18 +157,15 @@ export const AtlasSelectionFloatingAction: React.FC<AtlasSelectionFloatingAction
         </Button>
       )}
 
-      <Tooltip content={t("atlasStudioCloseSelection")}>
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={onClose}
-          className="h-6 w-6 min-h-0 p-0 text-stone-400 hover:text-stone-200"
-          aria-label={t("atlasStudioCloseSelection")}
-        >
-          <X size={14} />
-        </Button>
-      </Tooltip>
-    </div>
+      <IconButton
+        size="xs"
+        variant="ghost"
+        onClick={onClose}
+        aria-label={t("atlasStudioCloseSelection")}
+        tooltipContent={t("atlasStudioCloseSelection")}
+        icon={<X size={14} />}
+      />
+    </ActionBar>
   );
 };
 

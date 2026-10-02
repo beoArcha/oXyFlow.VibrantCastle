@@ -9,7 +9,7 @@ import {
   Code,
   Sliders,
 } from "lucide-react";
-import { Button, Badge, SegmentedControl, Textarea } from "@components/ui";
+import { Button, Badge, SegmentedControl, Textarea, ActionBar } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import {
   AtlasGridConfig,
@@ -267,7 +267,7 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
   return (
     <div className="flex flex-col gap-3">
       {/* Header Bar with Action Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-800 pb-2">
+      <ActionBar variant="plain" className="border-b border-stone-800 pb-2">
         <div className="flex items-center gap-2">
           <FileCode className="w-4 h-4 text-emerald-400" />
           <span className="text-xs font-bold text-stone-200">
@@ -361,7 +361,7 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
             <RotateCcw size={11} />
           </Button>
         </div>
-      </div>
+      </ActionBar>
 
       {/* Validation Alert */}
       {validationIssues.length > 0 && (

@@ -1,6 +1,6 @@
 import React from "react";
 import { Sparkles, Check, Save } from "lucide-react";
-import { Button, Badge, CompactNumberStepper, ActionBar } from "@components/ui";
+import { Button, Badge, CompactNumberStepper, ActionBar, Card } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { IAtlasSlicingConfig, ResolvedFrameRect } from "../types";
 
@@ -37,12 +37,11 @@ export const AtlasSlicingAutoIslandsCard: React.FC<AtlasSlicingAutoIslandsCardPr
   };
 
   return (
-    <div className="p-3 bg-black/40 rounded-xl border border-stone-800/80 flex flex-col gap-3">
+    <Card variant="subtle" className="p-3 gap-3">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1.5 text-xs font-semibold text-stone-300">
-          <Sparkles size={13} className="text-yellow-400" />
-          <span>{t("atlasStudioAutoIslandsTitle")}</span>
-        </div>
+        <Card.Title icon={<Sparkles size={13} className="text-yellow-400" />} className="text-xs">
+          {t("atlasStudioAutoIslandsTitle")}
+        </Card.Title>
         <Badge variant={detectedIslands.length > 0 ? "green" : "stone"}>
           {detectedIslands.length} {t("atlasStudioIslandsDetected")}
         </Badge>
@@ -100,7 +99,7 @@ export const AtlasSlicingAutoIslandsCard: React.FC<AtlasSlicingAutoIslandsCardPr
           </>
         }
       />
-    </div>
+    </Card>
   );
 };
 

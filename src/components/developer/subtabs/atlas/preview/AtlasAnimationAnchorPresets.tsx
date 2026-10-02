@@ -1,6 +1,6 @@
 import React from "react";
 import { Crosshair } from "lucide-react";
-import { Slider, Button } from "@components/ui";
+import { Slider, SegmentedControl, SegmentedControlOption } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasOriginDefinition } from "../types";
 
@@ -11,6 +11,8 @@ export interface AtlasAnimationAnchorPresetsProps {
   onOriginChange?: (origin: AtlasOriginDefinition) => void;
 }
 
+type OriginPresetType = "feet" | "center" | "top_left";
+
 export const AtlasAnimationAnchorPresets: React.FC<AtlasAnimationAnchorPresetsProps> = React.memo(({
   fps,
   onFpsChange,
@@ -19,23 +21,43 @@ export const AtlasAnimationAnchorPresets: React.FC<AtlasAnimationAnchorPresetsPr
 }) => {
   const { t } = useI18n();
 
-  const presets = [
+  const presets: { type: OriginPresetType; normalized: { x: number; y: number }; label: string }[] = [
     {
-      type: "feet" as const,
+      type: "feet",
       normalized: { x: 0.5, y: 1.0 },
       label: t("atlasStudioAnchorFeet"),
     },
     {
-      type: "center" as const,
+      type: "center",
       normalized: { x: 0.5, y: 0.5 },
       label: t("atlasStudioAnchorCenter"),
     },
     {
-      type: "top_left" as const,
+      type: "top_left",
       normalized: { x: 0.0, y: 0.0 },
       label: t("atlasStudioAnchorTopLeft"),
     },
   ];
+
+  const activeType: OriginPresetType =
+    origin?.type === "center" || origin?.type === "top_left" || origin?.type === "feet"
+      ? origin.type
+      : "feet";
+
+  const options: SegmentedControlOption<OriginPresetType>[] = presets.map((p) => ({
+    value: p.type,
+    label: p.label,
+  }));
+
+  const handleSelect = (val: OriginPresetType) => {
+    const matched = presets.find((p) => p.type === val);
+    if (matched) {
+      onOriginChange?.({
+        type: matched.type,
+        normalized: matched.normalized,
+      });
+    }
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1 border-t border-stone-800/80">
@@ -60,30 +82,18 @@ export const AtlasAnimationAnchorPresets: React.FC<AtlasAnimationAnchorPresetsPr
             ({origin?.normalized?.x ?? 0.5}, {origin?.normalized?.y ?? 1.0})
           </span>
         </span>
-        <div className="flex items-center gap-1 text-[10px]">
-          {presets.map((p) => {
-            const isSelected = origin?.type === p.type;
-            return (
-              <Button
-                key={p.type}
-                size="sm"
-                variant={isSelected ? "primary" : "secondary"}
-                onClick={() =>
-                  onOriginChange?.({
-                    type: p.type,
-                    normalized: p.normalized,
-                  })
-                }
-                className="flex-1 h-7 py-1 px-1 text-[10px] font-bold"
-              >
-                {p.label}
-              </Button>
-            );
-          })}
-        </div>
+        <SegmentedControl<OriginPresetType>
+          options={options}
+          value={activeType}
+          onChange={handleSelect}
+          fullWidth
+          size="sm"
+        />
       </div>
     </div>
   );
 });
 
 AtlasAnimationAnchorPresets.displayName = "AtlasAnimationAnchorPresets";
+
+export default AtlasAnimationAnchorPresets;

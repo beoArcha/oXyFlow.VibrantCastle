@@ -8,7 +8,7 @@ import {
   ShieldCheck,
   Eye,
 } from "lucide-react";
-import { Button, Slider, Badge, Switch, SegmentedControl, ColorPickerInput } from "@/components/ui";
+import { Button, Slider, Badge, Switch, SegmentedControl, ColorPickerInput, Card } from "@/components/ui";
 import { useI18n } from "@context/I18nContext";
 import { IAtlasBackgroundConfig } from "./types";
 import { BackgroundProcessor } from "@/game/engine/meta/slicing";
@@ -162,7 +162,7 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
   return (
     <div className="flex flex-col gap-3">
       {/* 1. Background Mode Switcher */}
-      <div className="p-2.5 bg-[#120603] rounded-xl border border-stone-800 flex flex-col gap-2">
+      <Card variant="subtle" className="p-2.5 flex flex-col gap-2">
         <span className="text-[11px] font-bold text-stone-300 uppercase tracking-wider flex items-center justify-between">
           <span className="flex items-center gap-1.5">
             <Sliders size={13} className="text-amber-400" />
@@ -192,11 +192,11 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
           fullWidth
           size="md"
         />
-      </div>
+      </Card>
 
       {/* 2. Color Sampling & Tolerance Controls (when mode === 'color') */}
       {currentMode === "color" && (
-        <div className="p-2.5 bg-[#120603] rounded-xl border border-stone-800 flex flex-col gap-2.5">
+        <Card variant="subtle" className="p-2.5 flex flex-col gap-2.5">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-stone-300 uppercase tracking-wider flex items-center gap-1.5">
               <Pipette size={13} className="text-amber-400" />
@@ -276,11 +276,11 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
               size="sm"
             />
           </div>
-        </div>
+        </Card>
       )}
 
       {/* 3. Export Clean PNG (Bake Alpha) Card */}
-      <div className="p-3 bg-gradient-to-br from-[#180d06] to-[#120603] rounded-xl border border-amber-900/60 flex flex-col gap-2 shadow-lg">
+      <Card variant="subtle" className="p-3 flex flex-col gap-2 shadow-lg">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
             <Sparkles size={13} className="text-amber-400" />
@@ -316,7 +316,7 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
             </>
           )}
         </Button>
-      </div>
+      </Card>
     </div>
   );
 };

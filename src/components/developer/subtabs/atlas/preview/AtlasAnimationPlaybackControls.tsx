@@ -10,7 +10,7 @@ import {
   Minus,
   Layers,
 } from "lucide-react";
-import { Button } from "@/components/ui";
+import { Button, ActionBar } from "@/components/ui";
 import { useI18n } from "@context/I18nContext";
 
 export interface AtlasAnimationPlaybackControlsProps {
@@ -49,7 +49,11 @@ export const AtlasAnimationPlaybackControls: React.FC<AtlasAnimationPlaybackCont
   const { t } = useI18n();
 
   return (
-    <div className="flex items-center justify-between gap-2 flex-wrap">
+    <ActionBar
+      variant="subtle"
+      bordered={false}
+      className="flex items-center justify-between gap-2 flex-wrap"
+    >
       {/* Play/Pause & Step Buttons */}
       <div className="flex items-center gap-1">
         <Button
@@ -147,8 +151,10 @@ export const AtlasAnimationPlaybackControls: React.FC<AtlasAnimationPlaybackCont
           {t("atlasStudioOnionSkinning")}
         </Button>
       </div>
-    </div>
+    </ActionBar>
   );
 });
 
 AtlasAnimationPlaybackControls.displayName = "AtlasAnimationPlaybackControls";
+
+export default AtlasAnimationPlaybackControls;

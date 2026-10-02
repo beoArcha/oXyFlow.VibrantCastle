@@ -4,6 +4,7 @@ import {
   Button,
   IconButton,
   Input,
+  Card,
   Table,
   TableHeader,
   TableBody,
@@ -46,7 +47,7 @@ export const AtlasSlicingFreeformTable: React.FC<AtlasSlicingFreeformTableProps>
   const allSelected = frames.length > 0 && selectedFrameIds.length === frames.length;
 
   return (
-    <div className="flex flex-col gap-2 p-3 bg-black/40 rounded-xl border border-stone-800/80">
+    <Card variant="subtle" className="p-3 gap-2">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <IconButton
@@ -206,7 +207,7 @@ export const AtlasSlicingFreeformTable: React.FC<AtlasSlicingFreeformTableProps>
           </TableBody>
         </Table>
       </div>
-    </div>
+    </Card>
   );
 };
 

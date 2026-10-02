@@ -13,7 +13,14 @@ import {
   Sparkles,
   ListOrdered,
 } from "lucide-react";
-import { Button, Badge } from "@components/ui";
+import {
+  Button,
+  Badge,
+  ActionBar,
+  SegmentedControl,
+  SegmentedControlOption,
+  IconButton,
+} from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { SlicerViewerTool } from "../types";
 
@@ -62,54 +69,46 @@ export const AtlasViewportToolbar: React.FC<AtlasViewportToolbarProps> = ({
 }) => {
   const { t } = useI18n();
 
+  const toolOptions: SegmentedControlOption<SlicerViewerTool>[] = [
+    {
+      value: "select",
+      label: t("atlasStudioToolSelect"),
+      icon: <MousePointer size={12} />,
+      title: t("atlasStudioToolSelect"),
+    },
+    {
+      value: "pan",
+      label: t("atlasStudioToolPan"),
+      icon: <Hand size={12} />,
+      title: t("atlasStudioToolPan"),
+    },
+    {
+      value: "eyedropper",
+      label: t("atlasStudioToolEyedropper"),
+      icon: <Pipette size={12} className="text-cyan-400" />,
+      title: t("atlasStudioToolEyedropper"),
+    },
+    {
+      value: "sequence",
+      label: t("atlasStudioToolSequence"),
+      icon: <ListOrdered size={12} className="text-amber-400" />,
+      title: t("atlasStudioToolSequence"),
+    },
+  ];
+
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2 p-2 bg-[#120603] rounded-xl border border-stone-800">
-      {/* Tools: Select, Pan, Eyedropper */}
-      <div className="flex items-center gap-1">
-        <Button
-          size="sm"
-          variant={activeTool === "select" ? "primary" : "secondary"}
-          onClick={() => onToolChange("select")}
-          title={t("atlasStudioToolSelect")}
-          className="h-7 px-2"
-        >
-          <MousePointer size={12} className="mr-1" />
-          <span className="text-[11px]">{t("atlasStudioToolSelect")}</span>
-        </Button>
-
-        <Button
-          size="sm"
-          variant={activeTool === "pan" ? "primary" : "secondary"}
-          onClick={() => onToolChange("pan")}
-          title={t("atlasStudioToolPan")}
-          className="h-7 px-2"
-        >
-          <Hand size={12} className="mr-1" />
-          <span className="text-[11px]">{t("atlasStudioToolPan")}</span>
-        </Button>
-
-        <Button
-          size="sm"
-          variant={activeTool === "eyedropper" ? "primary" : "secondary"}
-          onClick={() => onToolChange("eyedropper")}
-          title={t("atlasStudioToolEyedropper")}
-          className="h-7 px-2"
-        >
-          <Pipette size={12} className="mr-1 text-cyan-400" />
-          <span className="text-[11px]">{t("atlasStudioToolEyedropper")}</span>
-        </Button>
-
-        <Button
-          size="sm"
-          variant={activeTool === "sequence" ? "primary" : "secondary"}
-          onClick={() => onToolChange("sequence")}
-          title={t("atlasStudioToolSequence")}
-          className="h-7 px-2"
-        >
-          <ListOrdered size={12} className="mr-1 text-amber-400" />
-          <span className="text-[11px]">{t("atlasStudioToolSequence")}</span>
-        </Button>
-      </div>
+    <ActionBar
+      variant="banner"
+      bordered={false}
+      className="flex-wrap items-center justify-between gap-2 p-2 bg-[#120603] border-stone-800"
+    >
+      {/* Tools: Select, Pan, Eyedropper, Sequence */}
+      <SegmentedControl<SlicerViewerTool>
+        options={toolOptions}
+        value={activeTool}
+        onChange={onToolChange}
+        size="sm"
+      />
 
       {/* Layer Visibility Toggles */}
       <div className="flex items-center gap-1">
@@ -183,20 +182,40 @@ export const AtlasViewportToolbar: React.FC<AtlasViewportToolbarProps> = ({
           {Math.round(zoom * 100)}%
         </Badge>
 
-        <Button size="sm" variant="ghost" onClick={onZoomOut} className="h-7 px-1.5" title={t("atlasStudioZoom")}>
-          <ZoomOut size={13} />
-        </Button>
-        <Button size="sm" variant="ghost" onClick={onZoomIn} className="h-7 px-1.5" title={t("atlasStudioZoom")}>
-          <ZoomIn size={13} />
-        </Button>
-        <Button size="sm" variant="ghost" onClick={onZoomFit} className="h-7 px-1.5" title={t("atlasStudioZoomFit")}>
-          <Maximize2 size={13} />
-        </Button>
-        <Button size="sm" variant="ghost" onClick={onZoomReset} className="h-7 px-1.5" title={t("atlasStudioZoomReset")}>
-          <RotateCcw size={13} />
-        </Button>
+        <IconButton
+          size="xs"
+          variant="ghost"
+          onClick={onZoomOut}
+          aria-label={t("atlasStudioZoom")}
+          tooltipContent={t("atlasStudioZoom")}
+          icon={<ZoomOut size={13} />}
+        />
+        <IconButton
+          size="xs"
+          variant="ghost"
+          onClick={onZoomIn}
+          aria-label={t("atlasStudioZoom")}
+          tooltipContent={t("atlasStudioZoom")}
+          icon={<ZoomIn size={13} />}
+        />
+        <IconButton
+          size="xs"
+          variant="ghost"
+          onClick={onZoomFit}
+          aria-label={t("atlasStudioZoomFit")}
+          tooltipContent={t("atlasStudioZoomFit")}
+          icon={<Maximize2 size={13} />}
+        />
+        <IconButton
+          size="xs"
+          variant="ghost"
+          onClick={onZoomReset}
+          aria-label={t("atlasStudioZoomReset")}
+          tooltipContent={t("atlasStudioZoomReset")}
+          icon={<RotateCcw size={13} />}
+        />
       </div>
-    </div>
+    </ActionBar>
   );
 };
 

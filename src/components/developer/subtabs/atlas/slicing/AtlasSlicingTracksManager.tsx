@@ -2,10 +2,12 @@ import React, { useMemo } from "react";
 import { Layers, Plus, Copy, Trash2 } from "lucide-react";
 import {
   Button,
+  IconButton,
   Input,
   CompactNumberStepper,
   Tooltip,
   ConfirmDialog,
+  Card,
 } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
@@ -102,7 +104,7 @@ export const AtlasSlicingTracksManager: React.FC<AtlasSlicingTracksManagerProps>
   };
 
   return (
-    <div className="p-2.5 bg-[#120603] rounded-xl border border-stone-800 flex flex-col gap-2">
+    <Card variant="subtle" className="p-2.5 gap-2">
       <div className="flex items-center justify-between gap-2">
         <span className="text-[11px] font-bold text-stone-300 uppercase tracking-wider flex items-center gap-1.5">
           <Layers size={13} className="text-amber-400" />
@@ -143,34 +145,32 @@ export const AtlasSlicingTracksManager: React.FC<AtlasSlicingTracksManagerProps>
 
       {/* Selected Track Editor */}
       {activeTrack && (
-        <div className="p-2 bg-black/40 rounded-lg border border-stone-800/80 flex flex-col gap-2 mt-1">
+        <Card variant="dark" className="p-2 gap-2 mt-1">
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs font-bold text-amber-300 font-mono">
               {activeTrack.name}
             </span>
             <div className="flex items-center gap-1">
-              <Tooltip content={t("atlasStudioDuplicateTrack")}>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => handleDuplicateTrack(activeTrack)}
-                  className="h-6 px-1.5 text-stone-400 hover:text-stone-200"
-                >
-                  <Copy size={12} />
-                </Button>
-              </Tooltip>
+              <IconButton
+                size="xs"
+                variant="ghost"
+                aria-label={t("atlasStudioDuplicateTrack") || "Duplicate track"}
+                tooltipContent={t("atlasStudioDuplicateTrack")}
+                onClick={() => handleDuplicateTrack(activeTrack)}
+                className="text-stone-400 hover:text-stone-200"
+                icon={<Copy size={12} />}
+              />
 
               {tracks.length > 1 && (
-                <Tooltip content={t("atlasStudioRemoveTrack")}>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => setTrackToDelete(activeTrack.name)}
-                    className="h-6 px-1.5 text-rose-400 hover:text-rose-200 hover:bg-rose-950/40"
-                  >
-                    <Trash2 size={12} />
-                  </Button>
-                </Tooltip>
+                <IconButton
+                  size="xs"
+                  variant="ghost"
+                  aria-label={t("atlasStudioRemoveTrack") || "Remove track"}
+                  tooltipContent={t("atlasStudioRemoveTrack")}
+                  onClick={() => setTrackToDelete(activeTrack.name)}
+                  className="text-rose-400 hover:text-rose-200 hover:bg-rose-950/40"
+                  icon={<Trash2 size={12} />}
+                />
               )}
             </div>
           </div>
@@ -275,7 +275,7 @@ export const AtlasSlicingTracksManager: React.FC<AtlasSlicingTracksManagerProps>
               })}
             </div>
           </div>
-        </div>
+        </Card>
       )}
       {/* Confirmation Dialog for Track Deletion */}
       <ConfirmDialog
@@ -297,7 +297,7 @@ export const AtlasSlicingTracksManager: React.FC<AtlasSlicingTracksManagerProps>
         cancelLabel={t("cancel") || "Cancel"}
         confirmVariant="danger"
       />
-    </div>
+    </Card>
   );
 };
 
