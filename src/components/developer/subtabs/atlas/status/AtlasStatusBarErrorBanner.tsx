@@ -1,6 +1,6 @@
 import React from "react";
 import { X } from "lucide-react";
-import { Badge } from "@components/ui";
+import { Badge, IconButton } from "@components/ui";
 import { GameBaseError } from "@lib/errors";
 
 export interface AtlasStatusBarErrorBannerProps {
@@ -26,13 +26,18 @@ export const AtlasStatusBarErrorBanner: React.FC<AtlasStatusBarErrorBannerProps>
         )}
       </div>
       {onClearError && (
-        <button
+        <IconButton
+          size="xs"
+          variant="ghost"
+          aria-label="Dismiss error"
           onClick={onClearError}
-          className="text-rose-400 hover:text-rose-100 p-0.5 cursor-pointer"
+          className="text-rose-400 hover:text-rose-100"
         >
           <X size={13} />
-        </button>
+        </IconButton>
       )}
     </div>
   );
 };
+
+export default AtlasStatusBarErrorBanner;

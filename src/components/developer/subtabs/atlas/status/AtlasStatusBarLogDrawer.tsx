@@ -1,6 +1,6 @@
 import React from "react";
 import { Activity, ExternalLink } from "lucide-react";
-import { Badge } from "@components/ui";
+import { Badge, Button } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { LogLevel, LogRecord } from "@lib/logger";
 
@@ -38,13 +38,15 @@ export const AtlasStatusBarLogDrawer: React.FC<AtlasStatusBarLogDrawerProps> = (
         </span>
 
         {onNavigateToLogs && (
-          <button
+          <Button
+            size="sm"
+            variant="ghost"
             onClick={onNavigateToLogs}
-            className="flex items-center gap-1 text-[10px] text-cyan-400 hover:text-cyan-200 cursor-pointer"
+            className="h-5 px-1.5 text-[10px] text-cyan-400 hover:text-cyan-200 min-h-0"
+            leftIcon={<ExternalLink size={10} />}
           >
-            <ExternalLink size={10} />
-            <span>{t("atlasStudioOpenLogsTab") || "Full view (Logs)"}</span>
-          </button>
+            {t("atlasStudioOpenLogsTab") || "Full view (Logs)"}
+          </Button>
         )}
       </div>
 

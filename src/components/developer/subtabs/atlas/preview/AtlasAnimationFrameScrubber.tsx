@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "@components/ui";
 
 export interface AtlasAnimationFrameScrubberProps {
   totalFrames: number;
@@ -15,22 +16,26 @@ export const AtlasAnimationFrameScrubber: React.FC<AtlasAnimationFrameScrubberPr
 
   return (
     <div className="flex items-center gap-1 overflow-x-auto custom-scrollbar py-1">
-      {Array.from({ length: totalFrames }).map((_, fIdx) => (
-        <button
-          key={fIdx}
-          type="button"
-          onClick={() => onSelectFrame(fIdx)}
-          className={`px-2 py-0.5 rounded text-xs font-mono font-bold transition-all border cursor-pointer ${
-            currentFrame === fIdx
-              ? "bg-gradient-to-r from-amber-600 to-amber-700 text-white border-amber-400 shadow-md shadow-amber-950/50"
-              : "bg-black/50 text-stone-400 border-stone-800 hover:text-stone-200 hover:border-stone-700"
-          }`}
-        >
-          #{fIdx}
-        </button>
-      ))}
+      {Array.from({ length: totalFrames }).map((_, fIdx) => {
+        const isSelected = currentFrame === fIdx;
+        return (
+          <Button
+            key={fIdx}
+            size="sm"
+            variant={isSelected ? "primary" : "secondary"}
+            onClick={() => onSelectFrame(fIdx)}
+            className={`h-6 px-2 min-h-0 text-xs font-mono font-bold shrink-0 ${
+              !isSelected ? "bg-black/50 border-stone-800 text-stone-400 hover:text-stone-200" : ""
+            }`}
+          >
+            #{fIdx}
+          </Button>
+        );
+      })}
     </div>
   );
 });
 
 AtlasAnimationFrameScrubber.displayName = "AtlasAnimationFrameScrubber";
+
+export default AtlasAnimationFrameScrubber;

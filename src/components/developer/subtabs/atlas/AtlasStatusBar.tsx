@@ -73,12 +73,14 @@ export const AtlasStatusBar: React.FC<AtlasStatusBarProps> = ({
         {/* Right: Error Dismissal & Logs Drawer Button */}
         <div className="flex items-center gap-2">
           {error && onClearError && (
-            <button
+            <Button
+              size="sm"
+              variant="ghost"
               onClick={onClearError}
-              className="text-[11px] text-red-400 hover:text-red-200 underline cursor-pointer"
+              className="h-6 px-1.5 text-[11px] text-red-400 hover:text-red-200 underline"
             >
               {t("atlasStudioDismissError") || "Dismiss error"}
-            </button>
+            </Button>
           )}
 
           <Button

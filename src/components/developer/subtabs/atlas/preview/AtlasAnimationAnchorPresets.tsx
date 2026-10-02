@@ -1,6 +1,6 @@
 import React from "react";
 import { Crosshair } from "lucide-react";
-import { Slider } from "@/components/ui";
+import { Slider, Button } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasOriginDefinition } from "../types";
 
@@ -18,6 +18,24 @@ export const AtlasAnimationAnchorPresets: React.FC<AtlasAnimationAnchorPresetsPr
   onOriginChange,
 }) => {
   const { t } = useI18n();
+
+  const presets = [
+    {
+      type: "feet" as const,
+      normalized: { x: 0.5, y: 1.0 },
+      label: t("atlasStudioAnchorFeet"),
+    },
+    {
+      type: "center" as const,
+      normalized: { x: 0.5, y: 0.5 },
+      label: t("atlasStudioAnchorCenter"),
+    },
+    {
+      type: "top_left" as const,
+      normalized: { x: 0.0, y: 0.0 },
+      label: t("atlasStudioAnchorTopLeft"),
+    },
+  ];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1 border-t border-stone-800/80">
@@ -43,42 +61,25 @@ export const AtlasAnimationAnchorPresets: React.FC<AtlasAnimationAnchorPresetsPr
           </span>
         </span>
         <div className="flex items-center gap-1 text-[10px]">
-          <button
-            type="button"
-            onClick={() =>
-              onOriginChange?.({
-                type: "feet",
-                normalized: { x: 0.5, y: 1.0 },
-              })
-            }
-            className="flex-1 py-1 px-1 bg-black/60 rounded border border-stone-800 hover:border-amber-700 text-stone-300 font-bold cursor-pointer"
-          >
-            {t("atlasStudioAnchorFeet")}
-          </button>
-          <button
-            type="button"
-            onClick={() =>
-              onOriginChange?.({
-                type: "center",
-                normalized: { x: 0.5, y: 0.5 },
-              })
-            }
-            className="flex-1 py-1 px-1 bg-black/60 rounded border border-stone-800 hover:border-amber-700 text-stone-300 font-bold cursor-pointer"
-          >
-            {t("atlasStudioAnchorCenter")}
-          </button>
-          <button
-            type="button"
-            onClick={() =>
-              onOriginChange?.({
-                type: "top_left",
-                normalized: { x: 0.0, y: 0.0 },
-              })
-            }
-            className="flex-1 py-1 px-1 bg-black/60 rounded border border-stone-800 hover:border-amber-700 text-stone-300 font-bold cursor-pointer"
-          >
-            {t("atlasStudioAnchorTopLeft")}
-          </button>
+          {presets.map((p) => {
+            const isSelected = origin?.type === p.type;
+            return (
+              <Button
+                key={p.type}
+                size="sm"
+                variant={isSelected ? "primary" : "secondary"}
+                onClick={() =>
+                  onOriginChange?.({
+                    type: p.type,
+                    normalized: p.normalized,
+                  })
+                }
+                className="flex-1 h-7 py-1 px-1 text-[10px] font-bold"
+              >
+                {p.label}
+              </Button>
+            );
+          })}
         </div>
       </div>
     </div>

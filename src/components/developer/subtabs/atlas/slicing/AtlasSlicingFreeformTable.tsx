@@ -1,6 +1,16 @@
 import React from "react";
 import { Plus, Trash2, CheckSquare, Square } from "lucide-react";
-import { Button, Tooltip, Input } from "@components/ui";
+import {
+  Button,
+  IconButton,
+  Input,
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { IFreeformFrameRect } from "@game/engine/meta/types";
 
@@ -39,25 +49,25 @@ export const AtlasSlicingFreeformTable: React.FC<AtlasSlicingFreeformTableProps>
     <div className="flex flex-col gap-2 p-3 bg-black/40 rounded-xl border border-stone-800/80">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Tooltip content={allSelected ? t("atlasStudioDeselectAll") : t("atlasStudioSelectAll")}>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() =>
-                allSelected
-                  ? onDeselectAll()
-                  : onSelectAll(frames.map((f, idx) => f.id || `frame_${idx}`))
-              }
-              className="h-6 w-6 min-h-0 p-0 text-stone-400 hover:text-stone-200"
-              aria-label={allSelected ? t("atlasStudioDeselectAll") : t("atlasStudioSelectAll")}
-            >
-              {allSelected ? (
+          <IconButton
+            size="sm"
+            variant="ghost"
+            aria-label={allSelected ? t("atlasStudioDeselectAll") : t("atlasStudioSelectAll")}
+            tooltipContent={allSelected ? t("atlasStudioDeselectAll") : t("atlasStudioSelectAll")}
+            onClick={() =>
+              allSelected
+                ? onDeselectAll()
+                : onSelectAll(frames.map((f, idx) => f.id || `frame_${idx}`))
+            }
+            className="text-stone-400 hover:text-stone-200"
+            icon={
+              allSelected ? (
                 <CheckSquare size={14} className="text-amber-400" />
               ) : (
                 <Square size={14} />
-              )}
-            </Button>
-          </Tooltip>
+              )
+            }
+          />
           <span className="text-xs font-semibold text-stone-300">
             {t("atlasStudioFreeformFramesTitle")} ({frames.length})
           </span>
@@ -75,51 +85,57 @@ export const AtlasSlicingFreeformTable: React.FC<AtlasSlicingFreeformTableProps>
       </div>
 
       {/* Frame Table Container */}
-      <div className="max-h-60 overflow-y-auto custom-scrollbar border border-stone-800 rounded-lg">
-        <table className="w-full text-left font-mono text-[11px] border-collapse">
-          <thead>
-            <tr className="bg-stone-900/90 text-stone-400 border-b border-stone-800">
-              <th className="p-1.5 w-6 text-center">#</th>
-              <th className="p-1.5">{t("atlasStudioFrameColId")}</th>
-              <th className="p-1.5 w-14">X</th>
-              <th className="p-1.5 w-14">Y</th>
-              <th className="p-1.5 w-14">W</th>
-              <th className="p-1.5 w-14">H</th>
-              <th className="p-1.5">{t("atlasStudioFrameColTrack")}</th>
-              <th className="p-1.5 w-8 text-center"></th>
-            </tr>
-          </thead>
-          <tbody>
+      <div className="max-h-60 overflow-y-auto custom-scrollbar">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-8 text-center p-1">#</TableHead>
+              <TableHead className="p-1.5">{t("atlasStudioFrameColId")}</TableHead>
+              <TableHead className="w-14 p-1.5">X</TableHead>
+              <TableHead className="w-14 p-1.5">Y</TableHead>
+              <TableHead className="w-14 p-1.5">W</TableHead>
+              <TableHead className="w-14 p-1.5">H</TableHead>
+              <TableHead className="p-1.5">{t("atlasStudioFrameColTrack")}</TableHead>
+              <TableHead className="w-8 text-center p-1"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {frames.map((frame, idx) => {
               const frameId = frame.id || `frame_${idx}`;
               const isSelected = selectedFrameIds.includes(frameId);
 
               return (
-                <tr
+                <TableRow
                   key={frameId}
+                  isSelected={isSelected}
                   onClick={() => onSelectFrame?.(idx)}
-                  className={`border-b border-stone-900/80 hover:bg-stone-900/40 transition-colors ${isSelected ? "bg-amber-950/25" : ""
-                    }`}
+                  className="cursor-pointer"
                 >
-                  <td className="p-1.5 text-center" onClick={(e) => e.stopPropagation()}>
-                    <Button
-                      size="sm"
+                  <TableCell
+                    className="p-1 text-center"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <IconButton
+                      size="xs"
                       variant="ghost"
+                      aria-label={
+                        isSelected ? t("atlasStudioDeselectAll") : t("atlasStudioSelectAll")
+                      }
                       onClick={() => onToggleSelectFrame(frameId)}
-                      className="h-5 w-5 min-h-0 p-0 text-stone-400 hover:text-amber-400"
-                      aria-label={isSelected ? t("atlasStudioDeselectAll") : t("atlasStudioSelectAll")}
-                    >
-                      {isSelected ? (
-                        <CheckSquare size={13} className="text-amber-400" />
-                      ) : (
-                        <Square size={13} />
-                      )}
-                    </Button>
-                  </td>
-                  <td className="p-1.5 text-amber-200/90 font-bold truncate max-w-[90px]">
+                      className="text-stone-400 hover:text-amber-400"
+                      icon={
+                        isSelected ? (
+                          <CheckSquare size={13} className="text-amber-400" />
+                        ) : (
+                          <Square size={13} />
+                        )
+                      }
+                    />
+                  </TableCell>
+                  <TableCell className="p-1.5 text-amber-200/90 font-bold truncate max-w-[90px]">
                     {frameId}
-                  </td>
-                  <td className="p-1 text-stone-300">
+                  </TableCell>
+                  <TableCell className="p-1 text-stone-300">
                     <Input
                       type="number"
                       value={frame.x}
@@ -130,8 +146,8 @@ export const AtlasSlicingFreeformTable: React.FC<AtlasSlicingFreeformTableProps>
                       containerClassName="w-12 max-w-[48px]"
                       className="h-5.5 px-0.5 text-center font-mono text-[10px] bg-black/60 border-stone-800 rounded"
                     />
-                  </td>
-                  <td className="p-1 text-stone-300">
+                  </TableCell>
+                  <TableCell className="p-1 text-stone-300">
                     <Input
                       type="number"
                       value={frame.y}
@@ -142,8 +158,8 @@ export const AtlasSlicingFreeformTable: React.FC<AtlasSlicingFreeformTableProps>
                       containerClassName="w-12 max-w-[48px]"
                       className="h-5.5 px-0.5 text-center font-mono text-[10px] bg-black/60 border-stone-800 rounded"
                     />
-                  </td>
-                  <td className="p-1 text-stone-300">
+                  </TableCell>
+                  <TableCell className="p-1 text-stone-300">
                     <Input
                       type="number"
                       value={frame.width}
@@ -154,8 +170,8 @@ export const AtlasSlicingFreeformTable: React.FC<AtlasSlicingFreeformTableProps>
                       containerClassName="w-12 max-w-[48px]"
                       className="h-5.5 px-0.5 text-center font-mono text-[10px] bg-black/60 border-stone-800 rounded"
                     />
-                  </td>
-                  <td className="p-1 text-stone-300">
+                  </TableCell>
+                  <TableCell className="p-1 text-stone-300">
                     <Input
                       type="number"
                       value={frame.height}
@@ -166,28 +182,29 @@ export const AtlasSlicingFreeformTable: React.FC<AtlasSlicingFreeformTableProps>
                       containerClassName="w-12 max-w-[48px]"
                       className="h-5.5 px-0.5 text-center font-mono text-[10px] bg-black/60 border-stone-800 rounded"
                     />
-                  </td>
-                  <td className="p-1.5 text-stone-400 truncate max-w-[80px]">
+                  </TableCell>
+                  <TableCell className="p-1.5 text-stone-400 truncate max-w-[80px]">
                     {frame.trackName || "—"}
-                  </td>
-                  <td className="p-1 text-center" onClick={(e) => e.stopPropagation()}>
-                    <Tooltip content={t("delete") || "Delete"}>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => onDeleteFrame(frameId)}
-                        className="h-6 w-6 min-h-0 p-0 text-stone-500 hover:text-rose-400 hover:bg-rose-950/40"
-                        aria-label={t("delete") || "Delete"}
-                      >
-                        <Trash2 size={12} />
-                      </Button>
-                    </Tooltip>
-                  </td>
-                </tr>
+                  </TableCell>
+                  <TableCell
+                    className="p-1 text-center"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <IconButton
+                      size="xs"
+                      variant="ghost"
+                      aria-label={t("delete") || "Delete"}
+                      tooltipContent={t("delete") || "Delete"}
+                      onClick={() => onDeleteFrame(frameId)}
+                      className="text-stone-500 hover:text-rose-400 hover:bg-rose-950/40"
+                      icon={<Trash2 size={12} />}
+                    />
+                  </TableCell>
+                </TableRow>
               );
             })}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

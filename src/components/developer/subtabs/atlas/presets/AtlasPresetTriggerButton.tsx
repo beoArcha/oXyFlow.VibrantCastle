@@ -1,6 +1,6 @@
 import React from "react";
 import { ChevronDown } from "lucide-react";
-import { Badge } from "@components/ui";
+import { Button, Badge } from "@components/ui";
 import { IAtlasAssetManifestItem } from "@game/engine/meta/registry";
 import { getCategoryMeta } from "./categoryMeta";
 
@@ -18,9 +18,10 @@ export const AtlasPresetTriggerButton: React.FC<AtlasPresetTriggerButtonProps> =
   const activeMeta = activeAsset ? getCategoryMeta(activeAsset.category) : null;
 
   return (
-    <button
+    <Button
+      variant="secondary"
       onClick={onClick}
-      className="flex items-center gap-2.5 px-3 py-1.5 bg-[#120603] hover:bg-[#1a0904] text-stone-200 border border-amber-800/60 hover:border-amber-500 rounded-xl transition-all shadow-md shadow-black/40 group cursor-pointer"
+      className="flex items-center gap-2.5 px-3 py-1.5 bg-[#120603] hover:bg-[#1a0904] text-stone-200 border border-amber-800/60 hover:border-amber-500 rounded-xl transition-all shadow-md shadow-black/40 group cursor-pointer h-auto min-h-0"
       aria-expanded={isOpen}
       aria-haspopup="listbox"
     >
@@ -41,6 +42,6 @@ export const AtlasPresetTriggerButton: React.FC<AtlasPresetTriggerButtonProps> =
         size={14}
         className={`text-amber-400/80 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
       />
-    </button>
+    </Button>
   );
 };

@@ -226,22 +226,28 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
           {/* Quick Presets Swatches */}
           <div className="flex items-center gap-1.5 flex-wrap">
             <span className="text-[10px] text-stone-400 mr-1 font-medium">{t("atlasStudioPresetsLabel")}</span>
-            {COMMON_PRESETS.map((p) => (
-              <button
-                key={p.hex}
-                onClick={() => handleColorChange(p.hex)}
-                className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono border ${currentColor.toLowerCase() === p.hex.toLowerCase()
-                    ? "border-amber-400 bg-amber-950/50 text-amber-200 font-bold"
-                    : "border-stone-800 bg-black/40 text-stone-400 hover:border-stone-700 hover:text-stone-300"
+            {COMMON_PRESETS.map((p) => {
+              const isSelected = currentColor.toLowerCase() === p.hex.toLowerCase();
+              return (
+                <Button
+                  key={p.hex}
+                  size="sm"
+                  variant={isSelected ? "primary" : "secondary"}
+                  onClick={() => handleColorChange(p.hex)}
+                  className={`h-6 px-1.5 text-[10px] font-mono min-h-0 ${
+                    !isSelected ? "bg-black/50 border-stone-800 text-stone-400 hover:text-stone-200" : ""
                   }`}
-              >
-                <span
-                  className="w-2.5 h-2.5 rounded-full border border-stone-700"
-                  style={{ backgroundColor: p.hex }}
-                />
-                {p.name}
-              </button>
-            ))}
+                  leftIcon={
+                    <span
+                      className="w-2.5 h-2.5 rounded-full border border-stone-700 shrink-0"
+                      style={{ backgroundColor: p.hex }}
+                    />
+                  }
+                >
+                  {p.name}
+                </Button>
+              );
+            })}
           </div>
 
           {/* Tolerance Slider */}
