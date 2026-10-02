@@ -2,8 +2,8 @@ import React from "react";
 import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
 import { renderIntoDom, cleanupDom } from "@test-utils/domTestUtils";
 import { CharacterProvider } from "../CharacterContext";
-import { useCharacterPortrait } from "../useCharacterPortrait";
-import { useCharacterSprite } from "../useCharacterSprite";
+import { useCharacterPortrait } from "../hooks/useCharacterPortrait";
+import { useCharacterSprite } from "../hooks/useCharacterSprite";
 import { assetLoader } from "@game/engine/assetLoader";
 
 describe("Character Module Hooks (useCharacterPortrait & useCharacterSprite)", () => {

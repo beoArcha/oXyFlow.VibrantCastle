@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { User } from "lucide-react";
 import { cn } from "@lib/utils";
-import { useCharacterPortrait } from "./useCharacterPortrait";
+import { useCharacterPortrait } from "./hooks/useCharacterPortrait";
 import {
   CharacterPortraitCrop,
   CharacterPortraitSize,

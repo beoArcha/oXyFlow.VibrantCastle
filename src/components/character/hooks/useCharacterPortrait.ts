@@ -5,7 +5,7 @@ import {
   subscribeToAssetLoader,
   preloadCharacterAssets,
 } from "@components/adapters";
-import { useCharacterContext } from "./CharacterContext";
+import { useCharacterContext } from "../CharacterContext";
 
 export type ResolvedPortraitData = CharacterPortraitVM;
 
@@ -32,7 +32,7 @@ export function useCharacterPortrait(
 
   // Preload portrait asset via adapter
   useEffect(() => {
-    preloadCharacterAssets(characterId, "high", 1).catch(() => {});
+    preloadCharacterAssets(characterId, "high", 1).catch(() => { });
   }, [characterId]);
 
   return resolveCharacterPortraitVM(characterId, mood);

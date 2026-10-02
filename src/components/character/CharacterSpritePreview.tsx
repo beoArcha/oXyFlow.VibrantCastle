@@ -1,10 +1,10 @@
 import React, { useRef, useEffect, useImperativeHandle, useCallback } from "react";
 import { AssetQuality } from "@game/types";
 import { AnimationName, CharacterProgressionTier, SpriteFrame } from "@game/engine/spriteTypes";
-import { useCharacterSprite } from "./useCharacterSprite";
+import { useCharacterSprite } from "./hooks/useCharacterSprite";
 import { useCharacterContext } from "./CharacterContext";
 import { renderSpritePreviewFrame } from "./renderSpritePreviewFrame";
-import { useCanvasDpr } from "./useCanvasDpr";
+import { useCanvasDpr } from "./hooks/useCanvasDpr";
 import { SpriteStageVisualProps } from "./types";
 
 export interface CharacterSpritePreviewProps extends SpriteStageVisualProps {

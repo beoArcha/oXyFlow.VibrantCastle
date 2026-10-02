@@ -7,7 +7,7 @@ import {
   subscribeToAssetLoader,
   preloadCharacterAssets,
 } from "@components/adapters";
-import { useCharacterContext } from "./CharacterContext";
+import { useCharacterContext } from "../CharacterContext";
 
 export type CharacterSpriteState = CharacterSpriteVM;
 
@@ -47,7 +47,7 @@ export function useCharacterSprite(
 
   // Preload textures when parameters change via adapter
   useEffect(() => {
-    preloadCharacterAssets(characterId, quality, tier).catch(() => {});
+    preloadCharacterAssets(characterId, quality, tier).catch(() => { });
   }, [characterId, quality, tier]);
 
   return useMemo(
