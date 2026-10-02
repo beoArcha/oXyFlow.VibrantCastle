@@ -4,14 +4,8 @@ import { Button, Card, CardHeader, CardTitle, CardContent } from "@components/ui
 import { useI18n } from "@context/I18nContext";
 import { BackgroundLayerTier } from "@game/locations/schema/locationSchema";
 
-const PARALLAX_TIERS: BackgroundLayerTier[] = ["far", "mid_far", "mid", "mid_close", "close"];
-
-export interface TesterParallaxCardProps {
-  parallaxTiers: Record<BackgroundLayerTier, boolean>;
-  onToggleParallaxTier: (tier: BackgroundLayerTier) => void;
-  onSetMusicIntensity: (intensity: number) => void;
-  onTriggerParticleBurst: (type: "spark" | "magic" | "dust") => void;
-}
+import { PARALLAX_TIERS } from "./constants";
+import { TesterParallaxCardProps } from "./types";
 
 export const TesterParallaxCard: React.FC<TesterParallaxCardProps> = ({
   parallaxTiers,

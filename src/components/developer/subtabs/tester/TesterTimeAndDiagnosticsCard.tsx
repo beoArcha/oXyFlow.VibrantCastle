@@ -3,15 +3,7 @@ import { FastForward, StepForward, Eye, Activity } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent, Badge, Switch } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 
-export interface TesterTimeAndDiagnosticsCardProps {
-  timeScale: number;
-  showHitboxes: boolean;
-  showProfiler: boolean;
-  onSetTimeScale: (scale: number) => void;
-  onStepSingleFrame: () => void;
-  onToggleHitboxes: () => void;
-  onToggleProfiler: () => void;
-}
+import { TesterTimeAndDiagnosticsCardProps } from "./types";
 
 export const TesterTimeAndDiagnosticsCard: React.FC<TesterTimeAndDiagnosticsCardProps> = ({
   timeScale,

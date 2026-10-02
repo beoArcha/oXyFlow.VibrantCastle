@@ -3,24 +3,9 @@ import { Skull, Ghost, Trophy, AlertTriangle, Plus } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent, Select, Switch } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 
-export const MONSTER_ID_LIST = [
-  { id: "training_dummy", translationKey: "enemyTrainingDummy" },
-  { id: "court_sentinel", translationKey: "enemyCourtSentinel" },
-  { id: "chasm_crawler", translationKey: "enemyChasmCrawler" },
-  { id: "bastion_gargoyle", translationKey: "enemyBastionGargoyle" },
-  { id: "bastion_sentinel_boss", translationKey: "enemyBastionSentinelBoss" },
-  { id: "clockwork_automaton", translationKey: "enemyClockworkAutomaton" },
-  { id: "aether_wisp", translationKey: "enemyAetherWisp" },
-];
+import { MONSTER_ID_LIST } from "./constants";
 
-export interface TesterCombatCardProps {
-  freezeAI: boolean;
-  onToggleFreezeAI: () => void;
-  onKillAllEnemies: () => void;
-  onForceVictory: () => void;
-  onForceDefeat: () => void;
-  onSpawnEnemy: (enemyTypeId: string) => void;
-}
+import { TesterCombatCardProps } from "./types";
 
 export const TesterCombatCard: React.FC<TesterCombatCardProps> = ({
   freezeAI,

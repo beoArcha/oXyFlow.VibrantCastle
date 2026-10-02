@@ -3,18 +3,7 @@ import { Shield, Zap, FastForward, Ghost, Heart } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent, Switch } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 
-export interface TesterCheatsCardProps {
-  godMode: boolean;
-  infiniteMana: boolean;
-  infiniteStamina: boolean;
-  noClip: boolean;
-  onToggleGodMode: () => void;
-  onToggleInfiniteMana: () => void;
-  onToggleInfiniteStamina: () => void;
-  onToggleNoClip: () => void;
-  onSetPlayerHp: (amount: number) => void;
-  onRefillVitals: () => void;
-}
+import { TesterCheatsCardProps } from "./types";
 
 export const TesterCheatsCard: React.FC<TesterCheatsCardProps> = ({
   godMode,

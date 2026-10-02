@@ -2,28 +2,11 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { MapPin, Compass, Crosshair } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
-import { SpawnPreset } from "@game/debug/debugManager";
-import { debugManager } from "@game/debug/debugManager";
+import { SpawnPreset, debugManager } from "@game/debug/debugManager";
 import { getLocation, LocationId } from "@game/locations";
+import { LOCATION_IDS } from "./constants";
 
-export const LOCATION_IDS: LocationId[] = [
-  "courtyard",
-  "thorn_chasm",
-  "grand_bastion",
-  "clocktower",
-  "aether_sanctuary",
-];
-
-export interface TesterTeleportCardProps {
-  currentLocationId: LocationId;
-  onLoadLocation: (locId: LocationId) => void;
-  onTeleportPlayer?: (x: number, y: number) => void;
-  playerX?: number;
-  playerY?: number;
-  clickToTeleport: boolean;
-  onToggleClickToTeleport: () => void;
-  presets?: SpawnPreset[];
-}
+import { TesterTeleportCardProps } from "./types";
 
 export const TesterTeleportCard: React.FC<TesterTeleportCardProps> = ({
   currentLocationId,
