@@ -73,7 +73,7 @@ export const Input = React.memo(
           />
 
           {rightIcon && (
-            <span className="absolute right-2.5 flex items-center justify-center text-stone-500 pointer-events-none shrink-0">
+            <span className="absolute right-2.5 flex items-center justify-center text-stone-500 z-10 shrink-0">
               {rightIcon}
             </span>
           )}

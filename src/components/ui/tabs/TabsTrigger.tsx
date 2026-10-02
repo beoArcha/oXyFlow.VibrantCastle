@@ -9,6 +9,8 @@ export interface TabsTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonE
   icon?: React.ReactNode;
   /** Optional badge text or counter value */
   badge?: string | number;
+  /** Optional keyboard shortcut badge label e.g. "M", "Esc", "1" */
+  keyLabel?: string;
 }
 
 /**
@@ -17,7 +19,7 @@ export interface TabsTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonE
  */
 export const TabsTrigger = React.memo(
   React.forwardRef<HTMLButtonElement, TabsTriggerProps>(function TabsTrigger(
-    { value, icon, badge, children, className, disabled, onClick, ...props },
+    { value, icon, badge, keyLabel, children, className, disabled, onClick, ...props },
     ref
   ) {
     const { activeValue, setActiveValue } = useTabsContext("Trigger");
@@ -70,6 +72,16 @@ export const TabsTrigger = React.memo(
             )}
           >
             {badge}
+          </span>
+        )}
+        {keyLabel && (
+          <span
+            className={cn(
+              "text-[10px] px-1.5 py-0.5 rounded font-mono font-bold leading-none ml-0.5",
+              isActive ? "bg-black/30 text-amber-200" : "bg-stone-900 text-stone-400"
+            )}
+          >
+            [{keyLabel}]
           </span>
         )}
       </button>

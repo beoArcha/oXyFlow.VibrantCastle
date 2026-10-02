@@ -9,29 +9,38 @@ import {
   TabsContent,
 } from "./tabs/index";
 
-export interface TabItem {
-  id: string;
-  label: string;
+export interface TabItem<T extends string = string> {
+  id: T;
+  label: React.ReactNode;
   icon?: React.ReactNode;
   badge?: string | number;
+  keyLabel?: string;
+  disabled?: boolean;
 }
 
-export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
+export type KeyedTabItem<T extends string = string> = TabItem<T>;
+
+export interface TabsProps<T extends string = string>
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "defaultValue"> {
   /** Controlled active tab value */
-  value?: string;
+  value?: T;
   /** Uncontrolled default active tab value */
-  defaultValue?: string;
+  defaultValue?: T;
   /** Callback fired when active tab changes */
-  onValueChange?: (value: string) => void;
+  onValueChange?: (value: T) => void;
   /** Tab orientation (default: "horizontal") */
   orientation?: TabsOrientation;
   /** Legacy array of tab items for 100% backward compatibility */
-  items?: TabItem[];
+  items?: TabItem<T>[];
   /** Legacy active tab ID for 100% backward compatibility */
-  activeId?: string;
+  activeId?: T;
   /** Legacy change callback for 100% backward compatibility */
-  onChange?: (id: string) => void;
+  onChange?: (id: T) => void;
+  /** Optional trailing action slot in legacy items mode */
+  trailingAction?: React.ReactNode;
 }
+
+export type KeyedTabsProps<T extends string = string> = TabsProps<T>;
 
 /**
  * Gothic Tabs composite component orchestrating active tab selection,
@@ -41,7 +50,7 @@ export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "o
  * and backward-compatible legacy array mode (items={...}).
  */
 const TabsRoot = React.memo(
-  React.forwardRef<HTMLDivElement, TabsProps>(function Tabs(
+  React.forwardRef(function Tabs<T extends string = string>(
     {
       value: controlledValue,
       defaultValue,
@@ -50,30 +59,36 @@ const TabsRoot = React.memo(
       items,
       activeId,
       onChange,
+      trailingAction,
       children,
       className,
       ...props
-    },
-    ref
+    }: TabsProps<T>,
+    ref: React.ForwardedRef<HTMLDivElement>
   ) {
     // Legacy Array Mode: compose TabsList and TabsTrigger primitives without code duplication
     if (items && items.length > 0) {
-      const currentActive = activeId ?? items[0]?.id;
+      const currentActive = String(activeId ?? controlledValue ?? items[0]?.id);
       const legacyContextValue: TabsContextValue = {
         activeValue: currentActive,
-        setActiveValue: (newVal: string) => onChange?.(newVal),
+        setActiveValue: (newVal: string) => {
+          onChange?.(newVal as T);
+          onValueChange?.(newVal as T);
+        },
         orientation,
       };
 
       return (
         <TabsContext.Provider value={legacyContextValue}>
-          <TabsList ref={ref} className={className} {...props}>
+          <TabsList ref={ref} trailingAction={trailingAction} className={className} {...props}>
             {items.map((tab) => (
               <TabsTrigger
-                key={tab.id}
-                value={tab.id}
+                key={String(tab.id)}
+                value={String(tab.id)}
                 icon={tab.icon}
                 badge={tab.badge}
+                keyLabel={tab.keyLabel}
+                disabled={tab.disabled}
               >
                 {tab.label}
               </TabsTrigger>
@@ -93,14 +108,14 @@ const TabsRoot = React.memo(
         if (!isControlled) {
           setInternalValue(newVal);
         }
-        onValueChange?.(newVal);
+        onValueChange?.(newVal as T);
       },
       [isControlled, onValueChange]
     );
 
     const contextValue = useMemo<TabsContextValue>(
       () => ({
-        activeValue,
+        activeValue: String(activeValue),
         setActiveValue,
         orientation,
       }),
@@ -119,10 +134,11 @@ const TabsRoot = React.memo(
 
 TabsRoot.displayName = "Tabs";
 
-export interface TabsComponent
-  extends React.MemoExoticComponent<
-    React.ForwardRefExoticComponent<TabsProps & React.RefAttributes<HTMLDivElement>>
-  > {
+export interface TabsComponent {
+  <T extends string = string>(
+    props: TabsProps<T> & { ref?: React.ForwardedRef<HTMLDivElement> }
+  ): React.ReactElement | null;
+  displayName?: string;
   List: typeof TabsList;
   Trigger: typeof TabsTrigger;
   Content: typeof TabsContent;
@@ -132,6 +148,8 @@ export const Tabs = TabsRoot as unknown as TabsComponent;
 Tabs.List = TabsList;
 Tabs.Trigger = TabsTrigger;
 Tabs.Content = TabsContent;
+
+export const KeyedTabs = Tabs;
 
 export * from "./tabs/index";
 export default Tabs;

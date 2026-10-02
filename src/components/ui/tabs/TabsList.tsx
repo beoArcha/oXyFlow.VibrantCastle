@@ -5,6 +5,8 @@ import { useTabsContext } from "./TabsContext";
 export interface TabsListProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
   children: React.ReactNode;
+  /** Optional trailing action slot aligned to the right (e.g. close/resume button) */
+  trailingAction?: React.ReactNode;
 }
 
 /**
@@ -13,7 +15,7 @@ export interface TabsListProps extends React.HTMLAttributes<HTMLDivElement> {
  */
 export const TabsList = React.memo(
   React.forwardRef<HTMLDivElement, TabsListProps>(function TabsList(
-    { className, children, onKeyDown, ...props },
+    { className, children, onKeyDown, trailingAction, ...props },
     ref
   ) {
     const { orientation } = useTabsContext("List");
@@ -70,13 +72,21 @@ export const TabsList = React.memo(
         aria-orientation={orientation}
         onKeyDown={handleKeyDown}
         className={cn(
-          "shrink-0 flex items-center gap-1.5 p-1.5 bg-[#120502]/95 border border-amber-500/30 rounded-xl shadow-inner",
+          "shrink-0 flex items-center justify-between gap-1.5 p-1.5 bg-[#120502]/95 border border-amber-500/30 rounded-xl shadow-inner",
           orientation === "horizontal" ? "flex-wrap" : "flex-col items-stretch",
           className
         )}
         {...props}
       >
-        {children}
+        <div
+          className={cn(
+            "flex items-center gap-1.5",
+            orientation === "horizontal" ? "flex-wrap" : "flex-col items-stretch"
+          )}
+        >
+          {children}
+        </div>
+        {trailingAction && <div className="ml-auto flex items-center">{trailingAction}</div>}
       </div>
     );
   })

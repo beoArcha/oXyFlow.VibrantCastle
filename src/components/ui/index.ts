@@ -1,6 +1,7 @@
 // Core Primitives
 export * from "./Button";
 export * from "./IconButton";
+export * from "./buttonVariants";
 export * from "./Badge";
 export * from "./KbdKey";
 export * from "./KbdGroup";
@@ -29,7 +30,6 @@ export * from "./CompactNumberStepper";
 
 // Navigation
 export * from "./Tabs";
-export * from "./KeyedTabs";
 export * from "./SegmentedControl";
 export * from "./LanguageSelector";
 
@@ -43,4 +43,3 @@ export * from "./LoadingOverlay";
 
 // Error Resilience
 export * from "./GameErrorBoundary";
-

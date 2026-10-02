@@ -1,7 +1,7 @@
 import React from "react";
 import { Menu as MenuIcon, HelpCircle, Backpack, BookOpen, Play, Layers } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
-import { KeyedTabs, KeyedTabItem } from "@components/ui";
+import { Tabs, TabItem } from "@components/ui";
 
 export type ModalType = "menu" | "help" | "inventory" | "skillTree" | "creation";
 
@@ -27,8 +27,8 @@ export const ModalNavigationTabs: React.FC<ModalNavigationTabsProps> = React.mem
   }) {
     const { t } = useI18n();
 
-    const items: KeyedTabItem<ModalType>[] = React.useMemo(() => {
-      const list: KeyedTabItem<ModalType>[] = [
+    const items: TabItem<ModalType>[] = React.useMemo(() => {
+      const list: TabItem<ModalType>[] = [
         {
           id: "menu",
           label: t("menu"),
@@ -84,7 +84,7 @@ export const ModalNavigationTabs: React.FC<ModalNavigationTabsProps> = React.mem
     );
 
     return (
-      <KeyedTabs<ModalType>
+      <Tabs<ModalType>
         id="modal-quick-navigation"
         items={items}
         activeId={currentModal}
