@@ -73,14 +73,12 @@ export const AtlasCanvasView: React.FC<AtlasCanvasViewProps> = React.memo(({
           marginLeft: showLabels && sheetType === "spritesheet" ? "110px" : "auto",
         }}
       >
-        {/* Loading Indicator */}
         {!activeUrl && (
           <div className="absolute inset-0 flex items-center justify-center text-xs font-mono text-stone-500">
             {t("atlasLoading")}
           </div>
         )}
 
-        {/* Scaled Texture Atlas Image */}
         {activeUrl && (
           <img
             src={activeUrl}
@@ -89,7 +87,6 @@ export const AtlasCanvasView: React.FC<AtlasCanvasViewProps> = React.memo(({
           />
         )}
 
-        {/* 12x8 Frame Grid Overlay */}
         {showGrid && imageDimensions.width > 0 && (
           <AtlasGridOverlay
             columns={columns}
@@ -98,7 +95,6 @@ export const AtlasCanvasView: React.FC<AtlasCanvasViewProps> = React.memo(({
           />
         )}
 
-        {/* Active Animation Row Highlighting (only for spritesheet) */}
         {sheetType === "spritesheet" && (
           <AtlasRowHighlight
             activeRow={activeRow}
@@ -108,7 +104,6 @@ export const AtlasCanvasView: React.FC<AtlasCanvasViewProps> = React.memo(({
           />
         )}
 
-        {/* Side Row Labels (only for spritesheet) */}
         {showLabels && sheetType === "spritesheet" && (
           <AtlasRowLabels
             rows={animationRows}

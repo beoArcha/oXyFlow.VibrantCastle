@@ -57,7 +57,6 @@ export const CharacterStageControls: React.FC<CharacterStageControlsProps> = Rea
         className
       )}
     >
-      {/* Animation Action Selector */}
       <div className="flex flex-wrap items-center gap-1">
         {ANIMATION_OPTIONS.map(({ id, labelKey }) => (
           <Button
@@ -75,9 +74,7 @@ export const CharacterStageControls: React.FC<CharacterStageControlsProps> = Rea
         ))}
       </div>
 
-      {/* Stage Controls: Play/Pause, Flip, Speed, Scale */}
       <div className="flex items-center gap-2 shrink-0">
-        {/* Play/Pause */}
         <Tooltip content={isPlaying ? t("studioPause") : t("studioPlay")}>
           <Button
             size="sm"
@@ -93,7 +90,6 @@ export const CharacterStageControls: React.FC<CharacterStageControlsProps> = Rea
           </Button>
         </Tooltip>
 
-        {/* Flip Direction L/R */}
         <Tooltip content={t("studioFlipTitle")}>
           <Button
             size="sm"
@@ -107,7 +103,6 @@ export const CharacterStageControls: React.FC<CharacterStageControlsProps> = Rea
           </Button>
         </Tooltip>
 
-        {/* Speed & Scale / Zoom Selector */}
         <PlaybackSpeedScaleControl
           speed={playbackSpeed}
           onSpeedChange={onSpeedChange}

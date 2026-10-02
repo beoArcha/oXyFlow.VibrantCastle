@@ -35,7 +35,6 @@ export const AtlasViewerToolbar: React.FC<AtlasViewerToolbarProps> = React.memo(
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-800/80 pb-2">
-      {/* Sheet Category Toggle */}
       <Tabs
         value={sheetType}
         onValueChange={(val) => onSheetTypeChange(val as "spritesheet" | "portraits")}
@@ -58,9 +57,7 @@ export const AtlasViewerToolbar: React.FC<AtlasViewerToolbarProps> = React.memo(
         </TabsList>
       </Tabs>
 
-      {/* View Controls: Zoom + Grid + Labels */}
       <div className="flex items-center gap-2">
-        {/* Grid Toggle */}
         <Tooltip content={t("atlasToggleGrid")}>
           <Button
             size="sm"
@@ -74,7 +71,6 @@ export const AtlasViewerToolbar: React.FC<AtlasViewerToolbarProps> = React.memo(
           </Button>
         </Tooltip>
 
-        {/* Row Labels Toggle (only for spritesheet) */}
         {sheetType === "spritesheet" && (
           <Tooltip content={t("atlasToggleRows")}>
             <Button
@@ -89,7 +85,6 @@ export const AtlasViewerToolbar: React.FC<AtlasViewerToolbarProps> = React.memo(
           </Tooltip>
         )}
 
-        {/* Zoom Controls */}
         <div className="flex items-center gap-1 bg-black/60 px-1.5 py-1 rounded-lg border border-stone-800">
           <Tooltip content={t("atlasZoomOut")}>
             <Button

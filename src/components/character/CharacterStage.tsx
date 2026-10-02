@@ -70,7 +70,6 @@ export const CharacterStage: React.FC<CharacterStageProps> = React.memo(({
       accentColor={accentColor}
     >
       <div className={cn("flex flex-col gap-3", className)}>
-        {/* Playback & Animation Controls */}
         <CharacterStageControls
           activeAction={activeAction}
           onActionChange={handleActionChange}
@@ -84,9 +83,7 @@ export const CharacterStage: React.FC<CharacterStageProps> = React.memo(({
           onScaleChange={handleScaleChange}
         />
 
-        {/* Character Stage & Portrait Layout */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-stretch">
-          {/* Portrait Preview Card */}
           <div className="flex flex-col items-center justify-center gap-3 p-3.5 rounded-xl bg-black/60 border border-amber-900/40">
             <CharacterPortrait
               size="lg"
@@ -104,7 +101,6 @@ export const CharacterStage: React.FC<CharacterStageProps> = React.memo(({
             </div>
           </div>
 
-          {/* High-Resolution Animated Sprite Stage (Spacious, No Clipping) */}
           <div className="md:col-span-3 flex flex-col justify-between p-3.5 rounded-xl bg-black/60 border border-amber-900/40">
             <div className="w-full h-72 sm:h-80 relative overflow-hidden bg-[#0d0301] rounded-lg border border-stone-900 shadow-inner">
               <CharacterSpritePreview
@@ -117,7 +113,6 @@ export const CharacterStage: React.FC<CharacterStageProps> = React.memo(({
               />
             </div>
 
-            {/* Metadata Telemetry Bar */}
             <div className="flex flex-wrap items-center justify-between pt-2.5 px-1 text-[11px] text-stone-400 border-t border-stone-800/80 mt-2.5 gap-2">
               <div className="flex flex-wrap items-center gap-1.5">
                 <Badge variant="amber" className="capitalize font-mono">
