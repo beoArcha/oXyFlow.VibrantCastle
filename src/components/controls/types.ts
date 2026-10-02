@@ -111,3 +111,17 @@ export interface KeyboardMapperProps {
 export interface GamepadMapperProps {
   readonly className?: string;
 }
+
+export interface ControlsMapperCardProps {
+  readonly title: string;
+  readonly titleIcon: React.ReactNode;
+  readonly resetBtnId: string;
+  readonly onResetDefaults: () => void;
+  readonly selectedPlayer: PlayerId;
+  readonly onSelectPlayer: (player: PlayerId) => void;
+  readonly children: React.ReactNode;
+  readonly beforeGrid?: React.ReactNode;
+  readonly gridId?: string;
+  readonly gridClassName?: string;
+  readonly className?: string;
+}

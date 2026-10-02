@@ -4,6 +4,7 @@ export * from "./KeyboardMapper";
 export * from "./KeyRebindDialog";
 export * from "./ControlBindingRow";
 export * from "./PlayerTabSelector";
+export * from "./ControlsMapperCard";
 
 // Utilities
 export * from "./formatKeyLabel";
