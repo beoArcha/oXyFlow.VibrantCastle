@@ -1,5 +1,6 @@
 export * from "./types";
 export * from "./utils";
+export * from "./hooks/useLogFilters";
 export * from "./LogsHeaderToolbar";
 export * from "./LogsFilterControls";
 export * from "./LogItemDrawer";

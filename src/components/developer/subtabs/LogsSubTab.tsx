@@ -5,8 +5,7 @@ import {
   LogsHeaderToolbar,
   LogsFilterControls,
   LogsTerminalList,
-  LogCounts,
-  LogFilterLevel,
+  useLogFilters,
   safeStringify,
 } from "./logs";
 
@@ -24,22 +23,45 @@ export const LogsSubTab: React.FC = () => {
     exportJson,
   } = useThrottledLogs({ throttleMs: 150 });
 
-  // Filtering and interaction states
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [levelFilter, setLevelFilter] = useState<LogFilterLevel>("all");
-  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  // Filtering and interaction states managed by dedicated hook
+  const {
+    searchQuery,
+    setSearchQuery,
+    levelFilter,
+    setLevelFilter,
+    categoryFilter,
+    setCategoryFilter,
+    counts,
+    availableCategories,
+    filteredLogs,
+  } = useLogFilters(logs);
+
   const [expandedLogIds, setExpandedLogIds] = useState<Set<string>>(new Set());
   const [autoScroll, setAutoScroll] = useState<boolean>(true);
   const [copied, setCopied] = useState<boolean>(false);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom on new logs if enabled
+  // Smart auto-scroll: only scrolls to bottom if user is already near bottom
   useEffect(() => {
-    if (autoScroll && scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+    if (!autoScroll || !scrollContainerRef.current) return;
+
+    const el = scrollContainerRef.current;
+    const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 48;
+    if (isNearBottom) {
+      el.scrollTop = el.scrollHeight;
     }
   }, [lastUpdated, autoScroll]);
+
+  const handleToggleAutoScroll = useCallback(() => {
+    setAutoScroll((prev) => {
+      const next = !prev;
+      if (next && scrollContainerRef.current) {
+        scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+      }
+      return next;
+    });
+  }, []);
 
   const toggleExpand = useCallback((id: string) => {
     setExpandedLogIds((prev) => {
@@ -57,75 +79,6 @@ export const LogsSubTab: React.FC = () => {
     clearLogs();
     setExpandedLogIds(new Set());
   }, [clearLogs]);
-
-  // Metrics summary
-  const counts: LogCounts = useMemo(() => {
-    let fatal = 0;
-    let error = 0;
-    let warn = 0;
-    let info = 0;
-    let debug = 0;
-
-    logs.forEach((l) => {
-      switch (l.level) {
-        case LogLevel.FATAL:
-          fatal++;
-          break;
-        case LogLevel.ERROR:
-          error++;
-          break;
-        case LogLevel.WARN:
-          warn++;
-          break;
-        case LogLevel.INFO:
-          info++;
-          break;
-        case LogLevel.DEBUG:
-          debug++;
-          break;
-      }
-    });
-
-    return { fatal, error, warn, info, debug, total: logs.length };
-  }, [logs]);
-
-  // Distinct categories available in current logs
-  const availableCategories = useMemo(() => {
-    const set = new Set<string>();
-    logs.forEach((l) => {
-      if (l.category) set.add(l.category);
-    });
-    return Array.from(set).sort();
-  }, [logs]);
-
-  // Filtered log list
-  const filteredLogs = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-
-    return logs.filter((log) => {
-      if (levelFilter === "fatal" && log.level !== LogLevel.FATAL) return false;
-      if (levelFilter === "error" && log.level !== LogLevel.ERROR && log.level !== LogLevel.FATAL) return false;
-      if (levelFilter === "warn" && log.level !== LogLevel.WARN && log.level !== LogLevel.ERROR && log.level !== LogLevel.FATAL) return false;
-      if (levelFilter === "info" && log.level < LogLevel.INFO) return false;
-      if (levelFilter === "debug" && log.level !== LogLevel.DEBUG) return false;
-
-      if (categoryFilter !== "all" && log.category !== categoryFilter) {
-        return false;
-      }
-
-      if (q) {
-        const msg = (log.message || "").toLowerCase();
-        const cat = (log.category || "").toLowerCase();
-        const ctx = log.context ? safeStringify(log.context).toLowerCase() : "";
-        const err = log.error?.message ? log.error.message.toLowerCase() : "";
-        if (!msg.includes(q) && !cat.includes(q) && !ctx.includes(q) && !err.includes(q)) {
-          return false;
-        }
-      }
-
-      return true;
-    });
-  }, [logs, levelFilter, categoryFilter, searchQuery]);
 
   const handleCopyLogs = async () => {
     const text = filteredLogs
@@ -174,7 +127,7 @@ export const LogsSubTab: React.FC = () => {
           totalCount={counts.total}
           autoScroll={autoScroll}
           copied={copied}
-          onToggleAutoScroll={() => setAutoScroll((prev) => !prev)}
+          onToggleAutoScroll={handleToggleAutoScroll}
           onCopyLogs={handleCopyLogs}
           onDownloadLogs={handleDownloadLogs}
           onClearLogs={handleClearLogs}
