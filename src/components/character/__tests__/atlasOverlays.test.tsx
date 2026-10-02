@@ -1,9 +1,11 @@
 import React from "react";
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { renderIntoDom, cleanupDom } from "@test-utils/domTestUtils";
-import { AtlasGridOverlay } from "../AtlasGridOverlay";
-import { AtlasRowHighlight } from "../AtlasRowHighlight";
-import { AtlasRowLabels } from "../AtlasRowLabels";
+import {
+  AtlasGridOverlay,
+  AtlasRowHighlight,
+  AtlasRowLabels,
+} from "../atlas";
 
 describe("Atlas Visual Overlays", () => {
   beforeEach(async () => {

@@ -1,10 +1,12 @@
 import React from "react";
 import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
 import { renderIntoDom, cleanupDom } from "@test-utils/domTestUtils";
-import { AtlasViewerToolbar } from "../AtlasViewerToolbar";
-import { AtlasCanvasView } from "../AtlasCanvasView";
-import { AtlasViewerFooter } from "../AtlasViewerFooter";
-import { AtlasSheetViewer } from "../AtlasSheetViewer";
+import {
+  AtlasViewerToolbar,
+  AtlasCanvasView,
+  AtlasViewerFooter,
+  AtlasSheetViewer,
+} from "../atlas";
 
 describe("Atlas Sheet Viewer & Subcomponents", () => {
   beforeEach(async () => {
