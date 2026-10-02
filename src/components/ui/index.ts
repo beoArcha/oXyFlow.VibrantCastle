@@ -14,6 +14,8 @@ export * from "./ActionBar";
 export * from "./Alert";
 export * from "./EmptyState";
 export * from "./Table";
+export * from "./MetricTile";
+export * from "./CopyableSnippet";
 
 // Form Controls
 export * from "./Input";

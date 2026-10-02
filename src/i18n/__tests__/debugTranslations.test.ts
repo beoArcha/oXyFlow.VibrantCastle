@@ -22,6 +22,17 @@ describe("Debug Translations (i18n)", () => {
       "debugPlayerDash",
       "debugPlayerFacingLeft",
       "debugPlayerFacingRight",
+      "debugActionTeleportShort",
+      "debugActionDamageShort",
+      "debugPlayerIdleState",
+      "debugUnitFps",
+      "debugUnitMs",
+      "debugUnitPx",
+      "debugToggleSensorsTitle",
+      "debugSearchEnemiesPlaceholder",
+      "debugVitalsHp",
+      "debugVitalsMp",
+      "debugVitalsSp",
     ] as const;
 
     for (const key of requiredKeys) {

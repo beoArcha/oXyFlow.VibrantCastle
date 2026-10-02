@@ -253,6 +253,17 @@ export interface SettingsI18n {
   debugPlayerDash: string;
   debugPlayerFacingLeft: string;
   debugPlayerFacingRight: string;
+  debugActionTeleportShort: string;
+  debugActionDamageShort: string;
+  debugPlayerIdleState: string;
+  debugUnitFps: string;
+  debugUnitMs: string;
+  debugUnitPx: string;
+  debugToggleSensorsTitle: string;
+  debugSearchEnemiesPlaceholder: string;
+  debugVitalsHp: string;
+  debugVitalsMp: string;
+  debugVitalsSp: string;
   atlasStudioPresetSelect: string;
   atlasStudioPresetCharacter: string;
   atlasStudioPresetEnemy: string;
