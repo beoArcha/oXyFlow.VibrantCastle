@@ -563,6 +563,10 @@ export interface SettingsI18n {
   atlasPortraitsTab: string;
   atlasToggleGrid: string;
   atlasToggleRows: string;
+  atlasGridLabel: string;
+  atlasRowsLabel: string;
+  atlasResetLabel: string;
+  characterTierBadge: string;
   atlasZoomIn: string;
   atlasZoomOut: string;
   atlasResetZoom: string;

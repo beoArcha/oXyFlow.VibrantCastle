@@ -3,11 +3,11 @@ import { AssetQuality } from "@game/types";
 import { CharacterProgressionTier } from "@game/engine/spriteTypes";
 
 export interface CharacterContextValue {
-  characterId: string;
-  mood?: string;
-  quality?: AssetQuality;
-  tier?: CharacterProgressionTier;
-  accentColor?: string;
+  readonly characterId: string;
+  readonly mood?: string;
+  readonly quality?: AssetQuality;
+  readonly tier?: CharacterProgressionTier;
+  readonly accentColor?: string;
 }
 
 const CharacterContext = createContext<CharacterContextValue>({
@@ -18,12 +18,12 @@ const CharacterContext = createContext<CharacterContextValue>({
 });
 
 export interface CharacterProviderProps {
-  characterId: string;
-  mood?: string;
-  quality?: AssetQuality;
-  tier?: CharacterProgressionTier;
-  accentColor?: string;
-  children: React.ReactNode;
+  readonly characterId: string;
+  readonly mood?: string;
+  readonly quality?: AssetQuality;
+  readonly tier?: CharacterProgressionTier;
+  readonly accentColor?: string;
+  readonly children: React.ReactNode;
 }
 
 /**

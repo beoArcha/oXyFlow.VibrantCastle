@@ -1,30 +1,23 @@
+// Character Core Components
 export { CharacterPortrait } from "./CharacterPortrait";
 export { CharacterSpritePreview } from "./CharacterSpritePreview";
 export { CharacterStage } from "./CharacterStage";
 export { CharacterStageControls } from "./CharacterStageControls";
-export { AtlasSheetViewer } from "./AtlasSheetViewer";
-export { AtlasViewerToolbar } from "./AtlasViewerToolbar";
-export { AtlasCanvasView } from "./AtlasCanvasView";
-export { AtlasGridOverlay } from "./AtlasGridOverlay";
-export { AtlasRowHighlight } from "./AtlasRowHighlight";
-export { AtlasRowLabels } from "./AtlasRowLabels";
-export { AtlasViewerFooter } from "./AtlasViewerFooter";
+
+// Character Context & Hooks
 export { CharacterProvider, useCharacterContext } from "./CharacterContext";
 export { useCharacterPortrait } from "./useCharacterPortrait";
 export { useCharacterSprite } from "./useCharacterSprite";
 
+// Character Types
 export type { CharacterPortraitProps, CharacterPortraitSize, CharacterPortraitVariant } from "./CharacterPortrait";
 export type { CharacterSpritePreviewProps } from "./CharacterSpritePreview";
 export type { CharacterStageProps } from "./CharacterStage";
 export type { CharacterStageControlsProps } from "./CharacterStageControls";
-export type { AtlasSheetViewerProps } from "./AtlasSheetViewer";
-export type { AtlasViewerToolbarProps } from "./AtlasViewerToolbar";
-export type { AtlasCanvasViewProps } from "./AtlasCanvasView";
-export type { AtlasGridOverlayProps } from "./AtlasGridOverlay";
-export type { AtlasRowHighlightProps } from "./AtlasRowHighlight";
-export type { AtlasRowLabelsProps } from "./AtlasRowLabels";
-export type { AtlasViewerFooterProps } from "./AtlasViewerFooter";
 export type { CharacterContextValue, CharacterProviderProps } from "./CharacterContext";
 export type { ResolvedPortraitData } from "./useCharacterPortrait";
 export type { CharacterSpriteState } from "./useCharacterSprite";
 export type { CharacterPortraitCrop } from "./types";
+
+// Atlas Submodule
+export * from "./atlas";

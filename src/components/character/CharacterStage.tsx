@@ -11,21 +11,21 @@ import { CharacterSpritePreview } from "./CharacterSpritePreview";
 import { CharacterStageControls } from "./CharacterStageControls";
 
 export interface CharacterStageProps {
-  characterId: string;
-  mood?: string;
-  quality: AssetQuality;
-  scalingFilter?: string;
-  activeAction?: AnimationName;
-  onActionChange?: (action: AnimationName) => void;
-  playbackSpeed?: number;
-  onSpeedChange?: (speed: number) => void;
-  scale?: number;
-  onScaleChange?: (scale: number) => void;
-  flipHorizontal?: boolean;
-  onToggleFlip?: () => void;
-  isPlaying?: boolean;
-  onTogglePlay?: () => void;
-  className?: string;
+  readonly characterId: string;
+  readonly mood?: string;
+  readonly quality: AssetQuality;
+  readonly scalingFilter?: string;
+  readonly activeAction?: AnimationName;
+  readonly onActionChange?: (action: AnimationName) => void;
+  readonly playbackSpeed?: number;
+  readonly onSpeedChange?: (speed: number) => void;
+  readonly scale?: number;
+  readonly onScaleChange?: (scale: number) => void;
+  readonly flipHorizontal?: boolean;
+  readonly onToggleFlip?: () => void;
+  readonly isPlaying?: boolean;
+  readonly onTogglePlay?: () => void;
+  readonly className?: string;
 }
 
 /**
@@ -127,12 +127,12 @@ export const CharacterStage: React.FC<CharacterStageProps> = React.memo(({
                   {playbackSpeed}x {t("speedLabel")}
                 </Badge>
                 <Badge variant="stone" className="font-mono">
-                  {scale}x zoom
+                  {scale}x {t("zoomLabel")}
                 </Badge>
               </div>
               <div className="flex items-center gap-1.5">
                 <Badge variant="stone" className="font-mono">
-                  {quality.toUpperCase()} TIER • {scalingFilter.toUpperCase()}
+                  {quality.toUpperCase()} {t("characterTierBadge")} • {scalingFilter.toUpperCase()}
                 </Badge>
               </div>
             </div>

@@ -6,17 +6,17 @@ import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 
 export interface CharacterStageControlsProps {
-  activeAction: AnimationName;
-  onActionChange: (action: AnimationName) => void;
-  isPlaying: boolean;
-  onTogglePlay: () => void;
-  flipHorizontal: boolean;
-  onToggleFlip: () => void;
-  playbackSpeed: number;
-  onSpeedChange: (speed: number) => void;
-  scale: number;
-  onScaleChange: (scale: number) => void;
-  className?: string;
+  readonly activeAction: AnimationName;
+  readonly onActionChange: (action: AnimationName) => void;
+  readonly isPlaying: boolean;
+  readonly onTogglePlay: () => void;
+  readonly flipHorizontal: boolean;
+  readonly onToggleFlip: () => void;
+  readonly playbackSpeed: number;
+  readonly onSpeedChange: (speed: number) => void;
+  readonly scale: number;
+  readonly onScaleChange: (scale: number) => void;
+  readonly className?: string;
 }
 
 const ANIMATION_OPTIONS: Array<{ id: AnimationName; labelKey: string }> = [

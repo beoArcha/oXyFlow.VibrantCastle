@@ -70,7 +70,14 @@ export const ANIMATION_ROW_MAP: Record<AnimationName, number> = {
   crouch: 7,
 };
 
-export function resolveAnimationRowIndex(animName: AnimationName): number {
+export function resolveAnimationRowIndex(
+  animName: AnimationName,
+  rows?: readonly AnimationRowVM[]
+): number {
+  if (rows) {
+    const found = rows.find((r) => r.name === animName);
+    if (found !== undefined) return found.row;
+  }
   return ANIMATION_ROW_MAP[animName] ?? 0;
 }
 
