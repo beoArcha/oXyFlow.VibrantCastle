@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Activity, Gauge, Zap, Sparkles, Crosshair, Map, Video } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Badge, BadgeVariant } from "@components/ui";
+import { Card, CardHeader, CardTitle, CardContent, Badge, BadgeVariant, MetricTile } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
+import { TelemetryMetricItem } from "./types";
 
 export interface DebugTelemetryProps {
   measuredFps: number;
@@ -17,7 +18,7 @@ export interface DebugTelemetryProps {
   levelHeight: number;
 }
 
-export const DebugTelemetryCard: React.FC<DebugTelemetryProps> = ({
+export const DebugTelemetryCard: React.FC<DebugTelemetryProps> = React.memo(function DebugTelemetryCard({
   measuredFps,
   targetFps,
   frameTimeMs,
@@ -29,11 +30,96 @@ export const DebugTelemetryCard: React.FC<DebugTelemetryProps> = ({
   cameraY,
   levelWidth,
   levelHeight,
-}) => {
+}) {
   const { t } = useI18n();
 
   const fpsBadgeVariant: BadgeVariant =
     measuredFps >= targetFps - 5 ? "green" : measuredFps >= 30 ? "amber" : "red";
+
+  const safeFrameTime =
+    Number.isFinite(frameTimeMs) && frameTimeMs >= 0
+      ? frameTimeMs
+      : measuredFps > 0
+        ? 1000 / measuredFps
+        : 16.6;
+
+  const metrics: TelemetryMetricItem[] = useMemo(
+    () => [
+      {
+        id: "fps",
+        label: t("debugMetricFps"),
+        icon: <Gauge size={13} />,
+        value: measuredFps,
+        subtext: `/ ${targetFps}`,
+        variant: "emerald",
+      },
+      {
+        id: "frameTime",
+        label: t("debugMetricFrameTime"),
+        icon: <Activity size={13} />,
+        value: safeFrameTime.toFixed(1),
+        subtext: t("debugUnitMs"),
+        variant: "amber",
+      },
+      {
+        id: "particles",
+        label: t("debugMetricParticles"),
+        icon: <Sparkles size={13} />,
+        value: particleCount,
+        variant: "amber",
+      },
+      {
+        id: "projectiles",
+        label: t("debugMetricProjectiles"),
+        icon: <Zap size={13} />,
+        value: projectileCount,
+        variant: "cyan",
+      },
+      {
+        id: "enemies",
+        label: t("debugMetricEnemies"),
+        icon: <Crosshair size={13} />,
+        value: enemyCount,
+        variant: "rose",
+      },
+      {
+        id: "entities",
+        label: t("debugMetricEntities"),
+        icon: <Map size={13} />,
+        value: entityCount,
+        variant: "purple",
+      },
+      {
+        id: "camera",
+        label: t("debugMetricCamera"),
+        icon: <Video size={13} />,
+        value: `X: ${Math.round(cameraX)}, Y: ${Math.round(cameraY)}`,
+        variant: "blue",
+      },
+      {
+        id: "world",
+        label: t("debugMetricWorld"),
+        icon: <Map size={13} />,
+        value: `${levelWidth} × ${levelHeight}`,
+        subtext: t("debugUnitPx"),
+        variant: "stone",
+      },
+    ],
+    [
+      t,
+      measuredFps,
+      targetFps,
+      safeFrameTime,
+      particleCount,
+      projectileCount,
+      enemyCount,
+      entityCount,
+      cameraX,
+      cameraY,
+      levelWidth,
+      levelHeight,
+    ]
+  );
 
   return (
     <Card variant="default">
@@ -42,102 +128,25 @@ export const DebugTelemetryCard: React.FC<DebugTelemetryProps> = ({
           {t("debugTelemetryTitle")}
         </CardTitle>
         <Badge variant={fpsBadgeVariant}>
-          {measuredFps} FPS / {targetFps}
+          {measuredFps} {t("debugUnitFps")} / {targetFps}
         </Badge>
       </CardHeader>
       <CardContent className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-        {/* FPS & Target */}
-        <div className="flex flex-col p-2.5 bg-[#140602] rounded-xl border border-stone-800">
-          <div className="flex items-center gap-1.5 text-stone-400 text-xs font-semibold">
-            <Gauge size={13} className="text-emerald-400" />
-            <span>{t("debugMetricFps")}</span>
-          </div>
-          <span className="text-base font-bold font-mono text-emerald-300 mt-1">
-            {measuredFps}{" "}
-            <span className="text-xs text-stone-500 font-normal">/ {targetFps}</span>
-          </span>
-        </div>
-
-        {/* Frame Time */}
-        <div className="flex flex-col p-2.5 bg-[#140602] rounded-xl border border-stone-800">
-          <div className="flex items-center gap-1.5 text-stone-400 text-xs font-semibold">
-            <Activity size={13} className="text-amber-400" />
-            <span>{t("debugMetricFrameTime")}</span>
-          </div>
-          <span className="text-base font-bold font-mono text-amber-300 mt-1">
-            {frameTimeMs.toFixed(1)}{" "}
-            <span className="text-xs text-stone-500 font-normal">ms</span>
-          </span>
-        </div>
-
-        {/* Particles Count */}
-        <div className="flex flex-col p-2.5 bg-[#140602] rounded-xl border border-stone-800">
-          <div className="flex items-center gap-1.5 text-stone-400 text-xs font-semibold">
-            <Sparkles size={13} className="text-yellow-400" />
-            <span>{t("debugMetricParticles")}</span>
-          </div>
-          <span className="text-base font-bold font-mono text-yellow-300 mt-1">
-            {particleCount}
-          </span>
-        </div>
-
-        {/* Projectiles Count */}
-        <div className="flex flex-col p-2.5 bg-[#140602] rounded-xl border border-stone-800">
-          <div className="flex items-center gap-1.5 text-stone-400 text-xs font-semibold">
-            <Zap size={13} className="text-cyan-400" />
-            <span>{t("debugMetricProjectiles")}</span>
-          </div>
-          <span className="text-base font-bold font-mono text-cyan-300 mt-1">
-            {projectileCount}
-          </span>
-        </div>
-
-        {/* Enemy Count */}
-        <div className="flex flex-col p-2.5 bg-[#140602] rounded-xl border border-stone-800">
-          <div className="flex items-center gap-1.5 text-stone-400 text-xs font-semibold">
-            <Crosshair size={13} className="text-rose-400" />
-            <span>{t("debugMetricEnemies")}</span>
-          </div>
-          <span className="text-base font-bold font-mono text-rose-300 mt-1">
-            {enemyCount}
-          </span>
-        </div>
-
-        {/* Interactive Entities Count */}
-        <div className="flex flex-col p-2.5 bg-[#140602] rounded-xl border border-stone-800">
-          <div className="flex items-center gap-1.5 text-stone-400 text-xs font-semibold">
-            <Map size={13} className="text-purple-400" />
-            <span>{t("debugMetricEntities")}</span>
-          </div>
-          <span className="text-base font-bold font-mono text-purple-300 mt-1">
-            {entityCount}
-          </span>
-        </div>
-
-        {/* Camera Coordinates */}
-        <div className="flex flex-col p-2.5 bg-[#140602] rounded-xl border border-stone-800">
-          <div className="flex items-center gap-1.5 text-stone-400 text-xs font-semibold">
-            <Video size={13} className="text-blue-400" />
-            <span>{t("debugMetricCamera")}</span>
-          </div>
-          <span className="text-xs font-bold font-mono text-blue-300 mt-1">
-            X: {Math.round(cameraX)}, Y: {Math.round(cameraY)}
-          </span>
-        </div>
-
-        {/* Level Dimensions */}
-        <div className="flex flex-col p-2.5 bg-[#140602] rounded-xl border border-stone-800">
-          <div className="flex items-center gap-1.5 text-stone-400 text-xs font-semibold">
-            <Map size={13} className="text-stone-400" />
-            <span>{t("debugMetricWorld")}</span>
-          </div>
-          <span className="text-xs font-bold font-mono text-stone-300 mt-1">
-            {levelWidth} × {levelHeight} px
-          </span>
-        </div>
+        {metrics.map((metric) => (
+          <MetricTile
+            key={metric.id}
+            icon={metric.icon}
+            label={metric.label}
+            value={metric.value}
+            subtext={metric.subtext}
+            variant={metric.variant}
+          />
+        ))}
       </CardContent>
     </Card>
   );
-};
+});
+
+DebugTelemetryCard.displayName = "DebugTelemetryCard";
 
 export default DebugTelemetryCard;

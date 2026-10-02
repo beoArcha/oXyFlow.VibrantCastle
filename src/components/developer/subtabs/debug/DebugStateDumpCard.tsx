@@ -1,53 +1,49 @@
-import React, { useState } from "react";
-import { FileJson, Copy, Check } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Button } from "@/components/ui";
+import React, { useMemo } from "react";
+import { FileJson } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent, CopyableSnippet } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
+import { DebugGameSnapshot } from "./types";
 
 export interface DebugStateDumpProps {
-  stateObject: Record<string, unknown>;
+  stateObject: DebugGameSnapshot | Record<string, unknown>;
 }
 
-export const DebugStateDumpCard: React.FC<DebugStateDumpProps> = ({ stateObject }) => {
+export const DebugStateDumpCard: React.FC<DebugStateDumpProps> = React.memo(function DebugStateDumpCard({
+  stateObject,
+}) {
   const { t } = useI18n();
-  const [copied, setCopied] = useState<boolean>(false);
 
-  const jsonString = JSON.stringify(stateObject, null, 2);
-
-  const handleCopy = async () => {
+  const jsonString = useMemo(() => {
     try {
-      await navigator.clipboard.writeText(jsonString);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
-    } catch {
-      // Ignore clipboard errors if denied
+      return JSON.stringify(stateObject, null, 2);
+    } catch (err) {
+      return JSON.stringify(
+        { error: "Failed to serialize state object", details: String(err) },
+        null,
+        2
+      );
     }
-  };
+  }, [stateObject]);
 
   return (
     <Card variant="default">
       <CardHeader>
-        <div className="flex items-center justify-between w-full">
-          <CardTitle icon={<FileJson className="w-4 h-4 text-amber-400" />}>
-            {t("debugStateSnapshotTitle")}
-          </CardTitle>
-          <Button
-            size="sm"
-            variant={copied ? "primary" : "secondary"}
-            icon={copied ? <Check size={12} /> : <Copy size={12} />}
-            onClick={handleCopy}
-            className="text-xs py-1"
-          >
-            {copied ? t("debugSnapshotCopied") : t("debugCopySnapshot")}
-          </Button>
-        </div>
+        <CardTitle icon={<FileJson className="w-4 h-4 text-amber-400" />}>
+          {t("debugStateSnapshotTitle")}
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <pre className="p-3 bg-[#0a0301] rounded-xl border border-stone-900 text-[11px] font-mono text-amber-200/90 overflow-x-auto max-h-56 custom-scrollbar select-all">
-          {jsonString}
-        </pre>
+        <CopyableSnippet
+          text={jsonString}
+          copyLabel={t("debugCopySnapshot")}
+          copiedLabel={t("debugSnapshotCopied")}
+          maxHeightClass="max-h-56"
+        />
       </CardContent>
     </Card>
   );
-};
+});
+
+DebugStateDumpCard.displayName = "DebugStateDumpCard";
 
 export default DebugStateDumpCard;

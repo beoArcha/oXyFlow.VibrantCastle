@@ -1,8 +1,21 @@
-import React from "react";
-import { Skull, Crosshair, Zap, Trash2 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from "@components/ui";
+import React, { useState, useMemo } from "react";
+import { Skull } from "lucide-react";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Badge,
+  Table,
+  TableHeader,
+  TableHead,
+  TableBody,
+  EmptyState,
+  SearchInput,
+} from "@components/ui";
 import { Enemy } from "@game/types";
 import { useI18n } from "@context/I18nContext";
+import { DebugEntityTableRow } from "./DebugEntityTableRow";
 
 export interface DebugEntityTableProps {
   enemies: Enemy[];
@@ -12,129 +25,109 @@ export interface DebugEntityTableProps {
   onActionComplete?: () => void;
 }
 
-export const DebugEntityTableCard: React.FC<DebugEntityTableProps> = ({
-  enemies,
-  onTeleportToEnemy,
-  onDamageEnemy,
-  onRemoveEnemy,
-  onActionComplete,
-}) => {
-  const { t } = useI18n();
+export const DebugEntityTableCard: React.FC<DebugEntityTableProps> = React.memo(
+  function DebugEntityTableCard({
+    enemies,
+    onTeleportToEnemy,
+    onDamageEnemy,
+    onRemoveEnemy,
+    onActionComplete,
+  }) {
+    const { t } = useI18n();
+    const [searchQuery, setSearchQuery] = useState("");
 
-  const handleTeleportToEnemy = (enemy: Enemy) => {
-    if (!Number.isFinite(enemy.x) || !Number.isFinite(enemy.y)) return;
-    onTeleportToEnemy?.(enemy);
-    onActionComplete?.();
-  };
+    const filteredEnemies = useMemo(() => {
+      const q = searchQuery.trim().toLowerCase();
+      if (!q) return enemies;
+      return enemies.filter(
+        (e) =>
+          e.id.toLowerCase().includes(q) ||
+          (e.defaultName && e.defaultName.toLowerCase().includes(q))
+      );
+    }, [enemies, searchQuery]);
 
-  const handleDamageEnemy = (enemyId: string) => {
-    onDamageEnemy?.(enemyId, 50);
-    onActionComplete?.();
-  };
+    const handleTeleport = (enemy: Enemy) => {
+      if (!Number.isFinite(enemy.x) || !Number.isFinite(enemy.y)) return;
+      onTeleportToEnemy?.(enemy);
+      onActionComplete?.();
+    };
 
-  const handleRemoveEnemy = (enemyId: string) => {
-    onRemoveEnemy?.(enemyId);
-    onActionComplete?.();
-  };
+    const handleDamage = (enemyId: string, amount: number) => {
+      onDamageEnemy?.(enemyId, amount);
+      onActionComplete?.();
+    };
 
-  return (
-    <Card variant="default">
-      <CardHeader>
-        <CardTitle icon={<Skull className="w-4 h-4 text-rose-400" />}>
-          {t("debugEntityTableTitle")}
-        </CardTitle>
-        <Badge variant="red">{enemies.length}</Badge>
-      </CardHeader>
-      <CardContent>
-        {enemies.length === 0 ? (
-          <div className="p-4 text-center text-xs text-stone-500 font-mono">
-            {t("debugNoEnemies")}
+    const handleRemove = (enemyId: string) => {
+      onRemoveEnemy?.(enemyId);
+      onActionComplete?.();
+    };
+
+    return (
+      <Card variant="default">
+        <CardHeader>
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-2">
+              <CardTitle icon={<Skull className="w-4 h-4 text-rose-400" />}>
+                {t("debugEntityTableTitle")}
+              </CardTitle>
+              <Badge variant="red">{enemies.length}</Badge>
+            </div>
+            {enemies.length > 3 && (
+              <div className="w-48">
+                <SearchInput
+                  value={searchQuery}
+                  onChange={(val) => setSearchQuery(val)}
+                  onClear={() => setSearchQuery("")}
+                  placeholder={t("debugSearchEnemiesPlaceholder")}
+                  className="h-7 text-xs"
+                />
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="overflow-x-auto custom-scrollbar">
-            <table className="w-full text-left text-xs">
-              <thead className="text-[10px] text-stone-400 uppercase bg-[#140602] border-b border-stone-800">
-                <tr>
-                  <th className="py-2 px-3">{t("debugTableId")}</th>
-                  <th className="py-2 px-3">{t("debugTableCoords")}</th>
-                  <th className="py-2 px-3">{t("debugTableHp")}</th>
-                  <th className="py-2 px-3 text-right">{t("debugTableActions")}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-stone-800/60 font-mono">
-                {enemies.map((enemy) => (
-                  <tr key={enemy.id} className="hover:bg-white/5 transition-colors">
-                    {/* ID / Name */}
-                    <td className="py-2.5 px-3">
-                      <div className="flex flex-col">
-                        <span className="font-bold text-stone-200">
-                          {enemy.defaultName || enemy.id}
-                        </span>
-                        <span className="text-[10px] text-stone-500">{enemy.id}</span>
-                      </div>
-                    </td>
-
-                    {/* Coordinates */}
-                    <td className="py-2.5 px-3 whitespace-nowrap text-amber-300">
-                      X: {Math.round(enemy.x)}, Y: {Math.round(enemy.y)}
-                    </td>
-
-                    {/* HP */}
-                    <td className="py-2.5 px-3 whitespace-nowrap">
-                      <span
-                        className={`font-bold ${enemy.health <= 0
-                          ? "text-stone-500"
-                          : enemy.health < enemy.maxHealth * 0.3
-                            ? "text-rose-400"
-                            : "text-emerald-400"
-                          }`}
-                      >
-                        {Math.round(enemy.health)} / {enemy.maxHealth}
-                      </span>
-                    </td>
-
-                    {/* Action buttons */}
-                    <td className="py-2.5 px-3 whitespace-nowrap text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          icon={<Crosshair size={11} />}
-                          onClick={() => handleTeleportToEnemy(enemy)}
-                          title={t("debugActionTeleport")}
-                          className="h-6 text-[10px] px-2 py-0"
-                        >
-                          TP
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="danger"
-                          icon={<Zap size={11} />}
-                          onClick={() => handleDamageEnemy(enemy.id)}
-                          title={t("debugActionDamage")}
-                          className="h-6 text-[10px] px-2 py-0"
-                        >
-                          -50
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          icon={<Trash2 size={11} />}
-                          onClick={() => handleRemoveEnemy(enemy.id)}
-                          title={t("debugActionRemove")}
-                          className="h-6 text-[10px] px-1.5 py-0 text-stone-500 hover:text-rose-400"
-                        />
-                      </div>
-                    </td>
+        </CardHeader>
+        <CardContent>
+          {enemies.length === 0 ? (
+            <EmptyState
+              icon={<Skull size={24} className="text-stone-600" />}
+              title={t("debugNoEnemies")}
+              compact={true}
+            />
+          ) : filteredEnemies.length === 0 ? (
+            <EmptyState
+              title={t("debugNoFilterResults")}
+              compact={true}
+            />
+          ) : (
+            <div className="max-h-72 overflow-y-auto custom-scrollbar">
+              <Table>
+                <TableHeader>
+                  <tr>
+                    <TableHead>{t("debugTableId")}</TableHead>
+                    <TableHead>{t("debugTableCoords")}</TableHead>
+                    <TableHead>{t("debugTableHp")}</TableHead>
+                    <TableHead className="text-right">{t("debugTableActions")}</TableHead>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
-};
+                </TableHeader>
+                <TableBody>
+                  {filteredEnemies.map((enemy) => (
+                    <DebugEntityTableRow
+                      key={enemy.id}
+                      enemy={enemy}
+                      onTeleport={handleTeleport}
+                      onDamage={handleDamage}
+                      onRemove={handleRemove}
+                    />
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    );
+  }
+);
+
+DebugEntityTableCard.displayName = "DebugEntityTableCard";
 
 export default DebugEntityTableCard;
