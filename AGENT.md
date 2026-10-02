@@ -1,4 +1,4 @@
-# 🧱 AGENT.md v3 — Vibrant Castle
+# 🧱 AGENT.md v3.1 — Vibrant Castle
 
 ---
 
@@ -245,6 +245,22 @@ Every complex change MUST produce:
 * PHASE PLAN
 * IMPLEMENTATION (per phase)
 * VALIDATION REPORT
+
+---
+
+### 1.7 TypeScript Architecture & Patterns (STRICT)
+
+TODO
+
+---
+
+### 1.8 Comments
+
+* Comments must follow CleanCode principles.
+* Comments must be concise and to the point.
+* Comments must be in English.
+* Comments on class, hooks, methods etc. must adhere to JSdoc principles
+* Inline comments need to be used only when it necessary to explain mathematical, algorytmic, deep technical or deep buisness logic that is not obvious from the code. Always prefer self-explaining code over comments.
 
 ---
 
@@ -636,6 +652,7 @@ A task is complete ONLY if:
 * Asset validator clean.
 * Level schema validated.
 * i18n keys complete.
+* a11y implemented at atleast minimum useful level
 
 ---
 
