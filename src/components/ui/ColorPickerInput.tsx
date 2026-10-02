@@ -3,19 +3,19 @@ import { cn } from "@lib/utils";
 
 export interface ColorPickerInputProps {
   /** Hex color value e.g. "#ff00ff" */
-  value: string;
+  readonly value: string;
   /** Change callback with validated hex color */
-  onChange: (hex: string) => void;
+  readonly onChange: (hex: string) => void;
   /** Disables color picker controls */
-  disabled?: boolean;
+  readonly disabled?: boolean;
   /** Placeholder text */
-  placeholder?: string;
+  readonly placeholder?: string;
   /** Custom container class */
-  className?: string;
+  readonly className?: string;
   /** Tooltip for the color picker button */
-  colorPickerTitle?: string;
+  readonly colorPickerTitle?: string;
   /** Tooltip for the color swatch */
-  sampleTitle?: string;
+  readonly sampleTitle?: string;
 }
 
 /**
@@ -53,14 +53,12 @@ export const ColorPickerInput: React.FC<ColorPickerInputProps> = React.memo(({
 
   return (
     <div className={cn("flex items-center gap-2", className)}>
-      {/* Visual Swatch */}
       <div
         className="w-8 h-8 rounded-lg border-2 border-stone-700 shadow-inner shrink-0 transition-colors"
         style={{ backgroundColor: value || "#000000" }}
         title={sampleTitle || `Color: ${value}`}
       />
 
-      {/* Hex Text Input & Native Picker Trigger */}
       <div className="flex-1 flex items-center gap-1.5">
         <input
           type="text"

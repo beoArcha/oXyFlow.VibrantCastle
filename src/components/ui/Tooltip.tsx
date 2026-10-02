@@ -4,12 +4,12 @@ import { cn } from "@lib/utils";
 export type TooltipPosition = "top" | "bottom" | "left" | "right";
 
 export interface TooltipProps {
-  content: React.ReactNode;
-  children: React.ReactElement;
-  position?: TooltipPosition;
-  delayDuration?: number;
-  className?: string;
-  disabled?: boolean;
+  readonly content: React.ReactNode;
+  readonly children: React.ReactElement;
+  readonly position?: TooltipPosition;
+  readonly delayDuration?: number;
+  readonly className?: string;
+  readonly disabled?: boolean;
 }
 
 const positionClasses: Record<TooltipPosition, string> = {
@@ -61,7 +61,15 @@ export const Tooltip: React.FC<TooltipProps> = React.memo(function Tooltip({
     };
   }, []);
 
-  const child = React.Children.only(children) as React.ReactElement<any>;
+  const child = React.Children.only(children);
+  const childProps = React.isValidElement(child)
+    ? (child.props as Partial<{
+        onMouseEnter: React.MouseEventHandler;
+        onMouseLeave: React.MouseEventHandler;
+        onFocus: React.FocusEventHandler;
+        onBlur: React.FocusEventHandler;
+      }>)
+    : {};
 
   return (
     <div
@@ -71,22 +79,24 @@ export const Tooltip: React.FC<TooltipProps> = React.memo(function Tooltip({
       onFocus={showTooltip}
       onBlur={hideTooltip}
     >
-      {React.cloneElement(child, {
-        "aria-describedby": isVisible ? tooltipId : undefined,
+      {React.cloneElement<React.HTMLAttributes<HTMLElement>>(
+        child as React.ReactElement<React.HTMLAttributes<HTMLElement>>,
+        {
+          "aria-describedby": isVisible ? tooltipId : undefined,
         onMouseEnter: (e: React.MouseEvent) => {
-          (child.props as any).onMouseEnter?.(e);
+          childProps.onMouseEnter?.(e);
           showTooltip();
         },
         onMouseLeave: (e: React.MouseEvent) => {
-          (child.props as any).onMouseLeave?.(e);
+          childProps.onMouseLeave?.(e);
           hideTooltip();
         },
         onFocus: (e: React.FocusEvent) => {
-          (child.props as any).onFocus?.(e);
+          childProps.onFocus?.(e);
           showTooltip();
         },
         onBlur: (e: React.FocusEvent) => {
-          (child.props as any).onBlur?.(e);
+          childProps.onBlur?.(e);
           hideTooltip();
         },
       })}

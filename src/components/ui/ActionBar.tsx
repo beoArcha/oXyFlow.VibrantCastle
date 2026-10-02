@@ -5,13 +5,13 @@ export type ActionBarVariant = "default" | "subtle" | "banner" | "plain";
 
 export interface ActionBarProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Optional contextual text or label displayed on the left side */
-  description?: React.ReactNode;
+  readonly description?: React.ReactNode;
   /** Primary and secondary action buttons displayed on the right side */
-  actions?: React.ReactNode;
+  readonly actions?: React.ReactNode;
   /** Whether to show a top separator border. Defaults to true for default/subtle variants. */
-  bordered?: boolean;
+  readonly bordered?: boolean;
   /** Visual presentation variant */
-  variant?: ActionBarVariant;
+  readonly variant?: ActionBarVariant;
 }
 
 const variantStyles: Record<ActionBarVariant, string> = {

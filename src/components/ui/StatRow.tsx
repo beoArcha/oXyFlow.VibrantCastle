@@ -4,10 +4,10 @@ import { cn } from "@lib/utils";
 export type StatRowVariant = "red" | "cyan" | "amber" | "purple" | "default";
 
 export interface StatRowProps extends React.HTMLAttributes<HTMLDivElement> {
-  label: string;
-  value: React.ReactNode;
-  icon?: React.ReactNode;
-  variant?: StatRowVariant;
+  readonly label: string;
+  readonly value: React.ReactNode;
+  readonly icon?: React.ReactNode;
+  readonly variant?: StatRowVariant;
 }
 
 const textStyles: Record<StatRowVariant, string> = {

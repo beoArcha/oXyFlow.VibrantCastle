@@ -4,15 +4,15 @@ import { cn } from "@lib/utils";
 
 export interface KbdGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Array of raw key strings or display labels */
-  keys: string[];
+  readonly keys: readonly string[];
   /** Visual color theme variant matching KbdKey */
-  variant?: KbdKeyVariant;
+  readonly variant?: KbdKeyVariant;
   /** Optional separator element rendered between keys (e.g. "+", "/", "or") */
-  separator?: React.ReactNode;
+  readonly separator?: React.ReactNode;
   /** Optional label formatter function (e.g. formatKeyLabel) */
-  formatLabel?: (key: string) => React.ReactNode;
+  readonly formatLabel?: (key: string) => React.ReactNode;
   /** Optional maximum number of keys to display */
-  maxKeys?: number;
+  readonly maxKeys?: number;
 }
 
 /**

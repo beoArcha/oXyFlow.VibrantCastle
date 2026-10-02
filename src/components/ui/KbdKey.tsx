@@ -4,8 +4,8 @@ import { cn } from "@lib/utils";
 export type KbdKeyVariant = "amber" | "purple" | "cyan" | "stone";
 
 export interface KbdKeyProps extends React.HTMLAttributes<HTMLElement> {
-  children: React.ReactNode;
-  variant?: KbdKeyVariant;
+  readonly children: React.ReactNode;
+  readonly variant?: KbdKeyVariant;
 }
 
 const keyStyles: Record<KbdKeyVariant, string> = {

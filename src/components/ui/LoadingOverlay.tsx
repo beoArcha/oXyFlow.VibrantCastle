@@ -4,15 +4,15 @@ import { cn } from "@lib/utils";
 
 export interface LoadingOverlayProps extends React.HTMLAttributes<HTMLDivElement> {
   /** If true, the loading indicator is displayed. Defaults to true. */
-  isLoading?: boolean;
+  readonly isLoading?: boolean;
   /** Backward-compatible alias for isLoading */
-  loading?: boolean;
+  readonly loading?: boolean;
   /** Optional loading message or status label */
-  message?: React.ReactNode;
+  readonly message?: React.ReactNode;
   /** Size of the spinner */
-  size?: "sm" | "md" | "lg";
+  readonly size?: "sm" | "md" | "lg";
   /** Visual presentation mode */
-  variant?: "overlay" | "inline" | "fullscreen";
+  readonly variant?: "overlay" | "inline" | "fullscreen";
 }
 
 const spinnerSizes = {

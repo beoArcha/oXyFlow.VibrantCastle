@@ -1,16 +1,20 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect } from "react";
 import { cn } from "@lib/utils";
+import { useToast, UseToastReturn } from "./hooks/useToast";
+
+export type { UseToastReturn };
+export { useToast };
 
 export type ToastVariant = "info" | "success" | "warning" | "danger";
 export type ToastPosition = "top" | "bottom" | "inline";
 
 export interface ToastProps extends React.HTMLAttributes<HTMLDivElement> {
-  message?: string | null;
-  variant?: ToastVariant;
-  position?: ToastPosition;
-  duration?: number;
-  onDismiss?: () => void;
-  icon?: React.ReactNode;
+  readonly message?: string | null;
+  readonly variant?: ToastVariant;
+  readonly position?: ToastPosition;
+  readonly duration?: number;
+  readonly onDismiss?: () => void;
+  readonly icon?: React.ReactNode;
 }
 
 /**
@@ -88,40 +92,5 @@ export const Toast = React.memo(
 );
 
 Toast.displayName = "Toast";
-
-/**
- * Lightweight hook managing toast message state and timed auto-dismissal.
- *
- * @example
- * ```tsx
- * const { toastMessage, showToast, dismissToast } = useToast(4000);
- * showToast("Action performed!");
- * ```
- */
-export function useToast(defaultDuration = 4000) {
-  const [toastMessage, setToastMessage] = useState<string>("");
-
-  const showToast = useCallback(
-    (msg: string, duration = defaultDuration) => {
-      setToastMessage(msg);
-      if (duration > 0) {
-        setTimeout(() => {
-          setToastMessage((current) => (current === msg ? "" : current));
-        }, duration);
-      }
-    },
-    [defaultDuration]
-  );
-
-  const dismissToast = useCallback(() => {
-    setToastMessage("");
-  }, []);
-
-  return {
-    toastMessage,
-    showToast,
-    dismissToast,
-  };
-}
 
 export default Toast;

@@ -2,11 +2,11 @@ import React from "react";
 import { cn } from "@lib/utils";
 
 export interface EmptyStateProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
-  icon?: React.ReactNode;
-  title: React.ReactNode;
-  description?: React.ReactNode;
-  action?: React.ReactNode;
-  compact?: boolean;
+  readonly icon?: React.ReactNode;
+  readonly title: React.ReactNode;
+  readonly description?: React.ReactNode;
+  readonly action?: React.ReactNode;
+  readonly compact?: boolean;
 }
 
 /**

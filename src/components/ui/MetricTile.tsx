@@ -12,17 +12,17 @@ export type MetricTileVariant =
 
 export interface MetricTileProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Metric descriptive title or label */
-  label: React.ReactNode;
+  readonly label: React.ReactNode;
   /** Primary metric value (number, text, or badge) */
-  value: React.ReactNode;
+  readonly value: React.ReactNode;
   /** Leading icon for the metric */
-  icon?: React.ReactNode;
+  readonly icon?: React.ReactNode;
   /** Optional secondary unit or target subtext (e.g. "ms", "/ 60") */
-  subtext?: React.ReactNode;
+  readonly subtext?: React.ReactNode;
   /** Semantic color theme variant */
-  variant?: MetricTileVariant;
+  readonly variant?: MetricTileVariant;
   /** Compact padding and font size for dense dashboard layouts */
-  compact?: boolean;
+  readonly compact?: boolean;
 }
 
 const variantStyles: Record<

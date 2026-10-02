@@ -6,11 +6,11 @@ import { IconButton } from "./IconButton";
 export type AlertVariant = "info" | "warning" | "danger" | "success";
 
 export interface AlertProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
-  variant?: AlertVariant;
-  title?: React.ReactNode;
-  icon?: React.ReactNode;
-  onClose?: () => void;
-  closeAriaLabel?: string;
+  readonly variant?: AlertVariant;
+  readonly title?: React.ReactNode;
+  readonly icon?: React.ReactNode;
+  readonly onClose?: () => void;
+  readonly closeAriaLabel?: string;
 }
 
 const variantStyles: Record<AlertVariant, { container: string; title: string; defaultIcon: React.ReactNode }> = {

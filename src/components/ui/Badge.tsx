@@ -4,8 +4,8 @@ import { cn } from "@lib/utils";
 export type BadgeVariant = "amber" | "red" | "cyan" | "purple" | "green" | "stone";
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: BadgeVariant;
-  icon?: React.ReactNode;
+  readonly variant?: BadgeVariant;
+  readonly icon?: React.ReactNode;
 }
 
 const badgeStyles: Record<BadgeVariant, string> = {
