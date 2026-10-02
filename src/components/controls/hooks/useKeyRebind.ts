@@ -7,22 +7,13 @@ import {
   isRebindCancelKey,
 } from "@components/adapters";
 
-export interface KeyBindingTarget {
-  player: PlayerId;
-  action: keyof InputMap;
-  label: string;
-}
+import {
+  KeyBindingTarget,
+  UseKeyRebindOptions,
+  UseKeyRebindResult,
+} from "../types";
 
-export interface UseKeyRebindOptions {
-  onSuccess?: (message: string) => void;
-}
-
-export interface UseKeyRebindResult {
-  bindingTarget: KeyBindingTarget | null;
-  isRebinding: boolean;
-  startRebind: (target: KeyBindingTarget) => void;
-  cancelRebind: () => void;
-}
+export type { KeyBindingTarget, UseKeyRebindOptions, UseKeyRebindResult };
 
 /**
  * Custom React hook managing keyboard action rebinding state and event capture.

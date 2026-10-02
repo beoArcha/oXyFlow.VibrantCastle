@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { Keyboard, RotateCcw } from "lucide-react";
-import { PlayerId, InputMap, GameTranslationDictionary } from "@game/types";
+import { PlayerId, InputMap } from "@game/types";
 import {
   Button,
   Card,
@@ -15,30 +15,13 @@ import { useKeyboard } from "./hooks/useKeyboard";
 import { formatKeyLabel } from "./formatKeyLabel";
 import { ControlBindingRow } from "./ControlBindingRow";
 import { PlayerTabSelector } from "./PlayerTabSelector";
+import {
+  KeyboardMapperProps,
+  KEYBOARD_ACTION_I18N_MAP,
+  KEYBOARD_ACTION_KEYS,
+} from "./types";
 
-export interface KeyboardMapperProps {
-  /** Callback fired to begin key rebind for an action */
-  onStartRebind: (action: keyof InputMap, player: PlayerId, label: string) => void;
-  /** Optional container class name */
-  className?: string;
-}
-
-const ACTION_I18N_KEYS: Record<keyof InputMap, keyof GameTranslationDictionary> = {
-  left: "keyMoveLeft",
-  right: "keyMoveRight",
-  up: "keyAimUp",
-  down: "keyCrouchDown",
-  jump: "keyJump",
-  action1: "keyMeleeAttack",
-  action2: "keyDashAction",
-  magic1: "keyPrimaryMagic",
-  magic2: "keySecondaryMagic",
-  potion1: "keyPotion1",
-  potion2: "keyPotion2",
-  potion3: "keyPotion3",
-};
-
-const ACTION_KEYS = Object.keys(ACTION_I18N_KEYS) as (keyof InputMap)[];
+export type { KeyboardMapperProps };
 
 /**
  * Keyboard control binding configuration panel.
@@ -87,9 +70,9 @@ export const KeyboardMapper: React.FC<KeyboardMapperProps> = React.memo(
             id="keyboard-bindings-grid"
             className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-80 overflow-y-auto pr-1"
           >
-            {ACTION_KEYS.map((action) => {
+            {KEYBOARD_ACTION_KEYS.map((action) => {
               const keys = bindings[action] || [];
-              const actionLabel = t(ACTION_I18N_KEYS[action]);
+              const actionLabel = t(KEYBOARD_ACTION_I18N_MAP[action]);
 
               return (
                 <ControlBindingRow

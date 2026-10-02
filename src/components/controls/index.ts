@@ -12,3 +12,4 @@ export * from "./formatKeyLabel";
 export * from "./hooks/useGamepad";
 export * from "./hooks/useKeyboard";
 export * from "./hooks/useKeyRebind";
+export * from "./types";

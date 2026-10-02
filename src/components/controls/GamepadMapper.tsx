@@ -16,24 +16,13 @@ import { useGamepad } from "./hooks/useGamepad";
 import { ControlBindingRow } from "./ControlBindingRow";
 import { PlayerTabSelector } from "./PlayerTabSelector";
 import { cn } from "@lib/utils";
+import {
+  GamepadMapperProps,
+  GAMEPAD_ACTION_I18N_MAP,
+  GAMEPAD_ACTION_KEYS,
+} from "./types";
 
-export interface GamepadMapperProps {
-  /** Optional container class name */
-  className?: string;
-}
-
-const ACTION_I18N_KEYS: Record<keyof GamepadBindingMap, keyof GameTranslationDictionary> = {
-  jump: "keyJump",
-  action1: "keyMeleeAttack",
-  action2: "keyDashAction",
-  magic1: "keyPrimaryMagic",
-  magic2: "keySecondaryMagic",
-  potion1: "keyPotion1",
-  potion2: "keyPotion2",
-  potion3: "keyPotion3",
-};
-
-const ACTION_KEYS = Object.keys(ACTION_I18N_KEYS) as (keyof GamepadBindingMap)[];
+export type { GamepadMapperProps };
 
 /**
  * Gamepad controller button mapping configuration panel.
@@ -119,7 +108,7 @@ export const GamepadMapper: React.FC<GamepadMapperProps> = React.memo(
               className="p-3 bg-amber-950/90 border-2 border-amber-500 rounded-xl text-center flex flex-col items-center gap-1.5 animate-pulse"
             >
               <span className="text-xs font-bold text-amber-200 uppercase tracking-wider">
-                {t("remapGamepadPrompt")} {t(ACTION_I18N_KEYS[listeningAction])}
+                {t("remapGamepadPrompt")} {t(GAMEPAD_ACTION_I18N_MAP[listeningAction])}
               </span>
               <Button
                 id="cancel-gamepad-rebind-btn"
@@ -136,9 +125,9 @@ export const GamepadMapper: React.FC<GamepadMapperProps> = React.memo(
             id="gamepad-bindings-grid"
             className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-80 overflow-y-auto pr-1"
           >
-            {ACTION_KEYS.map((action) => {
+            {GAMEPAD_ACTION_KEYS.map((action) => {
               const buttonIndex = bindings[action];
-              const actionLabel = t(ACTION_I18N_KEYS[action]);
+              const actionLabel = t(GAMEPAD_ACTION_I18N_MAP[action]);
               const isListeningThis = listeningAction === action;
 
               return (

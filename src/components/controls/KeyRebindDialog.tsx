@@ -1,14 +1,10 @@
 import React from "react";
 import { Keyboard } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
-import { Button, Dialog } from "@ui";
-import { KeyBindingTarget } from "./hooks/useKeyRebind";
+import { Button, Dialog } from "@components/ui";
+import { KeyRebindDialogProps } from "./types";
 
-export interface KeyRebindDialogProps {
-  target: KeyBindingTarget | null;
-  onCancel: () => void;
-  className?: string;
-}
+export type { KeyRebindDialogProps };
 
 /**
  * Gothic action keybinding capture dialog overlay.

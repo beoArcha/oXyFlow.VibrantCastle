@@ -11,16 +11,9 @@ import {
   resetGamepadBindings,
   startGamepadButtonCapture,
 } from "@components/adapters";
+import { UseGamepadResult } from "../types";
 
-export interface UseGamepadResult {
-  connectedPads: ConnectedGamepadVM[];
-  currentPad: ConnectedGamepadVM | undefined;
-  bindings: GamepadBindingsVM;
-  listeningAction: keyof GamepadBindingMap | null;
-  setListeningAction: React.Dispatch<React.SetStateAction<keyof GamepadBindingMap | null>>;
-  lastPressedButton: number | null;
-  resetDefaults: () => void;
-}
+export type { UseGamepadResult };
 
 /**
  * Custom React hook for gamepad controller management, connection tracking, and rebinding.

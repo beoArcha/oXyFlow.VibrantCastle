@@ -4,13 +4,10 @@ import {
   getKeyboardBindingsVM,
   subscribeToKeyboardBindings,
   resetKeyboardBindings,
-  KeyboardBindingsVM,
 } from "@components/adapters";
+import { UseKeyboardResult } from "../types";
 
-export interface UseKeyboardResult {
-  bindings: KeyboardBindingsVM;
-  resetDefaults: () => void;
-}
+export type { UseKeyboardResult };
 
 /**
  * Custom React hook for inspecting and resetting player keyboard bindings.

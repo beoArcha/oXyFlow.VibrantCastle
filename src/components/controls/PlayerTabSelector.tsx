@@ -3,17 +3,9 @@ import { PlayerId } from "@game/types";
 import { Tabs, TabItem } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
+import { PlayerTabSelectorProps } from "./types";
 
-export interface PlayerTabSelectorProps {
-  /** The currently selected player identifier */
-  selectedPlayer: PlayerId;
-  /** Callback fired when a player tab is selected */
-  onSelectPlayer: (player: PlayerId) => void;
-  /** Additional class names for styling wrapper */
-  className?: string;
-  /** Custom ID for testing and DOM targeting */
-  id?: string;
-}
+export type { PlayerTabSelectorProps };
 
 /**
  * Standardized player selector tabs component for controls configuration (P1 vs P2).

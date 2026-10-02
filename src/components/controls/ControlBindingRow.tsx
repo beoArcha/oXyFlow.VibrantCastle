@@ -1,27 +1,9 @@
 import React from "react";
-import { Button, ButtonVariant } from "@components/ui";
+import { Button } from "@components/ui";
 import { cn } from "@lib/utils";
+import { ControlBindingRowProps } from "./types";
 
-export interface ControlBindingRowProps {
-  /** Label describing the action (e.g. "Jump", "Attack") */
-  label: string;
-  /** Controls representation (rendered badges, KbdKeys, etc.) */
-  children: React.ReactNode;
-  /** Callback fired when the rebind button is clicked */
-  onRebind: () => void;
-  /** Text displayed inside the rebind button */
-  rebindLabel: string;
-  /** Visual variant of the rebind button */
-  rebindVariant?: ButtonVariant;
-  /** Whether rebinding is disabled */
-  disabled?: boolean;
-  /** Whether this row is currently listening for input capture */
-  isListening?: boolean;
-  /** Optional identifier for testing and accessibility */
-  id?: string;
-  /** Additional class names for the outer wrapper */
-  className?: string;
-}
+export type { ControlBindingRowProps };
 
 /**
  * Reusable presentation row for action-to-input mappings (keyboard keys or gamepad buttons).
