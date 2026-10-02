@@ -8,5 +8,7 @@ export * from "./TesterTeleportCard";
 export * from "./TesterCheatsCard";
 export * from "./TesterInventoryCard";
 export * from "./TesterCombatCard";
+export * from "./TesterSimulationSpeedCard";
+export * from "./TesterDiagnosticsCard";
 export * from "./TesterTimeAndDiagnosticsCard";
 export * from "./TesterParallaxCard";

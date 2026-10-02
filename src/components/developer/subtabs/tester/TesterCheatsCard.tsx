@@ -2,9 +2,12 @@ import React from "react";
 import { Shield, Zap, FastForward, Ghost, Heart } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent, Switch } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
-
+import { QUICK_HP_PRESETS } from "./constants";
 import { TesterCheatsCardProps } from "./types";
 
+/**
+ * Presentation card for player invulnerability, stamina, mana, no-clip and vitals quick restores.
+ */
 export const TesterCheatsCard: React.FC<TesterCheatsCardProps> = ({
   godMode,
   infiniteMana,
@@ -58,7 +61,6 @@ export const TesterCheatsCard: React.FC<TesterCheatsCardProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        {/* Cheat Toggles */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {cheatToggles.map((cheat) => (
             <div
@@ -79,8 +81,7 @@ export const TesterCheatsCard: React.FC<TesterCheatsCardProps> = ({
           ))}
         </div>
 
-        {/* Vitals Quick Restores */}
-        <div className="p-3 bg-[#180904] rounded-lg border border-[#4a1d0d] flex flex-wrap items-center justify-between gap-2">
+        <Card variant="dark" className="p-3 flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Heart size={15} className="text-red-400" />
             <span className="text-xs font-bold text-stone-200">
@@ -88,10 +89,10 @@ export const TesterCheatsCard: React.FC<TesterCheatsCardProps> = ({
             </span>
           </div>
           <div className="flex items-center gap-1.5 flex-wrap">
-            <Button size="sm" variant="secondary" onClick={() => onSetPlayerHp(1)}>
+            <Button size="sm" variant="secondary" onClick={() => onSetPlayerHp(QUICK_HP_PRESETS[0])}>
               {t("tester1HpBtn")}
             </Button>
-            <Button size="sm" variant="secondary" onClick={() => onSetPlayerHp(50)}>
+            <Button size="sm" variant="secondary" onClick={() => onSetPlayerHp(QUICK_HP_PRESETS[1])}>
               {t("tester50HpBtn")}
             </Button>
             <Button
@@ -103,7 +104,7 @@ export const TesterCheatsCard: React.FC<TesterCheatsCardProps> = ({
               {t("testerRefillAllBtn")}
             </Button>
           </div>
-        </div>
+        </Card>
       </CardContent>
     </Card>
   );

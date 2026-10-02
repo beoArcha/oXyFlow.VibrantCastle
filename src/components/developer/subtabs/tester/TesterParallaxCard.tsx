@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Layers, Music, Sparkles } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent } from "@components/ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, SegmentedControl } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { BackgroundLayerTier } from "@game/locations/schema/locationSchema";
-
-import { PARALLAX_TIERS } from "./constants";
+import { PARALLAX_TIERS, MUSIC_INTENSITY_PRESETS } from "./constants";
 import { TesterParallaxCardProps } from "./types";
 
+/**
+ * Presentation card for parallax depth tiers, dynamic music intensity and particle bursts.
+ */
 export const TesterParallaxCard: React.FC<TesterParallaxCardProps> = ({
   parallaxTiers,
   onToggleParallaxTier,
@@ -14,6 +16,15 @@ export const TesterParallaxCard: React.FC<TesterParallaxCardProps> = ({
   onTriggerParticleBurst,
 }) => {
   const { t } = useI18n();
+
+  const musicOptions = useMemo(
+    () =>
+      MUSIC_INTENSITY_PRESETS.map((m) => ({
+        value: m.val,
+        label: t(m.labelKey),
+      })),
+    [t]
+  );
 
   return (
     <Card variant="default">
@@ -23,14 +34,13 @@ export const TesterParallaxCard: React.FC<TesterParallaxCardProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        {/* Parallax Layer Toggles */}
         <div>
           <div className="text-xs font-semibold text-stone-300 mb-2 flex items-center gap-1.5">
             <Layers size={13} className="text-amber-400" />
             <span>{t("testerParallaxTiersLabel")}</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
-            {PARALLAX_TIERS.map((tier) => (
+            {PARALLAX_TIERS.map((tier: BackgroundLayerTier) => (
               <Button
                 key={tier}
                 size="sm"
@@ -45,35 +55,22 @@ export const TesterParallaxCard: React.FC<TesterParallaxCardProps> = ({
           </div>
         </div>
 
-        {/* Music Intensity */}
-        <div className="p-3 bg-[#180904] rounded-lg border border-[#4a1d0d] flex flex-wrap items-center justify-between gap-3">
+        <Card variant="dark" className="p-3 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Music size={15} className="text-purple-400" />
             <span className="text-xs font-bold text-stone-200">
               {t("testerMusicIntensityLabel")}
             </span>
           </div>
-          <div className="flex items-center gap-1.5 flex-wrap">
-            {[
-              { labelKey: "testerMusicChill", val: 0.1 },
-              { labelKey: "testerMusicSuspense", val: 0.4 },
-              { labelKey: "testerMusicCombat", val: 0.7 },
-              { labelKey: "testerMusicClimax", val: 1.0 },
-            ].map((m) => (
-              <Button
-                key={m.val}
-                size="sm"
-                variant="secondary"
-                onClick={() => onSetMusicIntensity(m.val)}
-              >
-                {t(m.labelKey)}
-              </Button>
-            ))}
-          </div>
-        </div>
+          <SegmentedControl
+            options={musicOptions}
+            value={0.4}
+            onChange={onSetMusicIntensity}
+            size="sm"
+          />
+        </Card>
 
-        {/* Particle Emitter Test */}
-        <div className="flex items-center justify-between p-2.5 bg-[#180904] rounded-lg border border-[#4a1d0d] flex-wrap gap-2">
+        <Card variant="dark" className="p-2.5 flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-2">
             <Sparkles size={15} className="text-amber-400" />
             <span className="text-xs font-bold text-stone-200">
@@ -103,7 +100,7 @@ export const TesterParallaxCard: React.FC<TesterParallaxCardProps> = ({
               {t("testerParticleDust")}
             </Button>
           </div>
-        </div>
+        </Card>
       </CardContent>
     </Card>
   );
