@@ -1,13 +1,15 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { MapPin, Compass, Crosshair } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@components/ui";
+import React, { useState, useMemo, useCallback } from "react";
+import { MapPin, Compass, Crosshair, RefreshCw } from "lucide-react";
+import { Button, Card, CardHeader, CardTitle, CardContent, Badge, CompactNumberStepper } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { SpawnPreset, debugManager } from "@game/debug/debugManager";
 import { getLocation, LocationId } from "@game/locations";
 import { LOCATION_IDS } from "./constants";
-
 import { TesterTeleportCardProps } from "./types";
 
+/**
+ * Presentation card for player teleportation, checkpoints navigation and location switching.
+ */
 export const TesterTeleportCard: React.FC<TesterTeleportCardProps> = ({
   currentLocationId,
   onLoadLocation,
@@ -18,7 +20,7 @@ export const TesterTeleportCard: React.FC<TesterTeleportCardProps> = ({
   onToggleClickToTeleport,
   presets: externalPresets,
 }) => {
-  const { t } = useI18n();
+  const { t, isPl } = useI18n();
 
   const [customX, setCustomX] = useState<number>(() =>
     playerX !== undefined && Number.isFinite(playerX) ? Math.round(playerX) : 150
@@ -38,21 +40,30 @@ export const TesterTeleportCard: React.FC<TesterTeleportCardProps> = ({
     }
   }, [customX, customY, onTeleportPlayer]);
 
-  const handlePresetTeleport = useCallback((x: number, y: number) => {
-    if (Number.isFinite(x) && Number.isFinite(y)) {
-      setCustomX(Math.round(x));
-      setCustomY(Math.round(y));
-      onTeleportPlayer?.(Math.round(x), Math.round(y));
-    }
-  }, [onTeleportPlayer]);
+  const handlePresetTeleport = useCallback(
+    (x: number, y: number) => {
+      if (Number.isFinite(x) && Number.isFinite(y)) {
+        setCustomX(Math.round(x));
+        setCustomY(Math.round(y));
+        onTeleportPlayer?.(Math.round(x), Math.round(y));
+      }
+    },
+    [onTeleportPlayer]
+  );
+
+  const handleSyncCurrentPosition = useCallback(() => {
+    if (playerX !== undefined && Number.isFinite(playerX)) setCustomX(Math.round(playerX));
+    if (playerY !== undefined && Number.isFinite(playerY)) setCustomY(Math.round(playerY));
+  }, [playerX, playerY]);
 
   const getPresetLabel = useCallback(
     (preset: SpawnPreset): string => {
-      const pascalKey = `preset${preset.id.charAt(0).toUpperCase()}${preset.id.slice(1)}`;
-      const localized = t(pascalKey);
-      return localized !== pascalKey ? localized : preset.name;
+      if (isPl && preset.namePl) {
+        return preset.namePl;
+      }
+      return preset.name;
     },
-    [t]
+    [isPl]
   );
 
   return (
@@ -64,7 +75,6 @@ export const TesterTeleportCard: React.FC<TesterTeleportCardProps> = ({
         <Badge variant="amber">{currentLocationId}</Badge>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        {/* Predefined Checkpoints */}
         <div>
           <div className="text-xs font-semibold text-stone-300 mb-2 flex items-center gap-1.5">
             <Compass size={13} className="text-amber-400" />
@@ -90,46 +100,48 @@ export const TesterTeleportCard: React.FC<TesterTeleportCardProps> = ({
           </div>
         </div>
 
-        {/* Manual Teleport Coordinates */}
-        <div className="p-3 bg-[#180904] rounded-lg border border-[#4a1d0d] flex flex-wrap items-center justify-between gap-3">
+        <Card variant="dark" className="p-3 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Crosshair size={15} className="text-amber-400" />
             <span className="text-xs font-bold text-stone-200">
               {t("testerCoordsLabel")}
             </span>
+            {playerX !== undefined && (
+              <Button
+                size="sm"
+                variant="ghost"
+                icon={<RefreshCw size={12} />}
+                onClick={handleSyncCurrentPosition}
+                title="Sync with current player position"
+                className="text-[10px] text-stone-400 hover:text-amber-300 px-1 py-0.5 h-6"
+              >
+                {Math.round(playerX)}, {Math.round(playerY ?? 0)}
+              </Button>
+            )}
           </div>
           <div className="flex items-center gap-2 flex-wrap">
-            <div className="flex items-center gap-1">
-              <span className="text-xs text-stone-400 font-mono">X:</span>
-              <input
-                type="number"
-                value={customX}
-                onChange={(e) => {
-                  const val = parseFloat(e.target.value);
-                  setCustomX(Number.isFinite(val) ? val : 0);
-                }}
-                className="w-20 px-2 py-1 bg-stone-900 border border-stone-700 rounded text-xs font-mono text-amber-200 focus:outline-none focus:border-amber-500"
-              />
-            </div>
-            <div className="flex items-center gap-1">
-              <span className="text-xs text-stone-400 font-mono">Y:</span>
-              <input
-                type="number"
-                value={customY}
-                onChange={(e) => {
-                  const val = parseFloat(e.target.value);
-                  setCustomY(Number.isFinite(val) ? val : 0);
-                }}
-                className="w-20 px-2 py-1 bg-stone-900 border border-stone-700 rounded text-xs font-mono text-amber-200 focus:outline-none focus:border-amber-500"
-              />
-            </div>
+            <CompactNumberStepper
+              label="X"
+              value={customX}
+              onChange={setCustomX}
+              min={0}
+              step={10}
+              className="w-24 text-xs font-mono"
+            />
+            <CompactNumberStepper
+              label="Y"
+              value={customY}
+              onChange={setCustomY}
+              min={0}
+              step={10}
+              className="w-24 text-xs font-mono"
+            />
             <Button size="sm" variant="primary" onClick={handleCustomTeleport}>
               {t("testerTeleportBtn")}
             </Button>
           </div>
-        </div>
+        </Card>
 
-        {/* Click to Teleport & Location Switcher */}
         <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-[#4a1d0d]">
           <Button
             size="sm"
@@ -145,23 +157,20 @@ export const TesterTeleportCard: React.FC<TesterTeleportCardProps> = ({
             <span className="text-xs text-stone-400 font-medium">
               {t("testerSwitchLocationLabel")}
             </span>
-            {LOCATION_IDS.map((locId) => {
+            {LOCATION_IDS.map((locId: LocationId) => {
               const locDef = getLocation(locId);
               const locName = locDef ? t(locDef.nameKey) : locId;
-              const shortName = locName.split(" ")[0];
 
               return (
-                <button
+                <Button
                   key={locId}
-                  type="button"
+                  size="sm"
+                  variant={currentLocationId === locId ? "primary" : "secondary"}
                   onClick={() => onLoadLocation(locId)}
-                  className={`px-2 py-1 text-[11px] font-bold rounded border transition-colors cursor-pointer ${currentLocationId === locId
-                      ? "bg-amber-600 text-white border-amber-400"
-                      : "bg-stone-900 text-stone-300 border-stone-800 hover:border-amber-700"
-                    }`}
+                  className="text-xs py-1 px-2.5 h-7"
                 >
-                  {shortName}
-                </button>
+                  {locName}
+                </Button>
               );
             })}
           </div>

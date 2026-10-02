@@ -86,60 +86,66 @@ export class DebugManager {
   }
 
   public toggleGodMode(): boolean {
-    this.state.godMode = !this.state.godMode;
+    this.state = { ...this.state, godMode: !this.state.godMode };
     this.notify();
     return this.state.godMode;
   }
 
   public toggleInfiniteMana(): boolean {
-    this.state.infiniteMana = !this.state.infiniteMana;
+    this.state = { ...this.state, infiniteMana: !this.state.infiniteMana };
     this.notify();
     return this.state.infiniteMana;
   }
 
   public toggleInfiniteStamina(): boolean {
-    this.state.infiniteStamina = !this.state.infiniteStamina;
+    this.state = { ...this.state, infiniteStamina: !this.state.infiniteStamina };
     this.notify();
     return this.state.infiniteStamina;
   }
 
   public toggleNoClip(): boolean {
-    this.state.noClip = !this.state.noClip;
+    this.state = { ...this.state, noClip: !this.state.noClip };
     this.notify();
     return this.state.noClip;
   }
 
   public toggleFreezeAI(): boolean {
-    this.state.freezeAI = !this.state.freezeAI;
+    this.state = { ...this.state, freezeAI: !this.state.freezeAI };
     this.notify();
     return this.state.freezeAI;
   }
 
   public setTimeScale(scale: number): void {
-    this.state.timeScale = Math.max(0.1, Math.min(5.0, scale));
+    this.state = { ...this.state, timeScale: Math.max(0.1, Math.min(5.0, scale)) };
     this.notify();
   }
 
   public toggleHitboxes(): boolean {
-    this.state.showHitboxes = !this.state.showHitboxes;
+    this.state = { ...this.state, showHitboxes: !this.state.showHitboxes };
     this.notify();
     return this.state.showHitboxes;
   }
 
   public toggleProfiler(): boolean {
-    this.state.showProfiler = !this.state.showProfiler;
+    this.state = { ...this.state, showProfiler: !this.state.showProfiler };
     this.notify();
     return this.state.showProfiler;
   }
 
   public toggleClickToTeleport(): boolean {
-    this.state.clickToTeleport = !this.state.clickToTeleport;
+    this.state = { ...this.state, clickToTeleport: !this.state.clickToTeleport };
     this.notify();
     return this.state.clickToTeleport;
   }
 
   public toggleParallaxTier(tier: BackgroundLayerTier): boolean {
-    this.state.parallaxTiers[tier] = !this.state.parallaxTiers[tier];
+    this.state = {
+      ...this.state,
+      parallaxTiers: {
+        ...this.state.parallaxTiers,
+        [tier]: !this.state.parallaxTiers[tier],
+      },
+    };
     this.notify();
     return this.state.parallaxTiers[tier];
   }

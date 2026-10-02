@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Skull, Ghost, Trophy, AlertTriangle, Plus } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent, Select, Switch } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
-
 import { MONSTER_ID_LIST } from "./constants";
-
 import { TesterCombatCardProps } from "./types";
 
+/**
+ * Presentation card for enemy wipes, AI freeze toggling, win/loss triggers and monster spawning.
+ */
 export const TesterCombatCard: React.FC<TesterCombatCardProps> = ({
   freezeAI,
   onToggleFreezeAI,
@@ -18,6 +19,15 @@ export const TesterCombatCard: React.FC<TesterCombatCardProps> = ({
   const { t } = useI18n();
   const [selectedEnemy, setSelectedEnemy] = useState<string>("court_sentinel");
 
+  const monsterOptions = useMemo(
+    () =>
+      MONSTER_ID_LIST.map((m) => ({
+        value: m.id,
+        label: t(m.translationKey),
+      })),
+    [t]
+  );
+
   return (
     <Card variant="default">
       <CardHeader>
@@ -26,7 +36,6 @@ export const TesterCombatCard: React.FC<TesterCombatCardProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        {/* Combat actions */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 items-center">
           <Button
             variant="secondary"
@@ -66,8 +75,7 @@ export const TesterCombatCard: React.FC<TesterCombatCardProps> = ({
           </Button>
         </div>
 
-        {/* Enemy Spawner Controls */}
-        <div className="p-3 bg-[#180904] rounded-lg border border-[#4a1d0d] flex flex-wrap items-center justify-between gap-3">
+        <Card variant="dark" className="p-3 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Plus size={15} className="text-amber-400" />
             <span className="text-xs font-bold text-stone-200">
@@ -80,10 +88,7 @@ export const TesterCombatCard: React.FC<TesterCombatCardProps> = ({
               variant="castle"
               value={selectedEnemy}
               onChange={(e) => setSelectedEnemy(e.target.value)}
-              options={MONSTER_ID_LIST.map((m) => ({
-                value: m.id,
-                label: t(m.translationKey),
-              }))}
+              options={monsterOptions}
               className="w-48 font-semibold text-xs"
             />
             <Button
@@ -95,7 +100,7 @@ export const TesterCombatCard: React.FC<TesterCombatCardProps> = ({
               {t("testerSpawnNearPlayerBtn")}
             </Button>
           </div>
-        </div>
+        </Card>
       </CardContent>
     </Card>
   );
