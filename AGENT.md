@@ -1,4 +1,4 @@
-# 🧱 AGENT.md v3.1 — Vibrant Castle
+# 🧱 AGENT.md v4 — Vibrant Castle
 
 ---
 
@@ -61,9 +61,9 @@ Every engineering decision should improve at least one of the following without 
 * Long-Term Sustainability
 * SOLID Principles
 * Clean Code Principles
-* KISS (Keep It Simple, Stupid)
-* YAGNI (You Ain't Gonna Need This)
-* DRY (Don't Repeat Yourself)
+* KISS
+* YAGNI
+* DRY
 
 ---
 
@@ -91,7 +91,7 @@ This protocol MUST be used when:
 * change affects multiple systems (ENGINE / UI / CONTENT / AI)
 * change impacts determinism, rendering, input, or state flow
 * change introduces or modifies core mechanics
-* change touches multiple technical domains (e.g. rendering + collision + logging)
+* change touches multiple technical domains
 * change complexity is non-trivial
 
 ❌ FORBIDDEN:
@@ -99,6 +99,8 @@ This protocol MUST be used when:
 * implementing complex changes in a single step
 * skipping analysis phase
 * introducing partial, non-working states
+
+---
 
 #### 1.6.2 Required Workflow
 
@@ -109,33 +111,41 @@ Every complex change MUST follow:
 * PHASED DELIVERY
 * VALIDATION
 
+---
+
 #### 1.6.3 Analysis (MANDATORY)
 
 Analysis MUST include:
 
 * problem definition
+
 * affected domains:
 
-* ENGINE
-* UI
-* CONTENT
-* AI
+  * ENGINE
+  * UI
+  * CONTENT
+  * AI
 
-Affected technical layers:
+* technical layers:
 
-* rendering
-* simulation
-* collision
-* input
-* persistence
-* logging
+  * rendering
+  * simulation
+  * collision
+  * input
+  * persistence
+  * logging
+
 * risks:
-* determinism break
-* performance degradation
-* visual inconsistency
+
+  * determinism break
+  * performance degradation
+  * visual inconsistency
+
 * invariants that MUST NOT be broken
 
 Output: structured analysis document
+
+---
 
 #### 1.6.4 Implementation Plan (MANDATORY)
 
@@ -145,18 +155,20 @@ Plan MUST:
 * define scope per phase
 * define expected output per phase
 
-Ensure each phase produces:
+Each phase MUST produce:
 
 * working
 * testable
 * stable
 
-Each phase MUST NOT break:
+Must NOT break:
 
 * game loop
 * determinism
 * rendering pipeline
 * UI contract
+
+---
 
 #### 1.6.5 Phased Delivery Rules
 
@@ -175,20 +187,22 @@ Allowed:
 
 * partially implemented systems
 * dead code paths
-* breaking snapshot contract
+* broken contracts
+
+---
 
 #### 1.6.6 Domain vs Technical Decomposition
 
-Changes MUST be decomposed along TWO axes:
+Changes MUST be decomposed along:
 
-A. System Domains
+A. System Domains:
 
 * ENGINE
 * UI
 * CONTENT
 * AI
 
-B. Technical Concerns
+B. Technical Concerns:
 
 * rendering
 * simulation
@@ -198,35 +212,21 @@ B. Technical Concerns
 * logging
 * persistence
 
-A single problem MAY span multiple domains and multiple concerns.
-
-Example:
-
-"Slicing system"
-
-Domains:
-
-* ENGINE (collision + damage)
-* UI (feedback)
-* CONTENT (weapon config)
-
-Technical:
-
-* collision detection
-* animation timing
-* rendering effects
+---
 
 #### 1.6.7 Phase Design Strategy
 
-Phases SHOULD be ordered:
+Order:
 
-* Data structures
-* Core logic (ENGINE)
-* Rendering
-* UI integration
-* Content integration
+1. Data structures
+2. Core logic (ENGINE)
+3. Rendering
+4. UI integration
+5. Content integration
 
 Never reverse this order.
+
+---
 
 #### 1.6.8 Validation (MANDATORY)
 
@@ -235,32 +235,49 @@ Each phase MUST pass:
 * determinism check
 * performance check
 * rendering correctness
-* no regression in existing systems
+* no regression
+
+---
 
 #### 1.6.9 Output Format (STRICT)
 
-Every complex change MUST produce:
-
 * ANALYSIS
 * PHASE PLAN
-* IMPLEMENTATION (per phase)
+* IMPLEMENTATION
 * VALIDATION REPORT
 
 ---
 
 ### 1.7 TypeScript Architecture & Patterns (STRICT)
 
-TODO
+#### General Rules
+
+* `strict` mode REQUIRED
+* `any` FORBIDDEN
+* implicit types FORBIDDEN
+* explicit return types REQUIRED for public APIs
+
+#### Type Safety
+
+* Prefer `unknown` over `any`
+* Use discriminated unions
+* Avoid unsafe casting
+
+#### UI Note
+
+Detailed UI TypeScript, hooks and component rules are defined in:
+
+➡ **UI_RULES.md (source of truth for UI implementation)**
 
 ---
 
 ### 1.8 Comments
 
-* Comments must follow CleanCode principles.
-* Comments must be concise and to the point.
-* Comments must be in English.
-* Comments on class, hooks, methods etc. must adhere to JSdoc principles
-* Inline comments need to be used only when it necessary to explain mathematical, algorytmic, deep technical or deep buisness logic that is not obvious from the code. Always prefer self-explaining code over comments.
+* Comments must follow CleanCode principles
+* Comments must be concise
+* Comments must be in English
+* Prefer self-explanatory code
+* Use comments only for non-obvious logic
 
 ---
 
@@ -268,7 +285,7 @@ TODO
 
 ### 2.1 Game Loop (MANDATORY)
 
-* Framerates: 30/60/90/120 Hz
+* 30/60/90/120 Hz
 * Decoupled render
 
 Structure:
@@ -281,18 +298,17 @@ render(interpolation)
 * Game logic in React
 * Variable timestep gameplay
 
-#### 2.1.1 Game loop config
-
-* fixedStep = 1/60 (configurable).
-* maxUpdatesPerFrame = 5.
-* Deterministic RNG: pcg32 seeded from level.seed.
-* Snapshot format: { timestamp_ms, entities: [...], global: {...}, checksum } — UI must treat snapshots as read-only.
-
 ---
 
 ### 2.2 State Flow
 
 Input → Command → Engine → State → Snapshot → UI
+
+#### UI Contract
+
+* Snapshot is immutable
+* UI is read-only
+* UI communicates via commands only
 
 ❌ FORBIDDEN:
 
@@ -362,6 +378,23 @@ React is ONLY for:
 
 ---
 
+### 3.4 UI Implementation Rules
+
+UI implementation details are defined in:
+
+➡ **UI_RULES.md (MANDATORY)**
+
+This includes:
+
+* component architecture
+* hooks rules
+* adapters
+* testing
+* naming
+* performance guidelines
+
+---
+
 ## 4. CONTENT PIPELINE
 
 ### 4.1 Pipeline
@@ -396,9 +429,9 @@ Each level MUST:
 
 ---
 
-### 4.4 Level JSON schema (required)
+### 4.4 Level JSON schema
 
-Provide level.schema.json and ensure CI validates all level JSONs. Minimal required fields and an example must be in the repo. Parallax layer entry must include type (far|mid_far|mid|mid_close|close), path, opaque (boolean).
+Must include schema validation and CI enforcement.
 
 ---
 
@@ -408,9 +441,9 @@ Provide level.schema.json and ensure CI validates all level JSONs. Minimal requi
 
 AI MAY:
 
-* generate PNG assets
-* modify level JSON
-* adjust parallax
+* generate assets
+* modify JSON
+* adjust visuals
 
 ---
 
@@ -419,8 +452,8 @@ AI MAY:
 AI MUST NOT:
 
 * change gameplay systems
-* break lore consistency
-* introduce new mechanics
+* break consistency
+* introduce mechanics
 
 ---
 
@@ -433,13 +466,11 @@ AI MUST NOT:
 
 ---
 
-### 5.4 Validation (MANDATORY)
-
-Every output MUST satisfy:
+### 5.4 Validation
 
 * lore consistency
-* asset rules
-* technical constraints
+* technical correctness
+* asset compliance
 
 ---
 
