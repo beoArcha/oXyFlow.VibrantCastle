@@ -1,46 +1,47 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useResponsiveCanvas } from "./hooks/useResponsiveCanvas";
-import gameEngine from "@game/loop/engine";
-import { PlayerId } from "@game/types";
-import { debugManager } from "@game/debug/debugManager";
-import { HUDViewportCanvasProps } from "./types";
+import {
+  attachViewportCanvas,
+  resizeViewportCanvas,
+  executeCanvasClickTeleport,
+} from "@components/adapters/hudAdapter";
+import type { HUDViewportCanvasProps } from "./types";
 
 export type { HUDViewportCanvasProps };
 
-/**
- * Encapsulates the responsive game canvas rendering viewport and engine lifecycle binding.
- */
 export const HUDViewportCanvas: React.FC<HUDViewportCanvasProps> = ({
   displaySettings,
   children,
 }) => {
-  const { containerRef, canvasRef, canvasStyle } = useResponsiveCanvas(displaySettings);
+  const handleResize = useCallback(
+    (
+      width: number,
+      height: number,
+      dpr: number,
+      scalingFilter: typeof displaySettings.scalingFilter
+    ) => {
+      resizeViewportCanvas(width, height, dpr, scalingFilter);
+    },
+    []
+  );
+
+  const { containerRef, canvasRef, canvasStyle } = useResponsiveCanvas(
+    displaySettings,
+    handleResize
+  );
   const isGpu = displaySettings.hardwareAcceleration !== false;
 
-  // Mount canvas into gameEngine renderer on initial render or canvas recreation
   useEffect(() => {
-    if (canvasRef.current) {
-      gameEngine.attachCanvas(canvasRef.current);
-      gameEngine.start();
-    }
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const cleanup = attachViewportCanvas(canvas);
+    return cleanup;
   }, [canvasRef, isGpu]);
 
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!debugManager.state.clickToTeleport || !canvasRef.current) return;
-    const rect = canvasRef.current.getBoundingClientRect();
-    const clientX = e.clientX - rect.left;
-    const clientY = e.clientY - rect.top;
-
-    const scaleX = canvasRef.current.width / rect.width;
-    const scaleY = canvasRef.current.height / rect.height;
-    const canvasPxX = clientX * scaleX;
-    const canvasPxY = clientY * scaleY;
-
-    const scaleFactor = gameEngine.getRendererScaleFactor();
-    const worldX = gameEngine.cameraManager.x + canvasPxX / scaleFactor;
-    const worldY = gameEngine.cameraManager.y + canvasPxY / scaleFactor;
-
-    gameEngine.teleportPlayer(PlayerId.Player1, Math.round(worldX - 16), Math.round(worldY - 24));
+    if (!canvasRef.current) return;
+    executeCanvasClickTeleport(canvasRef.current, e.clientX, e.clientY);
   };
 
   return (

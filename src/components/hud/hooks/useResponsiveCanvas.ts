@@ -1,6 +1,12 @@
 import { useRef, useEffect, useState, useCallback, useMemo } from "react";
-import { DisplaySettings } from "@game/types";
-import gameEngine from "@game/loop/engine";
+import type { DisplaySettings } from "@game/types";
+
+export type ResponsiveCanvasResizeHandler = (
+  width: number,
+  height: number,
+  dpr: number,
+  scalingFilter: DisplaySettings["scalingFilter"]
+) => void;
 
 export interface ResponsiveCanvasResult {
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -20,12 +26,10 @@ function getTargetDpr(): number {
   return Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, 2);
 }
 
-/**
- * Custom React hook for responsive game canvas scaling.
- * Computes letterbox/pillarbox aspect ratio constraints and notifies GameEngine of dimension changes.
- * Capped at 2x DPR to preserve GPU memory per AGENT.md Sec. 12.
- */
-export function useResponsiveCanvas(displaySettings: DisplaySettings): ResponsiveCanvasResult {
+export function useResponsiveCanvas(
+  displaySettings: DisplaySettings,
+  onResize?: ResponsiveCanvasResizeHandler
+): ResponsiveCanvasResult {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -66,13 +70,10 @@ export function useResponsiveCanvas(displaySettings: DisplaySettings): Responsiv
 
     setDimensions({ width: targetW, height: targetH, dpr });
 
-    gameEngine.setCanvasDimensions(
-      targetW,
-      targetH,
-      dpr,
-      displaySettings.scalingFilter
-    );
-  }, [calculateTargetDimensions, displaySettings.scalingFilter]);
+    if (onResize) {
+      onResize(targetW, targetH, dpr, displaySettings.scalingFilter);
+    }
+  }, [calculateTargetDimensions, displaySettings.scalingFilter, onResize]);
 
   const updateDimensions = useCallback(() => {
     const container = containerRef.current;

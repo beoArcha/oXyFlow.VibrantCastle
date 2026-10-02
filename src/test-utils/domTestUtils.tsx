@@ -54,9 +54,9 @@ export function setupDomEnvironment() {
   (globalThis as any).ResizeObserver =
     (win as any).ResizeObserver ||
     class {
-      observe() {}
-      unobserve() {}
-      disconnect() {}
+      observe() { }
+      unobserve() { }
+      disconnect() { }
     };
   if (win.HTMLCanvasElement) {
     const origGetContext = (win.HTMLCanvasElement.prototype as any).getContext;
@@ -261,4 +261,3 @@ export async function renderCustomHook<T, P = void>(
     },
   };
 }
-

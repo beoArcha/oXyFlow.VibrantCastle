@@ -8,6 +8,7 @@ import type {
 } from "@game/types";
 import type { AssetQuality } from "@/types/assets";
 import type { PlayerTheme } from "@styles/theme";
+import type { SpellItemVM } from "./viewModels";
 
 export * from "./viewModels";
 
@@ -64,8 +65,8 @@ export interface HUDQuickBeltData {
 export interface HUDQuickBeltProps {
   readonly player: HUDQuickBeltData;
   readonly playerNumber: 1 | 2;
-  readonly primarySpell: MagicSkill | null;
-  readonly secondarySpell: MagicSkill | null;
+  readonly primarySpell: SpellItemVM | MagicSkill | null;
+  readonly secondarySpell: SpellItemVM | MagicSkill | null;
   readonly primarySpellName: string;
   readonly secondarySpellName: string;
   readonly primaryKeyLabel: string;

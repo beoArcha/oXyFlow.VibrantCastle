@@ -3,7 +3,9 @@ import {
   useQuickPotion,
   calculatePlayerDerivedStats,
 } from "@game/logic/inventory";
-import type { InventoryState, Item } from "@game/types";
+import gameEngine from "@game/loop/engine";
+import { debugManager } from "@game/debug/debugManager";
+import { PlayerId, type InventoryState, type Item, type ScalingFilterMode } from "@game/types";
 import { type PlayerTheme, resolvePlayerTheme } from "@styles/theme";
 import type {
   PlayerStatusVM,
@@ -188,3 +190,54 @@ export function resolvePlayerDerivedStats(
   if (!player || !player.inventory || !player.inventory.equipment) return null;
   return calculatePlayerDerivedStats(player);
 }
+
+/**
+ * Attaches the HTMLCanvasElement to the game engine renderer and starts the loop.
+ * Returns a cleanup function that stops the engine on unmount.
+ */
+export function attachViewportCanvas(canvas: HTMLCanvasElement): () => void {
+  gameEngine.attachCanvas(canvas);
+  gameEngine.start();
+  return () => {
+    gameEngine.stop();
+  };
+}
+
+/**
+ * Relays canvas dimension updates to the game engine renderer.
+ */
+export function resizeViewportCanvas(
+  width: number,
+  height: number,
+  dpr: number,
+  scalingFilter: ScalingFilterMode
+): void {
+  gameEngine.setCanvasDimensions(width, height, dpr, scalingFilter);
+}
+
+/**
+ * Handles canvas clicks for debug click-to-teleport, isolating debugManager and gameEngine from UI.
+ */
+export function executeCanvasClickTeleport(
+  canvas: HTMLCanvasElement,
+  clientX: number,
+  clientY: number
+): boolean {
+  if (!debugManager.state.clickToTeleport) return false;
+
+  const projection = resolveViewportCameraProjection(
+    canvas,
+    clientX,
+    clientY,
+    gameEngine.cameraManager,
+    gameEngine.getRendererScaleFactor()
+  );
+
+  gameEngine.teleportPlayer(
+    PlayerId.Player1,
+    projection.worldX,
+    projection.worldY
+  );
+  return true;
+}
+

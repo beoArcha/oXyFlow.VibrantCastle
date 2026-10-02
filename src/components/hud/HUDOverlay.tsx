@@ -1,6 +1,9 @@
 import React, { useCallback, useMemo } from "react";
-import { SPELL_REGISTRY } from "@game/logic/magic";
-import { useQuickPotion, calculatePlayerDerivedStats } from "@game/logic/inventory";
+import {
+  resolvePlayerDerivedStats,
+  executeQuickPotionUse,
+  resolveSpellVM,
+} from "@components/adapters/hudAdapter";
 import { useGameSession, useSettings } from "@context/GameContext";
 import { useI18n } from "@context/I18nContext";
 import { HUDOverlayLayout } from "./HUDOverlayLayout";
@@ -51,36 +54,52 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
 
   const { t } = useI18n();
 
-  // Derived spell registry definitions memoized
   const p1PrimarySpell = useMemo(
-    () => (p1 ? SPELL_REGISTRY[p1.primarySpellId] : null),
-    [p1?.primarySpellId]
+    () =>
+      resolveSpellVM(
+        p1?.primarySpellId,
+        hudSettings.p1QuickKeys.primarySpell,
+        "cyan"
+      ),
+    [p1?.primarySpellId, hudSettings.p1QuickKeys.primarySpell]
   );
   const p1SecondarySpell = useMemo(
-    () => (p1 ? SPELL_REGISTRY[p1.secondarySpellId] : null),
-    [p1?.secondarySpellId]
+    () =>
+      resolveSpellVM(
+        p1?.secondarySpellId,
+        hudSettings.p1QuickKeys.secondarySpell,
+        "purple"
+      ),
+    [p1?.secondarySpellId, hudSettings.p1QuickKeys.secondarySpell]
   );
-  const p1Stats = useMemo(() => (p1 ? calculatePlayerDerivedStats(p1) : null), [p1]);
+  const p1Stats = useMemo(() => resolvePlayerDerivedStats(p1), [p1]);
 
   const p2PrimarySpell = useMemo(
-    () => (p2 ? SPELL_REGISTRY[p2.primarySpellId] : null),
-    [p2?.primarySpellId]
+    () =>
+      resolveSpellVM(
+        p2?.primarySpellId,
+        hudSettings.p2QuickKeys.primarySpell,
+        "cyan"
+      ),
+    [p2?.primarySpellId, hudSettings.p2QuickKeys.primarySpell]
   );
   const p2SecondarySpell = useMemo(
-    () => (p2 ? SPELL_REGISTRY[p2.secondarySpellId] : null),
-    [p2?.secondarySpellId]
+    () =>
+      resolveSpellVM(
+        p2?.secondarySpellId,
+        hudSettings.p2QuickKeys.secondarySpell,
+        "purple"
+      ),
+    [p2?.secondarySpellId, hudSettings.p2QuickKeys.secondarySpell]
   );
-  const p2Stats = useMemo(() => (p2 ? calculatePlayerDerivedStats(p2) : null), [p2]);
+  const p2Stats = useMemo(() => resolvePlayerDerivedStats(p2), [p2]);
 
   const currentLocationName = currentLocation ? t(currentLocation.nameKey) : "";
 
   const handlePotionClick = useCallback(
     (playerIndex: number, slotIndex: number) => {
       const targetPlayer = playerIndex === 0 ? p1 : p2;
-      if (targetPlayer) {
-        useQuickPotion(targetPlayer, slotIndex);
-        notifyEngineUpdate();
-      }
+      executeQuickPotionUse(targetPlayer, slotIndex, notifyEngineUpdate);
     },
     [p1, p2, notifyEngineUpdate]
   );

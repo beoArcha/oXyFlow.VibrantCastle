@@ -1,13 +1,10 @@
-import { describe, it, expect, beforeEach, afterEach, spyOn } from "bun:test";
+import { describe, it, expect, afterEach, mock } from "bun:test";
 import { act } from "react";
-import { useResponsiveCanvas } from "../useResponsiveCanvas";
-import { DisplaySettings } from "@game/types";
-import gameEngine from "@game/loop/engine";
+import { useResponsiveCanvas, type ResponsiveCanvasResizeHandler } from "../useResponsiveCanvas";
+import type { DisplaySettings } from "@game/types";
 import { renderCustomHook, cleanupDom } from "@test-utils/domTestUtils";
 
 describe("useResponsiveCanvas Hook", () => {
-  let engineSpy: any;
-
   const mockSettings: DisplaySettings = {
     aspectRatio: "16:9",
     scalingFilter: "pixel",
@@ -17,12 +14,7 @@ describe("useResponsiveCanvas Hook", () => {
     hardwareAcceleration: true,
   };
 
-  beforeEach(() => {
-    engineSpy = spyOn(gameEngine, "setCanvasDimensions").mockImplementation(() => { });
-  });
-
   afterEach(async () => {
-    engineSpy.mockRestore();
     await cleanupDom();
   });
 
@@ -79,19 +71,20 @@ describe("useResponsiveCanvas Hook", () => {
     await unmount();
   });
 
-  it("updates canvas dimensions and notifies gameEngine when updateDimensions is called", async () => {
-    const { result, unmount } = await renderCustomHook(() => useResponsiveCanvas(mockSettings));
+  it("updates canvas dimensions and notifies onResize callback when updateDimensions is called", async () => {
+    const onResizeMock = mock<ResponsiveCanvasResizeHandler>(() => {});
+    const { result, unmount } = await renderCustomHook(() => useResponsiveCanvas(mockSettings, onResizeMock));
 
     const mockDiv = document.createElement("div");
     Object.defineProperty(mockDiv, "clientWidth", { value: 1600, configurable: true });
     Object.defineProperty(mockDiv, "clientHeight", { value: 900, configurable: true });
-    (result.current.containerRef as any).current = mockDiv;
+    (result.current.containerRef as { current: HTMLDivElement | null }).current = mockDiv;
 
     await act(async () => {
       result.current.updateDimensions();
     });
 
-    expect(engineSpy).toHaveBeenCalled();
+    expect(onResizeMock).toHaveBeenCalled();
     expect(result.current.computedDimensions.width).toBe(1600);
     expect(result.current.computedDimensions.height).toBe(900);
     expect(result.current.computedDimensions.dpr).toBeLessThanOrEqual(2);
@@ -103,10 +96,9 @@ describe("useResponsiveCanvas Hook", () => {
     const { result, unmount } = await renderCustomHook(() => useResponsiveCanvas(mockSettings));
 
     const mockDiv = document.createElement("div");
-    // 2000x900 is wider than 16:9 (ratio ~2.22 vs 1.77) -> height = 900, width = 900 * 16/9 = 1600
     Object.defineProperty(mockDiv, "clientWidth", { value: 2000, configurable: true });
     Object.defineProperty(mockDiv, "clientHeight", { value: 900, configurable: true });
-    (result.current.containerRef as any).current = mockDiv;
+    (result.current.containerRef as { current: HTMLDivElement | null }).current = mockDiv;
 
     await act(async () => {
       result.current.updateDimensions();
@@ -124,7 +116,7 @@ describe("useResponsiveCanvas Hook", () => {
     const mockDiv = document.createElement("div");
     Object.defineProperty(mockDiv, "clientWidth", { value: 100, configurable: true });
     Object.defineProperty(mockDiv, "clientHeight", { value: 50, configurable: true });
-    (result.current.containerRef as any).current = mockDiv;
+    (result.current.containerRef as { current: HTMLDivElement | null }).current = mockDiv;
 
     await act(async () => {
       result.current.updateDimensions();
