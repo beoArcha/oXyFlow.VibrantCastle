@@ -1,5 +1,5 @@
 import React from "react";
-import { ItemSlot } from "./ItemSlot";
+import { ItemSlot } from "@components/ui";
 import { BackpackGridVM, resolveBackpackVM } from "@components/adapters/inventoryAdapter";
 
 export interface InventoryBackpackGridProps {

@@ -1,13 +1,13 @@
 import React, { createRef, act } from "react";
 import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
-import { KeyedTabs } from "@ui";
 import {
+  KeyedTabs,
   ItemSlot,
   ItemIcon,
   registerItemIcon,
   getItemIcon,
   itemIconRegistry,
-} from "@components/inventory";
+} from "@ui";
 import { ModalNavigationTabs, ModalType } from "@components/modal";
 import { renderIntoDom, cleanupDom } from "@test-utils/domTestUtils";
 import { Item, ItemRarity, ItemType } from "@game/types";

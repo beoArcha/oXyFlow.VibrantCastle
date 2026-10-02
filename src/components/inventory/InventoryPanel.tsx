@@ -1,13 +1,20 @@
-import React from "react";
+import React, { useMemo, useCallback } from "react";
 import { Backpack as BackpackIcon, Shield, Sparkles } from "lucide-react";
-import { Modal, Card, CardHeader, CardTitle, CardContent } from "../ui";
+import { Modal, Card, CardHeader, CardTitle, CardContent, EmptyState } from "@components/ui";
 import { LanguageSelector } from "@components/adapters";
 import { ModalNavigationTabs, ModalType } from "@components/modal";
 import { CharacterPortrait } from "../character";
 import { useGameSession, useSettings, useInventory } from "@context/GameContext";
 import { useI18n } from "@context/I18nContext";
+import {
+  EquipmentSlotKey,
+  resolvePaperdollVM,
+  resolveInventoryStatsVM,
+  resolveInventoryQuickBeltVM,
+  resolveBackpackVM,
+  resolveItemDetailsVM,
+} from "@components/adapters/inventoryAdapter";
 import { useInventorySelection } from "./useInventorySelection";
-
 import { InventoryPlayerTabs } from "./InventoryPlayerTabs";
 import { InventoryPaperdoll } from "./InventoryPaperdoll";
 import { InventoryStats } from "./InventoryStats";
@@ -16,11 +23,15 @@ import { InventoryBackpackGrid } from "./InventoryBackpackGrid";
 import { InventoryItemDetails } from "./InventoryItemDetails";
 
 export interface InventoryPanelProps {
-  onClose: () => void;
-  onNavigateModal?: (modal: ModalType) => void;
-  onResume?: () => void;
+  readonly onClose: () => void;
+  readonly onNavigateModal?: (modal: ModalType) => void;
+  readonly onResume?: () => void;
 }
 
+/**
+ * Container component orchestrating inventory data fetching, selection state,
+ * and presenting ViewModels across Gothic paperdoll, backpack, stats, and item inspector.
+ */
 export const InventoryPanel: React.FC<InventoryPanelProps> = ({
   onClose,
   onNavigateModal,
@@ -56,7 +67,102 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
     handleDiscard,
   } = useInventorySelection();
 
-  if (!activePlayer || !activeInventory) return null;
+  const paperdollVM = useMemo(
+    () => resolvePaperdollVM(activeInventory?.equipment),
+    [activeInventory?.equipment]
+  );
+
+  const statsVM = useMemo(
+    () =>
+      resolveInventoryStatsVM(
+        activeDerivedStats,
+        activePlayer?.health ?? 0,
+        activePlayer?.mana ?? 0,
+        activePlayer?.stamina ?? 0
+      ),
+    [
+      activeDerivedStats,
+      activePlayer?.health,
+      activePlayer?.mana,
+      activePlayer?.stamina,
+    ]
+  );
+
+  const quickBeltVM = useMemo(
+    () => resolveInventoryQuickBeltVM(activeInventory?.quickPotions, activePlayerIndex === 0),
+    [activeInventory?.quickPotions, activePlayerIndex]
+  );
+
+  const backpackVM = useMemo(
+    () => resolveBackpackVM(activeInventory?.backpack, 16),
+    [activeInventory?.backpack]
+  );
+
+  const itemDetailsVM = useMemo(
+    () => resolveItemDetailsVM(selectedItem),
+    [selectedItem]
+  );
+
+  const handleSelectPlayer = useCallback(
+    (idx: number) => {
+      selectPlayer(idx, setActivePlayerIndex);
+    },
+    [selectPlayer, setActivePlayerIndex]
+  );
+
+  const handleSelectEquipSlot = useCallback(
+    (slotKey: EquipmentSlotKey) => {
+      const item = activeInventory?.equipment[slotKey] ?? null;
+      selectEquipSlot(slotKey, item);
+    },
+    [activeInventory?.equipment, selectEquipSlot]
+  );
+
+  const handleSelectBackpackSlot = useCallback(
+    (idx: number) => {
+      const item = activeInventory?.backpack[idx] ?? null;
+      selectBackpackSlot(idx, item);
+    },
+    [activeInventory?.backpack, selectBackpackSlot]
+  );
+
+  const handleSelectPotionSlot = useCallback(
+    (idx: number) => {
+      const item = activeInventory?.quickPotions[idx] ?? null;
+      selectPotionSlot(idx, item);
+    },
+    [activeInventory?.quickPotions, selectPotionSlot]
+  );
+
+  const handleDrinkPotion = useCallback(
+    (idx: number) => {
+      handleUsePotion(idx, usePotion, activeInventory);
+    },
+    [handleUsePotion, usePotion, activeInventory]
+  );
+
+  const handleEquipItem = useCallback(
+    (idx: number) => {
+      handleEquip(idx, equipItem);
+    },
+    [handleEquip, equipItem]
+  );
+
+  const handleUnequipItem = useCallback(
+    (slotKey: EquipmentSlotKey) => {
+      handleUnequip(slotKey, unequipItem);
+    },
+    [handleUnequip, unequipItem]
+  );
+
+  const handleDiscardItem = useCallback(
+    (idx: number) => {
+      handleDiscard(idx, discardItem);
+    },
+    [handleDiscard, discardItem]
+  );
+
+  if (!p1 || !activePlayer || !activeInventory) return null;
 
   return (
     <Modal
@@ -76,38 +182,30 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
             onResume={onResume}
           />
         )}
-        {/* Top Bar: Player Selection & Character Info */}
+
         <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-stone-800">
           <InventoryPlayerTabs
-            p1={p1!}
+            p1={p1}
             p2={p2}
             isTwoPlayer={isTwoPlayer}
             activePlayerIndex={activePlayerIndex}
-            onSelectPlayer={(idx) => selectPlayer(idx, setActivePlayerIndex)}
+            onSelectPlayer={handleSelectPlayer}
             p1Name={t("valen")}
             p2Name={t("aurelia")}
             assetQuality={displaySettings.assetQuality}
           />
         </div>
 
-        {/* Main Grid: Paperdoll & Stats on Left, Backpack & Quick Belt on Right */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-          {/* Left Column: Equipment Silhouette + Derived Stats */}
           <div className="lg:col-span-5 flex flex-col gap-3">
             <Card variant="default">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-stone-300">
-                    <Shield size={15} className="text-amber-400" />
-                    {t("paperdoll")}
-                  </span>
-                  <span className="text-[10px] font-mono text-stone-500 uppercase">
-                    BG2 Paperdoll
-                  </span>
+                <CardTitle className="text-sm flex items-center gap-1.5 text-stone-300">
+                  <Shield size={15} className="text-amber-400" />
+                  {t("paperdoll")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                {/* Visual Character Avatar in Center of Paperdoll */}
                 <div className="flex justify-center mb-2">
                   <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-amber-600/40 bg-stone-950/80 shadow-inner flex items-center justify-center">
                     <CharacterPortrait
@@ -118,24 +216,17 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
                 </div>
 
                 <InventoryPaperdoll
-                  equipment={activeInventory.equipment}
+                  paperdoll={paperdollVM}
                   selectedSlot={selectedEquipSlot}
-                  onSelectSlot={selectEquipSlot}
+                  onSelectSlot={handleSelectEquipSlot}
                 />
 
-                <InventoryStats
-                  currentHp={activePlayer.health}
-                  currentMana={activePlayer.mana}
-                  currentStamina={activePlayer.stamina}
-                  derivedStats={activeDerivedStats}
-                />
+                <InventoryStats stats={statsVM} />
               </CardContent>
             </Card>
           </div>
 
-          {/* Right Column: Traveling Backpack & Quick Potion Belt */}
           <div className="lg:col-span-7 flex flex-col gap-3">
-            {/* Quick Potion Belt */}
             <Card variant="default">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm flex items-center gap-1.5 text-stone-300">
@@ -145,15 +236,14 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
               </CardHeader>
               <CardContent className="pt-0">
                 <InventoryQuickBelt
-                  quickPotions={activeInventory.quickPotions}
+                  belt={quickBeltVM}
                   selectedPotionIdx={selectedPotionIdx}
-                  onSelectPotion={selectPotionSlot}
-                  onDrinkPotion={(idx) => handleUsePotion(idx, usePotion, activeInventory)}
+                  onSelectPotion={handleSelectPotionSlot}
+                  onDrinkPotion={handleDrinkPotion}
                 />
               </CardContent>
             </Card>
 
-            {/* Traveling Backpack (16 Slots) */}
             <Card variant="default">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm flex items-center justify-between">
@@ -162,36 +252,39 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
                     {t("backpack")}
                   </span>
                   <span className="text-xs text-stone-500 font-mono">
-                    {activeInventory.backpack.filter(Boolean).length} / 16
+                    {backpackVM.occupiedCount} / {backpackVM.totalCapacity}
                   </span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
                 <InventoryBackpackGrid
-                  backpack={activeInventory.backpack}
+                  grid={backpackVM}
                   selectedBackpackIdx={selectedBackpackIdx}
-                  onSelectSlot={selectBackpackSlot}
+                  onSelectSlot={handleSelectBackpackSlot}
                   maxSlots={16}
                 />
               </CardContent>
             </Card>
 
-            {/* Selected Item Inspector / Details */}
-            {selectedItem ? (
+            {itemDetailsVM ? (
               <InventoryItemDetails
-                item={selectedItem}
+                details={itemDetailsVM}
                 selectedBackpackIdx={selectedBackpackIdx}
                 selectedEquipSlot={selectedEquipSlot}
                 selectedPotionIdx={selectedPotionIdx}
-                onEquip={(idx) => handleEquip(idx, equipItem)}
-                onUnequip={(slot) => handleUnequip(slot, unequipItem)}
-                onUsePotion={(idx) => handleUsePotion(idx, usePotion, activeInventory)}
-                onDiscard={(idx) => handleDiscard(idx, discardItem)}
+                onEquip={handleEquipItem}
+                onUnequip={handleUnequipItem}
+                onUsePotion={handleDrinkPotion}
+                onDiscard={handleDiscardItem}
               />
             ) : (
-              <div className="p-4 rounded-xl border border-dashed border-stone-800 text-center text-xs text-stone-500">
-                {t("emptySlot")} — {t("backpack")}
-              </div>
+              <EmptyState
+                compact
+                icon={<BackpackIcon size={20} className="text-stone-600" />}
+                title={t("emptySlot")}
+                description={t("backpack")}
+                className="border-dashed border-stone-800/80"
+              />
             )}
           </div>
         </div>

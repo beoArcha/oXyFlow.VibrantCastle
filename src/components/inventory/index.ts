@@ -1,5 +1,3 @@
-export * from "./ItemIcon";
-export * from "./ItemSlot";
 export * from "./InventoryPlayerTabs";
 export * from "./InventoryPaperdoll";
 export * from "./InventoryStats";

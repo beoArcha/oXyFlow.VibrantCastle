@@ -1,6 +1,6 @@
 import React from "react";
 import { Crown, Sword, Shirt, Shield, Sparkles, CircleDot } from "lucide-react";
-import { ItemSlot } from "./ItemSlot";
+import { ItemSlot } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import {
   EquipmentPaperdollVM,
