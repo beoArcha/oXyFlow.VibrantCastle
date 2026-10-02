@@ -40,4 +40,19 @@ describe("useAtlasTexture Hook & Single-Source Decodes", () => {
     expect(result.current.error).toBeNull();
     expect(result.current.image).not.toBeNull();
   });
+
+  it("safely unmounts during an in-flight image load without throwing or logging errors", async () => {
+    const dataUri =
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+
+    const { unmount } = await renderCustomHook(() => useAtlasTexture(dataUri));
+
+    // Immediately unmount while effect is resolving
+    await unmount();
+
+    // Verify unmount was clean and no errors were logged to the ring buffer
+    const logs = LoggerManager.getInstance().ringBuffer.getLogs();
+    const errorLogs = logs.filter((l) => l.level === LogLevel.ERROR);
+    expect(errorLogs.length).toBe(0);
+  });
 });

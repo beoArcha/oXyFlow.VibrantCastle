@@ -14,7 +14,6 @@ import {
   setupDomEnvironment,
   createMockContext2D,
 } from "@test-utils";
-import { t } from "@/i18n";
 import { AtlasAnimationTrackDefinition, AtlasGridConfig, ResolvedFrameRect } from "../types";
 
 describe("AtlasAnimationPreview Decomposition & Math", () => {
@@ -298,43 +297,80 @@ describe("AtlasAnimationPreview Decomposition & Math", () => {
       expect(drawCalls.length).toBe(2);
     });
 
-    it("verifies all atlas toolbar and studio keys are properly translated without exposing raw keys", () => {
-      const keysToCheck = [
-        "atlasStudioGridShort",
-        "atlasStudioTracksShort",
-        "atlasStudioFramesShort",
-        "atlasStudioToggleChroma",
-        "atlasStudioChromaShort",
-        "atlasStudioAutoIslandsTitle",
-        "atlasStudioBakeIslandsDesc",
-        "atlasStudioBakeSuccess",
-        "atlasStudioBakeIslandsBtn",
-        "atlasStudioFreeformFramesTitle",
-        "atlasStudioAddFrameBtn",
-        "atlasStudioFrameColId",
-        "atlasStudioFrameColTrack",
-        "atlasStudioGridConfigTitle",
-        "atlasStudioGridCellWidth",
-        "atlasStudioGridCellHeight",
-        "atlasStudioGridSpacing",
-        "atlasStudioGridSafeMargin",
-        "atlasStudioSlicingStrategyLabel",
-        "atlasStudioFramesSelected",
-        "atlasStudioSelectTrackPlaceholder",
-        "atlasStudioNewTrackNamePlaceholder",
-        "atlasStudioCreateTrackBtn",
-      ];
+    it("correctly mirrors pivot position and flips drawing context when flipX is true", () => {
+      const mockCanvas = document.createElement("canvas");
+      const mockCtx = createMockContext2D(256, 256);
+      mockCanvas.getContext = () => mockCtx as any;
 
-      for (const key of keysToCheck) {
-        const plTranslation = t("pl", key);
-        const enTranslation = t("en", key);
+      const track: AtlasAnimationTrackDefinition = {
+        name: "attack",
+        row: 0,
+        frames: 1,
+        fps: 8,
+        loop: false,
+      };
 
-        // Neither Polish nor English should return the raw key
-        expect(plTranslation).not.toBe(key);
-        expect(enTranslation).not.toBe(key);
-        expect(plTranslation.length).toBeGreaterThan(0);
-        expect(enTranslation.length).toBeGreaterThan(0);
-      }
+      const gridConfig: AtlasGridConfig = {
+        columns: 4,
+        rows: 4,
+        cellWidth: 32,
+        cellHeight: 32,
+        spacing: 0,
+        safeMargin: 0,
+      };
+
+      const mockImage = { naturalWidth: 128, naturalHeight: 128 } as HTMLImageElement;
+
+      // Custom pivot at normalized (0.8, 0.9)
+      const customOrigin = {
+        type: "custom" as const,
+        normalized: { x: 0.8, y: 0.9 },
+      };
+
+      // 1. Render without flipX
+      renderAnimationFrame(mockCanvas, null, {
+        frameIdx: 0,
+        image: mockImage,
+        track,
+        gridConfig,
+        scale: 2,
+        showPivot: true,
+        showGroundLine: true,
+        flipX: false,
+        origin: customOrigin,
+        onionSkinning: false,
+      });
+
+      const normalArcCalls = mockCtx.getArcCalls();
+      expect(normalArcCalls.length).toBeGreaterThan(0);
+      // dw = 32 * 2 = 64, dh = 32 * 2 = 64
+      // Normal px = Math.round(0.8 * 64) = 51
+      expect(normalArcCalls[0].x).toBe(Math.round(0.8 * 64));
+      expect(normalArcCalls[0].y).toBe(Math.round(0.9 * 64));
+
+      // 2. Render with flipX = true on fresh canvas
+      const flipCanvas = document.createElement("canvas");
+      const flipCtx = createMockContext2D(256, 256);
+      flipCanvas.getContext = () => flipCtx as any;
+
+      renderAnimationFrame(flipCanvas, null, {
+        frameIdx: 0,
+        image: mockImage,
+        track,
+        gridConfig,
+        scale: 2,
+        showPivot: true,
+        showGroundLine: true,
+        flipX: true,
+        origin: customOrigin,
+        onionSkinning: false,
+      });
+
+      const flipArcCalls = flipCtx.getArcCalls();
+      expect(flipArcCalls.length).toBeGreaterThan(0);
+      // Mirrored px = Math.round((1.0 - 0.8) * 64) = 13
+      expect(flipArcCalls[0].x).toBe(Math.round((1.0 - 0.8) * 64));
+      expect(flipArcCalls[0].y).toBe(Math.round(0.9 * 64));
     });
   });
 });

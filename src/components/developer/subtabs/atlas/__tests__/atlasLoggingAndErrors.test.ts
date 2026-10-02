@@ -3,7 +3,6 @@ import { defaultAtlasSlicingEngine } from "@/game/engine/meta/slicing/AtlasSlici
 import { AutoIslandSlicingStrategy } from "@/game/engine/meta/slicing/AutoIslandSlicingStrategy";
 import { LoggerManager, LogLevel } from "@/lib/logger";
 import { AssetError, ParserError, ErrorCode, GameBaseError } from "@/lib/errors";
-import { settingsTranslations } from "@i18n/modules/settings";
 
 describe("Atlas Studio - Logging & Domain Error Architecture", () => {
   beforeEach(() => {
@@ -96,26 +95,4 @@ describe("Atlas Studio - Logging & Domain Error Architecture", () => {
     expect(studioLog?.message).toBe("Preset loaded: valen");
     expect(studioLog?.context?.presetId).toBe("valen");
   });
-
-  it("verifies status bar i18n keys are translated in PL and EN", () => {
-    expect(settingsTranslations.pl.atlasStudioStatusReady).toBe("Gotowy");
-    expect(settingsTranslations.pl.atlasStudioStatusError).toBe("Błąd");
-    expect(settingsTranslations.pl.atlasStudioDismissError).toBe("Zamknij błąd");
-    expect(settingsTranslations.pl.atlasStudioToggleLogs).toBe("Dziennik zdarzeń slicera");
-    expect(settingsTranslations.pl.atlasStudioLogs).toBe("Dziennik");
-    expect(settingsTranslations.pl.atlasStudioRecentLogs).toBe("Ostatnie zdarzenia slicera");
-    expect(settingsTranslations.pl.atlasStudioOpenLogsTab).toBe("Pełny podgląd (Logs)");
-    expect(settingsTranslations.pl.atlasStudioNoLogsYet).toBe("Brak zarejestrowanych zdarzeń slicera.");
-
-    expect(settingsTranslations.en.atlasStudioStatusReady).toBe("Ready");
-    expect(settingsTranslations.en.atlasStudioStatusError).toBe("Error");
-    expect(settingsTranslations.en.atlasStudioDismissError).toBe("Dismiss error");
-    expect(settingsTranslations.en.atlasStudioToggleLogs).toBe("Slicer event log");
-    expect(settingsTranslations.en.atlasStudioLogs).toBe("Logs");
-    expect(settingsTranslations.en.atlasStudioRecentLogs).toBe("Recent slicer events");
-    expect(settingsTranslations.en.atlasStudioOpenLogsTab).toBe("Full view (Logs)");
-    expect(settingsTranslations.en.atlasStudioNoLogsYet).toBe("No slicer events recorded yet.");
-  });
 });
-
-

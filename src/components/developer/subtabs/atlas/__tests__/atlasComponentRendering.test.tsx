@@ -9,6 +9,7 @@ import {
   setupDomEnvironment,
 } from "@test-utils";
 import { AtlasGridConfig, AtlasAnimationTrackDefinition, AtlasMetaDoc } from "../types";
+import { IFreeformFrameRect } from "@game/engine/meta/types";
 
 describe("Atlas Studio - Component Rendering & UI Integration", () => {
   beforeEach(() => {
@@ -309,6 +310,84 @@ describe("Atlas Studio - Component Rendering & UI Integration", () => {
       );
 
       expect(container.textContent).toContain("Loading Texture...");
+    });
+  });
+
+  describe("AtlasSlicingFreeformTable Interactive Operations", () => {
+    it("renders freeform frames, edits frame attributes, toggles selection, and handles deletion", async () => {
+      const { AtlasSlicingFreeformTable } = await import("../slicing/AtlasSlicingFreeformTable");
+
+      const initialFrames: IFreeformFrameRect[] = [
+        { id: "frame_0", x: 10, y: 20, width: 32, height: 48, trackName: "idle" },
+        { id: "frame_1", x: 50, y: 20, width: 32, height: 48, trackName: "idle" },
+      ];
+
+      let added = false;
+      let deletedId: string | null = null;
+      let updatedField: any = null;
+
+      const StatefulTable = () => {
+        const [tableFrames, setTableFrames] = React.useState(initialFrames);
+        const [sel, setSel] = React.useState<string[]>(["frame_0"]);
+
+        return (
+          <AtlasSlicingFreeformTable
+            frames={tableFrames}
+            selectedFrameIds={sel}
+            onToggleSelectFrame={(id) => {
+              setSel((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
+            }}
+            onSelectAll={(ids) => setSel(ids)}
+            onDeselectAll={() => setSel([])}
+            onAddFrame={() => {
+              added = true;
+            }}
+            onUpdateFrameField={(id, field, val) => {
+              updatedField = { id, field, val };
+              setTableFrames((prev) =>
+                prev.map((f) => (f.id === id ? { ...f, [field]: val } : f))
+              );
+            }}
+            onDeleteFrame={(id) => {
+              deletedId = id;
+              setTableFrames((prev) => prev.filter((f) => f.id !== id));
+            }}
+          />
+        );
+      };
+
+      const { container, click, changeInput } = await renderIntoDom(<StatefulTable />);
+
+      // Verify rows are rendered
+      expect(container.textContent).toContain("frame_0");
+      expect(container.textContent).toContain("frame_1");
+
+      // Verify "Add Frame" button
+      const addBtn = Array.from(container.querySelectorAll("button")).find((b) =>
+        b.textContent?.includes("Add") || b.textContent?.includes("Dodaj")
+      );
+      expect(addBtn).toBeDefined();
+      if (addBtn) {
+        await click(addBtn);
+        expect(added).toBe(true);
+      }
+
+      // Verify editing a number input (e.g. frame_0 X position)
+      const inputs = container.querySelectorAll('input[type="number"]');
+      expect(inputs.length).toBeGreaterThanOrEqual(4);
+      const firstXInput = inputs[0] as HTMLInputElement;
+      expect(firstXInput.value).toBe("10");
+
+      await changeInput(firstXInput, "15");
+      expect(updatedField).toEqual({ id: "frame_0", field: "x", val: 15 });
+
+      // Verify delete button on first row
+      const deleteBtn = container.querySelector("tbody tr td:last-child button");
+      expect(deleteBtn).not.toBeNull();
+      if (deleteBtn) {
+        await click(deleteBtn);
+        expect(deletedId).toBe("frame_0");
+      }
     });
   });
 });
