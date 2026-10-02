@@ -1,43 +1,51 @@
 import React from "react";
-import { Item } from "@game/types";
 import { Button } from "@components/ui";
 import { ItemSlot } from "./ItemSlot";
 import { useI18n } from "@context/I18nContext";
+import {
+  InventoryQuickBeltVM,
+  resolveInventoryQuickBeltVM,
+} from "@components/adapters/inventoryAdapter";
 
 export interface InventoryQuickBeltProps {
-  quickPotions: (Item | null)[];
-  selectedPotionIdx: number | null;
-  onSelectPotion: (idx: number, potion: Item | null) => void;
-  onDrinkPotion: (idx: number) => void;
+  readonly belt?: InventoryQuickBeltVM;
+  readonly quickPotions?: readonly any[] | any[];
+  readonly selectedPotionIdx: number | null;
+  readonly onSelectPotion: (idx: number, potion: any | null) => void;
+  readonly onDrinkPotion?: (idx: number) => void;
 }
 
-export const InventoryQuickBelt: React.FC<InventoryQuickBeltProps> = ({
+/**
+ * Presentational bar representing the 3 quick potion belt slots.
+ */
+export const InventoryQuickBelt = React.memo(function InventoryQuickBelt({
+  belt,
   quickPotions,
   selectedPotionIdx,
   onSelectPotion,
   onDrinkPotion,
-}) => {
+}: InventoryQuickBeltProps) {
   const { t } = useI18n();
+
+  const effectiveBelt = belt ?? resolveInventoryQuickBeltVM(quickPotions);
 
   return (
     <div className="grid grid-cols-3 gap-2">
-      {[0, 1, 2].map((idx) => {
-        const pot = quickPotions[idx];
-        const isSelected = selectedPotionIdx === idx;
+      {effectiveBelt.slots.map((slotVM) => {
+        const isSelected = selectedPotionIdx === slotVM.slotIndex;
         return (
-          <div key={idx} className="flex flex-col gap-1.5">
+          <div key={`quick-belt-${slotVM.slotIndex}`} className="flex flex-col gap-1.5">
             <ItemSlot
-              item={pot}
-              label={`Slot ${idx + 1}`}
+              slot={slotVM}
+              label={slotVM.keyLabel ? `${t("quickPotions")} ${slotVM.keyLabel}` : undefined}
               isSelected={isSelected}
-              count={pot ? pot.count : undefined}
-              onClick={() => onSelectPotion(idx, pot)}
+              onClick={() => onSelectPotion(slotVM.slotIndex, slotVM)}
             />
-            {pot && (
+            {onDrinkPotion && !slotVM.isEmpty && (
               <Button
                 size="sm"
                 variant="primary"
-                onClick={() => onDrinkPotion(idx)}
+                onClick={() => onDrinkPotion(slotVM.slotIndex)}
               >
                 {t("useItem")}
               </Button>
@@ -47,6 +55,8 @@ export const InventoryQuickBelt: React.FC<InventoryQuickBeltProps> = ({
       })}
     </div>
   );
-};
+});
+
+InventoryQuickBelt.displayName = "InventoryQuickBelt";
 
 export default InventoryQuickBelt;

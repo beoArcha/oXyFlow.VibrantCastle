@@ -1,82 +1,71 @@
 import React from "react";
-import { Sparkles, Sword, Shirt, Shield, Sparkle, CircleDot } from "lucide-react";
-import { EquipmentState, Item } from "@game/types";
+import { Crown, Sword, Shirt, Shield, Sparkles, CircleDot } from "lucide-react";
 import { ItemSlot } from "./ItemSlot";
 import { useI18n } from "@context/I18nContext";
+import {
+  EquipmentPaperdollVM,
+  EquipmentSlotKey,
+  resolvePaperdollVM,
+} from "@components/adapters/inventoryAdapter";
 
 export interface InventoryPaperdollProps {
-  equipment: EquipmentState;
-  selectedSlot: keyof EquipmentState | null;
-  onSelectSlot: (slot: keyof EquipmentState, item: Item | null) => void;
+  readonly paperdoll?: EquipmentPaperdollVM;
+  readonly equipment?: any;
+  readonly selectedSlot: EquipmentSlotKey | null;
+  readonly onSelectSlot: (slot: EquipmentSlotKey, item: any | null) => void;
 }
 
-export const InventoryPaperdoll: React.FC<InventoryPaperdollProps> = ({
+const slotGridClasses: Record<EquipmentSlotKey, string> = {
+  helmet: "col-start-2",
+  mainHand: "col-start-1",
+  armor: "col-start-2",
+  offHand: "col-start-3",
+  amulet: "col-start-1",
+  ring: "col-start-3",
+};
+
+const placeholderIcons: Record<EquipmentSlotKey, React.ReactNode> = {
+  helmet: <Crown size={11} />,
+  mainHand: <Sword size={11} />,
+  armor: <Shirt size={11} />,
+  offHand: <Shield size={11} />,
+  amulet: <Sparkles size={11} />,
+  ring: <CircleDot size={11} />,
+};
+
+/**
+ * Presentational Gothic Paperdoll grid representing 6 character equipment slots.
+ */
+export const InventoryPaperdoll = React.memo(function InventoryPaperdoll({
+  paperdoll,
   equipment,
   selectedSlot,
   onSelectSlot,
-}) => {
+}: InventoryPaperdollProps) {
   const { t } = useI18n();
+
+  const effectivePaperdoll = paperdoll ?? resolvePaperdollVM(equipment);
 
   return (
     <div className="grid grid-cols-3 gap-2.5 max-w-xs mx-auto my-2">
-      {/* Row 1: Helmet */}
-      <div className="col-start-2">
-        <ItemSlot
-          item={equipment.helmet}
-          label={t("helmet")}
-          iconPlaceholder={<Sparkles size={11} />}
-          isSelected={selectedSlot === "helmet"}
-          onClick={() => onSelectSlot("helmet", equipment.helmet)}
-        />
-      </div>
-
-      {/* Row 2: MainHand, Armor, OffHand */}
-      <ItemSlot
-        item={equipment.mainHand}
-        label={t("mainHand")}
-        iconPlaceholder={<Sword size={11} />}
-        isSelected={selectedSlot === "mainHand"}
-        onClick={() => onSelectSlot("mainHand", equipment.mainHand)}
-      />
-
-      <ItemSlot
-        item={equipment.armor}
-        label={t("armor")}
-        iconPlaceholder={<Shirt size={11} />}
-        isSelected={selectedSlot === "armor"}
-        onClick={() => onSelectSlot("armor", equipment.armor)}
-      />
-
-      <ItemSlot
-        item={equipment.offHand}
-        label={t("offHand")}
-        iconPlaceholder={<Shield size={11} />}
-        isSelected={selectedSlot === "offHand"}
-        onClick={() => onSelectSlot("offHand", equipment.offHand)}
-      />
-
-      {/* Row 3: Amulet, Ring */}
-      <div className="col-start-1">
-        <ItemSlot
-          item={equipment.amulet}
-          label={t("amulet")}
-          iconPlaceholder={<Sparkle size={11} />}
-          isSelected={selectedSlot === "amulet"}
-          onClick={() => onSelectSlot("amulet", equipment.amulet)}
-        />
-      </div>
-
-      <div className="col-start-3">
-        <ItemSlot
-          item={equipment.ring}
-          label={t("ring")}
-          iconPlaceholder={<CircleDot size={11} />}
-          isSelected={selectedSlot === "ring"}
-          onClick={() => onSelectSlot("ring", equipment.ring)}
-        />
-      </div>
+      {effectivePaperdoll.slots.map((slotVM) => {
+        const isSelected = selectedSlot === slotVM.slotKey;
+        return (
+          <div key={slotVM.slotKey} className={slotGridClasses[slotVM.slotKey]}>
+            <ItemSlot
+              slot={slotVM}
+              label={t(slotVM.labelKey)}
+              iconPlaceholder={placeholderIcons[slotVM.slotKey]}
+              isSelected={isSelected}
+              onClick={() => onSelectSlot(slotVM.slotKey, slotVM)}
+            />
+          </div>
+        );
+      })}
     </div>
   );
-};
+});
+
+InventoryPaperdoll.displayName = "InventoryPaperdoll";
 
 export default InventoryPaperdoll;

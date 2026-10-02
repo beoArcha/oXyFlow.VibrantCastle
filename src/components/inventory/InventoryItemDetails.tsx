@@ -1,23 +1,34 @@
 import React from "react";
-import { CheckCircle, ArrowDownToDot, Trash2, Zap, Heart, Shield, Sword } from "lucide-react";
-import { Item, EquipmentState, ItemType } from "@game/types";
+import { CheckCircle, ArrowDownToDot, Trash2, Heart } from "lucide-react";
 import { Card, Button, Badge } from "@components/ui";
 import { ItemIcon } from "./ItemIcon";
 import { useI18n } from "@context/I18nContext";
+import {
+  ItemDetailsVM,
+  EquipmentSlotKey,
+  resolveItemDetailsVM,
+} from "@components/adapters/inventoryAdapter";
+import { cn } from "@lib/utils";
 
 export interface InventoryItemDetailsProps {
-  item: Item;
-  selectedBackpackIdx: number | null;
-  selectedEquipSlot: keyof EquipmentState | null;
-  selectedPotionIdx: number | null;
-  onEquip: (backpackIdx: number) => void;
-  onUnequip: (slot: keyof EquipmentState) => void;
-  onUsePotion: (potionIdx: number) => void;
-  onDiscard?: (backpackIdx: number) => void;
+  readonly item?: any;
+  readonly details?: ItemDetailsVM | null;
+  readonly selectedBackpackIdx: number | null;
+  readonly selectedEquipSlot: EquipmentSlotKey | null;
+  readonly selectedPotionIdx: number | null;
+  readonly onEquip: (backpackIdx: number) => void;
+  readonly onUnequip: (slot: EquipmentSlotKey) => void;
+  readonly onUsePotion: (potionIdx: number) => void;
+  readonly onDiscard?: (backpackIdx: number) => void;
 }
 
-export const InventoryItemDetails: React.FC<InventoryItemDetailsProps> = ({
+/**
+ * Presentational inspector displaying detailed statistics, description, and actions
+ * for the currently selected equipment, backpack, or potion item.
+ */
+export const InventoryItemDetails = React.memo(function InventoryItemDetails({
   item,
+  details,
   selectedBackpackIdx,
   selectedEquipSlot,
   selectedPotionIdx,
@@ -25,97 +36,45 @@ export const InventoryItemDetails: React.FC<InventoryItemDetailsProps> = ({
   onUnequip,
   onUsePotion,
   onDiscard,
-}) => {
+}: InventoryItemDetailsProps) {
   const { t } = useI18n();
 
-  const localizedName = t(item.nameKey) || item.id;
-  const localizedDesc = t(item.descriptionKey) || "";
+  const effectiveDetails = details ?? resolveItemDetailsVM(item);
 
-  const getItemTypeLabel = (type: ItemType): string => {
-    switch (type) {
-      case ItemType.Weapon:
-        return t("itemTypeWeapon");
-      case ItemType.Shield:
-        return t("itemTypeShield");
-      case ItemType.Helmet:
-        return t("itemTypeHelmet");
-      case ItemType.Armor:
-        return t("itemTypeArmor");
-      case ItemType.Amulet:
-        return t("itemTypeAmulet");
-      case ItemType.Ring:
-        return t("itemTypeRing");
-      case ItemType.Potion:
-        return t("itemTypePotion");
-      default:
-        return type;
-    }
-  };
+  if (!effectiveDetails) return null;
 
-  const getRarityLabel = (rarity: string): string => {
-    switch (rarity) {
-      case "common":
-        return t("rarityCommon");
-      case "uncommon":
-        return t("rarityUncommon");
-      case "rare":
-        return t("rarityRare");
-      case "legendary":
-        return t("rarityLegendary");
-      default:
-        return rarity;
-    }
-  };
-
-  const rarityBadgeVariant: Record<string, "stone" | "amber" | "cyan" | "red"> = {
-    common: "stone",
-    uncommon: "amber",
-    rare: "cyan",
-    legendary: "amber",
-  };
+  const localizedName = t(effectiveDetails.nameKey) || effectiveDetails.id;
+  const localizedDesc = t(effectiveDetails.descriptionKey) || "";
 
   return (
     <Card variant="highlight" className="animate-in fade-in duration-150">
       <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
-        {/* Item Icon & Basic Header */}
         <div className="flex items-center gap-3">
           <div className="p-2.5 bg-stone-900 rounded-xl border border-amber-500/50 flex items-center justify-center shrink-0">
-            <ItemIcon name={item.icon} size={28} className="text-amber-300 drop-shadow" />
+            <ItemIcon name={effectiveDetails.iconName} size={28} className="text-amber-300 drop-shadow" />
           </div>
           <div>
             <h4 className="text-base font-bold text-amber-200 leading-snug">
               {localizedName}
             </h4>
             <div className="flex gap-1.5 mt-1">
-              <Badge variant="stone">{getItemTypeLabel(item.type)}</Badge>
-              <Badge variant={rarityBadgeVariant[item.rarity] || "stone"}>
-                {getRarityLabel(item.rarity)}
+              <Badge variant="stone">{t(effectiveDetails.typeLabelKey)}</Badge>
+              <Badge variant={effectiveDetails.rarityVariant}>
+                {t(effectiveDetails.rarityLabelKey)}
               </Badge>
-              {item.count !== undefined && item.count > 1 && (
-                <Badge variant="amber">x{item.count}</Badge>
+              {effectiveDetails.count !== undefined && effectiveDetails.count > 1 && (
+                <Badge variant="amber">x{effectiveDetails.count}</Badge>
               )}
             </div>
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex items-center gap-2 self-end sm:self-auto">
-          {selectedBackpackIdx !== null && item.type !== ItemType.Potion && (
+          {selectedBackpackIdx !== null && (
             <Button
               variant="primary"
               size="sm"
-              icon={<CheckCircle size={14} />}
-              onClick={() => onEquip(selectedBackpackIdx)}
-            >
-              {t("equipItem")}
-            </Button>
-          )}
-
-          {selectedBackpackIdx !== null && item.type === ItemType.Potion && (
-            <Button
-              variant="primary"
-              size="sm"
-              icon={<Heart size={14} />}
+              icon={effectiveDetails.isPotion ? <Heart size={14} /> : <CheckCircle size={14} />}
               onClick={() => onEquip(selectedBackpackIdx)}
             >
               {t("equipItem")}
@@ -157,51 +116,19 @@ export const InventoryItemDetails: React.FC<InventoryItemDetailsProps> = ({
         </div>
       </div>
 
-      {/* Item Stat Modifiers */}
-      <div className="flex flex-wrap gap-2 mt-2.5 pt-2 border-t border-amber-900/40 text-xs">
-        {item.attackBonus !== undefined && item.attackBonus > 0 && (
-          <span className="flex items-center gap-1 text-amber-300 font-mono font-semibold">
-            <Sword size={12} /> +{item.attackBonus} {t("itemAttackBonus")}
-          </span>
-        )}
-        {item.defenseBonus !== undefined && item.defenseBonus > 0 && (
-          <span className="flex items-center gap-1 text-red-300 font-mono font-semibold">
-            <Shield size={12} /> +{item.defenseBonus} {t("itemDefenseBonus")}
-          </span>
-        )}
-        {item.maxHpBonus !== undefined && item.maxHpBonus > 0 && (
-          <span className="flex items-center gap-1 text-rose-300 font-mono font-semibold">
-            <Heart size={12} /> +{item.maxHpBonus} {t("itemHpBonus")}
-          </span>
-        )}
-        {item.maxManaBonus !== undefined && item.maxManaBonus > 0 && (
-          <span className="flex items-center gap-1 text-cyan-300 font-mono font-semibold">
-            <Zap size={12} /> +{item.maxManaBonus} {t("itemManaBonus")}
-          </span>
-        )}
-        {item.maxStaminaBonus !== undefined && item.maxStaminaBonus > 0 && (
-          <span className="flex items-center gap-1 text-amber-200 font-mono font-semibold">
-            <Zap size={12} /> +{item.maxStaminaBonus} {t("itemStaminaBonus")}
-          </span>
-        )}
-        {item.healHp !== undefined && item.healHp > 0 && (
-          <span className="flex items-center gap-1 text-rose-300 font-mono font-semibold">
-            <Heart size={12} /> +{item.healHp} {t("itemHealHp")}
-          </span>
-        )}
-        {item.healMana !== undefined && item.healMana > 0 && (
-          <span className="flex items-center gap-1 text-cyan-300 font-mono font-semibold">
-            <Zap size={12} /> +{item.healMana} {t("itemHealMana")}
-          </span>
-        )}
-        {item.healStamina !== undefined && item.healStamina > 0 && (
-          <span className="flex items-center gap-1 text-amber-200 font-mono font-semibold">
-            <Zap size={12} /> +{item.healStamina} {t("itemHealStamina")}
-          </span>
-        )}
-      </div>
+      {effectiveDetails.modifiers.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-2.5 pt-2 border-t border-amber-900/40 text-xs">
+          {effectiveDetails.modifiers.map((modifier) => (
+            <span
+              key={modifier.type}
+              className={cn("flex items-center gap-1 font-mono font-semibold", modifier.textColorClass)}
+            >
+              <ItemIcon name={modifier.iconName} size={12} /> {modifier.formattedValue} {t(modifier.labelKey)}
+            </span>
+          ))}
+        </div>
+      )}
 
-      {/* Description Text */}
       {localizedDesc && (
         <p className="text-xs text-stone-300 leading-relaxed mt-2 border-t border-amber-900/30 pt-2 italic">
           {localizedDesc}
@@ -209,6 +136,8 @@ export const InventoryItemDetails: React.FC<InventoryItemDetailsProps> = ({
       )}
     </Card>
   );
-};
+});
+
+InventoryItemDetails.displayName = "InventoryItemDetails";
 
 export default InventoryItemDetails;
