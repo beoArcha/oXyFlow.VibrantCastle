@@ -1,6 +1,6 @@
 import React from "react";
 import { Play, Pause, ArrowLeftRight } from "lucide-react";
-import { Button, Tooltip } from "@components/ui";
+import { Button, Tooltip, PlaybackSpeedScaleControl } from "@components/ui";
 import { AnimationName } from "@game/engine/spriteTypes";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
@@ -109,37 +109,15 @@ export const CharacterStageControls: React.FC<CharacterStageControlsProps> = Rea
           </Button>
         </Tooltip>
 
-        {/* Speed Selector */}
-        <div className="flex items-center gap-1 bg-black/60 px-1.5 py-0.5 rounded-lg border border-stone-800">
-          <span className="text-[9px] text-stone-400 font-mono">Spd:</span>
-          {SPEED_OPTIONS.map((spd) => (
-            <Button
-              key={spd}
-              size="sm"
-              variant={playbackSpeed === spd ? "primary" : "ghost"}
-              onClick={() => onSpeedChange(spd)}
-              className="px-1.5 py-0.5 min-h-0 h-6 text-[9px] font-mono"
-            >
-              {spd}x
-            </Button>
-          ))}
-        </div>
-
-        {/* Scale / Zoom Selector */}
-        <div className="flex items-center gap-1 bg-black/60 px-1.5 py-0.5 rounded-lg border border-stone-800">
-          <span className="text-[9px] text-stone-400 font-mono">Zoom:</span>
-          {SCALE_OPTIONS.map((scl) => (
-            <Button
-              key={scl}
-              size="sm"
-              variant={scale === scl ? "primary" : "ghost"}
-              onClick={() => onScaleChange(scl)}
-              className="px-1.5 py-0.5 min-h-0 h-6 text-[9px] font-mono"
-            >
-              {scl}x
-            </Button>
-          ))}
-        </div>
+        {/* Speed & Scale / Zoom Selector */}
+        <PlaybackSpeedScaleControl
+          speed={playbackSpeed}
+          onSpeedChange={onSpeedChange}
+          scale={scale}
+          onScaleChange={onScaleChange}
+          speedOptions={SPEED_OPTIONS}
+          scaleOptions={SCALE_OPTIONS}
+        />
       </div>
     </div>
   );

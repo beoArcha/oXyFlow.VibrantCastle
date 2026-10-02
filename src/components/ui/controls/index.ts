@@ -18,3 +18,4 @@ export * from "./ConfirmDialog";
 export * from "./Tooltip";
 export * from "./Toast";
 export * from "./GameErrorBoundary";
+export * from "./PlaybackSpeedScaleControl";

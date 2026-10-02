@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
 import React from "react";
 import { setupDomEnvironment, renderIntoDom } from "@test-utils/domTestUtils";
-import { FileUploadButton, SegmentedControl, ColorPickerInput } from "../index";
+import { FileUploadButton, SegmentedControl, ColorPickerInput, PlaybackSpeedScaleControl } from "../index";
 
 describe("Studio UI Controls (Design System)", () => {
   beforeEach(() => {
@@ -311,4 +311,47 @@ describe("Studio UI Controls (Design System)", () => {
       await unmount();
     });
   });
+
+  describe("PlaybackSpeedScaleControl", () => {
+    it("renders speed and scale segments with labels and responds to clicks", async () => {
+      const onSpeedChange = mock((_s: number) => {});
+      const onScaleChange = mock((_sc: number) => {});
+
+      const { container, click, unmount } = await renderIntoDom(
+        <PlaybackSpeedScaleControl
+          speed={1.0}
+          onSpeedChange={onSpeedChange}
+          scale={1.5}
+          onScaleChange={onScaleChange}
+          speedLabel="Speed:"
+          scaleLabel="Scale:"
+          speedOptions={[0.5, 1.0, 2.0]}
+          scaleOptions={[1.0, 2.0, 3.0]}
+        />
+      );
+
+      expect(container.textContent).toContain("Speed:");
+      expect(container.textContent).toContain("Scale:");
+
+      const buttons = Array.from(container.querySelectorAll("button"));
+      expect(buttons.length).toBe(6); // 3 speed + 3 scale
+
+      const speedBtn = buttons.find((b) => b.textContent?.trim() === "2x");
+      expect(speedBtn).toBeDefined();
+      if (speedBtn) {
+        await click(speedBtn);
+        expect(onSpeedChange).toHaveBeenCalledWith(2.0);
+      }
+
+      const scaleBtn = buttons.find((b) => b.textContent?.trim() === "3x");
+      expect(scaleBtn).toBeDefined();
+      if (scaleBtn) {
+        await click(scaleBtn);
+        expect(onScaleChange).toHaveBeenCalledWith(3.0);
+      }
+
+      await unmount();
+    });
+  });
 });
+
