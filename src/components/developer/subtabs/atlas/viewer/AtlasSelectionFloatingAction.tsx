@@ -1,5 +1,6 @@
 import React from "react";
 import { Plus, Check, Split, Box, X } from "lucide-react";
+import { Button, Tooltip } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasGridConfig } from "../types";
 
@@ -65,8 +66,10 @@ export const AtlasSelectionFloatingAction: React.FC<AtlasSelectionFloatingAction
       </span>
 
       {onCreateTrackFromSelection && (
-        <button
-          type="button"
+        <Button
+          size="sm"
+          variant="primary"
+          icon={<Plus size={12} />}
           onClick={() => {
             const row = gridConfig ? Math.floor(activeSelection.y / gridConfig.cellHeight) : 0;
             onCreateTrackFromSelection({
@@ -78,16 +81,17 @@ export const AtlasSelectionFloatingAction: React.FC<AtlasSelectionFloatingAction
             });
             onClose();
           }}
-          className="flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition-all cursor-pointer shadow"
+          className="h-7 px-2.5 text-xs font-bold shadow"
         >
-          <Plus size={12} />
-          <span>{t("atlasStudioCreateTrackFromSelection")}</span>
-        </button>
+          {t("atlasStudioCreateTrackFromSelection")}
+        </Button>
       )}
 
       {onAssignSelectionToActiveTrack && selectedTrackName && (
-        <button
-          type="button"
+        <Button
+          size="sm"
+          variant="secondary"
+          icon={<Check size={12} className="text-emerald-400" />}
           onClick={() => {
             const row = gridConfig ? Math.floor(activeSelection.y / gridConfig.cellHeight) : 0;
             onAssignSelectionToActiveTrack({
@@ -99,16 +103,17 @@ export const AtlasSelectionFloatingAction: React.FC<AtlasSelectionFloatingAction
             });
             onClose();
           }}
-          className="flex items-center gap-1 px-2 py-1 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-bold transition-all cursor-pointer"
+          className="h-7 px-2.5 text-xs font-bold"
         >
-          <Check size={12} className="text-emerald-400" />
-          <span>{t("atlasStudioAssignSelection")}</span>
-        </button>
+          {t("atlasStudioAssignSelection")}
+        </Button>
       )}
 
       {onMergeSelectionAsWide && gridConfig && (
-        <button
-          type="button"
+        <Button
+          size="sm"
+          variant="secondary"
+          icon={<Split size={12} className="text-cyan-400" />}
           onClick={() => {
             const span = Math.max(1, Math.round(activeSelection.width / gridConfig.cellWidth));
             onMergeSelectionAsWide({
@@ -120,16 +125,17 @@ export const AtlasSelectionFloatingAction: React.FC<AtlasSelectionFloatingAction
             });
             onClose();
           }}
-          className="flex items-center gap-1 px-2 py-1 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-bold transition-all cursor-pointer"
+          className="h-7 px-2.5 text-xs font-bold"
         >
-          <Split size={12} className="text-cyan-400" />
-          <span>{t("atlasStudioMergeWide")}</span>
-        </button>
+          {t("atlasStudioMergeWide")}
+        </Button>
       )}
 
       {onAddFreeformFrame && (
-        <button
-          type="button"
+        <Button
+          size="sm"
+          variant="danger"
+          icon={<Box size={12} className="text-rose-400" />}
           onClick={() => {
             onAddFreeformFrame({
               x: activeSelection.x,
@@ -141,21 +147,23 @@ export const AtlasSelectionFloatingAction: React.FC<AtlasSelectionFloatingAction
             });
             onClose();
           }}
-          className="flex items-center gap-1 px-2 py-1 rounded-lg bg-rose-900/60 hover:bg-rose-800 border border-rose-500/50 text-rose-200 text-xs font-bold transition-all cursor-pointer"
+          className="h-7 px-2.5 text-xs font-bold"
         >
-          <Box size={12} className="text-rose-400" />
-          <span>{t("atlasStudioAddFreeformFrame")}</span>
-        </button>
+          {t("atlasStudioAddFreeformFrame")}
+        </Button>
       )}
 
-      <button
-        type="button"
-        onClick={onClose}
-        className="p-1 text-stone-400 hover:text-stone-200 transition-colors cursor-pointer"
-        title={t("atlasStudioCloseSelection")}
-      >
-        <X size={14} />
-      </button>
+      <Tooltip content={t("atlasStudioCloseSelection")}>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={onClose}
+          className="h-6 w-6 min-h-0 p-0 text-stone-400 hover:text-stone-200"
+          aria-label={t("atlasStudioCloseSelection")}
+        >
+          <X size={14} />
+        </Button>
+      </Tooltip>
     </div>
   );
 };

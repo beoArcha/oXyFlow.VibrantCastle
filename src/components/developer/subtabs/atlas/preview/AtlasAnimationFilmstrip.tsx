@@ -150,40 +150,56 @@ const FrameThumbnail: React.FC<FrameThumbnailProps> = ({
         onClick={(e) => e.stopPropagation()}
         className="absolute inset-x-0 bottom-0 bg-black/85 backdrop-blur-xs rounded-b-xl py-0.5 px-1 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity"
       >
-        <button
-          onClick={onMoveLeft}
-          disabled={frameIndex === 0}
-          title={t("atlasStudioFilmstripMoveLeft")}
-          className="text-stone-400 hover:text-white disabled:opacity-20 cursor-pointer p-0.5"
-        >
-          <ChevronLeft size={11} />
-        </button>
+        <Tooltip content={t("atlasStudioFilmstripMoveLeft")}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={onMoveLeft}
+            disabled={frameIndex === 0}
+            className="h-5 w-5 min-h-0 p-0 text-stone-400 hover:text-white"
+            aria-label={t("atlasStudioFilmstripMoveLeft")}
+          >
+            <ChevronLeft size={11} />
+          </Button>
+        </Tooltip>
 
-        <button
-          onClick={onDuplicate}
-          title={t("atlasStudioFilmstripDuplicate")}
-          className="text-amber-400 hover:text-amber-200 cursor-pointer p-0.5"
-        >
-          <Copy size={10} />
-        </button>
+        <Tooltip content={t("atlasStudioFilmstripDuplicate")}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={onDuplicate}
+            className="h-5 w-5 min-h-0 p-0 text-amber-400 hover:text-amber-200"
+            aria-label={t("atlasStudioFilmstripDuplicate")}
+          >
+            <Copy size={10} />
+          </Button>
+        </Tooltip>
 
-        <button
-          onClick={onRemove}
-          disabled={totalFrames <= 1}
-          title={t("atlasStudioFilmstripDelete")}
-          className="text-rose-400 hover:text-rose-200 disabled:opacity-20 cursor-pointer p-0.5"
-        >
-          <Trash2 size={10} />
-        </button>
+        <Tooltip content={t("atlasStudioFilmstripDelete")}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={onRemove}
+            disabled={totalFrames <= 1}
+            className="h-5 w-5 min-h-0 p-0 text-rose-400 hover:text-rose-200"
+            aria-label={t("atlasStudioFilmstripDelete")}
+          >
+            <Trash2 size={10} />
+          </Button>
+        </Tooltip>
 
-        <button
-          onClick={onMoveRight}
-          disabled={frameIndex === totalFrames - 1}
-          title={t("atlasStudioFilmstripMoveRight")}
-          className="text-stone-400 hover:text-white disabled:opacity-20 cursor-pointer p-0.5"
-        >
-          <ChevronRight size={11} />
-        </button>
+        <Tooltip content={t("atlasStudioFilmstripMoveRight")}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={onMoveRight}
+            disabled={frameIndex === totalFrames - 1}
+            className="h-5 w-5 min-h-0 p-0 text-stone-400 hover:text-white"
+            aria-label={t("atlasStudioFilmstripMoveRight")}
+          >
+            <ChevronRight size={11} />
+          </Button>
+        </Tooltip>
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ import {
   ConfirmDialog,
 } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
+import { cn } from "@lib/utils";
 import { AtlasAnimationTrackDefinition } from "../types";
 
 export interface AtlasSlicingTracksManagerProps {
@@ -121,19 +122,23 @@ export const AtlasSlicingTracksManager: React.FC<AtlasSlicingTracksManagerProps>
 
       {/* Tracks horizontal pill list */}
       <div className="flex items-center gap-1 overflow-x-auto custom-scrollbar py-1">
-        {tracks.map((tr) => (
-          <button
-            key={tr.name}
-            type="button"
-            onClick={() => onSelectTrack(tr.name)}
-            className={`px-2 py-1 rounded-lg text-xs font-mono font-bold whitespace-nowrap transition-all border cursor-pointer ${selectedTrackName === tr.name
-                ? "bg-gradient-to-r from-amber-600 to-amber-700 text-white border-amber-400 shadow-sm shadow-amber-950/40"
-                : "bg-black/50 text-stone-400 border-stone-800 hover:text-stone-200 hover:border-stone-700"
-              }`}
-          >
-            {tr.name} (r{tr.row})
-          </button>
-        ))}
+        {tracks.map((tr) => {
+          const isSelected = selectedTrackName === tr.name;
+          return (
+            <Button
+              key={tr.name}
+              size="sm"
+              variant={isSelected ? "primary" : "secondary"}
+              onClick={() => onSelectTrack(tr.name)}
+              className={cn(
+                "h-7 px-2.5 text-xs font-mono font-bold whitespace-nowrap",
+                !isSelected && "bg-black/50 border-stone-800 text-stone-400 hover:text-stone-200"
+              )}
+            >
+              {tr.name} (r{tr.row})
+            </Button>
+          );
+        })}
       </div>
 
       {/* Selected Track Editor */}
@@ -240,24 +245,30 @@ export const AtlasSlicingTracksManager: React.FC<AtlasSlicingTracksManagerProps>
                     </span>
 
                     <div className="flex items-center gap-1 mt-1">
-                      <button
-                        type="button"
-                        onClick={() => handleAdjustSlotSpan(activeTrackIndex, fIdx, -1)}
-                        disabled={currentSpan <= 1}
-                        title={t("atlasStudioSubSlotSpan")}
-                        className="w-4 h-4 rounded bg-stone-800 hover:bg-stone-700 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center text-[10px] font-bold cursor-pointer"
-                      >
-                        -
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleAdjustSlotSpan(activeTrackIndex, fIdx, 1)}
-                        disabled={currentSpan >= 8}
-                        title={t("atlasStudioAddSlotSpan")}
-                        className="w-4 h-4 rounded bg-amber-700 hover:bg-amber-600 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center text-[10px] font-bold text-white cursor-pointer"
-                      >
-                        +
-                      </button>
+                      <Tooltip content={t("atlasStudioSubSlotSpan")}>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => handleAdjustSlotSpan(activeTrackIndex, fIdx, -1)}
+                          disabled={currentSpan <= 1}
+                          className="w-4.5 h-4.5 min-h-0 p-0 text-[10px] font-bold bg-stone-800 border-stone-700 hover:bg-stone-700"
+                          aria-label={t("atlasStudioSubSlotSpan")}
+                        >
+                          -
+                        </Button>
+                      </Tooltip>
+                      <Tooltip content={t("atlasStudioAddSlotSpan")}>
+                        <Button
+                          size="sm"
+                          variant="primary"
+                          onClick={() => handleAdjustSlotSpan(activeTrackIndex, fIdx, 1)}
+                          disabled={currentSpan >= 8}
+                          className="w-4.5 h-4.5 min-h-0 p-0 text-[10px] font-bold"
+                          aria-label={t("atlasStudioAddSlotSpan")}
+                        >
+                          +
+                        </Button>
+                      </Tooltip>
                     </div>
                   </div>
                 );

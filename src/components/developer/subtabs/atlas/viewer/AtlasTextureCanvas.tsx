@@ -9,6 +9,7 @@ import {
   BackgroundProcessor,
   IPixelBuffer,
 } from "@game/engine/meta/slicing";
+import { LoadingOverlay } from "@components/ui";
 
 export const TRACK_COLORS = [
   { stroke: "#38bdf8", fill: "rgba(56, 189, 248, 0.18)" }, // sky
@@ -357,12 +358,12 @@ export const AtlasTextureCanvas: React.FC<AtlasTextureCanvasProps> = ({
       />
 
       {isLoading && (
-        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 bg-black/75 backdrop-blur-xs rounded border border-amber-500/40 animate-in fade-in duration-150">
-          <div className="w-8 h-8 rounded-full border-2 border-amber-500/30 border-t-amber-400 animate-spin" />
-          <span className="text-[11px] font-mono font-semibold text-amber-200 tracking-wider">
-            Loading Texture...
-          </span>
-        </div>
+        <LoadingOverlay
+          isLoading={true}
+          message="Loading Texture..."
+          variant="overlay"
+          className="rounded border border-amber-500/40"
+        />
       )}
     </div>
   );

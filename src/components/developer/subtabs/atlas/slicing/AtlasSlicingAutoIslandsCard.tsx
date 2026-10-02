@@ -1,6 +1,6 @@
 import React from "react";
 import { Sparkles, Check, Save } from "lucide-react";
-import { Button, Badge, CompactNumberStepper } from "@components/ui";
+import { Button, Badge, CompactNumberStepper, ActionBar } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { IAtlasSlicingConfig, ResolvedFrameRect } from "../types";
 
@@ -70,36 +70,36 @@ export const AtlasSlicingAutoIslandsCard: React.FC<AtlasSlicingAutoIslandsCardPr
       </div>
 
       {/* Bake Island Action Bar */}
-      <div className="flex items-center justify-between pt-2 border-t border-stone-800/80 gap-2 flex-wrap">
-        <p className="text-[11px] text-stone-400">
-          {t("atlasStudioBakeIslandsDesc")}
-        </p>
-        <div className="flex items-center gap-1.5 flex-wrap">
-          {onClusterRowsIntoTracks && (
+      <ActionBar
+        description={t("atlasStudioBakeIslandsDesc")}
+        actions={
+          <>
+            {onClusterRowsIntoTracks && (
+              <Button
+                size="sm"
+                variant="secondary"
+                icon={<Sparkles size={13} className="text-yellow-400" />}
+                onClick={onClusterRowsIntoTracks}
+                disabled={detectedIslands.length === 0}
+                className="text-xs"
+              >
+                {t("atlasStudioClusterRowsBtn")}
+              </Button>
+            )}
+
             <Button
               size="sm"
-              variant="secondary"
-              icon={<Sparkles size={13} className="text-yellow-400" />}
-              onClick={onClusterRowsIntoTracks}
+              variant={bakeSuccess ? "primary" : "secondary"}
+              icon={bakeSuccess ? <Check size={13} className="text-emerald-400" /> : <Save size={13} />}
+              onClick={onBakeAllIslands}
               disabled={detectedIslands.length === 0}
               className="text-xs"
             >
-              {t("atlasStudioClusterRowsBtn")}
+              {bakeSuccess ? t("atlasStudioBakeSuccess") : t("atlasStudioBakeIslandsBtn")}
             </Button>
-          )}
-
-          <Button
-            size="sm"
-            variant={bakeSuccess ? "primary" : "secondary"}
-            icon={bakeSuccess ? <Check size={13} className="text-emerald-400" /> : <Save size={13} />}
-            onClick={onBakeAllIslands}
-            disabled={detectedIslands.length === 0}
-            className="text-xs"
-          >
-            {bakeSuccess ? t("atlasStudioBakeSuccess") : t("atlasStudioBakeIslandsBtn")}
-          </Button>
-        </div>
-      </div>
+          </>
+        }
+      />
     </div>
   );
 };

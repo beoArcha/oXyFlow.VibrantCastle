@@ -9,6 +9,7 @@ export * from "./StatRow";
 export * from "./Card";
 export * from "./ProgressBar";
 export * from "./Slider";
+export * from "./ActionBar";
 
 // Form Controls
 export * from "./Input";
@@ -30,6 +31,7 @@ export * from "./Dialog";
 export * from "./ConfirmDialog";
 export * from "./Tooltip";
 export * from "./Toast";
+export * from "./LoadingOverlay";
 
 // Game Domain & Equipment
 export * from "./ItemIcon";
