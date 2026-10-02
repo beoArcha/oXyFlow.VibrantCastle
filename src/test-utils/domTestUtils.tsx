@@ -76,7 +76,11 @@ export function setupDomEnvironment() {
   return win;
 }
 
-export async function renderIntoDom(ui: React.ReactElement) {
+export interface RenderIntoDomOptions {
+  wrapper?: React.ComponentType<{ children: React.ReactNode }>;
+}
+
+export async function renderIntoDom(ui: React.ReactElement, options?: RenderIntoDomOptions) {
   if (typeof document === "undefined" || !document.body) {
     setupDomEnvironment();
   }
@@ -88,8 +92,10 @@ export async function renderIntoDom(ui: React.ReactElement) {
   const root = createRoot(container);
   activeRoot = root;
 
+  const Wrapper = options?.wrapper ?? TestProviders;
+
   await act(async () => {
-    root.render(<TestProviders>{ui}</TestProviders>);
+    root.render(<Wrapper>{ui}</Wrapper>);
   });
 
   return {
@@ -105,6 +111,11 @@ export async function renderIntoDom(ui: React.ReactElement) {
     click: async (element: Element) => {
       await act(async () => {
         element.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+      });
+    },
+    keyDown: async (element: Element, key: string, eventInit?: KeyboardEventInit) => {
+      await act(async () => {
+        element.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true, ...eventInit }));
       });
     },
     changeInput: async (input: HTMLInputElement, value: string) => {

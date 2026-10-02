@@ -60,6 +60,7 @@ export const LogsTerminalList: React.FC<LogsTerminalListProps> = ({
               className="flex flex-col rounded-lg border border-stone-900 bg-black/40 hover:bg-stone-900/40 transition-colors overflow-hidden"
             >
               <div
+                data-testid="log-entry-row"
                 role={hasDetails ? "button" : undefined}
                 tabIndex={hasDetails ? 0 : undefined}
                 aria-expanded={hasDetails ? isExpanded : undefined}
