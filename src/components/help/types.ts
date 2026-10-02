@@ -1,22 +1,56 @@
 import React from "react";
+import { PlayerId } from "@game/types";
+import { ModalType } from "@components/modal";
 
 export type HelpTab = "all" | "shortcuts" | "controls" | "mechanics";
 
 export interface ShortcutEntry {
-  id: string;
-  icon?: React.ReactNode;
-  label: string;
-  keys: string[];
-  separator?: string;
-  badge?: string;
-  badgeVariant?: "stone" | "amber" | "cyan" | "purple" | "red";
-  keyVariant?: "amber" | "cyan" | "purple" | "stone";
+  readonly id: string;
+  readonly icon?: React.ReactNode;
+  readonly label: string;
+  readonly keys: readonly string[];
+  readonly separator?: string;
+  readonly badge?: string;
+  readonly badgeVariant?: "stone" | "amber" | "cyan" | "purple" | "red";
+  readonly keyVariant?: "amber" | "cyan" | "purple" | "stone";
 }
 
 export interface PlayerControlItem {
-  actionLabel: string;
-  keys: string[];
-  variant?: "stone" | "amber" | "cyan" | "purple";
+  readonly actionLabel: string;
+  readonly keys: readonly string[];
+  readonly variant?: "stone" | "amber" | "cyan" | "purple";
 }
- 
-export { formatKeyLabel } from "@components/controls/formatKeyLabel";
+
+export interface HelpBannerProps {
+  readonly className?: string;
+}
+
+export interface HelpNavigationProps {
+  readonly activeTab: HelpTab;
+  readonly onSelectTab: (tab: HelpTab) => void;
+  readonly className?: string;
+}
+
+export interface HelpControlsCardProps {
+  readonly playerId: PlayerId;
+  readonly title: string;
+  readonly icon: React.ReactNode;
+  readonly flankBadge: string;
+  readonly theme: "crimson" | "cyan";
+  readonly className?: string;
+}
+
+export interface HelpShortcutsGridProps {
+  readonly className?: string;
+}
+
+export interface HelpMechanicsTipsProps {
+  readonly className?: string;
+}
+
+export interface HelpModalProps {
+  readonly onClose: () => void;
+  readonly defaultTab?: HelpTab;
+  readonly onNavigateModal?: (modal: ModalType) => void;
+  readonly onResume?: () => void;
+}

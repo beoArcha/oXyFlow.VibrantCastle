@@ -1,5 +1,5 @@
 import React from "react";
-import { HelpModal } from "@components/help/HelpModal";
+import { HelpModal } from "@components/help";
 import { MenuModal } from "@components/menu/MenuModal";
 import { InventoryPanel } from "@components/inventory/InventoryPanel";
 import { SkillTreePanel } from "@components/skills/SkillTreePanel";
