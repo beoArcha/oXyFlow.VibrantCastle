@@ -1,11 +1,13 @@
 import React from "react";
 import { cn } from "@lib/utils";
+import { Tooltip } from "./Tooltip";
 
 export interface SegmentedControlOption<T extends string | number> {
   value: T;
   label: React.ReactNode;
   icon?: React.ReactNode;
   title?: string;
+  tooltipContent?: React.ReactNode;
   disabled?: boolean;
 }
 
@@ -57,14 +59,14 @@ export function SegmentedControl<T extends string | number>({
         const isSelected = opt.value === value;
         const isDisabled = disabled || opt.disabled;
 
-        return (
+        const buttonElement = (
           <button
             key={String(opt.value)}
             type="button"
             role="radio"
             aria-checked={isSelected}
             disabled={isDisabled}
-            title={opt.title}
+            title={opt.tooltipContent ? undefined : opt.title}
             onClick={() => !isDisabled && onChange(opt.value)}
             className={cn(
               "flex items-center justify-center gap-1 font-bold transition-all rounded cursor-pointer",
@@ -80,6 +82,16 @@ export function SegmentedControl<T extends string | number>({
             <span className="truncate">{opt.label}</span>
           </button>
         );
+
+        if (opt.tooltipContent) {
+          return (
+            <Tooltip key={String(opt.value)} content={opt.tooltipContent}>
+              {buttonElement}
+            </Tooltip>
+          );
+        }
+
+        return buttonElement;
       })}
     </div>
   );

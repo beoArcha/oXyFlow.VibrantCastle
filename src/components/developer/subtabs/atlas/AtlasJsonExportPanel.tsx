@@ -4,12 +4,11 @@ import {
   Copy,
   Download,
   Check,
-  AlertTriangle,
   RotateCcw,
   Code,
   Sliders,
 } from "lucide-react";
-import { Button, Badge, SegmentedControl, Textarea, ActionBar } from "@components/ui";
+import { Button, Badge, SegmentedControl, Textarea, ActionBar, Alert } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import {
   AtlasGridConfig,
@@ -365,24 +364,24 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
 
       {/* Validation Alert */}
       {validationIssues.length > 0 && (
-        <div className="flex flex-col gap-1 p-2 bg-amber-950/40 border border-amber-600/50 rounded-lg text-xs text-amber-300">
-          <div className="flex items-center gap-1.5 font-bold">
-            <AlertTriangle size={13} className="text-amber-400" />
-            <span>{t("atlasStudioValidationWarning")}:</span>
-          </div>
+        <Alert
+          variant="warning"
+          title={`${t("atlasStudioValidationWarning")}:`}
+          className="text-xs"
+        >
           <ul className="list-disc pl-5 text-[10px] text-amber-200/90 font-mono space-y-0.5">
             {validationIssues.map((issue, idx) => (
               <li key={idx}>{issue}</li>
             ))}
           </ul>
-        </div>
+        </Alert>
       )}
 
       {/* Syntax Error Alert */}
       {syntaxError && (
-        <div className="p-2 bg-rose-950/50 border border-rose-600 rounded-lg text-rose-300 text-xs font-mono">
+        <Alert variant="danger" className="text-xs font-mono">
           {t("atlasStudioSyntaxErrorPrefix")} {syntaxError}
-        </div>
+        </Alert>
       )}
 
       {/* JSON Viewer / Editor Textarea */}

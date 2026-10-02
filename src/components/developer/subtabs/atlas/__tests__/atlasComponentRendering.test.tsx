@@ -390,4 +390,83 @@ describe("Atlas Studio - Component Rendering & UI Integration", () => {
       }
     });
   });
+
+  describe("AtlasTrackSlotSpanEditor Component", () => {
+    it("renders frame tiles, displays spans, handles adjustments and respects limits", async () => {
+      const { AtlasTrackSlotSpanEditor } = await import("../slicing/AtlasTrackSlotSpanEditor");
+
+      const adjustments: { frameIndex: number; delta: number }[] = [];
+
+      const { container, click } = await renderIntoDom(
+        <AtlasTrackSlotSpanEditor
+          framesCount={3}
+          slotSpan={[1, 2, 8]}
+          onAdjustSlotSpan={(frameIndex, delta) => {
+            adjustments.push({ frameIndex, delta });
+          }}
+        />
+      );
+
+      // Verify 3 tiles rendered with spans
+      expect(container.textContent).toContain("#0");
+      expect(container.textContent).toContain("1x");
+      expect(container.textContent).toContain("#1");
+      expect(container.textContent).toContain("2x");
+      expect(container.textContent).toContain("#2");
+      expect(container.textContent).toContain("8x");
+
+      const buttons = container.querySelectorAll("button");
+      expect(buttons.length).toBe(6); // 2 buttons per tile
+
+      // Tile 0 (span 1): minus button (buttons[0]) should be disabled
+      expect((buttons[0] as HTMLButtonElement).disabled).toBe(true);
+      // Tile 0: plus button (buttons[1]) should be enabled
+      expect((buttons[1] as HTMLButtonElement).disabled).toBe(false);
+      await click(buttons[1]);
+      expect(adjustments).toContainEqual({ frameIndex: 0, delta: 1 });
+
+      // Tile 1 (span 2): both buttons enabled
+      expect((buttons[2] as HTMLButtonElement).disabled).toBe(false);
+      expect((buttons[3] as HTMLButtonElement).disabled).toBe(false);
+      await click(buttons[2]);
+      expect(adjustments).toContainEqual({ frameIndex: 1, delta: -1 });
+
+      // Tile 2 (span 8): minus enabled, plus disabled (max 8)
+      expect((buttons[4] as HTMLButtonElement).disabled).toBe(false);
+      expect((buttons[5] as HTMLButtonElement).disabled).toBe(true);
+    });
+  });
+
+  describe("AtlasStatusBarErrorBanner with Generic Alert", () => {
+    it("renders error banner with code, message, details and handles dismiss", async () => {
+      const { AtlasStatusBarErrorBanner } = await import("../status/AtlasStatusBarErrorBanner");
+      const { AssetError, ErrorCode } = await import("@lib/errors");
+
+      let cleared = false;
+      const testError = new AssetError("Resource not found", ErrorCode.ASSET_NOT_FOUND, {
+        details: { resourceId: "atlas_hero" },
+      });
+
+      const { container, click } = await renderIntoDom(
+        <AtlasStatusBarErrorBanner
+          error={testError}
+          onClearError={() => {
+            cleared = true;
+          }}
+        />
+      );
+
+      expect(container.querySelector('[role="alert"]')).not.toBeNull();
+      expect(container.textContent).toContain("NOT_FOUND");
+      expect(container.textContent).toContain("Resource not found");
+      expect(container.textContent).toContain("atlas_hero");
+
+      const dismissBtn = container.querySelector('button[aria-label="Dismiss error"]');
+      expect(dismissBtn).not.toBeNull();
+      if (dismissBtn) {
+        await click(dismissBtn);
+        expect(cleared).toBe(true);
+      }
+    });
+  });
 });

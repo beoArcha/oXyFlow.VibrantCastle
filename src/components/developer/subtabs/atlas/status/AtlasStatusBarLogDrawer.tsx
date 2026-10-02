@@ -1,6 +1,6 @@
 import React from "react";
 import { Activity, ExternalLink } from "lucide-react";
-import { Badge, Button } from "@components/ui";
+import { Badge, Button, EmptyState } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { LogLevel, LogRecord } from "@lib/logger";
 
@@ -51,9 +51,12 @@ export const AtlasStatusBarLogDrawer: React.FC<AtlasStatusBarLogDrawerProps> = (
       </div>
 
       {logs.length === 0 ? (
-        <div className="py-4 text-center text-xs text-stone-600">
-          {t("atlasStudioNoLogsYet") || "No slicer events recorded yet."}
-        </div>
+        <EmptyState
+          compact
+          icon={<Activity size={16} className="text-stone-600" />}
+          title={t("atlasStudioNoLogsYet") || "No slicer events recorded yet."}
+          className="border-dashed py-3"
+        />
       ) : (
         <div className="flex flex-col gap-1 font-mono text-[10px]">
           {logs.slice(-10).reverse().map((entry, idx) => (

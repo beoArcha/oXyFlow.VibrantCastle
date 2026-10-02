@@ -20,6 +20,8 @@ import {
   SegmentedControl,
   SegmentedControlOption,
   IconButton,
+  Tooltip,
+  KbdKey,
 } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { SlicerViewerTool } from "../types";
@@ -74,25 +76,44 @@ export const AtlasViewportToolbar: React.FC<AtlasViewportToolbarProps> = ({
       value: "select",
       label: t("atlasStudioToolSelect"),
       icon: <MousePointer size={12} />,
-      title: t("atlasStudioToolSelect"),
+      tooltipContent: (
+        <div className="flex items-center gap-1.5">
+          <span>{t("atlasStudioToolSelect")}</span>
+          <KbdKey variant="amber">V</KbdKey>
+        </div>
+      ),
     },
     {
       value: "pan",
       label: t("atlasStudioToolPan"),
       icon: <Hand size={12} />,
-      title: t("atlasStudioToolPan"),
+      tooltipContent: (
+        <div className="flex items-center gap-1.5">
+          <span>{t("atlasStudioToolPan")}</span>
+          <KbdKey variant="amber">H</KbdKey>
+        </div>
+      ),
     },
     {
       value: "eyedropper",
       label: t("atlasStudioToolEyedropper"),
       icon: <Pipette size={12} className="text-cyan-400" />,
-      title: t("atlasStudioToolEyedropper"),
+      tooltipContent: (
+        <div className="flex items-center gap-1.5">
+          <span>{t("atlasStudioToolEyedropper")}</span>
+          <KbdKey variant="amber">I</KbdKey>
+        </div>
+      ),
     },
     {
       value: "sequence",
       label: t("atlasStudioToolSequence"),
       icon: <ListOrdered size={12} className="text-amber-400" />,
-      title: t("atlasStudioToolSequence"),
+      tooltipContent: (
+        <div className="flex items-center gap-1.5">
+          <span>{t("atlasStudioToolSequence")}</span>
+        </div>
+      ),
     },
   ];
 
@@ -112,62 +133,72 @@ export const AtlasViewportToolbar: React.FC<AtlasViewportToolbarProps> = ({
 
       {/* Layer Visibility Toggles */}
       <div className="flex items-center gap-1">
-        <Button
-          size="sm"
-          variant={showGrid ? "primary" : "secondary"}
-          onClick={onToggleGrid}
-          title={t("atlasStudioToggleGrid")}
-          className="h-7 px-2 text-[11px]"
-        >
-          <GridIcon size={12} className="mr-1" />
-          {t("atlasStudioGridShort")}
-        </Button>
-
-        <Button
-          size="sm"
-          variant={showTracks ? "primary" : "secondary"}
-          onClick={onToggleTracks}
-          title={t("atlasStudioToggleTracks")}
-          className="h-7 px-2 text-[11px]"
-        >
-          <Layers size={12} className="mr-1" />
-          {t("atlasStudioTracksShort")}
-        </Button>
-
-        {onToggleMargins && (
+        <Tooltip content={t("atlasStudioToggleGrid")}>
           <Button
             size="sm"
-            variant={showMargins ? "primary" : "secondary"}
-            onClick={onToggleMargins}
-            title={t("atlasStudioToggleMargins")}
+            variant={showGrid ? "primary" : "secondary"}
+            onClick={onToggleGrid}
+            aria-label={t("atlasStudioToggleGrid")}
             className="h-7 px-2 text-[11px]"
           >
-            <Square size={12} className="mr-1 text-sky-400" />
-            {t("atlasStudioToggleMargins")}
+            <GridIcon size={12} className="mr-1" />
+            {t("atlasStudioGridShort")}
           </Button>
+        </Tooltip>
+
+        <Tooltip content={t("atlasStudioToggleTracks")}>
+          <Button
+            size="sm"
+            variant={showTracks ? "primary" : "secondary"}
+            onClick={onToggleTracks}
+            aria-label={t("atlasStudioToggleTracks")}
+            className="h-7 px-2 text-[11px]"
+          >
+            <Layers size={12} className="mr-1" />
+            {t("atlasStudioTracksShort")}
+          </Button>
+        </Tooltip>
+
+        {onToggleMargins && (
+          <Tooltip content={t("atlasStudioToggleMargins")}>
+            <Button
+              size="sm"
+              variant={showMargins ? "primary" : "secondary"}
+              onClick={onToggleMargins}
+              aria-label={t("atlasStudioToggleMargins")}
+              className="h-7 px-2 text-[11px]"
+            >
+              <Square size={12} className="mr-1 text-sky-400" />
+              {t("atlasStudioToggleMargins")}
+            </Button>
+          </Tooltip>
         )}
 
-        <Button
-          size="sm"
-          variant={showFrames ? "primary" : "secondary"}
-          onClick={onToggleFrames}
-          title={t("atlasStudioToggleFrames")}
-          className="h-7 px-2 text-[11px]"
-        >
-          <Square size={12} className="mr-1" />
-          {t("atlasStudioFramesShort")}
-        </Button>
+        <Tooltip content={t("atlasStudioToggleFrames")}>
+          <Button
+            size="sm"
+            variant={showFrames ? "primary" : "secondary"}
+            onClick={onToggleFrames}
+            aria-label={t("atlasStudioToggleFrames")}
+            className="h-7 px-2 text-[11px]"
+          >
+            <Square size={12} className="mr-1" />
+            {t("atlasStudioFramesShort")}
+          </Button>
+        </Tooltip>
 
-        <Button
-          size="sm"
-          variant={previewChroma ? "primary" : "secondary"}
-          onClick={onToggleChroma}
-          title={t("atlasStudioToggleChroma")}
-          className="h-7 px-2 text-[11px]"
-        >
-          <Sparkles size={12} className="mr-1 text-yellow-400" />
-          {t("atlasStudioChromaShort")}
-        </Button>
+        <Tooltip content={t("atlasStudioToggleChroma")}>
+          <Button
+            size="sm"
+            variant={previewChroma ? "primary" : "secondary"}
+            onClick={onToggleChroma}
+            aria-label={t("atlasStudioToggleChroma")}
+            className="h-7 px-2 text-[11px]"
+          >
+            <Sparkles size={12} className="mr-1 text-yellow-400" />
+            {t("atlasStudioChromaShort")}
+          </Button>
+        </Tooltip>
       </div>
 
       {/* Zoom Controls & Dimension Readout */}

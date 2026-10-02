@@ -1,4 +1,6 @@
 import React from "react";
+import { Search } from "lucide-react";
+import { EmptyState } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { IAtlasAssetManifestItem } from "@game/engine/meta/registry";
 import { AtlasPresetItemRow } from "./AtlasPresetItemRow";
@@ -18,9 +20,12 @@ export const AtlasPresetList: React.FC<AtlasPresetListProps> = ({
 
   if (assets.length === 0) {
     return (
-      <div className="py-6 text-center text-xs text-stone-500 font-medium">
-        {t("atlasStudioNoAssetsFound")}
-      </div>
+      <EmptyState
+        compact
+        icon={<Search size={18} className="text-stone-600" />}
+        title={t("atlasStudioNoAssetsFound")}
+        className="py-6 border-dashed"
+      />
     );
   }
 
@@ -37,3 +42,5 @@ export const AtlasPresetList: React.FC<AtlasPresetListProps> = ({
     </div>
   );
 };
+
+export default AtlasPresetList;

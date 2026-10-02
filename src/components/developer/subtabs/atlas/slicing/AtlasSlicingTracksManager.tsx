@@ -12,6 +12,7 @@ import {
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 import { AtlasAnimationTrackDefinition } from "../types";
+import { AtlasTrackSlotSpanEditor } from "./AtlasTrackSlotSpanEditor";
 
 export interface AtlasSlicingTracksManagerProps {
   tracks: AtlasAnimationTrackDefinition[];
@@ -215,66 +216,12 @@ export const AtlasSlicingTracksManager: React.FC<AtlasSlicingTracksManagerProps>
           </div>
 
           {/* Visual slotSpan Frame Tiles Editor */}
-          <div className="flex flex-col gap-1.5 pt-1.5 border-t border-stone-800/80">
-            <span className="text-[10px] text-stone-400 font-bold uppercase tracking-wider flex items-center justify-between">
-              <span>{t("atlasStudioTrackSlotSpan")}</span>
-              <span className="text-[9px] text-amber-400/90 font-normal">
-                {t("atlasStudioResizeSpansHint")}
-              </span>
-            </span>
-
-            <div className="flex items-center gap-1.5 overflow-x-auto custom-scrollbar py-1">
-              {Array.from({ length: activeTrack.frames }).map((_, fIdx) => {
-                const currentSpan =
-                  activeTrack.slotSpan?.[fIdx] ?? activeTrack.cells?.[fIdx] ?? 1;
-
-                return (
-                  <div
-                    key={fIdx}
-                    className={`flex flex-col items-center justify-between p-1.5 rounded-lg border text-center transition-all ${currentSpan > 1
-                        ? "bg-amber-950/40 border-amber-500/80 text-amber-300"
-                        : "bg-black/60 border-stone-800 text-stone-300"
-                      }`}
-                    style={{ minWidth: `${Math.max(54, currentSpan * 32)}px` }}
-                  >
-                    <span className="text-[10px] font-mono text-stone-400">
-                      #{fIdx}
-                    </span>
-                    <span className="text-xs font-mono font-bold text-amber-200">
-                      {currentSpan}x
-                    </span>
-
-                    <div className="flex items-center gap-1 mt-1">
-                      <Tooltip content={t("atlasStudioSubSlotSpan")}>
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          onClick={() => handleAdjustSlotSpan(activeTrackIndex, fIdx, -1)}
-                          disabled={currentSpan <= 1}
-                          className="w-4.5 h-4.5 min-h-0 p-0 text-[10px] font-bold bg-stone-800 border-stone-700 hover:bg-stone-700"
-                          aria-label={t("atlasStudioSubSlotSpan")}
-                        >
-                          -
-                        </Button>
-                      </Tooltip>
-                      <Tooltip content={t("atlasStudioAddSlotSpan")}>
-                        <Button
-                          size="sm"
-                          variant="primary"
-                          onClick={() => handleAdjustSlotSpan(activeTrackIndex, fIdx, 1)}
-                          disabled={currentSpan >= 8}
-                          className="w-4.5 h-4.5 min-h-0 p-0 text-[10px] font-bold"
-                          aria-label={t("atlasStudioAddSlotSpan")}
-                        >
-                          +
-                        </Button>
-                      </Tooltip>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          <AtlasTrackSlotSpanEditor
+            framesCount={activeTrack.frames}
+            slotSpan={activeTrack.slotSpan}
+            cells={activeTrack.cells}
+            onAdjustSlotSpan={(fIdx, delta) => handleAdjustSlotSpan(activeTrackIndex, fIdx, delta)}
+          />
         </Card>
       )}
       {/* Confirmation Dialog for Track Deletion */}

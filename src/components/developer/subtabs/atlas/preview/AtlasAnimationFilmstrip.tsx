@@ -10,7 +10,7 @@ import {
   Clock,
   Info,
 } from "lucide-react";
-import { Button, Badge, Tooltip, ConfirmDialog } from "@components/ui";
+import { Button, Badge, Tooltip, ConfirmDialog, EmptyState } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import {
   AtlasGridConfig,
@@ -326,10 +326,12 @@ export const AtlasAnimationFilmstrip: React.FC<AtlasAnimationFilmstripProps> = (
       {/* Horizontal Scrollable Frame Thumbnails Strip */}
       <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar py-1 min-h-[90px]">
         {frameItems.length === 0 ? (
-          <div className="flex items-center gap-2 p-3 text-xs text-stone-400 italic">
-            <Info size={14} className="text-amber-500" />
-            <span>{t("atlasStudioFilmstripNoFrames")}</span>
-          </div>
+          <EmptyState
+            compact
+            icon={<Film size={18} className="text-amber-500/80" />}
+            title={t("atlasStudioFilmstripNoFrames")}
+            className="w-full py-3 border-dashed"
+          />
         ) : (
           frameItems.map((item, idx) => (
             <FrameThumbnail
