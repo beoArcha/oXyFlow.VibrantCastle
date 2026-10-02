@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { AssetQuality } from "@game/types";
 import { AnimationName } from "@game/engine/spriteTypes";
 import { Badge } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
+import { resolveCharacterProfileVM } from "@components/adapters";
 import { cn } from "@lib/utils";
 import { CharacterProvider } from "./CharacterContext";
 import { CharacterPortrait } from "./CharacterPortrait";
@@ -36,45 +37,30 @@ export const CharacterStage: React.FC<CharacterStageProps> = React.memo(({
   mood = "neutral",
   quality,
   scalingFilter = "pixelated",
-  activeAction: propAction,
-  onActionChange: propOnActionChange,
-  playbackSpeed: propSpeed,
-  onSpeedChange: propOnSpeedChange,
-  scale: propScale,
-  onScaleChange: propOnScaleChange,
-  flipHorizontal: propFlip,
-  onToggleFlip: propOnToggleFlip,
-  isPlaying: propPlaying,
-  onTogglePlay: propOnTogglePlay,
+  activeAction = "idle",
+  onActionChange,
+  playbackSpeed = 1.0,
+  onSpeedChange,
+  scale = 1.5,
+  onScaleChange,
+  flipHorizontal = false,
+  onToggleFlip,
+  isPlaying = true,
+  onTogglePlay,
   className,
 }) => {
   const { t } = useI18n();
+  const profile = resolveCharacterProfileVM(characterId);
 
-  // Internal state fallbacks if rendered uncontrolled
-  const [internalAction, setInternalAction] = useState<AnimationName>("idle");
-  const [internalSpeed, setInternalSpeed] = useState<number>(1.0);
-  const [internalScale, setInternalScale] = useState<number>(1.5);
-  const [internalFlip, setInternalFlip] = useState<boolean>(false);
-  const [internalPlaying, setInternalPlaying] = useState<boolean>(true);
+  const handleActionChange = onActionChange ?? (() => {});
+  const handleSpeedChange = onSpeedChange ?? (() => {});
+  const handleScaleChange = onScaleChange ?? (() => {});
+  const handleToggleFlip = onToggleFlip ?? (() => {});
+  const handleTogglePlay = onTogglePlay ?? (() => {});
 
-  const activeAction = propAction ?? internalAction;
-  const onActionChange = propOnActionChange ?? setInternalAction;
-
-  const playbackSpeed = propSpeed ?? internalSpeed;
-  const onSpeedChange = propOnSpeedChange ?? setInternalSpeed;
-
-  const scale = propScale ?? internalScale;
-  const onScaleChange = propOnScaleChange ?? setInternalScale;
-
-  const flipHorizontal = propFlip ?? internalFlip;
-  const onToggleFlip = propOnToggleFlip ?? (() => setInternalFlip((f) => !f));
-
-  const isPlaying = propPlaying ?? internalPlaying;
-  const onTogglePlay = propOnTogglePlay ?? (() => setInternalPlaying((p) => !p));
-
-  const accentColor = characterId === "aurelia" ? "#06b6d4" : "#d97706";
-  const classTitle = characterId === "valen" ? t("valenClassTitle") : t("aureliaClassTitle");
-  const classTags = characterId === "valen" ? t("valenClassTags") : t("aureliaClassTags");
+  const accentColor = profile.accentColor;
+  const classTitle = t(profile.classTitleKey);
+  const classTags = t(profile.classTagsKey);
 
   return (
     <CharacterProvider
@@ -87,15 +73,15 @@ export const CharacterStage: React.FC<CharacterStageProps> = React.memo(({
         {/* Playback & Animation Controls */}
         <CharacterStageControls
           activeAction={activeAction}
-          onActionChange={onActionChange}
+          onActionChange={handleActionChange}
           isPlaying={isPlaying}
-          onTogglePlay={onTogglePlay}
+          onTogglePlay={handleTogglePlay}
           flipHorizontal={flipHorizontal}
-          onToggleFlip={onToggleFlip}
+          onToggleFlip={handleToggleFlip}
           playbackSpeed={playbackSpeed}
-          onSpeedChange={onSpeedChange}
+          onSpeedChange={handleSpeedChange}
           scale={scale}
-          onScaleChange={onScaleChange}
+          onScaleChange={handleScaleChange}
         />
 
         {/* Character Stage & Portrait Layout */}

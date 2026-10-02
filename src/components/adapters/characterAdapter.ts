@@ -58,7 +58,23 @@ export interface AtlasSheetMetaVM {
   readonly animationRows: readonly AnimationRowVM[];
 }
 
-const DEFAULT_ANIMATION_ROWS: readonly AnimationRowVM[] = [
+export const ANIMATION_ROW_MAP: Record<AnimationName, number> = {
+  idle: 0,
+  run: 1,
+  move: 1,
+  jump: 2,
+  fall: 3,
+  attack: 4,
+  dash: 5,
+  cast: 6,
+  crouch: 7,
+};
+
+export function resolveAnimationRowIndex(animName: AnimationName): number {
+  return ANIMATION_ROW_MAP[animName] ?? 0;
+}
+
+export const DEFAULT_ANIMATION_ROWS: readonly AnimationRowVM[] = [
   { row: 0, name: "idle", labelKey: "animIdle" },
   { row: 1, name: "run", labelKey: "animRun" },
   { row: 2, name: "jump", labelKey: "animJump" },

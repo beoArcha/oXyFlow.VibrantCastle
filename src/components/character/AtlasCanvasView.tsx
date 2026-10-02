@@ -1,32 +1,19 @@
 import React from "react";
 import { AnimationName } from "@game/engine/spriteTypes";
 import { useI18n } from "@context/I18nContext";
+import {
+  AnimationRowVM,
+  DEFAULT_ANIMATION_ROWS,
+  ANIMATION_ROW_MAP,
+  resolveAnimationRowIndex,
+} from "@components/adapters";
 import { AtlasGridOverlay } from "./AtlasGridOverlay";
 import { AtlasRowHighlight } from "./AtlasRowHighlight";
 import { AtlasRowLabels } from "./AtlasRowLabels";
 
-export const ANIMATION_ROW_MAP: Record<AnimationName, number> = {
-  idle: 0,
-  run: 1,
-  move: 1,
-  jump: 2,
-  fall: 3,
-  attack: 4,
-  dash: 5,
-  cast: 6,
-  crouch: 7,
-};
-
-export const ROW_ANIMATION_KEYS: Array<{ row: number; name: AnimationName; labelKey: string }> = [
-  { row: 0, name: "idle", labelKey: "animIdle" },
-  { row: 1, name: "run", labelKey: "animRun" },
-  { row: 2, name: "jump", labelKey: "animJump" },
-  { row: 3, name: "fall", labelKey: "animFall" },
-  { row: 4, name: "attack", labelKey: "animAttack" },
-  { row: 5, name: "dash", labelKey: "animDash" },
-  { row: 6, name: "cast", labelKey: "animCast" },
-  { row: 7, name: "crouch", labelKey: "animCrouch" },
-];
+// Re-exported for backwards compatibility
+export { ANIMATION_ROW_MAP };
+export const ROW_ANIMATION_KEYS = DEFAULT_ANIMATION_ROWS;
 
 export interface AtlasCanvasViewProps {
   activeUrl: string;
@@ -40,11 +27,12 @@ export interface AtlasCanvasViewProps {
   rows?: number;
   cellWidth?: number;
   cellHeight?: number;
+  animationRows?: readonly AnimationRowVM[];
   scrollContainerRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 /**
- * Presentational canvas viewport for the texture atlas,
+ * Presentational texture viewport for the texture atlas,
  * grid alignment overlay, active animation band, and row indicators.
  */
 export const AtlasCanvasView: React.FC<AtlasCanvasViewProps> = React.memo(({
@@ -58,10 +46,11 @@ export const AtlasCanvasView: React.FC<AtlasCanvasViewProps> = React.memo(({
   columns = 12,
   rows = 8,
   cellHeight = 128,
+  animationRows = DEFAULT_ANIMATION_ROWS,
   scrollContainerRef,
 }) => {
   const { t } = useI18n();
-  const activeRow = ANIMATION_ROW_MAP[activeAnimation] ?? 0;
+  const activeRow = resolveAnimationRowIndex(activeAnimation);
   const isSpritesheet = sheetType === "spritesheet";
 
   return (
@@ -109,7 +98,7 @@ export const AtlasCanvasView: React.FC<AtlasCanvasViewProps> = React.memo(({
           {/* Side Row Labels overlay */}
           {isSpritesheet && showLabels && imageDimensions.height > 0 && (
             <AtlasRowLabels
-              rows={ROW_ANIMATION_KEYS}
+              rows={animationRows as any}
               activeRow={activeRow}
               cellHeight={cellHeight}
               zoom={zoom}
@@ -126,5 +115,8 @@ export const AtlasCanvasView: React.FC<AtlasCanvasViewProps> = React.memo(({
 });
 
 AtlasCanvasView.displayName = "AtlasCanvasView";
+
+export const AtlasTextureView = AtlasCanvasView;
+export type AtlasTextureViewProps = AtlasCanvasViewProps;
 
 export default AtlasCanvasView;

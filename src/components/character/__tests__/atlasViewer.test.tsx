@@ -205,5 +205,22 @@ describe("Atlas Sheet Viewer & Subcomponents", () => {
       expect(container.querySelectorAll("[role='tab']").length).toBe(2);
       expect(container.textContent).toContain("HIGH");
     });
+
+    it("switches to portraits grid and dynamically updates grid frame count to 5x5", async () => {
+      const { container, click } = await renderIntoDom(
+        <AtlasSheetViewer
+          characterId="valen"
+          quality="high"
+        />
+      );
+
+      const tabs = container.querySelectorAll("[role='tab']");
+      expect(tabs.length).toBe(2);
+      await click(tabs[1]);
+
+      // Portraits grid is 5x5 = 25 frames
+      expect(container.textContent).toContain("25");
+      expect(container.textContent).toContain("5×5");
+    });
   });
 });

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { AssetQuality } from "@game/types";
 import { AnimationName } from "@game/engine/spriteTypes";
-import { assetLoader } from "@game/engine/assetLoader";
+import { resolveAtlasSheetMetaVM } from "@components/adapters";
 import { cn } from "@lib/utils";
 import { Card } from "@components/ui";
 import { AtlasViewerToolbar } from "./AtlasViewerToolbar";
@@ -36,27 +36,30 @@ export const AtlasSheetViewer: React.FC<AtlasSheetViewerProps> = React.memo(({
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Resolve texture URL from assetLoader and manifest
-  const manifest = assetLoader.getCharacterManifest(characterId);
-  const spriteMap = assetLoader.getActiveSpriteMap(characterId, quality);
-
-  const spritesheetUrl = spriteMap?.meta.imageUrl || "";
-  const portraitsUrl = manifest?.portraitsGridUrl || "";
-  const activeUrl = sheetType === "spritesheet" ? spritesheetUrl : portraitsUrl;
+  // Resolve texture URL and grid configuration via adapter
+  const meta = resolveAtlasSheetMetaVM(characterId, quality);
+  const activeUrl = sheetType === "spritesheet" ? meta.spritesheetUrl : meta.portraitsGridUrl;
+  const activeGrid = sheetType === "spritesheet" ? meta.spritesheetGrid : meta.portraitsGrid;
 
   useEffect(() => {
     if (!activeUrl) return;
+    let isCancelled = false;
     const img = new Image();
     img.src = activeUrl;
     img.onload = () => {
-      setImageDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+      if (!isCancelled) {
+        setImageDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+      }
+    };
+    return () => {
+      isCancelled = true;
     };
   }, [activeUrl]);
 
-  const columns = 12;
-  const rows = 8;
-  const cellWidth = imageDimensions.width > 0 ? imageDimensions.width / columns : 128;
-  const cellHeight = imageDimensions.height > 0 ? imageDimensions.height / rows : 128;
+  const columns = activeGrid.columns;
+  const rows = activeGrid.rows;
+  const cellWidth = imageDimensions.width > 0 ? imageDimensions.width / columns : activeGrid.cellWidth;
+  const cellHeight = imageDimensions.height > 0 ? imageDimensions.height / rows : activeGrid.cellHeight;
 
   const handleZoomIn = useCallback(() => {
     setZoom((z) => Math.min(1.5, Math.round((z + 0.15) * 100) / 100));
@@ -105,6 +108,7 @@ export const AtlasSheetViewer: React.FC<AtlasSheetViewerProps> = React.memo(({
         rows={rows}
         cellWidth={cellWidth}
         cellHeight={cellHeight}
+        animationRows={meta.animationRows}
         scrollContainerRef={scrollContainerRef}
       />
 
@@ -123,4 +127,3 @@ export const AtlasSheetViewer: React.FC<AtlasSheetViewerProps> = React.memo(({
 AtlasSheetViewer.displayName = "AtlasSheetViewer";
 
 export default AtlasSheetViewer;
-
