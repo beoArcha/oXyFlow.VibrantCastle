@@ -34,6 +34,8 @@ export interface ProgressBarProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   heightClass?: string;
   /** Enables animated shimmer effect across the bar */
   animated?: boolean;
+  /** Custom bar gradient/color class override */
+  barClassName?: string;
   /** Custom accessible value text for screen readers */
   ariaValueText?: string;
 }
@@ -108,6 +110,7 @@ export const ProgressBar = React.memo(
       icon,
       heightClass,
       animated = false,
+      barClassName,
       ariaValueText,
       className,
       ...props
@@ -157,7 +160,7 @@ export const ProgressBar = React.memo(
           <div
             className={cn(
               "h-full rounded-full transition-all duration-200 ease-out relative overflow-hidden",
-              style.bar
+              barClassName || style.bar
             )}
             style={{ width: `${percentage}%` }}
           >

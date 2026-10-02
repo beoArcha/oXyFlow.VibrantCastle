@@ -8,7 +8,7 @@ import type {
 } from "@game/types";
 import type { AssetQuality } from "@/types/assets";
 import type { PlayerTheme } from "@styles/theme";
-import type { SpellItemVM } from "./viewModels";
+import type { PlayerStatusVM, QuickBeltVM, SpellItemVM } from "./viewModels";
 
 export * from "./viewModels";
 
@@ -38,13 +38,14 @@ export type HUDPlayerStatusData = ICharacterIdentity &
   };
 
 export interface HUDPlayerStatusCardProps {
-  readonly player: HUDPlayerStatusData;
-  readonly playerNumber: 1 | 2;
-  readonly characterName: string;
+  readonly status?: PlayerStatusVM;
+  readonly player?: HUDPlayerStatusData;
+  readonly playerNumber?: 1 | 2;
+  readonly characterName?: string;
   readonly themeColor?: PlayerTheme | "red";
   readonly theme?: PlayerTheme | "red";
-  readonly assetQuality: AssetQuality;
-  readonly attackPower: number;
+  readonly assetQuality?: AssetQuality;
+  readonly attackPower?: number;
   readonly onOpenSkillTree?: () => void;
 }
 
@@ -63,15 +64,16 @@ export interface HUDQuickBeltData {
 }
 
 export interface HUDQuickBeltProps {
-  readonly player: HUDQuickBeltData;
-  readonly playerNumber: 1 | 2;
-  readonly primarySpell: SpellItemVM | MagicSkill | null;
-  readonly secondarySpell: SpellItemVM | MagicSkill | null;
-  readonly primarySpellName: string;
-  readonly secondarySpellName: string;
-  readonly primaryKeyLabel: string;
-  readonly secondaryKeyLabel: string;
-  readonly potionKeyRangeLabel: string;
+  readonly belt?: QuickBeltVM;
+  readonly player?: HUDQuickBeltData;
+  readonly playerNumber?: 1 | 2;
+  readonly primarySpell?: SpellItemVM | MagicSkill | null;
+  readonly secondarySpell?: SpellItemVM | MagicSkill | null;
+  readonly primarySpellName?: string;
+  readonly secondarySpellName?: string;
+  readonly primaryKeyLabel?: string;
+  readonly secondaryKeyLabel?: string;
+  readonly potionKeyRangeLabel?: string;
   readonly onUsePotion: (slotIndex: number) => void;
   readonly onOpenInventory?: () => void;
   readonly onOpenSkillTree?: () => void;
@@ -93,6 +95,7 @@ export interface PauseOverlayProps {
 
 export interface VictoryOverlayProps {
   readonly onNextLocation: () => void;
+  readonly onRestart: () => void;
   readonly onOpenMenu: () => void;
 }
 

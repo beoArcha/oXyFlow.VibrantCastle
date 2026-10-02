@@ -7,4 +7,6 @@ export { HUDQuickBelt } from "./HUDQuickBelt";
 export { HUDControlsHint } from "./HUDControlsHint";
 export { HUDNarratorBanner } from "./HUDNarratorBanner";
 export { HUDStatusOverlay } from "./HUDStatusOverlay";
+export * from "./overlays";
+export * from "./viewModels";
 export * from "./types";

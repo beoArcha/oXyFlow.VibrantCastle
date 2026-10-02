@@ -1,8 +1,9 @@
 import React, { useCallback, useMemo } from "react";
 import {
   resolvePlayerDerivedStats,
+  resolvePlayerStatusVM,
+  resolveQuickBeltVM,
   executeQuickPotionUse,
-  resolveSpellVM,
 } from "@components/adapters/hudAdapter";
 import { useGameSession, useSettings } from "@context/GameContext";
 import { useI18n } from "@context/I18nContext";
@@ -14,16 +15,8 @@ import { HUDTopControls } from "./HUDTopControls";
 import { HUDQuickBelt } from "./HUDQuickBelt";
 import { HUDControlsHint } from "./HUDControlsHint";
 import { HUDNarratorBanner } from "./HUDNarratorBanner";
-import { HUDOverlayProps } from "./types";
+import type { HUDOverlayProps } from "./types";
 
-/**
- * HUDOverlay Orchestrator Component.
- *
- * Responsibilities:
- * - Orchestrates subcomponents and handles high-level HUD state.
- * - Free of direct HTML tags and CSS styling classes.
- * - Delegates layout, canvas rendering, player cards, control pills, belts, and narration to dedicated components.
- */
 export const HUDOverlay: React.FC<HUDOverlayProps> = ({
   onOpenInventory,
   onOpenSkillTree,
@@ -51,48 +44,58 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
   } = useGameSession();
 
   const { isTwoPlayer, displaySettings, hudSettings } = useSettings();
-
   const { t } = useI18n();
 
-  const p1PrimarySpell = useMemo(
-    () =>
-      resolveSpellVM(
-        p1?.primarySpellId,
-        hudSettings.p1QuickKeys.primarySpell,
-        "cyan"
-      ),
-    [p1?.primarySpellId, hudSettings.p1QuickKeys.primarySpell]
-  );
-  const p1SecondarySpell = useMemo(
-    () =>
-      resolveSpellVM(
-        p1?.secondarySpellId,
-        hudSettings.p1QuickKeys.secondarySpell,
-        "purple"
-      ),
-    [p1?.secondarySpellId, hudSettings.p1QuickKeys.secondarySpell]
-  );
   const p1Stats = useMemo(() => resolvePlayerDerivedStats(p1), [p1]);
-
-  const p2PrimarySpell = useMemo(
-    () =>
-      resolveSpellVM(
-        p2?.primarySpellId,
-        hudSettings.p2QuickKeys.primarySpell,
-        "cyan"
-      ),
-    [p2?.primarySpellId, hudSettings.p2QuickKeys.primarySpell]
-  );
-  const p2SecondarySpell = useMemo(
-    () =>
-      resolveSpellVM(
-        p2?.secondarySpellId,
-        hudSettings.p2QuickKeys.secondarySpell,
-        "purple"
-      ),
-    [p2?.secondarySpellId, hudSettings.p2QuickKeys.secondarySpell]
-  );
   const p2Stats = useMemo(() => resolvePlayerDerivedStats(p2), [p2]);
+
+  const p1StatusVM = useMemo(
+    () =>
+      resolvePlayerStatusVM(p1, p1Stats, {
+        characterName: hudSettings.p1CharacterName,
+        theme: hudSettings.p1ThemeColor,
+        playerNumber: 1,
+        attackFallback: hudSettings.p1AttackFallback,
+      }),
+    [p1, p1Stats, hudSettings.p1CharacterName, hudSettings.p1ThemeColor, hudSettings.p1AttackFallback]
+  );
+
+  const p2StatusVM = useMemo(
+    () =>
+      resolvePlayerStatusVM(p2, p2Stats, {
+        characterName: hudSettings.p2CharacterName,
+        theme: hudSettings.p2ThemeColor,
+        playerNumber: 2,
+        attackFallback: hudSettings.p2AttackFallback,
+      }),
+    [p2, p2Stats, hudSettings.p2CharacterName, hudSettings.p2ThemeColor, hudSettings.p2AttackFallback]
+  );
+
+  const p1QuickBeltVM = useMemo(
+    () =>
+      resolveQuickBeltVM(p1, {
+        playerNumber: 1,
+        primaryKeyLabel: hudSettings.p1QuickKeys.primarySpell,
+        secondaryKeyLabel: hudSettings.p1QuickKeys.secondarySpell,
+        potionKeyRangeLabel: hudSettings.p1QuickKeys.potionsRange,
+        primarySpellId: p1?.primarySpellId,
+        secondarySpellId: p1?.secondarySpellId,
+      }),
+    [p1, hudSettings.p1QuickKeys]
+  );
+
+  const p2QuickBeltVM = useMemo(
+    () =>
+      resolveQuickBeltVM(p2, {
+        playerNumber: 2,
+        primaryKeyLabel: hudSettings.p2QuickKeys.primarySpell,
+        secondaryKeyLabel: hudSettings.p2QuickKeys.secondarySpell,
+        potionKeyRangeLabel: hudSettings.p2QuickKeys.potionsRange,
+        primarySpellId: p2?.primarySpellId,
+        secondarySpellId: p2?.secondarySpellId,
+      }),
+    [p2, hudSettings.p2QuickKeys]
+  );
 
   const currentLocationName = currentLocation ? t(currentLocation.nameKey) : "";
 
@@ -131,14 +134,10 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
         )
       }
       topLeftSlot={
-        p1 && (
+        p1StatusVM && (
           <HUDPlayerStatusCard
-            player={p1}
-            playerNumber={1}
-            characterName={hudSettings.p1CharacterName}
-            themeColor={hudSettings.p1ThemeColor}
+            status={p1StatusVM}
             assetQuality={displaySettings.assetQuality}
-            attackPower={p1Stats?.totalAttack || hudSettings.p1AttackFallback}
             onOpenSkillTree={onOpenSkillTree}
           />
         )
@@ -154,29 +153,17 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
         />
       }
       topRightSlot={
-        isTwoPlayer && p2 ? (
+        isTwoPlayer && p2StatusVM ? (
           <HUDPlayerStatusCard
-            player={p2}
-            playerNumber={2}
-            characterName={hudSettings.p2CharacterName}
-            themeColor={hudSettings.p2ThemeColor}
+            status={p2StatusVM}
             assetQuality={displaySettings.assetQuality}
-            attackPower={p2Stats?.totalAttack || hudSettings.p2AttackFallback}
           />
         ) : null
       }
       leftFlankSlot={
-        p1 && (
+        p1QuickBeltVM && (
           <HUDQuickBelt
-            player={p1}
-            playerNumber={1}
-            primarySpell={p1PrimarySpell}
-            secondarySpell={p1SecondarySpell}
-            primarySpellName={p1PrimarySpell ? t(p1PrimarySpell.nameKey) : ""}
-            secondarySpellName={p1SecondarySpell ? t(p1SecondarySpell.nameKey) : ""}
-            primaryKeyLabel={hudSettings.p1QuickKeys.primarySpell}
-            secondaryKeyLabel={hudSettings.p1QuickKeys.secondarySpell}
-            potionKeyRangeLabel={hudSettings.p1QuickKeys.potionsRange}
+            belt={p1QuickBeltVM}
             onUsePotion={handleP1Potion}
             onOpenInventory={onOpenInventory}
             onOpenSkillTree={onOpenSkillTree}
@@ -185,17 +172,9 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
         )
       }
       rightFlankSlot={
-        isTwoPlayer && p2 ? (
+        isTwoPlayer && p2QuickBeltVM ? (
           <HUDQuickBelt
-            player={p2}
-            playerNumber={2}
-            primarySpell={p2PrimarySpell}
-            secondarySpell={p2SecondarySpell}
-            primarySpellName={p2PrimarySpell ? t(p2PrimarySpell.nameKey) : ""}
-            secondarySpellName={p2SecondarySpell ? t(p2SecondarySpell.nameKey) : ""}
-            primaryKeyLabel={hudSettings.p2QuickKeys.primarySpell}
-            secondaryKeyLabel={hudSettings.p2QuickKeys.secondarySpell}
-            potionKeyRangeLabel={hudSettings.p2QuickKeys.potionsRange}
+            belt={p2QuickBeltVM}
             onUsePotion={handleP2Potion}
           />
         ) : hudSettings.showControlsHint ? (

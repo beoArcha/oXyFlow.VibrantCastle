@@ -1,47 +1,55 @@
 import React from "react";
 import { Swords, Wind, VolumeX } from "lucide-react";
-import { Badge } from "@components/ui";
+import { Badge, Button } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
-import { HUDControlsHintProps } from "./types";
+import { useKeyboard, formatKeyLabel } from "@components/controls";
+import { PlayerId } from "@game/types";
+import type { HUDControlsHintProps } from "./types";
 
 export type { HUDControlsHintProps };
 
-/**
- * Clean control reminders and audio enablement widget for single player mode.
- */
 export const HUDControlsHint: React.FC<HUDControlsHintProps> = React.memo(({
   isAudioInitialized,
   onInitializeAudio,
 }) => {
   const { t } = useI18n();
+  const { bindings } = useKeyboard(PlayerId.Player1);
+
+  const meleeKey = bindings.action1?.[0]
+    ? formatKeyLabel(bindings.action1[0], t("spaceKey"))
+    : "J";
+
+  const dashKey = bindings.action2?.[0]
+    ? formatKeyLabel(bindings.action2[0], t("spaceKey"))
+    : "L";
 
   return (
     <div className="flex flex-col items-end gap-2">
-      {/* 1P Mode and Audio indicator */}
-      <div className="hidden md:flex items-center gap-2 bg-[#140602]/80 backdrop-blur-md px-3 py-2 rounded-2xl border border-[#5c2d18]">
+      <div className="hidden md:flex items-center gap-2 bg-stone-950/80 backdrop-blur-md px-3 py-2 rounded-2xl border border-amber-900/40">
         <Badge variant="amber" icon={<Swords size={12} />}>
-          1P Mode
+          {t("singlePlayerMode")}
         </Badge>
         {!isAudioInitialized && (
-          <button
+          <Button
+            size="sm"
+            variant="accent"
             onClick={onInitializeAudio}
-            className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-amber-600/30 text-amber-300 border border-amber-500/40 text-[11px] font-bold hover:bg-amber-600/50 cursor-pointer animate-pulse"
+            leftIcon={<VolumeX size={13} />}
+            className="h-6 px-2 py-0.5 text-[11px] font-bold rounded-lg animate-pulse"
           >
-            <VolumeX size={13} />
             {t("enableAudio")}
-          </button>
+          </Button>
         )}
       </div>
 
-      {/* Action Shortcut Reminders */}
-      <div className="hidden md:flex flex-col gap-2 bg-[#140602]/70 backdrop-blur-md p-2.5 rounded-2xl border border-stone-900/60 max-w-[170px] text-[11px] text-stone-400">
+      <div className="hidden md:flex flex-col gap-2 bg-stone-950/70 backdrop-blur-md p-2.5 rounded-2xl border border-stone-900/60 max-w-[170px] text-[11px] text-stone-400">
         <div className="flex items-center gap-1.5 text-amber-400 font-bold">
           <Swords size={12} />
-          <span>{t("meleeAttack")}: [J]</span>
+          <span>{t("meleeAttack")}: [{meleeKey}]</span>
         </div>
         <div className="flex items-center gap-1.5 text-stone-300 font-bold">
           <Wind size={12} className="text-cyan-400" />
-          <span>{t("dashAction")}: [L]</span>
+          <span>{t("dashAction")}: [{dashKey}]</span>
         </div>
       </div>
     </div>

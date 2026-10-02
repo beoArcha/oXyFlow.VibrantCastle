@@ -1,14 +1,13 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Sparkles, Shield, FlaskConical, Backpack, BookOpen } from "lucide-react";
-import { KbdKey } from "@components/ui";
+import { Button, KbdKey } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
-import { HUDQuickBeltProps } from "./types";
+import { resolvePotionSlotsVM } from "@components/adapters/hudAdapter";
+import type { HUDQuickBeltProps, PotionSlotVM } from "./types";
 import { cn } from "@lib/utils";
 
-/**
- * Left or Right flank action belt displaying active spells, quick potion slots, and RPG shortcuts.
- */
 export const HUDQuickBelt: React.FC<HUDQuickBeltProps> = React.memo(({
+  belt,
   player,
   playerNumber,
   primarySpell,
@@ -24,28 +23,43 @@ export const HUDQuickBelt: React.FC<HUDQuickBeltProps> = React.memo(({
   showRpgButtons = false,
 }) => {
   const { t } = useI18n();
-  const isP1 = playerNumber === 1;
+
+  const effectivePlayerNumber = belt ? belt.playerNumber : (playerNumber ?? 1);
+  const isP1 = effectivePlayerNumber === 1;
+
+  const effectivePrimarySpell = belt ? belt.primarySpell : primarySpell;
+  const effectiveSecondarySpell = belt ? belt.secondarySpell : secondarySpell;
+  const effectivePrimarySpellName = belt ? belt.primarySpellName : (primarySpellName ?? "");
+  const effectiveSecondarySpellName = belt ? belt.secondarySpellName : (secondarySpellName ?? "");
+  const effectivePrimaryKeyLabel = belt ? belt.primaryKeyLabel : (primaryKeyLabel ?? "");
+  const effectiveSecondaryKeyLabel = belt ? belt.secondaryKeyLabel : (secondaryKeyLabel ?? "");
+  const effectivePotionKeyRangeLabel = belt ? belt.potionKeyRangeLabel : (potionKeyRangeLabel ?? "");
+
+  const potionSlots: readonly PotionSlotVM[] = useMemo(() => {
+    if (belt?.potions) return belt.potions;
+    return resolvePotionSlotsVM(player?.inventory?.quickPotions, isP1);
+  }, [belt?.potions, player?.inventory?.quickPotions, isP1]);
 
   const borderColor = isP1 ? "border-red-950/70" : "border-cyan-950/70";
   const titleColor = isP1 ? "text-stone-400" : "text-cyan-400";
-  const potionBorderColor = isP1 ? "border-amber-600/70 hover:border-amber-400" : "border-cyan-600/70 hover:border-cyan-400";
+  const potionBorderColor = isP1
+    ? "border-amber-600/70 hover:border-amber-400"
+    : "border-cyan-600/70 hover:border-cyan-400";
   const potionTextColor = isP1 ? "text-amber-200" : "text-cyan-200";
 
   return (
     <div
       className={cn(
-        "bg-[#140602]/85 backdrop-blur-md p-2.5 rounded-2xl border shadow-2xl flex flex-col gap-3 max-w-[200px]",
+        "bg-stone-950/85 backdrop-blur-md p-2.5 rounded-2xl border shadow-2xl flex flex-col gap-3 max-w-[200px]",
         borderColor
       )}
     >
-      {/* Equipped Spells */}
       <div className="flex flex-col gap-1.5">
         <span className={cn("text-[10px] font-bold tracking-wider uppercase", titleColor)}>
           {isP1 ? t("tabSkills") : `P2 ${t("tabSkills")}`}
         </span>
 
-        {/* Primary Spell Card */}
-        {primarySpell && (
+        {effectivePrimarySpell && (
           <div className="flex items-center justify-between p-1.5 bg-black/50 border border-cyan-800/60 rounded-xl">
             <div className="flex items-center gap-1.5">
               <div className="w-6 h-6 rounded-lg bg-cyan-950/80 border border-cyan-500 flex items-center justify-center text-cyan-300">
@@ -53,19 +67,18 @@ export const HUDQuickBelt: React.FC<HUDQuickBeltProps> = React.memo(({
               </div>
               <div className="flex flex-col">
                 <span className="text-[11px] font-bold text-cyan-300 leading-tight">
-                  {primarySpellName}
+                  {effectivePrimarySpellName}
                 </span>
                 <span className="text-[9px] text-cyan-500">
-                  {primarySpell.manaCost} {t("manaUnit")}
+                  {effectivePrimarySpell.manaCost} {t("manaUnit")}
                 </span>
               </div>
             </div>
-            <KbdKey variant="cyan">{primaryKeyLabel}</KbdKey>
+            <KbdKey variant="cyan">{effectivePrimaryKeyLabel}</KbdKey>
           </div>
         )}
 
-        {/* Secondary Spell Card */}
-        {secondarySpell && (
+        {effectiveSecondarySpell && (
           <div className="flex items-center justify-between p-1.5 bg-black/50 border border-purple-800/60 rounded-xl">
             <div className="flex items-center gap-1.5">
               <div className="w-6 h-6 rounded-lg bg-purple-950/80 border border-purple-500 flex items-center justify-center text-purple-300">
@@ -73,44 +86,49 @@ export const HUDQuickBelt: React.FC<HUDQuickBeltProps> = React.memo(({
               </div>
               <div className="flex flex-col">
                 <span className="text-[11px] font-bold text-purple-300 leading-tight">
-                  {secondarySpellName}
+                  {effectiveSecondarySpellName}
                 </span>
                 <span className="text-[9px] text-purple-500">
-                  {secondarySpell.manaCost} {t("manaUnit")}
+                  {effectiveSecondarySpell.manaCost} {t("manaUnit")}
                 </span>
               </div>
             </div>
-            <KbdKey variant="purple">{secondaryKeyLabel}</KbdKey>
+            <KbdKey variant="purple">{effectiveSecondaryKeyLabel}</KbdKey>
           </div>
         )}
       </div>
 
-      {/* Quick Potions Belt (3 Slots) */}
-      <div className="flex flex-col gap-1.5 border-t border-[#3a1a0f] pt-2">
+      <div className="flex flex-col gap-1.5 border-t border-stone-800/80 pt-2">
         <div className="flex items-center justify-between text-[10px] font-bold tracking-wider uppercase text-amber-400">
           <span>{t("quickPotions")}</span>
-          <span className="text-[9px] text-stone-500">{potionKeyRangeLabel}</span>
+          <span className="text-[9px] text-stone-500">{effectivePotionKeyRangeLabel}</span>
         </div>
 
         <div className="grid grid-cols-3 gap-1.5">
-          {[0, 1, 2].map((slotIdx) => {
-            const pot = player.inventory.quickPotions[slotIdx];
+          {potionSlots.map((pot) => {
+            const hasPotion = !pot.isEmpty && pot.count > 0;
+            const potionTitle = hasPotion && pot.nameKey
+              ? `${t(pot.nameKey)} (${t("usePotion")})`
+              : t("potionEmpty");
+
             return (
               <button
-                key={`pot-${playerNumber}-${slotIdx}`}
-                title={pot ? `${t(pot.nameKey)} (${t("usePotion")})` : t("potionEmpty")}
-                onClick={() => onUsePotion(slotIdx)}
+                key={`pot-${effectivePlayerNumber}-${pot.slotIndex}`}
+                type="button"
+                title={potionTitle}
+                aria-label={potionTitle}
+                onClick={() => onUsePotion(pot.slotIndex)}
                 className={cn(
                   "relative aspect-square rounded-xl flex flex-col items-center justify-center p-1 border transition-all cursor-pointer",
-                  pot
-                    ? `bg-[#26120b] ${potionBorderColor} hover:scale-105`
+                  hasPotion
+                    ? `bg-stone-900/80 ${potionBorderColor} hover:scale-105`
                     : "bg-black/30 border-stone-800 text-stone-700 opacity-60"
                 )}
               >
                 <FlaskConical
                   size={14}
                   className={
-                    pot
+                    hasPotion
                       ? pot.healHp
                         ? "text-red-400"
                         : pot.healMana
@@ -119,13 +137,13 @@ export const HUDQuickBelt: React.FC<HUDQuickBeltProps> = React.memo(({
                       : "text-stone-600"
                   }
                 />
-                {pot && (
+                {hasPotion && (
                   <span className={cn("text-[9px] font-bold mt-0.5", potionTextColor)}>
-                    x{pot.count || 1}
+                    x{pot.count}
                   </span>
                 )}
                 <span className="absolute -bottom-1 -right-1 text-[8px] bg-black/80 px-1 rounded font-mono text-stone-400">
-                  {isP1 ? slotIdx + 1 : slotIdx + 7}
+                  {pot.keyLabel}
                 </span>
               </button>
             );
@@ -133,28 +151,31 @@ export const HUDQuickBelt: React.FC<HUDQuickBeltProps> = React.memo(({
         </div>
       </div>
 
-      {/* Quick RPG Panel Buttons */}
       {showRpgButtons && onOpenInventory && onOpenSkillTree && (
-        <div className="grid grid-cols-2 gap-1.5 border-t border-[#3a1a0f] pt-2">
-          <button
+        <div className="grid grid-cols-2 gap-1.5 border-t border-stone-800/80 pt-2">
+          <Button
             id="flank-inventory-btn"
-            title={`${t("inventoryBtn")} [I] - No Pause`}
+            variant="secondary"
+            size="sm"
+            title={`${t("inventoryBtn")} [I]`}
             onClick={onOpenInventory}
-            className="flex items-center justify-center gap-1 py-1.5 px-2 rounded-xl bg-[#26120b] hover:bg-[#3d1b0e] border border-amber-700/60 text-amber-300 text-[11px] font-bold cursor-pointer transition-all"
+            leftIcon={<Backpack size={13} />}
+            className="h-7 py-1 px-2 rounded-xl bg-stone-900/80 hover:bg-stone-800 border-amber-700/60 text-amber-300 text-[11px] font-bold"
           >
-            <Backpack size={13} />
             <span>[I]</span>
-          </button>
+          </Button>
 
-          <button
+          <Button
             id="flank-skilltree-btn"
-            title={`${t("skillTreeBtn")} [K] - No Pause`}
+            variant="secondary"
+            size="sm"
+            title={`${t("skillTreeBtn")} [K]`}
             onClick={onOpenSkillTree}
-            className="flex items-center justify-center gap-1 py-1.5 px-2 rounded-xl bg-[#26120b] hover:bg-[#3d1b0e] border border-purple-700/60 text-purple-300 text-[11px] font-bold cursor-pointer transition-all"
+            leftIcon={<BookOpen size={13} />}
+            className="h-7 py-1 px-2 rounded-xl bg-stone-900/80 hover:bg-stone-800 border-purple-700/60 text-purple-300 text-[11px] font-bold"
           >
-            <BookOpen size={13} />
             <span>[K]</span>
-          </button>
+          </Button>
         </div>
       )}
     </div>

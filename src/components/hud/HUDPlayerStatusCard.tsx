@@ -1,6 +1,6 @@
 import React from "react";
 import { Heart, Sparkles, Zap } from "lucide-react";
-import { ProgressBar, Badge } from "@components/ui";
+import { ProgressBar, Badge, Button } from "@components/ui";
 import { CharacterPortrait } from "@components/character";
 import { useI18n } from "@context/I18nContext";
 import { getPlayerThemeTokens } from "@styles/theme";
@@ -8,27 +8,41 @@ import type { HUDPlayerStatusCardProps } from "./types";
 import { cn } from "@lib/utils";
 
 export const HUDPlayerStatusCard: React.FC<HUDPlayerStatusCardProps> = React.memo(({
+  status,
   player,
   playerNumber,
   characterName,
   themeColor,
   theme,
-  assetQuality,
+  assetQuality = "mid",
   attackPower,
   onOpenSkillTree,
 }) => {
   const { t } = useI18n();
-  const themeTokens = getPlayerThemeTokens(theme || themeColor);
+
+  const effectivePlayerNumber = status ? status.playerNumber : (playerNumber ?? 1);
+  const effectiveName = status ? status.characterName : (characterName ?? "");
+  const effectiveTheme = status ? status.theme : (theme || themeColor);
+  const effectiveHealth = status ? status.health : (player?.health ?? 0);
+  const effectiveMaxHealth = status ? status.maxHealth : (player?.maxHealth ?? 1);
+  const effectiveMana = status ? status.mana : (player?.mana ?? 0);
+  const effectiveMaxMana = status ? status.maxMana : (player?.maxMana ?? 1);
+  const effectiveStamina = status ? status.stamina : (player?.stamina ?? 0);
+  const effectiveMaxStamina = status ? status.maxStamina : (player?.maxStamina ?? 1);
+  const effectiveAttackPower = status ? status.attackPower : (attackPower ?? 10);
+  const effectiveSkillPoints = status ? status.skillPoints : (player?.skillPoints ?? 0);
+
+  const themeTokens = getPlayerThemeTokens(effectiveTheme);
+  const fallbackCharacterId = themeTokens.id === "crimson" ? "valen" : "aurelia";
+  const effectiveCharacterId = (status ? status.characterId : player?.characterId) || fallbackCharacterId;
 
   const qualityLabel =
     assetQuality === "low" ? "16b" : assetQuality === "mid" ? "32b" : "HD";
 
-  const fallbackCharacterId = themeTokens.id === "crimson" ? "valen" : "aurelia";
-
   return (
     <div
       className={cn(
-        "bg-[#140602]/85 backdrop-blur-md p-3 rounded-2xl border shadow-2xl flex flex-col gap-2 transition-all",
+        "bg-stone-950/85 backdrop-blur-md p-3 rounded-2xl border shadow-2xl flex flex-col gap-2 transition-all",
         themeTokens.cardWidth,
         themeTokens.cardBorder
       )}
@@ -42,7 +56,7 @@ export const HUDPlayerStatusCard: React.FC<HUDPlayerStatusCardProps> = React.mem
             )}
           >
             <CharacterPortrait
-              characterId={player.characterId || fallbackCharacterId}
+              characterId={effectiveCharacterId}
               className="w-full h-full"
             />
             <div
@@ -58,7 +72,7 @@ export const HUDPlayerStatusCard: React.FC<HUDPlayerStatusCardProps> = React.mem
           <div className="flex flex-col">
             <div className="flex items-center gap-1.5">
               <span className={cn("text-xs font-bold leading-tight", themeTokens.nameColor)}>
-                {characterName}
+                {effectiveName}
               </span>
               <span
                 className={cn(
@@ -66,24 +80,26 @@ export const HUDPlayerStatusCard: React.FC<HUDPlayerStatusCardProps> = React.mem
                   themeTokens.tagClass
                 )}
               >
-                P{playerNumber}
+                P{effectivePlayerNumber}
               </span>
             </div>
             <span className="text-[10px] text-stone-400">
-              {t("attackPower")}: {Math.round(attackPower)}
+              {t("attackPower")}: {Math.round(effectiveAttackPower)}
             </span>
           </div>
         </div>
 
-        {typeof player.skillPoints === "number" && player.skillPoints > 0 && onOpenSkillTree ? (
-          <button
+        {effectiveSkillPoints > 0 && onOpenSkillTree ? (
+          <Button
+            size="sm"
+            variant="accent"
             onClick={onOpenSkillTree}
-            className="flex items-center gap-1 px-2 py-0.5 bg-amber-500/20 border border-amber-500/50 rounded-full text-[10px] font-bold text-amber-300 animate-pulse hover:bg-amber-500/30 cursor-pointer"
+            className="h-6 px-2 py-0.5 text-[10px] font-bold rounded-full animate-pulse gap-1"
+            leftIcon={<Sparkles size={11} />}
           >
-            <Sparkles size={11} />
-            +{player.skillPoints} {t("skillPointsUnit")}
-          </button>
-        ) : playerNumber === 2 ? (
+            +{effectiveSkillPoints} {t("skillPointsUnit")}
+          </Button>
+        ) : effectivePlayerNumber === 2 ? (
           <Badge variant="cyan" className="text-[10px]">
             Co-op
           </Badge>
@@ -92,9 +108,10 @@ export const HUDPlayerStatusCard: React.FC<HUDPlayerStatusCardProps> = React.mem
 
       <div className="flex flex-col gap-1.5">
         <ProgressBar
-          value={player.health}
-          max={player.maxHealth}
+          value={effectiveHealth}
+          max={effectiveMaxHealth}
           variant="health"
+          barClassName={themeTokens.healthBarClass}
           label={t("health")}
           icon={
             <Heart
@@ -107,16 +124,16 @@ export const HUDPlayerStatusCard: React.FC<HUDPlayerStatusCardProps> = React.mem
           heightClass="h-2.5"
         />
         <ProgressBar
-          value={player.mana}
-          max={player.maxMana}
+          value={effectiveMana}
+          max={effectiveMaxMana}
           variant="mana"
           label={t("mana")}
           icon={<Sparkles className="w-3 h-3 text-cyan-400" />}
           heightClass="h-2"
         />
         <ProgressBar
-          value={player.stamina}
-          max={player.maxStamina}
+          value={effectiveStamina}
+          max={effectiveMaxStamina}
           variant="stamina"
           label={t("stamina")}
           icon={<Zap className="w-3 h-3 text-amber-400" />}

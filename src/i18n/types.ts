@@ -66,6 +66,7 @@ export interface HudI18n {
   secondarySpell: string;
   meleeAttack: string;
   dashAction: string;
+  singlePlayerMode: string;
   controlsHelp: string;
   tipsMechanics: string;
   potionEmpty: string;

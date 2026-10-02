@@ -1,4 +1,5 @@
 import React from "react";
+import { cn } from "@lib/utils";
 import { Modal } from "./Modal";
 import {
   ModalContent,
@@ -16,6 +17,7 @@ export interface DialogProps {
   description?: React.ReactNode;
   icon?: React.ReactNode;
   maxWidthClass?: string;
+  contentClassName?: string;
   showCloseButton?: boolean;
   closeOnBackdropClick?: boolean;
   closeOnEscape?: boolean;
@@ -66,6 +68,7 @@ const DialogBase: React.FC<DialogProps> = React.memo(function Dialog({
   description,
   icon,
   maxWidthClass = "max-w-md",
+  contentClassName,
   showCloseButton = true,
   closeOnBackdropClick = true,
   closeOnEscape = true,
@@ -88,7 +91,7 @@ const DialogBase: React.FC<DialogProps> = React.memo(function Dialog({
       portalContainer={portalContainer}
       className={className}
     >
-      <ModalContent maxWidthClass={maxWidthClass}>
+      <ModalContent maxWidthClass={maxWidthClass} className={cn("md:h-auto", contentClassName)}>
         {title ? (
           <>
             <ModalHeader

@@ -62,6 +62,7 @@ export interface PlayerThemeTokens {
   readonly heartIconClass: string;
   readonly cardWidth: string;
   readonly progressBarVariant: "health" | "mana";
+  readonly healthBarClass: string;
   readonly helpHeaderBg: string;
   readonly helpFlankBadge: string;
   readonly helpIconColor: string;
@@ -78,6 +79,7 @@ export const PLAYER_THEMES: Record<PlayerTheme, PlayerThemeTokens> = {
     heartIconClass: "text-red-500 fill-red-500",
     cardWidth: "w-64 sm:w-76",
     progressBarVariant: "health",
+    healthBarClass: "bg-gradient-to-r from-red-700 via-red-600 to-red-400",
     helpHeaderBg: "from-red-950/40",
     helpFlankBadge: "bg-red-500/10 text-red-400 border-red-500/20",
     helpIconColor: "text-red-400",
@@ -92,6 +94,7 @@ export const PLAYER_THEMES: Record<PlayerTheme, PlayerThemeTokens> = {
     heartIconClass: "text-cyan-400 fill-cyan-400",
     cardWidth: "w-60 sm:w-72",
     progressBarVariant: "health",
+    healthBarClass: "bg-gradient-to-r from-cyan-700 via-cyan-500 to-blue-400",
     helpHeaderBg: "from-cyan-950/40",
     helpFlankBadge: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
     helpIconColor: "text-cyan-400",
