@@ -118,9 +118,8 @@ export const LogsSubTab: React.FC = () => {
   return (
     <div
       id="subtab-content-logs"
-      className="flex flex-col gap-3 h-[calc(88vh-180px)] min-h-[500px] max-h-[720px] animate-in fade-in duration-150"
+      className="flex flex-col gap-3 flex-1 min-h-0 h-full animate-in fade-in duration-150"
     >
-      {/* 1. Header Toolbar & Filters */}
       <div className="bg-[#140703]/90 border border-amber-500/40 rounded-xl p-3 flex flex-col gap-3 shadow-lg shadow-black/60 shrink-0">
         <LogsHeaderToolbar
           filteredCount={filteredLogs.length}
@@ -146,7 +145,6 @@ export const LogsSubTab: React.FC = () => {
         />
       </div>
 
-      {/* 2. Expanded Terminal List Area */}
       <LogsTerminalList
         logs={filteredLogs}
         expandedLogIds={expandedLogIds}

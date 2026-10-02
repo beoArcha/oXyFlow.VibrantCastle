@@ -2,9 +2,11 @@ import React from "react";
 import { ScrollText, ArrowDownCircle, Copy, Check, Download, Trash2 } from "lucide-react";
 import { Button } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
-
 import { LogsHeaderToolbarProps } from "./types";
 
+/**
+ * Header toolbar for the logs terminal offering counters and global batch actions.
+ */
 export const LogsHeaderToolbar: React.FC<LogsHeaderToolbarProps> = ({
   filteredCount,
   totalCount,
@@ -19,7 +21,6 @@ export const LogsHeaderToolbar: React.FC<LogsHeaderToolbarProps> = ({
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
-      {/* Title and live counter badge */}
       <div className="flex items-center gap-2">
         <div className="p-1.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-400">
           <ScrollText size={16} />
@@ -39,20 +40,23 @@ export const LogsHeaderToolbar: React.FC<LogsHeaderToolbarProps> = ({
         </div>
       </div>
 
-      {/* Action buttons */}
       <div className="flex items-center gap-1.5">
-        <button
-          type="button"
+        <Button
+          size="sm"
+          variant={autoScroll ? "primary" : "outline"}
+          icon={
+            <ArrowDownCircle
+              size={13}
+              className={autoScroll ? "text-amber-200" : "text-stone-400"}
+            />
+          }
           onClick={onToggleAutoScroll}
-          className={`flex items-center gap-1 px-2.5 py-1 rounded-lg border text-xs font-mono transition-all cursor-pointer ${autoScroll
-              ? "bg-amber-600/30 border-amber-500 text-amber-200 shadow-sm"
-              : "bg-stone-900/80 border-stone-800 text-stone-400 hover:text-stone-200"
-            }`}
           title={t("debugAutoScrollToggle")}
+          aria-pressed={autoScroll}
+          className="text-xs font-mono"
         >
-          <ArrowDownCircle size={13} className={autoScroll ? "text-amber-400" : "text-stone-500"} />
-          <span>{t("debugAutoScrollLabel")}</span>
-        </button>
+          {t("debugAutoScrollLabel")}
+        </Button>
 
         <Button
           size="sm"

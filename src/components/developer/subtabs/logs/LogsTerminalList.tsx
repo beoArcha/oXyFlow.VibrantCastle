@@ -1,10 +1,10 @@
 import React from "react";
 import { ListFilter, ChevronDown, ChevronRight } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
-import { LogRecord, LogLevel } from "@lib/logger";
-import { LogItemDrawer } from "./LogItemDrawer";
-
+import { LogLevel } from "@lib/logger";
+import { EmptyState } from "@components/ui";
 import { LogsTerminalListProps } from "./types";
+import { LogsItemDrawer } from "./LogsItemDrawer";
 
 const getLevelBadgeClass = (level: LogLevel) => {
   switch (level) {
@@ -22,6 +22,9 @@ const getLevelBadgeClass = (level: LogLevel) => {
   }
 };
 
+/**
+ * Terminal list view displaying individual log entries with expandable detail drawers.
+ */
 export const LogsTerminalList: React.FC<LogsTerminalListProps> = ({
   logs,
   expandedLogIds,
@@ -37,14 +40,14 @@ export const LogsTerminalList: React.FC<LogsTerminalListProps> = ({
       className="flex-1 min-h-0 bg-[#0e0402]/95 border border-amber-500/30 rounded-xl p-3 overflow-y-auto custom-scrollbar flex flex-col gap-1.5 font-mono text-xs shadow-inner shadow-black/80"
     >
       {logs.length === 0 ? (
-        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-stone-500 font-mono gap-2">
-          <ListFilter size={28} className="text-stone-600" />
-          <p className="text-sm font-semibold">{t("debugEmptyLog")}</p>
-          {hasSearchQuery && (
-            <p className="text-xs text-stone-600">
-              {t("debugNoFilterResults")}
-            </p>
-          )}
+        <div className="flex-1 flex items-center justify-center p-4">
+          <EmptyState
+            icon={<ListFilter size={28} className="text-stone-600" />}
+            title={t("debugEmptyLog")}
+            description={hasSearchQuery ? t("debugNoFilterResults") : undefined}
+            compact
+            className="border-stone-800/40 bg-transparent text-stone-400"
+          />
         </div>
       ) : (
         logs.map((entry) => {
@@ -56,31 +59,36 @@ export const LogsTerminalList: React.FC<LogsTerminalListProps> = ({
               key={entry.id}
               className="flex flex-col rounded-lg border border-stone-900 bg-black/40 hover:bg-stone-900/40 transition-colors overflow-hidden"
             >
-              {/* Main line */}
               <div
+                role={hasDetails ? "button" : undefined}
+                tabIndex={hasDetails ? 0 : undefined}
+                aria-expanded={hasDetails ? isExpanded : undefined}
+                aria-label={hasDetails ? (isExpanded ? t("debugCollapseDetails") : t("debugExpandDetails")) : undefined}
                 onClick={() => hasDetails && onToggleExpand(entry.id)}
-                className={`flex items-start gap-2.5 p-2 select-text ${hasDetails ? "cursor-pointer" : ""
-                  }`}
+                onKeyDown={(e) => {
+                  if (hasDetails && (e.key === "Enter" || e.key === " ")) {
+                    e.preventDefault();
+                    onToggleExpand(entry.id);
+                  }
+                }}
+                className={`flex items-start gap-2.5 p-2 select-text ${
+                  hasDetails
+                    ? "cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-amber-500/60"
+                    : ""
+                }`}
               >
-                {/* Expand toggle icon */}
                 {hasDetails ? (
-                  <button
-                    type="button"
-                    className="mt-0.5 text-stone-500 hover:text-amber-400 transition-colors"
-                    title={isExpanded ? t("debugCollapseDetails") : t("debugExpandDetails")}
-                  >
+                  <span className="mt-0.5 text-stone-500 hover:text-amber-400 transition-colors">
                     {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                  </button>
+                  </span>
                 ) : (
                   <span className="w-3.5" />
                 )}
 
-                {/* Timestamp */}
                 <span className="text-stone-500 text-[10px] shrink-0 font-mono pt-0.5">
                   {entry.timeFormatted}
                 </span>
 
-                {/* Level Badge */}
                 <span
                   className={`px-1.5 py-0.2 rounded text-[9px] uppercase font-bold border shrink-0 ${getLevelBadgeClass(
                     entry.level
@@ -89,26 +97,24 @@ export const LogsTerminalList: React.FC<LogsTerminalListProps> = ({
                   {entry.levelName}
                 </span>
 
-                {/* Category Badge */}
                 <span className="px-1.5 py-0.2 rounded text-[9px] font-bold border border-stone-800 bg-stone-900/80 text-stone-300 shrink-0">
                   {entry.category}
                 </span>
 
-                {/* Message */}
                 <span
-                  className={`flex-1 break-words leading-tight ${entry.level >= LogLevel.ERROR
+                  className={`flex-1 break-words leading-tight ${
+                    entry.level >= LogLevel.ERROR
                       ? "text-rose-300 font-semibold"
                       : entry.level === LogLevel.WARN
                         ? "text-amber-200"
                         : entry.level === LogLevel.INFO
                           ? "text-cyan-100"
                           : "text-stone-300"
-                    }`}
+                  }`}
                 >
                   {entry.message}
                 </span>
 
-                {/* Has details pill */}
                 {hasDetails && (
                   <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 shrink-0">
                     {entry.error ? "error" : "context"}
@@ -116,9 +122,8 @@ export const LogsTerminalList: React.FC<LogsTerminalListProps> = ({
                 )}
               </div>
 
-              {/* Expanded Details Drawer */}
               {isExpanded && (
-                <LogItemDrawer context={entry.context} error={entry.error} />
+                <LogsItemDrawer context={entry.context} error={entry.error} />
               )}
             </div>
           );
