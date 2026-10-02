@@ -7,7 +7,7 @@ import { LogsSubTab } from "./subtabs/LogsSubTab";
 import { AtlasMetaSubTab } from "./subtabs/AtlasMetaSubTab";
 import { useI18n } from "@context/I18nContext";
 import { useThrottledLogCount } from "./hooks/useThrottledLogs";
-import { TabItem } from "@components/ui/Tabs";
+import { TabItem } from "@ui";
 
 export type DeveloperSubTabId = "testing" | "debug" | "logs" | "atlas_slicer";
 

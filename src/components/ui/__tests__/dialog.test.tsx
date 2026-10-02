@@ -1,8 +1,7 @@
 import { describe, it, expect, mock, beforeEach, afterEach } from "bun:test";
 import React from "react";
 import { setupDomEnvironment, cleanupDom, renderIntoDom } from "@test-utils";
-import { Dialog } from "../Dialog";
-import { Button } from "../Button";
+import { Dialog, Button } from "../index";
 
 describe("Dialog Primitive", () => {
   beforeEach(() => {

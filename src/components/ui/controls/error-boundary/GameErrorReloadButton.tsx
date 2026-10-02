@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, ButtonProps } from "../Button";
+import { Button, ButtonProps } from "../../primitives/Button";
 import { useGameErrorContext } from "./GameErrorContext";
 
 export interface GameErrorReloadButtonProps extends Partial<ButtonProps> {

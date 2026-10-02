@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import React from "react";
-import { ActionBar } from "../ActionBar";
-import { Button } from "../Button";
+import { ActionBar, Button } from "../index";
 import { renderIntoDom, cleanupDom, setupDomEnvironment } from "@test-utils";
 
 describe("ActionBar Component", () => {

@@ -1,9 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
 import React from "react";
 import { setupDomEnvironment, renderIntoDom } from "@test-utils/domTestUtils";
-import { FileUploadButton } from "../FileUploadButton";
-import { SegmentedControl } from "../SegmentedControl";
-import { ColorPickerInput } from "../ColorPickerInput";
+import { FileUploadButton, SegmentedControl, ColorPickerInput } from "../index";
 
 describe("Studio UI Controls (Design System)", () => {
   beforeEach(() => {

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import React from "react";
-import { GameErrorBoundary } from "../ui/GameErrorBoundary";
+import { GameErrorBoundary } from "../ui";
 import { LoggerManager, LogLevel, ILogTransport, LogRecord } from "@lib/logger";
 import { RingBufferTransport } from "@lib/logger/transports/RingBufferTransport";
 
@@ -154,7 +154,7 @@ describe("GameErrorBoundary Component", () => {
       let capturedContext: any = null;
       const boundary = new GameErrorBoundary({
         children: null,
-        fallback: (ctx) => {
+        fallback: (ctx: any) => {
           capturedContext = ctx;
           return React.createElement("button", { onClick: ctx.onRetry }, "Mini Retry");
         },

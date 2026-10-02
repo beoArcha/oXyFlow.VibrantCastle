@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import React, { useState } from "react";
-import { CompactNumberStepper } from "../CompactNumberStepper";
+import { CompactNumberStepper } from "../index";
 import { renderIntoDom, cleanupDom, setupDomEnvironment } from "@test-utils";
 
 describe("CompactNumberStepper Component", () => {

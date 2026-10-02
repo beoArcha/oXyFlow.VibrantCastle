@@ -1,6 +1,6 @@
 import React from "react";
 import { Copy, Check } from "lucide-react";
-import { Button, ButtonProps } from "../Button";
+import { Button, ButtonProps } from "../../primitives/Button";
 import { useGameErrorContext } from "./GameErrorContext";
 
 export interface GameErrorCopyButtonProps extends Partial<ButtonProps> {

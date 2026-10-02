@@ -1,7 +1,7 @@
 import React from "react";
 import { AlertTriangle } from "lucide-react";
 import { Dialog } from "./Dialog";
-import { Button, ButtonVariant } from "./Button";
+import { Button, ButtonVariant } from "../primitives/Button";
 
 export interface ConfirmDialogProps {
   isOpen: boolean;

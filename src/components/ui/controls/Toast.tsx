@@ -1,9 +1,6 @@
 import React, { useEffect } from "react";
 import { cn } from "@lib/utils";
-import { useToast, UseToastReturn } from "./hooks/useToast";
 
-export type { UseToastReturn };
-export { useToast };
 
 export type ToastVariant = "info" | "success" | "warning" | "danger";
 export type ToastPosition = "top" | "bottom" | "inline";

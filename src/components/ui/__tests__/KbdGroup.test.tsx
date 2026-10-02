@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import React from "react";
 import { setupDomEnvironment, renderIntoDom } from "@test-utils/domTestUtils";
-import { KbdGroup } from "../KbdGroup";
+import { KbdGroup } from "../index";
 
 describe("KbdGroup Component", () => {
   beforeEach(() => {
@@ -56,7 +56,7 @@ describe("KbdGroup Component", () => {
     const { container, unmount } = await renderIntoDom(
       <KbdGroup
         keys={["ArrowUp", "ArrowDown"]}
-        formatLabel={(k) => (k === "ArrowUp" ? "↑" : "↓")}
+        formatLabel={(k: string) => (k === "ArrowUp" ? "↑" : "↓")}
       />
     );
 

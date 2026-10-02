@@ -1,7 +1,7 @@
 import { describe, it, expect, mock, beforeEach, afterEach } from "bun:test";
 import React, { act } from "react";
 import { renderCustomHook, setupDomEnvironment, cleanupDom, renderIntoDom } from "@test-utils";
-import { Toast, useToast } from "../Toast";
+import { Toast, useToast } from "../index";
 
 describe("Toast Primitive & useToast Hook", () => {
   beforeEach(() => {

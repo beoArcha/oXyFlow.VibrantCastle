@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Copy, Check } from "lucide-react";
 import { cn } from "@lib/utils";
-import { Button } from "./Button";
+import { Button } from "../primitives/Button";
 
 export interface CopyableSnippetProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {

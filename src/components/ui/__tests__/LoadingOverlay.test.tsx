@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import React from "react";
-import { LoadingOverlay, IsLoading } from "../LoadingOverlay";
+import { LoadingOverlay, IsLoading } from "../index";
 import { renderIntoDom, cleanupDom, setupDomEnvironment } from "@test-utils";
 
 describe("LoadingOverlay Component", () => {

@@ -6,7 +6,7 @@ import {
   LogRecord,
   getLogger,
 } from "../index";
-import { GameErrorBoundary } from "@components/ui/GameErrorBoundary";
+import { GameErrorBoundary } from "@ui";
 import React from "react";
 
 describe("Logging System Integration & E2E", () => {

@@ -16,7 +16,7 @@ import {
   ErrorCode,
   EngineError,
 } from "@lib/errors";
-import { GameErrorBoundary } from "@components/ui/GameErrorBoundary";
+import { GameErrorBoundary } from "@ui";
 import { LoggerManager, LogLevel, ILogTransport, LogRecord } from "@lib/logger";
 
 describe("React Context Safety & ErrorBoundary", () => {

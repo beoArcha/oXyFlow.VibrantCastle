@@ -1,6 +1,5 @@
 import React from "react";
-import { Tabs, TabItem } from "@components/ui/Tabs";
-import { Badge } from "@components/ui/Badge";
+import { Tabs, TabItem, Badge } from "@ui";
 
 export interface DeveloperTabLayoutProps {
   tabItems: TabItem[];

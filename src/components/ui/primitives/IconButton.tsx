@@ -2,7 +2,7 @@ import React from "react";
 import { Loader2 } from "lucide-react";
 import { cn } from "@lib/utils";
 import { ButtonVariant, buttonVariantStyles } from "./buttonVariants";
-import { Tooltip, TooltipPosition } from "./Tooltip";
+import { Tooltip, TooltipPosition } from "../controls/Tooltip";
 
 export type IconButtonSize = "xs" | "sm" | "md" | "lg";
 

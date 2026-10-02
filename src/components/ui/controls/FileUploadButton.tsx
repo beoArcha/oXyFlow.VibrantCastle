@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Button, ButtonVariant, ButtonSize } from "./Button";
+import { Button, ButtonVariant, ButtonSize } from "../primitives/Button";
 import { Upload } from "lucide-react";
 import { cn } from "@lib/utils";
 

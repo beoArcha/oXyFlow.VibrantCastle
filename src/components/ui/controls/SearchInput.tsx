@@ -2,7 +2,7 @@ import React from "react";
 import { Search, X } from "lucide-react";
 import { cn } from "@lib/utils";
 import { Input, InputProps } from "./Input";
-import { IconButton } from "./IconButton";
+import { IconButton } from "../primitives/IconButton";
 
 export interface SearchInputProps
   extends Omit<InputProps, "onChange" | "value"> {
