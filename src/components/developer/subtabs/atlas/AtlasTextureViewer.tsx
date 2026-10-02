@@ -127,7 +127,7 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
   const [previewChroma, setPreviewChroma] = useState<boolean>(false);
 
   // Hook managing texture image loading and frame slicing resolution
-  const { image, pixelBuffer, resolvedFrames } = useAtlasResolvedFrames({
+  const { image, pixelBuffer, resolvedFrames, isLoading } = useAtlasResolvedFrames({
     imageSrc,
     image: externalImage,
     pixelBuffer: externalPixelBuffer,
@@ -269,6 +269,7 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
             dragStart={dragStart}
             dragCurrent={dragCurrent}
             activeSelection={activeSelection}
+            isLoading={isLoading}
           />
 
           {activeSelection && (

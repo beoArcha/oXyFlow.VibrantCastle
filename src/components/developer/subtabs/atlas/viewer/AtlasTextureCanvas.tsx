@@ -42,6 +42,7 @@ export interface AtlasTextureCanvasProps {
   dragStart: { x: number; y: number } | null;
   dragCurrent: { x: number; y: number } | null;
   activeSelection: { x: number; y: number; width: number; height: number } | null;
+  isLoading?: boolean;
 }
 
 export const AtlasTextureCanvas: React.FC<AtlasTextureCanvasProps> = ({
@@ -50,6 +51,7 @@ export const AtlasTextureCanvas: React.FC<AtlasTextureCanvasProps> = ({
   zoom,
   panOffset,
   isPanning,
+  isLoading = false,
   previewChroma,
   pixelBuffer,
   backgroundConfig,
@@ -353,6 +355,15 @@ export const AtlasTextureCanvas: React.FC<AtlasTextureCanvasProps> = ({
         ref={canvasRef}
         className="rounded border border-amber-900/50 shadow-2xl"
       />
+
+      {isLoading && (
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 bg-black/75 backdrop-blur-xs rounded border border-amber-500/40 animate-in fade-in duration-150">
+          <div className="w-8 h-8 rounded-full border-2 border-amber-500/30 border-t-amber-400 animate-spin" />
+          <span className="text-[11px] font-mono font-semibold text-amber-200 tracking-wider">
+            Loading Texture...
+          </span>
+        </div>
+      )}
     </div>
   );
 };

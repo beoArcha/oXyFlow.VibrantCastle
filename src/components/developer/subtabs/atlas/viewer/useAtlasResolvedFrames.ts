@@ -178,5 +178,6 @@ export function useAtlasResolvedFrames({
     pixelBuffer,
     resolvedFrames,
     sliceDuration,
+    isLoading: fallbackTexture.isLoading && externalImage === undefined,
   };
 }

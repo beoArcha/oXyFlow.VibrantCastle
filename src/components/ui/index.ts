@@ -16,6 +16,7 @@ export * from "./Select";
 export * from "./Switch";
 export * from "./FileUploadButton";
 export * from "./ColorPickerInput";
+export * from "./CompactNumberStepper";
 
 // Navigation
 export * from "./Tabs";

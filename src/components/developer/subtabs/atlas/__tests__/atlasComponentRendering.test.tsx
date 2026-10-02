@@ -279,4 +279,36 @@ describe("Atlas Studio - Component Rendering & UI Integration", () => {
       expect(fResolved.height).toBe(50);
     });
   });
+
+  describe("AtlasTextureCanvas Loading Overlay", () => {
+    it("renders animated loading overlay when isLoading is true", async () => {
+      const { AtlasTextureCanvas } = await import("../viewer/AtlasTextureCanvas");
+      const canvasRef = { current: null };
+
+      const { container } = await renderIntoDom(
+        <AtlasTextureCanvas
+          canvasRef={canvasRef}
+          image={null}
+          zoom={1}
+          panOffset={{ x: 0, y: 0 }}
+          isPanning={false}
+          previewChroma={false}
+          pixelBuffer={null}
+          showGrid={false}
+          showTracks={false}
+          showMargins={false}
+          showFrames={false}
+          resolvedFrames={[]}
+          selectedTrackName={null}
+          selectedFrameIndex={null}
+          dragStart={null}
+          dragCurrent={null}
+          activeSelection={null}
+          isLoading={true}
+        />
+      );
+
+      expect(container.textContent).toContain("Loading Texture...");
+    });
+  });
 });

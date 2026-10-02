@@ -10,7 +10,7 @@ import {
   Clock,
   Info,
 } from "lucide-react";
-import { Button, Badge } from "@components/ui";
+import { Button, Badge, Tooltip, ConfirmDialog } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import {
   AtlasGridConfig,
@@ -206,6 +206,7 @@ export const AtlasAnimationFilmstrip: React.FC<AtlasAnimationFilmstripProps> = (
   onClearTrackFrames,
 }) => {
   const { t } = useI18n();
+  const [isClearConfirmOpen, setIsClearConfirmOpen] = React.useState<boolean>(false);
 
   const fallbackTexture = useAtlasTexture(externalImage !== undefined ? "" : imageSrc);
   const image = externalImage !== undefined ? externalImage : fallbackTexture.image;
@@ -265,41 +266,44 @@ export const AtlasAnimationFilmstrip: React.FC<AtlasAnimationFilmstripProps> = (
 
         {/* Quick Sequence Actions */}
         <div className="flex items-center gap-1">
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={onReverseTrack}
-            disabled={frameItems.length <= 1}
-            title={t("atlasStudioFilmstripReverse")}
-            className="h-6 px-2 text-[10px]"
-          >
-            <ArrowLeftRight size={10} className="mr-1 text-cyan-400" />
-            {t("atlasStudioFilmstripReverse")}
-          </Button>
+          <Tooltip content={t("atlasStudioFilmstripReverse")}>
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={onReverseTrack}
+              disabled={frameItems.length <= 1}
+              className="h-6 px-2 text-[10px]"
+            >
+              <ArrowLeftRight size={10} className="mr-1 text-cyan-400" />
+              {t("atlasStudioFilmstripReverse")}
+            </Button>
+          </Tooltip>
 
-          <Button
-            size="sm"
-            variant={currentTrack.pingPong ? "primary" : "secondary"}
-            onClick={onPingPongTrack}
-            disabled={frameItems.length <= 1}
-            title={t("atlasStudioFilmstripPingPong")}
-            className="h-6 px-2 text-[10px]"
-          >
-            <Repeat size={10} className="mr-1 text-yellow-400" />
-            {t("atlasStudioFilmstripPingPong")}
-          </Button>
+          <Tooltip content={t("atlasStudioFilmstripPingPong")}>
+            <Button
+              size="sm"
+              variant={currentTrack.pingPong ? "primary" : "secondary"}
+              onClick={onPingPongTrack}
+              disabled={frameItems.length <= 1}
+              className="h-6 px-2 text-[10px]"
+            >
+              <Repeat size={10} className="mr-1 text-yellow-400" />
+              {t("atlasStudioFilmstripPingPong")}
+            </Button>
+          </Tooltip>
 
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={onClearTrackFrames}
-            disabled={frameItems.length <= 1}
-            title={t("atlasStudioFilmstripClear")}
-            className="h-6 px-2 text-[10px] text-rose-400 hover:text-rose-200"
-          >
-            <Trash2 size={10} className="mr-1" />
-            {t("atlasStudioFilmstripClear")}
-          </Button>
+          <Tooltip content={t("atlasStudioFilmstripClear")}>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setIsClearConfirmOpen(true)}
+              disabled={frameItems.length === 0}
+              className="h-6 px-2 text-[10px] text-rose-400 hover:text-rose-200"
+            >
+              <Trash2 size={10} className="mr-1" />
+              {t("atlasStudioFilmstripClear")}
+            </Button>
+          </Tooltip>
         </div>
       </div>
 
@@ -332,6 +336,23 @@ export const AtlasAnimationFilmstrip: React.FC<AtlasAnimationFilmstripProps> = (
           ))
         )}
       </div>
+      {/* Confirmation Dialog for Clearing Sequence */}
+      <ConfirmDialog
+        isOpen={isClearConfirmOpen}
+        onClose={() => setIsClearConfirmOpen(false)}
+        onConfirm={() => {
+          setIsClearConfirmOpen(false);
+          onClearTrackFrames();
+        }}
+        title={t("atlasStudioFilmstripClear")}
+        message={
+          t("atlasStudioFilmstripClearConfirm") ||
+          "Are you sure you want to clear all frames from this animation sequence?"
+        }
+        confirmLabel={t("clear") || "Clear"}
+        cancelLabel={t("cancel") || "Cancel"}
+        confirmVariant="danger"
+      />
     </div>
   );
 };

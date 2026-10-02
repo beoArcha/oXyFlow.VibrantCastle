@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Grid,
   Upload,
@@ -7,7 +7,16 @@ import {
   PanelRightClose,
   PanelRightOpen,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, Badge, Button, FileUploadButton } from "@components/ui";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  Badge,
+  Button,
+  FileUploadButton,
+  Tooltip,
+  ConfirmDialog,
+} from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasPresetSelector } from "./AtlasPresetSelector";
 
@@ -31,74 +40,98 @@ export const AtlasHeaderToolbar: React.FC<AtlasHeaderToolbarProps> = ({
   onToggleInspector,
 }) => {
   const { t } = useI18n();
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState<boolean>(false);
 
   return (
-    <Card variant="default">
-      <CardHeader className="flex flex-wrap items-center justify-between gap-3 p-3">
-        <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-2">
-            <CardTitle icon={<Grid className="w-4 h-4 text-amber-400" />}>
-              {t("subtabAtlasSlicer")}
-            </CardTitle>
-            <Badge variant="amber">Studio v3 Pro</Badge>
+    <>
+      <Card variant="default">
+        <CardHeader className="flex flex-wrap items-center justify-between gap-3 p-3">
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-2">
+              <CardTitle icon={<Grid className="w-4 h-4 text-amber-400" />}>
+                {t("subtabAtlasSlicer")}
+              </CardTitle>
+              <Badge variant="amber">Studio v3 Pro</Badge>
+            </div>
+
+            <AtlasPresetSelector
+              selectedPresetId={selectedPresetId}
+              onSelectPreset={onSelectPreset}
+            />
           </div>
 
-          <AtlasPresetSelector
-            selectedPresetId={selectedPresetId}
-            onSelectPreset={onSelectPreset}
-          />
-        </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <FileUploadButton
+              accept="image/png,image/jpeg"
+              onChange={onImageUpload}
+              icon={<Upload size={12} />}
+              label={t("atlasStudioUploadImage")}
+            />
 
-        <div className="flex items-center gap-2 flex-wrap">
-          <FileUploadButton
-            accept="image/png,image/jpeg"
-            onChange={onImageUpload}
-            icon={<Upload size={12} />}
-            label={t("atlasStudioUploadImage")}
-          />
+            <FileUploadButton
+              accept="application/json,.json"
+              onChange={onJsonUpload}
+              icon={<FileJson size={12} />}
+              label={t("atlasStudioLoadJsonFile")}
+            />
 
-          <FileUploadButton
-            accept="application/json,.json"
-            onChange={onJsonUpload}
-            icon={<FileJson size={12} />}
-            label={t("atlasStudioLoadJsonFile")}
-          />
+            <Tooltip content={t("atlasStudioResetDefaults")}>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setIsResetConfirmOpen(true)}
+                className="h-8 px-2.5"
+              >
+                <RotateCcw size={13} />
+              </Button>
+            </Tooltip>
 
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={onResetDefaults}
-            title={t("atlasStudioResetDefaults")}
-            className="h-8 px-2.5"
-          >
-            <RotateCcw size={13} />
-          </Button>
+            <Tooltip
+              content={
+                isInspectorOpen
+                  ? t("atlasStudioCollapseInspector")
+                  : t("atlasStudioExpandInspector")
+              }
+            >
+              <Button
+                size="sm"
+                variant={isInspectorOpen ? "secondary" : "primary"}
+                onClick={onToggleInspector}
+                className="h-8 px-2.5 flex items-center gap-1.5"
+              >
+                {isInspectorOpen ? (
+                  <PanelRightClose size={13} />
+                ) : (
+                  <PanelRightOpen size={13} />
+                )}
+                <span className="hidden sm:inline text-xs font-semibold">
+                  {isInspectorOpen
+                    ? t("atlasStudioCollapseInspector")
+                    : t("atlasStudioExpandInspector")}
+                </span>
+              </Button>
+            </Tooltip>
+          </div>
+        </CardHeader>
+      </Card>
 
-          <Button
-            size="sm"
-            variant={isInspectorOpen ? "secondary" : "primary"}
-            onClick={onToggleInspector}
-            title={
-              isInspectorOpen
-                ? t("atlasStudioCollapseInspector")
-                : t("atlasStudioExpandInspector")
-            }
-            className="h-8 px-2.5 flex items-center gap-1.5"
-          >
-            {isInspectorOpen ? (
-              <PanelRightClose size={13} />
-            ) : (
-              <PanelRightOpen size={13} />
-            )}
-            <span className="hidden sm:inline text-xs font-semibold">
-              {isInspectorOpen
-                ? t("atlasStudioCollapseInspector")
-                : t("atlasStudioExpandInspector")}
-            </span>
-          </Button>
-        </div>
-      </CardHeader>
-    </Card>
+      <ConfirmDialog
+        isOpen={isResetConfirmOpen}
+        onClose={() => setIsResetConfirmOpen(false)}
+        onConfirm={() => {
+          setIsResetConfirmOpen(false);
+          onResetDefaults();
+        }}
+        title={t("atlasStudioResetDefaults")}
+        message={
+          t("atlasStudioResetDefaultsConfirm") ||
+          "Are you sure you want to reset all modifications to defaults? Unsaved slicing and track changes will be lost."
+        }
+        confirmLabel={t("atlasStudioResetConfirm") || "Reset"}
+        cancelLabel={t("cancel") || "Cancel"}
+        confirmVariant="danger"
+      />
+    </>
   );
 };
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid } from "lucide-react";
-import { Input } from "@components/ui";
+import { CompactNumberStepper } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasGridConfig, SlicingMethod } from "../types";
 
@@ -18,10 +18,9 @@ export const AtlasSlicingGridConfigCard: React.FC<AtlasSlicingGridConfigCardProp
   const { t } = useI18n();
 
   const handleFieldChange = (field: keyof AtlasGridConfig, value: number) => {
-    const safeVal = Math.max(0, isNaN(value) ? 0 : value);
     onGridConfigChange({
       ...gridConfig,
-      [field]: safeVal,
+      [field]: value,
     });
   };
 
@@ -35,69 +34,55 @@ export const AtlasSlicingGridConfigCard: React.FC<AtlasSlicingGridConfigCardProp
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {/* Columns */}
-        <Input
-          type="number"
+        <CompactNumberStepper
           min={1}
           value={gridConfig.columns}
-          onChange={(e) => handleFieldChange("columns", parseInt(e.target.value, 10))}
+          onChange={(v) => handleFieldChange("columns", v)}
           label={t("atlasStudioGridCols")}
-          className="font-mono text-xs text-amber-200 py-1 px-2 h-7"
-          containerClassName="gap-0.5"
         />
 
         {/* Rows */}
-        <Input
-          type="number"
+        <CompactNumberStepper
           min={1}
           value={gridConfig.rows}
-          onChange={(e) => handleFieldChange("rows", parseInt(e.target.value, 10))}
+          onChange={(v) => handleFieldChange("rows", v)}
           label={t("atlasStudioGridRows")}
-          className="font-mono text-xs text-amber-200 py-1 px-2 h-7"
-          containerClassName="gap-0.5"
         />
 
         {/* Cell Width */}
-        <Input
-          type="number"
+        <CompactNumberStepper
           min={8}
+          unit="px"
           value={gridConfig.cellWidth}
-          onChange={(e) => handleFieldChange("cellWidth", parseInt(e.target.value, 10))}
+          onChange={(v) => handleFieldChange("cellWidth", v)}
           label={t("atlasStudioGridCellWidth")}
-          className="font-mono text-xs text-amber-200 py-1 px-2 h-7"
-          containerClassName="gap-0.5"
         />
 
         {/* Cell Height */}
-        <Input
-          type="number"
+        <CompactNumberStepper
           min={8}
+          unit="px"
           value={gridConfig.cellHeight}
-          onChange={(e) => handleFieldChange("cellHeight", parseInt(e.target.value, 10))}
+          onChange={(v) => handleFieldChange("cellHeight", v)}
           label={t("atlasStudioGridCellHeight")}
-          className="font-mono text-xs text-amber-200 py-1 px-2 h-7"
-          containerClassName="gap-0.5"
         />
 
         {/* Spacing */}
-        <Input
-          type="number"
+        <CompactNumberStepper
           min={0}
+          unit="px"
           value={gridConfig.spacing}
-          onChange={(e) => handleFieldChange("spacing", parseInt(e.target.value, 10))}
+          onChange={(v) => handleFieldChange("spacing", v)}
           label={t("atlasStudioGridSpacing")}
-          className="font-mono text-xs text-amber-200 py-1 px-2 h-7"
-          containerClassName="gap-0.5"
         />
 
         {/* Safe Margin */}
-        <Input
-          type="number"
+        <CompactNumberStepper
           min={0}
+          unit="px"
           value={gridConfig.safeMargin}
-          onChange={(e) => handleFieldChange("safeMargin", parseInt(e.target.value, 10))}
+          onChange={(v) => handleFieldChange("safeMargin", v)}
           label={t("atlasStudioGridSafeMargin")}
-          className="font-mono text-xs text-amber-200 py-1 px-2 h-7"
-          containerClassName="gap-0.5"
         />
       </div>
     </div>

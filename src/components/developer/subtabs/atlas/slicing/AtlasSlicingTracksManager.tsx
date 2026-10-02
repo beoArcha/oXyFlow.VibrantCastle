@@ -1,6 +1,12 @@
 import React, { useMemo } from "react";
 import { Layers, Plus, Copy, Trash2 } from "lucide-react";
-import { Button, Input } from "@components/ui";
+import {
+  Button,
+  Input,
+  CompactNumberStepper,
+  Tooltip,
+  ConfirmDialog,
+} from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasAnimationTrackDefinition } from "../types";
 
@@ -30,6 +36,8 @@ export const AtlasSlicingTracksManager: React.FC<AtlasSlicingTracksManagerProps>
     () => (activeTrack ? tracks.findIndex((tr) => tr.name === activeTrack.name) : -1),
     [tracks, activeTrack]
   );
+
+  const [trackToDelete, setTrackToDelete] = React.useState<string | null>(null);
 
   const handleAddTrack = () => {
     const nextRow = Math.min(maxRows - 1, tracks.length);
@@ -136,25 +144,28 @@ export const AtlasSlicingTracksManager: React.FC<AtlasSlicingTracksManagerProps>
               {activeTrack.name}
             </span>
             <div className="flex items-center gap-1">
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => handleDuplicateTrack(activeTrack)}
-                title={t("atlasStudioDuplicateTrack")}
-                className="h-6 px-1.5 text-stone-400 hover:text-stone-200"
-              >
-                <Copy size={12} />
-              </Button>
-              {tracks.length > 1 && (
+              <Tooltip content={t("atlasStudioDuplicateTrack")}>
                 <Button
                   size="sm"
                   variant="ghost"
-                  onClick={() => handleRemoveTrack(activeTrack.name)}
-                  title={t("atlasStudioRemoveTrack")}
-                  className="h-6 px-1.5 text-rose-400 hover:text-rose-200 hover:bg-rose-950/40"
+                  onClick={() => handleDuplicateTrack(activeTrack)}
+                  className="h-6 px-1.5 text-stone-400 hover:text-stone-200"
                 >
-                  <Trash2 size={12} />
+                  <Copy size={12} />
                 </Button>
+              </Tooltip>
+
+              {tracks.length > 1 && (
+                <Tooltip content={t("atlasStudioRemoveTrack")}>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setTrackToDelete(activeTrack.name)}
+                    className="h-6 px-1.5 text-rose-400 hover:text-rose-200 hover:bg-rose-950/40"
+                  >
+                    <Trash2 size={12} />
+                  </Button>
+                </Tooltip>
               )}
             </div>
           </div>
@@ -172,55 +183,29 @@ export const AtlasSlicingTracksManager: React.FC<AtlasSlicingTracksManagerProps>
               containerClassName="gap-0.5"
             />
 
-            <Input
-              type="number"
+            <CompactNumberStepper
               value={activeTrack.row}
               min={0}
               max={maxRows - 1}
-              onChange={(e) =>
-                handleUpdateTrack(
-                  activeTrackIndex,
-                  "row",
-                  parseInt(e.target.value, 10) || 0
-                )
-              }
+              onChange={(v) => handleUpdateTrack(activeTrackIndex, "row", v)}
               label={t("atlasStudioTrackRow")}
-              className="font-mono text-xs text-amber-200 py-1 px-2 h-7"
-              containerClassName="gap-0.5"
             />
 
-            <Input
-              type="number"
+            <CompactNumberStepper
               value={activeTrack.frames}
               min={1}
               max={64}
-              onChange={(e) =>
-                handleUpdateTrack(
-                  activeTrackIndex,
-                  "frames",
-                  parseInt(e.target.value, 10) || 1
-                )
-              }
+              onChange={(v) => handleUpdateTrack(activeTrackIndex, "frames", v)}
               label={t("atlasStudioTrackFrames")}
-              className="font-mono text-xs text-amber-200 py-1 px-2 h-7"
-              containerClassName="gap-0.5"
             />
 
-            <Input
-              type="number"
+            <CompactNumberStepper
               value={activeTrack.fps}
               min={1}
               max={60}
-              onChange={(e) =>
-                handleUpdateTrack(
-                  activeTrackIndex,
-                  "fps",
-                  parseInt(e.target.value, 10) || 8
-                )
-              }
+              unit="fps"
+              onChange={(v) => handleUpdateTrack(activeTrackIndex, "fps", v)}
               label={t("atlasStudioTrackFps")}
-              className="font-mono text-xs text-amber-200 py-1 px-2 h-7"
-              containerClassName="gap-0.5"
             />
           </div>
 
@@ -281,6 +266,26 @@ export const AtlasSlicingTracksManager: React.FC<AtlasSlicingTracksManagerProps>
           </div>
         </div>
       )}
+      {/* Confirmation Dialog for Track Deletion */}
+      <ConfirmDialog
+        isOpen={trackToDelete !== null}
+        onClose={() => setTrackToDelete(null)}
+        onConfirm={() => {
+          if (trackToDelete) {
+            handleRemoveTrack(trackToDelete);
+            setTrackToDelete(null);
+          }
+        }}
+        title={t("atlasStudioRemoveTrack")}
+        message={
+          trackToDelete
+            ? `${t("atlasStudioRemoveTrackConfirm") || "Are you sure you want to delete track"} "${trackToDelete}"?`
+            : ""
+        }
+        confirmLabel={t("delete") || "Delete"}
+        cancelLabel={t("cancel") || "Cancel"}
+        confirmVariant="danger"
+      />
     </div>
   );
 };

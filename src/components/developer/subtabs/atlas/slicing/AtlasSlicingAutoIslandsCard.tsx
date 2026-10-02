@@ -1,6 +1,6 @@
 import React from "react";
 import { Sparkles, Check, Save } from "lucide-react";
-import { Button, Badge, Input } from "@components/ui";
+import { Button, Badge, CompactNumberStepper } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { IAtlasSlicingConfig, ResolvedFrameRect } from "../types";
 
@@ -50,26 +50,22 @@ export const AtlasSlicingAutoIslandsCard: React.FC<AtlasSlicingAutoIslandsCardPr
 
       {/* Island Parameters Grid */}
       <div className="grid grid-cols-2 gap-2">
-        <Input
-          type="number"
+        <CompactNumberStepper
           min={2}
           max={500}
+          unit="px"
           value={autoConfig.minIslandPixels ?? 15}
-          onChange={(e) => handleUpdateAutoParam("minIslandPixels", parseInt(e.target.value, 10) || 15)}
+          onChange={(v) => handleUpdateAutoParam("minIslandPixels", v)}
           label={t("atlasStudioIslandMinPixels")}
-          className="font-mono text-xs text-emerald-300 py-1 px-2 h-7"
-          containerClassName="gap-0.5"
         />
 
-        <Input
-          type="number"
+        <CompactNumberStepper
           min={1}
           max={50}
+          unit="px"
           value={autoConfig.clusterYTolerance ?? 10}
-          onChange={(e) => handleUpdateAutoParam("clusterYTolerance", parseInt(e.target.value, 10) || 10)}
+          onChange={(v) => handleUpdateAutoParam("clusterYTolerance", v)}
           label={t("atlasStudioClusterYTolerance")}
-          className="font-mono text-xs text-emerald-300 py-1 px-2 h-7"
-          containerClassName="gap-0.5"
         />
       </div>
 

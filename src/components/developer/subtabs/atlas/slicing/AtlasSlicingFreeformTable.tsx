@@ -1,6 +1,6 @@
 import React from "react";
 import { Plus, Trash2, CheckSquare, Square } from "lucide-react";
-import { Button } from "@components/ui";
+import { Button, Tooltip } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { IFreeformFrameRect } from "@game/engine/meta/types";
 
@@ -162,13 +162,15 @@ export const AtlasSlicingFreeformTable: React.FC<AtlasSlicingFreeformTableProps>
                     {frame.trackName || "—"}
                   </td>
                   <td className="p-1 text-center" onClick={(e) => e.stopPropagation()}>
-                    <button
-                      type="button"
-                      onClick={() => onDeleteFrame(frameId)}
-                      className="text-stone-500 hover:text-rose-400 cursor-pointer"
-                    >
-                      <Trash2 size={12} />
-                    </button>
+                    <Tooltip content={t("delete") || "Delete"}>
+                      <button
+                        type="button"
+                        onClick={() => onDeleteFrame(frameId)}
+                        className="text-stone-500 hover:text-rose-400 cursor-pointer p-0.5"
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </Tooltip>
                   </td>
                 </tr>
               );
