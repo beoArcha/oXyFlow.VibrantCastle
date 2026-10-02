@@ -9,3 +9,4 @@ export * from "./MetricTile";
 export * from "./EmptyState";
 export * from "./Alert";
 export * from "./ProgressBar";
+export * from "./ItemIcon";

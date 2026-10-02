@@ -19,3 +19,4 @@ export * from "./Tooltip";
 export * from "./Toast";
 export * from "./GameErrorBoundary";
 export * from "./PlaybackSpeedScaleControl";
+export * from "./ItemSlot";
