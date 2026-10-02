@@ -73,6 +73,36 @@ export function setupDomEnvironment() {
       return origGetContext ? origGetContext.apply(this, [type, ...args]) : null;
     };
   }
+  if (win.HTMLImageElement) {
+    const origSrcDescriptor = Object.getOwnPropertyDescriptor(win.HTMLImageElement.prototype, "src");
+    Object.defineProperty(win.HTMLImageElement.prototype, "src", {
+      get() {
+        return origSrcDescriptor?.get ? origSrcDescriptor.get.call(this) : (this as any)._src;
+      },
+      set(value: string) {
+        if (origSrcDescriptor?.set) {
+          origSrcDescriptor.set.call(this, value);
+        } else {
+          (this as any)._src = value;
+        }
+        try {
+          Object.defineProperty(this, "complete", { value: true, configurable: true });
+          Object.defineProperty(this, "naturalWidth", { value: 100, configurable: true });
+          Object.defineProperty(this, "naturalHeight", { value: 100, configurable: true });
+        } catch {
+          // ignore if already defined
+        }
+        setTimeout(() => {
+          if (typeof (this as any).onload === "function") {
+            (this as any).onload(new (win as any).Event("load"));
+          }
+          (this as any).dispatchEvent(new (win as any).Event("load"));
+        }, 0);
+      },
+      configurable: true,
+      enumerable: true,
+    });
+  }
   return win;
 }
 

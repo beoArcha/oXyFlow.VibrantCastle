@@ -1,4 +1,5 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect, spyOn } from "bun:test";
+import { assetLoader } from "@game/engine/assetLoader";
 import {
   resolveCharacterPortraitVM,
   resolveCharacterSpriteVM,
@@ -131,7 +132,10 @@ describe("characterAdapter - Engine to UI Data Transformation", () => {
     });
 
     it("preloads character textures asynchronously without error", async () => {
+      const preloadSpy = spyOn(assetLoader, "preloadCharacter").mockResolvedValue(undefined);
       await expect(preloadCharacterAssets("valen", "high", 1)).resolves.toBeUndefined();
+      expect(preloadSpy).toHaveBeenCalledWith("valen", "high", 1);
+      preloadSpy.mockRestore();
     });
   });
 });
