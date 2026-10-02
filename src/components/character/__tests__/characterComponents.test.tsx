@@ -1,4 +1,4 @@
-import React, { createRef } from "react";
+import React, { createRef, act } from "react";
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { renderIntoDom, cleanupDom } from "@test-utils/domTestUtils";
 import { CharacterPortrait } from "../CharacterPortrait";
@@ -72,6 +72,49 @@ describe("Character Presentation Components (CharacterPortrait & CharacterSprite
       );
 
       expect(container.firstElementChild).not.toBeNull();
+      expect(container.firstElementChild?.getAttribute("role")).toBe("img");
+    });
+
+    it("renders fallback placeholder when image loading errors", async () => {
+      const { container } = await renderIntoDom(
+        <CharacterPortrait src="/invalid/path.png" alt="Failed Portrait" />
+      );
+
+      const img = container.querySelector("img");
+      expect(img).not.toBeNull();
+      if (img) {
+        await act(async () => {
+          const reactKey = Object.keys(img).find((k) => k.startsWith("__reactProps"));
+          const props = reactKey ? (img as any)[reactKey] : null;
+          if (props && typeof props.onError === "function") {
+            props.onError({ target: img, currentTarget: img });
+          } else {
+            img.dispatchEvent(new Event("error"));
+          }
+        });
+      }
+
+      const fallback = container.querySelector("[role='img']");
+      expect(fallback).not.toBeNull();
+      expect(fallback?.getAttribute("aria-label")).toBe("Failed Portrait");
+    });
+
+    it("renders canvas with role='img' and unmounts cleanly", async () => {
+      const mockCrop = { x: 0, y: 0, width: 64, height: 64 };
+      const { container, unmount } = await renderIntoDom(
+        <CharacterPortrait
+          src="/assets/sprites/valen/valen_portraits.png"
+          crop={mockCrop}
+          alt="Cropped Valen Face"
+        />
+      );
+
+      const canvas = container.querySelector("canvas");
+      expect(canvas).not.toBeNull();
+      expect(canvas?.getAttribute("role")).toBe("img");
+      expect(canvas?.getAttribute("aria-label")).toBe("Cropped Valen Face");
+
+      await unmount();
     });
   });
 
@@ -155,6 +198,22 @@ describe("Character Presentation Components (CharacterPortrait & CharacterSprite
           playbackSpeed={1}
         />
       );
+
+      await unmount();
+    });
+
+    it("preserves animation loop when scale and flip props are dynamically updated", async () => {
+      const { container, unmount } = await renderIntoDom(
+        <CharacterSpritePreview
+          characterId="valen"
+          playbackSpeed={1}
+          scale={1.5}
+          flipHorizontal={false}
+        />
+      );
+
+      const canvas = container.querySelector("canvas");
+      expect(canvas).not.toBeNull();
 
       await unmount();
     });

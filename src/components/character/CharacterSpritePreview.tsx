@@ -8,30 +8,32 @@ import { useCanvasDpr } from "./useCanvasDpr";
 
 export interface CharacterSpritePreviewProps {
   /** Optional explicit texture for pure presentation primitive mode */
-  texture?: HTMLImageElement | null;
+  readonly texture?: HTMLImageElement | null;
   /** Optional explicit frame slice for pure presentation primitive mode */
-  frame?: SpriteFrame | null;
+  readonly frame?: SpriteFrame | null;
   /** Optional character ID; if omitted, resolved from CharacterContext */
-  characterId?: string;
+  readonly characterId?: string;
   /** Graphic quality tier */
-  quality?: AssetQuality;
+  readonly quality?: AssetQuality;
   /** Active animation state */
-  state?: AnimationName;
+  readonly state?: AnimationName;
   /** Progression tier */
-  tier?: CharacterProgressionTier;
+  readonly tier?: CharacterProgressionTier;
   /** Playback speed factor. If 0, animation loop is halted. */
-  playbackSpeed?: number;
+  readonly playbackSpeed?: number;
   /** Visual scale */
-  scale?: number;
+  readonly scale?: number;
   /** Optional flip horizontally */
-  flipHorizontal?: boolean;
+  readonly flipHorizontal?: boolean;
   /** Optional custom canvas background color/gradient */
-  backgroundGradient?: [string, string];
+  readonly backgroundGradient?: [string, string];
   /** Optional ground accent line color */
-  accentColor?: string;
-  className?: string;
-  ariaLabel?: string;
+  readonly accentColor?: string;
+  readonly className?: string;
+  readonly ariaLabel?: string;
 }
+
+const DEFAULT_BG_GRADIENT: readonly [string, string] = ["#1a0802", "#080201"];
 
 /**
  * Generic Character Sprite Preview Component
@@ -41,6 +43,7 @@ export interface CharacterSpritePreviewProps {
  * - Zero per-frame React re-renders: animation loop executes directly in rAF on Canvas 2D.
  * - Decoupled rendering: blit and anti-clipping math isolated in renderSpritePreviewFrame.
  * - Dynamic buffer: adapted to container dimensions and DPR via useCanvasDpr.
+ * - Memory & loop safety: cancellation of rAF on unmount, seamless updates via paramsRef.
  */
 export const CharacterSpritePreview = React.memo(
   React.forwardRef<HTMLDivElement, CharacterSpritePreviewProps>(
@@ -73,7 +76,7 @@ export const CharacterSpritePreview = React.memo(
       );
 
       const accentColor = explicitAccent || context.accentColor || "#d97706";
-      const bgGrad: [string, string] = backgroundGradient || ["#1a0802", "#080201"];
+      const bgGrad = backgroundGradient ?? (DEFAULT_BG_GRADIENT as [string, string]);
 
       const containerRef = useRef<HTMLDivElement | null>(null);
       const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -92,18 +95,17 @@ export const CharacterSpritePreview = React.memo(
         spriteData,
       });
 
-      useEffect(() => {
-        paramsRef.current = {
-          scale,
-          flipHorizontal,
-          bgGrad,
-          accentColor,
-          playbackSpeed,
-          explicitTexture,
-          explicitFrame,
-          spriteData,
-        };
-      });
+      // Synchronize immediately for frame-to-frame continuity
+      paramsRef.current = {
+        scale,
+        flipHorizontal,
+        bgGrad,
+        accentColor,
+        playbackSpeed,
+        explicitTexture,
+        explicitFrame,
+        spriteData,
+      };
 
       const drawStaticFrame = useCallback(() => {
         const canvas = canvasRef.current;
@@ -139,7 +141,24 @@ export const CharacterSpritePreview = React.memo(
       // Dynamic DPR buffer adaptation
       useCanvasDpr(canvasRef, containerRef, drawStaticFrame);
 
-      // Canvas Rendering & Animation Loop (Zero React setState calls)
+      // Static redraw effect (when paused or explicit frame provided)
+      useEffect(() => {
+        if (explicitFrame !== undefined || playbackSpeed === 0) {
+          drawStaticFrame();
+        }
+      }, [
+        explicitFrame,
+        playbackSpeed,
+        scale,
+        flipHorizontal,
+        bgGrad,
+        accentColor,
+        spriteData.frame,
+        spriteData.texture,
+        drawStaticFrame,
+      ]);
+
+      // Active animation rAF loop (executes only when playing)
       useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -148,11 +167,9 @@ export const CharacterSpritePreview = React.memo(
 
         // Static mode: explicit frame passed or animation halted
         if (explicitFrame !== undefined || playbackSpeed === 0) {
-          drawStaticFrame();
           return;
         }
 
-        // Active animation rAF loop
         let animId: number;
         let continuousTicks = 0;
         let lastTime = performance.now();
@@ -194,13 +211,11 @@ export const CharacterSpritePreview = React.memo(
       }, [
         explicitTexture,
         explicitFrame,
-        playbackSpeed,
-        scale,
-        flipHorizontal,
-        bgGrad,
-        accentColor,
-        spriteData,
-        drawStaticFrame,
+        playbackSpeed === 0,
+        characterId,
+        state,
+        tier,
+        spriteData.texture,
       ]);
 
       return (
@@ -223,4 +238,3 @@ export const CharacterSpritePreview = React.memo(
 CharacterSpritePreview.displayName = "CharacterSpritePreview";
 
 export default CharacterSpritePreview;
-

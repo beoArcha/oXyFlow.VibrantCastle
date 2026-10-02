@@ -59,8 +59,8 @@ describe("Studio UI Controls (Design System)", () => {
     });
 
     it("calls onFileSelect and onChange when a file is selected", async () => {
-      const onFileSelect = mock((_file: File) => {});
-      const onChange = mock((_e: React.ChangeEvent<HTMLInputElement>) => {});
+      const onFileSelect = mock((_file: File) => { });
+      const onChange = mock((_e: React.ChangeEvent<HTMLInputElement>) => { });
 
       const { container, unmount } = await renderIntoDom(
         <FileUploadButton
@@ -124,7 +124,7 @@ describe("Studio UI Controls (Design System)", () => {
     ];
 
     it("renders options with ARIA radiogroup semantics and highlights selected option", async () => {
-      const onChange = mock((_val: string) => {});
+      const onChange = mock((_val: string) => { });
 
       const { container, unmount } = await renderIntoDom(
         <SegmentedControl
@@ -148,7 +148,7 @@ describe("Studio UI Controls (Design System)", () => {
     });
 
     it("calls onChange when an unselected option is clicked", async () => {
-      const onChange = mock((_val: string) => {});
+      const onChange = mock((_val: string) => { });
 
       const { container, unmount } = await renderIntoDom(
         <SegmentedControl
@@ -172,7 +172,7 @@ describe("Studio UI Controls (Design System)", () => {
         { value: 2, label: "2x" },
         { value: 4, label: "4x" },
       ];
-      const onChange = mock((_val: number) => {});
+      const onChange = mock((_val: number) => { });
 
       const { container, unmount } = await renderIntoDom(
         <SegmentedControl<number>
@@ -196,7 +196,7 @@ describe("Studio UI Controls (Design System)", () => {
         <SegmentedControl
           options={options}
           value="by_count"
-          onChange={() => {}}
+          onChange={() => { }}
           gridCols={3}
           fullWidth
         />
@@ -209,7 +209,7 @@ describe("Studio UI Controls (Design System)", () => {
     });
 
     it("does not fire onChange for disabled options or control", async () => {
-      const onChange = mock((_val: string) => {});
+      const onChange = mock((_val: string) => { });
       const optionsWithDisabled = [
         { value: "a", label: "A" },
         { value: "b", label: "B", disabled: true },
@@ -237,7 +237,7 @@ describe("Studio UI Controls (Design System)", () => {
       const { container, unmount } = await renderIntoDom(
         <ColorPickerInput
           value="#ff00aa"
-          onChange={() => {}}
+          onChange={() => { }}
         />
       );
 
@@ -256,7 +256,7 @@ describe("Studio UI Controls (Design System)", () => {
     });
 
     it("auto-prepends # when typing hex code without hash", async () => {
-      const onChange = mock((_hex: string) => {});
+      const onChange = mock((_hex: string) => { });
 
       const { container, changeInput, unmount } = await renderIntoDom(
         <ColorPickerInput
@@ -275,7 +275,7 @@ describe("Studio UI Controls (Design System)", () => {
     });
 
     it("calls onChange when native color input changes", async () => {
-      const onChange = mock((_hex: string) => {});
+      const onChange = mock((_hex: string) => { });
 
       const { container, changeInput, unmount } = await renderIntoDom(
         <ColorPickerInput
@@ -297,7 +297,7 @@ describe("Studio UI Controls (Design System)", () => {
       const { container, unmount } = await renderIntoDom(
         <ColorPickerInput
           value="#123456"
-          onChange={() => {}}
+          onChange={() => { }}
           disabled
         />
       );
@@ -314,8 +314,8 @@ describe("Studio UI Controls (Design System)", () => {
 
   describe("PlaybackSpeedScaleControl", () => {
     it("renders speed and scale segments with labels and responds to clicks", async () => {
-      const onSpeedChange = mock((_s: number) => {});
-      const onScaleChange = mock((_sc: number) => {});
+      const onSpeedChange = mock((_s: number) => { });
+      const onScaleChange = mock((_sc: number) => { });
 
       const { container, click, unmount } = await renderIntoDom(
         <PlaybackSpeedScaleControl
@@ -354,4 +354,3 @@ describe("Studio UI Controls (Design System)", () => {
     });
   });
 });
-
