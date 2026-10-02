@@ -1,31 +1,36 @@
 import { useCallback, useSyncExternalStore } from "react";
-import { PlayerId, InputMap } from "@game/types";
-import gameInputs from "@game/loop/input";
+import { PlayerId } from "@game/types";
+import {
+  getKeyboardBindingsVM,
+  subscribeToKeyboardBindings,
+  resetKeyboardBindings,
+  KeyboardBindingsVM,
+} from "@components/adapters";
 
 export interface UseKeyboardResult {
-  bindings: Record<keyof InputMap, string[]>;
+  bindings: KeyboardBindingsVM;
   resetDefaults: () => void;
 }
 
 /**
  * Custom React hook for inspecting and resetting player keyboard bindings.
- * Subscribes reactively to the GameInputEngine via useSyncExternalStore.
+ * Subscribes reactively to keyboard bindings via controlsAdapter and useSyncExternalStore.
  *
  * @param selectedPlayer Player whose bindings are being inspected/reset
  */
 export function useKeyboard(selectedPlayer: PlayerId): UseKeyboardResult {
   const subscribe = useCallback((onStoreChange: () => void) => {
-    return gameInputs.onBindingsChange(onStoreChange);
+    return subscribeToKeyboardBindings(onStoreChange);
   }, []);
 
   const getSnapshot = useCallback(() => {
-    return gameInputs.getKeyboardBindings(selectedPlayer);
+    return getKeyboardBindingsVM(selectedPlayer);
   }, [selectedPlayer]);
 
   const bindings = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
   const resetDefaults = useCallback(() => {
-    gameInputs.resetToDefaults(selectedPlayer);
+    resetKeyboardBindings(selectedPlayer);
   }, [selectedPlayer]);
 
   return {

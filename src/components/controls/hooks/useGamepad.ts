@@ -1,97 +1,82 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { PlayerId, GamepadBindingMap } from "@game/types";
-import gameInputs, { ConnectedGamepadInfo } from "@game/loop/input";
+import {
+  ConnectedGamepadVM,
+  GamepadBindingsVM,
+  getConnectedGamepadsVM,
+  getGamepadBindingsVM,
+  subscribeToGamepadConnection,
+  subscribeToGamepadBindings,
+  rebindGamepadAction,
+  resetGamepadBindings,
+  startGamepadButtonCapture,
+} from "@components/adapters";
 
 export interface UseGamepadResult {
-  connectedPads: ConnectedGamepadInfo[];
-  currentPad: ConnectedGamepadInfo | undefined;
-  bindings: GamepadBindingMap;
+  connectedPads: ConnectedGamepadVM[];
+  currentPad: ConnectedGamepadVM | undefined;
+  bindings: GamepadBindingsVM;
   listeningAction: keyof GamepadBindingMap | null;
   setListeningAction: React.Dispatch<React.SetStateAction<keyof GamepadBindingMap | null>>;
   lastPressedButton: number | null;
   resetDefaults: () => void;
 }
 
-function getConnectedPadInfos(): ConnectedGamepadInfo[] {
-  return gameInputs.getConnectedGamepads().map((p) => ({
-    index: p.index,
-    id: p.id,
-    buttonsCount: p.buttons.length,
-    axesCount: p.axes.length,
-  }));
-}
-
 /**
  * Custom React hook for gamepad controller management, connection tracking, and rebinding.
- * Uses event-driven connection updates and on-demand polling only during remapping.
+ * Delegates engine synchronization and hardware polling to controlsAdapter.
  */
 export function useGamepad(selectedPlayer: PlayerId): UseGamepadResult {
-  const [connectedPads, setConnectedPads] = useState<ConnectedGamepadInfo[]>(getConnectedPadInfos);
-  const [bindings, setBindings] = useState<GamepadBindingMap>(() => ({
-    ...gameInputs.getGamepadBindings(selectedPlayer),
-  }));
+  const [connectedPads, setConnectedPads] = useState<ConnectedGamepadVM[]>(getConnectedGamepadsVM);
+  const [bindings, setBindings] = useState<GamepadBindingsVM>(() =>
+    getGamepadBindingsVM(selectedPlayer)
+  );
   const [listeningAction, setListeningAction] = useState<keyof GamepadBindingMap | null>(null);
   const [lastPressedButton, setLastPressedButton] = useState<number | null>(null);
 
   const activePadIndex = selectedPlayer === PlayerId.Player1 ? 0 : 1;
   const currentPad = connectedPads.find((p) => p.index === activePadIndex);
 
-  // Event-driven gamepad connection updates and disconnect safeguard
+  // Synchronize connected gamepads list and handle disconnect safety
   useEffect(() => {
-    setConnectedPads(getConnectedPadInfos());
-    const unsub = gameInputs.onGamepadChange((connected, pad) => {
-      setConnectedPads(getConnectedPadInfos());
-      // Automatically cancel remapping if active gamepad was disconnected
+    setConnectedPads(getConnectedGamepadsVM());
+    return subscribeToGamepadConnection((connected, pad) => {
+      setConnectedPads(getConnectedGamepadsVM());
       if (!connected && pad.index === activePadIndex) {
         setListeningAction(null);
       }
     });
-    return unsub;
   }, [activePadIndex]);
 
-  // Synchronize bindings when player changes or when bindings are updated externally
+  // Synchronize bindings when player changes or when bindings update externally
   useEffect(() => {
-    setBindings({ ...gameInputs.getGamepadBindings(selectedPlayer) });
+    setBindings(getGamepadBindingsVM(selectedPlayer));
     setListeningAction(null);
 
-    const unsub = gameInputs.onBindingsChange(() => {
-      setBindings({ ...gameInputs.getGamepadBindings(selectedPlayer) });
+    return subscribeToGamepadBindings(() => {
+      setBindings(getGamepadBindingsVM(selectedPlayer));
     });
-    return unsub;
   }, [selectedPlayer]);
 
-  // Poll button presses ONLY when listening for a rebind action (50ms interval balances latency and CPU)
+  // Capture button press during active rebind listening
   useEffect(() => {
     if (!listeningAction) return;
 
-    const interval = setInterval(() => {
-      const rawPads = gameInputs.getConnectedGamepads();
-      const pad = rawPads[activePadIndex];
-      // If controller disconnected during listening, cancel listening
-      if (!pad) {
+    return startGamepadButtonCapture(
+      activePadIndex,
+      (buttonIndex) => {
+        setLastPressedButton(buttonIndex);
+        rebindGamepadAction(selectedPlayer, listeningAction, buttonIndex);
         setListeningAction(null);
-        return;
+      },
+      () => {
+        setListeningAction(null);
       }
-
-      for (let i = 0; i < pad.buttons.length; i++) {
-        const btn = pad.buttons[i];
-        if (!btn) continue;
-
-        // Triggers and standard buttons: register when pressed or analog value crosses threshold
-        if (btn.pressed || btn.value > 0.5) {
-          setLastPressedButton(i);
-          gameInputs.setGamepadBinding(selectedPlayer, listeningAction, i);
-          setListeningAction(null);
-          break;
-        }
-      }
-    }, 50);
-
-    return () => clearInterval(interval);
+    );
   }, [listeningAction, activePadIndex, selectedPlayer]);
 
   const resetDefaults = useCallback(() => {
-    gameInputs.resetToDefaults(selectedPlayer);
+    resetGamepadBindings(selectedPlayer);
     setListeningAction(null);
   }, [selectedPlayer]);
 

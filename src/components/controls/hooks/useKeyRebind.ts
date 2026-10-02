@@ -1,7 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { useI18n } from "@context/I18nContext";
-import { gameInputs } from "@game/loop/input";
 import { PlayerId, InputMap } from "@game/types";
+import {
+  rebindKeyboardAction,
+  isReservedSystemKey,
+  isRebindCancelKey,
+} from "@components/adapters";
 
 export interface KeyBindingTarget {
   player: PlayerId;
@@ -21,39 +25,8 @@ export interface UseKeyRebindResult {
 }
 
 /**
- * System and navigation keys reserved from game action remapping.
- */
-const RESERVED_KEYS = new Set([
-  "Tab",
-  "CapsLock",
-  "Meta",
-  "MetaLeft",
-  "MetaRight",
-  "ContextMenu",
-  "F1",
-  "F2",
-  "F3",
-  "F4",
-  "F5",
-  "F6",
-  "F7",
-  "F8",
-  "F9",
-  "F10",
-  "F11",
-  "F12",
-]);
-
-/**
  * Custom React hook managing keyboard action rebinding state and event capture.
- * Safely registers key bindings in the game input pipeline and triggers feedback messages.
- *
- * @example
- * ```tsx
- * const { bindingTarget, isRebinding, startRebind, cancelRebind } = useKeyRebind({
- *   onSuccess: (msg) => showToast(msg),
- * });
- * ```
+ * Delegates key normalization and engine registration to controlsAdapter.
  */
 export function useKeyRebind(options: UseKeyRebindOptions = {}): UseKeyRebindResult {
   const { onSuccess } = options;
@@ -77,36 +50,32 @@ export function useKeyRebind(options: UseKeyRebindOptions = {}): UseKeyRebindRes
       e.preventDefault();
       e.stopPropagation();
 
-      // Escape key cancels rebinding dialog without modifying bindings
-      if (e.key === "Escape" || e.code === "Escape") {
+      if (isRebindCancelKey(e.code, e.key)) {
         setBindingTarget(null);
         return;
       }
 
-      // Ignore reserved navigation and system function keys
-      if (RESERVED_KEYS.has(e.code) || RESERVED_KEYS.has(e.key)) {
+      if (isReservedSystemKey(e.code, e.key)) {
         return;
       }
 
-      const keyCode = e.code;
-      const keyName = e.key;
-
-      // Normalizes physical scan code (e.g. "KeyW") alongside semantic character representations ("w", "W")
-      // to guarantee deterministic input matching across diverse keyboard layouts and Shift states.
-      const keysToBind = [keyCode, keyName, keyName.toLowerCase()].filter(
-        (v, i, arr) => v && arr.indexOf(v) === i
+      const bound = rebindKeyboardAction(
+        bindingTarget.player,
+        bindingTarget.action,
+        e.code,
+        e.key
       );
 
-      gameInputs.setKeyboardBinding(bindingTarget.player, bindingTarget.action, keysToBind);
+      if (bound) {
+        const keyDisplayName = e.key === " " ? t("spaceKey") : e.key;
+        const feedbackMessage = t("rebindSuccess", {
+          key: keyDisplayName,
+          action: bindingTarget.label,
+        });
 
-      const keyDisplayName = keyName === " " ? t("spaceKey") : keyName;
-      const feedbackMessage = t("rebindSuccess", {
-        key: keyDisplayName,
-        action: bindingTarget.label,
-      });
-
-      onSuccess?.(feedbackMessage);
-      setBindingTarget(null);
+        onSuccess?.(feedbackMessage);
+        setBindingTarget(null);
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown, true);
