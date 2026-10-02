@@ -1,51 +1,70 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { DebugTelemetryCard } from "./debug/DebugTelemetryCard";
-import { DebugPlayerInspectorCard } from "./debug/DebugPlayerInspectorCard";
-import { DebugEntityTableCard } from "./debug/DebugEntityTableCard";
-import { DebugCollisionsCard } from "./debug/DebugCollisionsCard";
-import { DebugStateDumpCard } from "./debug/DebugStateDumpCard";
+import React, { useCallback, useMemo } from "react";
+import {
+  DebugTelemetryCard,
+  DebugPlayerInspectorCard,
+  DebugTogglesCard,
+  DebugEntityTableCard,
+  DebugStateDumpCard,
+  DebugGameSnapshot,
+  useDebugTelemetry,
+  useDebugManagerState,
+} from "./debug";
 import { useGameSession, useSettings } from "@context/GameContext";
 import gameEngine from "@game/loop/engine";
-import fpsManager from "@game/engine/fpsManager";
 import { debugManager } from "@game/debug/debugManager";
-import { PlayerId } from "@game/types";
+import { PlayerId, Enemy } from "@game/types";
 
 export const DebugSubTab: React.FC = () => {
   const { p1, p2, currentLocationId } = useGameSession();
   const { isTwoPlayer } = useSettings();
 
-  // Reactive debug manager state
-  const [debugState, setDebugState] = useState(debugManager.state);
-  useEffect(() => {
-    return debugManager.subscribe(() => {
-      setDebugState({ ...debugManager.state });
-    });
+  const debugState = useDebugManagerState();
+  const telemetry = useDebugTelemetry(250);
+
+  const handleToggleHitboxes = useCallback(() => {
+    debugManager.toggleHitboxes();
   }, []);
 
-  // Periodic telemetry tick for live stats
-  const [tick, setTick] = useState<number>(0);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTick((t) => (t + 1) % 10000);
-    }, 250);
-    return () => clearInterval(interval);
+  const handleToggleProfiler = useCallback(() => {
+    debugManager.toggleProfiler();
   }, []);
 
-  // Dynamic telemetry calculations
-  const measuredFps = fpsManager.getMeasuredFps();
-  const targetFps = fpsManager.getTargetFps();
-  const frameTimeMs = measuredFps > 0 ? 1000 / measuredFps : 16.6;
-  const particleCount = gameEngine.particleSystem.getParticles().length;
-  const projectileCount = gameEngine.projectiles.length;
-  const enemies = gameEngine.enemies;
-  const entityCount = gameEngine.entities.length;
-  const cameraX = gameEngine.cameraManager.x;
-  const cameraY = gameEngine.cameraManager.y;
-  const levelWidth = gameEngine.levelWidth;
-  const levelHeight = gameEngine.levelHeight;
+  const handleToggleClickToTeleport = useCallback(() => {
+    debugManager.toggleClickToTeleport();
+  }, []);
 
-  // Snapshot JSON state
-  const stateSnapshot = useMemo(() => {
+  const handleToggleFreezeAI = useCallback(() => {
+    debugManager.toggleFreezeAI();
+  }, []);
+
+  const handleTeleportToEnemy = useCallback((enemy: Enemy) => {
+    const controller = gameEngine.debugController;
+    if (controller) {
+      controller.teleportPlayer(PlayerId.Player1, Math.round(enemy.x), Math.round(enemy.y - 40));
+    } else {
+      gameEngine.teleportPlayer(PlayerId.Player1, Math.round(enemy.x), Math.round(enemy.y - 40));
+    }
+  }, []);
+
+  const handleDamageEnemy = useCallback((enemyId: string, amount: number) => {
+    const controller = gameEngine.debugController;
+    if (controller) {
+      controller.damageEnemy(enemyId, amount);
+    } else {
+      gameEngine.damageEnemy(enemyId, amount);
+    }
+  }, []);
+
+  const handleRemoveEnemy = useCallback((enemyId: string) => {
+    const controller = gameEngine.debugController;
+    if (controller) {
+      controller.removeEnemy(enemyId);
+    } else {
+      gameEngine.removeEnemy(enemyId);
+    }
+  }, []);
+
+  const stateSnapshot: DebugGameSnapshot = useMemo(() => {
     return {
       currentLocationId,
       timeScale: debugState.timeScale,
@@ -57,78 +76,66 @@ export const DebugSubTab: React.FC = () => {
       showHitboxes: debugState.showHitboxes,
       p1: p1
         ? {
-          x: Math.round(p1.x),
-          y: Math.round(p1.y),
-          health: p1.health,
-          mana: p1.mana,
-          stamina: p1.stamina,
-          isGrounded: p1.isGrounded,
-          facingLeft: p1.facingLeft,
-          activeAnimation: p1.animationState,
-        }
+            x: Math.round(p1.x),
+            y: Math.round(p1.y),
+            health: p1.health,
+            mana: p1.mana,
+            stamina: p1.stamina,
+            isGrounded: p1.isGrounded,
+            facingLeft: p1.facingLeft,
+            activeAnimation: p1.animationState,
+          }
         : null,
-      enemiesCount: enemies.length,
-      particlesCount: particleCount,
-      projectilesCount: projectileCount,
+      enemiesCount: telemetry.enemies.length,
+      particlesCount: telemetry.particleCount,
+      projectilesCount: telemetry.projectileCount,
     };
   }, [
     currentLocationId,
     debugState,
     p1,
-    enemies.length,
-    particleCount,
-    projectileCount,
-    tick,
+    telemetry.enemies.length,
+    telemetry.particleCount,
+    telemetry.projectileCount,
   ]);
 
   return (
     <div id="subtab-content-debug" className="flex flex-col gap-4 animate-in fade-in duration-150">
-      {/* 1. Real-time Telemetry Card */}
       <DebugTelemetryCard
-        measuredFps={measuredFps}
-        targetFps={targetFps}
-        frameTimeMs={frameTimeMs}
-        particleCount={particleCount}
-        projectileCount={projectileCount}
-        enemyCount={enemies.length}
-        entityCount={entityCount}
-        cameraX={cameraX}
-        cameraY={cameraY}
-        levelWidth={levelWidth}
-        levelHeight={levelHeight}
+        measuredFps={telemetry.measuredFps}
+        targetFps={telemetry.targetFps}
+        frameTimeMs={telemetry.frameTimeMs}
+        particleCount={telemetry.particleCount}
+        projectileCount={telemetry.projectileCount}
+        enemyCount={telemetry.enemies.length}
+        entityCount={telemetry.entityCount}
+        cameraX={telemetry.cameraX}
+        cameraY={telemetry.cameraY}
+        levelWidth={telemetry.levelWidth}
+        levelHeight={telemetry.levelHeight}
       />
 
-      {/* 2. Player Inspector */}
       <DebugPlayerInspectorCard p1={p1 ?? null} p2={p2 ?? null} isTwoPlayer={isTwoPlayer} />
 
-      {/* 3. Collision and Sensors toggles */}
-      <DebugCollisionsCard
+      <DebugTogglesCard
         showHitboxes={debugState.showHitboxes}
         showProfiler={debugState.showProfiler}
         clickToTeleport={debugState.clickToTeleport}
         freezeAI={debugState.freezeAI}
-        onToggleHitboxes={() => debugManager.toggleHitboxes()}
-        onToggleProfiler={() => debugManager.toggleProfiler()}
-        onToggleClickToTeleport={() => debugManager.toggleClickToTeleport()}
-        onToggleFreezeAI={() => debugManager.toggleFreezeAI()}
+        onToggleHitboxes={handleToggleHitboxes}
+        onToggleProfiler={handleToggleProfiler}
+        onToggleClickToTeleport={handleToggleClickToTeleport}
+        onToggleFreezeAI={handleToggleFreezeAI}
       />
 
-      {/* 4. Active Entities and Enemies Table */}
       <DebugEntityTableCard
-        enemies={enemies}
-        onTeleportToEnemy={(enemy) => {
-          gameEngine.teleportPlayer(PlayerId.Player1, Math.round(enemy.x), Math.round(enemy.y - 40));
-        }}
-        onDamageEnemy={(enemyId, amount) => {
-          gameEngine.damageEnemy(enemyId, amount);
-        }}
-        onRemoveEnemy={(enemyId) => {
-          gameEngine.removeEnemy(enemyId);
-        }}
-        onActionComplete={() => setTick((t) => t + 1)}
+        enemies={telemetry.enemies}
+        onTeleportToEnemy={handleTeleportToEnemy}
+        onDamageEnemy={handleDamageEnemy}
+        onRemoveEnemy={handleRemoveEnemy}
+        onActionComplete={telemetry.refresh}
       />
 
-      {/* 5. JSON State Dump */}
       <DebugStateDumpCard stateObject={stateSnapshot} />
     </div>
   );

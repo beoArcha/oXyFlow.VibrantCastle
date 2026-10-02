@@ -7,3 +7,4 @@ export * from "./DebugEntityTableRow";
 export * from "./DebugTogglesCard";
 export * from "./DebugCollisionsCard";
 export * from "./DebugStateDumpCard";
+export * from "./hooks";
