@@ -1,40 +1,36 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useThrottledLogs } from "../hooks/useThrottledLogs";
-import { LogRecord, LogLevel, LoggerManager } from "@lib/logger";
+import { LogLevel } from "@lib/logger";
 import {
   LogsHeaderToolbar,
   LogsFilterControls,
   LogsTerminalList,
   LogCounts,
+  LogFilterLevel,
+  safeStringify,
 } from "./logs";
-
-export interface DisplayLogItem extends LogRecord {
-  id: string;
-}
 
 /**
  * LogsSubTab Orchestrator Component.
- *
- * Responsibilities:
- * - Subscribes to throttled RingBuffer events (AGENT.md § 3.3 & § 12.1).
- * - Manages filter and expansion states.
- * - Orchestrates LogsHeaderToolbar, LogsFilterControls, and LogsTerminalList.
- * - Conforms to Single Responsibility Principle (SRP) (<150 lines).
  */
 export const LogsSubTab: React.FC = () => {
-  // Throttled ring buffer reactive subscription
-  const { logs, lastUpdated, clearLogs } = useThrottledLogs({ throttleMs: 150 });
+  // Throttled ring buffer reactive subscription with full facade
+  const {
+    logs,
+    lastUpdated,
+    clearLogs,
+    globalLogLevel,
+    setGlobalLogLevel,
+    exportJson,
+  } = useThrottledLogs({ throttleMs: 150 });
 
   // Filtering and interaction states
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [levelFilter, setLevelFilter] = useState<string>("all");
+  const [levelFilter, setLevelFilter] = useState<LogFilterLevel>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [expandedLogIds, setExpandedLogIds] = useState<Set<string>>(new Set());
   const [autoScroll, setAutoScroll] = useState<boolean>(true);
   const [copied, setCopied] = useState<boolean>(false);
-  const [globalLogLevel, setGlobalLogLevel] = useState<LogLevel>(
-    () => LoggerManager.getInstance().defaultLevel
-  );
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -61,11 +57,6 @@ export const LogsSubTab: React.FC = () => {
     clearLogs();
     setExpandedLogIds(new Set());
   }, [clearLogs]);
-
-  const handleChangeGlobalLevel = (level: LogLevel) => {
-    LoggerManager.getInstance().setDefaultLevel(level);
-    setGlobalLogLevel(level);
-  };
 
   // Metrics summary
   const counts: LogCounts = useMemo(() => {
@@ -125,7 +116,7 @@ export const LogsSubTab: React.FC = () => {
       if (q) {
         const msg = (log.message || "").toLowerCase();
         const cat = (log.category || "").toLowerCase();
-        const ctx = log.context ? JSON.stringify(log.context).toLowerCase() : "";
+        const ctx = log.context ? safeStringify(log.context).toLowerCase() : "";
         const err = log.error?.message ? log.error.message.toLowerCase() : "";
         if (!msg.includes(q) && !cat.includes(q) && !ctx.includes(q) && !err.includes(q)) {
           return false;
@@ -139,7 +130,7 @@ export const LogsSubTab: React.FC = () => {
   const handleCopyLogs = async () => {
     const text = filteredLogs
       .map((item) => {
-        const contextStr = item.context ? ` | Context: ${JSON.stringify(item.context)}` : "";
+        const contextStr = item.context ? ` | Context: ${safeStringify(item.context)}` : "";
         const errStr = item.error ? ` | Error: ${item.error.message}\nStack: ${item.error.stack}` : "";
         return `[${item.timeFormatted}] [${item.levelName}] [${item.category}] ${item.message}${contextStr}${errStr}`;
       })
@@ -158,7 +149,7 @@ export const LogsSubTab: React.FC = () => {
 
   const handleDownloadLogs = () => {
     try {
-      const jsonStr = LoggerManager.getInstance().ringBuffer.exportAsJson();
+      const jsonStr = exportJson();
       const blob = new Blob([jsonStr], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -198,7 +189,7 @@ export const LogsSubTab: React.FC = () => {
           counts={counts}
           availableCategories={availableCategories}
           globalLogLevel={globalLogLevel}
-          onChangeGlobalLevel={handleChangeGlobalLevel}
+          onChangeGlobalLevel={setGlobalLogLevel}
         />
       </div>
 

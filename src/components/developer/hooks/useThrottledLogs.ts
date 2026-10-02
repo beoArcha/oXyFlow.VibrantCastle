@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { LogRecord, LoggerManager } from "@lib/logger";
+import { LogRecord, LoggerManager, LogLevel } from "@lib/logger";
 
 export interface UseThrottledLogsOptions {
   throttleMs?: number;
@@ -10,6 +10,9 @@ export interface UseThrottledLogsResult {
   logs: LogRecord[];
   lastUpdated: number;
   clearLogs: () => void;
+  globalLogLevel: LogLevel;
+  setGlobalLogLevel: (level: LogLevel) => void;
+  exportJson: () => string;
 }
 
 /**
@@ -65,16 +68,21 @@ export function useThrottledLogs(options: UseThrottledLogsOptions = {}): UseThro
 
   const [logs, setLogs] = useState<LogRecord[]>(getFilteredLogs);
   const [lastUpdated, setLastUpdated] = useState<number>(() => Date.now());
+  const [globalLogLevel, setGlobalLogLevelState] = useState<LogLevel>(
+    () => LoggerManager.getInstance().defaultLevel
+  );
 
   useEffect(() => {
     setLogs(getFilteredLogs());
     setLastUpdated(Date.now());
+    setGlobalLogLevelState(LoggerManager.getInstance().defaultLevel);
 
     return setupThrottledSubscription(
       (cb) => ringBuffer.subscribe(cb),
       () => {
         setLogs(getFilteredLogs());
         setLastUpdated(Date.now());
+        setGlobalLogLevelState(LoggerManager.getInstance().defaultLevel);
       },
       throttleMs
     );
@@ -86,7 +94,23 @@ export function useThrottledLogs(options: UseThrottledLogsOptions = {}): UseThro
     setLastUpdated(Date.now());
   }, [ringBuffer]);
 
-  return { logs, lastUpdated, clearLogs };
+  const setGlobalLogLevel = useCallback((level: LogLevel) => {
+    LoggerManager.getInstance().setDefaultLevel(level);
+    setGlobalLogLevelState(level);
+  }, []);
+
+  const exportJson = useCallback((): string => {
+    return LoggerManager.getInstance().ringBuffer.exportAsJson();
+  }, []);
+
+  return {
+    logs,
+    lastUpdated,
+    clearLogs,
+    globalLogLevel,
+    setGlobalLogLevel,
+    exportJson,
+  };
 }
 
 /**

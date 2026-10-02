@@ -4,13 +4,7 @@ import { useI18n } from "@context/I18nContext";
 import { LogRecord, LogLevel } from "@lib/logger";
 import { LogItemDrawer } from "./LogItemDrawer";
 
-export interface LogsTerminalListProps {
-  logs: LogRecord[];
-  expandedLogIds: Set<string>;
-  onToggleExpand: (id: string) => void;
-  scrollContainerRef: React.RefObject<HTMLDivElement | null>;
-  hasSearchQuery: boolean;
-}
+import { LogsTerminalListProps } from "./types";
 
 const getLevelBadgeClass = (level: LogLevel) => {
   switch (level) {

@@ -3,10 +3,8 @@ import { AlertTriangle } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
 import { SerializedError } from "@lib/logger";
 
-export interface LogItemDrawerProps {
-  context?: Record<string, unknown>;
-  error?: SerializedError;
-}
+import { LogItemDrawerProps } from "./types";
+import { safeStringify } from "./utils";
 
 export const LogItemDrawer: React.FC<LogItemDrawerProps> = ({ context, error }) => {
   const { t } = useI18n();
@@ -26,7 +24,7 @@ export const LogItemDrawer: React.FC<LogItemDrawerProps> = ({ context, error }) 
             Structured Log Context:
           </span>
           <pre className="p-2 rounded bg-stone-950 border border-stone-800 text-amber-200/90 overflow-x-auto text-[10px] font-mono leading-relaxed">
-            {JSON.stringify(context, null, 2)}
+            {safeStringify(context, 2)}
           </pre>
         </div>
       )}

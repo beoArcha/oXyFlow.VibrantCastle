@@ -3,16 +3,7 @@ import { ScrollText, ArrowDownCircle, Copy, Check, Download, Trash2 } from "luci
 import { Button } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 
-export interface LogsHeaderToolbarProps {
-  filteredCount: number;
-  totalCount: number;
-  autoScroll: boolean;
-  copied: boolean;
-  onToggleAutoScroll: () => void;
-  onCopyLogs: () => void;
-  onDownloadLogs: () => void;
-  onClearLogs: () => void;
-}
+import { LogsHeaderToolbarProps } from "./types";
 
 export const LogsHeaderToolbar: React.FC<LogsHeaderToolbarProps> = ({
   filteredCount,

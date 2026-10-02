@@ -4,27 +4,7 @@ import { Select } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
 import { LogLevel } from "@lib/logger";
 
-export interface LogCounts {
-  fatal: number;
-  error: number;
-  warn: number;
-  info: number;
-  debug: number;
-  total: number;
-}
-
-export interface LogsFilterControlsProps {
-  searchQuery: string;
-  onSearchQueryChange: (q: string) => void;
-  levelFilter: string;
-  onLevelFilterChange: (lvl: string) => void;
-  categoryFilter: string;
-  onCategoryFilterChange: (cat: string) => void;
-  counts: LogCounts;
-  availableCategories: string[];
-  globalLogLevel: LogLevel;
-  onChangeGlobalLevel: (lvl: LogLevel) => void;
-}
+import { LogCounts, LogsFilterControlsProps, LogFilterLevel } from "./types";
 
 export const LogsFilterControls: React.FC<LogsFilterControlsProps> = ({
   searchQuery,
