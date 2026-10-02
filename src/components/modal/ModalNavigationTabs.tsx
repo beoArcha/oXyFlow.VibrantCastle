@@ -1,7 +1,7 @@
 import React from "react";
 import { Menu as MenuIcon, HelpCircle, Backpack, BookOpen, Play, Layers } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
-import { KeyedTabs, KeyedTabItem } from "./KeyedTabs";
+import { KeyedTabs, KeyedTabItem } from "@components/ui";
 
 export type ModalType = "menu" | "help" | "inventory" | "skillTree" | "creation";
 
@@ -15,7 +15,7 @@ export interface ModalNavigationTabsProps {
 
 /**
  * Specialized game modal navigation bar delegating layout, tablist semantics,
- * and shortcut badges to generic KeyedTabs.
+ * and shortcut badges to KeyedTabs.
  */
 export const ModalNavigationTabs: React.FC<ModalNavigationTabsProps> = React.memo(
   function ModalNavigationTabs({

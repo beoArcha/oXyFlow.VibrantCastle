@@ -1,7 +1,18 @@
 import React from "react";
 import { cn } from "@lib/utils";
 
-export type BarVariant = "health" | "mana" | "stamina" | "amber" | "purple";
+export type ProgressBarVariant =
+  | "danger"
+  | "info"
+  | "warning"
+  | "amber"
+  | "purple"
+  // Backward-compatible aliases
+  | "health"
+  | "mana"
+  | "stamina";
+
+export type BarVariant = ProgressBarVariant;
 export type ProgressBarSize = "sm" | "md" | "lg";
 
 export interface ProgressBarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
@@ -10,7 +21,7 @@ export interface ProgressBarProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   /** Maximum progress value (must be > 0) */
   max: number;
   /** Color theme variant */
-  variant?: BarVariant;
+  variant?: ProgressBarVariant;
   /** Size preset controlling bar height */
   size?: ProgressBarSize;
   /** Optional label displayed above the progress bar */
@@ -27,37 +38,51 @@ export interface ProgressBarProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   ariaValueText?: string;
 }
 
-const variantGradients: Record<BarVariant, { bar: string; border: string; text: string; glow: string }> = {
-  health: {
-    bar: "bg-gradient-to-r from-red-700 via-red-600 to-red-400",
-    border: "border-red-900/70",
-    text: "text-red-300",
-    glow: "shadow-red-950/40",
-  },
-  mana: {
-    bar: "bg-gradient-to-r from-cyan-700 via-cyan-500 to-blue-400",
-    border: "border-cyan-900/70",
-    text: "text-cyan-300",
-    glow: "shadow-cyan-950/40",
-  },
-  stamina: {
-    bar: "bg-gradient-to-r from-amber-700 via-amber-500 to-yellow-400",
-    border: "border-amber-900/70",
-    text: "text-amber-300",
-    glow: "shadow-amber-950/40",
-  },
-  amber: {
-    bar: "bg-gradient-to-r from-amber-600 to-amber-400",
-    border: "border-amber-900/60",
-    text: "text-amber-200",
-    glow: "shadow-amber-950/40",
-  },
-  purple: {
-    bar: "bg-gradient-to-r from-purple-700 to-purple-400",
-    border: "border-purple-900/70",
-    text: "text-purple-300",
-    glow: "shadow-purple-950/40",
-  },
+const dangerGradient = {
+  bar: "bg-gradient-to-r from-red-700 via-red-600 to-red-400",
+  border: "border-red-900/70",
+  text: "text-red-300",
+  glow: "shadow-red-950/40",
+};
+
+const infoGradient = {
+  bar: "bg-gradient-to-r from-cyan-700 via-cyan-500 to-blue-400",
+  border: "border-cyan-900/70",
+  text: "text-cyan-300",
+  glow: "shadow-cyan-950/40",
+};
+
+const warningGradient = {
+  bar: "bg-gradient-to-r from-amber-700 via-amber-500 to-yellow-400",
+  border: "border-amber-900/70",
+  text: "text-amber-300",
+  glow: "shadow-amber-950/40",
+};
+
+const amberGradient = {
+  bar: "bg-gradient-to-r from-amber-600 to-amber-400",
+  border: "border-amber-900/60",
+  text: "text-amber-200",
+  glow: "shadow-amber-950/40",
+};
+
+const purpleGradient = {
+  bar: "bg-gradient-to-r from-purple-700 to-purple-400",
+  border: "border-purple-900/70",
+  text: "text-purple-300",
+  glow: "shadow-purple-950/40",
+};
+
+const variantGradients: Record<ProgressBarVariant, { bar: string; border: string; text: string; glow: string }> = {
+  danger: dangerGradient,
+  info: infoGradient,
+  warning: warningGradient,
+  amber: amberGradient,
+  purple: purpleGradient,
+  // Backward-compatible aliases
+  health: dangerGradient,
+  mana: infoGradient,
+  stamina: warningGradient,
 };
 
 const sizeHeightStyles: Record<ProgressBarSize, string> = {
@@ -76,7 +101,7 @@ export const ProgressBar = React.memo(
     {
       value,
       max,
-      variant = "health",
+      variant = "danger",
       size = "md",
       label,
       showValueText = true,

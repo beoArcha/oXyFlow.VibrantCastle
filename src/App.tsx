@@ -6,12 +6,12 @@ import { HUDOverlay } from "@components/hud/HUDOverlay";
 import { Swords, HelpCircle, Menu as MenuIcon } from "lucide-react";
 import {
   Badge,
-  ModalType,
   GameErrorBoundary,
   LanguageSelector,
   Toast,
   useToast,
 } from "@ui";
+import { ModalType } from "@components/modal";
 import { KeyRebindDialog, useKeyRebind } from "@components/controls";
 import {
   GameLayout,

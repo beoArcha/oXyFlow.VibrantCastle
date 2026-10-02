@@ -1,6 +1,7 @@
 import React from "react";
 import { Item } from "@game/types";
-import { ItemSlot, Button } from "@components/ui";
+import { Button } from "@components/ui";
+import { ItemSlot } from "./ItemSlot";
 import { useI18n } from "@context/I18nContext";
 
 export interface InventoryQuickBeltProps {

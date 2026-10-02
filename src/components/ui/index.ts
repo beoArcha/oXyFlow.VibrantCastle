@@ -41,10 +41,6 @@ export * from "./Tooltip";
 export * from "./Toast";
 export * from "./LoadingOverlay";
 
-// Game Domain & Equipment
-export * from "./ItemIcon";
-export * from "./ItemSlot";
-export * from "./ModalNavigationTabs";
-
 // Error Resilience
 export * from "./GameErrorBoundary";
+

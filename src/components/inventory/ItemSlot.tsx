@@ -34,7 +34,7 @@ const iconSizes: Record<"sm" | "md" | "lg", number> = {
 };
 
 /**
- * Gothic Inventory Item Slot primitive representing equipped items or backpack cells.
+ * Gothic Inventory Item Slot representing equipped items or backpack cells.
  * Adheres to WAI-ARIA role="button" semantics with keyboard activation (Enter/Space),
  * strict ItemRarity typing, stack counter badges, and selection highlight rings.
  */

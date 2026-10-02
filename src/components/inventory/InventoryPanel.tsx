@@ -1,6 +1,7 @@
 import React from "react";
 import { Backpack as BackpackIcon, Shield, Sparkles } from "lucide-react";
-import { Modal, ModalNavigationTabs, ModalType, Card, CardHeader, CardTitle, CardContent, LanguageSelector } from "../ui";
+import { Modal, Card, CardHeader, CardTitle, CardContent, LanguageSelector } from "../ui";
+import { ModalNavigationTabs, ModalType } from "@components/modal";
 import { CharacterPortrait } from "../character";
 import { useGameSession, useSettings, useInventory } from "@context/GameContext";
 import { useI18n } from "@context/I18nContext";

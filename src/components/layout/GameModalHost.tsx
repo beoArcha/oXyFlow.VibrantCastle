@@ -4,7 +4,7 @@ import { MenuModal } from "@components/menu/MenuModal";
 import { InventoryPanel } from "@components/inventory/InventoryPanel";
 import { SkillTreePanel } from "@components/skills/SkillTreePanel";
 import { DeveloperModal } from "@components/developer";
-import { ModalType } from "@ui";
+import { ModalType } from "@components/modal";
 import { PlayerId, InputMap } from "@game/types";
 import { UseModalManagerResult } from "@components/menu/hooks/useModalManager";
 
