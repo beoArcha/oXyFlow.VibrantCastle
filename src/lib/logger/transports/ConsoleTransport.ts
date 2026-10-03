@@ -21,6 +21,12 @@ export class ConsoleTransport implements ILogTransport {
       return;
     }
 
+    // In test environment, suppress DEBUG and INFO console noise by default
+    const isTest = typeof process !== "undefined" && process.env?.NODE_ENV === "test";
+    if (isTest && record.level < LogLevel.WARN) {
+      return;
+    }
+
     const { header, style, body, context, error } = this.formatter.formatForConsole(record);
     const args: unknown[] = [header, style, body];
 

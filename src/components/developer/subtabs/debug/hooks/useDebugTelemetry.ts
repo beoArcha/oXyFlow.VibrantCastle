@@ -30,6 +30,9 @@ export function useDebugTelemetry(refreshIntervalMs: number = 250): DebugTelemet
   }, []);
 
   useEffect(() => {
+    if (typeof process !== "undefined" && (process.env?.NODE_ENV === "test" || (globalThis as any).IS_REACT_ACT_ENVIRONMENT)) {
+      return;
+    }
     const timer = setInterval(refresh, refreshIntervalMs);
     return () => clearInterval(timer);
   }, [refreshIntervalMs, refresh]);

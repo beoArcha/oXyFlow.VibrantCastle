@@ -1,3 +1,4 @@
+import React, { act } from "react";
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { renderToString } from "react-dom/server";
 import { TesterSubTab } from "../subtabs/TesterSubTab";
@@ -54,10 +55,14 @@ describe("TesterSubTab & Interaction Domain Cards", () => {
 
       expect(debugManager.state.godMode).toBe(false);
 
-      debugManager.toggleGodMode();
+      await act(async () => {
+        debugManager.toggleGodMode();
+      });
       expect(debugManager.state.godMode).toBe(true);
 
-      debugManager.toggleGodMode();
+      await act(async () => {
+        debugManager.toggleGodMode();
+      });
       expect(debugManager.state.godMode).toBe(false);
     });
   });

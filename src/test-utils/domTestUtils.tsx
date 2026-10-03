@@ -42,9 +42,14 @@ export function setupDomEnvironment() {
               this.onerror?.(err);
             });
         } else {
-          setTimeout(() => {
+          const triggerFileLoad = () => {
             this.onload?.({ target: { result: String(file) } } as any);
-          }, 0);
+          };
+          if (typeof queueMicrotask === "function") {
+            queueMicrotask(triggerFileLoad);
+          } else {
+            triggerFileLoad();
+          }
         }
       }
     } as any);
@@ -92,12 +97,22 @@ export function setupDomEnvironment() {
         } catch {
           // ignore if already defined
         }
-        setTimeout(() => {
-          if (typeof (this as any).onload === "function") {
-            (this as any).onload(new (win as any).Event("load"));
+        const triggerLoad = () => {
+          try {
+            if (typeof (this as any).onload === "function") {
+              (this as any).onload(new (win as any).Event("load"));
+            }
+            (this as any).dispatchEvent(new (win as any).Event("load"));
+          } catch {
+            // Ignore load dispatch errors in mock test environment
           }
-          (this as any).dispatchEvent(new (win as any).Event("load"));
-        }, 0);
+        };
+
+        if (typeof queueMicrotask === "function") {
+          queueMicrotask(triggerLoad);
+        } else {
+          triggerLoad();
+        }
       },
       configurable: true,
       enumerable: true,

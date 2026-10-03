@@ -46,6 +46,20 @@ export function detectEnvironmentMode(): LogEnvironmentMode {
     // Ignore error if process is unavailable
   }
 
+  try {
+    // Detect Bun test runner execution even if NODE_ENV is unset
+    if (typeof (globalThis as any).Bun !== "undefined") {
+      if (
+        (typeof process !== "undefined" && Array.isArray(process.argv) && process.argv.some((a) => a.includes("test"))) ||
+        (globalThis as any).IS_REACT_ACT_ENVIRONMENT
+      ) {
+        return "test";
+      }
+    }
+  } catch {
+    // Ignore error
+  }
+
   return "development";
 }
 

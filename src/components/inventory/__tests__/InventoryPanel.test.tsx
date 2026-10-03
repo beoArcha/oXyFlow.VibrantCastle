@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
 import { renderIntoDom, cleanupDom } from "@test-utils/domTestUtils";
 import { ModalType } from "@components/modal";
 import { InventoryPanel } from "../InventoryPanel";
+import gameEngine from "@game/loop/engine";
 
 describe("InventoryPanel Integration Tests", () => {
   let unmount: (() => Promise<void>) | null = null;

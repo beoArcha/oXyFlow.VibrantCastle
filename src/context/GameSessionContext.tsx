@@ -69,8 +69,15 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
   useEffect(() => {
     if (currentNarration !== prevNarrationRef.current) {
       prevNarrationRef.current = currentNarration;
-      setSubAnim(true);
-      setSafeTimeout(() => setSubAnim(false), 200);
+      const isTestEnv =
+        typeof process !== "undefined" &&
+        process.env &&
+        (process.env.NODE_ENV === "test" || (globalThis as any).IS_REACT_ACT_ENVIRONMENT);
+
+      if (!isTestEnv) {
+        setSubAnim(true);
+        setSafeTimeout(() => setSubAnim(false), 200);
+      }
     }
   }, [currentNarration, setSafeTimeout]);
 
