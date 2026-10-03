@@ -10,6 +10,10 @@ describe("InventoryPanel Integration Tests", () => {
 
   beforeEach(() => {
     unmount = null;
+    gameEngine.resetLevel("courtyard", undefined, false);
+    if (typeof localStorage !== "undefined" && typeof localStorage.clear === "function") {
+      localStorage.clear();
+    }
   });
 
   afterEach(async () => {

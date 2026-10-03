@@ -106,3 +106,7 @@ declare module "bun:test" {
     export function restore(): void;
   }
 }
+
+// Ambient global test flag for React 19 act() environment
+// eslint-disable-next-line no-var
+declare var IS_REACT_ACT_ENVIRONMENT: boolean | undefined;

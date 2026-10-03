@@ -7,14 +7,16 @@
 process.env.NODE_ENV = "test";
 
 // Mark React act environment for testing
-(globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
+globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 import { afterEach } from "bun:test";
 import { LoggerManager } from "./lib/logger";
+import { cleanupDom } from "./test-utils/domTestUtils";
 
-afterEach(() => {
+afterEach(async () => {
   const manager = LoggerManager.getInstance();
   if (manager.mode !== "test") {
     LoggerManager.resetInstance({ mode: "test" });
   }
+  await cleanupDom();
 });
