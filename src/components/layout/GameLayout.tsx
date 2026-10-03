@@ -4,12 +4,23 @@ import { cn } from "@lib/utils";
 import { KbdKey } from "@ui";
 
 /**
+ * Common layout styling tokens and classes for consistent Castlevania dark-fantasy aesthetic.
+ */
+const LAYOUT_STYLES = {
+  root: "h-screen w-screen max-w-full max-h-full bg-[#120602] text-[#fef3c7] font-sans antialiased flex flex-col justify-between overflow-hidden",
+  header: "border-b border-[#3a1a0f] bg-[#140602]/95 px-3 md:px-5 py-2 flex justify-between items-center z-10 shrink-0",
+  title: "text-base md:text-lg font-serif font-black tracking-tight text-amber-500 drop-shadow-md leading-none",
+  subtitle: "text-[11px] text-amber-600 font-medium hidden sm:block",
+  icon: "text-amber-500 animate-pulse shrink-0",
+} as const;
+
+/**
  * Props for the root game layout container.
  */
 export interface GameLayoutRootProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Optional callback to trigger audio initialization or resume on user interaction */
-  onInteract?: () => void;
-  children?: React.ReactNode;
+  readonly onInteract?: () => void;
+  readonly children?: React.ReactNode;
 }
 
 /**
@@ -27,16 +38,14 @@ export function GameLayoutRoot({
   children,
   id = "game-root-container",
   ...props
-}: GameLayoutRootProps) {
+}: GameLayoutRootProps): React.ReactElement {
   return (
     <div
       id={id}
+      tabIndex={-1}
       onClick={onInteract}
       onKeyDown={onInteract}
-      className={cn(
-        "h-screen w-screen max-w-full max-h-full bg-[#120602] text-[#fef3c7] font-sans antialiased flex flex-col justify-between overflow-hidden",
-        className
-      )}
+      className={cn(LAYOUT_STYLES.root, className)}
       {...props}
     >
       {children}
@@ -48,7 +57,7 @@ export function GameLayoutRoot({
  * Props for the game top header bar.
  */
 export interface GameLayoutHeaderProps extends React.HTMLAttributes<HTMLElement> {
-  children?: React.ReactNode;
+  readonly children?: React.ReactNode;
 }
 
 /**
@@ -59,14 +68,11 @@ export function GameLayoutHeader({
   children,
   id = "game-header",
   ...props
-}: GameLayoutHeaderProps) {
+}: GameLayoutHeaderProps): React.ReactElement {
   return (
     <header
       id={id}
-      className={cn(
-        "border-b border-[#3a1a0f] bg-[#140602]/95 px-3 md:px-5 py-2 flex justify-between items-center z-10 shrink-0",
-        className
-      )}
+      className={cn(LAYOUT_STYLES.header, className)}
       {...props}
     >
       {children}
@@ -79,11 +85,11 @@ export function GameLayoutHeader({
  */
 export interface GameLayoutBrandProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   /** Primary title text or element */
-  title: React.ReactNode;
+  readonly title: React.ReactNode;
   /** Optional subtitle or description displayed on larger screens */
-  subtitle?: React.ReactNode;
+  readonly subtitle?: React.ReactNode;
   /** Custom logo or icon (defaults to animated Layers icon) */
-  icon?: React.ReactNode;
+  readonly icon?: React.ReactNode;
 }
 
 /**
@@ -95,19 +101,19 @@ export function GameLayoutBrand({
   icon,
   className,
   ...props
-}: GameLayoutBrandProps) {
+}: GameLayoutBrandProps): React.ReactElement {
   return (
     <div className={cn("flex items-center gap-3", className)} {...props}>
-      {icon ?? <Layers className="text-[#f59e0b] animate-pulse shrink-0" size={22} />}
+      {icon ?? <Layers className={LAYOUT_STYLES.icon} size={22} />}
       <div>
         <h1
           id="app-title"
-          className="text-base md:text-lg font-serif font-black tracking-tight text-[#f59e0b] drop-shadow-md leading-none"
+          className={LAYOUT_STYLES.title}
         >
           {title}
         </h1>
         {subtitle && (
-          <p id="app-description" className="text-[11px] text-[#d97706] font-medium hidden sm:block">
+          <p id="app-description" className={LAYOUT_STYLES.subtitle}>
             {subtitle}
           </p>
         )}
@@ -120,7 +126,7 @@ export function GameLayoutBrand({
  * Props for the right-hand actions container in the header.
  */
 export interface GameLayoutActionsProps extends React.HTMLAttributes<HTMLDivElement> {
-  children?: React.ReactNode;
+  readonly children?: React.ReactNode;
 }
 
 /**
@@ -130,7 +136,7 @@ export function GameLayoutActions({
   className,
   children,
   ...props
-}: GameLayoutActionsProps) {
+}: GameLayoutActionsProps): React.ReactElement {
   return (
     <div className={cn("flex items-center gap-2", className)} {...props}>
       {children}
@@ -142,7 +148,7 @@ export function GameLayoutActions({
  * Props for grouping multiple hotkey hint buttons together.
  */
 export interface GameLayoutHotkeyGroupProps extends React.HTMLAttributes<HTMLDivElement> {
-  children?: React.ReactNode;
+  readonly children?: React.ReactNode;
 }
 
 /**
@@ -152,7 +158,7 @@ export function GameLayoutHotkeyGroup({
   className,
   children,
   ...props
-}: GameLayoutHotkeyGroupProps) {
+}: GameLayoutHotkeyGroupProps): React.ReactElement {
   return (
     <div
       className={cn("hidden md:flex items-center gap-2 text-xs text-stone-400 mr-2", className)}
@@ -168,11 +174,11 @@ export function GameLayoutHotkeyGroup({
  */
 export interface GameLayoutHotkeyHintProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** Keyboard key shortcut label */
-  hotkey: string;
+  readonly hotkey: string;
   /** Descriptive button label */
-  label: React.ReactNode;
+  readonly label: React.ReactNode;
   /** Optional icon prefix */
-  icon?: React.ReactNode;
+  readonly icon?: React.ReactNode;
 }
 
 /**
@@ -185,11 +191,15 @@ export function GameLayoutHotkeyHint({
   className,
   onClick,
   ...props
-}: GameLayoutHotkeyHintProps) {
+}: GameLayoutHotkeyHintProps): React.ReactElement {
+  const ariaLabel = typeof label === "string" ? `${label} (${hotkey})` : undefined;
+
   return (
     <button
       type="button"
       onClick={onClick}
+      aria-keyshortcuts={hotkey}
+      aria-label={ariaLabel}
       className={cn(
         "flex items-center gap-1 hover:text-amber-300 transition-colors cursor-pointer",
         className
@@ -207,7 +217,7 @@ export function GameLayoutHotkeyHint({
  * Props for the main viewport container.
  */
 export interface GameLayoutMainProps extends React.HTMLAttributes<HTMLElement> {
-  children?: React.ReactNode;
+  readonly children?: React.ReactNode;
 }
 
 /**
@@ -218,7 +228,7 @@ export function GameLayoutMain({
   children,
   id = "game-main-content",
   ...props
-}: GameLayoutMainProps) {
+}: GameLayoutMainProps): React.ReactElement {
   return (
     <main
       id={id}
@@ -245,3 +255,4 @@ export const GameLayout = {
   HotkeyHint: GameLayoutHotkeyHint,
   Main: GameLayoutMain,
 };
+

@@ -96,7 +96,6 @@ function GameScreen() {
     onCloseModal: handleCloseModal,
     onTogglePause: handleTogglePause,
     isRebinding,
-    onCancelRebind: cancelRebind,
   });
 
   return (

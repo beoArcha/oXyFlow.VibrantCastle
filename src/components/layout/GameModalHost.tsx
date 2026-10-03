@@ -1,30 +1,31 @@
 import React from "react";
 import { HelpModal } from "@components/help";
-import { MenuModal } from "@components/menu/MenuModal";
+import { MenuModal, type MenuModalProps } from "@components/menu/MenuModal";
 import { InventoryPanel } from "@components/inventory/InventoryPanel";
 import { SkillTreePanel } from "@components/skills/SkillTreePanel";
 import { DeveloperModal } from "@components/developer";
-import { ModalType } from "@components/modal";
-import { PlayerId, InputMap } from "@game/types";
-import { UseModalManagerResult } from "@components/menu/hooks/useModalManager";
+import type { ModalType } from "@components/modal";
+import type { UseModalManagerResult } from "@components/menu/hooks/useModalManager";
 
 /**
  * Props for the application modal host router.
  */
 export interface GameModalHostProps {
   /** Modal state manager instance providing visibility state flags */
-  modalManager: Pick<
-    UseModalManagerResult,
-    "isHelpOpen" | "isMenuOpen" | "isInventoryOpen" | "isSkillTreeOpen" | "isCreationOpen"
+  readonly modalManager: Readonly<
+    Pick<
+      UseModalManagerResult,
+      "isHelpOpen" | "isMenuOpen" | "isInventoryOpen" | "isSkillTreeOpen" | "isCreationOpen"
+    >
   >;
   /** Callback fired when the active modal requests closing */
-  onClose: () => void;
+  readonly onClose: () => void;
   /** Callback to transition directly between different modal screens */
-  onNavigateModal: (targetModal: ModalType) => void;
+  readonly onNavigateModal: (targetModal: ModalType) => void;
   /** Callback to resume gameplay and dismiss active modal */
-  onResume: () => void;
+  readonly onResume: () => void;
   /** Callback to initiate key rebind flow from settings */
-  onStartRebind?: (action: keyof InputMap, player: PlayerId, label: string) => void;
+  readonly onStartRebind?: MenuModalProps["onStartRebind"];
 }
 
 /**
@@ -47,56 +48,32 @@ export function GameModalHost({
   onResume,
   onStartRebind,
 }: GameModalHostProps): React.ReactElement | null {
+  const commonLifecycleProps = {
+    onClose,
+    onNavigateModal,
+    onResume,
+  } as const;
+
   if (modalManager.isHelpOpen) {
-    return (
-      <HelpModal
-        onClose={onClose}
-        onNavigateModal={onNavigateModal}
-        onResume={onResume}
-      />
-    );
+    return <HelpModal {...commonLifecycleProps} />;
   }
 
   if (modalManager.isMenuOpen) {
-    return (
-      <MenuModal
-        onClose={onClose}
-        onStartRebind={onStartRebind}
-        onNavigateModal={onNavigateModal}
-        onResume={onResume}
-      />
-    );
+    return <MenuModal {...commonLifecycleProps} onStartRebind={onStartRebind} />;
   }
 
   if (modalManager.isInventoryOpen) {
-    return (
-      <InventoryPanel
-        onClose={onClose}
-        onNavigateModal={onNavigateModal}
-        onResume={onResume}
-      />
-    );
+    return <InventoryPanel {...commonLifecycleProps} />;
   }
 
   if (modalManager.isSkillTreeOpen) {
-    return (
-      <SkillTreePanel
-        onClose={onClose}
-        onNavigateModal={onNavigateModal}
-        onResume={onResume}
-      />
-    );
+    return <SkillTreePanel {...commonLifecycleProps} />;
   }
 
   if (modalManager.isCreationOpen) {
-    return (
-      <DeveloperModal
-        onClose={onClose}
-        onNavigateModal={onNavigateModal}
-        onResume={onResume}
-      />
-    );
+    return <DeveloperModal {...commonLifecycleProps} />;
   }
 
   return null;
 }
+

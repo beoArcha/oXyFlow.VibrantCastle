@@ -2,7 +2,6 @@ import { describe, it, expect, mock, beforeEach, afterEach } from "bun:test";
 import React from "react";
 import { renderIntoDom, cleanupDom } from "@test-utils/domTestUtils";
 import { GameModalHost } from "../GameModalHost";
-import { PlayerId } from "@game/types";
 
 describe("GameModalHost Component", () => {
   let unmount: (() => Promise<void>) | null = null;
@@ -26,6 +25,7 @@ describe("GameModalHost Component", () => {
     isSkillTreeOpen: false,
     isCreationOpen: false,
   };
+
 
   it("renders null when no modal is active", async () => {
     const rendered = await renderIntoDom(

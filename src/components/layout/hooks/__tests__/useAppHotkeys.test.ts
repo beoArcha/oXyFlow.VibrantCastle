@@ -10,11 +10,8 @@ function createMockModalManager(overrides: Partial<AppHotkeysModalManager> = {})
     isInventoryOpen: false,
     isSkillTreeOpen: false,
     isCreationOpen: false,
-    openMenu: mock(() => {}),
-    openHelp: mock(() => {}),
     openInventory: mock(() => {}),
     openSkillTree: mock(() => {}),
-    openCreation: mock(() => {}),
     closeModal: mock(() => {}),
     ...overrides,
   };
@@ -192,9 +189,8 @@ describe("useAppHotkeys Hook", () => {
     await unmount();
   });
 
-  it("handles Escape key: closes active modal and cancels rebind if open", async () => {
+  it("handles Escape key: closes active modal when modal is open", async () => {
     const onCloseModal = mock(() => {});
-    const onCancelRebind = mock(() => {});
     const onOpenMenu = mock(() => {});
     const modalManager = createMockModalManager({ activeModal: "inventory" });
 
@@ -206,13 +202,11 @@ describe("useAppHotkeys Hook", () => {
         onOpenCreation: () => {},
         onCloseModal,
         onTogglePause: () => {},
-        onCancelRebind,
       })
     );
 
     window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
     expect(onCloseModal).toHaveBeenCalledTimes(1);
-    expect(onCancelRebind).toHaveBeenCalledTimes(1);
     expect(onOpenMenu).toHaveBeenCalledTimes(0);
 
     await unmount();
@@ -264,6 +258,32 @@ describe("useAppHotkeys Hook", () => {
     await unmount();
   });
 
+  it("ignores key events when target is contentEditable", async () => {
+    const onOpenHelp = mock(() => {});
+    const modalManager = createMockModalManager();
+
+    const { unmount } = await renderCustomHook(() =>
+      useAppHotkeys({
+        modalManager,
+        onOpenHelp,
+        onOpenMenu: () => {},
+        onOpenCreation: () => {},
+        onCloseModal: () => {},
+        onTogglePause: () => {},
+      })
+    );
+
+    const editableDiv = document.createElement("div");
+    editableDiv.contentEditable = "true";
+    document.body.appendChild(editableDiv);
+    editableDiv.dispatchEvent(new KeyboardEvent("keydown", { key: "h", bubbles: true }));
+
+    expect(onOpenHelp).toHaveBeenCalledTimes(0);
+    document.body.removeChild(editableDiv);
+
+    await unmount();
+  });
+
   it("ignores hotkeys completely when isRebinding is true", async () => {
     const onOpenHelp = mock(() => {});
     const modalManager = createMockModalManager();
@@ -284,5 +304,84 @@ describe("useAppHotkeys Hook", () => {
     expect(onOpenHelp).toHaveBeenCalledTimes(0);
 
     await unmount();
+  });
+
+  it("ignores hotkeys when modifier keys (ctrlKey, metaKey, altKey) are pressed to prevent hijacking browser shortcuts", async () => {
+    const onOpenCreation = mock(() => {});
+    const onTogglePause = mock(() => {});
+    const onOpenHelp = mock(() => {});
+    const modalManager = createMockModalManager();
+
+    const { unmount } = await renderCustomHook(() =>
+      useAppHotkeys({
+        modalManager,
+        onOpenHelp,
+        onOpenMenu: () => {},
+        onOpenCreation,
+        onCloseModal: () => {},
+        onTogglePause,
+      })
+    );
+
+    // Ctrl+C (copy text shortcut)
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "c", ctrlKey: true }));
+    expect(onOpenCreation).toHaveBeenCalledTimes(0);
+
+    // Cmd+C (macOS copy shortcut)
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "c", metaKey: true }));
+    expect(onOpenCreation).toHaveBeenCalledTimes(0);
+
+    // Ctrl+P (print shortcut)
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "p", ctrlKey: true }));
+    expect(onTogglePause).toHaveBeenCalledTimes(0);
+
+    // Alt+H (browser menu / system shortcut)
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "h", altKey: true }));
+    expect(onOpenHelp).toHaveBeenCalledTimes(0);
+
+    await unmount();
+  });
+
+  it("ignores hotkeys when enabled is false", async () => {
+    const onOpenHelp = mock(() => {});
+    const modalManager = createMockModalManager();
+
+    const { unmount } = await renderCustomHook(() =>
+      useAppHotkeys({
+        modalManager,
+        onOpenHelp,
+        onOpenMenu: () => {},
+        onOpenCreation: () => {},
+        onCloseModal: () => {},
+        onTogglePause: () => {},
+        enabled: false,
+      })
+    );
+
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "h" }));
+    expect(onOpenHelp).toHaveBeenCalledTimes(0);
+
+    await unmount();
+  });
+
+  it("cleans up keydown listener on unmount", async () => {
+    const onOpenHelp = mock(() => {});
+    const modalManager = createMockModalManager();
+
+    const { unmount } = await renderCustomHook(() =>
+      useAppHotkeys({
+        modalManager,
+        onOpenHelp,
+        onOpenMenu: () => {},
+        onOpenCreation: () => {},
+        onCloseModal: () => {},
+        onTogglePause: () => {},
+      })
+    );
+
+    await unmount();
+
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "h" }));
+    expect(onOpenHelp).toHaveBeenCalledTimes(0);
   });
 });

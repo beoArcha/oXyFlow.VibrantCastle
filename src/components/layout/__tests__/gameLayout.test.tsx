@@ -43,6 +43,9 @@ describe("GameLayout Compound Component", () => {
 
     await rendered.click(rootEl!);
     expect(handleInteract).toHaveBeenCalledTimes(1);
+
+    rootEl?.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+    expect(handleInteract).toHaveBeenCalledTimes(2);
   });
 
   it("renders GameLayout.Header with custom and default classes", async () => {
@@ -100,7 +103,7 @@ describe("GameLayout Compound Component", () => {
     expect(rendered.container.textContent).toContain("Hotkey 1");
   });
 
-  it("renders GameLayout.HotkeyHint and handles button clicks", async () => {
+  it("renders GameLayout.HotkeyHint and handles button clicks with A11Y attributes", async () => {
     const handleClick = mock();
     const rendered = await renderIntoDom(
       <GameLayout.HotkeyHint
@@ -116,6 +119,8 @@ describe("GameLayout Compound Component", () => {
     expect(button).not.toBeNull();
     expect(button?.textContent).toContain("Help");
     expect(button?.textContent).toContain("H");
+    expect(button?.getAttribute("aria-keyshortcuts")).toBe("H");
+    expect(button?.getAttribute("aria-label")).toBe("Help (H)");
     expect(rendered.container.querySelector("[data-testid='help-icon']")).not.toBeNull();
 
     await rendered.click(button!);
