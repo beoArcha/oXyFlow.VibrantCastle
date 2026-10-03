@@ -23,7 +23,8 @@ describe("InventoryPlayerTabs", () => {
         onSelectPlayer={onSelectPlayer}
         p1Name="Valen"
         p2Name="Aurelia"
-      />
+      />,
+      { mode: "ui" }
     );
 
     expect(container.textContent).toContain("Valen");
@@ -44,7 +45,8 @@ describe("InventoryPlayerTabs", () => {
         onSelectPlayer={onSelectPlayer}
         p1Name="Valen"
         p2Name="Aurelia"
-      />
+      />,
+      { mode: "ui" }
     );
 
     const tabs = container.querySelectorAll("[role='tab']");
@@ -68,7 +70,8 @@ describe("InventoryPlayerTabs", () => {
         onSelectPlayer={onSelectPlayer}
         p1Name="Valen"
         p2Name="Aurelia"
-      />
+      />,
+      { mode: "ui" }
     );
 
     const tabs = container.querySelectorAll<HTMLButtonElement>("[role='tab']");

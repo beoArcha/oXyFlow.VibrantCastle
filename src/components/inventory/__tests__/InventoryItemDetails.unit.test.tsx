@@ -55,7 +55,8 @@ describe("InventoryItemDetails Component", () => {
         onUnequip={mock(() => {})}
         onUsePotion={mock(() => {})}
         onDiscard={mock(() => {})}
-      />
+      />,
+      { mode: "ui" }
     );
 
     expect(container.textContent).toContain("x3");
@@ -77,7 +78,8 @@ describe("InventoryItemDetails Component", () => {
         onUnequip={mock(() => {})}
         onUsePotion={mock(() => {})}
         onDiscard={handleDiscard}
-      />
+      />,
+      { mode: "ui" }
     );
 
     const buttons = Array.from(container.querySelectorAll<HTMLButtonElement>("button"));
@@ -114,7 +116,8 @@ describe("InventoryItemDetails Component", () => {
         onEquip={handleEquip}
         onUnequip={mock(() => {})}
         onUsePotion={mock(() => {})}
-      />
+      />,
+      { mode: "ui" }
     );
 
     const useButton = container.querySelector<HTMLButtonElement>("button");
@@ -140,7 +143,8 @@ describe("InventoryItemDetails Component", () => {
         onEquip={mock(() => {})}
         onUnequip={handleUnequip}
         onUsePotion={mock(() => {})}
-      />
+      />,
+      { mode: "ui" }
     );
 
     const unequipBtn = container.querySelector<HTMLButtonElement>("button");
@@ -166,7 +170,8 @@ describe("InventoryItemDetails Component", () => {
         onEquip={mock(() => {})}
         onUnequip={mock(() => {})}
         onUsePotion={handleUsePotion}
-      />
+      />,
+      { mode: "ui" }
     );
 
     const potionBtn = container.querySelector<HTMLButtonElement>("button");

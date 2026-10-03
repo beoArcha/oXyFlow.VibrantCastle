@@ -10,7 +10,10 @@
         "clean": "rm -rf dist server.js",
         "lint": "tsc --noEmit",
         "test": "bun test",
-        "test:arch": "bun test src/tests/arch"
+        "test:unit": "bun test unit",
+        "test:integration": "bun test integration",
+        "test:arch": "bun test src/tests/arch",
+        "test:watch": "bun test --watch"
     },
     "dependencies": {
         "@google/genai": "^2.4.0",

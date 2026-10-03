@@ -1,7 +1,7 @@
 import React, { act } from "react";
 import { createRoot, Root } from "react-dom/client";
 import { GlobalWindow } from "happy-dom";
-import { TestProviders } from "./testProviders";
+import { TestProviders, UiTestProviders, IntegrationTestProviders } from "./testProviders";
 import { createMockContext2D } from "./mockCanvas";
 
 let activeRoot: Root | null = null;
@@ -121,8 +121,11 @@ export function setupDomEnvironment() {
   return win;
 }
 
+export type TestProviderMode = "ui" | "integration" | "none";
+
 export interface RenderIntoDomOptions {
-  wrapper?: React.ComponentType<{ children: React.ReactNode }>;
+  wrapper?: React.ComponentType<{ children: React.ReactNode }> | null;
+  mode?: TestProviderMode;
 }
 
 export async function renderIntoDom(ui: React.ReactElement, options?: RenderIntoDomOptions) {
@@ -137,10 +140,19 @@ export async function renderIntoDom(ui: React.ReactElement, options?: RenderInto
   const root = createRoot(container);
   activeRoot = root;
 
-  const Wrapper = options?.wrapper ?? TestProviders;
+  let Wrapper: React.ComponentType<{ children: React.ReactNode }> | null;
+  if (options?.wrapper !== undefined) {
+    Wrapper = options.wrapper;
+  } else if (options?.mode === "ui") {
+    Wrapper = UiTestProviders;
+  } else if (options?.mode === "none") {
+    Wrapper = null;
+  } else {
+    Wrapper = TestProviders;
+  }
 
   await act(async () => {
-    root.render(<Wrapper>{ui}</Wrapper>);
+    root.render(Wrapper ? <Wrapper>{ui}</Wrapper> : ui);
   });
 
   return {
@@ -213,7 +225,8 @@ export interface RenderHookResult<T, P> {
 
 export interface RenderHookOptions<P> {
   initialProps?: P;
-  wrapper?: React.ComponentType<{ children: React.ReactNode }>;
+  wrapper?: React.ComponentType<{ children: React.ReactNode }> | null;
+  mode?: TestProviderMode;
 }
 
 /**
@@ -230,9 +243,20 @@ export async function renderCustomHook<T, P = void>(
   const isOptions =
     optionsOrProps !== null &&
     typeof optionsOrProps === "object" &&
-    ("wrapper" in (optionsOrProps as object) || "initialProps" in (optionsOrProps as object));
+    ("wrapper" in (optionsOrProps as object) || "initialProps" in (optionsOrProps as object) || "mode" in (optionsOrProps as object));
 
-  const wrapper = isOptions ? (optionsOrProps as RenderHookOptions<P>).wrapper : undefined;
+  let wrapper: React.ComponentType<{ children: React.ReactNode }> | null | undefined = undefined;
+  if (isOptions) {
+    const opts = optionsOrProps as RenderHookOptions<P>;
+    if (opts.wrapper !== undefined) {
+      wrapper = opts.wrapper;
+    } else if (opts.mode === "ui") {
+      wrapper = UiTestProviders;
+    } else if (opts.mode === "integration") {
+      wrapper = IntegrationTestProviders;
+    }
+  }
+
   const initialProps = isOptions
     ? (optionsOrProps as RenderHookOptions<P>).initialProps
     : (optionsOrProps as P);
