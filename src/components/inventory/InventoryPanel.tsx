@@ -1,6 +1,14 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { Backpack as BackpackIcon, Shield, Sparkles } from "lucide-react";
-import { Modal, Card, CardHeader, CardTitle, CardContent, EmptyState } from "@components/ui";
+import {
+  Modal,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  EmptyState,
+  ConfirmDialog,
+} from "@components/ui";
 import { LanguageSelector } from "@components/adapters";
 import { ModalNavigationTabs, ModalType } from "@components/modal";
 import { CharacterPortrait } from "../character";
@@ -37,7 +45,7 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
   onNavigateModal,
   onResume,
 }) => {
-  const { displaySettings, isTwoPlayer } = useSettings();
+  const { isTwoPlayer } = useSettings();
   const { p1, p2 } = useGameSession();
   const {
     activePlayerIndex,
@@ -52,8 +60,9 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
   } = useInventory();
   const { t } = useI18n();
 
+  const [pendingDiscardIdx, setPendingDiscardIdx] = useState<number | null>(null);
+
   const {
-    selectedItem,
     selectedBackpackIdx,
     selectedEquipSlot,
     selectedPotionIdx,
@@ -66,6 +75,19 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
     handleUsePotion,
     handleDiscard,
   } = useInventorySelection();
+
+  const selectedItem = useMemo(() => {
+    if (selectedBackpackIdx !== null) {
+      return activeInventory?.backpack[selectedBackpackIdx] ?? null;
+    }
+    if (selectedEquipSlot !== null) {
+      return activeInventory?.equipment[selectedEquipSlot] ?? null;
+    }
+    if (selectedPotionIdx !== null) {
+      return activeInventory?.quickPotions[selectedPotionIdx] ?? null;
+    }
+    return null;
+  }, [activeInventory, selectedBackpackIdx, selectedEquipSlot, selectedPotionIdx]);
 
   const paperdollVM = useMemo(
     () => resolvePaperdollVM(activeInventory?.equipment),
@@ -112,33 +134,30 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
 
   const handleSelectEquipSlot = useCallback(
     (slotKey: EquipmentSlotKey) => {
-      const item = activeInventory?.equipment[slotKey] ?? null;
-      selectEquipSlot(slotKey, item);
+      selectEquipSlot(slotKey);
     },
-    [activeInventory?.equipment, selectEquipSlot]
+    [selectEquipSlot]
   );
 
   const handleSelectBackpackSlot = useCallback(
     (idx: number) => {
-      const item = activeInventory?.backpack[idx] ?? null;
-      selectBackpackSlot(idx, item);
+      selectBackpackSlot(idx);
     },
-    [activeInventory?.backpack, selectBackpackSlot]
+    [selectBackpackSlot]
   );
 
   const handleSelectPotionSlot = useCallback(
     (idx: number) => {
-      const item = activeInventory?.quickPotions[idx] ?? null;
-      selectPotionSlot(idx, item);
+      selectPotionSlot(idx);
     },
-    [activeInventory?.quickPotions, selectPotionSlot]
+    [selectPotionSlot]
   );
 
-  const handleDrinkPotion = useCallback(
+  const handleUsePotionSlot = useCallback(
     (idx: number) => {
-      handleUsePotion(idx, usePotion, activeInventory);
+      handleUsePotion(idx, usePotion);
     },
-    [handleUsePotion, usePotion, activeInventory]
+    [handleUsePotion, usePotion]
   );
 
   const handleEquipItem = useCallback(
@@ -155,12 +174,20 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
     [handleUnequip, unequipItem]
   );
 
-  const handleDiscardItem = useCallback(
-    (idx: number) => {
-      handleDiscard(idx, discardItem);
-    },
-    [handleDiscard, discardItem]
-  );
+  const handlePromptDiscard = useCallback((idx: number) => {
+    setPendingDiscardIdx(idx);
+  }, []);
+
+  const handleConfirmDiscard = useCallback(() => {
+    if (pendingDiscardIdx !== null) {
+      handleDiscard(pendingDiscardIdx, discardItem);
+      setPendingDiscardIdx(null);
+    }
+  }, [handleDiscard, discardItem, pendingDiscardIdx]);
+
+  const handleCancelDiscard = useCallback(() => {
+    setPendingDiscardIdx(null);
+  }, []);
 
   if (!p1 || !activePlayer || !activeInventory) return null;
 
@@ -192,7 +219,6 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
             onSelectPlayer={handleSelectPlayer}
             p1Name={t("valen")}
             p2Name={t("aurelia")}
-            assetQuality={displaySettings.assetQuality}
           />
         </div>
 
@@ -239,7 +265,7 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
                   belt={quickBeltVM}
                   selectedPotionIdx={selectedPotionIdx}
                   onSelectPotion={handleSelectPotionSlot}
-                  onDrinkPotion={handleDrinkPotion}
+                  onUsePotion={handleUsePotionSlot}
                 />
               </CardContent>
             </Card>
@@ -261,7 +287,6 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
                   grid={backpackVM}
                   selectedBackpackIdx={selectedBackpackIdx}
                   onSelectSlot={handleSelectBackpackSlot}
-                  maxSlots={16}
                 />
               </CardContent>
             </Card>
@@ -274,8 +299,8 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
                 selectedPotionIdx={selectedPotionIdx}
                 onEquip={handleEquipItem}
                 onUnequip={handleUnequipItem}
-                onUsePotion={handleDrinkPotion}
-                onDiscard={handleDiscardItem}
+                onUsePotion={handleUsePotionSlot}
+                onDiscard={handlePromptDiscard}
               />
             ) : (
               <EmptyState
@@ -289,6 +314,17 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
           </div>
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={pendingDiscardIdx !== null}
+        onClose={handleCancelDiscard}
+        onConfirm={handleConfirmDiscard}
+        title={t("discardItem")}
+        message={t("discardItem")}
+        confirmLabel={t("discardItem")}
+        cancelLabel={t("cancel")}
+        confirmVariant="danger"
+      />
     </Modal>
   );
 };

@@ -1,6 +1,7 @@
 import React, { act } from "react";
 import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
 import { renderIntoDom, cleanupDom } from "@test-utils/domTestUtils";
+import { ModalType } from "@components/modal";
 import { InventoryPanel } from "../InventoryPanel";
 
 describe("InventoryPanel Integration Tests", () => {
@@ -89,7 +90,7 @@ describe("InventoryPanel Integration Tests", () => {
   });
 
   it("renders navigation tabs when onNavigateModal and onResume are provided", async () => {
-    const handleNavigate = mock((_modal: any) => {});
+    const handleNavigate = mock((_modal: ModalType) => {});
     const handleResume = mock(() => {});
 
     const rendered = await renderIntoDom(
@@ -101,8 +102,80 @@ describe("InventoryPanel Integration Tests", () => {
     );
     unmount = rendered.unmount;
 
-    // ModalNavigationTabs has buttons for inventory, character, map, settings, etc.
     const navTabs = document.querySelector("#inventory-container");
     expect(navTabs).not.toBeNull();
+  });
+
+  it("prompts with ConfirmDialog when discard button is clicked and cancels when cancel button is clicked", async () => {
+    const rendered = await renderIntoDom(<InventoryPanel onClose={mock()} />);
+    unmount = rendered.unmount;
+
+    const slots = Array.from(document.querySelectorAll<HTMLElement>("[role='button']"));
+    const occupiedSlot = slots.find(
+      (slot) => !slot.className.includes("border-stone-800/40") && slot.getAttribute("aria-label")
+    );
+
+    if (occupiedSlot) {
+      await act(async () => {
+        await rendered.click(occupiedSlot);
+      });
+
+      const discardBtn = Array.from(document.querySelectorAll<HTMLButtonElement>("button")).find(
+        (btn) => btn.querySelector("svg.lucide-trash-2") !== null
+      );
+
+      if (discardBtn) {
+        await act(async () => {
+          await rendered.click(discardBtn);
+        });
+
+        const dialogs = document.querySelectorAll("[role='dialog']");
+        expect(dialogs.length).toBeGreaterThanOrEqual(2);
+
+        const cancelBtn = Array.from(document.querySelectorAll<HTMLButtonElement>("button")).find(
+          (btn) => btn.textContent?.includes("Cancel") || btn.textContent?.includes("Anuluj")
+        );
+        expect(cancelBtn).not.toBeUndefined();
+
+        await act(async () => {
+          await rendered.click(cancelBtn!);
+        });
+
+        const remainingDialogs = document.querySelectorAll("[role='dialog']");
+        expect(remainingDialogs.length).toBe(1);
+      }
+    }
+  });
+
+  it("handles equipping or unequipping items when action button is clicked", async () => {
+    const rendered = await renderIntoDom(<InventoryPanel onClose={mock()} />);
+    unmount = rendered.unmount;
+
+    const slots = Array.from(document.querySelectorAll<HTMLElement>("[role='button']"));
+    const occupiedSlot = slots.find(
+      (slot) => !slot.className.includes("border-stone-800/40") && slot.getAttribute("aria-label")
+    );
+
+    if (occupiedSlot) {
+      await act(async () => {
+        await rendered.click(occupiedSlot);
+      });
+
+      const actionBtn = Array.from(document.querySelectorAll<HTMLButtonElement>("button")).find(
+        (btn) =>
+          btn.querySelector("svg.lucide-check-circle") !== null ||
+          btn.querySelector("svg.lucide-arrow-down-to-dot") !== null ||
+          btn.querySelector("svg.lucide-heart") !== null
+      );
+
+      if (actionBtn) {
+        await act(async () => {
+          await rendered.click(actionBtn);
+        });
+
+        const dialog = document.querySelector("[role='dialog']");
+        expect(dialog).not.toBeNull();
+      }
+    }
   });
 });

@@ -1,37 +1,30 @@
-import { useState, useCallback, useMemo } from "react";
-import { Item, EquipmentState, InventoryState } from "@game/types";
+import { useState, useCallback } from "react";
 import { EquipmentSlotKey } from "@components/adapters/inventoryAdapter";
 
 export type InventorySelection =
   | { readonly kind: "none" }
-  | { readonly kind: "backpack"; readonly index: number; readonly item: Item | null }
-  | { readonly kind: "equipment"; readonly slot: EquipmentSlotKey; readonly item: Item | null }
-  | { readonly kind: "potion"; readonly index: number; readonly item: Item | null };
+  | { readonly kind: "backpack"; readonly index: number }
+  | { readonly kind: "equipment"; readonly slot: EquipmentSlotKey }
+  | { readonly kind: "potion"; readonly index: number };
 
 export interface InventorySelectionState {
   readonly selection: InventorySelection;
-  readonly selectedItem: Item | null;
   readonly selectedBackpackIdx: number | null;
   readonly selectedEquipSlot: EquipmentSlotKey | null;
   readonly selectedPotionIdx: number | null;
   readonly selectPlayer: (idx: number, setActivePlayerIndex?: (idx: number) => void) => void;
-  readonly selectEquipSlot: (slot: EquipmentSlotKey, item: Item | null) => void;
-  readonly selectBackpackSlot: (idx: number, item: Item | null) => void;
-  readonly selectPotionSlot: (idx: number, item: Item | null) => void;
+  readonly selectEquipSlot: (slot: EquipmentSlotKey) => void;
+  readonly selectBackpackSlot: (idx: number) => void;
+  readonly selectPotionSlot: (idx: number) => void;
   readonly handleEquip: (backpackIdx: number, equipItem: (idx: number) => boolean) => boolean;
   readonly handleUnequip: (slot: EquipmentSlotKey, unequipItem: (slot: EquipmentSlotKey) => boolean) => boolean;
-  readonly handleUsePotion: (
-    idx: number,
-    usePotion: (idx: number) => boolean,
-    activeInventory?: InventoryState | null
-  ) => boolean;
+  readonly handleUsePotion: (idx: number, usePotion: (idx: number) => boolean) => boolean;
   readonly handleDiscard: (backpackIdx: number, discardItem: (idx: number) => boolean) => boolean;
   readonly clearSelection: () => void;
 }
 
 /**
- * Hook orchestrating mutually exclusive item selection and contextual item actions
- * across backpack slots, paperdoll equipment slots, and quick potion belt slots.
+ * Manages UI selection coordinates and actions across inventory slots.
  */
 export function useInventorySelection(
   initialSelection: InventorySelection = { kind: "none" }
@@ -50,27 +43,24 @@ export function useInventorySelection(
     [clearSelection]
   );
 
-  const selectEquipSlot = useCallback((slot: EquipmentSlotKey, item: Item | null) => {
+  const selectEquipSlot = useCallback((slot: EquipmentSlotKey) => {
     setSelection({
       kind: "equipment",
       slot,
-      item,
     });
   }, []);
 
-  const selectBackpackSlot = useCallback((idx: number, item: Item | null) => {
+  const selectBackpackSlot = useCallback((idx: number) => {
     setSelection({
       kind: "backpack",
       index: idx,
-      item,
     });
   }, []);
 
-  const selectPotionSlot = useCallback((idx: number, item: Item | null) => {
+  const selectPotionSlot = useCallback((idx: number) => {
     setSelection({
       kind: "potion",
       index: idx,
-      item,
     });
   }, []);
 
@@ -97,34 +87,14 @@ export function useInventorySelection(
   );
 
   const handleUsePotion = useCallback(
-    (
-      idx: number,
-      usePotion: (idx: number) => boolean,
-      _activeInventory?: InventoryState | null
-    ): boolean => {
+    (idx: number, usePotion: (idx: number) => boolean): boolean => {
       const success = usePotion(idx);
       if (success) {
-        setSelection((current) => {
-          if (current.kind === "potion" && current.index === idx && current.item) {
-            const currentCount = current.item.count ?? 1;
-            if (currentCount <= 1) {
-              return { kind: "none" };
-            }
-            return {
-              kind: "potion",
-              index: idx,
-              item: {
-                ...current.item,
-                count: currentCount - 1,
-              },
-            };
-          }
-          return { kind: "none" };
-        });
+        clearSelection();
       }
       return success;
     },
-    []
+    [clearSelection]
   );
 
   const handleDiscard = useCallback(
@@ -138,25 +108,12 @@ export function useInventorySelection(
     [clearSelection]
   );
 
-  const selectedItem = useMemo(() => {
-    return selection.kind !== "none" ? selection.item : null;
-  }, [selection]);
-
-  const selectedBackpackIdx = useMemo(() => {
-    return selection.kind === "backpack" ? selection.index : null;
-  }, [selection]);
-
-  const selectedEquipSlot = useMemo(() => {
-    return selection.kind === "equipment" ? selection.slot : null;
-  }, [selection]);
-
-  const selectedPotionIdx = useMemo(() => {
-    return selection.kind === "potion" ? selection.index : null;
-  }, [selection]);
+  const selectedBackpackIdx = selection.kind === "backpack" ? selection.index : null;
+  const selectedEquipSlot = selection.kind === "equipment" ? selection.slot : null;
+  const selectedPotionIdx = selection.kind === "potion" ? selection.index : null;
 
   return {
     selection,
-    selectedItem,
     selectedBackpackIdx,
     selectedEquipSlot,
     selectedPotionIdx,

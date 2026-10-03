@@ -5,14 +5,12 @@ import { useI18n } from "@context/I18nContext";
 import {
   EquipmentPaperdollVM,
   EquipmentSlotKey,
-  resolvePaperdollVM,
 } from "@components/adapters/inventoryAdapter";
 
 export interface InventoryPaperdollProps {
-  readonly paperdoll?: EquipmentPaperdollVM;
-  readonly equipment?: any;
+  readonly paperdoll: EquipmentPaperdollVM;
   readonly selectedSlot: EquipmentSlotKey | null;
-  readonly onSelectSlot: (slot: EquipmentSlotKey, item: any | null) => void;
+  readonly onSelectSlot: (slot: EquipmentSlotKey) => void;
 }
 
 const slotGridClasses: Record<EquipmentSlotKey, string> = {
@@ -38,17 +36,14 @@ const placeholderIcons: Record<EquipmentSlotKey, React.ReactNode> = {
  */
 export const InventoryPaperdoll = React.memo(function InventoryPaperdoll({
   paperdoll,
-  equipment,
   selectedSlot,
   onSelectSlot,
 }: InventoryPaperdollProps) {
   const { t } = useI18n();
 
-  const effectivePaperdoll = paperdoll ?? resolvePaperdollVM(equipment);
-
   return (
     <div className="grid grid-cols-3 gap-2.5 max-w-xs mx-auto my-2">
-      {effectivePaperdoll.slots.map((slotVM) => {
+      {paperdoll.slots.map((slotVM) => {
         const isSelected = selectedSlot === slotVM.slotKey;
         return (
           <div key={slotVM.slotKey} className={slotGridClasses[slotVM.slotKey]}>
@@ -57,7 +52,7 @@ export const InventoryPaperdoll = React.memo(function InventoryPaperdoll({
               label={t(slotVM.labelKey)}
               iconPlaceholder={placeholderIcons[slotVM.slotKey]}
               isSelected={isSelected}
-              onClick={() => onSelectSlot(slotVM.slotKey, slotVM)}
+              onClick={() => onSelectSlot(slotVM.slotKey)}
             />
           </div>
         );

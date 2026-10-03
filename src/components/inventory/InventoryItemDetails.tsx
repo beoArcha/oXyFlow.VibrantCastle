@@ -5,13 +5,11 @@ import { useI18n } from "@context/I18nContext";
 import {
   ItemDetailsVM,
   EquipmentSlotKey,
-  resolveItemDetailsVM,
 } from "@components/adapters/inventoryAdapter";
 import { cn } from "@lib/utils";
 
 export interface InventoryItemDetailsProps {
-  readonly item?: any;
-  readonly details?: ItemDetailsVM | null;
+  readonly details: ItemDetailsVM;
   readonly selectedBackpackIdx: number | null;
   readonly selectedEquipSlot: EquipmentSlotKey | null;
   readonly selectedPotionIdx: number | null;
@@ -26,7 +24,6 @@ export interface InventoryItemDetailsProps {
  * for the currently selected equipment, backpack, or potion item.
  */
 export const InventoryItemDetails = React.memo(function InventoryItemDetails({
-  item,
   details,
   selectedBackpackIdx,
   selectedEquipSlot,
@@ -38,31 +35,27 @@ export const InventoryItemDetails = React.memo(function InventoryItemDetails({
 }: InventoryItemDetailsProps) {
   const { t } = useI18n();
 
-  const effectiveDetails = details ?? resolveItemDetailsVM(item);
-
-  if (!effectiveDetails) return null;
-
-  const localizedName = t(effectiveDetails.nameKey) || effectiveDetails.id;
-  const localizedDesc = t(effectiveDetails.descriptionKey) || "";
+  const localizedName = t(details.nameKey) || details.id;
+  const localizedDesc = t(details.descriptionKey) || "";
 
   return (
     <Card variant="highlight" className="animate-in fade-in duration-150">
       <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
         <div className="flex items-center gap-3">
           <div className="p-2.5 bg-stone-900 rounded-xl border border-amber-500/50 flex items-center justify-center shrink-0">
-            <ItemIcon name={effectiveDetails.iconName} size={28} className="text-amber-300 drop-shadow" />
+            <ItemIcon name={details.iconName} size={28} className="text-amber-300 drop-shadow" />
           </div>
           <div>
             <h4 className="text-base font-bold text-amber-200 leading-snug">
               {localizedName}
             </h4>
             <div className="flex gap-1.5 mt-1">
-              <Badge variant="stone">{t(effectiveDetails.typeLabelKey)}</Badge>
-              <Badge variant={effectiveDetails.rarityVariant}>
-                {t(effectiveDetails.rarityLabelKey)}
+              <Badge variant="stone">{t(details.typeLabelKey)}</Badge>
+              <Badge variant={details.rarityVariant}>
+                {t(details.rarityLabelKey)}
               </Badge>
-              {effectiveDetails.count !== undefined && effectiveDetails.count > 1 && (
-                <Badge variant="amber">x{effectiveDetails.count}</Badge>
+              {details.count !== undefined && details.count > 1 && (
+                <Badge variant="amber">x{details.count}</Badge>
               )}
             </div>
           </div>
@@ -73,10 +66,10 @@ export const InventoryItemDetails = React.memo(function InventoryItemDetails({
             <Button
               variant="primary"
               size="sm"
-              icon={effectiveDetails.isPotion ? <Heart size={14} /> : <CheckCircle size={14} />}
+              icon={details.isPotion ? <Heart size={14} /> : <CheckCircle size={14} />}
               onClick={() => onEquip(selectedBackpackIdx)}
             >
-              {t("equipItem")}
+              {details.isPotion ? t("useItem") : t("equipItem")}
             </Button>
           )}
 
@@ -115,9 +108,9 @@ export const InventoryItemDetails = React.memo(function InventoryItemDetails({
         </div>
       </div>
 
-      {effectiveDetails.modifiers.length > 0 && (
+      {details.modifiers.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-2.5 pt-2 border-t border-amber-900/40 text-xs">
-          {effectiveDetails.modifiers.map((modifier) => (
+          {details.modifiers.map((modifier) => (
             <span
               key={modifier.type}
               className={cn("flex items-center gap-1 font-mono font-semibold", modifier.textColorClass)}

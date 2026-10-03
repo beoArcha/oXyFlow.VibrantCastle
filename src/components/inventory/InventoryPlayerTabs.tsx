@@ -2,6 +2,7 @@ import React from "react";
 import { User } from "lucide-react";
 import { CharacterPortrait } from "../character";
 import { Tabs, TabsList, TabsTrigger, Badge } from "@components/ui";
+import { PLAYER_THEMES } from "@styles/theme";
 import { cn } from "@lib/utils";
 
 export interface CharacterIdentityData {
@@ -17,7 +18,6 @@ export interface InventoryPlayerTabsProps {
   readonly onSelectPlayer: (index: number) => void;
   readonly p1Name: string;
   readonly p2Name: string;
-  readonly assetQuality?: string;
 }
 
 /**
@@ -56,7 +56,12 @@ export const InventoryPlayerTabs = React.memo(function InventoryPlayerTabs({
         <TabsTrigger
           value="0"
           icon={
-            <div className="w-5 h-5 rounded overflow-hidden border border-red-500/40 bg-black/60 shrink-0">
+            <div
+              className={cn(
+                "w-5 h-5 rounded overflow-hidden border bg-black/60 shrink-0",
+                PLAYER_THEMES.crimson.avatarBorder
+              )}
+            >
               <CharacterPortrait characterId={p1CharacterId} className="w-full h-full" />
             </div>
           }
@@ -81,7 +86,12 @@ export const InventoryPlayerTabs = React.memo(function InventoryPlayerTabs({
         <TabsTrigger
           value="1"
           icon={
-            <div className="w-5 h-5 rounded overflow-hidden border border-cyan-500/40 bg-black/60 shrink-0">
+            <div
+              className={cn(
+                "w-5 h-5 rounded overflow-hidden border bg-black/60 shrink-0",
+                PLAYER_THEMES.cyan.avatarBorder
+              )}
+            >
               <CharacterPortrait characterId={p2CharacterId} className="w-full h-full" />
             </div>
           }

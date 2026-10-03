@@ -1,17 +1,13 @@
 import React from "react";
 import { Button, ItemSlot } from "@components/ui";
 import { useI18n } from "@context/I18nContext";
-import {
-  InventoryQuickBeltVM,
-  resolveInventoryQuickBeltVM,
-} from "@components/adapters/inventoryAdapter";
+import { InventoryQuickBeltVM } from "@components/adapters/inventoryAdapter";
 
 export interface InventoryQuickBeltProps {
-  readonly belt?: InventoryQuickBeltVM;
-  readonly quickPotions?: readonly any[] | any[];
+  readonly belt: InventoryQuickBeltVM;
   readonly selectedPotionIdx: number | null;
-  readonly onSelectPotion: (idx: number, potion: any | null) => void;
-  readonly onDrinkPotion?: (idx: number) => void;
+  readonly onSelectPotion: (idx: number) => void;
+  readonly onUsePotion?: (idx: number) => void;
 }
 
 /**
@@ -19,18 +15,15 @@ export interface InventoryQuickBeltProps {
  */
 export const InventoryQuickBelt = React.memo(function InventoryQuickBelt({
   belt,
-  quickPotions,
   selectedPotionIdx,
   onSelectPotion,
-  onDrinkPotion,
+  onUsePotion,
 }: InventoryQuickBeltProps) {
   const { t } = useI18n();
 
-  const effectiveBelt = belt ?? resolveInventoryQuickBeltVM(quickPotions);
-
   return (
     <div className="grid grid-cols-3 gap-2">
-      {effectiveBelt.slots.map((slotVM) => {
+      {belt.slots.map((slotVM) => {
         const isSelected = selectedPotionIdx === slotVM.slotIndex;
         return (
           <div key={`quick-belt-${slotVM.slotIndex}`} className="flex flex-col gap-1.5">
@@ -38,13 +31,13 @@ export const InventoryQuickBelt = React.memo(function InventoryQuickBelt({
               slot={slotVM}
               label={slotVM.keyLabel ? `${t("quickPotions")} ${slotVM.keyLabel}` : undefined}
               isSelected={isSelected}
-              onClick={() => onSelectPotion(slotVM.slotIndex, slotVM)}
+              onClick={() => onSelectPotion(slotVM.slotIndex)}
             />
-            {onDrinkPotion && !slotVM.isEmpty && (
+            {onUsePotion && !slotVM.isEmpty && (
               <Button
                 size="sm"
                 variant="primary"
-                onClick={() => onDrinkPotion(slotVM.slotIndex)}
+                onClick={() => onUsePotion(slotVM.slotIndex)}
               >
                 {t("useItem")}
               </Button>
