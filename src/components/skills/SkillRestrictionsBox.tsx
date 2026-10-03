@@ -1,105 +1,80 @@
 import React from "react";
-import { ShieldAlert, CheckCircle2, XCircle, UserCheck, AlertTriangle } from "lucide-react";
-import { SkillTreeNode } from "@game/types";
+import { ShieldAlert, UserCheck } from "lucide-react";
+import { SkillRestrictionVM } from "@components/adapters";
 import { useI18n } from "@context/I18nContext";
-import { useSkills } from "@context/GameContext";
-import { Badge } from "../ui";
+import { Alert, Badge, Card } from "../ui";
+import { SkillRequirementRow } from "./SkillRequirementRow";
 
 export interface SkillRestrictionsBoxProps {
-  node: SkillTreeNode;
-  className?: string;
+  readonly restriction: SkillRestrictionVM;
+  readonly className?: string;
 }
 
-export const SkillRestrictionsBox: React.FC<SkillRestrictionsBoxProps> = ({ node, className = "" }) => {
+export const SkillRestrictionsBox = ({
+  restriction,
+  className = "",
+}: SkillRestrictionsBoxProps): React.ReactElement => {
   const { t } = useI18n();
-  const { evaluateSkill, skillPoints } = useSkills();
 
-  const evalResult = evaluateSkill(node.id);
-  const isCharacterValen = node.character === "valen";
-  const charRestrictionText = isCharacterValen
-    ? t("restrictionCharacterValen")
-    : t("restrictionCharacterAurelia");
-
-  const localizedRestrictionDesc = node.restrictionKey ? t(node.restrictionKey) : "";
-  const reqNode = evalResult.reqSkillNode;
+  const isValen = restriction.characterName === "Valen";
 
   return (
-    <div className={`bg-[#1c0c07]/90 rounded-xl p-3 border border-[#5c2d18] flex flex-col gap-2.5 text-xs ${className}`}>
-      {/* Title & Character Restriction Header */}
+    <Card variant="subtle" className={`p-3 flex flex-col gap-2.5 text-xs ${className}`}>
       <div className="flex items-center justify-between border-b border-[#3d1b0e] pb-1.5">
         <div className="flex items-center gap-1.5 text-[#fbbf24] font-bold">
           <ShieldAlert size={14} className="text-amber-400" />
           <span>{t("requirementsAndRestrictions")}</span>
         </div>
-        <Badge variant={isCharacterValen ? "amber" : "cyan"} className="text-[10px]" icon={<UserCheck size={10} />}>
-          {isCharacterValen ? "Valen" : "Aurelia"}
+        <Badge variant={isValen ? "amber" : "cyan"} className="text-[10px]" icon={<UserCheck size={10} />}>
+          {restriction.characterName}
         </Badge>
       </div>
 
-      {/* Discipline description */}
       <div className="text-[11px] text-[#fed7aa] italic leading-relaxed">
-        {charRestrictionText}
+        {t(restriction.disciplineKey)}
       </div>
 
-      {/* Specific I18N Detailed Restriction */}
-      {localizedRestrictionDesc && (
+      {restriction.restrictionKey && (
         <div className="bg-[#26120b] p-2 rounded-lg border border-[#5c2d18]/70 text-[#fde68a] text-[11px] leading-relaxed">
-          {localizedRestrictionDesc}
+          {t(restriction.restrictionKey)}
         </div>
       )}
 
-      {/* Requirements Matrix */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] pt-1 border-t border-[#3d1b0e]">
-        {/* Prerequisite Node Requirement */}
-        <div className="flex items-center justify-between p-1.5 bg-[#140704] rounded-md border border-[#3d1b0e]">
-          <span className="text-stone-400">{t("restrictionPrerequisite")}</span>
-          <div className="flex items-center gap-1">
-            {reqNode ? (
-              <>
-                <span className="font-semibold text-stone-200 line-clamp-1 max-w-[90px]">
-                  {t(reqNode.skill.nameKey)}
-                </span>
-                {evalResult.hasPrerequisite ? (
-                  <CheckCircle2 size={13} className="text-emerald-400 shrink-0" />
-                ) : (
-                  <XCircle size={13} className="text-rose-400 shrink-0" />
-                )}
-              </>
-            ) : (
-              <span className="text-emerald-400 flex items-center gap-1">
-                <CheckCircle2 size={12} /> {t("restrictionNone")}
-              </span>
-            )}
-          </div>
-        </div>
+        <SkillRequirementRow
+          label={t("restrictionPrerequisite")}
+          isMet={restriction.hasPrerequisite}
+        >
+          {restriction.reqSkillNameKey ? (
+            <span className="font-semibold text-stone-200 line-clamp-1 max-w-[90px]">
+              {t(restriction.reqSkillNameKey)}
+            </span>
+          ) : (
+            <span className="text-emerald-400 text-xs">
+              {t("restrictionNone")}
+            </span>
+          )}
+        </SkillRequirementRow>
 
-        {/* Skill Points Requirement */}
-        <div className="flex items-center justify-between p-1.5 bg-[#140704] rounded-md border border-[#3d1b0e]">
-          <span className="text-stone-400">{t("restrictionCost")}</span>
-          <div className="flex items-center gap-1.5">
-            <span className={`font-mono font-bold ${evalResult.hasPoints ? "text-amber-300" : "text-rose-400"}`}>
-              {node.pointCost} PU
-            </span>
-            <span className="text-[10px] text-stone-500">
-              ({skillPoints} PU)
-            </span>
-            {evalResult.hasPoints ? (
-              <CheckCircle2 size={13} className="text-emerald-400 shrink-0" />
-            ) : (
-              <XCircle size={13} className="text-rose-400 shrink-0" />
-            )}
-          </div>
-        </div>
+        <SkillRequirementRow
+          label={t("restrictionCost")}
+          isMet={restriction.hasPoints}
+        >
+          <span className={`font-mono font-bold ${restriction.hasPoints ? "text-amber-300" : "text-rose-400"}`}>
+            {restriction.pointCost} {t("skillPointsUnit")}
+          </span>
+          <span className="text-[10px] text-stone-500">
+            ({restriction.availablePoints} {t("skillPointsUnit")})
+          </span>
+        </SkillRequirementRow>
       </div>
 
-      {/* Warning message if currently locked */}
-      {!evalResult.isUnlocked && !evalResult.canUnlock && (
-        <div className="flex items-start gap-1.5 text-[10px] text-amber-400/90 bg-amber-950/40 border border-amber-800/40 p-1.5 rounded-md">
-          <AlertTriangle size={12} className="shrink-0 mt-0.5" />
-          <span>{t("restrictionUnavailable")}</span>
-        </div>
+      {restriction.isUnavailable && (
+        <Alert variant="warning" className="p-2 text-[10px] rounded-lg">
+          {t("restrictionUnavailable")}
+        </Alert>
       )}
-    </div>
+    </Card>
   );
 };
 

@@ -720,6 +720,16 @@ export interface SkillsI18n {
   equippedPrimaryBadge: string;
   equippedSecondaryBadge: string;
   activeCharacterLabel: string;
+  characterClassKnight: string;
+  characterClassScholar: string;
+  playerValenLabel: string;
+  playerAureliaLabel: string;
+  shieldDurationLabel: string;
+  autoIntervalLabel: string;
+  equippedActiveSlot: string;
+  passivePermanentDesc: string;
+  autoCastDesc: string;
+
 
   // Spell names & descriptions
   spellAetherBoltName: string;

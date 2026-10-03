@@ -5,3 +5,4 @@ export * from "./controlsAdapter";
 export * from "./hudAdapter";
 export * from "./inventoryAdapter";
 export * from "./statsAdapter";
+export * from "./skillsAdapter";

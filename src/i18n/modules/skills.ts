@@ -38,6 +38,16 @@ export const skillsTranslations: Record<LanguageCode, SkillsI18n> = {
     equippedPrimaryBadge: "Główny [U]",
     equippedSecondaryBadge: "Pomocniczy [I]",
     activeCharacterLabel: "Aktywny Bohater:",
+    characterClassKnight: "Słoneczny Rycerz",
+    characterClassScholar: "Uczona Arkanów",
+    playerValenLabel: "Valen (P1)",
+    playerAureliaLabel: "Aurelia (P2)",
+    shieldDurationLabel: "Czas ochrony:",
+    autoIntervalLabel: "Częstotliwość aktywacji:",
+    equippedActiveSlot: "Aktywny",
+    passivePermanentDesc: "Aura pasywna jest trwale aktywna na bohaterze.",
+    autoCastDesc: "Zaklęcie aktywuje się automatycznie podczas walki.",
+
 
     // Spells base
     spellAetherBoltName: "Promień Aetheru",
@@ -142,6 +152,16 @@ export const skillsTranslations: Record<LanguageCode, SkillsI18n> = {
     equippedPrimaryBadge: "Primary [U]",
     equippedSecondaryBadge: "Secondary [I]",
     activeCharacterLabel: "Active Hero:",
+    characterClassKnight: "Solar Knight",
+    characterClassScholar: "Arcane Scholar",
+    playerValenLabel: "Valen (P1)",
+    playerAureliaLabel: "Aurelia (P2)",
+    shieldDurationLabel: "Shield Duration:",
+    autoIntervalLabel: "Activation Rate:",
+    equippedActiveSlot: "Active",
+    passivePermanentDesc: "Passive aura is permanently active on the hero.",
+    autoCastDesc: "Spell activates automatically during combat.",
+
 
     // Spells base
     spellAetherBoltName: "Aether Bolt",
