@@ -7,10 +7,16 @@ import React, {
   useRef,
   useMemo,
 } from "react";
-import { Player } from "@game/types";
+import { Player, SoundType } from "@game/types";
 import gameEngine from "@game/loop/engine";
 import { gameAudio } from "@game/engine/audioEngine";
-import { getNextLocation, getLocation, LocationDefinition, LocationId } from "@game/locations";
+import {
+  getAllLocations,
+  getNextLocation,
+  getLocation,
+  LocationDefinition,
+  LocationId,
+} from "@game/locations";
 import { useI18n } from "./I18nContext";
 import { useEngineSubscription } from "./hooks/useEngineSubscription";
 import { useSafeTimeout } from "./hooks/useSafeTimeout";
@@ -25,6 +31,7 @@ export interface GameSessionContextValue {
   isPaused: boolean;
   currentLocation: LocationDefinition;
   currentLocationId: LocationId;
+  availableLocations: readonly LocationDefinition[];
   narration: string;
   subAnim: boolean;
   isAudioInitialized: boolean;
@@ -35,6 +42,7 @@ export interface GameSessionContextValue {
   loadLocation: (locId: LocationId) => void;
   advanceLocation: () => void;
   initializeAudio: () => void;
+  playPreviewSFX: (type: "slash" | "magic") => void;
   notifyEngineUpdate: () => void;
 }
 
@@ -176,6 +184,16 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
     notifyEngineUpdate();
   }, [notifyEngineUpdate]);
 
+  const availableLocations = useMemo(() => getAllLocations(), []);
+
+  const playPreviewSFX = useCallback((type: "slash" | "magic") => {
+    if (type === "slash") {
+      gameAudio.playSFX(SoundType.SFX_SLASH);
+    } else if (type === "magic") {
+      gameAudio.playSFX(SoundType.SFX_MAGIC_BOLT);
+    }
+  }, []);
+
   const value = useMemo<GameSessionContextValue>(
     () => ({
       p1,
@@ -185,6 +203,7 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
       isPaused,
       currentLocation,
       currentLocationId,
+      availableLocations,
       narration: currentNarration,
       subAnim,
       isAudioInitialized,
@@ -194,6 +213,7 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
       loadLocation,
       advanceLocation,
       initializeAudio,
+      playPreviewSFX,
       notifyEngineUpdate,
     }),
     [
@@ -204,6 +224,7 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
       isPaused,
       currentLocation,
       currentLocationId,
+      availableLocations,
       currentNarration,
       subAnim,
       isAudioInitialized,
@@ -213,6 +234,7 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
       loadLocation,
       advanceLocation,
       initializeAudio,
+      playPreviewSFX,
       notifyEngineUpdate,
     ]
   );

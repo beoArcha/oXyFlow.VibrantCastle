@@ -10,7 +10,6 @@ export const CharacterStudioSection: React.FC = () => {
   const { displaySettings } = useSettings();
   const { t } = useI18n();
 
-  // Character preview state
   const {
     previewCharacter,
     previewMood,
@@ -36,7 +35,6 @@ export const CharacterStudioSection: React.FC = () => {
               {t("studioTitle")}
             </CardTitle>
 
-            {/* Studio View Mode Switcher */}
             <Tabs
               value={studioMode}
               onValueChange={(val) => setStudioMode(val as "stage" | "atlas")}
@@ -60,7 +58,6 @@ export const CharacterStudioSection: React.FC = () => {
             </Tabs>
           </div>
 
-          {/* Character Selector */}
           <div className="flex items-center gap-1.5">
             <Button
               size="sm"

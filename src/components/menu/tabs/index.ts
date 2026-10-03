@@ -1,7 +1,9 @@
-export { GameplayTab } from "./GameplayTab";
-export { LocationsTab } from "./LocationsTab";
-export { DisplayTab } from "./DisplayTab";
-export { DisplaySettingsSection } from "./DisplaySettingsSection";
+export { GameplayTab, type GameplayTabProps } from "./GameplayTab";
+export { LocationsTab, type LocationsTabProps, type LocationItemVM } from "./LocationsTab";
+export { DisplayTab, type DisplayTabProps } from "./DisplayTab";
+export { DisplaySettingsSection, type DisplaySettingsSectionProps } from "./DisplaySettingsSection";
 export { CharacterStudioSection } from "./CharacterStudioSection";
-export { AudioTab } from "./AudioTab";
-export { TesterTab } from "./TesterTab";
+export { AudioTab, type AudioTabProps } from "./AudioTab";
+export * from "./display";
+export * from "./gameplay";
+export * from "./audio";

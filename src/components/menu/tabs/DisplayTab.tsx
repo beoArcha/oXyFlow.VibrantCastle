@@ -1,23 +1,30 @@
 import React, { useState } from "react";
 import { RotateCcw, Check } from "lucide-react";
 import { Button } from "@components/ui";
-import { useSettings } from "@context/GameContext";
+import { useSettings } from "@context/SettingsContext";
 import { useI18n } from "@context/I18nContext";
+import { useSafeTimeout } from "@context/hooks/useSafeTimeout";
 import { DEFAULT_SETTINGS } from "@context/settingsTypes";
 import { DisplaySettingsSection } from "./DisplaySettingsSection";
 import { CharacterStudioSection } from "./CharacterStudioSection";
+import { cn } from "@lib/utils";
 
-export const DisplayTab: React.FC = () => {
+export interface DisplayTabProps {
+  readonly className?: string;
+}
+
+export const DisplayTab = ({ className }: DisplayTabProps = {}): React.ReactElement => {
   const { setDisplaySettings } = useSettings();
   const { t } = useI18n();
+  const { setSafeTimeout } = useSafeTimeout();
   const [statusNotification, setStatusNotification] = useState<string | null>(null);
 
-  const showNotification = (msg: string) => {
+  const showNotification = (msg: string): void => {
     setStatusNotification(msg);
-    setTimeout(() => setStatusNotification(null), 2500);
+    setSafeTimeout(() => setStatusNotification(null), 2500);
   };
 
-  const handleResetDisplay = () => {
+  const handleResetDisplay = (): void => {
     setDisplaySettings({
       aspectRatio: DEFAULT_SETTINGS.display.aspectRatio,
       scalingFilter: DEFAULT_SETTINGS.display.scalingFilter,
@@ -29,8 +36,10 @@ export const DisplayTab: React.FC = () => {
   };
 
   return (
-    <div id="tab-content-display" className="flex flex-col gap-4 animate-in fade-in duration-150 text-stone-200">
-      {/* Toast Notification */}
+    <div
+      id="tab-content-display"
+      className={cn("flex flex-col gap-4 animate-in fade-in duration-150 text-stone-200", className)}
+    >
       {statusNotification && (
         <div className="p-2.5 bg-amber-600/90 text-white rounded-xl shadow-lg border border-amber-400 text-xs font-semibold flex items-center justify-between animate-in fade-in">
           <span>{statusNotification}</span>
@@ -38,13 +47,10 @@ export const DisplayTab: React.FC = () => {
         </div>
       )}
 
-      {/* 1-4. Ekrany, Skalowanie, FPS, Asset Quality */}
       <DisplaySettingsSection />
 
-      {/* 5. Studio Postaci i Atlasów */}
       <CharacterStudioSection />
 
-      {/* 6. Diagnostyka i Reset Ustawień Wyświetlania */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-[#140602] border border-[#5c2d18] rounded-xl text-xs">
         <div className="flex items-center gap-2">
           <RotateCcw size={16} className="text-amber-400 shrink-0" />

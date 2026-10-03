@@ -8,20 +8,36 @@ import {
   MapPin,
   BarChart3,
 } from "lucide-react";
-import { PlayerId, InputMap } from "@game/types";
+import type { KeyboardMapperProps } from "../controls/types";
 import { Tabs } from "../ui";
 import KeyboardMapper from "../controls/KeyboardMapper";
 import GamepadMapper from "../controls/GamepadMapper";
 import StatsPanel from "./StatsPanel";
 import { GameplayTab, LocationsTab, DisplayTab, AudioTab } from "./tabs";
 import { useI18n } from "@context/I18nContext";
+import { cn } from "@lib/utils";
+
+export type MenuTabId =
+  | "gameplay"
+  | "stats"
+  | "locations"
+  | "keyboard"
+  | "gamepad"
+  | "display"
+  | "audio";
 
 export interface MenuPanelProps {
-  onStartRebind?: (action: keyof InputMap, player: PlayerId, label: string) => void;
+  readonly onStartRebind?: KeyboardMapperProps["onStartRebind"];
+  readonly initialTab?: MenuTabId;
+  readonly className?: string;
 }
 
-export const MenuPanel: React.FC<MenuPanelProps> = ({ onStartRebind }) => {
-  const [activeTab, setActiveTab] = useState<string>("gameplay");
+export const MenuPanel = ({
+  onStartRebind,
+  initialTab = "gameplay",
+  className,
+}: MenuPanelProps): React.ReactElement => {
+  const [activeTab, setActiveTab] = useState<string>(initialTab);
   const { t } = useI18n();
 
   const tabItems = [
@@ -35,11 +51,9 @@ export const MenuPanel: React.FC<MenuPanelProps> = ({ onStartRebind }) => {
   ];
 
   return (
-    <div id="settings-menu-panel" className="flex flex-col gap-4">
-      {/* Navigation Tabs */}
+    <div id="settings-menu-panel" className={cn("flex flex-col gap-4", className)}>
       <Tabs items={tabItems} activeId={activeTab} onChange={setActiveTab} />
 
-      {/* Tab Panels with smooth fade transition */}
       <div className="flex-1">
         {activeTab === "gameplay" && <GameplayTab />}
         {activeTab === "stats" && <StatsPanel />}

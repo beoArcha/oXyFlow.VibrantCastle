@@ -1,33 +1,34 @@
 import React from "react";
 import { Music, Volume2, VolumeX, Sparkles, Play } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent, Slider, Button, Badge } from "@components/ui";
-import { useSettings } from "@context/GameContext";
+import { useSettings } from "@context/SettingsContext";
+import { useGameSession } from "@context/GameSessionContext";
 import { useI18n } from "@context/I18nContext";
-import gameEngine from "@game/loop/engine";
-import { SoundType } from "@game/types";
+import { VolumePresetBar } from "./audio";
 import { cn } from "@lib/utils";
 
-export const AudioTab: React.FC = () => {
+export interface AudioTabProps {
+  readonly className?: string;
+}
+
+export const AudioTab = ({ className }: AudioTabProps): React.ReactElement => {
   const { volumeMusic, setVolumeMusic, volumeSFX, setVolumeSFX } = useSettings();
-  const { t, language } = useI18n();
-  const isPl = language === "pl";
+  const { playPreviewSFX } = useGameSession();
+  const { t } = useI18n();
 
   const musicPercent = Math.round(volumeMusic * 100);
   const sfxPercent = Math.round(volumeSFX * 100);
 
-  const presets = [0, 25, 50, 75, 100];
-
-  const handleTestSFX = () => {
-    gameEngine.playSFX(SoundType.SFX_SLASH);
+  const handleTestSFX = (): void => {
+    playPreviewSFX("slash");
   };
 
-  const handleTestSpellSFX = () => {
-    gameEngine.playSFX(SoundType.SFX_MAGIC_BOLT);
+  const handleTestSpellSFX = (): void => {
+    playPreviewSFX("magic");
   };
 
   return (
-    <div id="tab-content-audio" className="flex flex-col gap-4 animate-in fade-in duration-150">
-      {/* 1. Music (BGM) Volume */}
+    <div id="tab-content-audio" className={cn("flex flex-col gap-4 animate-in fade-in duration-150", className)}>
       <Card variant="subtle">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -51,29 +52,13 @@ export const AudioTab: React.FC = () => {
             icon={musicPercent > 0 ? <Music size={14} /> : <VolumeX size={14} />}
           />
 
-          {/* Quick Presets */}
-          <div className="flex items-center gap-1.5 pt-1">
-            <span className="text-[11px] text-stone-400 mr-1">{isPl ? "Szybki wybór:" : "Presets:"}</span>
-            {presets.map((p) => (
-              <button
-                key={p}
-                type="button"
-                onClick={() => setVolumeMusic(p / 100)}
-                className={cn(
-                  "px-2 py-0.5 rounded text-[11px] font-mono font-bold transition-all cursor-pointer border",
-                  musicPercent === p
-                    ? "bg-amber-600 text-white border-amber-400"
-                    : "bg-[#140602] text-stone-400 hover:text-amber-200 border-stone-800 hover:border-amber-700/60"
-                )}
-              >
-                {p === 0 ? (isPl ? "Wycisz" : "Mute") : `${p}%`}
-              </button>
-            ))}
-          </div>
+          <VolumePresetBar
+            activePercent={musicPercent}
+            onSelectPercent={(p) => setVolumeMusic(p / 100)}
+          />
         </CardContent>
       </Card>
 
-      {/* 2. Sound Effects (SFX) Volume */}
       <Card variant="subtle">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -97,26 +82,11 @@ export const AudioTab: React.FC = () => {
             icon={sfxPercent > 0 ? <Volume2 size={14} /> : <VolumeX size={14} />}
           />
 
-          {/* Quick Presets & Test Sound */}
           <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-[#4a200e]/50">
-            <div className="flex items-center gap-1.5">
-              <span className="text-[11px] text-stone-400 mr-1">{isPl ? "Szybki wybór:" : "Presets:"}</span>
-              {presets.map((p) => (
-                <button
-                  key={p}
-                  type="button"
-                  onClick={() => setVolumeSFX(p / 100)}
-                  className={cn(
-                    "px-2 py-0.5 rounded text-[11px] font-mono font-bold transition-all cursor-pointer border",
-                    sfxPercent === p
-                      ? "bg-amber-600 text-white border-amber-400"
-                      : "bg-[#140602] text-stone-400 hover:text-amber-200 border-stone-800 hover:border-amber-700/60"
-                  )}
-                >
-                  {p === 0 ? (isPl ? "Wycisz" : "Mute") : `${p}%`}
-                </button>
-              ))}
-            </div>
+            <VolumePresetBar
+              activePercent={sfxPercent}
+              onSelectPercent={(p) => setVolumeSFX(p / 100)}
+            />
 
             <div className="flex items-center gap-2">
               <Button
@@ -125,7 +95,7 @@ export const AudioTab: React.FC = () => {
                 icon={<Play size={12} className="text-amber-400" />}
                 onClick={handleTestSFX}
               >
-                {isPl ? "Test Dźwięku" : "Test SFX"}
+                {t("audioTestSfxBtn")}
               </Button>
               <Button
                 size="sm"
@@ -133,7 +103,7 @@ export const AudioTab: React.FC = () => {
                 icon={<Sparkles size={12} className="text-purple-400" />}
                 onClick={handleTestSpellSFX}
               >
-                {isPl ? "Test Magii" : "Test Magic"}
+                {t("audioTestMagicBtn")}
               </Button>
             </div>
           </div>
@@ -144,3 +114,4 @@ export const AudioTab: React.FC = () => {
 };
 
 export default AudioTab;
+

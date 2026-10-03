@@ -1,6 +1,7 @@
-export { MenuPanel } from "./MenuPanel";
-export { MenuModal } from "./MenuModal";
-export { StatsPanel } from "./StatsPanel";
+export { MenuPanel, type MenuPanelProps } from "./MenuPanel";
+export { MenuModal, type MenuModalProps } from "./MenuModal";
+export { StatsPanel, type StatsPanelProps } from "./StatsPanel";
+export * from "./stats";
 export * from "./tabs";
 export * from "./hooks/useSpritePreviewState";
 export { default } from "./MenuPanel";

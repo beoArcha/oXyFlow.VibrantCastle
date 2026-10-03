@@ -38,6 +38,12 @@ describe("GameSessionContext & useGameSession Hook", () => {
     expect(result.current.isPaused).toBe(false);
     expect(result.current.currentLocationId).toBeDefined();
     expect(result.current.currentLocation).toBeDefined();
+    expect(result.current.availableLocations.length).toBeGreaterThan(0);
+    expect(typeof result.current.playPreviewSFX).toBe("function");
+
+    // Can invoke playPreviewSFX safely
+    result.current.playPreviewSFX("slash");
+    result.current.playPreviewSFX("magic");
 
     await unmount();
   });

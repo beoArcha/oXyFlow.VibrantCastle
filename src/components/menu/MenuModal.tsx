@@ -7,30 +7,26 @@ import { MenuPanel, MenuPanelProps } from "./MenuPanel";
 import { useI18n } from "@context/I18nContext";
 
 export interface MenuModalProps extends MenuPanelProps {
-  onClose: () => void;
-  onNavigateModal?: (modal: ModalType) => void;
-  onResume?: () => void;
+  readonly onClose: () => void;
+  readonly onNavigateModal?: (modal: ModalType) => void;
+  readonly onResume?: () => void;
 }
 
-export const MenuModal: React.FC<MenuModalProps> = ({
+export const MenuModal = ({
   onClose,
   onStartRebind,
+  initialTab,
   onNavigateModal,
   onResume,
-}) => {
-  const { t, language } = useI18n();
-
-  const subtitle =
-    language === "pl"
-      ? "Konfiguracja parametrów rozgrywki, sterowania, dźwięku i grafiki"
-      : "Gameplay settings, controls configuration, audio and graphics options";
+}: MenuModalProps): React.ReactElement => {
+  const { t } = useI18n();
 
   return (
     <Modal
       isOpen={true}
       onClose={onClose}
       title={`${t("menu")} & ${t("settings")}`}
-      subtitle={subtitle}
+      subtitle={t("menuSubtitle")}
       icon={<SlidersHorizontal className="w-5 h-5 text-amber-400" />}
       headerRight={<LanguageSelector />}
       maxWidthClass="max-w-4xl"
@@ -44,8 +40,10 @@ export const MenuModal: React.FC<MenuModalProps> = ({
             onResume={onResume}
           />
         )}
-        <MenuPanel onStartRebind={onStartRebind} />
+        <MenuPanel onStartRebind={onStartRebind} initialTab={initialTab} />
       </div>
     </Modal>
   );
 };
+
+export default MenuModal;

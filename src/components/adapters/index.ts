@@ -4,3 +4,4 @@ export * from "./characterAdapter";
 export * from "./controlsAdapter";
 export * from "./hudAdapter";
 export * from "./inventoryAdapter";
+export * from "./statsAdapter";

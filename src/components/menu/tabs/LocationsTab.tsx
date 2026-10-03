@@ -1,18 +1,40 @@
 import React from "react";
 import { MapPin, Compass, Check } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@components/ui";
-import { getAllLocations } from "@game/locations";
-import { useGameSession } from "@context/GameContext";
+import { useGameSession } from "@context/GameSessionContext";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 
-export const LocationsTab: React.FC = () => {
-  const { loadLocation, currentLocationId } = useGameSession();
+export interface LocationItemVM {
+  readonly id: string;
+  readonly nameKey: string;
+  readonly descriptionKey: string;
+  readonly width: number;
+  readonly height: number;
+}
+
+export interface LocationsTabProps {
+  readonly locations?: readonly LocationItemVM[];
+  readonly currentLocationId?: string;
+  readonly onLoadLocation?: (locId: string) => void;
+  readonly className?: string;
+}
+
+export const LocationsTab = ({
+  locations,
+  currentLocationId: propCurrentLocationId,
+  onLoadLocation,
+  className,
+}: LocationsTabProps = {}): React.ReactElement => {
+  const session = useGameSession();
   const { t } = useI18n();
-  const allLocations = getAllLocations();
+
+  const allLocations = locations ?? session.availableLocations;
+  const activeLocationId = propCurrentLocationId ?? session.currentLocationId;
+  const handleLoadLocation = onLoadLocation ?? session.loadLocation;
 
   return (
-    <div id="tab-content-locations" className="flex flex-col gap-3 animate-in fade-in duration-150">
+    <div id="tab-content-locations" className={cn("flex flex-col gap-3 animate-in fade-in duration-150", className)}>
       <Card variant="default">
         <CardHeader>
           <CardTitle icon={<MapPin className="w-4 h-4 text-amber-400" />}>
@@ -22,7 +44,7 @@ export const LocationsTab: React.FC = () => {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {allLocations.map((loc) => {
-              const isCurrent = loc.id === currentLocationId;
+              const isCurrent = loc.id === activeLocationId;
               const locName = t(loc.nameKey);
               const locDesc = t(loc.descriptionKey);
 
@@ -58,7 +80,7 @@ export const LocationsTab: React.FC = () => {
                     <Button
                       size="sm"
                       variant={isCurrent ? "secondary" : "primary"}
-                      onClick={() => loadLocation(loc.id)}
+                      onClick={() => handleLoadLocation(loc.id)}
                       disabled={isCurrent}
                     >
                       {isCurrent ? t("activeBadge") : t("changeLocation")}

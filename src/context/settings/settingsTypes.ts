@@ -1,4 +1,5 @@
-import { DisplaySettings } from "@game/types";
+import { DisplaySettings, AspectRatioMode, ScalingFilterMode, TargetFps, AssetQuality } from "@game/types";
+export type { DisplaySettings, AspectRatioMode, ScalingFilterMode, TargetFps, AssetQuality };
 import { IContext } from "../IContext";
 
 export interface HudQuickKeysSettings {

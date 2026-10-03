@@ -20,3 +20,5 @@ export * from "./Toast";
 export * from "./GameErrorBoundary";
 export * from "./PlaybackSpeedScaleControl";
 export * from "./ItemSlot";
+export * from "./SettingToggleRow";
+export * from "./SettingOptionCard";
