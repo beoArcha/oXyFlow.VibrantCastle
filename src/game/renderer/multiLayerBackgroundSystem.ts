@@ -57,7 +57,6 @@ const DEFAULT_TIER_SPEEDS: Readonly<
  * Implements a high-performance multi-layered background system for all primary sectors.
  * - 'far' tier: Rendered as a static backdrop, anchored to the viewport without camera parallax movement.
  * - 'mid_far', 'mid', 'mid_close', 'close' tiers: Dynamically rendered with calculated parallax scrolling.
- * Integrated with centralized assetLoader (AGENT.md § 4.1).
  */
 export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
   private readonly atmosphericRenderer: ISectorAtmosphericRenderer;

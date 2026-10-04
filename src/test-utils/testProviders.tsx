@@ -11,7 +11,7 @@ export interface TestProvidersProps {
 /**
  * Lightweight provider for isolated UI unit tests.
  * Only mounts presentation-layer contexts (I18n) without spinning up
- * the GameEngine, sound, loop, or session subscriptions (AGENT.md & ISP).
+ * the GameEngine, sound, loop, or session subscriptions.
  */
 export const UiTestProviders: React.FC<TestProvidersProps> = ({
   children,

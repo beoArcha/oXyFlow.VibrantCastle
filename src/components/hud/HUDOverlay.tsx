@@ -3,8 +3,7 @@ import {
   resolvePlayerDerivedStats,
   resolvePlayerStatusVM,
   resolveQuickBeltVM,
-  executeQuickPotionUse,
-} from "@components/adapters/hudAdapter";
+} from "./hud.mapper";
 import { useGameSession, useSettings } from "@context/GameContext";
 import { useI18n } from "@context/I18nContext";
 import { HUDOverlayLayout } from "./HUDOverlayLayout";
@@ -40,7 +39,7 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
     restart,
     advanceLocation,
     initializeAudio,
-    notifyEngineUpdate,
+    useQuickPotion,
   } = useGameSession();
 
   const { isTwoPlayer, displaySettings, hudSettings } = useSettings();
@@ -101,10 +100,9 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
 
   const handlePotionClick = useCallback(
     (playerIndex: number, slotIndex: number) => {
-      const targetPlayer = playerIndex === 0 ? p1 : p2;
-      executeQuickPotionUse(targetPlayer, slotIndex, notifyEngineUpdate);
+      useQuickPotion(playerIndex, slotIndex);
     },
-    [p1, p2, notifyEngineUpdate]
+    [useQuickPotion]
   );
 
   const handleResume = useCallback(() => {

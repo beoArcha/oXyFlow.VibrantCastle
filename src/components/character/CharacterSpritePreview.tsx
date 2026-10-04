@@ -30,13 +30,6 @@ const DEFAULT_BG_GRADIENT: readonly [string, string] = ["#1a0802", "#080201"];
 
 /**
  * Generic Character Sprite Preview Component
- *
- * Adheres strictly to AGENT.md Sec. 3.3 and presentation separation:
- * - Presentation-only: renders the provided sprite frame onto canvas.
- * - Zero per-frame React re-renders: animation loop executes directly in rAF on Canvas 2D.
- * - Decoupled rendering: blit and anti-clipping math isolated in renderSpritePreviewFrame.
- * - Dynamic buffer: adapted to container dimensions and DPR via useCanvasDpr.
- * - Memory & loop safety: cancellation of rAF on unmount, seamless updates via paramsRef.
  */
 export const CharacterSpritePreview = React.memo(
   React.forwardRef<HTMLDivElement, CharacterSpritePreviewProps>(

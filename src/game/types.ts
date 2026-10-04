@@ -121,7 +121,7 @@ export interface Projectile {
   skillId: string;
 }
 
-// Item & Baldur's Gate 2 style Inventory
+// Item & classic isometric cRPG style Inventory
 export enum ItemType {
   Weapon = "weapon",
   Shield = "shield",
@@ -132,9 +132,9 @@ export enum ItemType {
   Potion = "potion",
 }
 
-// ==========================================
-// Item & Inventory Segregated Interfaces (ISP)
-// ==========================================
+/**
+ * Item & Inventory segregated interfaces.
+ */
 
 export type ItemRarity = "common" | "uncommon" | "rare" | "legendary";
 
@@ -177,7 +177,7 @@ export interface EquipmentState {
 
 export interface InventoryState {
   equipment: EquipmentState;
-  quickPotions: (Item | null)[]; // 3 quick slots for potions (BG2 style belt)
+  quickPotions: (Item | null)[]; // 3 quick slots for potions (classic isometric cRPG style belt)
   backpack: (Item | null)[]; // 16 grid backpack slots
 }
 
@@ -196,9 +196,9 @@ export interface SkillTreeNode {
   gridY: number;
 }
 
-// ==========================================
-// Player & Character Segregated Interfaces (ISP)
-// ==========================================
+/**
+ * Player & Character segregated interfaces.
+ */
 
 export interface ICharacterIdentity {
   characterId?: "valen" | "aurelia";

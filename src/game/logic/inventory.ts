@@ -22,7 +22,7 @@ export const ITEM_REGISTRY: Record<string, Item> = Object.entries(itemsData).red
 
 /**
  * Creates default initial inventory for a new game / player.
- * Matches BG2 layout with equipped starter gear and a few potions in the belt.
+ * Matches classic isometric RPGs layout with equipped starter gear and a few potions in the belt.
  */
 export function createDefaultInventory(): InventoryState {
   const backpack: (Item | null)[] = new Array(16).fill(null);

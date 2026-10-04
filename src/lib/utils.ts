@@ -20,3 +20,11 @@ export function formatString(
     return params[key] !== undefined ? String(params[key]) : `{${key}}`;
   });
 }
+
+/**
+ * Capitalizes the first character of a string safely.
+ */
+export function capitalize(text: string): string {
+  if (!text) return "";
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}

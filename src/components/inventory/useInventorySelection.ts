@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { EquipmentSlotKey } from "@components/adapters/inventoryAdapter";
+import { EquipmentSlotKey } from "./inventory.mapper";
 
 export type InventorySelection =
   | { readonly kind: "none" }

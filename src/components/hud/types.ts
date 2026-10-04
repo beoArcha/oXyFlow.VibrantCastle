@@ -8,9 +8,28 @@ import type {
 } from "@game/types";
 import type { AssetQuality } from "@/types/assets";
 import type { PlayerTheme } from "@styles/theme";
+import type { calculatePlayerDerivedStats } from "@game/logic/inventory";
 import type { PlayerStatusVM, QuickBeltVM, SpellItemVM } from "./viewModels";
 
 export * from "./viewModels";
+
+export type PlayerDerivedStats = ReturnType<typeof calculatePlayerDerivedStats>;
+
+export interface ResolvePlayerStatusOptions {
+  readonly characterName: string;
+  readonly theme: PlayerTheme | "red";
+  readonly playerNumber: 1 | 2;
+  readonly attackFallback?: number;
+}
+
+export interface ResolveQuickBeltOptions {
+  readonly playerNumber: 1 | 2;
+  readonly primaryKeyLabel: string;
+  readonly secondaryKeyLabel: string;
+  readonly potionKeyRangeLabel: string;
+  readonly primarySpellId?: string;
+  readonly secondarySpellId?: string;
+}
 
 export interface HUDOverlayProps {
   readonly onOpenInventory: () => void;

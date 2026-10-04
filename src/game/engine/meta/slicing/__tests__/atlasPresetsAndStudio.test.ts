@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test";
-import { ATLAS_PRESETS } from "@components/developer/subtabs/atlas/assetPresets";
+import { ATLAS_PRESETS } from "@developer/subtabs/atlas/assetPresets";
 import { defaultAtlasSlicingEngine } from "../AtlasSlicingEngine";
 import { defaultMetaParser } from "../../MetaParser";
 

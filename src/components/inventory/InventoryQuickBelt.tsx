@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, ItemSlot } from "@ui";
 import { useI18n } from "@context/I18nContext";
-import { InventoryQuickBeltVM } from "@components/adapters/inventoryAdapter";
+import { InventoryQuickBeltVM } from "./inventory.mapper";
 
 export interface InventoryQuickBeltProps {
   readonly belt: InventoryQuickBeltVM;

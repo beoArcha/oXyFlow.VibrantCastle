@@ -49,6 +49,13 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
     setStateVersion((v) => v + 1);
   }, engine);
 
+  useEffect(() => {
+    if (!engine?.eventBus) return;
+    return engine.eventBus.on("ITEM_CONSUMED", () => {
+      setStateVersion((v) => v + 1);
+    });
+  }, [engine]);
+
   const activePlayer = useMemo(() => {
     const raw = activePlayerIndex === 1 && engine.players[1] ? engine.players[1] : engine.players[0];
     if (!raw) return undefined;

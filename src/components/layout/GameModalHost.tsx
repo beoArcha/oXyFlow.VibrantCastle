@@ -3,7 +3,7 @@ import { HelpModal } from "@components/help";
 import { MenuModal, type MenuModalProps } from "@components/menu/MenuModal";
 import { InventoryPanel } from "@components/inventory/InventoryPanel";
 import { SkillTreePanel } from "@components/skills/SkillTreePanel";
-import { DeveloperModal } from "@components/developer";
+import { DeveloperModal } from "@developer";
 import type { ModalType } from "@components/modal";
 import type { UseModalManagerResult } from "@components/menu/hooks/useModalManager";
 

@@ -22,7 +22,6 @@ export interface ICelestialRenderer {
 
 /**
  * Dedicated renderer for parallax celestial bodies (Suns, Moons, Eclipses, Radiant Halos).
- * Adheres to SRP & AGENT.md file size limits (< 150 lines).
  */
 export class CelestialRenderer implements ICelestialRenderer {
   private readonly coronaGradientCache: Map<string, CanvasGradient> = new Map();

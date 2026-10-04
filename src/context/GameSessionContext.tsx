@@ -7,9 +7,11 @@ import React, {
   useRef,
   useMemo,
 } from "react";
-import { Player, SoundType } from "@game/types";
+import { Player, SoundType, PlayerId, ScalingFilterMode } from "@game/types";
 import gameEngine from "@game/loop/engine";
+import { GameEventBus } from "@game/engine/eventBus";
 import { gameAudio } from "@game/engine/audioEngine";
+import { debugManager } from "@game/debug/debugManager";
 import {
   getAllLocations,
   getNextLocation,
@@ -35,6 +37,7 @@ export interface GameSessionContextValue {
   narration: string;
   subAnim: boolean;
   isAudioInitialized: boolean;
+  eventBus: GameEventBus;
 
   setPaused: (paused: boolean) => void;
   togglePause: (forceState?: boolean) => boolean;
@@ -44,6 +47,94 @@ export interface GameSessionContextValue {
   initializeAudio: () => void;
   playPreviewSFX: (type: "slash" | "magic") => void;
   notifyEngineUpdate: () => void;
+
+  // Viewport / canvas lifecycle and interaction port
+  attachCanvas: (canvas: HTMLCanvasElement) => () => void;
+  resizeCanvas: (
+    width: number,
+    height: number,
+    dpr: number,
+    scalingFilter: ScalingFilterMode
+  ) => void;
+  teleportPlayerAtViewport: (
+    canvas: HTMLCanvasElement,
+    clientX: number,
+    clientY: number
+  ) => boolean;
+  useQuickPotion: (playerIndex: number, slotIndex: number) => boolean;
+}
+
+/**
+ * Attaches the HTMLCanvasElement to the game engine renderer and starts the loop.
+ * Returns a cleanup function that stops the engine on unmount.
+ */
+export function attachViewportCanvas(canvas: HTMLCanvasElement): () => void {
+  gameEngine.attachCanvas(canvas);
+  gameEngine.start();
+  return () => {
+    gameEngine.stop();
+  };
+}
+
+/**
+ * Relays canvas dimension updates to the game engine renderer.
+ */
+export function resizeViewportCanvas(
+  width: number,
+  height: number,
+  dpr: number,
+  scalingFilter: ScalingFilterMode
+): void {
+  gameEngine.setCanvasDimensions(width, height, dpr, scalingFilter);
+}
+
+/**
+ * Pure projection of canvas viewport clicks to in-game world coordinates.
+ */
+export function resolveViewportCameraProjection(
+  canvas: { readonly width: number; readonly height: number; readonly getBoundingClientRect: () => { readonly left: number; readonly top: number; readonly width: number; readonly height: number } },
+  clientX: number,
+  clientY: number,
+  camera: { readonly x: number; readonly y: number },
+  scaleFactor: number
+): { readonly worldX: number; readonly worldY: number } {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = rect.width > 0 ? canvas.width / rect.width : 1;
+  const scaleY = rect.height > 0 ? canvas.height / rect.height : 1;
+  const canvasPxX = (clientX - rect.left) * scaleX;
+  const canvasPxY = (clientY - rect.top) * scaleY;
+  const safeScale = scaleFactor > 0 ? scaleFactor : 1;
+
+  return {
+    worldX: Math.round(camera.x + canvasPxX / safeScale - 16),
+    worldY: Math.round(camera.y + canvasPxY / safeScale - 24),
+  };
+}
+
+/**
+ * Handles canvas clicks for debug click-to-teleport, isolating debugManager and gameEngine from UI.
+ */
+export function executeCanvasClickTeleport(
+  canvas: HTMLCanvasElement,
+  clientX: number,
+  clientY: number
+): boolean {
+  if (!debugManager.state.clickToTeleport) return false;
+
+  const projection = resolveViewportCameraProjection(
+    canvas,
+    clientX,
+    clientY,
+    gameEngine.cameraManager,
+    gameEngine.getRendererScaleFactor()
+  );
+
+  gameEngine.teleportPlayer(
+    PlayerId.Player1,
+    projection.worldX,
+    projection.worldY
+  );
+  return true;
 }
 
 const GameSessionContext = createContext<GameSessionContextValue | null>(null);
@@ -194,6 +285,40 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
     }
   }, []);
 
+  const attachCanvas = useCallback((canvas: HTMLCanvasElement) => {
+    return attachViewportCanvas(canvas);
+  }, []);
+
+  const resizeCanvas = useCallback(
+    (
+      width: number,
+      height: number,
+      dpr: number,
+      scalingFilter: ScalingFilterMode
+    ) => {
+      resizeViewportCanvas(width, height, dpr, scalingFilter);
+    },
+    []
+  );
+
+  const teleportPlayerAtViewport = useCallback(
+    (canvas: HTMLCanvasElement, clientX: number, clientY: number): boolean => {
+      return executeCanvasClickTeleport(canvas, clientX, clientY);
+    },
+    []
+  );
+
+  const useQuickPotion = useCallback(
+    (playerIndex: number, slotIndex: number): boolean => {
+      const success = gameEngine.usePlayerPotion(playerIndex, slotIndex);
+      if (success) {
+        notifyEngineUpdate();
+      }
+      return success;
+    },
+    [notifyEngineUpdate]
+  );
+
   const value = useMemo<GameSessionContextValue>(
     () => ({
       p1,
@@ -207,6 +332,7 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
       narration: currentNarration,
       subAnim,
       isAudioInitialized,
+      eventBus: gameEngine.eventBus,
       setPaused,
       togglePause,
       restart,
@@ -215,6 +341,10 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
       initializeAudio,
       playPreviewSFX,
       notifyEngineUpdate,
+      attachCanvas,
+      resizeCanvas,
+      teleportPlayerAtViewport,
+      useQuickPotion,
     }),
     [
       p1,
@@ -236,6 +366,10 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
       initializeAudio,
       playPreviewSFX,
       notifyEngineUpdate,
+      attachCanvas,
+      resizeCanvas,
+      teleportPlayerAtViewport,
+      useQuickPotion,
     ]
   );
 

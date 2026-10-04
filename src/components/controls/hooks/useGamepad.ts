@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { PlayerId, GamepadBindingMap } from "@game/types";
-import {
+import type {
   ConnectedGamepadVM,
   GamepadBindingsVM,
+} from "@context";
+import {
   getConnectedGamepadsVM,
   getGamepadBindingsVM,
   subscribeToGamepadConnection,
@@ -10,7 +12,7 @@ import {
   rebindGamepadAction,
   resetGamepadBindings,
   startGamepadButtonCapture,
-} from "@components/adapters";
+} from "@context";
 import { UseGamepadResult } from "../types";
 
 export type { UseGamepadResult };

@@ -8,4 +8,5 @@ export * from "./InventoryContext";
 export * from "./SkillsContext";
 export * from "./GameContext";
 export * from "./I18nContext";
+export * from "./ControlsContext";
 export * from "./hooks";

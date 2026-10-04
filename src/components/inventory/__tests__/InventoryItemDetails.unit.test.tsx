@@ -2,7 +2,7 @@ import React, { act } from "react";
 import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
 import { renderIntoDom, cleanupDom } from "@test-utils/domTestUtils";
 import { InventoryItemDetails } from "../InventoryItemDetails";
-import { ItemDetailsVM, EquipmentSlotKey } from "@components/adapters/inventoryAdapter";
+import { ItemDetailsVM, EquipmentSlotKey } from "../inventory.mapper";
 import { ItemType } from "@game/types";
 
 describe("InventoryItemDetails Component", () => {

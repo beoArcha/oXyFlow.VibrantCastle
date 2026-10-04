@@ -2,7 +2,7 @@ import { describe, it, expect } from "bun:test";
 import React, { act } from "react";
 import { renderIntoDom, cleanupDom } from "@test-utils/domTestUtils";
 import { UiTestProviders, IntegrationTestProviders } from "@test-utils/testProviders";
-import { SkillDetailVM } from "@components/adapters";
+import { SkillDetailVM } from "../skills.mapper";
 import { SkillDetailsCard } from "../SkillDetailsCard";
 import { SkillTreeConstellation } from "../SkillTreeConstellation";
 

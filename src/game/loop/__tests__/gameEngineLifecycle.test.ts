@@ -465,4 +465,31 @@ describe("GameEngine Lifecycle, Transitions & State Management", () => {
       expect(() => engine.renderFrame(0.5)).not.toThrow();
     });
   });
+
+  describe("GameEventBus Integration", () => {
+    it("emits STATE_SNAPSHOT and LOCATION_CHANGED on pause and location change", () => {
+      let statePayload: any = null;
+      let locationPayload: any = null;
+
+      const unsubState = engine.eventBus.on("STATE_SNAPSHOT", (p) => {
+        statePayload = p;
+      });
+      const unsubLoc = engine.eventBus.on("LOCATION_CHANGED", (p) => {
+        locationPayload = p;
+      });
+
+      engine.setPaused(true);
+      expect(statePayload).toEqual({
+        isPaused: true,
+        isVictory: false,
+        isDefeat: false,
+      });
+
+      engine.loadLocation("clocktower");
+      expect(locationPayload?.locationId).toBe("clocktower");
+
+      unsubState();
+      unsubLoc();
+    });
+  });
 });

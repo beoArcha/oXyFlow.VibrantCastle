@@ -1,4 +1,4 @@
-# 🧱 AGENT.md v4 — Vibrant Castle
+# 🧱 AGENT.md v4.1 — Vibrant Castle
 
 ---
 
@@ -20,17 +20,24 @@ All outputs (code, JSON, assets) **MUST comply**.
 
 ### 1.1 Layered Architecture
 
-System is strictly separated:
+System is strictly separated into formal architectural layers:
 
-ENGINE → simulation + rendering
-UI → React (HUD, menus only)
-CONTENT → JSON + assets
-AI → generation + modification
+* **ENGINE (`src/game`)** → deterministic game simulation (physics, combat, logic, loop) + Canvas 2D rendering pipeline. Pure TypeScript, zero UI dependencies.
+* **DATA (`src/data`)** → universal static declarative game content (levels, items, skills, structures, narrative, placeholders, defaults). Single source of truth.
+* **CONTEXT (`src/context`)** → bidirectional communication ports & adapters bridging React with Engine. Manages subscriptions, hardware bindings, and session lifecycle.
+* **UI (`src/components`)** → React presentation layer (HUD, menus, overlays, dialogs). Pure presentation and command dispatch.
+* **DEVELOPER (`src/developer`)** → isolated developer workbench (Atlas Studio, cheats, debug inspector, ring buffer log viewer). Independent sub-application.
+* **DESIGN SYSTEM (`src/ui`)** → reusable, headless and styled UI primitives (Button, Modal, Card, Toast, Table, Slider, etc.). Zero domain dependencies.
+* **LIB (`src/lib`)** → foundational utilities, logging infrastructure (RingBufferLogger), and domain error hierarchy (`GameBaseError`).
 
 ❌ FORBIDDEN:
 
 * Mixing UI with game logic
 * Storing gameplay state in React
+* Game engine (`src/game`) importing from UI (`src/components`), Context (`src/context`), or Developer (`src/developer`)
+* React Context (`src/context`) importing from UI components (`src/components`)
+* UI components (`src/components`) importing developer tools (`src/developer`)
+* Direct DOM dependencies inside simulation core
 
 ---
 
@@ -263,6 +270,19 @@ Each phase MUST pass:
 * Use discriminated unions
 * Avoid unsafe casting
 
+#### Error Handling Hierarchy (STRICT)
+
+* `new Error(...)` is strictly FORBIDDEN in production code.
+* `Error` is an abstract language base; all concrete runtime errors MUST instantiate a structured domain class inheriting from `GameBaseError` (`src/lib/errors/GameBaseError.ts`).
+* Errors must provide strong typing with unique `code` string literals, descriptive messages, and structured `details` metadata payloads.
+* Specialized domain families:
+  * `DomainError` / `GameplayError` (`src/lib/errors/DomainError.ts`)
+  * `AssetError` (`src/lib/errors/AssetError.ts`)
+  * `ParserError` (`src/lib/errors/ParserError.ts`)
+  * `PhysicsError` (`src/lib/errors/PhysicsError.ts`)
+  * `MissingContextProviderError` (`src/lib/errors/ContextErrors.ts`)
+* Fallible functional operations should return `Result<T, E>` (`Ok(value)` / `Err(error)`) instead of throwing exceptions for predictable control flow.
+
 #### UI Note
 
 Detailed UI TypeScript, hooks and component rules are defined in:
@@ -300,20 +320,39 @@ render(interpolation)
 
 ---
 
-### 2.2 State Flow
+### 2.2 Dual State Communication Flow
 
-Input → Command → Engine → State → Snapshot → UI
+The engine communicates with the UI through two distinct, strictly decoupled channels:
+
+1. **Continuous State Stream (60Hz / Simulation Tick)**:
+
+   ```graph
+   Input → Command → Engine → Simulation → Snapshot → React Context → UI
+   ```
+
+   * Snapshot is immutable and read-only.
+   * UI subscribes via React Context (`useEngineSubscription`).
+
+2. **Discrete Domain Event Stream (Asynchronous / Real-time)**:
+
+   ```graph
+   Engine → DomainEvent → GameEventBus → React Context → UI
+   ```
+
+   * Instant notification for game events (damage numbers, heals, potion use, location change, narration triggers).
+   * Context providers bridge event bus subscriptions to UI state with automatic cleanup.
 
 #### UI Contract
 
-* Snapshot is immutable
-* UI is read-only
-* UI communicates via commands only
+* Snapshot is immutable.
+* UI is strictly read-only.
+* UI communicates with Engine via Commands routed through `src/context/` ports.
 
 ❌ FORBIDDEN:
 
-* React mutating engine state
-* Bidirectional state sync
+* React mutating engine state directly
+* UI importing engine singletons directly (must use `@context`)
+* Bidirectional state sync loops
 
 ---
 
@@ -349,6 +388,22 @@ Raw Input → Normalize → Action → Engine
 
 ---
 
+### 2.6 Domain Events & GameEventBus (MANDATORY)
+
+The engine features a dedicated, zero-dependency `GameEventBus` (`src/game/engine/eventBus.ts`):
+
+* Strongly typed event definitions:
+  * `PLAYER_DAMAGED`
+  * `PLAYER_HEALED`
+  * `ITEM_CONSUMED`
+  * `NARRATION_TRIGGERED`
+  * `LOCATION_CHANGED`
+  * `LEVEL_RESET`
+  * `STATE_SNAPSHOT`
+* **Inversion of Control**: Engine notifies listeners without knowing who is listening (React, sound engine, telemetry).
+* **Error-isolated dispatch**: Subscriber errors are caught and logged without disrupting the 60Hz simulation loop.
+* **Subscription Lifecycle**: Subscriptions in React must use `useEffect` cleanup handlers to prevent memory leaks.
+
 ## 3. UI LAYER (REACT)
 
 ### 3.1 Responsibilities
@@ -362,10 +417,11 @@ React is ONLY for:
 
 ---
 
-### 3.2 Communication
+### 3.2 Communication & Ports
 
-* Command dispatch to engine
-* Read-only state snapshot
+* All communication between UI and Engine flows strictly through **React Context** (`src/context/`).
+* Pure presentation transformations use localized **View Model Mappers** (`*.mapper.ts`).
+* The obsolete `src/components/adapters/` directory is permanently abolished.
 
 ---
 
@@ -388,22 +444,39 @@ This includes:
 
 * component architecture
 * hooks rules
-* adapters
+* view model mappers
+* design system (`@ui`)
 * testing
 * naming
 * performance guidelines
 
 ---
 
-## 4. CONTENT PIPELINE
+## 4. CONTENT PIPELINE & DATA LAYER
 
-### 4.1 Pipeline
+### 4.1 Architecture
 
-SCENARIO → LEVEL JSON → ASSETS → ENGINE
+Static game content is strictly decoupled from the engine:
+
+SCENARIO → src/data (JSON) → ASSETS → ENGINE / UI / DEVELOPER
+
+* `src/data/` is the universal, top-level single source of truth for all game content.
+* The engine (`src/game`) acts as an **interpreter** of data, not its hardcoded container.
+* Data is accessed across all modules via the `@data` and `@data/*` path aliases.
+
+### 4.2 Data Organization (`src/data/`)
+
+* `src/data/locations/` → Level blueprint JSONs (courtyard, clocktower, aether_sanctuary, grand_bastion, thorn_chasm).
+* `src/data/items/` → Item registry, equipment, and potion JSON schemas.
+* `src/data/skills/` → Skill tree JSONs for Aurelia, Valen, and shared mastery.
+* `src/data/structures/` → Interactive map structures, chests, levers, and portals.
+* `src/data/narrative/` → Dialogue scenario, Act 1 story progression, and trigger manifests.
+* `src/data/defaults/` → Default keybindings, gamepad maps, and settings configs.
+* `src/data/placeholders/` → SVG fallback icons and placeholders.
 
 ---
 
-### 4.2 Level Requirements
+### 4.3 Level Requirements
 
 Each level MUST define:
 

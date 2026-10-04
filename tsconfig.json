@@ -34,17 +34,29 @@
       "@context/*": [
         "./src/context/*"
       ],
+      "@context": [
+        "./src/context/index.ts"
+      ],
       "@data/*": [
         "./src/data/*"
       ],
       "@data": [
         "./src/data/index.ts"
       ],
+      "@developer/*": [
+        "./src/developer/*"
+      ],
+      "@developer": [
+        "./src/developer/index.ts"
+      ],
       "@game/*": [
         "./src/game/*"
       ],
       "@lib/*": [
         "./src/lib/*"
+      ],
+      "@lib": [
+        "./src/lib/index.ts"
       ],
       "@i18n/*": [
         "./src/i18n/*"

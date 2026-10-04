@@ -5,7 +5,7 @@ import {
   rebindKeyboardAction,
   isReservedSystemKey,
   isRebindCancelKey,
-} from "@components/adapters";
+} from "@context";
 
 import {
   KeyBindingTarget,

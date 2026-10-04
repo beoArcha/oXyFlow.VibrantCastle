@@ -1,7 +1,7 @@
 import React from "react";
 import { PlayerId, InputMap, GamepadBindingMap, GameTranslationDictionary } from "@game/types";
 import { ButtonVariant } from "@ui";
-import { ConnectedGamepadVM, KeyboardBindingsVM, GamepadBindingsVM } from "@components/adapters";
+import type { ConnectedGamepadVM, KeyboardBindingsVM, GamepadBindingsVM } from "@context";
 
 
 export const KEYBOARD_ACTION_I18N_MAP: Record<keyof InputMap, keyof GameTranslationDictionary> = {
@@ -38,9 +38,7 @@ export const GAMEPAD_ACTION_KEYS: readonly (keyof GamepadBindingMap)[] = Object.
   GAMEPAD_ACTION_I18N_MAP
 ) as (keyof GamepadBindingMap)[];
 
-// ---------------------------------------------------------------------------
-// Hook Target & Result Contracts
-// ---------------------------------------------------------------------------
+/** Hook target and result contracts */
 
 export interface KeyBindingTarget {
   readonly player: PlayerId;
@@ -74,9 +72,7 @@ export interface UseGamepadResult {
   readonly resetDefaults: () => void;
 }
 
-// ---------------------------------------------------------------------------
-// Component Props Contracts
-// ---------------------------------------------------------------------------
+/** Component props contracts */
 
 export interface ControlBindingRowProps {
   readonly label: string;

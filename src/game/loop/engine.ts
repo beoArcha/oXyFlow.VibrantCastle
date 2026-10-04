@@ -39,6 +39,7 @@ import { CombatSystem, ICombatSystem } from "../engine/combatSystem";
 import { EnemyAISystem, IEnemyAISystem } from "../engine/enemyAISystem";
 import { NarrationSystem, INarrationSystem } from "../engine/narrationSystem";
 import { PlayerController, IPlayerController, defaultPlayerController } from "../engine/playerController";
+import { GameEventBus, gameEventBus } from "../engine/eventBus";
 import { debugManager } from "../debug/debugManager";
 import defaultSettingsJson from "@data/defaults/defaultSettings.json";
 import { engineLogger } from "../logger/gameLogger";
@@ -65,6 +66,7 @@ export interface IGameDependencies {
   environmentCollisions?: IEnvironmentCollisionSystem;
   logger?: ILogger;
   circuitBreaker?: LoopCircuitBreaker;
+  eventBus?: GameEventBus;
 }
 
 /**
@@ -81,6 +83,9 @@ export class GameEngine {
   public enemies: Enemy[] = [];
   public entities: Entity[] = [];
   public projectiles: Projectile[] = [];
+
+  // Domain Event Bus
+  public readonly eventBus: GameEventBus;
 
   // Subsystems (DIP)
   private readonly audio: GameAudioEngine;
@@ -243,6 +248,7 @@ export class GameEngine {
   }
 
   constructor(deps: IGameDependencies = {}) {
+    this.eventBus = deps.eventBus || gameEventBus;
     this.audio = deps.audio || gameAudio;
     this.inputs = deps.inputs || gameInputs;
     this.physics = deps.physics || new GamePhysicsEngine(this.audio);
@@ -278,6 +284,7 @@ export class GameEngine {
       new PlayerCommandController({
         getPlayers: () => this.players,
         notifyStateChanged: () => this.notifyReact(),
+        eventBus: this.eventBus,
       });
 
     this.levelLifecycleManager =
@@ -345,11 +352,21 @@ export class GameEngine {
 
   public setPaused(paused: boolean) {
     this.isPaused = paused;
+    this.eventBus.emit("STATE_SNAPSHOT", {
+      isPaused: this.isPaused,
+      isVictory: this.isVictory,
+      isDefeat: this.isDefeat,
+    });
     this.notifyReact();
   }
 
   public togglePause(forceState?: boolean): boolean {
     this.isPaused = forceState !== undefined ? forceState : !this.isPaused;
+    this.eventBus.emit("STATE_SNAPSHOT", {
+      isPaused: this.isPaused,
+      isVictory: this.isVictory,
+      isDefeat: this.isDefeat,
+    });
     this.notifyReact();
     return this.isPaused;
   }
@@ -395,6 +412,10 @@ export class GameEngine {
       preservePlayerStats,
     });
     this.levelLifecycleManager.loadLocation(locationId, targetSpawnPoint, preservePlayerStats);
+    this.eventBus.emit("LOCATION_CHANGED", {
+      locationId: this.currentLocationId,
+      locationNameKey: this.currentLocation?.nameKey || "locationUnknown",
+    });
   }
 
   public resetLevel(
@@ -403,6 +424,9 @@ export class GameEngine {
     preservePlayerStats: boolean = false
   ) {
     this.levelLifecycleManager.resetLevel(locationId, customSpawnPoint, preservePlayerStats);
+    this.eventBus.emit("LEVEL_RESET", {
+      locationId: this.currentLocationId,
+    });
   }
 
   public setTwoPlayerMode(enabled: boolean, preserveStats: boolean = true) {
@@ -595,6 +619,10 @@ export class GameEngine {
   public triggerNarration(key: string) {
     const triggered = this.narrationSystem.trigger(key, this.settings.language);
     if (triggered) {
+      this.eventBus.emit("NARRATION_TRIGGERED", {
+        textKey: key,
+        text: this.narrationSystem.getCurrentText(),
+      });
       this.notifyReact();
     }
   }
@@ -902,11 +930,13 @@ export class GameEngine {
 
   public advanceToNextLocation() {
     this.levelLifecycleManager.advanceToNextLocation();
+    this.eventBus.emit("LOCATION_CHANGED", {
+      locationId: this.currentLocationId,
+      locationNameKey: this.currentLocation?.nameKey || "locationUnknown",
+    });
   }
 
-  // ==========================================
-  // TESTER & DEBUG SUITE ACTIONS
-  // ==========================================
+  /** Tester and debug suite actions */
 
   public getRenderer(): GameRenderer | null {
     return this.renderer;
@@ -916,7 +946,7 @@ export class GameEngine {
     return this.renderer ? this.renderer.scaleFactor : 1;
   }
 
-  // --- Debug & Cheat Delegation (Delegated to DebugCheatsController - SRP) ---
+  /** Debug & Cheat delegation to DebugCheatsController */
 
   public teleportPlayer(playerId: PlayerId = PlayerId.Player1, x: number, y: number) {
     this.debugCheats.teleportPlayer(playerId, x, y);
@@ -982,7 +1012,7 @@ export class GameEngine {
     this.debugCheats.forceDefeat();
   }
 
-  // --- Player Command Pipeline (AGENT.md unidirectional architecture) ---
+  // --- Player Command Pipeline ---
 
   public equipPlayerItem(playerIndex: number, backpackIndex: number): boolean {
     return this.playerCommandController.equipPlayerItem(playerIndex, backpackIndex);
@@ -993,7 +1023,14 @@ export class GameEngine {
   }
 
   public usePlayerPotion(playerIndex: number, slotIndex: number): boolean {
-    return this.playerCommandController.usePlayerPotion(playerIndex, slotIndex);
+    const success = this.playerCommandController.usePlayerPotion(playerIndex, slotIndex);
+    if (success) {
+      this.eventBus.emit("ITEM_CONSUMED", {
+        playerIndex,
+        slotIndex,
+      });
+    }
+    return success;
   }
 
   public discardPlayerItem(playerIndex: number, backpackIndex: number): boolean {

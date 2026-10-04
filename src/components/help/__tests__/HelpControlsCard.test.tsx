@@ -4,7 +4,7 @@ import { Swords } from "lucide-react";
 import { setupDomEnvironment, cleanupDom, renderIntoDom, TestProviders } from "@test-utils";
 import { PlayerId } from "@game/types";
 import { gameInputs } from "@game/loop/input";
-import { rebindKeyboardAction, resetKeyboardBindings } from "@components/adapters";
+import { rebindKeyboardAction, resetKeyboardBindings } from "@context";
 import { HelpControlsCard } from "../HelpControlsCard";
 
 describe("HelpControlsCard Component", () => {

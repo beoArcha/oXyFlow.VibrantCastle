@@ -5,7 +5,7 @@ import { MagicSkill, MagicCategory, MagicTriggerType } from "@game/types";
  * Divided into Offensive, Defensive, and Passive archetypes.
  */
 export const SPELL_REGISTRY: Record<string, MagicSkill> = {
-  // === Valen: Solar Martial Arts ===
+  // Valen: Solar Martial Arts
   solar_flare: {
     id: "solar_flare",
     character: "valen",
@@ -166,7 +166,7 @@ export const SPELL_REGISTRY: Record<string, MagicSkill> = {
     minLevel: 3,
   } as MagicSkill,
 
-  // === Aurelia: Celestial Arcanum & Time ===
+  // Aurelia: Celestial Arcanum & Time
   aether_bolt: {
     id: "aether_bolt",
     character: "aurelia",

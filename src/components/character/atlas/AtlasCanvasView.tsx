@@ -6,7 +6,7 @@ import {
   DEFAULT_ANIMATION_ROWS,
   ANIMATION_ROW_MAP,
   resolveAnimationRowIndex,
-} from "@components/adapters";
+} from "../character.mapper";
 import { ImageDimensions } from "../types";
 import { AtlasSheetType } from "./types";
 import { AtlasGridOverlay } from "./AtlasGridOverlay";

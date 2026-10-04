@@ -23,7 +23,6 @@ export interface IDebugProfilerOverlay {
 /**
  * Dedicated visual overlay for engine performance metrics, GPU acceleration status,
  * live entity telemetry, and cheat toggles.
- * Adheres to SRP & AGENT.md size limits (< 140 lines).
  */
 export class DebugProfilerOverlay implements IDebugProfilerOverlay {
   private readonly profilerFlags: string[] = [];

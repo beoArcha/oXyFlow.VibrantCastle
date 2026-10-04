@@ -13,6 +13,8 @@ import {
   getDefaultSkillsForCharacter,
 } from "../logic/skills";
 
+import { GameEventBus } from "../engine/eventBus";
+
 /**
  * Context provided to PlayerCommandController to interact with game state.
  * Implements Dependency Inversion Principle (DIP) to decouple command logic from GameEngine.
@@ -20,6 +22,7 @@ import {
 export interface IPlayerCommandContext {
   getPlayers(): Player[];
   notifyStateChanged(): void;
+  eventBus?: GameEventBus;
 }
 
 /**
@@ -72,6 +75,10 @@ export class PlayerCommandController implements IPlayerCommandController {
     if (!player) return false;
     const success = useQuickPotion(player, slotIndex);
     if (success) {
+      this.context.eventBus?.emit("ITEM_CONSUMED", {
+        playerIndex,
+        slotIndex,
+      });
       this.context.notifyStateChanged();
     }
     return success;

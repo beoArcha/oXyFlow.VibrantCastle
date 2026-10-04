@@ -1,6 +1,6 @@
 import React from "react";
 import { ItemSlot } from "@ui";
-import { BackpackGridVM } from "@components/adapters/inventoryAdapter";
+import { BackpackGridVM } from "./inventory.mapper";
 
 export interface InventoryBackpackGridProps {
   readonly grid: BackpackGridVM;

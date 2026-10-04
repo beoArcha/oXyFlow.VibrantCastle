@@ -36,9 +36,7 @@ export type RenderLayerName = "background" | "interactive" | "actors" | "foregro
 
 export type BlendMode = "normal" | "additive" | "screen" | "multiply";
 
-// ============================================================================
-// 1. Meta Information & Identity
-// ============================================================================
+/** Meta Information & Identity */
 export interface IMetaInfo {
   id: string;
   entityType: EntityType;
@@ -48,9 +46,7 @@ export interface IMetaInfo {
   entityId?: string;
 }
 
-// ============================================================================
-// 2. Atlas Grid Geometry
-// ============================================================================
+/** Atlas Grid Geometry */
 export interface IAtlasGrid {
   columns: number;
   rows: number;
@@ -64,9 +60,7 @@ export interface IAtlasGrid {
   noOverlap?: boolean;
 }
 
-// ============================================================================
-// 2b. Atlas Background & Transparency Configuration (Chroma Keying)
-// ============================================================================
+/** Atlas Background & Transparency Configuration (Chroma Keying) */
 export type BackgroundMode = "transparent" | "color" | "solid";
 
 export interface IAtlasBackgroundConfig {
@@ -76,9 +70,7 @@ export interface IAtlasBackgroundConfig {
   removeAtRuntime?: boolean;
 }
 
-// ============================================================================
-// 2c. Slicing Configuration & Resolved Frame Geometry
-// ============================================================================
+/** Slicing Configuration & Resolved Frame Geometry */
 export type SlicingMethod = "by_count" | "by_cell_size" | "freeform_rects" | "auto_islands";
 
 export interface ICellSizeSlicingParams {
@@ -139,9 +131,7 @@ export interface ResolvedFrameRect {
   pivot?: { x: number; y: number };
 }
 
-// ============================================================================
-// 3. Quality Variants & Resolution Scaling
-// ============================================================================
+/** Quality Variants & Resolution Scaling */
 export interface IVariantTier {
   cellWidth: number;
   cellHeight: number;
@@ -152,9 +142,7 @@ export interface IVariantsConfig {
   variants: Record<AssetQuality, IVariantTier>;
 }
 
-// ============================================================================
-// 4. Animation Tracks & Frame Timing
-// ============================================================================
+/** Animation Tracks & Frame Timing */
 export interface IAnimationTrackMeta {
   row: number;
   frames: number;
@@ -175,9 +163,7 @@ export interface IAnimationTracks {
   animations: Record<string, IAnimationTrackMeta>;
 }
 
-// ============================================================================
-// 5. Spatial Layout, Origin & Facing
-// ============================================================================
+/** Spatial Layout, Origin & Facing */
 export interface ISpatialOrigin {
   type: AnchorOriginType;
   normalized: {
@@ -197,9 +183,7 @@ export interface ISpatialLayout {
   };
 }
 
-// ============================================================================
-// 6. Portrait Mood Matrix (Characters)
-// ============================================================================
+/** Portrait Mood Matrix (Characters) */
 export interface IPortraitMatrix {
   columns: number;
   rows: number;
@@ -210,23 +194,17 @@ export interface IPortraitMatrix {
   expressions?: Record<string, { row: number; col: number; emotion?: string }>;
 }
 
-// ============================================================================
-// 7. State Machine Mapping (Creatures & Structures)
-// ============================================================================
+/** State Machine Mapping (Creatures & Structures) */
 export interface IStateMapping {
   states: Record<string, { animation: string }>;
 }
 
-// ============================================================================
-// 8. Info Frames & Bestiary Indices (Objects, Structures & Codices)
-// ============================================================================
+/** Info Frames & Bestiary Indices (Objects, Structures & Codices) */
 export interface IInfoFrames {
   infoFrames: Record<string, number>;
 }
 
-// ============================================================================
-// 9. Interaction & Triggers (Structures & Interactive Props)
-// ============================================================================
+/** Interaction & Triggers (Structures & Interactive Props) */
 export interface IInteractionTrigger {
   onPlayerEnterRadius?: boolean;
   onPlayerInteract?: boolean;
@@ -246,18 +224,14 @@ export interface IInteractionConfig {
   effects?: IInteractionEffects;
 }
 
-// ============================================================================
-// 10. Render Directives
-// ============================================================================
+/** Render Directives */
 export interface IRenderDirectives {
   layer: RenderLayerName;
   zIndex: number;
   blend: BlendMode;
 }
 
-// ============================================================================
-// 11. Validation & AI Generation Constraints
-// ============================================================================
+/** Validation & AI Generation Constraints */
 export interface IValidationConstraints {
   strictGrid?: boolean;
   noOverlap?: boolean;
@@ -272,9 +246,7 @@ export interface IValidationConstraints {
   [key: string]: any;
 }
 
-// ============================================================================
-// Composite Documents (Role-Based Types - ISP)
-// ============================================================================
+/** Composite Documents (Role-Based Types - ISP) */
 
 /**
  * Character Metadata Document (e.g. Valen, Aurelia)

@@ -1,0 +1,95 @@
+export type GameEventType =
+  | "PLAYER_DAMAGED"
+  | "PLAYER_HEALED"
+  | "ITEM_CONSUMED"
+  | "NARRATION_TRIGGERED"
+  | "LOCATION_CHANGED"
+  | "STATE_SNAPSHOT"
+  | "LEVEL_RESET";
+
+export interface GameEventPayloads {
+  PLAYER_DAMAGED: {
+    readonly playerIndex: number;
+    readonly damage: number;
+    readonly currentHealth: number;
+    readonly maxHealth: number;
+    readonly source?: string;
+  };
+  PLAYER_HEALED: {
+    readonly playerIndex: number;
+    readonly amount: number;
+    readonly currentHealth: number;
+    readonly maxHealth: number;
+  };
+  ITEM_CONSUMED: {
+    readonly playerIndex: number;
+    readonly slotIndex: number;
+    readonly itemId?: string;
+    readonly itemType?: string;
+  };
+  NARRATION_TRIGGERED: {
+    readonly textKey: string;
+    readonly text: string;
+  };
+  LOCATION_CHANGED: {
+    readonly locationId: string;
+    readonly locationNameKey: string;
+  };
+  STATE_SNAPSHOT: {
+    readonly isPaused: boolean;
+    readonly isVictory: boolean;
+    readonly isDefeat: boolean;
+  };
+  LEVEL_RESET: {
+    readonly locationId: string;
+  };
+}
+
+export type GameEventListener<T extends GameEventType> = (payload: GameEventPayloads[T]) => void;
+
+/**
+ * Strongly-typed domain event bus for decoupled engine-to-context notifications.
+ * Pure TypeScript, zero UI or React dependencies.
+ */
+export class GameEventBus {
+  private readonly listeners: {
+    [K in GameEventType]?: Set<GameEventListener<K>>;
+  } = {};
+
+  public on<T extends GameEventType>(type: T, listener: GameEventListener<T>): () => void {
+    if (!this.listeners[type]) {
+      this.listeners[type] = new Set() as any;
+    }
+    (this.listeners[type] as Set<GameEventListener<T>>).add(listener);
+    return () => this.off(type, listener);
+  }
+
+  public off<T extends GameEventType>(type: T, listener: GameEventListener<T>): void {
+    this.listeners[type]?.delete(listener as any);
+  }
+
+  public emit<T extends GameEventType>(type: T, payload: GameEventPayloads[T]): void {
+    const set = this.listeners[type];
+    if (set && set.size > 0) {
+      set.forEach((listener) => {
+        try {
+          listener(payload);
+        } catch {
+          // Prevent listener errors from breaking engine loops
+        }
+      });
+    }
+  }
+
+  public listenerCount<T extends GameEventType>(type: T): number {
+    return this.listeners[type]?.size ?? 0;
+  }
+
+  public clear(): void {
+    for (const key of Object.keys(this.listeners) as GameEventType[]) {
+      this.listeners[key]?.clear();
+    }
+  }
+}
+
+export const gameEventBus = new GameEventBus();

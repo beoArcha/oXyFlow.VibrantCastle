@@ -4,3 +4,4 @@ export * from "./formatters/DefaultFormatter";
 export * from "./transports/ConsoleTransport";
 export * from "./transports/RingBufferTransport";
 export * from "./globalErrorHandler";
+export * from "./diagnosticReport";

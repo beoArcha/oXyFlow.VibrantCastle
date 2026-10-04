@@ -1,3 +1,5 @@
+export * from "./types";
+export * from "./inventory.mapper";
 export * from "./InventoryPlayerTabs";
 export * from "./InventoryPaperdoll";
 export * from "./InventoryStats";

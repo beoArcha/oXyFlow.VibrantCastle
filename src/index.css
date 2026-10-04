@@ -1,9 +1,6 @@
 @import "tailwindcss";
 
-/* ============================================================
-   GOTHIC DARK FANTASY STYLIZED SCROLLBAR
-   Theme-aligned for Castlevania / Pause Modal Aesthetic
-   ============================================================ */
+/* Gothic dark fantasy stylized scrollbar (theme-aligned for Castlevania aesthetic) */
 
 /* WebKit (Chrome, Edge, Safari, Opera) */
 ::-webkit-scrollbar {

@@ -6,7 +6,7 @@ import {
   resolveCharacterSpriteVM,
   subscribeToAssetLoader,
   preloadCharacterAssets,
-} from "@components/adapters";
+} from "../character.mapper";
 import { useCharacterContext } from "../CharacterContext";
 
 export type CharacterSpriteState = CharacterSpriteVM;
@@ -14,9 +14,6 @@ export type CharacterSpriteState = CharacterSpriteVM;
 /**
  * Hook extracting character sprite textures, active animation configuration,
  * and frame resolution logic via characterAdapter.
- *
- * Adheres strictly to AGENT.md Sec. 3.3 (zero per-frame React setState calls).
- * React re-renders are only triggered when asset textures load or input parameters change.
  */
 export function useCharacterSprite(
   overrideCharacterId?: string,

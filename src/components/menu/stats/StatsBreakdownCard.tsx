@@ -2,7 +2,7 @@ import React from "react";
 import { Target, FlaskConical } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent, ProgressBar } from "@ui";
 import { useI18n } from "@context/I18nContext";
-import type { KillsBreakdownVM, PotionsBreakdownVM } from "@components/adapters";
+import type { KillsBreakdownVM, PotionsBreakdownVM } from "./stats.mapper";
 import { cn } from "@lib/utils";
 
 export interface StatsBreakdownCardProps {

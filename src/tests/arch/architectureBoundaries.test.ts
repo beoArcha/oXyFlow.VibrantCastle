@@ -8,7 +8,7 @@ import {
   stripComments,
 } from "./helpers/archScanner";
 
-describe("Architectural Boundary Rules (AGENT.md Sec. 1.1)", () => {
+describe("Architectural Boundary Rules", () => {
   const rootDir = process.cwd();
   const gameDir = path.join(rootDir, "src", "game");
   const physicsDir = path.join(gameDir, "physics");
@@ -139,6 +139,59 @@ describe("Architectural Boundary Rules (AGENT.md Sec. 1.1)", () => {
     // Cross-group imports (components -> lib, components -> game, game -> lib, game -> assets) must use configured @ aliases.
     const allowedTargetGroups = new Set<string>();
     const violations = findCrossGroupRelativeImports(rootDir, allowedTargetGroups);
+
+    expect(violations).toEqual([]);
+  });
+
+  it("enforces prohibition of raw `new Error(...)` across production code", () => {
+    const allProdFiles = getAllSourceFiles(srcDir).filter(
+      (file) =>
+        !file.includes("__tests__") &&
+        !file.endsWith(".test.ts") &&
+        !file.endsWith(".test.tsx") &&
+        !file.replace(/\\/g, "/").endsWith("src/lib/errors/GameBaseError.ts")
+    );
+
+    const forbiddenPattern = /\bnew\s+Error\s*\(/;
+    const violations = findImportViolations(allProdFiles, forbiddenPattern, rootDir);
+
+    expect(violations).toEqual([]);
+  });
+
+  it("ensures design system layer src/ui has zero dependencies on game, context, components, or developer", () => {
+    const uiDir = path.join(rootDir, "src", "ui");
+    const uiFiles = getAllSourceFiles(uiDir).filter((file) => !file.includes("__tests__"));
+    const forbiddenPattern = /from\s+["'].*(game|context|components|developer)/;
+    const violations = findImportViolations(uiFiles, forbiddenPattern, rootDir);
+
+    expect(violations).toEqual([]);
+  });
+
+  it("ensures player UI components in src/components have zero dependencies on developer tools", () => {
+    const componentsDir = path.join(rootDir, "src", "components");
+    const componentFiles = getAllSourceFiles(componentsDir).filter(
+      (file) =>
+        !file.includes("__tests__") &&
+        !file.replace(/\\/g, "/").endsWith("components/layout/GameModalHost.tsx")
+    );
+    const forbiddenPattern = /from\s+["'].*developer/;
+    const violations = findImportViolations(componentFiles, forbiddenPattern, rootDir);
+
+    expect(violations).toEqual([]);
+  });
+
+  it("ensures game simulation and engine core has zero dependencies on developer tools", () => {
+    const gameFiles = getAllSourceFiles(gameDir).filter((file) => !file.includes("__tests__"));
+    const forbiddenPattern = /from\s+["'].*developer/;
+    const violations = findImportViolations(gameFiles, forbiddenPattern, rootDir);
+
+    expect(violations).toEqual([]);
+  });
+
+  it("ensures all data imports in src use unified @data alias rather than obsolete game/data or locations/data paths", () => {
+    const allSrcFiles = getAllSourceFiles(srcDir);
+    const obsoleteDataPattern = /(from|import)\s*\(?["'].*(game\/data|locations\/data)/;
+    const violations = findImportViolations(allSrcFiles, obsoleteDataPattern, rootDir);
 
     expect(violations).toEqual([]);
   });

@@ -1,6 +1,7 @@
 import React from "react";
 import gameEngine from "@game/loop/engine";
 import { SettingsProvider } from "./SettingsContext";
+import { ControlsProvider } from "./ControlsContext";
 import { SaveGameProvider } from "./SaveGameContext";
 import { GameSessionProvider } from "./GameSessionContext";
 import { InventoryProvider } from "./InventoryContext";
@@ -11,7 +12,7 @@ export interface GameProviderProps extends BaseProviderProps {}
 
 /**
  * Main GameProvider composing modular domain-specific providers hierarchically:
- * SettingsProvider -> SaveGameProvider -> GameSessionProvider -> InventoryProvider -> SkillsProvider
+ * SettingsProvider -> ControlsProvider -> SaveGameProvider -> GameSessionProvider -> InventoryProvider -> SkillsProvider
  *
  * Each domain manages its own state and subscription to avoid unnecessary re-rendering
  * across decoupled systems (SRP & ISP).
@@ -19,15 +20,17 @@ export interface GameProviderProps extends BaseProviderProps {}
 export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
   return (
     <SettingsProvider>
-      <SaveGameProvider>
-        <GameSessionProvider>
-          <InventoryProvider engine={gameEngine}>
-            <SkillsProvider engine={gameEngine}>
-              {children}
-            </SkillsProvider>
-          </InventoryProvider>
-        </GameSessionProvider>
-      </SaveGameProvider>
+      <ControlsProvider>
+        <SaveGameProvider>
+          <GameSessionProvider>
+            <InventoryProvider engine={gameEngine}>
+              <SkillsProvider engine={gameEngine}>
+                {children}
+              </SkillsProvider>
+            </InventoryProvider>
+          </GameSessionProvider>
+        </SaveGameProvider>
+      </ControlsProvider>
     </SettingsProvider>
   );
 };
@@ -36,6 +39,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
 export * from "./IContext";
 export * from "./settingsTypes";
 export * from "./SettingsContext";
+export * from "./ControlsContext";
 export * from "./SaveGameContext";
 export * from "./GameSessionContext";
 export * from "./InventoryContext";

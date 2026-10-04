@@ -19,7 +19,6 @@ export interface IMountainRidgeRenderer {
 
 /**
  * Dedicated renderer for procedural mountain ridges and chasm gorge crags with rim lighting.
- * Adheres to SRP & AGENT.md file size limits (< 160 lines).
  */
 export class MountainRidgeRenderer implements IMountainRidgeRenderer {
   public render(

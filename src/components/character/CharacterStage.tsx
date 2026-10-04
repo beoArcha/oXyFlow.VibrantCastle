@@ -3,7 +3,7 @@ import { AssetQuality } from "@game/types";
 import { AnimationName } from "@game/engine/spriteTypes";
 import { Badge } from "@ui";
 import { useI18n } from "@context/I18nContext";
-import { resolveCharacterProfileVM } from "@components/adapters";
+import { resolveCharacterProfileVM } from "./character.mapper";
 import { cn } from "@lib/utils";
 import {
   AnimationPlaybackProps,

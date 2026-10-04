@@ -1,6 +1,6 @@
 import React from "react";
 import { ShieldAlert, UserCheck } from "lucide-react";
-import { SkillRestrictionVM } from "@components/adapters";
+import { SkillRestrictionVM } from "./skills.mapper";
 import { useI18n } from "@context/I18nContext";
 import { Alert, Badge, Card } from "@ui";
 import { SkillRequirementRow } from "./SkillRequirementRow";

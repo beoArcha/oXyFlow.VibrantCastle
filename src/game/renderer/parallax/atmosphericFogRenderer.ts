@@ -26,7 +26,6 @@ export interface IAtmosphericFogRenderer {
 /**
  * Dedicated renderer for atmospheric horizon haze, twinkling star fields,
  * sky gradients, and undulating multi-frequency fog ribbons.
- * Adheres to SRP & AGENT.md file size limits (< 150 lines).
  */
 export class AtmosphericFogRenderer implements IAtmosphericFogRenderer {
   private readonly cachedStars: Array<{

@@ -5,10 +5,6 @@
  * Pre-renders procedural skies, solar auras, castle profiles, and scenery trees
  * onto offscreen GPU canvas textures, replacing per-frame path rasterization
  * with blazing-fast hardware-accelerated drawImage (quad) blits.
- *
- * Strict AGENT.md compliance:
- * - ZERO allocations in the per-frame render loop (reusable static texture buffers).
- * - ZERO canvas resizes per frame (buffers resize only when viewport dimensions change).
  */
 
 export class ProceduralBackdropCache {

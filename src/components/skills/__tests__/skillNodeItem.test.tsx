@@ -2,7 +2,7 @@ import { describe, it, expect, mock } from "bun:test";
 import React from "react";
 import { renderIntoDom, cleanupDom } from "@test-utils/domTestUtils";
 import { UiTestProviders } from "@test-utils/testProviders";
-import { SkillNodeVM } from "@components/adapters";
+import { SkillNodeVM } from "../skills.mapper";
 import { SkillNodeItem } from "../SkillNodeItem";
 
 describe("SkillNodeItem", () => {

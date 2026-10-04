@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Sparkles, CheckCircle2, Zap } from "lucide-react";
-import { toSkillDetailVM, SkillDetailVM } from "@components/adapters";
+import { toSkillDetailVM, SkillDetailVM } from "./skills.mapper";
 import { Card, CardHeader, CardTitle, CardContent, Badge, Button, KbdKey, Alert } from "@ui";
 import { SkillIcon } from "./SkillIcon";
 import { SkillPropertyMatrix } from "./SkillPropertyMatrix";

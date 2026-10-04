@@ -140,9 +140,9 @@ function buildTierManifest(
   };
 }
 
-// ==========================================
-// 1. VALEN - Master Duelist & Arcanist
-// ==========================================
+/**
+ * Valen - Master Duelist & Arcanist manifest definition.
+ */
 const valenSpriteMaps: Record<AssetQuality, SpriteAtlasMap> = {
   low: buildSpriteMapFromMeta("valen", valenMetaJson, "low", valenLowPng, 1),
   mid: buildSpriteMapFromMeta("valen", valenMetaJson, "mid", valenMidPng, 1),
@@ -205,9 +205,9 @@ export const VALEN_MANIFEST: CharacterAssetManifest = {
   meta: valenMetaJson,
 };
 
-// ==========================================
-// 2. AURELIA - Shadow Weaver & Guardian
-// ==========================================
+/**
+ * Aurelia - Shadow Weaver & Guardian manifest definition.
+ */
 const aureliaSpriteMaps: Record<AssetQuality, SpriteAtlasMap> = {
   low: buildSpriteMapFromMeta("aurelia", aureliaMetaJson, "low", aureliaLowPng, 1),
   mid: buildSpriteMapFromMeta("aurelia", aureliaMetaJson, "mid", aureliaMidPng, 1),

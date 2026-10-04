@@ -7,7 +7,7 @@ import {
   resetGameStats,
   subscribeToStats,
   type StatsViewModel,
-} from "@components/adapters";
+} from "./stats/stats.mapper";
 import {
   StatsSessionCard,
   StatsPlayerCard,

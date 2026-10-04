@@ -4,7 +4,7 @@ import {
   attachViewportCanvas,
   resizeViewportCanvas,
   executeCanvasClickTeleport,
-} from "@components/adapters/hudAdapter";
+} from "@context/GameSessionContext";
 import type { HUDViewportCanvasProps } from "./types";
 
 export type { HUDViewportCanvasProps };

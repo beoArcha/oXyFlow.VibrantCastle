@@ -1,4 +1,5 @@
-import { AnimationName } from "@game/engine/spriteTypes";
+import type { AssetQuality } from "@game/types";
+import type { AnimationName, CharacterProgressionTier, SpriteFrame } from "@game/engine/spriteTypes";
 
 /**
  * Basic width and height image dimension bounds.
@@ -65,3 +66,58 @@ export interface SpriteStageVisualProps {
   readonly backgroundGradient?: readonly [string, string];
   readonly accentColor?: string;
 }
+
+export interface CharacterPortraitVM {
+  readonly src: string;
+  readonly crop?: CharacterPortraitCrop;
+  readonly alt: string;
+  readonly isLoaded: boolean;
+  readonly isMain: boolean;
+  readonly characterId: string;
+  readonly mood: string;
+  readonly description?: string;
+}
+
+export interface CharacterSpriteVM {
+  readonly texture: HTMLImageElement | null;
+  readonly frame: SpriteFrame | null;
+  readonly characterId: string;
+  readonly quality: AssetQuality;
+  readonly tier: CharacterProgressionTier;
+  readonly state: AnimationName;
+  readonly isLoaded: boolean;
+  readonly getFrameForTick: (continuousTicks: number) => {
+    readonly frame: SpriteFrame | null;
+    readonly frameIndex: number;
+  };
+}
+
+export interface CharacterProfileVM {
+  readonly characterId: string;
+  readonly name: string;
+  readonly classTitleKey: string;
+  readonly classTagsKey: string;
+  readonly accentColor: string;
+}
+
+export interface AtlasGridDimensionsVM {
+  readonly columns: number;
+  readonly rows: number;
+  readonly cellWidth: number;
+  readonly cellHeight: number;
+}
+
+export interface AnimationRowVM {
+  readonly row: number;
+  readonly name: AnimationName;
+  readonly labelKey: string;
+}
+
+export interface AtlasSheetMetaVM {
+  readonly spritesheetUrl: string;
+  readonly portraitsGridUrl: string;
+  readonly spritesheetGrid: AtlasGridDimensionsVM;
+  readonly portraitsGrid: AtlasGridDimensionsVM;
+  readonly animationRows: readonly AnimationRowVM[];
+}
+

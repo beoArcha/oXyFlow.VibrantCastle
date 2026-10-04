@@ -184,7 +184,7 @@ describe("GameRenderer Integration & Verification", () => {
       expect(renderer.cameraX).toBe(200);
       expect(renderer.cameraY).toBe(100);
 
-      // AGENT.md § 12.1: Canvas Save/Restore balance MUST be exactly 0
+      // Canvas Save/Restore balance MUST be exactly 0
       expect(ctx.getSaveBalance()).toBe(0);
     });
 

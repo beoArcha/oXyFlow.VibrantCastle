@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { AssetQuality } from "@game/types";
 import { AnimationName } from "@game/engine/spriteTypes";
-import { resolveAtlasSheetMetaVM } from "@components/adapters";
+import { resolveAtlasSheetMetaVM } from "../character.mapper";
 import { cn } from "@lib/utils";
 import { Card } from "@ui";
 import { ImageDimensions } from "../types";

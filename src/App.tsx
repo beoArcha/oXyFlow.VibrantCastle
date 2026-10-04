@@ -17,7 +17,8 @@ import {
   GameModalHost,
   useAppHotkeys,
 } from "@components/layout";
-import { formatGameDiagnosticReport, LanguageSelector } from "@components/adapters";
+import { formatGameDiagnosticReport } from "@lib/logger";
+import { LanguageSelector } from "@components/common";
 
 function GameScreen() {
   const { t } = useI18n();

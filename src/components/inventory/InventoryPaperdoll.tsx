@@ -5,7 +5,7 @@ import { useI18n } from "@context/I18nContext";
 import {
   EquipmentPaperdollVM,
   EquipmentSlotKey,
-} from "@components/adapters/inventoryAdapter";
+} from "./inventory.mapper";
 
 export interface InventoryPaperdollProps {
   readonly paperdoll: EquipmentPaperdollVM;

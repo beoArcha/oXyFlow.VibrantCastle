@@ -4,7 +4,7 @@ import {
   resolveCharacterPortraitVM,
   subscribeToAssetLoader,
   preloadCharacterAssets,
-} from "@components/adapters";
+} from "../character.mapper";
 import { useCharacterContext } from "../CharacterContext";
 
 export type ResolvedPortraitData = CharacterPortraitVM;

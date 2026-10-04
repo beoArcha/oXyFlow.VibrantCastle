@@ -9,7 +9,7 @@ import {
   EmptyState,
   ConfirmDialog,
 } from "@ui";
-import { LanguageSelector } from "@components/adapters";
+import { LanguageSelector } from "@components/common";
 import { ModalNavigationTabs, ModalType } from "@components/modal";
 import { CharacterPortrait } from "../character";
 import { useGameSession, useSettings, useInventory } from "@context/GameContext";
@@ -21,7 +21,7 @@ import {
   resolveInventoryQuickBeltVM,
   resolveBackpackVM,
   resolveItemDetailsVM,
-} from "@components/adapters/inventoryAdapter";
+} from "./inventory.mapper";
 import { useInventorySelection } from "./useInventorySelection";
 import { InventoryPlayerTabs } from "./InventoryPlayerTabs";
 import { InventoryPaperdoll } from "./InventoryPaperdoll";

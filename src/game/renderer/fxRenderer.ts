@@ -76,7 +76,7 @@ export class FxRenderer implements IFxRenderer {
         ctx.ellipse(p.x, p.y, p.size * 1.5, p.size, p.life * 0.04, 0, Math.PI * 2);
         ctx.fill();
       } else {
-        // Dust particle: avoid string interpolation in render loop (AGENT.md § 12.2)
+        // Dust particle: avoid string interpolation in render loop 
         const alpha = Math.max(0, (1.0 - p.life / p.maxLife) * 0.35);
         ctx.globalAlpha = prevAlpha * alpha;
         ctx.fillStyle = "#fde047";

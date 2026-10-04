@@ -1,7 +1,6 @@
 import React from "react";
 import { Maximize2, Minimize2 } from "lucide-react";
 import { cn } from "@lib/utils";
-import { useI18n } from "@context/I18nContext";
 import { useModalContext } from "./ModalContext";
 import { ModalTitle } from "./ModalTitle";
 import { ModalCloseButton } from "./ModalCloseButton";
@@ -34,7 +33,6 @@ export const ModalHeader = React.memo(
     ref
   ) {
     const { isMaximized, toggleMaximize, allowMaximize } = useModalContext("Header");
-    const { t } = useI18n();
 
     return (
       <div
@@ -75,8 +73,8 @@ export const ModalHeader = React.memo(
               type="button"
               onClick={toggleMaximize}
               className="p-1.5 md:p-2 rounded-xl bg-stone-900/90 hover:bg-[#2a130a] text-stone-300 hover:text-amber-300 border border-stone-800 hover:border-amber-500/60 transition-all cursor-pointer shadow-md active:translate-y-px"
-              aria-label={isMaximized ? t("modalRestore") : t("modalMaximize")}
-              title={isMaximized ? t("modalRestore") : t("modalMaximize")}
+              aria-label={isMaximized ? "Restore window" : "Maximize window"}
+              title={isMaximized ? "Restore window" : "Maximize window"}
             >
               {isMaximized ? (
                 <Minimize2 className="w-4 h-4 md:w-5 md:h-5" />

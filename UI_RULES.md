@@ -45,14 +45,15 @@ UI is strictly:
 ### 1.2 DATA FLOW (STRICT)
 
 ```graph TD
-Engine --> Snapshot --> Adapter --> Container --> Presentational
+Engine --> Snapshot / EventBus --> Context Ports --> View Mappers --> Container / Presentational
 ```
 
 Rules:
 
 * Snapshot is **read-only**
-* UI NEVER mutates engine state
-* UI communicates via **commands only**
+* UI NEVER mutates engine state directly
+* UI communicates via **commands and context ports only**
+* Discrete domain notifications flow via **GameEventBus**
 
 ---
 
@@ -88,7 +89,7 @@ Every component MUST be one of:
 
 #### 2. Container
 
-* connects hooks + adapters
+* connects hooks + context ports
 * orchestrates data flow
 
 #### 3. Feature Component
@@ -96,10 +97,11 @@ Every component MUST be one of:
 * specific to feature
 * may combine multiple UI elements
 
-#### 4. Adapter (not a component)
+#### 4. View Model Mapper (`*.mapper.ts`) (not a component)
 
-* maps Engine → ViewModel
-* pure functions only
+* localized pure projection function within component feature folder
+* maps Engine/Data snapshot → UI ViewModel
+* pure functions only (zero side effects, zero React state)
 
 ---
 
@@ -205,31 +207,36 @@ Hooks must be testable in isolation.
 
 ---
 
-## 5. ADAPTERS (CRITICAL)
+## 5. PORTS & VIEW MODEL MAPPERS (CRITICAL)
 
-### 5.1 PURPOSE
+### 5.1 PURPOSE & SEPARATION
 
-Transform:
+Communication and presentation transformations are strictly decoupled:
 
-```graph TD
-Engine Snapshot --> UI ViewModel
-```
+1. **Context Ports (`src/context/`)**:
+   * Encapsulate engine lifecycle, canvas attachment, gamepad polling, and command dispatch.
+   * Provide reactive state and event bus subscriptions to UI components.
 
----
+2. **View Model Mappers (`*.mapper.ts`)**:
+   * Localized pure functions transforming raw domain data into UI-ready ViewModel structures:
 
-### 5.2 RULES
+   ```graph TD
+   Engine Snapshot / Data --> Pure Mapper (*.mapper.ts) --> UI ViewModel
+   ```
 
-* pure functions only
-* no side effects
-* must handle missing/invalid data
-* must be testable
+### 5.2 MAPPER RULES
 
----
+* Pure projection functions ONLY.
+* Zero side effects, zero mutable state.
+* Resilient: Must handle missing/undefined/invalid data gracefully with safe fallbacks.
+* 100% testable in unit tests without mounting React components.
+* Located alongside the feature components (e.g. `src/components/inventory/inventory.mapper.ts`).
 
 ### 5.3 FORBIDDEN
 
-* business logic
-* mutations
+* Business logic in mappers.
+* Direct engine mutations in components.
+* Central `src/components/adapters/` directory (abolished).
 
 ---
 
@@ -316,8 +323,8 @@ Allowed when:
 
 ### 9.1 SHOULD TEST
 
-* adapters
-* hooks
+* view model mappers
+* context ports & hooks
 * container logic
 * interactions
 

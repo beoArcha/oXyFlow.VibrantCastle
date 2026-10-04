@@ -27,7 +27,6 @@ export interface ICastleSilhouetteRenderer {
 
 /**
  * Dedicated renderer for Castlevania-style castle silhouettes (Distant Spires & Mid-ground Fortress Ramparts).
- * Adheres to SRP & AGENT.md file size limits (< 180 lines).
  */
 export class CastleSilhouetteRenderer implements ICastleSilhouetteRenderer {
   public render(

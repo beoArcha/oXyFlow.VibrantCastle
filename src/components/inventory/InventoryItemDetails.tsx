@@ -5,7 +5,7 @@ import { useI18n } from "@context/I18nContext";
 import {
   ItemDetailsVM,
   EquipmentSlotKey,
-} from "@components/adapters/inventoryAdapter";
+} from "./inventory.mapper";
 import { cn } from "@lib/utils";
 
 export interface InventoryItemDetailsProps {

@@ -4,7 +4,7 @@ import {
   getKeyboardBindingsVM,
   subscribeToKeyboardBindings,
   resetKeyboardBindings,
-} from "@components/adapters";
+} from "@context";
 import { UseKeyboardResult } from "../types";
 
 export type { UseKeyboardResult };

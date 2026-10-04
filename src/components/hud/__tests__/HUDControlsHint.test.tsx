@@ -2,7 +2,7 @@ import { describe, it, expect, mock, beforeEach, afterEach } from "bun:test";
 import React, { act } from "react";
 import { setupDomEnvironment, cleanupDom, renderIntoDom, TestProviders } from "@test-utils";
 import { PlayerId } from "@game/types";
-import { resetKeyboardBindings, rebindKeyboardAction } from "@components/adapters";
+import { resetKeyboardBindings, rebindKeyboardAction } from "@context";
 import { HUDControlsHint } from "../HUDControlsHint";
 
 describe("HUDControlsHint Component", () => {

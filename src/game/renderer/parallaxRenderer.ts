@@ -48,7 +48,6 @@ export interface IParallaxRendererDependencies {
  * Coordinates deep multi-layered parallax scrolling across the viewport using
  * the oversized background bounding box defined in location JSON blueprints.
  * Delegates specialized sub-layer rendering to focused modules in `src/game/renderer/parallax/`.
- * Size: < 190 lines (strict AGENT.md modularity compliance).
  */
 export class ParallaxRenderer {
   private readonly multiLayerSystem: IMultiLayerBackgroundSystem;

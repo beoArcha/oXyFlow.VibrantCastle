@@ -1,5 +1,5 @@
 import React from "react";
-import { SkillPropertyItemVM } from "@components/adapters";
+import { SkillPropertyItemVM } from "./skills.mapper";
 import { useI18n } from "@context/I18nContext";
 import { StatRow } from "@ui";
 

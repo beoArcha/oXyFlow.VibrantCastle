@@ -1,6 +1,6 @@
 import React from "react";
 import { CheckCircle2, Lock, Sparkles } from "lucide-react";
-import { SkillNodeVM } from "@components/adapters";
+import { SkillNodeVM } from "./skills.mapper";
 import { SkillIcon } from "./SkillIcon";
 import { Badge, KbdKey } from "@ui";
 import { useI18n } from "@context/I18nContext";
