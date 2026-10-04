@@ -8,7 +8,7 @@ import {
   ShieldCheck,
   Eye,
 } from "lucide-react";
-import { Button, Slider, Badge, Switch, SegmentedControl, ColorPickerInput, Card } from "@/components/ui";
+import { Button, Slider, Badge, Switch, SegmentedControl, ColorPickerInput, Card } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { IAtlasBackgroundConfig } from "./types";
 import { BackgroundProcessor } from "@/game/engine/meta/slicing";

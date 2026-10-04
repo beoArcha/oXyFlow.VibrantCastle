@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useMemo, useCallback } from "react";
 import { Sparkles, ChevronUp, ChevronDown } from "lucide-react";
-import { Button, Badge, Select } from "@/components/ui";
+import { Button, Badge, Select } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import {
   AtlasGridConfig,
@@ -285,7 +285,7 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
             size="sm"
             variant="castle"
             value={currentTrack?.name || ""}
-            onChange={(e) => onSelectTrack(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onSelectTrack(e.target.value)}
             options={tracks.map((tr) => ({
               value: tr.name,
               label: `${tr.name} (row ${tr.row}, ${tr.frames}f)`,

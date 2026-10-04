@@ -59,10 +59,16 @@
         "./src/types/*"
       ],
       "@ui/*": [
-        "./src/components/ui/*"
+        "./src/ui/*"
       ],
       "@ui": [
-        "./src/components/ui/index.ts"
+        "./src/ui/index.ts"
+      ],
+      "@components/ui/*": [
+        "./src/ui/*"
+      ],
+      "@components/ui": [
+        "./src/ui/index.ts"
       ]
     },
     "allowImportingTsExtensions": true,

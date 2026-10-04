@@ -1,6 +1,6 @@
 import React from "react";
 import { Sparkles, Swords, Wand2 } from "lucide-react";
-import { MetricTile, Tabs, TabsList, TabsTrigger } from "../ui";
+import { MetricTile, Tabs, TabsList, TabsTrigger } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { useSkills } from "@context/GameContext";
 
@@ -18,7 +18,7 @@ export const SkillPlayerTabs = ({
     <div className={`flex flex-wrap items-center justify-between gap-3 border-b border-[#5c2d18] pb-3 ${className}`}>
       <Tabs
         value={String(activePlayerIndex)}
-        onValueChange={(val) => setActivePlayerIndex(Number(val))}
+        onValueChange={(val: string) => setActivePlayerIndex(Number(val))}
       >
         <TabsList>
           <TabsTrigger

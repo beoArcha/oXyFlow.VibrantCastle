@@ -10,7 +10,7 @@ import {
   Minus,
   Layers,
 } from "lucide-react";
-import { Button, ActionBar, Tooltip, KbdKey } from "@/components/ui";
+import { Button, ActionBar, Tooltip, KbdKey } from "@ui";
 import { useI18n } from "@context/I18nContext";
 
 export interface AtlasAnimationPlaybackControlsProps {

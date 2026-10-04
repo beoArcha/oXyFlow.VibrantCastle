@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Flame, Shield, Zap } from "lucide-react";
 import { createSkillCategoryGroups, SkillCategoryGroupVM } from "@components/adapters";
-import { Card, CardHeader, CardTitle, CardContent } from "../ui";
+import { Card, CardHeader, CardTitle, CardContent } from "@ui";
 import { SkillNodeItem } from "./SkillNodeItem";
 import { useI18n } from "@context/I18nContext";
 import { useSkills } from "@context/GameContext";

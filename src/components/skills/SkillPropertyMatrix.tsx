@@ -1,7 +1,7 @@
 import React from "react";
 import { SkillPropertyItemVM } from "@components/adapters";
 import { useI18n } from "@context/I18nContext";
-import { StatRow } from "../ui";
+import { StatRow } from "@ui";
 
 export interface SkillPropertyMatrixProps {
   readonly properties: readonly SkillPropertyItemVM[];

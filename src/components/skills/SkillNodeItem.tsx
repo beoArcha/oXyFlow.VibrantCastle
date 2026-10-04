@@ -2,7 +2,7 @@ import React from "react";
 import { CheckCircle2, Lock, Sparkles } from "lucide-react";
 import { SkillNodeVM } from "@components/adapters";
 import { SkillIcon } from "./SkillIcon";
-import { Badge, KbdKey } from "../ui";
+import { Badge, KbdKey } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 

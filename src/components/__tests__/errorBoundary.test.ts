@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import React from "react";
-import { GameErrorBoundary } from "../ui";
+import { GameErrorBoundary } from "@ui";
 import { LoggerManager, LogLevel, ILogTransport, LogRecord } from "@lib/logger";
 import { RingBufferTransport } from "@lib/logger/transports/RingBufferTransport";
 

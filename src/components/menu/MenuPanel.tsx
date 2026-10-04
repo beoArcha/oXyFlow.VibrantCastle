@@ -9,7 +9,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import type { KeyboardMapperProps } from "../controls/types";
-import { Tabs } from "../ui";
+import { Tabs } from "@ui";
 import KeyboardMapper from "../controls/KeyboardMapper";
 import GamepadMapper from "../controls/GamepadMapper";
 import StatsPanel from "./StatsPanel";
