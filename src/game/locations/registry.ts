@@ -1,9 +1,9 @@
 import { LocationId, LocationDefinition } from "./types";
-import { courtyardLocation } from "./data/courtyard";
-import { thornChasmLocation } from "./data/thorn_chasm";
-import { clocktowerLocation } from "./data/clocktower";
-import { aetherSanctuaryLocation } from "./data/aether_sanctuary";
-import { grandBastionLocation } from "./data/grand_bastion";
+import { courtyardLocation } from "./definitions/courtyard";
+import { thornChasmLocation } from "./definitions/thorn_chasm";
+import { clocktowerLocation } from "./definitions/clocktower";
+import { aetherSanctuaryLocation } from "./definitions/aether_sanctuary";
+import { grandBastionLocation } from "./definitions/grand_bastion";
 
 export const LOCATION_REGISTRY: Record<LocationId, LocationDefinition> = {
   courtyard: courtyardLocation,

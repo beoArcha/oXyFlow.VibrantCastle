@@ -19,11 +19,11 @@ import { translations } from "@i18n";
  * 3. Parallax layers reference missing background PNG files on disk.
  * 4. Blueprint translation keys are missing from i18n dictionaries (showing raw fallback keys to players).
  *
- * This test suite enforces contract integrity across all location blueprints in src/game/locations/data/.
+ * This test suite enforces contract integrity across all location blueprints in src/data/locations/.
  */
 describe("Location Blueprint Schema Contracts", () => {
   const rootDir = path.resolve(__dirname, "../../..");
-  const dataDir = path.join(rootDir, "src/game/locations/data");
+  const dataDir = path.join(rootDir, "src/data/locations");
   const assetsBgDir = path.join(rootDir, "src/assets/bg");
 
   const CANONICAL_ROOMS = [

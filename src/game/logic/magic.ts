@@ -1,6 +1,6 @@
 import { Projectile, Player, InputMap, SoundType } from "@game/types";
 import { gameAudio } from "@game/engine/audioEngine";
-import { SPELL_REGISTRY } from "@game/data/spells";
+import { SPELL_REGISTRY } from "@data/skills/spells";
 import { Result, ok, err, GameplayError, ErrorCode } from "@lib/errors";
 import { magicLogger } from "@game/logger/gameLogger";
 

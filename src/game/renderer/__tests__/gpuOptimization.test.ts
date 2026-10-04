@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test";
-import defaultSettings from "@game/data/defaultSettings.json";
+import defaultSettings from "@data/defaults/defaultSettings.json";
 import { DEFAULT_SETTINGS } from "@context/settingsTypes";
 import { ProceduralBackdropCache } from "../proceduralBackdropCache";
 import { GameRenderer } from "../renderer";

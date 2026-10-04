@@ -1,7 +1,7 @@
 import { LocationDefinition } from "../types";
 import { LocationParser } from "../parser/locationParser";
 import { LocationJsonSchema } from "../schema/locationSchema";
-import thornChasmData from "./thorn_chasm.json";
+import thornChasmData from "@data/locations/thorn_chasm.json";
 
 // High-quality parallax layer assets from assets/bg/thorn_chasm
 import bgChasmFarHighPng from "@assets/bg/thorn_chasm/thorn_chasm_far_high.png";

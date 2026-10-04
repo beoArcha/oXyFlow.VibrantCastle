@@ -1,7 +1,7 @@
 import { LocationDefinition } from "../types";
 import { LocationParser } from "../parser/locationParser";
 import { LocationJsonSchema } from "../schema/locationSchema";
-import aetherSanctuaryData from "./aether_sanctuary.json";
+import aetherSanctuaryData from "@data/locations/aether_sanctuary.json";
 
 // High-quality parallax layer assets from assets/bg/aether_sanctuary
 import bgAetherFarHighPng from "@assets/bg/aether_sanctuary/aether_sanctuary_far_high.png";

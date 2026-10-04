@@ -1,0 +1,49 @@
+{
+  "actId": "act_1",
+  "titleKey": "act1Title",
+  "subtitleKey": "act1Subtitle",
+  "name": "The Awakening of the Bastion",
+  "setting": "Late 19th-century gothic fantasy citadel suspended in an eternal golden autumn",
+  "sectors": [
+    {
+      "id": "courtyard",
+      "phase": 1,
+      "nameKey": "locCourtyardName",
+      "openingNarrationKey": "locCourtyardOpening",
+      "objectiveKey": "objectiveCourtyard",
+      "narratorQuote": "The youth awoke upon the vast castle grounds. The crisp air carried scents of dry autumn leaves and fresh aether..."
+    },
+    {
+      "id": "thorn_chasm",
+      "phase": 2,
+      "nameKey": "locThornChasmName",
+      "openingNarrationKey": "locThornChasmOpening",
+      "objectiveKey": "objectiveThornChasm",
+      "narratorQuote": "One false step and it was over. But this kid knew how to bend gravity to his will."
+    },
+    {
+      "id": "clocktower",
+      "phase": 3,
+      "nameKey": "locClocktowerName",
+      "openingNarrationKey": "locClocktowerOpening",
+      "objectiveKey": "objectiveClocktower",
+      "narratorQuote": "Deep within the clocktower, massive iron cogs groaned, lifting the portcullis toward the clouds."
+    },
+    {
+      "id": "aether_sanctuary",
+      "phase": 4,
+      "nameKey": "locAetherSanctuaryName",
+      "openingNarrationKey": "locAetherSanctuaryOpening",
+      "objectiveKey": "objectiveAetherSanctuary",
+      "narratorQuote": "And so they stepped into a new dawn, fully armed and attuned to ancient Aether. The first trial was conquered, yet the deeper heart of the castle still slept..."
+    },
+    {
+      "id": "grand_bastion",
+      "phase": 5,
+      "nameKey": "locGrandBastionName",
+      "openingNarrationKey": "locGrandBastionOpening",
+      "objectiveKey": "objectiveGrandBastion",
+      "narratorQuote": "The master circuit proved their mettle; the Awakened Duelists claimed dominion over the high battlements."
+    }
+  ]
+}

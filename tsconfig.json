@@ -34,6 +34,12 @@
       "@context/*": [
         "./src/context/*"
       ],
+      "@data/*": [
+        "./src/data/*"
+      ],
+      "@data": [
+        "./src/data/index.ts"
+      ],
       "@game/*": [
         "./src/game/*"
       ],

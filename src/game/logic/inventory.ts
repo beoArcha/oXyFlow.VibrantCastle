@@ -1,7 +1,7 @@
 import { Item, ItemType, InventoryState, EquipmentState, Player, SoundType } from "@game/types";
 import { gameAudio } from "@game/engine/audioEngine";
 import { statsManager } from "./stats";
-import itemsData from "@game/data/items.json";
+import itemsData from "@data/items/items.json";
 import { inventoryLogger } from "@game/logger/gameLogger";
 import { Result, ok, err, GameplayError, ErrorCode } from "@lib/errors";
 

@@ -19,6 +19,7 @@ const TSCONFIG_ALIASES: Record<string, string> = {
   "@assets/": "src/assets/",
   "@components/": "src/components/",
   "@context/": "src/context/",
+  "@data/": "src/data/",
   "@game/": "src/game/",
   "@lib/": "src/lib/",
   "@i18n/": "src/i18n/",
@@ -29,6 +30,7 @@ const TSCONFIG_ALIASES: Record<string, string> = {
 };
 
 const EXACT_ALIASES: Record<string, string> = {
+  "@data": "src/data/index.ts",
   "@i18n": "src/i18n/index.ts",
   "@test-utils": "src/test-utils/index.ts",
   "@ui": "src/ui/index.ts",

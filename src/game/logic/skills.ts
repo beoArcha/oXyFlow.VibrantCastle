@@ -2,9 +2,8 @@ import { SkillTreeNode, Player, SoundType, PlayerId, MagicCategory, MagicTrigger
 import { SPELL_REGISTRY } from "./magic";
 import { gameAudio } from "../engine/audioEngine";
 import { calculatePlayerDerivedStats } from "./inventory";
-
-import valenSkillsData from "../data/skills_valen.json";
-import aureliaSkillsData from "../data/skills_aurelia.json";
+import valenSkillsData from "@data/skills/skills_valen.json";
+import aureliaSkillsData from "@data/skills/skills_aurelia.json";
 
 function parseJsonToNodes(data: any[], character: "valen" | "aurelia"): SkillTreeNode[] {
   return data.map(item => {
@@ -18,8 +17,8 @@ function parseJsonToNodes(data: any[], character: "valen" | "aurelia"): SkillTre
       triggerType: item.triggerType === "passive"
         ? MagicTriggerType.Passive
         : item.triggerType === "automatic"
-        ? MagicTriggerType.Automatic
-        : MagicTriggerType.Action,
+          ? MagicTriggerType.Automatic
+          : MagicTriggerType.Action,
       manaCost: item.manaCost ?? 0,
       staminaCost: item.staminaCost ?? 0,
       cooldownFrames: item.cooldownFrames ?? 0,

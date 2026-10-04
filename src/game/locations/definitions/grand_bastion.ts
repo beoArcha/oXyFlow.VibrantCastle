@@ -1,7 +1,7 @@
 import { LocationDefinition } from "../types";
 import { LocationParser } from "../parser/locationParser";
 import { LocationJsonSchema } from "../schema/locationSchema";
-import grandBastionData from "./grand_bastion.json";
+import grandBastionData from "@data/locations/grand_bastion.json";
 
 // High-quality parallax layer assets from assets/bg/grand_bastion
 import bgBastionFarHighPng from "@assets/bg/grand_bastion/grand_bastion_far_high.png";

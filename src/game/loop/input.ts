@@ -1,5 +1,5 @@
 import { InputMap, PlayerId, GamepadBindingMap } from "../types";
-import defaultControlsJson from "../data/defaultControls.json";
+import defaultControlsJson from "@data/defaults/defaultControls.json";
 
 export interface ConnectedGamepadInfo {
   index: number;

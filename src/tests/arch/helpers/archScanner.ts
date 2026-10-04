@@ -100,7 +100,7 @@ export function findCrossGroupRelativeImports(
 ): CrossGroupViolation[] {
   const srcDir = path.join(rootDir, "src");
   const allFiles = getAllSourceFiles(srcDir);
-  const topGroups = ["assets", "components", "context", "game", "i18n", "lib", "test-utils"];
+  const topGroups = ["assets", "components", "context", "data", "game", "i18n", "lib", "test-utils", "ui"];
   const violations: CrossGroupViolation[] = [];
 
   for (const file of allFiles) {

@@ -1,4 +1,4 @@
-import { MagicSkill, MagicCategory, MagicTriggerType } from "../types";
+import { MagicSkill, MagicCategory, MagicTriggerType } from "@game/types";
 
 /**
  * Registry of all available magic spells in the game for Valen and Aurelia.

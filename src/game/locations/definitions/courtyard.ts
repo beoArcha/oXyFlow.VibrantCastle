@@ -1,7 +1,7 @@
 import { LocationDefinition } from "../types";
 import { LocationParser } from "../parser/locationParser";
 import { LocationJsonSchema } from "../schema/locationSchema";
-import courtyardData from "./courtyard.json";
+import courtyardData from "@data/locations/courtyard.json";
 
 // High-quality parallax layer assets from assets/bg/courtyard
 import bgFarHighPng from "@assets/bg/courtyard/courtyard_far_high.png";

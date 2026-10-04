@@ -9,7 +9,7 @@ import {
   QUICK_HP_PRESETS,
 } from "../subtabs/tester";
 import { LOCATION_REGISTRY } from "@game/locations/registry";
-import enemiesData from "@game/data/enemies.json";
+import enemiesData from "@data/enemies/enemies.json";
 
 describe("Tester Module Constants & Domain Integrity", () => {
   it("verifies that all LOCATION_IDS exist in game LOCATION_REGISTRY", () => {

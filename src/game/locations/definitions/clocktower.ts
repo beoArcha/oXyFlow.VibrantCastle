@@ -1,7 +1,7 @@
 import { LocationDefinition } from "../types";
 import { LocationParser } from "../parser/locationParser";
 import { LocationJsonSchema } from "../schema/locationSchema";
-import clocktowerData from "./clocktower.json";
+import clocktowerData from "@data/locations/clocktower.json";
 
 // High-quality parallax layer assets from assets/bg/clocktower
 import bgTowerFarHighPng from "@assets/bg/clocktower/clocktower_far_high.png";

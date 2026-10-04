@@ -40,7 +40,7 @@ import { EnemyAISystem, IEnemyAISystem } from "../engine/enemyAISystem";
 import { NarrationSystem, INarrationSystem } from "../engine/narrationSystem";
 import { PlayerController, IPlayerController, defaultPlayerController } from "../engine/playerController";
 import { debugManager } from "../debug/debugManager";
-import defaultSettingsJson from "../data/defaultSettings.json";
+import defaultSettingsJson from "@data/defaults/defaultSettings.json";
 import { engineLogger } from "../logger/gameLogger";
 import { LoopCircuitBreaker } from "./loopCircuitBreaker";
 import { ILogger } from "@/lib/logger";
