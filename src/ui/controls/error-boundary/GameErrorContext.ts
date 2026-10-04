@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { GameErrorContextViolationError } from "@lib/errors";
 
 export interface GameErrorContextValue {
   error: Error | null;
@@ -16,9 +17,7 @@ export const GameErrorContext = React.createContext<GameErrorContextValue | null
 export function useGameErrorContext(): GameErrorContextValue {
   const context = useContext(GameErrorContext);
   if (!context) {
-    throw new Error(
-      "GameErrorBoundary compound subcomponents must be rendered within a GameErrorBoundary error state."
-    );
+    throw new GameErrorContextViolationError();
   }
   return context;
 }

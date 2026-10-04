@@ -27,6 +27,21 @@ export class EngineError extends GameBaseError {
 }
 
 /**
+ * Specialized engine error thrown when 2D or WebGL canvas rendering context is null or lost.
+ */
+export class CanvasContextError extends EngineError {
+  constructor(
+    message = "Could not acquire 2D canvas rendering context",
+    options?: DomainErrorOptions
+  ) {
+    super(message, ErrorCode.ENGINE_CANVAS_2D_UNAVAILABLE, {
+      severity: "ERROR",
+      ...options,
+    });
+  }
+}
+
+/**
  * Errors related to loading, decoding, or extracting assets, sprites, and sounds.
  */
 export class AssetError extends GameBaseError {
@@ -124,6 +139,58 @@ export class MissingContextProviderError extends UIError {
 }
 
 /**
+ * Specialized UI error thrown when a Tabs subcomponent is rendered outside a Tabs container.
+ */
+export class TabsContextViolationError extends UIError {
+  public readonly componentName: string;
+
+  constructor(componentName: string) {
+    super(
+      `<Tabs.${componentName}> must be rendered within a <Tabs> container.`,
+      ErrorCode.UI_TABS_CONTEXT_VIOLATION,
+      {
+        severity: "FATAL",
+        details: { componentName },
+      }
+    );
+    this.componentName = componentName;
+  }
+}
+
+/**
+ * Specialized UI error thrown when a Modal subcomponent is rendered outside a Modal container.
+ */
+export class ModalContextViolationError extends UIError {
+  public readonly componentName: string;
+
+  constructor(componentName: string) {
+    super(
+      `<Modal.${componentName}> must be rendered within an open <Modal> container.`,
+      ErrorCode.UI_MODAL_CONTEXT_VIOLATION,
+      {
+        severity: "FATAL",
+        details: { componentName },
+      }
+    );
+    this.componentName = componentName;
+  }
+}
+
+/**
+ * Specialized UI error thrown when GameErrorBoundary compound subcomponents are rendered outside a GameErrorBoundary state.
+ */
+export class GameErrorContextViolationError extends UIError {
+  constructor(
+    message = "GameErrorBoundary compound subcomponents must be rendered within a GameErrorBoundary error state."
+  ) {
+    super(message, ErrorCode.REACT_MISSING_CONTEXT, {
+      severity: "FATAL",
+      details: { context: "GameErrorContext" },
+    });
+  }
+}
+
+/**
  * Domain-level errors representing failed gameplay actions (e.g. invalid inventory move, not enough mana).
  * Defaults to severity 'WARN' because gameplay failures are normal occurrences, not system crashes.
  */
@@ -140,5 +207,41 @@ export class GameplayError extends GameBaseError {
       details: options?.details,
       cause: options?.cause,
     });
+  }
+}
+
+/**
+ * System and runtime execution failures, unexpected unhandled exceptions, and host environment crashes.
+ */
+export class SystemError extends GameBaseError {
+  constructor(
+    message: string,
+    code: ErrorCode = ErrorCode.UNKNOWN_ERROR,
+    options?: DomainErrorOptions
+  ) {
+    super(message, {
+      code,
+      domain: "SYSTEM",
+      severity: options?.severity ?? "ERROR",
+      details: options?.details,
+      cause: options?.cause,
+    });
+  }
+}
+
+/**
+ * Thrown when attempting to unwrap a failed Result (Err variant).
+ */
+export class UnwrapFailedError extends SystemError {
+  public readonly unwrapCause: unknown;
+
+  constructor(cause: unknown) {
+    const detail = cause instanceof Error ? cause.message : String(cause);
+    super(`Called Result.unwrap() on an Err: ${detail}`, ErrorCode.SYSTEM_UNWRAP_FAILED, {
+      severity: "FATAL",
+      cause,
+      details: { rawCause: String(cause) },
+    });
+    this.unwrapCause = cause;
   }
 }

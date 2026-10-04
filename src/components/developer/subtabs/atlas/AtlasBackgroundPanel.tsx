@@ -13,6 +13,7 @@ import { useI18n } from "@context/I18nContext";
 import { IAtlasBackgroundConfig } from "./types";
 import { BackgroundProcessor } from "@/game/engine/meta/slicing";
 import { LoggerManager } from "@lib/logger";
+import { AssetError, CanvasContextError, ErrorCode } from "@lib/errors";
 import { downloadBlob, formatAtlasExportFileName } from "./utils";
 
 export interface AtlasBackgroundPanelProps {
@@ -112,7 +113,12 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
         await new Promise<void>((resolve, reject) => {
           if (fallbackImg.complete) return resolve();
           fallbackImg.onload = () => resolve();
-          fallbackImg.onerror = () => reject(new Error("Failed to load image for baking"));
+          fallbackImg.onerror = () =>
+            reject(
+              new AssetError("Failed to load image for baking", ErrorCode.ASSET_IMAGE_LOAD_FAILED, {
+                details: { imageSrc },
+              })
+            );
         });
         img = fallbackImg;
       }
@@ -122,7 +128,11 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
       canvas.height = img.naturalHeight || img.height;
       const ctx = canvas.getContext("2d");
 
-      if (!ctx) throw new Error("Could not acquire 2d context for baking");
+      if (!ctx) {
+        throw new CanvasContextError("Could not acquire 2d context for baking", {
+          details: { assetId },
+        });
+      }
 
       ctx.drawImage(img, 0, 0);
 

@@ -1,14 +1,20 @@
 import { describe, expect, it } from "bun:test";
 import {
   AssetError,
+  CanvasContextError,
   EngineError,
   ErrorCode,
   GameBaseError,
+  GameErrorContextViolationError,
   GameplayError,
   MissingContextProviderError,
+  ModalContextViolationError,
   ParserError,
   SaveError,
+  SystemError,
+  TabsContextViolationError,
   UIError,
+  UnwrapFailedError,
 } from "../index";
 
 describe("SOLID Error Hierarchy", () => {
@@ -46,6 +52,50 @@ describe("SOLID Error Hierarchy", () => {
       expect(gameplayErr.domain).toBe("GAMEPLAY");
       expect(gameplayErr.severity).toBe("WARN");
       expect(gameplayErr.name).toBe("GameplayError");
+
+      const systemErr = new SystemError("Host process failed", ErrorCode.UNKNOWN_ERROR);
+      expect(systemErr.domain).toBe("SYSTEM");
+      expect(systemErr.severity).toBe("ERROR");
+      expect(systemErr.name).toBe("SystemError");
+    });
+
+    it("verifies specialized leaf classes specialize base domain errors", () => {
+      const canvasErr = new CanvasContextError("Context missing");
+      expect(canvasErr instanceof CanvasContextError).toBe(true);
+      expect(canvasErr instanceof EngineError).toBe(true);
+      expect(canvasErr instanceof GameBaseError).toBe(true);
+      expect(canvasErr.code).toBe(ErrorCode.ENGINE_CANVAS_2D_UNAVAILABLE);
+      expect(canvasErr.domain).toBe("ENGINE");
+
+      const tabsErr = new TabsContextViolationError("List");
+      expect(tabsErr instanceof TabsContextViolationError).toBe(true);
+      expect(tabsErr instanceof UIError).toBe(true);
+      expect(tabsErr.code).toBe(ErrorCode.UI_TABS_CONTEXT_VIOLATION);
+      expect(tabsErr.severity).toBe("FATAL");
+      expect(tabsErr.componentName).toBe("List");
+      expect(tabsErr.message).toContain("<Tabs.List>");
+
+      const modalErr = new ModalContextViolationError("Header");
+      expect(modalErr instanceof ModalContextViolationError).toBe(true);
+      expect(modalErr instanceof UIError).toBe(true);
+      expect(modalErr.code).toBe(ErrorCode.UI_MODAL_CONTEXT_VIOLATION);
+      expect(modalErr.severity).toBe("FATAL");
+      expect(modalErr.componentName).toBe("Header");
+      expect(modalErr.message).toContain("<Modal.Header>");
+
+      const gameErrorContextErr = new GameErrorContextViolationError();
+      expect(gameErrorContextErr instanceof GameErrorContextViolationError).toBe(true);
+      expect(gameErrorContextErr instanceof UIError).toBe(true);
+      expect(gameErrorContextErr.code).toBe(ErrorCode.REACT_MISSING_CONTEXT);
+      expect(gameErrorContextErr.severity).toBe("FATAL");
+      expect(gameErrorContextErr.message).toContain("GameErrorBoundary compound subcomponents");
+
+      const unwrapErr = new UnwrapFailedError("Bad state payload");
+      expect(unwrapErr instanceof UnwrapFailedError).toBe(true);
+      expect(unwrapErr instanceof SystemError).toBe(true);
+      expect(unwrapErr.code).toBe(ErrorCode.SYSTEM_UNWRAP_FAILED);
+      expect(unwrapErr.severity).toBe("FATAL");
+      expect(unwrapErr.unwrapCause).toBe("Bad state payload");
     });
 
     it("verifies MissingContextProviderError specializes UIError with hook and provider details", () => {

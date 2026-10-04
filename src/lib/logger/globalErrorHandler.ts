@@ -1,5 +1,6 @@
 import { ILogger } from "./types";
 import { getLogger } from "./Logger";
+import { ErrorCode, SystemError } from "../errors";
 
 let isInitialized = false;
 let errorHandler: ((event: ErrorEvent) => void) | null = null;
@@ -20,7 +21,18 @@ export function initGlobalErrorHandlers(customLogger?: ILogger): () => void {
         lineno: event.lineno,
         colno: event.colno,
       },
-      event.error || new Error(event.message)
+      event.error ||
+        new SystemError(
+          event.message || "Uncaught window exception",
+          ErrorCode.SYSTEM_UNCAUGHT_EXCEPTION,
+          {
+            details: {
+              filename: event.filename,
+              lineno: event.lineno,
+              colno: event.colno,
+            },
+          }
+        )
     );
   };
 
@@ -31,7 +43,11 @@ export function initGlobalErrorHandlers(customLogger?: ILogger): () => void {
     logger.error(
       `Unhandled promise rejection: ${message}`,
       undefined,
-      reason instanceof Error ? reason : new Error(message)
+      reason instanceof Error
+        ? reason
+        : new SystemError(message, ErrorCode.SYSTEM_UNHANDLED_REJECTION, {
+            cause: reason,
+          })
     );
   };
 

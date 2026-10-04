@@ -199,11 +199,15 @@ export function useAtlasPresets({ onTracksParsed, parseTracksFromMeta }: UseAtla
           try {
             const content = event.target?.result as string;
             if (!content || !content.trim()) {
-              throw new Error("JSON file is empty");
+              throw new ParserError("JSON file is empty", ErrorCode.PARSER_EMPTY_DOCUMENT, {
+                details: { fileName: file.name },
+              });
             }
             const parsed = JSON.parse(content);
             if (!parsed || typeof parsed !== "object") {
-              throw new Error("Invalid JSON document structure");
+              throw new ParserError("Invalid JSON document structure", ErrorCode.PARSER_STRUCTURE_INVALID, {
+                details: { fileName: file.name },
+              });
             }
 
             setMetaDoc(parsed);
@@ -243,12 +247,14 @@ export function useAtlasPresets({ onTracksParsed, parseTracksFromMeta }: UseAtla
             }
             onTracksParsed?.(parsedTracks, parsedTracks[0]?.name || "default");
           } catch (err: unknown) {
-            const errorMessage = err instanceof Error ? err.message : "Unknown error";
-            const parseError = new ParserError(
-              `Failed to parse meta JSON file: ${errorMessage}`,
-              ErrorCode.PARSER_INVALID_FORMAT,
-              { details: { fileName: file.name }, cause: err }
-            );
+            const parseError =
+              err instanceof ParserError
+                ? err
+                : new ParserError(
+                    `Failed to parse meta JSON file: ${err instanceof Error ? err.message : "Unknown error"}`,
+                    ErrorCode.PARSER_INVALID_FORMAT,
+                    { details: { fileName: file.name }, cause: err }
+                  );
             studioLogger.error(parseError.message, {
               code: parseError.code,
               details: parseError.details,

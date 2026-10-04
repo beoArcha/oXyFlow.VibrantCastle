@@ -1,4 +1,5 @@
 import { createContext, useContext } from "react";
+import { TabsContextViolationError } from "@lib/errors";
 
 export type TabsOrientation = "horizontal" | "vertical";
 
@@ -13,12 +14,12 @@ export const TabsContext = createContext<TabsContextValue | null>(null);
 /**
  * Accesses active tab state and navigation orientation from parent Tabs root.
  *
- * @throws {Error} if used outside a Tabs component hierarchy.
+ * @throws {TabsContextViolationError} if used outside a Tabs component hierarchy.
  */
 export function useTabsContext(componentName: string): TabsContextValue {
   const context = useContext(TabsContext);
   if (!context) {
-    throw new Error(`<Tabs.${componentName}> must be rendered within a <Tabs> container.`);
+    throw new TabsContextViolationError(componentName);
   }
   return context;
 }

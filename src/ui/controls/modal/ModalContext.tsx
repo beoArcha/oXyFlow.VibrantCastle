@@ -1,4 +1,5 @@
 import { createContext, useContext } from "react";
+import { ModalContextViolationError } from "@lib/errors";
 
 export interface ModalContextValue {
   isOpen: boolean;
@@ -14,12 +15,12 @@ export const ModalContext = createContext<ModalContextValue | null>(null);
 /**
  * Accesses parent modal state and actions.
  *
- * @throws {Error} if used outside a Modal context.
+ * @throws {ModalContextViolationError} if used outside a Modal context.
  */
 export function useModalContext(componentName: string): ModalContextValue {
   const context = useContext(ModalContext);
   if (!context) {
-    throw new Error(`<Modal.${componentName}> must be rendered within an open <Modal> container.`);
+    throw new ModalContextViolationError(componentName);
   }
   return context;
 }

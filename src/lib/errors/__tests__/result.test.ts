@@ -15,6 +15,7 @@ import {
   Result,
   tryCatch,
   unwrap,
+  UnwrapFailedError,
   unwrapOr,
   wrapThrowable,
 } from "../index";
@@ -69,6 +70,10 @@ describe("SOLID Result<T, E> Pattern", () => {
       const failure = err(new GameplayError("Out of mana", ErrorCode.GAMEPLAY_INSUFFICIENT_MANA));
       expect(() => unwrap(failure)).toThrow(GameplayError);
       expect(() => failure.unwrap()).toThrow(GameplayError);
+
+      const nonErrorFailure = err("plain string error");
+      expect(() => unwrap(nonErrorFailure)).toThrow(UnwrapFailedError);
+      expect(() => nonErrorFailure.unwrap()).toThrow(UnwrapFailedError);
     });
   });
 

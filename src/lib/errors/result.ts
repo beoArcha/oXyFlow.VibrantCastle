@@ -1,4 +1,5 @@
 import { GameBaseError } from "./GameBaseError";
+import { UnwrapFailedError } from "./domainErrors";
 
 /**
  * Successful Result class representing a valid computation and carrying value T (LSP).
@@ -78,7 +79,7 @@ export class Err<T = never, E = GameBaseError> {
     if (this.error instanceof Error) {
       throw this.error;
     }
-    throw new Error(String(this.error));
+    throw new UnwrapFailedError(this.error);
   }
 
   public unwrapOr(fallback: T): T {
