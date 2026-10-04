@@ -71,7 +71,7 @@ export function normalizeKeyScanCodes(code: string, key: string): string[] {
   );
 }
 
-/** Keyboard port and adapter operations */
+/** TODO: split into separate Keyboard port and adapter modules */
 
 /**
  * Retrieves the current keyboard bindings view model for a player.
@@ -113,7 +113,7 @@ export function rebindKeyboardAction(
   return true;
 }
 
-/** Gamepad port and adapter operations */
+/** TODO: split into separate Gamepad port and adapter modules */
 
 /**
  * Reads list of all currently connected hardware gamepads.
@@ -222,7 +222,7 @@ export interface ControlsContextValue {
 
 const ControlsContext = createContext<ControlsContextValue | null>(null);
 
-export interface ControlsProviderProps extends BaseProviderProps {}
+export interface ControlsProviderProps extends BaseProviderProps { }
 
 export const ControlsProvider: React.FC<ControlsProviderProps> = ({ children }) => {
   const value = useMemo<ControlsContextValue>(

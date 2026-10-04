@@ -72,10 +72,7 @@ export interface IGameDependencies {
 /**
  * Core Game Engine and Orchestrator.
  * Coordinates State, Inputs, Physics, Collisions, Magic/Projectiles, Synthesizer Audio, and Pixel Rendering.
- * Refactored to adhere to SOLID principles:
- * - SRP: Extracted CombatSystem, EnemyAISystem, NarrationSystem, and PlayerController.
- * - DIP: Injects domain subsystems with fallback defaults.
- * - LSP & ISP: Uses typed interfaces (ICollisionEngine, ICollisionContext, ICombatSystem, IPlayerController).
+ * TODO: Split into separate modules following Single Responsibility Principle (SRP).
  */
 export class GameEngine {
   // Game state

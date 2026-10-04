@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { GameEngine } from "@game/loop/engine";
-import { ItemType, PlayerId } from "@game/types";
-import { SaveState } from "@game/types";
+import { ItemType, SaveState } from "@game/types";
 
 /**
  * INTEGRATION TEST SUITE: Save and Restore Lifecycle
@@ -35,8 +34,26 @@ describe("Save and Restore Lifecycle Integration Tests", () => {
     p1.skillPoints = 4;
     p1.unlockedSkills = ["solar_flare", "sun_burst"];
 
-    // TODO: Add unique items to inventory
-
+    // Add unique items to inventory
+    p1.inventory.backpack[0] = {
+      id: "clockwork_blade",
+      nameKey: "itemClockworkBladeName",
+      descriptionKey: "itemClockworkBladeDesc",
+      type: ItemType.Weapon,
+      icon: "sword_gold",
+      rarity: "rare",
+      attackBonus: 55,
+    };
+    p1.inventory.quickPotions[0] = {
+      id: "mana_elixir",
+      nameKey: "potionManaName",
+      descriptionKey: "potionManaDesc",
+      type: ItemType.Potion,
+      icon: "potion_blue",
+      rarity: "common",
+      healMana: 50,
+      count: 3,
+    };
 
     // 2. Compile save state snapshot
     const snapshot = engine.createSaveSnapshot();
@@ -70,7 +87,17 @@ describe("Save and Restore Lifecycle Integration Tests", () => {
     expect(restoredPlayer.unlockedSkills).toContain("solar_flare");
     expect(restoredPlayer.unlockedSkills).toContain("sun_burst");
 
-    //TODO: Verify inventory restoration
+    // Verify inventory restoration
+    const restoredBackpackItem = restoredPlayer.inventory.backpack.find(
+      (item) => item?.id === "clockwork_blade"
+    );
+    expect(restoredBackpackItem).toBeDefined();
+    expect(restoredBackpackItem?.attackBonus).toBe(55);
+
+    const restoredPotion = restoredPlayer.inventory.quickPotions[0];
+    expect(restoredPotion).toBeDefined();
+    expect(restoredPotion?.id).toBe("mana_elixir");
+    expect(restoredPotion?.count).toBe(3);
   });
 
   it("handles corrupted or invalid save states gracefully without crashing engine", () => {

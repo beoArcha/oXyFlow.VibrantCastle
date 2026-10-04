@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
 import { GameEngine } from "@game/loop/engine";
-import { ItemType, PlayerId } from "@game/types";
-import { GameEventBus } from "@game/engine/eventBus";
+import { ItemType, Item } from "@game/types";
 
 /**
  * INTEGRATION TEST SUITE: Engine to React Context State & Event Flow
@@ -62,13 +61,32 @@ describe("Engine to React State Flow Integration Tests", () => {
       const player = engine.players[0];
       player.health = 50; // Damaged player
 
-      // TODO: Place a healing potion in quickPotions slot 0
+      const potionItem: Item = {
+        id: "health_potion_standard",
+        nameKey: "potionHealthName",
+        descriptionKey: "potionHealthDesc",
+        type: ItemType.Potion,
+        icon: "potion_red",
+        rarity: "common",
+        healHp: 40,
+        count: 2,
+      };
 
-      // TODO: Execute potion usage via PlayerCommandController
+      player.inventory.quickPotions[0] = potionItem;
 
-      // TODO: Verify player healed and count decremented
+      // Execute potion usage via PlayerCommandController
+      const success = engine.playerCommands.usePlayerPotion(0, 0);
+      expect(success).toBe(true);
 
-      //TODO: Verify domain event emitted  
+      // Verify player healed and count decremented
+      expect(player.health).toBe(90);
+      expect(player.inventory.quickPotions[0]?.count).toBe(1);
+
+      // Verify domain event emitted
+      expect(consumedListener).toHaveBeenCalledTimes(1);
+      const call = (consumedListener as any).mock.calls[0][0];
+      expect(call.playerIndex).toBe(0);
+      expect(call.slotIndex).toBe(0);
 
       unsubscribe();
     });
@@ -78,13 +96,29 @@ describe("Engine to React State Flow Integration Tests", () => {
     it("equips weapon from backpack and recalculates player combat stats", () => {
       const player = engine.players[0];
 
-      // TODO: Add a test weapon to backpack
+      const testWeapon: Item = {
+        id: "test_broadsword",
+        nameKey: "itemBroadswordName",
+        descriptionKey: "itemBroadswordDesc",
+        type: ItemType.Weapon,
+        icon: "sword_iron",
+        rarity: "rare",
+        attackBonus: 45,
+      };
 
-      //TODO: Equip item using controller
+      player.inventory.backpack[0] = testWeapon;
 
-      //TODO: Verify weapon is equipped in mainHand slot
+      // Equip item using controller
+      const equipSuccess = engine.playerCommands.equipPlayerItem(0, 0);
+      expect(equipSuccess).toBe(true);
 
-      //TODO: Unequip item
+      // Verify weapon is equipped in mainHand slot
+      expect(player.inventory.equipment.mainHand?.id).toBe("test_broadsword");
+
+      // Unequip item
+      const unequipSuccess = engine.playerCommands.unequipPlayerItem(0, "mainHand");
+      expect(unequipSuccess).toBe(true);
+      expect(player.inventory.equipment.mainHand).toBeNull();
     });
   });
 
