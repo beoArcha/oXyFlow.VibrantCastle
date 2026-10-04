@@ -4,8 +4,6 @@ export { default as defaultSettingsData } from "./defaults/defaultSettings.json"
 export { default as enemiesData } from "./enemies/enemies.json";
 export { default as itemsData } from "./items/items.json";
 export { default as skillsData } from "./skills/skills.json";
-export { default as skillsAureliaData } from "./skills/skills_aurelia.json";
-export { default as skillsValenData } from "./skills/skills_valen.json";
 export { default as structuresData } from "./structures/structures.json";
 export { default as scenarioAct1Data } from "./narrative/scenario_act1.json";
 export { default as narrativeTriggersData } from "./narrative/triggers.json";

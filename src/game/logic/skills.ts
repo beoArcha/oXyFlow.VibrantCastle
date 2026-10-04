@@ -2,8 +2,7 @@ import { SkillTreeNode, Player, SoundType, PlayerId, MagicCategory, MagicTrigger
 import { SPELL_REGISTRY } from "./magic";
 import { gameAudio } from "../engine/audioEngine";
 import { calculatePlayerDerivedStats } from "./inventory";
-import valenSkillsData from "@data/skills/skills_valen.json";
-import aureliaSkillsData from "@data/skills/skills_aurelia.json";
+import skillsData from "@data/skills/skills.json";
 
 function parseJsonToNodes(data: any[], character: "valen" | "aurelia"): SkillTreeNode[] {
   return data.map(item => {
@@ -46,8 +45,8 @@ function parseJsonToNodes(data: any[], character: "valen" | "aurelia"): SkillTre
   });
 }
 
-export const VALEN_SKILL_TREE_NODES: SkillTreeNode[] = parseJsonToNodes(valenSkillsData, "valen");
-export const AURELIA_SKILL_TREE_NODES: SkillTreeNode[] = parseJsonToNodes(aureliaSkillsData, "aurelia");
+export const VALEN_SKILL_TREE_NODES: SkillTreeNode[] = parseJsonToNodes(skillsData.valen, "valen");
+export const AURELIA_SKILL_TREE_NODES: SkillTreeNode[] = parseJsonToNodes(skillsData.aurelia, "aurelia");
 
 export const ALL_SKILL_TREE_NODES: SkillTreeNode[] = [
   ...VALEN_SKILL_TREE_NODES,
