@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Sparkles, CheckCircle2, Zap } from "lucide-react";
-import { toSkillDetailVM } from "@components/adapters";
+import { toSkillDetailVM, SkillDetailVM } from "@components/adapters";
 import { Card, CardHeader, CardTitle, CardContent, Badge, Button, KbdKey, Alert } from "../ui";
 import { SkillIcon } from "./SkillIcon";
 import { SkillPropertyMatrix } from "./SkillPropertyMatrix";
@@ -12,12 +12,14 @@ export interface SkillDetailsCardProps {
   readonly className?: string;
   readonly primaryKey?: string;
   readonly secondaryKey?: string;
+  readonly detail?: SkillDetailVM | null;
 }
 
 export const SkillDetailsCard = ({
   className = "",
   primaryKey = "U",
   secondaryKey = "I",
+  detail,
 }: SkillDetailsCardProps): React.ReactElement => {
   const { t } = useI18n();
   const {
@@ -31,6 +33,7 @@ export const SkillDetailsCard = ({
   } = useSkills();
 
   const detailVM = useMemo(() => {
+    if (detail !== undefined) return detail;
     if (!selectedNode) return null;
     return toSkillDetailVM(
       selectedNode,
@@ -40,7 +43,7 @@ export const SkillDetailsCard = ({
       secondarySpellId === selectedNode.id,
       t("manaUnit")
     );
-  }, [selectedNode, evaluateSkill, skillPoints, primarySpellId, secondarySpellId, t]);
+  }, [detail, selectedNode, evaluateSkill, skillPoints, primarySpellId, secondarySpellId, t]);
 
   if (!detailVM) {
     return (
