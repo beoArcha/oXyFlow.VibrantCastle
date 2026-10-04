@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, spyOn, beforeEach } from "bun:test";
 import {
   VALEN_SKILL_TREE_NODES,
   AURELIA_SKILL_TREE_NODES,
@@ -14,7 +14,7 @@ import { gameAudio } from "../../engine/audioEngine";
 
 describe("skills.ts - Unified skills.json Loader and Skill Tree Logic", () => {
   beforeEach(() => {
-    vi.spyOn(gameAudio, "playSFX").mockImplementation(() => {});
+    spyOn(gameAudio, "playSFX").mockImplementation(() => {});
   });
 
   describe("Skill Tree Node Segregation and Loading", () => {
@@ -129,7 +129,7 @@ describe("skills.ts - Unified skills.json Loader and Skill Tree Logic", () => {
       score: 0,
       unlockedSkills: ["solar_flare"],
       autoSkillTimer: 0,
-      inventory: { slots: [], equipment: {} as any },
+      inventory: { equipment: {} as any, quickPotions: [], backpack: [] },
       animationState: AnimationState.Idle,
       ...overrides
     });
