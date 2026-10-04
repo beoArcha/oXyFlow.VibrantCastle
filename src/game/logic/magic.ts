@@ -1,11 +1,11 @@
-import { Projectile, Player, InputMap, SoundType } from "@game/types";
+import { Projectile, Player, InputMap, SoundType, MagicSkill } from "@game/types";
 import { gameAudio } from "@game/engine/audioEngine";
-import { SPELL_REGISTRY } from "@data/skills/spells";
+import spellsData from "@data/skills/spells.json";
 import { Result, ok, err, GameplayError, ErrorCode } from "@lib/errors";
 import { magicLogger } from "@game/logger/gameLogger";
 
-// Re-export SPELL_REGISTRY for backward compatibility with existing UI components
-export { SPELL_REGISTRY };
+// Master SPELL_REGISTRY loaded from declarative JSON data
+export const SPELL_REGISTRY: Record<string, MagicSkill> = (spellsData as any).spells || (spellsData as any);
 
 export interface IMagicAudio {
   playSFX(type: SoundType): void;

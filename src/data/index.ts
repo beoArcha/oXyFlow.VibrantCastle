@@ -17,5 +17,5 @@ export { default as thornChasmBlueprint } from "./locations/thorn_chasm.json";
 export { default as aetherSanctuaryBlueprint } from "./locations/aether_sanctuary.json";
 export { default as grandBastionBlueprint } from "./locations/grand_bastion.json";
 
-// Typed spell registry
-export * from "./skills/spells";
+// Declarative Spells Data (JSON)
+export { default as spellsData } from "./skills/spells.json";

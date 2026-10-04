@@ -1,7 +1,6 @@
 import { Player, Enemy, Entity, Projectile, PlayerId, Vector2D } from "../types";
 import { statsManager } from "../logic/stats";
-import { ITEM_REGISTRY } from "../logic/inventory";
-import { SPELL_REGISTRY } from "@data/skills/spells";
+import { SPELL_REGISTRY } from "../logic/magic";
 import { LocationId } from "../locations";
 import { BackgroundLayerTier } from "../locations/schema/locationSchema";
 import { debugLogger } from "../logger/gameLogger";
