@@ -80,6 +80,19 @@ export class ParserError extends GameBaseError {
 }
 
 /**
+ * Errors resulting from encoding or decoding data structures via bidirectional Codecs.
+ */
+export class CodecError extends ParserError {
+  constructor(
+    message: string,
+    code: ErrorCode = ErrorCode.CODEC_DECODE_FAILED,
+    options?: DomainErrorOptions
+  ) {
+    super(message, code, options);
+  }
+}
+
+/**
  * Errors occurring during serialization, compression, storage, or deserialization of game saves.
  */
 export class SaveError extends GameBaseError {
