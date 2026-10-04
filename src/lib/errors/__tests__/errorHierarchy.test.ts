@@ -1,12 +1,15 @@
 import { describe, expect, it } from "bun:test";
 import {
+  ArchitectureError,
   AssetError,
   CanvasContextError,
+  CircularDependencyError,
   EngineError,
   ErrorCode,
   GameBaseError,
   GameErrorContextViolationError,
   GameplayError,
+  LayerBoundaryViolationError,
   MissingContextProviderError,
   ModalContextViolationError,
   ParserError,
@@ -57,6 +60,11 @@ describe("SOLID Error Hierarchy", () => {
       expect(systemErr.domain).toBe("SYSTEM");
       expect(systemErr.severity).toBe("ERROR");
       expect(systemErr.name).toBe("SystemError");
+
+      const archErr = new ArchitectureError("Module boundary violation", ErrorCode.ARCHITECTURE_VIOLATION);
+      expect(archErr.domain).toBe("ARCHITECTURE");
+      expect(archErr.severity).toBe("FATAL");
+      expect(archErr.name).toBe("ArchitectureError");
     });
 
     it("verifies specialized leaf classes specialize base domain errors", () => {
@@ -96,6 +104,29 @@ describe("SOLID Error Hierarchy", () => {
       expect(unwrapErr.code).toBe(ErrorCode.SYSTEM_UNWRAP_FAILED);
       expect(unwrapErr.severity).toBe("FATAL");
       expect(unwrapErr.unwrapCause).toBe("Bad state payload");
+
+      const circularErr = new CircularDependencyError("Cycle detected", [["a.ts", "b.ts", "a.ts"]]);
+      expect(circularErr instanceof CircularDependencyError).toBe(true);
+      expect(circularErr instanceof ArchitectureError).toBe(true);
+      expect(circularErr instanceof GameBaseError).toBe(true);
+      expect(circularErr.code).toBe(ErrorCode.ARCHITECTURE_CIRCULAR_DEPENDENCY);
+      expect(circularErr.domain).toBe("ARCHITECTURE");
+      expect(circularErr.cycles).toEqual([["a.ts", "b.ts", "a.ts"]]);
+      expect(circularErr.toLogContext().details).toEqual({
+        cycleCount: 1,
+        cycles: [["a.ts", "b.ts", "a.ts"]],
+      });
+
+      const boundaryErr = new LayerBoundaryViolationError("Illegal import", [{ file: "engine.ts", lineNo: 10 }]);
+      expect(boundaryErr instanceof LayerBoundaryViolationError).toBe(true);
+      expect(boundaryErr instanceof ArchitectureError).toBe(true);
+      expect(boundaryErr.code).toBe(ErrorCode.ARCHITECTURE_LAYER_LEAK);
+      expect(boundaryErr.domain).toBe("ARCHITECTURE");
+      expect(boundaryErr.violations).toEqual([{ file: "engine.ts", lineNo: 10 }]);
+      expect(boundaryErr.toLogContext().details).toEqual({
+        violationsCount: 1,
+        violations: [{ file: "engine.ts", lineNo: 10 }],
+      });
     });
 
     it("verifies MissingContextProviderError specializes UIError with hook and provider details", () => {

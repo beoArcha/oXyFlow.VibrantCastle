@@ -6,6 +6,7 @@ import {
   findCircularDependencies,
   formatCyclePath,
 } from "./helpers/dependencyGraph";
+import { CircularDependencyError } from "@lib/errors";
 
 /**
  * ARCHITECTURAL TEST SUITE: Circular Dependencies Detection
@@ -44,10 +45,11 @@ describe("Circular Dependency Invariants (ESM & Bundler Safety)", () => {
         .map((cycle, idx) => `  [Cycle ${idx + 1}] ${formatCyclePath(cycle, rootDir)}`)
         .join("\n");
 
-      throw new Error(
+      throw new CircularDependencyError(
         `Found ${cycles.length} runtime circular dependency cycle(s):\n${formattedCycles}\n` +
           `Remediation: Decouple dependencies by extracting shared types/interfaces to a foundational module ` +
-          `or converting value imports to 'import type'.`
+          `or converting value imports to 'import type'.`,
+        cycles
       );
     }
 
@@ -68,9 +70,10 @@ describe("Circular Dependency Invariants (ESM & Bundler Safety)", () => {
         .map((cycle, idx) => `  [Cycle ${idx + 1}] ${formatCyclePath(cycle, rootDir)}`)
         .join("\n");
 
-      throw new Error(
+      throw new CircularDependencyError(
         `Found ${cycles.length} module dependency cycle(s) (including types):\n${formattedCycles}\n` +
-          `Remediation: Eliminate mutual import loops between modules to preserve clean DAG architecture.`
+          `Remediation: Eliminate mutual import loops between modules to preserve clean DAG architecture.`,
+        cycles
       );
     }
 
@@ -91,8 +94,9 @@ describe("Circular Dependency Invariants (ESM & Bundler Safety)", () => {
         .map((cycle, idx) => `  [Cycle ${idx + 1}] ${formatCyclePath(cycle, rootDir)}`)
         .join("\n");
 
-      throw new Error(
-        `Found ${cycles.length} runtime circular dependency cycle(s) including tests:\n${formattedCycles}`
+      throw new CircularDependencyError(
+        `Found ${cycles.length} runtime circular dependency cycle(s) including tests:\n${formattedCycles}`,
+        cycles
       );
     }
 
