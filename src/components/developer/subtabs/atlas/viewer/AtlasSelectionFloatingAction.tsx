@@ -1,6 +1,6 @@
 import React from "react";
 import { Plus, Check, Split, Box, X } from "lucide-react";
-import { Button, ActionBar, IconButton } from "@components/ui";
+import { Button, ActionBar, IconButton } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasGridConfig } from "../types";
 

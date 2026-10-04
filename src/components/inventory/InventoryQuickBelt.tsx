@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, ItemSlot } from "@components/ui";
+import { Button, ItemSlot } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { InventoryQuickBeltVM } from "@components/adapters/inventoryAdapter";
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { AlertTriangle, Braces } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
-import { CopyableSnippet } from "@components/ui";
+import { CopyableSnippet } from "@ui";
 import { LogItemDrawerProps } from "./types";
 import { safeStringify } from "./utils";
 

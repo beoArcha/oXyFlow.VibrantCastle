@@ -1,6 +1,6 @@
 import React from "react";
 import { Save, FolderOpen, HardDrive, FileJson } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, FileUploadButton } from "@components/ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, FileUploadButton } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 

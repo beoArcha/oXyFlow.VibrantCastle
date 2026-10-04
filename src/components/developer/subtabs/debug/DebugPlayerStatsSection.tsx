@@ -1,6 +1,6 @@
 import React from "react";
 import { User, Zap, Heart, Compass } from "lucide-react";
-import { Badge, ProgressBar, BarVariant } from "@components/ui";
+import { Badge, ProgressBar, BarVariant } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { DebugPlayerStatsSectionProps } from "./types";
 
@@ -90,11 +90,10 @@ export const DebugPlayerStatsSection: React.FC<DebugPlayerStatsSectionProps> = R
             {player.animationState || t("debugPlayerIdleState")}
           </span>
           <span
-            className={`px-1.5 py-0.5 rounded text-[10px] font-bold border ${
-              isGrounded
+            className={`px-1.5 py-0.5 rounded text-[10px] font-bold border ${isGrounded
                 ? "bg-emerald-950/60 text-emerald-300 border-emerald-700/60"
                 : "bg-amber-950/60 text-amber-300 border-amber-700/60"
-            }`}
+              }`}
           >
             {t("debugPlayerGrounded")}: {isGrounded ? t("debugYes") : t("debugNo")}
           </span>

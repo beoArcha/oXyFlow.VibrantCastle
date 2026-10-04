@@ -1,6 +1,6 @@
 import React from "react";
 import { Save, FolderOpen, RotateCcw } from "lucide-react";
-import { Button, FileUploadButton } from "@components/ui";
+import { Button, FileUploadButton } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 

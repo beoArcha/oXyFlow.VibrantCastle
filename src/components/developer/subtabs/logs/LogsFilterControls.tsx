@@ -1,6 +1,6 @@
 import React from "react";
 import { Cpu } from "lucide-react";
-import { Select, SearchInput, SegmentedControl } from "@components/ui";
+import { Select, SearchInput, SegmentedControl } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { LogLevel } from "@lib/logger";
 import { LogsFilterControlsProps, LogFilterLevel } from "./types";
@@ -52,11 +52,10 @@ export const LogsFilterControls: React.FC<LogsFilterControlsProps> = ({
               type="button"
               onClick={() => onLevelFilterChange(id)}
               aria-pressed={levelFilter === id}
-              className={`px-2 py-0.5 rounded font-mono font-bold transition-all cursor-pointer flex items-center gap-1 ${
-                levelFilter === id
+              className={`px-2 py-0.5 rounded font-mono font-bold transition-all cursor-pointer flex items-center gap-1 ${levelFilter === id
                   ? "bg-amber-600 text-white shadow-sm"
                   : "text-stone-400 hover:text-stone-200"
-              }`}
+                }`}
             >
               <span>{label}</span>
               <span className={`text-[9px] ${levelFilter === id ? "text-white/80" : color || "text-stone-500"}`}>

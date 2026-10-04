@@ -7,7 +7,7 @@ import {
   CardTitle,
   CardContent,
   ConfirmDialog,
-} from "@components/ui";
+} from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 import { PlayerTabSelector } from "./PlayerTabSelector";

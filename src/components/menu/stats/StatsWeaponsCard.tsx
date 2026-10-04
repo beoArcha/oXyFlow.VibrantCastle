@@ -1,6 +1,6 @@
 import React from "react";
 import { Award } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, ProgressBar, Badge } from "@components/ui";
+import { Card, CardHeader, CardTitle, CardContent, ProgressBar, Badge } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import type { WeaponEfficacyVM } from "@components/adapters";
 import { cn } from "@lib/utils";

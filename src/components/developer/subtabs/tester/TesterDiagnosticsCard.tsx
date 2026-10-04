@@ -1,6 +1,6 @@
 import React from "react";
 import { Eye, Activity } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Switch } from "@components/ui";
+import { Card, CardHeader, CardTitle, CardContent, Switch } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { TesterDiagnosticsCardProps } from "./types";
 

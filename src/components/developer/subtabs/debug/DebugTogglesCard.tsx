@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Eye, Activity, Crosshair, Ghost } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Switch } from "@components/ui";
+import { Card, CardHeader, CardTitle, CardContent, Switch } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { DebugSensorToggle } from "./types";
 

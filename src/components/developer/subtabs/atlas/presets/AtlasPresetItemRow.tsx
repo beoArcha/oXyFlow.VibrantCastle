@@ -1,6 +1,6 @@
 import React from "react";
 import { Star, Check } from "lucide-react";
-import { Button, Badge } from "@components/ui";
+import { Button, Badge } from "@ui";
 import { IAtlasAssetManifestItem } from "@game/engine/meta/registry";
 import { getCategoryMeta } from "./categoryMeta";
 
@@ -22,11 +22,10 @@ export const AtlasPresetItemRow: React.FC<AtlasPresetItemRowProps> = ({
       variant="ghost"
       fullWidth
       onClick={onSelect}
-      className={`flex items-center justify-between p-2 h-auto min-h-0 rounded-xl border text-left transition-all group cursor-pointer ${
-        isSelected
+      className={`flex items-center justify-between p-2 h-auto min-h-0 rounded-xl border text-left transition-all group cursor-pointer ${isSelected
           ? "bg-gradient-to-r from-amber-950/60 to-amber-900/40 border-amber-500/80 shadow-sm text-stone-200"
           : "bg-black/40 border-stone-800/80 hover:bg-[#1a0c06] hover:border-amber-700/60 text-stone-200"
-      }`}
+        }`}
     >
       <div className="flex items-center gap-2.5 min-w-0">
         <div className="w-7 h-7 rounded-lg bg-[#140804] border border-stone-800 flex items-center justify-center flex-shrink-0">
@@ -36,9 +35,8 @@ export const AtlasPresetItemRow: React.FC<AtlasPresetItemRowProps> = ({
         <div className="flex flex-col min-w-0">
           <div className="flex items-center gap-1.5">
             <span
-              className={`text-xs font-bold truncate ${
-                isSelected ? "text-amber-200" : "text-stone-300 group-hover:text-amber-200"
-              }`}
+              className={`text-xs font-bold truncate ${isSelected ? "text-amber-200" : "text-stone-300 group-hover:text-amber-200"
+                }`}
             >
               {asset.name}
             </span>

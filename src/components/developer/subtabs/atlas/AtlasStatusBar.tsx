@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ScrollText, ChevronUp, ChevronDown } from "lucide-react";
-import { Button } from "@components/ui";
+import { Button } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { useThrottledLogs } from "../../hooks/useThrottledLogs";
 import { GameBaseError } from "@lib/errors";

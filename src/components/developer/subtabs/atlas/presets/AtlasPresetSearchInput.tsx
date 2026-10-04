@@ -1,5 +1,5 @@
 import React from "react";
-import { SearchInput } from "@components/ui";
+import { SearchInput } from "@ui";
 import { useI18n } from "@context/I18nContext";
 
 export interface AtlasPresetSearchInputProps {

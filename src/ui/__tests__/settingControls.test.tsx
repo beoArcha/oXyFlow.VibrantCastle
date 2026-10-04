@@ -1,7 +1,7 @@
 import { describe, it, expect, mock } from "bun:test";
 import React from "react";
 import { renderIntoDom, cleanupDom } from "@test-utils/domTestUtils";
-import { SettingToggleRow, SettingOptionCard } from "@components/ui";
+import { SettingToggleRow, SettingOptionCard } from "@ui";
 
 describe("Setting Controls (Design System)", () => {
   describe("SettingToggleRow", () => {

@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid } from "lucide-react";
-import { CompactNumberStepper, Card } from "@components/ui";
+import { CompactNumberStepper, Card } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasGridConfig, SlicingMethod } from "../types";
 

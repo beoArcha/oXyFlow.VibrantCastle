@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid, Pipette, FileJson } from "lucide-react";
-import { Card, CardHeader, CardContent, SegmentedControl } from "@components/ui";
+import { Card, CardHeader, CardContent, SegmentedControl } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import {
   AtlasGridConfig,
@@ -90,11 +90,11 @@ export interface AtlasInspectorDocumentProps {
  */
 export interface AtlasInspectorDockProps
   extends AtlasInspectorDockSlicesProps,
-    AtlasInspectorDockViewProps,
-    AtlasInspectorSlicingProps,
-    AtlasInspectorTracksProps,
-    AtlasInspectorBackgroundProps,
-    AtlasInspectorDocumentProps {}
+  AtlasInspectorDockViewProps,
+  AtlasInspectorSlicingProps,
+  AtlasInspectorTracksProps,
+  AtlasInspectorBackgroundProps,
+  AtlasInspectorDocumentProps { }
 
 export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
   tracksSlice,
@@ -137,14 +137,14 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
 
   // Resolve values from slices or direct props
   const effTab = activeTab ?? uiSlice?.activeInspectorTab ?? "slicing";
-  const effOnTabChange = onTabChange ?? uiSlice?.setActiveInspectorTab ?? (() => {});
+  const effOnTabChange = onTabChange ?? uiSlice?.setActiveInspectorTab ?? (() => { });
 
   const effTracks = tracks ?? tracksSlice?.tracks ?? [];
   const effSelectedTrackName = selectedTrackName !== undefined ? selectedTrackName : (tracksSlice?.selectedTrackName ?? null);
   const effSelectedFrameIndex = selectedFrameIndex !== undefined ? selectedFrameIndex : (tracksSlice?.selectedFrameIndex ?? null);
-  const effOnTracksChange = onTracksChange ?? tracksSlice?.setTracks ?? (() => {});
-  const effOnSelectTrack = onSelectTrack ?? tracksSlice?.setSelectedTrackName ?? (() => {});
-  const effOnSelectFrame = onSelectFrame ?? tracksSlice?.setSelectedFrameIndex ?? (() => {});
+  const effOnTracksChange = onTracksChange ?? tracksSlice?.setTracks ?? (() => { });
+  const effOnSelectTrack = onSelectTrack ?? tracksSlice?.setSelectedTrackName ?? (() => { });
+  const effOnSelectFrame = onSelectFrame ?? tracksSlice?.setSelectedFrameIndex ?? (() => { });
 
   const effAssetId = assetId ?? presetSlice?.activePreset?.id ?? "";
   const effMetaDoc: AtlasMetaDoc = metaDoc ?? presetSlice?.metaDoc ?? {
@@ -167,8 +167,8 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
     type: "center",
     normalized: { x: 0.5, y: 0.5 },
   };
-  const effOnMetaDocChange = onMetaDocChange ?? presetSlice?.setMetaDoc ?? (() => {});
-  const effOnResetDefaults = onResetDefaults ?? presetSlice?.handleResetDefaults ?? (() => {});
+  const effOnMetaDocChange = onMetaDocChange ?? presetSlice?.setMetaDoc ?? (() => { });
+  const effOnResetDefaults = onResetDefaults ?? presetSlice?.handleResetDefaults ?? (() => { });
 
   const effImageSrc = imageSrc ?? presetSlice?.imageSrc ?? "";
   const effImage = image !== undefined ? image : (textureSlice?.image ?? null);
@@ -184,9 +184,9 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
   const effSlicingConfig = slicingConfig ?? effMetaDoc.slicing;
   const effBackgroundConfig = backgroundConfig ?? effMetaDoc.backgroundConfig;
   const effResolvedFrames = resolvedFrames ?? slicingSlice?.resolvedFrames ?? [];
-  const effOnGridConfigChange = onGridConfigChange ?? slicingSlice?.setGridConfig ?? (() => {});
-  const effOnSlicingConfigChange = onSlicingConfigChange ?? slicingSlice?.handleSlicingConfigChange ?? (() => {});
-  const effOnBackgroundConfigChange = onBackgroundConfigChange ?? slicingSlice?.handleBackgroundConfigChange ?? (() => {});
+  const effOnGridConfigChange = onGridConfigChange ?? slicingSlice?.setGridConfig ?? (() => { });
+  const effOnSlicingConfigChange = onSlicingConfigChange ?? slicingSlice?.handleSlicingConfigChange ?? (() => { });
+  const effOnBackgroundConfigChange = onBackgroundConfigChange ?? slicingSlice?.handleBackgroundConfigChange ?? (() => { });
   const effOnBakeIslands = onBakeIslands ?? slicingSlice?.handleBakeIslands;
   const effOnClusterRowsIntoTracks = onClusterRowsIntoTracks ?? slicingSlice?.handleClusterIslandsIntoTracks;
   const effOnAddFreeformFrame = onAddFreeformFrame ?? slicingSlice?.handleAddFreeformFrame;
@@ -264,7 +264,7 @@ export const AtlasInspectorDock: React.FC<AtlasInspectorDockProps> = ({
             assetId={effAssetId}
             backgroundConfig={effBackgroundConfig}
             onBackgroundConfigChange={effOnBackgroundConfigChange}
-            onRequestEyedropper={onRequestEyedropper ?? (() => {})}
+            onRequestEyedropper={onRequestEyedropper ?? (() => { })}
           />
         )}
 

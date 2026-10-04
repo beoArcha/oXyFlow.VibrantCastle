@@ -1,6 +1,6 @@
 import React from "react";
 import { Play, Pause, ArrowLeftRight } from "lucide-react";
-import { Button, Tooltip, PlaybackSpeedScaleControl } from "@components/ui";
+import { Button, Tooltip, PlaybackSpeedScaleControl } from "@ui";
 import { AnimationName } from "@game/engine/spriteTypes";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
@@ -12,8 +12,8 @@ import {
 
 export interface CharacterStageControlsProps
   extends AnimationPlaybackProps,
-    ViewportScaleProps,
-    AnimationTrackSelectionProps {
+  ViewportScaleProps,
+  AnimationTrackSelectionProps {
   readonly className?: string;
 }
 

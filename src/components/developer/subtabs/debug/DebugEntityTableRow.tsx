@@ -1,6 +1,6 @@
 import React from "react";
 import { Crosshair, Zap, Trash2 } from "lucide-react";
-import { TableRow, TableCell, Button, IconButton } from "@components/ui";
+import { TableRow, TableCell, Button, IconButton } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { DebugEntityTableRowProps } from "./types";
 

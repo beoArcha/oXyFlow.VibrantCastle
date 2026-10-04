@@ -1,6 +1,6 @@
 import React from "react";
 import { Sparkles, Check, Save } from "lucide-react";
-import { Button, Badge, CompactNumberStepper, ActionBar, Card } from "@components/ui";
+import { Button, Badge, CompactNumberStepper, ActionBar, Card } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { IAtlasSlicingConfig, ResolvedFrameRect } from "../types";
 

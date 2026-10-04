@@ -22,7 +22,7 @@ import {
   IconButton,
   Tooltip,
   KbdKey,
-} from "@components/ui";
+} from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { SlicerViewerTool } from "../types";
 

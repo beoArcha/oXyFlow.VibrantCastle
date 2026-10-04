@@ -8,7 +8,7 @@ import {
   CardContent,
   EmptyState,
   ConfirmDialog,
-} from "@components/ui";
+} from "@ui";
 import { LanguageSelector } from "@components/adapters";
 import { ModalNavigationTabs, ModalType } from "@components/modal";
 import { CharacterPortrait } from "../character";

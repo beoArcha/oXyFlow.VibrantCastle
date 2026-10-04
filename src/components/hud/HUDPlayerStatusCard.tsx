@@ -1,6 +1,6 @@
 import React from "react";
 import { Heart, Sparkles, Zap } from "lucide-react";
-import { ProgressBar, Badge, Button } from "@components/ui";
+import { ProgressBar, Badge, Button } from "@ui";
 import { CharacterPortrait } from "@components/character";
 import { useI18n } from "@context/I18nContext";
 import { getPlayerThemeTokens } from "@styles/theme";

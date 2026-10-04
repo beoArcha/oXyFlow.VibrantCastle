@@ -1,7 +1,7 @@
 import React from "react";
 import { AssetQuality } from "@game/types";
 import { useI18n } from "@context/I18nContext";
-import { Badge } from "@components/ui";
+import { Badge } from "@ui";
 import { ImageDimensions } from "../types";
 
 export interface AtlasViewerFooterProps {

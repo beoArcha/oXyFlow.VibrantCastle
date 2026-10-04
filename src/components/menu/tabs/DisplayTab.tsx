@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { RotateCcw, Check } from "lucide-react";
-import { Button } from "@components/ui";
+import { Button } from "@ui";
 import { useSettings } from "@context/SettingsContext";
 import { useI18n } from "@context/I18nContext";
 import { useSafeTimeout } from "@context/hooks/useSafeTimeout";

@@ -1,6 +1,6 @@
 import React from "react";
 import { Users, User } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Badge, SettingOptionCard } from "@components/ui";
+import { Card, CardHeader, CardTitle, CardContent, Badge, SettingOptionCard } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 

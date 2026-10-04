@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { HelpCircle, Swords, Gamepad2 } from "lucide-react";
 import { PlayerId } from "@game/types";
-import { Modal, Button } from "@components/ui";
+import { Modal, Button } from "@ui";
 import { LanguageSelector } from "@components/adapters";
 import { ModalNavigationTabs } from "@components/modal";
 import { useI18n } from "@context/I18nContext";

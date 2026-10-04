@@ -1,6 +1,6 @@
 import React from "react";
 import { Sparkles, Compass } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "@components/ui";
+import { Card, CardHeader, CardTitle, CardContent } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 

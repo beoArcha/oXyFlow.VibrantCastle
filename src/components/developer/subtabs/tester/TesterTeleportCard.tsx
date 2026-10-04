@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { MapPin, Compass, Crosshair, RefreshCw } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge, CompactNumberStepper } from "@components/ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, Badge, CompactNumberStepper } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { SpawnPreset, debugManager } from "@game/debug/debugManager";
 import { getLocation, LocationId } from "@game/locations";

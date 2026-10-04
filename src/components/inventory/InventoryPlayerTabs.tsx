@@ -1,7 +1,7 @@
 import React from "react";
 import { User } from "lucide-react";
 import { CharacterPortrait } from "../character";
-import { Tabs, TabsList, TabsTrigger, Badge } from "@components/ui";
+import { Tabs, TabsList, TabsTrigger, Badge } from "@ui";
 import { PLAYER_THEMES } from "@styles/theme";
 import { cn } from "@lib/utils";
 

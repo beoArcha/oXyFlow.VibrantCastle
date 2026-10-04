@@ -1,5 +1,5 @@
 import React from "react";
-import { PlaybackSpeedScaleControl } from "@components/ui";
+import { PlaybackSpeedScaleControl } from "@ui";
 import { useI18n } from "@context/I18nContext";
 
 export interface AtlasAnimationSpeedScaleProps {

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Keyboard } from "lucide-react";
 import { PlayerId } from "@game/types";
-import { KbdGroup } from "@components/ui";
+import { KbdGroup } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { useKeyboard } from "./hooks/useKeyboard";
 import { formatKeyLabel } from "./formatKeyLabel";

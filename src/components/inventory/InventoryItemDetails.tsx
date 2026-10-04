@@ -1,6 +1,6 @@
 import React from "react";
 import { CheckCircle, ArrowDownToDot, Trash2, Heart } from "lucide-react";
-import { Card, Button, Badge, ItemIcon } from "@components/ui";
+import { Card, Button, Badge, ItemIcon } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import {
   ItemDetailsVM,

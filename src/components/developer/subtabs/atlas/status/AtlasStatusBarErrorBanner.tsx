@@ -1,5 +1,5 @@
 import React from "react";
-import { Badge, Alert } from "@components/ui";
+import { Badge, Alert } from "@ui";
 import { GameBaseError } from "@lib/errors";
 
 export interface AtlasStatusBarErrorBannerProps {

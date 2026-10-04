@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Keyboard, Swords, Compass, LayoutGrid } from "lucide-react";
-import { Tabs, TabItem } from "@components/ui";
+import { Tabs, TabItem } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 import { HelpTab, HelpNavigationProps } from "./types";

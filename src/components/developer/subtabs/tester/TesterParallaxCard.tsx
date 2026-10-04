@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Layers, Music, Sparkles } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, SegmentedControl } from "@components/ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, SegmentedControl } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { BackgroundLayerTier } from "@game/locations/schema/locationSchema";
 import { PARALLAX_TIERS, MUSIC_INTENSITY_PRESETS } from "./constants";

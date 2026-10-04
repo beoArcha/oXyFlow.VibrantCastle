@@ -1,6 +1,6 @@
 import React from "react";
 import { PlayerId, InputMap, GamepadBindingMap, GameTranslationDictionary } from "@game/types";
-import { ButtonVariant } from "@components/ui";
+import { ButtonVariant } from "@ui";
 import { ConnectedGamepadVM, KeyboardBindingsVM, GamepadBindingsVM } from "@components/adapters";
 
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { Shield, Zap, FastForward, Ghost, Heart } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Switch } from "@components/ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, Switch } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { QUICK_HP_PRESETS } from "./constants";
 import { TesterCheatsCardProps } from "./types";

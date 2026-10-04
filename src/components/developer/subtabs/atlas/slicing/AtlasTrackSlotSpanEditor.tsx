@@ -1,6 +1,6 @@
 import React from "react";
 import { Minus, Plus } from "lucide-react";
-import { IconButton } from "@components/ui";
+import { IconButton } from "@ui";
 import { useI18n } from "@context/I18nContext";
 
 export interface AtlasTrackSlotSpanEditorProps {
@@ -34,11 +34,10 @@ export const AtlasTrackSlotSpanEditor: React.FC<AtlasTrackSlotSpanEditorProps> =
           return (
             <div
               key={fIdx}
-              className={`flex flex-col items-center justify-between p-1.5 rounded-lg border text-center transition-all ${
-                currentSpan > 1
+              className={`flex flex-col items-center justify-between p-1.5 rounded-lg border text-center transition-all ${currentSpan > 1
                   ? "bg-amber-950/40 border-amber-500/80 text-amber-300"
                   : "bg-black/60 border-stone-800 text-stone-300"
-              }`}
+                }`}
               style={{ minWidth: `${Math.max(54, currentSpan * 32)}px` }}
             >
               <span className="text-[10px] font-mono text-stone-400">

@@ -1,6 +1,6 @@
 import React from "react";
 import { Music, Volume2, VolumeX, Sparkles, Play } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Slider, Button, Badge } from "@components/ui";
+import { Card, CardHeader, CardTitle, CardContent, Slider, Button, Badge } from "@ui";
 import { useSettings } from "@context/SettingsContext";
 import { useGameSession } from "@context/GameSessionContext";
 import { useI18n } from "@context/I18nContext";

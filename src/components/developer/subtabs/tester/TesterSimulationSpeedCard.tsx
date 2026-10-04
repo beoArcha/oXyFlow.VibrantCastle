@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { FastForward, StepForward } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge, SegmentedControl } from "@components/ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, Badge, SegmentedControl } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { TIME_SCALE_OPTIONS } from "./constants";
 import { TesterSimulationSpeedCardProps } from "./types";

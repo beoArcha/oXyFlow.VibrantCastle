@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { PlayerId } from "@game/types";
-import { Tabs, TabItem } from "@components/ui";
+import { Tabs, TabItem } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 import { PlayerTabSelectorProps } from "./types";

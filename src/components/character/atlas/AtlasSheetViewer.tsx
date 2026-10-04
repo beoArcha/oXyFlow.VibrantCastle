@@ -3,7 +3,7 @@ import { AssetQuality } from "@game/types";
 import { AnimationName } from "@game/engine/spriteTypes";
 import { resolveAtlasSheetMetaVM } from "@components/adapters";
 import { cn } from "@lib/utils";
-import { Card } from "@components/ui";
+import { Card } from "@ui";
 import { ImageDimensions } from "../types";
 import { AtlasSheetType } from "./types";
 import { AtlasViewerToolbar } from "./AtlasViewerToolbar";

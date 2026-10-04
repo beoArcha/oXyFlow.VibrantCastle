@@ -8,7 +8,7 @@ import {
   Code,
   Sliders,
 } from "lucide-react";
-import { Button, Badge, SegmentedControl, Textarea, ActionBar, Alert } from "@components/ui";
+import { Button, Badge, SegmentedControl, Textarea, ActionBar, Alert } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import {
   AtlasGridConfig,
@@ -391,9 +391,8 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
           value={rawText}
           onChange={handleRawChange}
           rows={14}
-          className={`font-mono text-[11px] p-2.5 leading-relaxed custom-scrollbar ${
-            editorMode === "formatted" ? "select-text cursor-default" : ""
-          }`}
+          className={`font-mono text-[11px] p-2.5 leading-relaxed custom-scrollbar ${editorMode === "formatted" ? "select-text cursor-default" : ""
+            }`}
           spellCheck={false}
         />
       </div>

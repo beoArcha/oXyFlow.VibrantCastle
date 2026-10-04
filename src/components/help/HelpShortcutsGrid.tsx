@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Keyboard, Backpack, BookOpen } from "lucide-react";
-import { KbdKey, Badge } from "@components/ui";
+import { KbdKey, Badge } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 import { ShortcutEntry, HelpShortcutsGridProps } from "./types";

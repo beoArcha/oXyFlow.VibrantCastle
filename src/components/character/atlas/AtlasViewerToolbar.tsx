@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid, ZoomIn, ZoomOut, Layers, Image as ImageIcon, RotateCcw } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
-import { Tabs, TabsList, TabsTrigger, Button, Tooltip } from "@components/ui";
+import { Tabs, TabsList, TabsTrigger, Button, Tooltip } from "@ui";
 import {
   AtlasSheetType,
   AtlasZoomControlsProps,
@@ -10,7 +10,7 @@ import {
 
 export interface AtlasViewerToolbarProps
   extends AtlasZoomControlsProps,
-    AtlasOverlayTogglesProps {
+  AtlasOverlayTogglesProps {
   readonly sheetType: AtlasSheetType;
   readonly onSheetTypeChange: (type: AtlasSheetType) => void;
 }

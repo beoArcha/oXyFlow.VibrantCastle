@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowRight, RotateCcw, Menu as MenuIcon, Trophy, Skull } from "lucide-react";
-import { Dialog, Button } from "@components/ui";
+import { Dialog, Button } from "@ui";
 import { useI18n } from "@context/I18nContext";
 
 export interface HUDOutcomeDialogProps {

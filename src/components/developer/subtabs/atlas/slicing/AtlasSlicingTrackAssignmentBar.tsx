@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowRight, Plus, X } from "lucide-react";
-import { Button, Badge, Select, ActionBar, Input } from "@components/ui";
+import { Button, Badge, Select, ActionBar, Input } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasAnimationTrackDefinition } from "../types";
 

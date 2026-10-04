@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@components/ui";
+import { Button } from "@ui";
 
 export interface AtlasAnimationFrameScrubberProps {
   totalFrames: number;
@@ -24,9 +24,8 @@ export const AtlasAnimationFrameScrubber: React.FC<AtlasAnimationFrameScrubberPr
             size="sm"
             variant={isSelected ? "primary" : "secondary"}
             onClick={() => onSelectFrame(fIdx)}
-            className={`h-6 px-2 min-h-0 text-xs font-mono font-bold shrink-0 ${
-              !isSelected ? "bg-black/50 border-stone-800 text-stone-400 hover:text-stone-200" : ""
-            }`}
+            className={`h-6 px-2 min-h-0 text-xs font-mono font-bold shrink-0 ${!isSelected ? "bg-black/50 border-stone-800 text-stone-400 hover:text-stone-200" : ""
+              }`}
           >
             #{fIdx}
           </Button>

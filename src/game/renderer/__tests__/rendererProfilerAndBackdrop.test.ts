@@ -1,11 +1,10 @@
 import { describe, it, expect } from "bun:test";
-import { MultiLayerBackgroundSystem, defaultMultiLayerBackgroundSystem } from "../multiLayerBackgroundSystem";
-import { AtmosphericSectorRenderer, defaultAtmosphericSectorRenderer } from "../background/atmospheric/atmosphericSectorRenderer";
-import { DebugProfilerOverlay, defaultDebugProfilerOverlay } from "../debugProfilerOverlay";
+import { MultiLayerBackgroundSystem } from "../multiLayerBackgroundSystem";
+import { AtmosphericSectorRenderer } from "../background/atmospheric/atmosphericSectorRenderer";
+import { DebugProfilerOverlay } from "../debugProfilerOverlay";
 import { HitboxRenderer } from "../hitboxRenderer";
-import { GameRenderer } from "../renderer";
 import { getLocation } from "@game/locations";
-import { Player, Enemy, Entity, Projectile, PlayerId, CollisionType } from "@game/types";
+import { Player, PlayerId } from "@game/types";
 import { createMockContext2D as createMockContext } from "@test-utils";
 
 describe("MultiLayerBackgroundSystem & DebugProfilerOverlay", () => {

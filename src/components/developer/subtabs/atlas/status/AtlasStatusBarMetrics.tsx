@@ -1,6 +1,6 @@
 import React from "react";
 import { Activity, AlertCircle, CheckCircle2, Layers } from "lucide-react";
-import { Badge } from "@components/ui";
+import { Badge } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { GameBaseError } from "@lib/errors";
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid, Box, Sparkles, Layers } from "lucide-react";
-import { SegmentedControl } from "@components/ui";
+import { SegmentedControl } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { SlicingMethod } from "../types";
 

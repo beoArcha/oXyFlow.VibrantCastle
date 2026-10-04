@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Skull, Ghost, Trophy, AlertTriangle, Plus } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Select, Switch } from "@components/ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, Select, Switch } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { MONSTER_ID_LIST } from "./constants";
 import { TesterCombatCardProps } from "./types";

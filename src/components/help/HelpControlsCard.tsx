@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { PlayerId } from "@game/types";
-import { KbdGroup, Badge } from "@components/ui";
+import { KbdGroup, Badge } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { useKeyboard, formatKeyLabel } from "@components/controls";
 import { cn } from "@lib/utils";

@@ -1,7 +1,7 @@
 import React from "react";
 import { Keyboard } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
-import { Button, Dialog } from "@components/ui";
+import { Button, Dialog } from "@ui";
 import { KeyRebindDialogProps } from "./types";
 
 export type { KeyRebindDialogProps };

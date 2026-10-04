@@ -1,6 +1,6 @@
 import React from "react";
 import { Shield } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "@components/ui";
+import { Card, CardHeader, CardTitle, CardContent } from "@ui";
 import { Player } from "@game/types";
 import { useI18n } from "@context/I18nContext";
 import { DebugPlayerStatsSection } from "./DebugPlayerStatsSection";

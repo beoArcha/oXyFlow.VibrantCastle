@@ -1,6 +1,6 @@
 import React from "react";
 import { ScrollText, ArrowDownCircle, Copy, Check, Download, Trash2 } from "lucide-react";
-import { Button } from "@components/ui";
+import { Button } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { LogsHeaderToolbarProps } from "./types";
 

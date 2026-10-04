@@ -1,6 +1,6 @@
 import React from "react";
 import { Pause, Play, HelpCircle, Menu as MenuIcon, Backpack, BookOpen } from "lucide-react";
-import { Dialog, Button } from "@components/ui";
+import { Dialog, Button } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import type { PauseOverlayProps } from "../types";
 

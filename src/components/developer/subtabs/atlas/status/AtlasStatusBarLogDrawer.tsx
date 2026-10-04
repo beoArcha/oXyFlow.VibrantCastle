@@ -1,6 +1,6 @@
 import React from "react";
 import { Activity, ExternalLink } from "lucide-react";
-import { Badge, Button, EmptyState } from "@components/ui";
+import { Badge, Button, EmptyState } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { LogLevel, LogRecord } from "@lib/logger";
 

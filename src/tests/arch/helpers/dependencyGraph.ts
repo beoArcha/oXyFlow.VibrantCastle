@@ -26,14 +26,12 @@ const TSCONFIG_ALIASES: Record<string, string> = {
   "@test-utils/": "src/test-utils/",
   "@types/": "src/types/",
   "@ui/": "src/ui/",
-  "@components/ui/": "src/ui/",
 };
 
 const EXACT_ALIASES: Record<string, string> = {
   "@i18n": "src/i18n/index.ts",
   "@test-utils": "src/test-utils/index.ts",
   "@ui": "src/ui/index.ts",
-  "@components/ui": "src/ui/index.ts",
 };
 
 const CANDIDATE_EXTENSIONS = [".ts", ".tsx", "/index.ts", "/index.tsx", ".json"];

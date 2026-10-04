@@ -1,6 +1,6 @@
 import React from "react";
 import { MapPin, Compass, Check } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@components/ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@ui";
 import { useGameSession } from "@context/GameSessionContext";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";

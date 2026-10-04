@@ -1,6 +1,6 @@
 import React from "react";
 import { HelpCircle, Pause, Play, Menu as MenuIcon, MapPin } from "lucide-react";
-import { Button, KbdKey } from "@components/ui";
+import { Button, KbdKey } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import type { HUDTopControlsProps } from "./types";
 import { cn } from "@lib/utils";

@@ -1,6 +1,6 @@
 import React from "react";
 import { Search } from "lucide-react";
-import { EmptyState } from "@components/ui";
+import { EmptyState } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { IAtlasAssetManifestItem } from "@game/engine/meta/registry";
 import { AtlasPresetItemRow } from "./AtlasPresetItemRow";

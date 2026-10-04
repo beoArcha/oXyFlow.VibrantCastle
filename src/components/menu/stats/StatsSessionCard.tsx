@@ -1,6 +1,6 @@
 import React from "react";
 import { Clock, Skull, Swords, FlaskConical, BarChart3, RotateCcw, HardDrive } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from "@components/ui";
+import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import type { SessionSummaryVM } from "@components/adapters";
 import { cn } from "@lib/utils";

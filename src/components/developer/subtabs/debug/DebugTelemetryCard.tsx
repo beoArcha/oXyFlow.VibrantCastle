@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Activity, Gauge, Zap, Sparkles, Crosshair, Map, Video } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Badge, BadgeVariant, MetricTile } from "@components/ui";
+import { Card, CardHeader, CardTitle, CardContent, Badge, BadgeVariant, MetricTile } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { TelemetryMetricItem } from "./types";
 

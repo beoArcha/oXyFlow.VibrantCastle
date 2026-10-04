@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Monitor, Maximize2, Minimize2, Tv, Layers } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, SettingOptionCard } from "@components/ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, SettingOptionCard } from "@ui";
 import { useSettings } from "@context/SettingsContext";
 import { useI18n } from "@context/I18nContext";
 import type { AspectRatioMode, ScalingFilterMode } from "@context/settingsTypes";
@@ -44,48 +44,48 @@ export const AspectRatioSection = ({
     subLabel: string;
     icon: React.ReactNode;
   }> = [
-    {
-      id: "auto",
-      label: t("aspectRatioAutoFill"),
-      subLabel: t("aspectRatioAutoFillDesc"),
-      icon: <Maximize2 size={15} />,
-    },
-    {
-      id: "16:9",
-      label: "16:9",
-      subLabel: t("aspectRatio169Desc"),
-      icon: <Tv size={15} />,
-    },
-    {
-      id: "16:10",
-      label: "16:10",
-      subLabel: t("aspectRatio1610Desc"),
-      icon: <Monitor size={15} />,
-    },
-    {
-      id: "4:3",
-      label: "4:3",
-      subLabel: t("aspectRatio43Desc"),
-      icon: <Layers size={15} />,
-    },
-  ];
+      {
+        id: "auto",
+        label: t("aspectRatioAutoFill"),
+        subLabel: t("aspectRatioAutoFillDesc"),
+        icon: <Maximize2 size={15} />,
+      },
+      {
+        id: "16:9",
+        label: "16:9",
+        subLabel: t("aspectRatio169Desc"),
+        icon: <Tv size={15} />,
+      },
+      {
+        id: "16:10",
+        label: "16:10",
+        subLabel: t("aspectRatio1610Desc"),
+        icon: <Monitor size={15} />,
+      },
+      {
+        id: "4:3",
+        label: "4:3",
+        subLabel: t("aspectRatio43Desc"),
+        icon: <Layers size={15} />,
+      },
+    ];
 
   const scalingModes: ReadonlyArray<{
     id: ScalingFilterMode;
     title: string;
     desc: string;
   }> = [
-    {
-      id: "pixel",
-      title: t("scalingPixelTitle"),
-      desc: t("scalingPixelDesc"),
-    },
-    {
-      id: "smooth",
-      title: t("scalingSmoothTitle"),
-      desc: t("scalingSmoothDesc"),
-    },
-  ];
+      {
+        id: "pixel",
+        title: t("scalingPixelTitle"),
+        desc: t("scalingPixelDesc"),
+      },
+      {
+        id: "smooth",
+        title: t("scalingSmoothTitle"),
+        desc: t("scalingSmoothDesc"),
+      },
+    ];
 
   return (
     <div className={cn("flex flex-col gap-4", className)}>

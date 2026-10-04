@@ -12,7 +12,7 @@ import {
   TableBody,
   EmptyState,
   SearchInput,
-} from "@components/ui";
+} from "@ui";
 import { Enemy } from "@game/types";
 import { useI18n } from "@context/I18nContext";
 import { DebugEntityTableRow } from "./DebugEntityTableRow";

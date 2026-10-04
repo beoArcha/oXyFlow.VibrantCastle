@@ -1,6 +1,6 @@
 import React from "react";
 import { Star, User, Skull, Building, Sparkles } from "lucide-react";
-import { SegmentedControl, SegmentedControlOption } from "@components/ui";
+import { SegmentedControl, SegmentedControlOption } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { AssetFilterType } from "./types";
 

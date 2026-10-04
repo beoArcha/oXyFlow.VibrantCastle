@@ -1,6 +1,6 @@
 import React from "react";
 import { Sword, Shield, Heart, Sparkles, Zap } from "lucide-react";
-import { StatRow, Card } from "@components/ui";
+import { StatRow, Card } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { InventoryStatsVM } from "@components/adapters/inventoryAdapter";
 

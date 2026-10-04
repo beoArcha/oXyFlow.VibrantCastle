@@ -1,6 +1,6 @@
 import React from "react";
 import { Target, FlaskConical } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, ProgressBar } from "@components/ui";
+import { Card, CardHeader, CardTitle, CardContent, ProgressBar } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import type { KillsBreakdownVM, PotionsBreakdownVM } from "@components/adapters";
 import { cn } from "@lib/utils";

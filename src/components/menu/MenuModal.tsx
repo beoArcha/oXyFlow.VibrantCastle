@@ -1,6 +1,6 @@
 import React from "react";
 import { SlidersHorizontal } from "lucide-react";
-import { Modal } from "@components/ui";
+import { Modal } from "@ui";
 import { LanguageSelector } from "@components/adapters";
 import { ModalNavigationTabs, ModalType } from "@components/modal";
 import { MenuPanel, MenuPanelProps } from "./MenuPanel";

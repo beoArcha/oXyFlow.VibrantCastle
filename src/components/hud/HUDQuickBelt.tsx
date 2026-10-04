@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Sparkles, Shield, FlaskConical, Backpack, BookOpen } from "lucide-react";
-import { Button, KbdKey } from "@components/ui";
+import { Button, KbdKey } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { resolvePotionSlotsVM } from "@components/adapters/hudAdapter";
 import type { HUDQuickBeltProps, PotionSlotVM } from "./types";

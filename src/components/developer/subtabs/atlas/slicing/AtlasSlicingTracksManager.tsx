@@ -8,7 +8,7 @@ import {
   Tooltip,
   ConfirmDialog,
   Card,
-} from "@components/ui";
+} from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 import { AtlasAnimationTrackDefinition } from "../types";

@@ -9,7 +9,7 @@ import {
   BackgroundProcessor,
   IPixelBuffer,
 } from "@game/engine/meta/slicing";
-import { LoadingOverlay } from "@components/ui";
+import { LoadingOverlay } from "@ui";
 
 export const TRACK_COLORS = [
   { stroke: "#38bdf8", fill: "rgba(56, 189, 248, 0.18)" }, // sky

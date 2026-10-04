@@ -11,7 +11,7 @@ import {
   TableRow,
   TableHead,
   TableCell,
-} from "@components/ui";
+} from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { IFreeformFrameRect } from "@game/engine/meta/types";
 

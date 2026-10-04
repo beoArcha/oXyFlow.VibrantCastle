@@ -1,6 +1,6 @@
 import React from "react";
 import { Crosshair } from "lucide-react";
-import { Slider, SegmentedControl, SegmentedControlOption } from "@components/ui";
+import { Slider, SegmentedControl, SegmentedControlOption } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasOriginDefinition } from "../types";
 

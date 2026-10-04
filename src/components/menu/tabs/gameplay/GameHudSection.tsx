@@ -1,6 +1,6 @@
 import React from "react";
 import { Layout, Backpack, HelpCircle, Subtitles } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, SettingToggleRow } from "@components/ui";
+import { Card, CardHeader, CardTitle, CardContent, SettingToggleRow } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import type { HudSettings } from "@context/settingsTypes";
 import { cn } from "@lib/utils";

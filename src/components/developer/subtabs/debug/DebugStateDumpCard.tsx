@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { FileJson } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, CopyableSnippet } from "@components/ui";
+import { Card, CardHeader, CardTitle, CardContent, CopyableSnippet } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { DebugGameSnapshot } from "./types";
 

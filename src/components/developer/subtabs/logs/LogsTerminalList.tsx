@@ -2,7 +2,7 @@ import React from "react";
 import { ListFilter, ChevronDown, ChevronRight } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
 import { LogLevel } from "@lib/logger";
-import { EmptyState } from "@components/ui";
+import { EmptyState } from "@ui";
 import { LogsTerminalListProps } from "./types";
 import { LogsItemDrawer } from "./LogsItemDrawer";
 
@@ -72,11 +72,10 @@ export const LogsTerminalList: React.FC<LogsTerminalListProps> = ({
                     onToggleExpand(entry.id);
                   }
                 }}
-                className={`flex items-start gap-2.5 p-2 select-text ${
-                  hasDetails
+                className={`flex items-start gap-2.5 p-2 select-text ${hasDetails
                     ? "cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-amber-500/60"
                     : ""
-                }`}
+                  }`}
               >
                 {hasDetails ? (
                   <span className="mt-0.5 text-stone-500 hover:text-amber-400 transition-colors">
@@ -103,15 +102,14 @@ export const LogsTerminalList: React.FC<LogsTerminalListProps> = ({
                 </span>
 
                 <span
-                  className={`flex-1 break-words leading-tight ${
-                    entry.level >= LogLevel.ERROR
+                  className={`flex-1 break-words leading-tight ${entry.level >= LogLevel.ERROR
                       ? "text-rose-300 font-semibold"
                       : entry.level === LogLevel.WARN
                         ? "text-amber-200"
                         : entry.level === LogLevel.INFO
                           ? "text-cyan-100"
                           : "text-stone-300"
-                  }`}
+                    }`}
                 >
                   {entry.message}
                 </span>

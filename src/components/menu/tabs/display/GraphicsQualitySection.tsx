@@ -8,7 +8,7 @@ import {
   Badge,
   SettingToggleRow,
   SettingOptionCard,
-} from "@components/ui";
+} from "@ui";
 import { useSettings } from "@context/SettingsContext";
 import { useI18n } from "@context/I18nContext";
 import type { TargetFps, AssetQuality } from "@context/settingsTypes";
@@ -30,11 +30,11 @@ export const GraphicsQualitySection = ({
     frameTime: string;
     multiplier: string;
   }> = [
-    { fps: 30, step: 2, frameTime: "33.3ms", multiplier: "2.00x" },
-    { fps: 60, step: 4, frameTime: "16.6ms", multiplier: "1.00x" },
-    { fps: 90, step: 6, frameTime: "11.1ms", multiplier: "0.67x" },
-    { fps: 120, step: 8, frameTime: "8.3ms", multiplier: "0.50x" },
-  ];
+      { fps: 30, step: 2, frameTime: "33.3ms", multiplier: "2.00x" },
+      { fps: 60, step: 4, frameTime: "16.6ms", multiplier: "1.00x" },
+      { fps: 90, step: 6, frameTime: "11.1ms", multiplier: "0.67x" },
+      { fps: 120, step: 8, frameTime: "8.3ms", multiplier: "0.50x" },
+    ];
 
   const assetQualities: ReadonlyArray<{
     id: AssetQuality;
@@ -42,25 +42,25 @@ export const GraphicsQualitySection = ({
     tierTag: string;
     descKey: string;
   }> = [
-    {
-      id: "low",
-      title: t("assetQualityLow"),
-      tierTag: "16-Bit Classic (36×52)",
-      descKey: "assetQualityLowDesc",
-    },
-    {
-      id: "mid",
-      title: t("assetQualityMid"),
-      tierTag: "16-Bit Mobile HD (52×66)",
-      descKey: "assetQualityMidDesc",
-    },
-    {
-      id: "high",
-      title: t("assetQualityHigh"),
-      tierTag: "HiPixel Masterclass (72×84)",
-      descKey: "assetQualityHighDesc",
-    },
-  ];
+      {
+        id: "low",
+        title: t("assetQualityLow"),
+        tierTag: "16-Bit Classic (36×52)",
+        descKey: "assetQualityLowDesc",
+      },
+      {
+        id: "mid",
+        title: t("assetQualityMid"),
+        tierTag: "16-Bit Mobile HD (52×66)",
+        descKey: "assetQualityMidDesc",
+      },
+      {
+        id: "high",
+        title: t("assetQualityHigh"),
+        tierTag: "HiPixel Masterclass (72×84)",
+        descKey: "assetQualityHighDesc",
+      },
+    ];
 
   const activeFps = displaySettings.targetFps || 60;
 

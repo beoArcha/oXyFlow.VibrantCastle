@@ -1,7 +1,7 @@
 import React from "react";
 import { AssetQuality } from "@game/types";
 import { AnimationName } from "@game/engine/spriteTypes";
-import { Badge } from "@components/ui";
+import { Badge } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { resolveCharacterProfileVM } from "@components/adapters";
 import { cn } from "@lib/utils";
@@ -52,11 +52,11 @@ export const CharacterStage: React.FC<CharacterStageProps> = React.memo(({
   const { t } = useI18n();
   const profile = resolveCharacterProfileVM(characterId);
 
-  const handleActionChange = onActionChange ?? (() => {});
-  const handleSpeedChange = onSpeedChange ?? (() => {});
-  const handleScaleChange = onScaleChange ?? (() => {});
-  const handleToggleFlip = onToggleFlip ?? (() => {});
-  const handleTogglePlay = onTogglePlay ?? (() => {});
+  const handleActionChange = onActionChange ?? (() => { });
+  const handleSpeedChange = onSpeedChange ?? (() => { });
+  const handleScaleChange = onScaleChange ?? (() => { });
+  const handleToggleFlip = onToggleFlip ?? (() => { });
+  const handleTogglePlay = onTogglePlay ?? (() => { });
 
   const accentColor = profile.accentColor;
   const classTitle = t(profile.classTitleKey);

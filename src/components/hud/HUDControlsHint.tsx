@@ -1,6 +1,6 @@
 import React from "react";
 import { Swords, Wind, VolumeX } from "lucide-react";
-import { Badge, Button } from "@components/ui";
+import { Badge, Button } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { useKeyboard, formatKeyLabel } from "@components/controls";
 import { PlayerId } from "@game/types";

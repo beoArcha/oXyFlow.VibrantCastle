@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Gamepad as GamepadIcon, Sparkles } from "lucide-react";
 import { PlayerId } from "@game/types";
-import { Button, Badge, KbdKey } from "@components/ui";
+import { Button, Badge, KbdKey } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { useGamepad } from "./hooks/useGamepad";
 import { ControlBindingRow } from "./ControlBindingRow";

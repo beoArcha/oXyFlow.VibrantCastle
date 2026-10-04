@@ -10,7 +10,7 @@ import {
   Clock,
   Info,
 } from "lucide-react";
-import { Button, Badge, Tooltip, ConfirmDialog, EmptyState } from "@components/ui";
+import { Button, Badge, Tooltip, ConfirmDialog, EmptyState } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import {
   AtlasGridConfig,
@@ -109,20 +109,18 @@ const FrameThumbnail: React.FC<FrameThumbnailProps> = ({
   return (
     <div
       onClick={onSelect}
-      className={`group relative flex flex-col items-center p-1.5 rounded-xl border transition-all cursor-pointer flex-shrink-0 select-none ${
-        isSelected
+      className={`group relative flex flex-col items-center p-1.5 rounded-xl border transition-all cursor-pointer flex-shrink-0 select-none ${isSelected
           ? "bg-amber-950/40 border-amber-400 shadow-md shadow-amber-950/60 ring-2 ring-amber-400/30"
           : "bg-[#140b07] border-stone-800 hover:border-amber-700/70 hover:bg-[#1a0f0a]"
-      }`}
+        }`}
     >
       {/* Frame Sequence Number Badge */}
       <div className="absolute top-1 left-1 z-10">
         <span
-          className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded shadow ${
-            isSelected
+          className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded shadow ${isSelected
               ? "bg-amber-500 text-stone-950 font-black"
               : "bg-black/75 text-amber-300 border border-stone-800"
-          }`}
+            }`}
         >
           #{frameIndex + 1}
         </span>
