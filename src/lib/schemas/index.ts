@@ -8,3 +8,6 @@
 export * from "./commonSchema";
 export * from "./spellsSchema";
 export * from "./skillsSchema";
+export * from "./itemSchema";
+export * from "./enemySchema";
+export * from "./structureSchema";

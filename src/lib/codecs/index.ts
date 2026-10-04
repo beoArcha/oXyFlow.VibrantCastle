@@ -8,3 +8,6 @@
 export * from "./codecInterface";
 export * from "./spellCodec";
 export * from "./skillCodec";
+export * from "./itemCodec";
+export * from "./enemyCodec";
+export * from "./structureCodec";

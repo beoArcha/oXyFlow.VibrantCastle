@@ -5,20 +5,21 @@ import itemsData from "@data/items/items.json";
 import { inventoryLogger } from "@game/logger/gameLogger";
 import { Result, ok, err, GameplayError, ErrorCode } from "@lib/errors";
 
+import { itemCodec } from "@lib/codecs";
+
 /**
- * Master Registry of Items available in the game (loaded from JSON data).
+ * Master Registry of Items available in the game (loaded and validated via itemCodec).
  */
-export const ITEM_REGISTRY: Record<string, Item> = Object.entries(itemsData).reduce(
-  (acc, [key, raw]) => {
-    acc[key] = {
-      ...raw,
-      type: raw.type as ItemType,
-      rarity: raw.rarity as "common" | "uncommon" | "rare" | "legendary",
-    };
-    return acc;
-  },
-  {} as Record<string, Item>
-);
+const decodedItemsRes = itemCodec.decodeDictionary(itemsData);
+if (!decodedItemsRes.isOk()) {
+  inventoryLogger.error("Failed to decode canonical items.json via itemCodec", {
+    error: decodedItemsRes.error.message
+  });
+}
+
+export const ITEM_REGISTRY: Record<string, Item> = decodedItemsRes.isOk()
+  ? (decodedItemsRes.value as unknown as Record<string, Item>)
+  : {};
 
 /**
  * Creates default initial inventory for a new game / player.
