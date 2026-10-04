@@ -127,7 +127,7 @@ export interface PortalDefinitionSchema {
  * Dictionaries bundled with the location or referenced globally.
  */
 export interface LocationDictionariesSchema {
-  monsters: Record<string, MonsterTemplateSchema>;
+  monsters?: Record<string, MonsterTemplateSchema>;
   entities: Record<string, EntityPrefabSchema>;
   portals: Record<string, PortalDefinitionSchema>;
 }

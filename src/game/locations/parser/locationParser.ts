@@ -3,9 +3,17 @@ import { CollisionType, Entity, Enemy } from "../../types";
 import {
   LocationJsonSchema,
   PortalDefinitionSchema,
+  MonsterTemplateSchema,
 } from "../schema/locationSchema";
 import { engineLogger } from "../../logger/gameLogger";
 import { ErrorCode, ParserError } from "@lib/errors";
+import enemiesData from "@data/enemies/enemies.json";
+import { enemyCodec, DomainEnemyTemplate } from "@lib/codecs";
+
+const decodedEnemiesRes = enemyCodec.decodeDictionary(enemiesData);
+export const CANONICAL_ENEMY_REGISTRY: Record<string, DomainEnemyTemplate> = decodedEnemiesRes.isOk()
+  ? decodedEnemiesRes.value
+  : {};
 
 /**
  * Parser for Location JSON Blueprints.
@@ -227,38 +235,70 @@ export class LocationParser {
               continue;
             }
 
-            const monsterDef = dictionaries.monsters[ep.monsterKey];
-            if (!monsterDef) {
+            const canonicalTemplate = CANONICAL_ENEMY_REGISTRY[ep.monsterKey];
+            const localTemplate = dictionaries?.monsters?.[ep.monsterKey];
+            if (!canonicalTemplate && !localTemplate) {
               engineLogger.warn(
-                `Monster template '${ep.monsterKey}' not found in location '${id}' dictionaries!`,
+                `Monster template '${ep.monsterKey}' not found in canonical registry or location '${id}' dictionaries!`,
                 { monsterKey: ep.monsterKey, locationId: id }
               );
               continue;
             }
 
             const isFacingLeft = ep.facingLeft !== undefined ? ep.facingLeft : true;
-            const speed = monsterDef.speed || 0;
+            let speed = 0;
+            let width = 40;
+            let height = 40;
+            let health = 50;
+            let maxHealth = 50;
+            let nameKey = "";
+            let defaultName = "Monster";
+            let isDummy = false;
+            let isAerial = false;
+
+            if (canonicalTemplate) {
+              speed = canonicalTemplate.stats.speed;
+              width = canonicalTemplate.dimensions.width;
+              height = canonicalTemplate.dimensions.height;
+              health = canonicalTemplate.stats.health;
+              maxHealth = canonicalTemplate.stats.maxHealth;
+              nameKey = canonicalTemplate.nameKey;
+              defaultName = canonicalTemplate.defaultName;
+              isDummy = canonicalTemplate.isDummy;
+              isAerial = canonicalTemplate.isAerial;
+            } else if (localTemplate) {
+              speed = localTemplate.speed || 0;
+              width = localTemplate.width;
+              height = localTemplate.height;
+              health = localTemplate.health;
+              maxHealth = localTemplate.maxHealth;
+              nameKey = localTemplate.nameKey || "";
+              defaultName = localTemplate.defaultName || localTemplate.name || "Monster";
+              isDummy = localTemplate.isDummy;
+              isAerial = localTemplate.isAerial || false;
+            }
+
             const vx = speed > 0 ? (isFacingLeft ? -speed : speed) : 0;
 
             enemies.push({
               id: ep.id,
               templateId: ep.monsterKey,
-              nameKey: monsterDef.nameKey,
-              defaultName: monsterDef.defaultName || monsterDef.name,
+              nameKey,
+              defaultName,
               x: ep.x,
               y: ep.y,
               vx,
               vy: 0,
-              width: monsterDef.width,
-              height: monsterDef.height,
-              health: ep.healthOverride ?? monsterDef.health,
-              maxHealth: monsterDef.maxHealth,
+              width,
+              height,
+              health: ep.healthOverride ?? health,
+              maxHealth,
               isDead: false,
               patrolMinX: ep.patrolMinX ?? (speed > 0 ? ep.x - 120 : 0),
               patrolMaxX: ep.patrolMaxX ?? (speed > 0 ? ep.x + 120 : 0),
               facingLeft: isFacingLeft,
-              isDummy: monsterDef.isDummy,
-              isAerial: monsterDef.isAerial || false,
+              isDummy,
+              isAerial,
               damageTimer: 0,
             });
           }

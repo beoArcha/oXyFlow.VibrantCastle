@@ -86,65 +86,6 @@
     ]
   },
   "dictionaries": {
-    "monsters": {
-      "training_dummy": {
-        "templateId": "training_dummy",
-        "nameKey": "monsterTrainingDummy",
-        "defaultName": "Training Dummy",
-        "width": 35,
-        "height": 60,
-        "health": 60,
-        "maxHealth": 60,
-        "speed": 0,
-        "attackPower": 0,
-        "isDummy": true,
-        "isAerial": false,
-        "colorScheme": {
-          "body": "#a16207",
-          "accent": "#ca8a04",
-          "eyes": "#eab308"
-        },
-        "scoreReward": 100
-      },
-      "court_sentinel": {
-        "templateId": "court_sentinel",
-        "nameKey": "monsterCourtSentinel",
-        "defaultName": "Courtyard Sentinel",
-        "width": 38,
-        "height": 55,
-        "health": 80,
-        "maxHealth": 80,
-        "speed": 1.0,
-        "attackPower": 15,
-        "isDummy": false,
-        "isAerial": false,
-        "colorScheme": {
-          "body": "#7c2d12",
-          "accent": "#ea580c",
-          "eyes": "#ef4444"
-        },
-        "scoreReward": 350
-      },
-      "gargoyle_scout": {
-        "templateId": "gargoyle_scout",
-        "nameKey": "monsterGargoyleScout",
-        "defaultName": "Gargoyle Scout",
-        "width": 36,
-        "height": 38,
-        "health": 50,
-        "maxHealth": 50,
-        "speed": 1.5,
-        "attackPower": 12,
-        "isDummy": false,
-        "isAerial": true,
-        "colorScheme": {
-          "body": "#475569",
-          "accent": "#0284c7",
-          "eyes": "#38bdf8"
-        },
-        "scoreReward": 400
-      }
-    },
     "entities": {
       "stone_floor": {
         "prefabId": "stone_floor",

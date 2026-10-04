@@ -85,46 +85,6 @@
     ]
   },
   "dictionaries": {
-    "monsters": {
-      "training_target": {
-        "templateId": "training_target",
-        "nameKey": "monsterTrainingDummy",
-        "defaultName": "Training Dummy",
-        "width": 35,
-        "height": 60,
-        "health": 70,
-        "maxHealth": 70,
-        "speed": 0,
-        "attackPower": 0,
-        "isDummy": true,
-        "isAerial": false,
-        "colorScheme": {
-          "body": "#b45309",
-          "accent": "#f59e0b",
-          "eyes": "#fef08a"
-        },
-        "scoreReward": 150
-      },
-      "clockwork_automaton": {
-        "templateId": "clockwork_automaton",
-        "nameKey": "monsterClockworkAutomaton",
-        "defaultName": "Clockwork Automaton",
-        "width": 48,
-        "height": 65,
-        "health": 120,
-        "maxHealth": 120,
-        "speed": 1.1,
-        "attackPower": 24,
-        "isDummy": false,
-        "isAerial": false,
-        "colorScheme": {
-          "body": "#78350f",
-          "accent": "#d97706",
-          "eyes": "#ef4444"
-        },
-        "scoreReward": 700
-      }
-    },
     "entities": {
       "tower_masonry": {
         "prefabId": "tower_masonry",

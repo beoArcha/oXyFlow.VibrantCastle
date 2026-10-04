@@ -85,65 +85,6 @@
     ]
   },
   "dictionaries": {
-    "monsters": {
-      "aether_sentinel": {
-        "templateId": "aether_sentinel",
-        "nameKey": "monsterAetherSentinel",
-        "defaultName": "Aether Sentinel",
-        "width": 42,
-        "height": 60,
-        "health": 90,
-        "maxHealth": 90,
-        "speed": 1.2,
-        "attackPower": 22,
-        "isDummy": false,
-        "isAerial": false,
-        "colorScheme": {
-          "body": "#1e3a8a",
-          "accent": "#38bdf8",
-          "eyes": "#e0f2fe"
-        },
-        "scoreReward": 600
-      },
-      "aether_wisp": {
-        "templateId": "aether_wisp",
-        "nameKey": "monsterAetherWisp",
-        "defaultName": "Aether Wisp",
-        "width": 36,
-        "height": 36,
-        "health": 60,
-        "maxHealth": 60,
-        "speed": 1.6,
-        "attackPower": 18,
-        "isDummy": false,
-        "isAerial": true,
-        "colorScheme": {
-          "body": "#0369a1",
-          "accent": "#06b6d4",
-          "eyes": "#67e8f9"
-        },
-        "scoreReward": 500
-      },
-      "aether_archon": {
-        "templateId": "aether_archon",
-        "nameKey": "monsterAetherArchon",
-        "defaultName": "Aether Archon",
-        "width": 50,
-        "height": 65,
-        "health": 140,
-        "maxHealth": 140,
-        "speed": 1.0,
-        "attackPower": 30,
-        "isDummy": false,
-        "isAerial": false,
-        "colorScheme": {
-          "body": "#1e1b4b",
-          "accent": "#818cf8",
-          "eyes": "#c7d2fe"
-        },
-        "scoreReward": 850
-      }
-    },
     "entities": {
       "sanctuary_masonry": {
         "prefabId": "sanctuary_masonry",

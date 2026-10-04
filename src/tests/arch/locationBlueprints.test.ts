@@ -1,7 +1,10 @@
 import { describe, it, expect } from "bun:test";
 import fs from "fs";
 import path from "path";
-import { LocationParser } from "@game/locations/parser/locationParser";
+import {
+  LocationParser,
+  CANONICAL_ENEMY_REGISTRY,
+} from "@game/locations/parser/locationParser";
 import {
   LocationJsonSchema,
   BackgroundLayerTier,
@@ -159,14 +162,23 @@ describe("Location Blueprint Schema Contracts", () => {
   });
 
   describe("Enemy & Monster Template Integrity", () => {
-    it("ensures every placed enemy references a valid monster template in dictionaries", () => {
+    it("ensures zero location blueprints declare redundant local monster dictionaries (strict SSOT)", () => {
+      const locationsWithLocalMonsters: string[] = [];
+      for (const { filename, json } of loadedBlueprints) {
+        if (json.dictionaries && json.dictionaries.monsters) {
+          locationsWithLocalMonsters.push(filename);
+        }
+      }
+      expect(locationsWithLocalMonsters).toEqual([]);
+    });
+
+    it("ensures every placed enemy references a valid monster template in canonical registry", () => {
       const missingMonsterRefs: { file: string; enemyId: string; monsterKey: string }[] = [];
 
       for (const { filename, json } of loadedBlueprints) {
-        const monsterDict = json.dictionaries?.monsters || {};
         if (json.layout?.enemies) {
           for (const enemy of json.layout.enemies) {
-            if (!monsterDict[enemy.monsterKey]) {
+            if (!CANONICAL_ENEMY_REGISTRY[enemy.monsterKey]) {
               missingMonsterRefs.push({
                 file: filename,
                 enemyId: enemy.id,
@@ -181,17 +193,15 @@ describe("Location Blueprint Schema Contracts", () => {
     });
 
     it("ensures monster templates declare positive dimensions and health invariants", () => {
-      for (const { filename, json } of loadedBlueprints) {
-        const monsterDict = json.dictionaries?.monsters || {};
-        for (const [key, monster] of Object.entries(monsterDict)) {
-          expect(monster.width).toBeGreaterThan(0);
-          expect(monster.height).toBeGreaterThan(0);
-          expect(monster.health).toBeGreaterThan(0);
-          expect(monster.maxHealth).toBeGreaterThanOrEqual(monster.health);
-          expect(monster.speed).toBeGreaterThanOrEqual(0);
-        }
+      for (const [key, monster] of Object.entries(CANONICAL_ENEMY_REGISTRY)) {
+        expect(monster.dimensions.width).toBeGreaterThan(0);
+        expect(monster.dimensions.height).toBeGreaterThan(0);
+        expect(monster.stats.health).toBeGreaterThan(0);
+        expect(monster.stats.maxHealth).toBeGreaterThanOrEqual(monster.stats.health);
+        expect(monster.stats.speed).toBeGreaterThanOrEqual(0);
       }
     });
+
 
     it("instantiates enemies cleanly for single-player and two-player modes", () => {
       for (const { json } of loadedBlueprints) {
@@ -306,18 +316,15 @@ describe("Location Blueprint Schema Contracts", () => {
     });
 
     it("ensures all monster nameKeys exist in EN and PL translation dictionaries", () => {
-      const missingMonsterKeys: { file: string; monsterKey: string; key: string; lang: string }[] = [];
+      const missingMonsterKeys: { monsterKey: string; key: string; lang: string }[] = [];
 
-      for (const { filename, json } of loadedBlueprints) {
-        const monsterDict = json.dictionaries?.monsters || {};
-        for (const [monsterKey, monster] of Object.entries(monsterDict)) {
-          if (monster.nameKey) {
-            if (!(monster.nameKey in enDict)) {
-              missingMonsterKeys.push({ file: filename, monsterKey, key: monster.nameKey, lang: "en" });
-            }
-            if (!(monster.nameKey in plDict)) {
-              missingMonsterKeys.push({ file: filename, monsterKey, key: monster.nameKey, lang: "pl" });
-            }
+      for (const [monsterKey, monster] of Object.entries(CANONICAL_ENEMY_REGISTRY)) {
+        if (monster.nameKey) {
+          if (!(monster.nameKey in enDict)) {
+            missingMonsterKeys.push({ monsterKey, key: monster.nameKey, lang: "en" });
+          }
+          if (!(monster.nameKey in plDict)) {
+            missingMonsterKeys.push({ monsterKey, key: monster.nameKey, lang: "pl" });
           }
         }
       }

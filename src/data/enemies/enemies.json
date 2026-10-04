@@ -205,6 +205,193 @@
         "accentColor": "#64748b",
         "eyesColor": "#ef4444"
       }
+    },
+    "aether_wisp": {
+      "id": "aether_wisp",
+      "nameKey": "monsterAetherWisp",
+      "defaultName": "Aether Wisp",
+      "category": "aerial",
+      "isDummy": false,
+      "isAerial": true,
+      "dimensions": {
+        "width": 36,
+        "height": 36
+      },
+      "stats": {
+        "health": 60,
+        "maxHealth": 60,
+        "speed": 1.6,
+        "attackPower": 18,
+        "scoreReward": 500
+      },
+      "proceduralFallback": {
+        "bodyColor": "#0369a1",
+        "accentColor": "#06b6d4",
+        "eyesColor": "#67e8f9"
+      }
+    },
+    "chasm_crawler": {
+      "id": "chasm_crawler",
+      "nameKey": "monsterChasmCrawler",
+      "defaultName": "Chasm Crawler",
+      "category": "ground_patrol",
+      "isDummy": false,
+      "isAerial": false,
+      "dimensions": {
+        "width": 45,
+        "height": 50
+      },
+      "stats": {
+        "health": 80,
+        "maxHealth": 80,
+        "speed": 0.8,
+        "attackPower": 20,
+        "scoreReward": 500
+      },
+      "proceduralFallback": {
+        "bodyColor": "#431407",
+        "accentColor": "#9a3412",
+        "eyesColor": "#fbbf24"
+      }
+    },
+    "gargoyle_scout": {
+      "id": "gargoyle_scout",
+      "nameKey": "monsterGargoyleScout",
+      "defaultName": "Gargoyle Scout",
+      "category": "aerial",
+      "isDummy": false,
+      "isAerial": true,
+      "dimensions": {
+        "width": 36,
+        "height": 38
+      },
+      "stats": {
+        "health": 50,
+        "maxHealth": 50,
+        "speed": 1.5,
+        "attackPower": 12,
+        "scoreReward": 400
+      },
+      "atlas": {
+        "presetId": "clockwork_owl_gargoyle",
+        "defaultAnimation": "fly",
+        "hitAnimation": "hit",
+        "attackAnimation": "attack",
+        "deathAnimation": "death"
+      },
+      "proceduralFallback": {
+        "bodyColor": "#475569",
+        "accentColor": "#0284c7",
+        "eyesColor": "#38bdf8"
+      }
+    },
+    "training_target": {
+      "id": "training_target",
+      "nameKey": "monsterTrainingDummy",
+      "defaultName": "Training Dummy",
+      "category": "dummy",
+      "isDummy": true,
+      "isAerial": false,
+      "dimensions": {
+        "width": 35,
+        "height": 60
+      },
+      "stats": {
+        "health": 70,
+        "maxHealth": 70,
+        "speed": 0,
+        "attackPower": 0,
+        "scoreReward": 150
+      },
+      "atlas": {
+        "presetId": "training_dummy",
+        "defaultAnimation": "idle",
+        "hitAnimation": "hit",
+        "deathAnimation": "destroy"
+      },
+      "proceduralFallback": {
+        "bodyColor": "#b45309",
+        "accentColor": "#f59e0b",
+        "eyesColor": "#fef08a"
+      }
+    },
+    "grand_dummy": {
+      "id": "grand_dummy",
+      "nameKey": "monsterTrainingDummy",
+      "defaultName": "Training Dummy",
+      "category": "dummy",
+      "isDummy": true,
+      "isAerial": false,
+      "dimensions": {
+        "width": 35,
+        "height": 60
+      },
+      "stats": {
+        "health": 60,
+        "maxHealth": 60,
+        "speed": 0,
+        "attackPower": 0,
+        "scoreReward": 120
+      },
+      "atlas": {
+        "presetId": "training_dummy",
+        "defaultAnimation": "idle",
+        "hitAnimation": "hit",
+        "deathAnimation": "destroy"
+      },
+      "proceduralFallback": {
+        "bodyColor": "#b45309",
+        "accentColor": "#f59e0b",
+        "eyesColor": "#fef08a"
+      }
+    },
+    "bastion_gargoyle": {
+      "id": "bastion_gargoyle",
+      "nameKey": "monsterChasmGargoyle",
+      "defaultName": "Chasm Gargoyle",
+      "category": "aerial",
+      "isDummy": false,
+      "isAerial": true,
+      "dimensions": {
+        "width": 40,
+        "height": 40
+      },
+      "stats": {
+        "health": 50,
+        "maxHealth": 50,
+        "speed": 1.2,
+        "attackPower": 15,
+        "scoreReward": 450
+      },
+      "proceduralFallback": {
+        "bodyColor": "#57534e",
+        "accentColor": "#ea580c",
+        "eyesColor": "#f97316"
+      }
+    },
+    "bastion_sentinel_boss": {
+      "id": "bastion_sentinel_boss",
+      "nameKey": "monsterCourtSentinel",
+      "defaultName": "Courtyard Sentinel",
+      "category": "elite",
+      "isDummy": false,
+      "isAerial": false,
+      "dimensions": {
+        "width": 45,
+        "height": 60
+      },
+      "stats": {
+        "health": 100,
+        "maxHealth": 100,
+        "speed": 1,
+        "attackPower": 25,
+        "scoreReward": 800
+      },
+      "proceduralFallback": {
+        "bodyColor": "#431407",
+        "accentColor": "#ea580c",
+        "eyesColor": "#ef4444"
+      }
     }
   }
 }

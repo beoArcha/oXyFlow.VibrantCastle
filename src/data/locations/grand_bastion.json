@@ -85,65 +85,6 @@
     ]
   },
   "dictionaries": {
-    "monsters": {
-      "grand_dummy": {
-        "templateId": "grand_dummy",
-        "nameKey": "monsterTrainingDummy",
-        "defaultName": "Training Dummy",
-        "width": 35,
-        "height": 60,
-        "health": 60,
-        "maxHealth": 60,
-        "speed": 0,
-        "attackPower": 0,
-        "isDummy": true,
-        "isAerial": false,
-        "colorScheme": {
-          "body": "#b45309",
-          "accent": "#f59e0b",
-          "eyes": "#fef08a"
-        },
-        "scoreReward": 120
-      },
-      "bastion_gargoyle": {
-        "templateId": "bastion_gargoyle",
-        "nameKey": "monsterChasmGargoyle",
-        "defaultName": "Chasm Gargoyle",
-        "width": 40,
-        "height": 40,
-        "health": 50,
-        "maxHealth": 50,
-        "speed": 1.2,
-        "attackPower": 15,
-        "isDummy": false,
-        "isAerial": true,
-        "colorScheme": {
-          "body": "#57534e",
-          "accent": "#ea580c",
-          "eyes": "#f97316"
-        },
-        "scoreReward": 450
-      },
-      "bastion_sentinel_boss": {
-        "templateId": "bastion_sentinel_boss",
-        "nameKey": "monsterCourtSentinel",
-        "defaultName": "Courtyard Sentinel",
-        "width": 45,
-        "height": 60,
-        "health": 100,
-        "maxHealth": 100,
-        "speed": 1.0,
-        "attackPower": 25,
-        "isDummy": false,
-        "isAerial": false,
-        "colorScheme": {
-          "body": "#431407",
-          "accent": "#ea580c",
-          "eyes": "#ef4444"
-        },
-        "scoreReward": 800
-      }
-    },
     "entities": {
       "bastion_floor": {
         "prefabId": "bastion_floor",
