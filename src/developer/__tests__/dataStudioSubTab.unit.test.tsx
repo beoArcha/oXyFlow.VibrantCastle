@@ -8,7 +8,7 @@ import { ItemEditorCard } from "../subtabs/datastudio/ItemEditorCard";
 import { VisualNovelPreviewCard } from "../subtabs/datastudio/VisualNovelPreviewCard";
 import { SkillTreeVisualizerCard } from "../subtabs/datastudio/SkillTreeVisualizerCard";
 import { AIGeneratorCard } from "../subtabs/datastudio/AIGeneratorCard";
-import { TestProviders, setupDomEnvironment, renderIntoDom, cleanupDom } from "@test-utils";
+import { TestProviders, UiTestProviders, setupDomEnvironment, renderIntoDom, cleanupDom } from "@test-utils";
 
 describe("DataStudio Developer Suite", () => {
   beforeEach(() => {
@@ -258,20 +258,22 @@ describe("DataStudio Developer Suite", () => {
     });
 
     it("validates malformed JSON and updates validation badge", async () => {
-      const { container, changeInput } = await renderIntoDom(
-        <TestProviders defaultLanguage="en">
+      const rendered = await renderIntoDom(
+        <UiTestProviders defaultLanguage="en">
           <AIGeneratorCard />
-        </TestProviders>,
+        </UiTestProviders>,
         { mode: "none" }
       );
 
-      const textarea = container.querySelector<HTMLTextAreaElement>("#ai-json-sandbox");
+      const textarea = rendered.container.querySelector<HTMLTextAreaElement>("#ai-json-sandbox");
       expect(textarea).not.toBeNull();
 
       if (textarea) {
-        await changeInput(textarea as unknown as HTMLInputElement, "{ invalid_json: ");
-        expect(container.textContent).toContain("1 Issue(s)");
+        await rendered.changeInput(textarea as unknown as HTMLInputElement, "{ invalid_json: ");
+        await new Promise((r) => setTimeout(r, 10));
+        expect(rendered.container.textContent).toMatch(/1 (Issue\(s\)|zastrzeżeń)/);
       }
+      await rendered.unmount();
     });
   });
 });

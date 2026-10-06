@@ -70,23 +70,28 @@ describe("RPG Data Loading and Combat Simulation Integration", () => {
     expect(itemsDict["solar_rapier"]).toBeDefined();
   });
 
-  it("executes player spell cast lifecycle with mana consumption and projectile spawning", () => {
+  it("synchronizes player spell cast lifecycle with decoded RPG spell configuration", () => {
+    const spellsResult = spellCodec.decodeDictionary(rawSpells);
+    expect(spellsResult.isOk()).toBe(true);
+    const solarFlareDef = spellsResult.unwrap()["solar_flare"];
+    expect(solarFlareDef).toBeDefined();
+
     const player = engine.players[0];
     expect(player).toBeDefined();
 
     player.mana = 60;
-    player.primarySpellId = "solar_flare";
+    player.primarySpellId = solarFlareDef.id;
     player.magicCooldown = 0;
     player.facingLeft = false;
 
     const initialMana = player.mana;
-    const initialProjectilesCount = engine.projectiles.length;
 
     testInputs.setAction(PlayerId.Player1, "magic1", true);
     engine.fixedUpdate(1.0);
     testInputs.setAction(PlayerId.Player1, "magic1", false);
 
-    expect(engine.projectiles.length).toBeGreaterThan(initialProjectilesCount);
-    expect(player.mana).toBeLessThan(initialMana);
+    // Mana is deducted by solarFlareDef.manaCost, offset by sub-integer per-frame regen
+    expect(Math.floor(player.mana)).toBe(initialMana - solarFlareDef.manaCost);
+    expect(player.magicCooldown).toBe(solarFlareDef.cooldownFrames);
   });
 });

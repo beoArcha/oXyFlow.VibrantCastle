@@ -242,5 +242,104 @@ describe("Architectural Boundary Rules", () => {
 
     assertZeroViolations(violations, "Data imports must use unified @data alias rather than obsolete paths");
   });
+
+  it("ensures all exceptions thrown in src/game use formalized GameBaseError domain hierarchy", () => {
+    const gameFiles = getAllSourceFiles(gameDir).filter((file) => !file.includes("__tests__"));
+    const throwNewPattern = /\bthrow\s+new\s+(\w+)\s*\(/g;
+    const allowedErrorClasses = new Set([
+      "GameBaseError",
+      "EngineError",
+      "CanvasContextError",
+      "ParserError",
+      "AssetError",
+      "CombatError",
+      "SaveError",
+      "CollisionError",
+    ]);
+
+    const violations: ImportViolation[] = [];
+
+    for (const file of gameFiles) {
+      const raw = fs.readFileSync(file, "utf-8");
+      const clean = stripComments(raw);
+      const lines = clean.split("\n");
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        let match: RegExpExecArray | null;
+        while ((match = throwNewPattern.exec(line)) !== null) {
+          const errorClassName = match[1];
+          if (!allowedErrorClasses.has(errorClassName)) {
+            violations.push({
+              file: path.relative(rootDir, file).replace(/\\/g, "/"),
+              lineNo: i + 1,
+              line: line.trim(),
+            });
+          }
+        }
+      }
+    }
+
+    assertZeroViolations(
+      violations,
+      "Exceptions thrown in src/game must use the GameBaseError domain hierarchy rather than raw Error or ad-hoc classes"
+    );
+  });
+
+  it("enforces barrel file discipline: external consumers must import via @ui, @lib/logger, and @lib/errors facades instead of deep internal paths", () => {
+    const allProdFiles = getAllSourceFiles(srcDir).filter(
+      (file) =>
+        !file.includes("__tests__") &&
+        !file.endsWith(".test.ts") &&
+        !file.endsWith(".test.tsx")
+    );
+
+    const deepUiPattern = /from\s+["'].*ui\/(?:primitives|controls|layout)\//;
+    const deepLoggerPattern = /from\s+["'].*lib\/logger\/(?:transports|formatters)\//;
+    const deepErrorsPattern = /from\s+["'].*lib\/errors\/(?:domainErrors|types)\//;
+
+    const violations: ImportViolation[] = [];
+
+    for (const file of allProdFiles) {
+      const rel = path.relative(rootDir, file).replace(/\\/g, "/");
+      const isInsideUi = rel.startsWith("src/ui/");
+      const isInsideLogger = rel.startsWith("src/lib/logger/");
+      const isInsideErrors = rel.startsWith("src/lib/errors/");
+
+      const raw = fs.readFileSync(file, "utf-8");
+      const clean = stripComments(raw);
+      const lines = clean.split("\n");
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        if (!isInsideUi && deepUiPattern.test(line)) {
+          violations.push({
+            file: rel,
+            lineNo: i + 1,
+            line: line.trim(),
+          });
+        }
+        if (!isInsideLogger && deepLoggerPattern.test(line)) {
+          violations.push({
+            file: rel,
+            lineNo: i + 1,
+            line: line.trim(),
+          });
+        }
+        if (!isInsideErrors && deepErrorsPattern.test(line)) {
+          violations.push({
+            file: rel,
+            lineNo: i + 1,
+            line: line.trim(),
+          });
+        }
+      }
+    }
+
+    assertZeroViolations(
+      violations,
+      "External consumers must use module entry-point barrel facades (@ui, @lib/logger, @lib/errors) instead of deep private paths"
+    );
+  });
 });
 

@@ -58,11 +58,12 @@ describe("Developer Cheat Engine Application Integration Tests", () => {
   });
 
   describe("Vitals & Progression Cheats", () => {
-    it("refills player health, mana, and stamina to maximum", () => {
+    it("refills player health, mana, and stamina to maximum and updates UI snapshot hash", () => {
       const p1 = engine.players[0];
       p1.health = 15;
       p1.mana = 5;
       p1.stamina = 10;
+      engine.checkAndUpdateVitalsSnapshot();
 
       engine.debugController.refillVitals(0);
 
@@ -70,6 +71,8 @@ describe("Developer Cheat Engine Application Integration Tests", () => {
       expect(p1.mana).toBe(p1.maxMana);
       expect(p1.stamina).toBe(p1.maxStamina);
       expect(p1.isDead).toBe(false);
+      // Confirms the change triggers snapshot difference for React UI update
+      expect(engine.checkAndUpdateVitalsSnapshot()).toBe(true);
     });
 
     it("unlocks all spells and grants bonus skill points", () => {
@@ -131,14 +134,28 @@ describe("Developer Cheat Engine Application Integration Tests", () => {
   });
 
   describe("Simulation Time Scale Tuning", () => {
-    it("adjusts global simulation time scale multiplier via debugManager", () => {
-      expect(debugManager.state.timeScale).toBe(1.0);
+    it("modulates engine simulation step rate via debugManager timeScale", () => {
+      const p1 = engine.players[0];
+      p1.x = 100;
+      p1.y = 200;
+      p1.vx = 10;
+      p1.vy = 0;
 
-      debugManager.setTimeScale(2.5);
-      expect(debugManager.state.timeScale).toBe(2.5);
+      // At normal 1.0x scale
+      debugManager.setTimeScale(1.0);
+      engine.fixedUpdate(1.0);
+      const deltaNormal = p1.x - 100;
 
-      debugManager.setTimeScale(0.25);
-      expect(debugManager.state.timeScale).toBe(0.25);
+      // Reset and simulate at 2.0x scale
+      p1.x = 100;
+      p1.y = 200;
+      p1.vx = 10;
+      p1.vy = 0;
+      debugManager.setTimeScale(2.0);
+      engine.fixedUpdate(1.0);
+      const deltaFast = p1.x - 100;
+
+      expect(deltaFast).toBeGreaterThan(deltaNormal);
     });
   });
 });

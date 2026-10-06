@@ -217,6 +217,10 @@ export class GameEngine {
   private animationId: number | null = null;
   public isPaused: boolean = false;
 
+  public get isLoopRunning(): boolean {
+    return this.isRunning;
+  }
+
   // React listener callbacks
   private stateListeners: Set<() => void> = new Set();
   private lastVitalsHash: string = "";

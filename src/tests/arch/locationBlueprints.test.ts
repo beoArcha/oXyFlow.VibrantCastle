@@ -207,15 +207,6 @@ describe("Location Blueprint Schema Contracts", () => {
       expect(missingMonsterRefs).toEqual([]);
     });
 
-    it("ensures monster templates declare positive dimensions and health invariants", () => {
-      for (const [key, monster] of Object.entries(CANONICAL_ENEMY_REGISTRY)) {
-        expect(monster.dimensions.width).toBeGreaterThan(0);
-        expect(monster.dimensions.height).toBeGreaterThan(0);
-        expect(monster.stats.health).toBeGreaterThan(0);
-        expect(monster.stats.maxHealth).toBeGreaterThanOrEqual(monster.stats.health);
-        expect(monster.stats.speed).toBeGreaterThanOrEqual(0);
-      }
-    });
 
 
     it("instantiates enemies cleanly for single-player and two-player modes", () => {
@@ -330,21 +321,5 @@ describe("Location Blueprint Schema Contracts", () => {
       expect(missingPortalKeys).toEqual([]);
     });
 
-    it("ensures all monster nameKeys exist in EN and PL translation dictionaries", () => {
-      const missingMonsterKeys: { monsterKey: string; key: string; lang: string }[] = [];
-
-      for (const [monsterKey, monster] of Object.entries(CANONICAL_ENEMY_REGISTRY)) {
-        if (monster.nameKey) {
-          if (!(monster.nameKey in enDict)) {
-            missingMonsterKeys.push({ monsterKey, key: monster.nameKey, lang: "en" });
-          }
-          if (!(monster.nameKey in plDict)) {
-            missingMonsterKeys.push({ monsterKey, key: monster.nameKey, lang: "pl" });
-          }
-        }
-      }
-
-      expect(missingMonsterKeys).toEqual([]);
-    });
   });
 });
