@@ -8,10 +8,11 @@ import {
   ZoomOut,
   RotateCcw,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Button } from "@ui";
+import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from "@ui";
+import { cn } from "@lib/utils";
 import skillsJson from "@data/skills/skills.json";
 import { calculateDagNodePositions, DagNodePosition } from "@lib/math/dagLayout";
-import { SkillCharacter, SkillNodeJsonSchema } from "@lib/schemas/skillsSchema";
+import { SkillCharacter, SkillNodeJsonSchema, SkillsDictionaryJsonSchema } from "@lib/schemas/skillsSchema";
 import { useI18n } from "@context/I18nContext";
 
 export const SkillTreeVisualizerCard: React.FC = () => {
@@ -21,7 +22,8 @@ export const SkillTreeVisualizerCard: React.FC = () => {
   const [zoomScale, setZoomScale] = useState<number>(1);
 
   const characterSkills: SkillNodeJsonSchema[] = useMemo(() => {
-    return (skillsJson as any)[selectedCharacter] ?? [];
+    const typedSkills = skillsJson as SkillsDictionaryJsonSchema;
+    return typedSkills[selectedCharacter] ?? [];
   }, [selectedCharacter]);
 
   const layout = useMemo(() => {
@@ -65,28 +67,24 @@ export const SkillTreeVisualizerCard: React.FC = () => {
           </CardTitle>
           <div className="flex items-center gap-2">
             {!layout.hasCycles ? (
-              <span
+              <Badge
+                variant="green"
+                icon={<CheckCircle2 size={13} />}
                 role="status"
                 aria-live="polite"
-                className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-950/60 border border-emerald-700/50 px-2.5 py-1 rounded-md shadow-sm"
               >
-                <CheckCircle2 size={13} />
-                <span>
-                  {t("dataStudioSkillTreeValid")} ({layout.nodes.length},{" "}
-                  {layout.edges.length})
-                </span>
-              </span>
+                {t("dataStudioSkillTreeValid")} ({layout.nodes.length},{" "}
+                {layout.edges.length})
+              </Badge>
             ) : (
-              <span
+              <Badge
+                variant="red"
+                icon={<AlertOctagon size={13} />}
                 role="alert"
                 aria-live="polite"
-                className="flex items-center gap-1.5 text-xs font-semibold text-rose-400 bg-rose-950/60 border border-rose-700/50 px-2.5 py-1 rounded-md shadow-sm"
               >
-                <AlertOctagon size={13} />
-                <span>
-                  {t("dataStudioSkillTreeCycleDetected")} ({layout.cycles.length})
-                </span>
-              </span>
+                {t("dataStudioSkillTreeCycleDetected")} ({layout.cycles.length})
+              </Badge>
             )}
           </div>
         </div>
@@ -151,7 +149,7 @@ export const SkillTreeVisualizerCard: React.FC = () => {
           </div>
         </div>
 
-        <div className="relative overflow-auto border border-amber-900/60 rounded-lg bg-[#0e0402] p-2 min-h-[360px] max-h-[560px] touch-pan-x touch-pan-y">
+        <div className="relative overflow-auto border border-amber-900/60 rounded-lg bg-stone-950 p-2 min-h-[360px] max-h-[560px] touch-pan-x touch-pan-y">
           <div
             style={{
               width: `${layout.width * zoomScale}px`,
@@ -175,7 +173,7 @@ export const SkillTreeVisualizerCard: React.FC = () => {
                   markerHeight="6"
                   orient="auto-start-reverse"
                 >
-                  <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+                  <path d="M 0 1 L 10 5 L 0 9 z" className="fill-amber-500" />
                 </marker>
               </defs>
 
@@ -195,8 +193,7 @@ export const SkillTreeVisualizerCard: React.FC = () => {
                     key={`${edge.fromId}->${edge.toId}`}
                     d={`M ${startX} ${startY} C ${startX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`}
                     fill="none"
-                    stroke="#b45309"
-                    strokeWidth="2"
+                    className="stroke-amber-600 stroke-2"
                     markerEnd="url(#dag-arrow)"
                   />
                 );
@@ -226,35 +223,34 @@ export const SkillTreeVisualizerCard: React.FC = () => {
                       width="140"
                       height="65"
                       rx="6"
-                      fill={isSelected ? "#3b160b" : "#1a0803"}
-                      stroke={isSelected ? "#f59e0b" : "#78350f"}
-                      strokeWidth={isSelected ? "2" : "1"}
+                      className={cn(
+                        isSelected
+                          ? "fill-amber-950 stroke-amber-500 stroke-2"
+                          : "fill-stone-950 stroke-amber-900 stroke-1"
+                      )}
                     />
                     <text
                       x="10"
                       y="22"
-                      fill="#fde68a"
                       fontSize="11"
                       fontWeight="bold"
-                      className="select-none font-sans"
+                      className="select-none font-sans fill-amber-200"
                     >
                       {skill?.nameKey ? t(skill.nameKey).slice(0, 15) : pos.id.slice(0, 15)}
                     </text>
                     <text
                       x="10"
                       y="38"
-                      fill="#ca8a04"
                       fontSize="9.5"
-                      className="select-none font-mono"
+                      className="select-none font-mono fill-amber-500"
                     >
                       {t("dataStudioSkillTreeTier")} {pos.tier} • {skill?.pointCost ?? 1} SP
                     </text>
                     <text
                       x="10"
                       y="52"
-                      fill="#a8a29e"
                       fontSize="9"
-                      className="select-none font-mono"
+                      className="select-none font-mono fill-stone-400"
                     >
                       {skill?.category ?? "active"}
                     </text>
@@ -266,10 +262,11 @@ export const SkillTreeVisualizerCard: React.FC = () => {
         </div>
 
         {inspectedSkill && (
-          <div
+          <Card
+            variant="subtle"
             role="region"
             aria-live="polite"
-            className="bg-[#140602] border border-amber-800/60 rounded-lg p-3 text-xs flex flex-col gap-2 shadow-sm"
+            className="p-3 text-xs flex flex-col gap-2 shadow-sm"
           >
             <div className="flex items-center justify-between flex-wrap gap-1">
               <span className="font-semibold text-amber-300 flex items-center gap-1.5">
@@ -297,7 +294,7 @@ export const SkillTreeVisualizerCard: React.FC = () => {
                 {inspectedSkill.reqSkillId ?? t("dataStudioSkillTreeRequiresNone")}
               </div>
             </div>
-          </div>
+          </Card>
         )}
       </CardContent>
     </Card>

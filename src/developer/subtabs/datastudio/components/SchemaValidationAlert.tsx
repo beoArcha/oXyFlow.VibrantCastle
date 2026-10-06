@@ -1,5 +1,5 @@
 import React from "react";
-import { AlertTriangle } from "lucide-react";
+import { Alert } from "@ui";
 import { ValidationErrorDetail } from "@lib/schemas/commonSchema";
 import { useI18n } from "@context/I18nContext";
 
@@ -9,6 +9,9 @@ export interface SchemaValidationAlertProps {
   className?: string;
 }
 
+/**
+ * Composite validation alert displaying schema validation issues using the design system Alert primitive.
+ */
 export const SchemaValidationAlert: React.FC<SchemaValidationAlertProps> = ({
   errors,
   title,
@@ -18,15 +21,13 @@ export const SchemaValidationAlert: React.FC<SchemaValidationAlertProps> = ({
   if (errors.length === 0) return null;
 
   return (
-    <div
+    <Alert
+      variant="danger"
+      title={title ?? t("dataStudioValidationErrors")}
       role="alert"
       aria-live="polite"
-      className={`bg-rose-950/40 border border-rose-900/60 rounded-lg p-3 text-xs text-rose-300 flex flex-col gap-1.5 shadow-sm ${className}`}
+      className={className}
     >
-      <div className="flex items-center gap-1.5 font-semibold text-rose-400">
-        <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-rose-400" />
-        <span>{title ?? t("dataStudioValidationErrors")}</span>
-      </div>
       <ul className="flex flex-col gap-1 pl-1 list-none m-0">
         {errors.map((err, idx) => (
           <li key={`${err.path}-${idx}`} className="font-mono text-[11px] leading-snug">
@@ -36,6 +37,6 @@ export const SchemaValidationAlert: React.FC<SchemaValidationAlertProps> = ({
           </li>
         ))}
       </ul>
-    </div>
+    </Alert>
   );
 };

@@ -1,49 +1,90 @@
 import React, { useState, useMemo } from "react";
-import { MessageSquare, UserCheck, ChevronRight, BookOpen, Skull } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Button, Select } from "@ui";
-import { CharacterPortrait } from "@components/character/CharacterPortrait";
+import { MessageSquare } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent, Select } from "@ui";
 import dialoguesVnJson from "@data/narrative/dialogues_vn.json";
-import { VisualNovelSceneJsonSchema } from "@lib/schemas/visualNovelSchema";
+import {
+  VisualNovelSceneJsonSchema,
+  VisualNovelDocumentJsonSchema,
+} from "@lib/schemas/visualNovelSchema";
 import { useI18n } from "@context/I18nContext";
 import {
   discoverSceneSpeakers,
   resolveEmotionsForSpeaker,
   calculateGridCoordinates,
+  resolveSceneRoster,
+  getSceneSummaries,
 } from "./services/visualNovelService";
+import { SceneSelectorHeader } from "./components/vn/SceneSelectorHeader";
+import { MultiCharacterStage } from "./components/vn/MultiCharacterStage";
+import { DialogueBubble } from "./components/vn/DialogueBubble";
+import { ExportToolbar } from "./components/ExportToolbar";
 
 export const VisualNovelPreviewCard: React.FC = () => {
   const { t } = useI18n();
-  const scene = dialoguesVnJson.scenes.scene_clocktower_meeting as unknown as VisualNovelSceneJsonSchema;
-  const nodeKeys = useMemo(() => Object.keys(scene.nodes), [scene]);
+  const vnDocument = dialoguesVnJson as VisualNovelDocumentJsonSchema;
 
-  const [activeNodeId, setActiveNodeId] = useState<string>(scene.initialNodeId);
+  const sceneSummaries = useMemo(
+    () => getSceneSummaries(vnDocument, (key) => t(key)),
+    [vnDocument, t]
+  );
+
+  const sceneOptions = useMemo(
+    () =>
+      sceneSummaries.map((s) => ({
+        value: s.sceneId,
+        label: `${s.title} (${s.sceneId})`,
+      })),
+    [sceneSummaries]
+  );
+
+  const [selectedSceneId, setSelectedSceneId] = useState<string>(
+    sceneSummaries[0]?.sceneId ?? "scene_clocktower_meeting"
+  );
+
+  const currentScene: VisualNovelSceneJsonSchema = useMemo(() => {
+    return vnDocument.scenes[selectedSceneId] ?? Object.values(vnDocument.scenes)[0];
+  }, [vnDocument, selectedSceneId]);
+
+  const nodeKeys = useMemo(
+    () => Object.keys(currentScene.nodes ?? {}),
+    [currentScene]
+  );
+
+  const [activeNodeId, setActiveNodeId] = useState<string>(
+    currentScene.initialNodeId ?? nodeKeys[0] ?? ""
+  );
+
   const currentNode = useMemo(() => {
-    return scene.nodes[activeNodeId] ?? scene.nodes[scene.initialNodeId];
-  }, [scene, activeNodeId]);
+    return (
+      currentScene.nodes[activeNodeId] ??
+      currentScene.nodes[currentScene.initialNodeId] ??
+      Object.values(currentScene.nodes)[0]
+    );
+  }, [currentScene, activeNodeId]);
 
   const speakerOptions = useMemo(
     () =>
-      discoverSceneSpeakers(scene, {
+      discoverSceneSpeakers(currentScene, {
         heroValen: t("dataStudioVnSpeakerHeroValen"),
         heroAurelia: t("dataStudioVnSpeakerHeroAurelia"),
         narrator: t("dataStudioVnSpeakerNarrator"),
         bossPrefix: t("dataStudioVnSpeakerBossPrefix"),
         enemyPrefix: t("dataStudioVnSpeakerEnemyPrefix"),
       }),
-    [scene, t]
+    [currentScene, t]
   );
 
   const [selectedSpeakerId, setSelectedSpeakerId] = useState<string>(
-    currentNode.speaker || "valen"
+    currentNode?.speaker || "valen"
   );
   const [selectedEmotion, setSelectedEmotion] = useState<string>("stoic");
 
-  const effectiveSpeaker = currentNode.speaker || selectedSpeakerId;
+  const effectiveSpeaker = currentNode?.speaker || selectedSpeakerId;
   const availableEmotions = useMemo(
     () => resolveEmotionsForSpeaker(effectiveSpeaker),
     [effectiveSpeaker]
   );
-  const effectiveEmotion = currentNode.emotion || selectedEmotion;
+  const effectiveEmotion = currentNode?.emotion || selectedEmotion;
 
   const { row, col, index } = useMemo(
     () => calculateGridCoordinates(effectiveEmotion, availableEmotions),
@@ -61,29 +102,70 @@ export const VisualNovelPreviewCard: React.FC = () => {
   );
 
   const isNarrator = effectiveSpeaker === "narrator";
-  const isHero = effectiveSpeaker === "valen" || effectiveSpeaker === "aurelia";
+
+  const stageActors = useMemo(() => {
+    return resolveSceneRoster(
+      currentScene,
+      currentNode,
+      effectiveSpeaker,
+      effectiveEmotion,
+      (keyOrId) => (keyOrId.startsWith("char") || keyOrId.startsWith("vn") ? t(keyOrId) : keyOrId)
+    );
+  }, [currentScene, currentNode, effectiveSpeaker, effectiveEmotion, t]);
+
+  const handleSelectScene = (sceneId: string) => {
+    setSelectedSceneId(sceneId);
+    const nextScene = vnDocument.scenes[sceneId];
+    if (nextScene) {
+      setActiveNodeId(nextScene.initialNodeId);
+      const firstNode = nextScene.nodes[nextScene.initialNodeId];
+      if (firstNode?.speaker) {
+        setSelectedSpeakerId(firstNode.speaker);
+      }
+    }
+  };
+
+  const handleSelectNode = (nodeId: string) => {
+    if (currentScene.nodes[nodeId]) {
+      setActiveNodeId(nodeId);
+      const targetNode = currentScene.nodes[nodeId];
+      if (targetNode?.speaker) {
+        setSelectedSpeakerId(targetNode.speaker);
+        const nextEmotions = resolveEmotionsForSpeaker(targetNode.speaker);
+        setSelectedEmotion(targetNode.emotion ?? nextEmotions[0] ?? "neutral");
+      }
+    }
+  };
 
   return (
     <Card variant="default">
       <CardHeader>
-        <CardTitle icon={<MessageSquare className="w-4 h-4 text-sky-400" />}>
-          {t("dataStudioVnCardTitle")}
-        </CardTitle>
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <CardTitle icon={<MessageSquare className="w-4 h-4 text-sky-400" />}>
+            {t("dataStudioVnCardTitle")}
+          </CardTitle>
+          <ExportToolbar
+            data={currentScene}
+            filename={`${currentScene.sceneId || "scene"}.json`}
+            modalTitle={`${t("dataStudioExportModalTitle")}: ${currentScene.sceneId}`}
+            isValid={true}
+          />
+        </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
+        <SceneSelectorHeader
+          selectedSceneId={selectedSceneId}
+          onSelectScene={handleSelectScene}
+          sceneOptions={sceneOptions}
+          currentScene={currentScene}
+        />
+
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3 bg-stone-950/60 border border-stone-800/80 rounded-lg">
           <Select
             id="vn-select-node"
             label={t("dataStudioVnDialogueNode")}
             value={activeNodeId}
-            onChange={(e) => {
-              const nextNodeId = e.target.value;
-              setActiveNodeId(nextNodeId);
-              const node = scene.nodes[nextNodeId];
-              if (node?.speaker) {
-                setSelectedSpeakerId(node.speaker);
-              }
-            }}
+            onChange={(e) => handleSelectNode(e.target.value)}
             options={nodeOptions}
             variant="castle"
             size="sm"
@@ -115,125 +197,40 @@ export const VisualNovelPreviewCard: React.FC = () => {
           />
         </div>
 
-        <div className="flex items-center gap-3 text-xs bg-[#140602]/80 border border-amber-900/40 rounded-lg px-3 py-2 flex-wrap">
+        <div className="flex items-center gap-3 text-xs bg-stone-950/80 border border-amber-900/40 rounded-lg px-3 py-2 flex-wrap">
           <span className="text-amber-200/70">
             {t("dataStudioVnActiveEmotion")}:{" "}
             <strong className="text-amber-300 font-mono">{effectiveEmotion}</strong>
           </span>
           <span className="text-amber-200/70">
             {t("dataStudioVnGridCell")}:{" "}
-            <span className="text-amber-100 font-medium">
+            <span className="text-amber-100 font-medium font-mono">
               R{row}, C{col} (Idx: {index})
             </span>
           </span>
           <span className="text-amber-200/70">
             {t("dataStudioVnPosition")}:{" "}
-            <strong className="text-amber-300">{currentNode.position ?? "center"}</strong>
+            <strong className="text-amber-300 font-mono">{currentNode.position ?? "center"}</strong>
+          </span>
+          <span className="text-amber-200/70">
+            Cast: <strong className="text-amber-300">{stageActors.length} characters on stage</strong>
           </span>
         </div>
 
-        <div className="relative bg-[#0d0402] border border-amber-900/70 rounded-lg p-4 flex flex-col md:flex-row items-center gap-4 min-h-[160px]">
-          <div className="shrink-0 flex flex-col items-center gap-1.5">
-            {isHero ? (
-              <CharacterPortrait
-                characterId={effectiveSpeaker}
-                mood={effectiveEmotion}
-                size="xl"
-                variant="framed"
-              />
-            ) : isNarrator ? (
-              <div
-                className="w-32 h-32 rounded-lg border border-amber-600/60 bg-[#1e0e05] flex flex-col items-center justify-center gap-2 text-amber-300 shadow-md"
-                role="img"
-                aria-label={t("dataStudioVnSpeakerNarrator")}
-              >
-                <BookOpen size={36} className="text-amber-400" />
-                <span className="text-[10px] font-serif uppercase tracking-wider font-bold">
-                  {t("dataStudioVnSpeakerNarrator")}
-                </span>
-              </div>
-            ) : (
-              <div
-                className="w-32 h-32 rounded-lg border border-rose-700/60 bg-[#1c0604] flex flex-col items-center justify-center gap-2 text-rose-300 shadow-md"
-                role="img"
-                aria-label={effectiveSpeaker}
-              >
-                <Skull size={36} className="text-rose-400" />
-                <span className="text-[10px] font-mono uppercase tracking-wider font-bold px-1 text-center truncate max-w-full">
-                  {effectiveSpeaker}
-                </span>
-              </div>
-            )}
-            <span className="text-[11px] font-semibold text-amber-300 uppercase tracking-wider">
-              {currentNode.speakerNameKey ? t(currentNode.speakerNameKey) : effectiveSpeaker}
-            </span>
-          </div>
+        <MultiCharacterStage
+          actors={stageActors}
+          isNarratorSpeaking={isNarrator}
+          backgroundId={currentScene.backgroundId}
+        />
 
-          <section
-            aria-label={t("dataStudioVnSpeakerSpeechAria")}
-            aria-live="polite"
-            className="flex-1 w-full bg-[#1c0803]/90 border border-amber-800/60 rounded-lg p-3.5 flex flex-col justify-between gap-3 shadow-lg"
-          >
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center justify-between text-xs font-semibold text-amber-400">
-                <span className="flex items-center gap-1">
-                  <UserCheck size={13} />
-                  {currentNode.speakerNameKey ? t(currentNode.speakerNameKey) : effectiveSpeaker}
-                </span>
-                <span className="font-mono text-[10px] text-amber-200/50">
-                  {t("dataStudioVnNodeLabel")}: {currentNode.id}
-                </span>
-              </div>
-              <p className="text-xs text-amber-100/90 leading-relaxed italic">
-                "{t(currentNode.dialogueKey)}"
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-1.5 pt-2 border-t border-amber-900/40">
-              {currentNode.choices && currentNode.choices.length > 0 ? (
-                <div role="group" aria-label={t("dataStudioVnPlayerDecisions")} className="flex flex-col gap-1">
-                  <span className="text-[10px] font-medium text-amber-200/60">
-                    {t("dataStudioVnPlayerDecisions")}
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    {currentNode.choices.map((choice) => (
-                      <Button
-                        key={choice.choiceId}
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => {
-                          if (scene.nodes[choice.targetNodeId]) {
-                            setActiveNodeId(choice.targetNodeId);
-                          }
-                        }}
-                      >
-                        {t(choice.textKey)}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              ) : currentNode.nextNodeId ? (
-                <Button
-                  variant="primary"
-                  size="sm"
-                  className="self-end"
-                  icon={<ChevronRight size={13} />}
-                  onClick={() => {
-                    if (currentNode.nextNodeId && scene.nodes[currentNode.nextNodeId]) {
-                      setActiveNodeId(currentNode.nextNodeId);
-                    }
-                  }}
-                >
-                  {t("dataStudioVnContinueDialogue")}
-                </Button>
-              ) : (
-                <span className="text-[11px] text-emerald-400 font-medium self-end">
-                  • {t("dataStudioVnEndOfScene")}
-                </span>
-              )}
-            </div>
-          </section>
-        </div>
+        <DialogueBubble
+          node={currentNode}
+          activeSpeakerName={
+            currentNode.speakerNameKey ? t(currentNode.speakerNameKey) : effectiveSpeaker
+          }
+          isNarrator={isNarrator}
+          onSelectNode={handleSelectNode}
+        />
       </CardContent>
     </Card>
   );

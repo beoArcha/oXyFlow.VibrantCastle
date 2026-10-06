@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Shield } from "lucide-react";
 import {
   Card,
@@ -8,6 +8,7 @@ import {
   Input,
   Select,
   CompactNumberStepper,
+  ItemSlot,
 } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import itemsJson from "@data/items/items.json";
@@ -23,6 +24,9 @@ import { DAMAGE_TYPES, DamageType } from "@lib/schemas/spellsSchema";
 import { PresetSelectorHeader } from "./components/PresetSelectorHeader";
 import { SchemaValidationAlert } from "./components/SchemaValidationAlert";
 import { SchemaValidationBadge } from "./components/SchemaValidationBadge";
+import { ExportToolbar } from "./components/ExportToolbar";
+import { useEntityDraft } from "./hooks/useEntityDraft";
+import { createDefaultItemDraft } from "./services/entityDraftFactory";
 
 export const ItemEditorCard: React.FC = () => {
   const { t } = useI18n();
@@ -31,50 +35,20 @@ export const ItemEditorCard: React.FC = () => {
     () => Object.values(itemsJson as Record<string, ItemJsonSchema>),
     []
   );
-  const [selectedItemId, setSelectedItemId] = useState<string>(existingItems[0]?.id ?? "");
 
-  const initialItem = useMemo(
-    () => existingItems.find((item) => item.id === selectedItemId) ?? existingItems[0],
-    [existingItems, selectedItemId]
-  );
-
-  const [draft, setDraft] = useState<Partial<ItemJsonSchema>>(() => ({
-    id: initialItem?.id ?? "item_new",
-    nameKey: initialItem?.nameKey ?? "itemNew",
-    descriptionKey: initialItem?.descriptionKey ?? "itemNewDesc",
-    type: initialItem?.type ?? "weapon",
-    rarity: initialItem?.rarity ?? "common",
-    icon: initialItem?.icon ?? "Sword",
-    attackBonus: initialItem?.attackBonus ?? 10,
-    defenseBonus: initialItem?.defenseBonus ?? 0,
-    damageType: initialItem?.damageType ?? "physical",
-    maxHpBonus: initialItem?.maxHpBonus ?? 0,
-    maxManaBonus: initialItem?.maxManaBonus ?? 0,
-  }));
-
-  const handleSelectItem = (itemId: string) => {
-    setSelectedItemId(itemId);
-    const found = existingItems.find((item) => item.id === itemId);
-    if (found) {
-      setDraft({ ...found });
-    }
-  };
-
-  const validationResult = useMemo(() => {
-    return validateItem(draft);
-  }, [draft]);
-
-  const validationErrors = useMemo(
-    () => (validationResult.success ? [] : validationResult.errors),
-    [validationResult]
-  );
-
-  const updateField = <K extends keyof ItemJsonSchema>(field: K, value: ItemJsonSchema[K]) => {
-    setDraft((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+  const {
+    selectedId: selectedItemId,
+    draft,
+    updateField,
+    validationResult,
+    validationErrors,
+    handleSelectPreset: handleSelectItem,
+    handleCreateNew,
+  } = useEntityDraft<ItemJsonSchema>({
+    initialItems: existingItems,
+    createDefaultDraft: createDefaultItemDraft,
+    validate: validateItem,
+  });
 
   const itemTypeOptions = useMemo(
     () => ITEM_TYPES.map((type) => ({ value: type, label: type })),
@@ -107,10 +81,18 @@ export const ItemEditorCard: React.FC = () => {
           <CardTitle icon={<Shield className="w-4 h-4 text-emerald-400" />}>
             {t("dataStudioItemCardTitle")}
           </CardTitle>
-          <SchemaValidationBadge
-            isValid={validationResult.success}
-            errorCount={validationErrors.length}
-          />
+          <div className="flex items-center gap-2">
+            <ExportToolbar
+              data={draft}
+              filename={`${draft.id || "item"}.json`}
+              modalTitle={`${t("dataStudioExportModalTitle")}: ${draft.id || "item"}`}
+              isValid={validationResult.success}
+            />
+            <SchemaValidationBadge
+              isValid={validationResult.success}
+              errorCount={validationErrors.length}
+            />
+          </div>
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
@@ -119,22 +101,43 @@ export const ItemEditorCard: React.FC = () => {
           onSelect={handleSelectItem}
           options={presetOptions}
           createButtonLabel={t("dataStudioItemCreateNew")}
-          onCreateNew={() => {
-            setDraft({
-              id: `item_custom_${Date.now().toString().slice(-4)}`,
-              nameKey: "itemCustomName",
-              descriptionKey: "itemCustomDesc",
-              type: "weapon",
-              rarity: "rare",
-              icon: "Sparkles",
-              attackBonus: 25,
-              defenseBonus: 5,
-              damageType: "astral",
-              maxHpBonus: 20,
-              maxManaBonus: 10,
-            });
-          }}
+          onCreateNew={handleCreateNew}
         />
+
+        {/* Visual Item Preview & Properties */}
+        <div className="flex items-center gap-4 p-3 bg-stone-950/60 border border-stone-800/80 rounded-lg flex-wrap sm:flex-nowrap">
+          <div className="shrink-0 flex flex-col items-center gap-1.5">
+            <ItemSlot
+              size="lg"
+              rarity={draft.rarity}
+              slot={{
+                id: draft.id,
+                icon: draft.icon,
+                rarity: draft.rarity,
+                label: draft.id,
+              }}
+            />
+            <span className="text-[10px] uppercase font-mono tracking-wider text-amber-300 font-semibold">
+              {draft.rarity ?? "common"}
+            </span>
+          </div>
+          <div className="flex-1 flex flex-col gap-1 text-xs text-stone-300">
+            <div className="flex items-center justify-between">
+              <strong className="text-amber-200 text-sm font-semibold">{draft.id}</strong>
+              <span className="font-mono text-amber-400 font-semibold uppercase">{draft.type}</span>
+            </div>
+            <p className="text-[11px] text-stone-400 italic">
+              {draft.descriptionKey ? t(draft.descriptionKey) : draft.descriptionKey}
+            </p>
+            <div className="flex items-center gap-3 text-[11px] text-stone-300 font-mono pt-1 flex-wrap">
+              {draft.attackBonus ? <span>ATK: +{draft.attackBonus}</span> : null}
+              {draft.defenseBonus ? <span>DEF: +{draft.defenseBonus}</span> : null}
+              {draft.maxHpBonus ? <span>HP: +{draft.maxHpBonus}</span> : null}
+              {draft.maxManaBonus ? <span>MP: +{draft.maxManaBonus}</span> : null}
+              {draft.damageType ? <span className="text-amber-300">[{draft.damageType}]</span> : null}
+            </div>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
           <Input

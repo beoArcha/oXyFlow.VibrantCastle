@@ -97,10 +97,22 @@ describe("DataStudio Developer Suite", () => {
   });
 
   describe("EnemyEditorCard", () => {
-    it("renders enemy form attributes and validates dimensions and stats in English", () => {
+    it("renders bestiary catalog mode by default in English", () => {
       const html = renderToString(
         <TestProviders defaultLanguage="en">
           <EnemyEditorCard />
+        </TestProviders>
+      );
+
+      expect(html).toContain("Bestiary Catalog");
+      expect(html).toContain("Monster Editor");
+      expect(html).toContain("Export Bestiary");
+    });
+
+    it("renders enemy form attributes and validates dimensions and stats in English", () => {
+      const html = renderToString(
+        <TestProviders defaultLanguage="en">
+          <EnemyEditorCard initialMode="editor" />
         </TestProviders>
       );
 
@@ -113,7 +125,7 @@ describe("DataStudio Developer Suite", () => {
     it("renders enemy form attributes in Polish", () => {
       const html = renderToString(
         <TestProviders defaultLanguage="pl">
-          <EnemyEditorCard />
+          <EnemyEditorCard initialMode="editor" />
         </TestProviders>
       );
 
