@@ -1,11 +1,5 @@
 /**
- * MetaParser.ts
- *
  * Universal Orchestrator & Factory for Entity and Atlas Metadata Documents.
- * Adheres strictly to SOLID:
- * - OCP: Open for extension via pluggable sub-parsers without modifying core orchestration.
- * - DIP: Injects domain section parsers with robust defaults.
- * - ISP: Exposes role-specialized parsing methods (parseCharacter, parseCreature, parseStructure, parseUniversal).
  */
 
 import {

@@ -1,6 +1,4 @@
 /**
- * AtlasAssetRegistry.ts
- *
  * Central Asset Registry Service implementing SOLID (OCP, DIP, SRP).
  * Preloads registered assets from atlas_manifest.json and supports dynamic runtime additions.
  */
@@ -59,7 +57,6 @@ export class AtlasAssetRegistry implements IAtlasAssetRegistry {
 
   /**
    * Dynamically resolves asset bundled payload using Vite globs or environment fallback.
-   * Adheres strictly to OCP and SRP - zero hardcoded imports.
    */
   private resolveBundledPayload(
     item: IAtlasAssetManifestItem

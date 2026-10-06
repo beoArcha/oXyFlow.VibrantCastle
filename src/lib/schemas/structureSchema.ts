@@ -3,7 +3,6 @@
  * 
  * Formal contract for interactive world objects, mechanisms, barriers, and hazards
  * matching src/data/structures/structures.json.
- * Adheres strictly to Zero-External-Dependency rules for src/lib.
  */
 
 import {

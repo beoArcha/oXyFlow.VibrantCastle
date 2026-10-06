@@ -12,7 +12,6 @@ export interface SlicingContext {
 
 /**
  * Strategy interface for slicing sprite sheets into discrete frames (GoF Strategy Pattern).
- * Adheres to Single Responsibility Principle (SRP) and Open/Closed Principle (OCP).
  */
 export interface ISlicingStrategy {
   readonly method: SlicingMethod;

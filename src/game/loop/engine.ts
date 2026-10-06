@@ -396,7 +396,7 @@ export class GameEngine {
 
   /**
    * Loads and switches the active location by ID.
-   * Preserves player progression (HP, mana, stamina, inventory, skills) like Castlevania.
+   * Preserves player progression (HP, mana, stamina, inventory, skills) across room transitions.
    */
   public loadLocation(
     locationId: LocationId,

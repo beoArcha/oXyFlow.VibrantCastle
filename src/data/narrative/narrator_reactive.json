@@ -1,0 +1,61 @@
+{
+  "version": "1.0",
+  "quotes": [
+    {
+      "id": "quote_hazard_fall",
+      "eventType": "hazard_damage",
+      "quoteKey": "narratorHazardFallQuote",
+      "priority": 80,
+      "cooldownSeconds": 15,
+      "maxTriggersPerSession": 5,
+      "soundCue": "wind_gust"
+    },
+    {
+      "id": "quote_boss_flawless",
+      "eventType": "boss_defeat_flawless",
+      "quoteKey": "narratorBossFlawlessQuote",
+      "priority": 100,
+      "cooldownSeconds": 60,
+      "maxTriggersPerSession": 1,
+      "soundCue": "fanfare_triumph"
+    },
+    {
+      "id": "quote_lever_pulled",
+      "eventType": "lever_activated",
+      "quoteKey": "narratorLeverPulledQuote",
+      "priority": 60,
+      "cooldownSeconds": 10,
+      "maxTriggersPerSession": 3,
+      "soundCue": "gear_grind"
+    },
+    {
+      "id": "quote_low_health_warning",
+      "eventType": "low_health",
+      "quoteKey": "narratorLowHealthQuote",
+      "priority": 90,
+      "cooldownSeconds": 30,
+      "maxTriggersPerSession": 3,
+      "conditions": {
+        "hpPercentageBelow": 25
+      }
+    },
+    {
+      "id": "quote_unison_strike",
+      "eventType": "unison_cast",
+      "quoteKey": "narratorUnisonStrikeQuote",
+      "priority": 85,
+      "cooldownSeconds": 20,
+      "maxTriggersPerSession": 4,
+      "soundCue": "crystal_resonance"
+    },
+    {
+      "id": "quote_secret_found",
+      "eventType": "secret_revealed",
+      "quoteKey": "narratorSecretFoundQuote",
+      "priority": 70,
+      "cooldownSeconds": 15,
+      "maxTriggersPerSession": 3,
+      "soundCue": "chime_intro"
+    }
+  ]
+}

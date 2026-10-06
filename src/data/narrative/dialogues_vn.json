@@ -1,0 +1,96 @@
+{
+  "version": "1.0",
+  "scenes": {
+    "scene_clocktower_meeting": {
+      "sceneId": "scene_clocktower_meeting",
+      "titleKey": "vnSceneClocktowerTitle",
+      "initialNodeId": "node_start",
+      "backgroundId": "bg_clocktower",
+      "musicCue": "bgm_clocktower_theme",
+      "metadata": {
+        "characters": ["valen", "aurelia"],
+        "locationId": "clocktower",
+        "actId": "act_1"
+      },
+      "nodes": {
+        "node_start": {
+          "id": "node_start",
+          "speaker": "narrator",
+          "dialogueKey": "vnDialogueClocktowerIntro",
+          "nextNodeId": "node_valen_arrival"
+        },
+        "node_valen_arrival": {
+          "id": "node_valen_arrival",
+          "speaker": "valen",
+          "speakerNameKey": "charValenName",
+          "position": "left",
+          "emotion": "stoic",
+          "dialogueKey": "vnDialogueValenObserve",
+          "nextNodeId": "node_aurelia_reveal"
+        },
+        "node_aurelia_reveal": {
+          "id": "node_aurelia_reveal",
+          "speaker": "aurelia",
+          "speakerNameKey": "charAureliaName",
+          "position": "right",
+          "emotion": "serene",
+          "dialogueKey": "vnDialogueAureliaGreeting",
+          "nextNodeId": "node_valen_choice"
+        },
+        "node_valen_choice": {
+          "id": "node_valen_choice",
+          "speaker": "valen",
+          "speakerNameKey": "charValenName",
+          "position": "left",
+          "emotion": "curious",
+          "dialogueKey": "vnDialogueValenInquire",
+          "choices": [
+            {
+              "choiceId": "choice_cooperate",
+              "textKey": "vnChoiceCooperate",
+              "targetNodeId": "node_branch_cooperate"
+            },
+            {
+              "choiceId": "choice_caution",
+              "textKey": "vnChoiceCaution",
+              "targetNodeId": "node_branch_caution"
+            }
+          ]
+        },
+        "node_branch_cooperate": {
+          "id": "node_branch_cooperate",
+          "speaker": "aurelia",
+          "speakerNameKey": "charAureliaName",
+          "position": "right",
+          "emotion": "radiant",
+          "dialogueKey": "vnDialogueAureliaCooperate",
+          "nextNodeId": "node_pact_formed"
+        },
+        "node_branch_caution": {
+          "id": "node_branch_caution",
+          "speaker": "aurelia",
+          "speakerNameKey": "charAureliaName",
+          "position": "right",
+          "emotion": "determined",
+          "dialogueKey": "vnDialogueAureliaCaution",
+          "nextNodeId": "node_pact_formed"
+        },
+        "node_pact_formed": {
+          "id": "node_pact_formed",
+          "speaker": "valen",
+          "speakerNameKey": "charValenName",
+          "position": "left",
+          "emotion": "resolute",
+          "dialogueKey": "vnDialogueValenResolute",
+          "nextNodeId": "node_conclusion"
+        },
+        "node_conclusion": {
+          "id": "node_conclusion",
+          "speaker": "narrator",
+          "dialogueKey": "vnDialogueClocktowerConclusion",
+          "nextNodeId": null
+        }
+      }
+    }
+  }
+}

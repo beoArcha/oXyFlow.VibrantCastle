@@ -2,8 +2,6 @@
  * Items Schema Contract & Validator
  * 
  * Formal contract for RPG equipment, weapons, armor, accessories, and consumables
- * matching src/data/items/items.json.
- * Adheres strictly to Zero-External-Dependency rules for src/lib.
  */
 
 import {

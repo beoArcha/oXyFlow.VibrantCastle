@@ -11,7 +11,6 @@ export interface LoopCircuitBreakerOptions {
 /**
  * LoopCircuitBreaker protects the high-frequency (60 FPS) game loop
  * from runaway error cascades and memory/console lockups.
- * Adheres to Single Responsibility Principle (SRP).
  */
 export class LoopCircuitBreaker {
   private consecutiveErrors = 0;

@@ -9,9 +9,8 @@ export interface IPhysicsAudio {
 
 /**
  * Manages pure game physics and kinematics: acceleration, friction, asymmetric gravity, velocities,
- * slide/dash momentum, backsteps, and Celeste/Hollow Knight-grade jump mechanics (variable height,
+ * slide/dash momentum, backsteps, and precision platforming jump mechanics (variable height,
  * coyote time, jump buffering, apex float).
- * Adheres strictly to SOLID Single Responsibility Principle (SRP) and Dependency Inversion (DIP).
  */
 export class GamePhysicsEngine {
   // Asymmetric & dynamic gravity tuned for snappy responsive game feel

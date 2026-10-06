@@ -4,6 +4,8 @@
   "nameKey": "locationClocktowerName",
   "descriptionKey": "locationClocktowerDesc",
   "openingNarrationKey": "narrationShootingRange",
+  "sceneType": "action_platformer",
+  "linkedSceneId": "scene_clocktower_meeting",
   "dimensions": {
     "width": 3200,
     "height": 1050

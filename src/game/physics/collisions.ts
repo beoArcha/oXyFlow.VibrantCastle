@@ -10,7 +10,6 @@ export interface ICollisionContext {
 
 /**
  * Interface for the Strategy Pattern handling collisions.
- * Adheres to Interface Segregation and Liskov Substitution principles.
  */
 export interface CollisionStrategy {
   handle(player: Player, entity: Entity, context: ICollisionContext): void;

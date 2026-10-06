@@ -3,7 +3,6 @@
  * 
  * Translates between external progression/skill_trees.json format and internal
  * DomainSkillProgression models with strict DAG validation and error handling.
- * Adheres strictly to Zero-External-Dependency rules for src/lib.
  */
 
 import { Result, ok, err, CodecError, ErrorCode } from "../errors";
@@ -49,8 +48,7 @@ export interface DomainSkillProgressionDocument {
 }
 
 export class ProgressionCodec
-  implements Codec<SkillProgressionDocumentJsonSchema, DomainSkillProgressionDocument>
-{
+  implements Codec<SkillProgressionDocumentJsonSchema, DomainSkillProgressionDocument> {
   public readonly name = "ProgressionCodec";
 
   public decode(raw: unknown): Result<DomainSkillProgressionDocument, CodecError> {

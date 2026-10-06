@@ -942,12 +942,35 @@ export interface NarrationsI18n {
   trainingMagicPrompt: string;
   trainingRangePrompt: string;
   creativeVibe: string;
+
+  // Contextual Reactive Narrator Quotes
+  narratorHazardFallQuote: string;
+  narratorBossFlawlessQuote: string;
+  narratorLeverPulledQuote: string;
+  narratorLowHealthQuote: string;
+  narratorUnisonStrikeQuote: string;
+  narratorSecretFoundQuote: string;
 }
 
 export interface DialoguesI18n {
   ravenCorvusGreeting: string;
   catAmberGreeting: string;
   sageBastionGreeting: string;
+
+  // Visual Novel Scenes & Dialogue Nodes
+  vnSceneClocktowerTitle: string;
+  charValenName: string;
+  charAureliaName: string;
+  vnDialogueClocktowerIntro: string;
+  vnDialogueValenObserve: string;
+  vnDialogueAureliaGreeting: string;
+  vnDialogueValenInquire: string;
+  vnChoiceCooperate: string;
+  vnChoiceCaution: string;
+  vnDialogueAureliaCooperate: string;
+  vnDialogueAureliaCaution: string;
+  vnDialogueValenResolute: string;
+  vnDialogueClocktowerConclusion: string;
 }
 
 export interface LoreI18n {

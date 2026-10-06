@@ -3,7 +3,6 @@
  * 
  * Translates between external spells.json format (and SpellsDocumentJsonSchema)
  * and internal DomainSpell models.
- * Adheres strictly to Zero-External-Dependency rules for src/lib.
  */
 
 import { Result, ok, err, CodecError, ErrorCode } from "../errors";

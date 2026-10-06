@@ -4,6 +4,7 @@
   "nameKey": "locationThornChasmName",
   "descriptionKey": "locationThornChasmDesc",
   "openingNarrationKey": "narrationMovement",
+  "sceneType": "action_platformer",
   "dimensions": {
     "width": 2800,
     "height": 700

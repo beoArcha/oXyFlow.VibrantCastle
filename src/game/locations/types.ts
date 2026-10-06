@@ -3,6 +3,7 @@ import {
   ParallaxBackgroundSchema,
   PortalDefinitionSchema,
   LocationJsonSchema,
+  LocationSceneType,
   ParticleType,
 } from "./schema/locationSchema";
 
@@ -32,6 +33,8 @@ export interface LocationDefinition {
   p2SpawnOffset: Vector2D;
   theme: LocationTheme;
   openingNarrationKey: string;
+  sceneType?: LocationSceneType;
+  linkedSceneId?: string;
   nextLocationId?: LocationId;
   parallaxBackground?: ParallaxBackgroundSchema;
   portals?: PortalDefinitionSchema[];

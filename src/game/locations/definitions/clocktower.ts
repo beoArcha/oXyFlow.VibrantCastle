@@ -18,7 +18,7 @@ import bgTowerCloseHighPng from "@assets/bg/clocktower/clocktower_close_high.png
  * - Multi-tiered vertical tower layout with dual moving elevators
  * - Angled target testing platforms (45° and 90° magic aiming)
  * - Clockwork Gear interactive lever and Spire Gate
- * - Castlevania portals: return to Thorn Chasm & forward to Aether Sanctuary
+ * - Room transition portals: return to Thorn Chasm & forward to Aether Sanctuary
  */
 export const clocktowerLocation: LocationDefinition = LocationParser.parse(
   clocktowerData as unknown as LocationJsonSchema

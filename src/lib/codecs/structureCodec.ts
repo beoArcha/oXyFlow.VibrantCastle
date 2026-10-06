@@ -1,8 +1,6 @@
 /**
  * Structure Bidirectional Codec
- * 
  * Translates between external structures.json format and internal DomainStructureTemplate models.
- * Adheres strictly to Zero-External-Dependency rules for src/lib.
  */
 
 import { Result, ok, err, CodecError, ErrorCode } from "../errors";
@@ -57,17 +55,17 @@ export class StructureCodec implements Codec<StructureJsonSchema, DomainStructur
       },
       atlas: d.atlas
         ? {
-            presetId: d.atlas.presetId,
-            states: d.atlas.states ? { ...d.atlas.states } : undefined
-          }
+          presetId: d.atlas.presetId,
+          states: d.atlas.states ? { ...d.atlas.states } : undefined
+        }
         : undefined,
       interaction: d.interaction
         ? {
-            type: d.interaction.type,
-            activation: d.interaction.activation,
-            triggerRadius: d.interaction.triggerRadius,
-            effects: d.interaction.effects ? { ...d.interaction.effects } : undefined
-          }
+          type: d.interaction.type,
+          activation: d.interaction.activation,
+          triggerRadius: d.interaction.triggerRadius,
+          effects: d.interaction.effects ? { ...d.interaction.effects } : undefined
+        }
         : undefined,
       proceduralFallback: d.proceduralFallback ? { ...d.proceduralFallback } : undefined
     };
@@ -87,17 +85,17 @@ export class StructureCodec implements Codec<StructureJsonSchema, DomainStructur
       },
       atlas: domain.atlas
         ? {
-            presetId: domain.atlas.presetId,
-            states: domain.atlas.states ? { ...domain.atlas.states } : undefined
-          }
+          presetId: domain.atlas.presetId,
+          states: domain.atlas.states ? { ...domain.atlas.states } : undefined
+        }
         : undefined,
       interaction: domain.interaction
         ? {
-            type: domain.interaction.type,
-            activation: domain.interaction.activation,
-            triggerRadius: domain.interaction.triggerRadius,
-            effects: domain.interaction.effects ? { ...domain.interaction.effects } : undefined
-          }
+          type: domain.interaction.type,
+          activation: domain.interaction.activation,
+          triggerRadius: domain.interaction.triggerRadius,
+          effects: domain.interaction.effects ? { ...domain.interaction.effects } : undefined
+        }
         : undefined,
       proceduralFallback: domain.proceduralFallback ? { ...domain.proceduralFallback } : undefined
     };

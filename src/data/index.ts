@@ -20,3 +20,9 @@ export { default as spellsData } from "./skills/spells.json";
 
 // DAG Skill Trees Progression Data (JSON)
 export { default as skillTreesData } from "./progression/skill_trees.json";
+
+// Visual Novel Narrative Dialogue Scenes (JSON)
+export { default as dialoguesVnData } from "./narrative/dialogues_vn.json";
+
+// Reactive Narrator Quotes (JSON)
+export { default as narratorReactiveData } from "./narrative/narrator_reactive.json";

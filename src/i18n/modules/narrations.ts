@@ -23,7 +23,14 @@ export const narrationsTranslations: Record<LanguageCode, NarrationsI18n> = {
     trainingGoalSuccess: "Trening mistrzowski ukończony! Zamek i jego sekrety czekają na odkrycie.",
     trainingMagicPrompt: "Skup energię w dłoniach. Klawisze C i V wyzwalają magię główną i pomocniczą.",
     trainingRangePrompt: "Strzelnica kątowa: Przytrzymaj Górę lub Dół podczas biegu, by strzelać pod kątem 45°, albo w miejscu, by strzelać pionowo!",
-    creativeVibe: "Styl: Castlevania Aria of Sorrow + Bastion, grafika w estetyce Hades i Owlboy",
+    creativeVibe: "Gotyckie Dark Fantasy Action-RPG z Reaktywną Narracją",
+
+    narratorHazardFallQuote: "Zimne kolce nie wybaczają pośpiechu. Podnieś się, otrzep proch i spójrz w górę.",
+    narratorBossFlawlessQuote: "Czysta poezja szermierki i magii. Żaden cios wroga nie dosięgnął szat wojownika.",
+    narratorLeverPulledQuote: "Stare żelazo uległo. Gdzieś w trzewiach bastionu otworzyła się nowa ścieżka.",
+    narratorLowHealthQuote: "Tętno przyspiesza, a wzrok zachodzi mgłą. Czas sięgnąć po eliksir nim będzie za późno.",
+    narratorUnisonStrikeQuote: "Słońce i gwiezdny pył w jednym rozbłysku. Siła duetu przekroczyła granice czasu.",
+    narratorSecretFoundQuote: "Cisza pękła. Za pękniętą płytą kryje się coś, co miało pozostać w zapomnieniu.",
   },
   en: {
     narrationOpening: "The youth awoke upon the vast castle grounds. The crisp air carried scents of dry autumn leaves and fresh aether.",
@@ -47,6 +54,13 @@ export const narrationsTranslations: Record<LanguageCode, NarrationsI18n> = {
     trainingGoalSuccess: "Mastery trial accomplished! The depths of the castle await.",
     trainingMagicPrompt: "Channel energy into your palms. Cast primary and secondary spells with dedicated keys.",
     trainingRangePrompt: "Angled shooting: Hold Up or Down during a run for 45° blasts, or stand in place for 90° vertical shots!",
-    creativeVibe: "Style: Castlevania Aria of Sorrow + Bastion, visual aesthetic inspired by Hades & Owlboy",
+    creativeVibe: "Gothic Dark Fantasy Action-RPG with Reactive Narration",
+
+    narratorHazardFallQuote: "The cold brambles show no mercy to the reckless. Rise, dust off the ash, and look upward.",
+    narratorBossFlawlessQuote: "Pure poetry of steel and sorcery. Not a single adversary strike grazed the duelist's cloak.",
+    narratorLeverPulledQuote: "The ancient iron relents. Somewhere deep within the citadel, a new pathway awakens.",
+    narratorLowHealthQuote: "The pulse quickens as vision blurs at the edges. Reach for a tonic before the dark claims you.",
+    narratorUnisonStrikeQuote: "Solar brilliance and starlight fused in a singular flash. The tandem strike transcends the flow of time.",
+    narratorSecretFoundQuote: "The silence fractures. Behind the worn masonry lies a treasure meant to stay buried.",
   },
 };

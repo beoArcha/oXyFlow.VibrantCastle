@@ -2,7 +2,6 @@
  * Enemy Bidirectional Codec
  * 
  * Translates between external enemies.json format and internal DomainEnemyTemplate models.
- * Adheres strictly to Zero-External-Dependency rules for src/lib.
  */
 
 import { Result, ok, err, CodecError, ErrorCode } from "../errors";

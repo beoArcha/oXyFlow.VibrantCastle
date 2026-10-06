@@ -8,6 +8,7 @@ import {
 import {
   LocationJsonSchema,
   BackgroundLayerTier,
+  LOCATION_SCENE_TYPES,
 } from "@game/locations/schema/locationSchema";
 import { translations } from "@i18n";
 
@@ -15,7 +16,7 @@ import { translations } from "@i18n";
  * ARCHITECTURAL TEST SUITE: Location Blueprint Schema Contracts
  *
  * Rationale & Invariants:
- * Castlevania-style levels are defined as declarative JSON blueprints.
+ * Levels and rooms are defined as declarative JSON blueprints.
  * Runtime crashes or broken game progression can occur if:
  * 1. Portals reference non-existent rooms (broken navigation graph).
  * 2. Placed enemies reference missing monster templates in the dictionary.
@@ -80,6 +81,20 @@ describe("Location Blueprint Schema Contracts", () => {
           expect(loc.height).toBe(json.dimensions.height);
           expect(loc.createEntities(false).length).toBeGreaterThan(0);
         }).not.toThrow();
+      }
+    });
+
+    it("ensures every blueprint specifies a valid sceneType supported by LocationParser", () => {
+      const validSceneTypes = new Set(LOCATION_SCENE_TYPES);
+      for (const { filename, json } of loadedBlueprints) {
+        const sceneType = json.sceneType || "action_platformer";
+        expect(validSceneTypes.has(sceneType)).toBe(true);
+
+        const loc = LocationParser.parse(json);
+        expect(loc.sceneType).toBe(sceneType);
+        if (json.linkedSceneId) {
+          expect(loc.linkedSceneId).toBe(json.linkedSceneId);
+        }
       }
     });
 

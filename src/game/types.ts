@@ -5,7 +5,6 @@ import type { DamageType, ItemStatusEffectSchema } from "@lib/schemas";
 
 /**
  * Shared types, interfaces, and enums for the 2D Game Engine.
- * Adheres strictly to SOLID principles and typescript standards.
  */
 
 export interface Vector2D {
@@ -325,7 +324,7 @@ export interface Entity {
   structureId?: string; // Links to structures.json (e.g. "aether_gate", "chrono_lever")
   animationState?: string; // e.g. "inactive", "charging", "activating", "active"
   animationTicks?: number;
-  // For portals / transitions (Castlevania-style)
+  // For portals / transitions (interconnected room network)
   targetLocationId?: string;
   targetSpawnPoint?: { x: number; y: number };
   portalActivation?: "touch" | "interact";

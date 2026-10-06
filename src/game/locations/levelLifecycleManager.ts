@@ -198,7 +198,7 @@ export class LevelLifecycleManager implements ILevelLifecycleManager {
     statsManager.recordLevelCompleted();
     this.context.playSFX(SoundType.SFX_SAVE);
 
-    // If portal specifies targetLocationId, transition seamlessly across the Castlevania network!
+    // If portal specifies targetLocationId, transition seamlessly across the interconnected location network!
     const targetLocId = (portalEntity?.targetLocationId || this.currentLocation?.nextLocationId) as
       | LocationId
       | undefined;

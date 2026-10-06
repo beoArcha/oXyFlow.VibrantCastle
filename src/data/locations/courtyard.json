@@ -4,6 +4,7 @@
   "nameKey": "locationCourtyardName",
   "descriptionKey": "locationCourtyardDesc",
   "openingNarrationKey": "narrationOpening",
+  "sceneType": "action_platformer",
   "dimensions": {
     "width": 3600,
     "height": 900

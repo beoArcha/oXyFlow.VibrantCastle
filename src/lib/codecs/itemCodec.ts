@@ -2,7 +2,6 @@
  * Item Bidirectional Codec
  * 
  * Translates between external items.json format and internal DomainItem models.
- * Adheres strictly to Zero-External-Dependency rules for src/lib.
  */
 
 import { Result, ok, err, CodecError, ErrorCode } from "../errors";

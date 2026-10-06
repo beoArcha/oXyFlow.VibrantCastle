@@ -46,12 +46,6 @@ const variantClasses: Record<CharacterPortraitVariant, string> = {
 
 /**
  * Generic Character Portrait Presentation Component
- *
- * Adheres strictly to separation of concerns:
- * - Presentation-only: renders the image or cropped sub-region that it is given.
- * - Semantic sizing & styling: supports raw, framed, circle variants and standardized sizes.
- * - Context-driven: if direct source/crop are not provided, it consumes the resolved portrait from context/hook.
- * - Memory & error resilient: unmount cancellation, error state fallback, DPR-aware canvas rendering.
  */
 export const CharacterPortrait = React.memo(
   React.forwardRef<HTMLDivElement, CharacterPortraitProps>(

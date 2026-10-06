@@ -12,3 +12,5 @@ export * from "./itemSchema";
 export * from "./enemySchema";
 export * from "./structureSchema";
 export * from "./progressionSchema";
+export * from "./visualNovelSchema";
+export * from "./narratorSchema";

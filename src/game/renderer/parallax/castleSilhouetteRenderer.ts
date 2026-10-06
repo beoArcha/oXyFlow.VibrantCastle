@@ -26,7 +26,7 @@ export interface ICastleSilhouetteRenderer {
 }
 
 /**
- * Dedicated renderer for Castlevania-style castle silhouettes (Distant Spires & Mid-ground Fortress Ramparts).
+ * Dedicated renderer for gothic atmospheric castle silhouettes (Distant Spires & Mid-ground Fortress Ramparts).
  */
 export class CastleSilhouetteRenderer implements ICastleSilhouetteRenderer {
   public render(

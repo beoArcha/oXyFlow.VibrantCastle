@@ -1,12 +1,5 @@
 /**
- * Location Schema Definition for Castlevania-style platformer.
- * 
- * Supports:
- * - Extensible Blueprint format
- * - Multi-layered Parallax backgrounds with oversized canvas boxes and dynamic scrolling
- * - Dictionaries: Monsters (templates), Entity Prefabs, Portals, Narrative triggers
- * - Multiple Portals in varied positions leading to diverse target locations
- * - Seamless player state retention across location transitions
+ * Location Schema Definition for gothic action-adventure platformer.
  */
 
 export type ParticleType = "leaf" | "dust" | "spark" | "magic" | "shield";
@@ -28,14 +21,14 @@ export interface ParallaxLayerSchema {
   name: string;
   tier?: BackgroundLayerTier;
   type:
-    | "image"
-    | "sky_gradient"
-    | "celestial"
-    | "castle_silhouettes"
-    | "mountain_ridges"
-    | "scenery_trees"
-    | "fog_overlay"
-    | "custom_shapes";
+  | "image"
+  | "sky_gradient"
+  | "celestial"
+  | "castle_silhouettes"
+  | "mountain_ridges"
+  | "scenery_trees"
+  | "fog_overlay"
+  | "custom_shapes";
   depth: number; // 0.05 = furthest background, 0.9 = foreground
   scrollSpeedX: number; // Parallax coefficient for X movement (e.g. 0.1, 0.25, 0.4)
   scrollSpeedY: number; // Parallax coefficient for Y movement (e.g. 0.05, 0.15)
@@ -227,6 +220,13 @@ export interface LocationLayoutSchema {
   enemies?: EnemyPlacementSchema[];
 }
 
+export const LOCATION_SCENE_TYPES = [
+  "action_platformer",
+  "visual_novel_stage",
+  "minigame_clockwork_puzzle",
+] as const;
+export type LocationSceneType = (typeof LOCATION_SCENE_TYPES)[number];
+
 /**
  * Complete Location JSON Blueprint Schema.
  */
@@ -236,6 +236,8 @@ export interface LocationJsonSchema {
   nameKey: string;
   descriptionKey: string;
   openingNarrationKey: string;
+  sceneType?: LocationSceneType;
+  linkedSceneId?: string;
   nextLocationId?: string;
   dimensions: {
     width: number;

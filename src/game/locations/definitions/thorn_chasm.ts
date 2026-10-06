@@ -16,7 +16,7 @@ import bgChasmCloseHighPng from "@assets/bg/thorn_chasm/thorn_chasm_close_high.p
  * - Extensible JSON schema with i18n keys
  * - 5-tier layered parallax background (far general base, mid-far, mid, mid-close, close overlay)
  * - Hazard pits, stepping stones, crouch slide archway, moving rock platform
- * - Castlevania portals: return to Courtyard & forward to Clocktower
+ * - Room transition portals: return to Courtyard & forward to Clocktower
  */
 export const thornChasmLocation: LocationDefinition = LocationParser.parse(
   thornChasmData as unknown as LocationJsonSchema

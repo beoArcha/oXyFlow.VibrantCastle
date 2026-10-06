@@ -3,7 +3,6 @@
  * 
  * Formal contract for enemy templates, combat stats, atlas bindings and fallbacks
  * matching src/data/enemies/enemies.json.
- * Adheres strictly to Zero-External-Dependency rules for src/lib.
  */
 
 import {

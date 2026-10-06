@@ -4,7 +4,6 @@
  * Formal contract for hero progression trees modeled as Directed Acyclic Graphs (DAG).
  * Validates acyclicity, root skill entry points, prerequisites referential integrity,
  * and character segregation for Valen and Aurelia.
- * Adheres strictly to Zero-External-Dependency rules for src/lib.
  */
 
 import {

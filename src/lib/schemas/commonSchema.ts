@@ -3,7 +3,6 @@
  * 
  * Provides foundational contracts, types, and composable validator utilities
  * for domain and data validation across the game engine, UI, and developer tools.
- * Adheres strictly to Zero-External-Dependency rules for src/lib.
  */
 
 export interface ValidationErrorDetail {

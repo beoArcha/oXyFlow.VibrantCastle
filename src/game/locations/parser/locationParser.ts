@@ -75,7 +75,7 @@ export class LocationParser {
       }
     }
 
-    // Canonical forward progression across Castlevania room network
+    // Canonical forward progression across location room network
     const CANONICAL_PROGRESSION: Record<LocationId, LocationId | undefined> = {
       courtyard: "thorn_chasm",
       thorn_chasm: "clocktower",
@@ -92,6 +92,8 @@ export class LocationParser {
       nameKey,
       descriptionKey,
       openingNarrationKey: openingNarrationKey || "narrationOpening",
+      sceneType: blueprint.sceneType || "action_platformer",
+      linkedSceneId: blueprint.linkedSceneId,
       width: dimensions.width,
       height: dimensions.height,
       spawnPoint: spawnPoints.default,
@@ -187,7 +189,7 @@ export class LocationParser {
           }
         }
 
-        // 5. Portals (Castlevania-style multi-room interconnects)
+        // 5. Portals (multi-room interconnects)
         if (layout.portals) {
           for (const p of layout.portals) {
             const portalDef = p.portalKey ? dictionaries.portals[p.portalKey] : undefined;

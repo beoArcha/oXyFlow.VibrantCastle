@@ -4,6 +4,7 @@
   "nameKey": "locationAetherSanctuaryName",
   "descriptionKey": "locationAetherSanctuaryDesc",
   "openingNarrationKey": "narrationMagicUsed",
+  "sceneType": "action_platformer",
   "dimensions": {
     "width": 3000,
     "height": 800

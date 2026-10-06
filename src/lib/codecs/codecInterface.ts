@@ -3,7 +3,6 @@
  * 
  * Provides type-safe bidirectional transformations between external JSON data structures
  * and internal strongly typed domain entities, with rich Result<T, CodecError> handling.
- * Adheres strictly to Zero-External-Dependency rules for src/lib.
  */
 
 import { Result, CodecError } from "../errors";

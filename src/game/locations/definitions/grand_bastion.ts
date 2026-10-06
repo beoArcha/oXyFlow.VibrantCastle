@@ -18,7 +18,7 @@ import bgBastionCloseHighPng from "@assets/bg/grand_bastion/grand_bastion_close_
  * - Expansive unified training circuit incorporating all zone archetypes
  * - Moving platform, thorn bridge, low crouch tunnel, angled shooting ledges
  * - Main Sluice Lever operating the Grand Portcullis
- * - Castlevania portals: return to Aether Sanctuary & Mastery Loop portal back to Courtyard
+ * - Room transition portals: return to Aether Sanctuary & Mastery Loop portal back to Courtyard
  */
 export const grandBastionLocation: LocationDefinition = LocationParser.parse(
   grandBastionData as unknown as LocationJsonSchema

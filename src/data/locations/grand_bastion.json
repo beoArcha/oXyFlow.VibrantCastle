@@ -4,6 +4,7 @@
   "nameKey": "locationGrandBastionName",
   "descriptionKey": "locationGrandBastionDesc",
   "openingNarrationKey": "trainingIntro",
+  "sceneType": "action_platformer",
   "dimensions": {
     "width": 3800,
     "height": 750

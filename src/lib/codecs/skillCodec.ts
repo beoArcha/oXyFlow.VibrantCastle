@@ -3,7 +3,6 @@
  * 
  * Translates between external skills.json format (and SkillsDictionaryJsonSchema)
  * and internal DomainSkillNode models.
- * Adheres strictly to Zero-External-Dependency rules for src/lib.
  */
 
 import { Result, ok, err, CodecError, ErrorCode } from "../errors";

@@ -30,7 +30,7 @@ const sizeStyles: Record<ButtonSize, string> = {
 };
 
 /**
- * Standard Castlevania Gothic interactive button primitive.
+ * Standard dark fantasy gothic interactive button primitive.
  * Supports forwardRef, semantic variants, sizes, icon slots, and accessible loading state.
  */
 export const Button = React.memo(
