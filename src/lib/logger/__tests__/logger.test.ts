@@ -271,4 +271,59 @@ describe("Logger System", () => {
       cleanup();
     });
   });
+
+  describe("ConsoleTransport & Test Environment Noise Suppression", () => {
+    it("suppresses console output by default in test environment", () => {
+      let consoleErrorCalled = false;
+      const originalError = console.error;
+      console.error = () => {
+        consoleErrorCalled = true;
+      };
+
+      try {
+        const transport = new ConsoleTransport({ minLevel: LogLevel.DEBUG });
+        transport.write({
+          id: "test_suppress",
+          timestamp: Date.now(),
+          timeFormatted: "12:00:00.000",
+          level: LogLevel.ERROR,
+          levelName: "ERROR",
+          category: "test:console",
+          message: "Error message that should be suppressed in tests",
+        });
+
+        expect(consoleErrorCalled).toBe(false);
+      } finally {
+        console.error = originalError;
+      }
+    });
+
+    it("writes to console when forceEnable is true", () => {
+      let capturedArgs: unknown[] = [];
+      const originalError = console.error;
+      console.error = (...args: unknown[]) => {
+        capturedArgs = args;
+      };
+
+      try {
+        const transport = new ConsoleTransport({
+          minLevel: LogLevel.DEBUG,
+          forceEnable: true,
+        });
+        transport.write({
+          id: "test_force",
+          timestamp: Date.now(),
+          timeFormatted: "12:00:00.000",
+          level: LogLevel.ERROR,
+          levelName: "ERROR",
+          category: "test:console",
+          message: "Explicit error",
+        });
+
+        expect(capturedArgs.length).toBeGreaterThan(0);
+      } finally {
+        console.error = originalError;
+      }
+    });
+  });
 });
