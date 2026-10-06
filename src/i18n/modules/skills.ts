@@ -113,7 +113,33 @@ export const skillsTranslations: Record<LanguageCode, SkillsI18n> = {
     restrictionAureliaSentinelSpark: "Mistyczna iskra 3 kręgu. Wymaga Zagięcia Czasu oraz 3 PU.",
     restrictionAureliaManaFont: "Wymaga poświęcenia 1 PU na zestrojenie z astralnymi rezerwami umysłu.",
     restrictionAureliaScholarlyFocus: "Wymaga Fontanny Many i 2 kręgu wtajemniczenia. Usprawnia czarowanie.",
-    restrictionAureliaAstralAttunement: "Ostateczna harmonia z kosmosem 3 kręgu. Wymaga Skupienia Uczonej oraz 3 PU."
+    restrictionAureliaAstralAttunement: "Ostateczna harmonia z kosmosem 3 kręgu. Wymaga Skupienia Uczonej oraz 3 PU.",
+
+    // DAG Skill Trees
+    treeValenSolarDuelist: "Klinga Słońca",
+    treeValenSunWarden: "Złoty Bastion",
+    treeAureliaAstralSorcery: "Gwiezdny Aether",
+    treeAureliaTimeWeaver: "Chronomancja",
+
+    // Enemy & Unison abilities
+    skillGargoyleDiveName: "Pikujący Szpon",
+    skillGargoyleDiveDesc: "Błyskawiczny atak z powietrza wymierzony prosto w intruza.",
+    skillSentinelAetherBeamName: "Wiązka Aetheru",
+    skillSentinelAetherBeamDesc: "Skupiony promień astralny wystrzeliwany z rdzenia strażnika.",
+    skillAutomatonHammerSlamName: "Młot Zegarowy",
+    skillAutomatonHammerSlamDesc: "Miażdżące uderzenie mechanicznego młota wstrząsające posadzką.",
+    skillChasmCrawlerBiteName: "Jadowite Kłapnięcie",
+    skillChasmCrawlerBiteDesc: "Agresywne ugryzienie bestii z przepaści.",
+    skillShadowKnightSlashName: "Cięcie Mroku",
+    skillShadowKnightSlashDesc: "Nasycone pustką zamkowe cięcie rozdzierające pancerz.",
+    skillAetherArchonWrathName: "Gniew Archonta",
+    skillAetherArchonWrathDesc: "Potężna fala aetherowej energii zmiatająca wszystko na swej drodze.",
+    skillOwlWindGustName: "Podmuch Wichru",
+    skillOwlWindGustDesc: "Skrzydlaty podmuch odpychający i raniący wrogów.",
+    skillDummyWobbleName: "Kołysanie Manekina",
+    skillDummyWobbleDesc: "Absorpcja ciosu i powrót do pozycji pionowej.",
+    skillUnisonSupernovaName: "Supernowa Duetu",
+    skillUnisonSupernovaDesc: "Połączona technika słonecznego miecza Valena i aetherowej fali Aurelii, wywołująca niszczycielski wybuch kosmicznego ognia."
   },
   en: {
     skillTreeTitle: "Constellation Grimoire of Magic",
@@ -227,6 +253,32 @@ export const skillsTranslations: Record<LanguageCode, SkillsI18n> = {
     restrictionAureliaSentinelSpark: "Tier 3 astral eye. Requires Temporal Phase and 3 SP.",
     restrictionAureliaManaFont: "Invest 1 SP to attune your mind with deep astral reservoirs.",
     restrictionAureliaScholarlyFocus: "Requires Mana Wellspring and Tier 2. Elevates incantation efficiency.",
-    restrictionAureliaAstralAttunement: "Ultimate Tier 3 cosmic resonance. Requires Scholar's Focus and 3 SP."
+    restrictionAureliaAstralAttunement: "Ultimate Tier 3 cosmic resonance. Requires Scholar's Focus and 3 SP.",
+
+    // DAG Skill Trees
+    treeValenSolarDuelist: "Solar Duelist",
+    treeValenSunWarden: "Sun Warden",
+    treeAureliaAstralSorcery: "Astral Sorcery",
+    treeAureliaTimeWeaver: "Time Weaver",
+
+    // Enemy & Unison abilities
+    skillGargoyleDiveName: "Gargoyle Dive Strike",
+    skillGargoyleDiveDesc: "A swift aerial dive aimed directly at the intruder.",
+    skillSentinelAetherBeamName: "Sentinel Aether Beam",
+    skillSentinelAetherBeamDesc: "A focused cosmic beam fired from the construct's power core.",
+    skillAutomatonHammerSlamName: "Clockwork Hammer Slam",
+    skillAutomatonHammerSlamDesc: "A crushing hammer strike that shatters stone underfoot.",
+    skillChasmCrawlerBiteName: "Venomous Snap",
+    skillChasmCrawlerBiteDesc: "An aggressive mandible lunge from chasm predators.",
+    skillShadowKnightSlashName: "Shadow Slash",
+    skillShadowKnightSlashDesc: "A void-infused blade slash piercing heavy armor.",
+    skillAetherArchonWrathName: "Archon's Wrath",
+    skillAetherArchonWrathDesc: "A devastating wave of pure celestial force sweeping the room.",
+    skillOwlWindGustName: "Wing Buffet",
+    skillOwlWindGustDesc: "A sudden blast of air pushing targets back.",
+    skillDummyWobbleName: "Dummy Resilience",
+    skillDummyWobbleDesc: "Absorbs physical impact and rights itself immediately.",
+    skillUnisonSupernovaName: "Supernova Combo",
+    skillUnisonSupernovaDesc: "Dual technique combining Valen's solar blade with Aurelia's aether barrage, triggering a cataclysmic cosmic explosion."
   }
 };

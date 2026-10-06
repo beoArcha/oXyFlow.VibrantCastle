@@ -17,7 +17,7 @@ import {
 } from "../index";
 import { renderIntoDom, cleanupDom, setupDomEnvironment } from "@test-utils";
 
-describe("Generic UI Controls (Phase 1)", () => {
+describe("Generic UI Controls", () => {
   beforeEach(() => {
     setupDomEnvironment();
   });

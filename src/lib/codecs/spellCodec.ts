@@ -20,7 +20,8 @@ import {
   DamageBreakdownSchema,
   ProjectileConfigSchema,
   SpellStatusEffectSchema,
-  CharacterId
+  CharacterId,
+  SpellOwnerType
 } from "../schemas";
 import { Codec } from "./codecInterface";
 
@@ -39,6 +40,8 @@ export interface DomainSpell {
   color: string;
   iconName: string;
   character?: CharacterId;
+  ownerType?: SpellOwnerType;
+  requiredParticipants?: CharacterId[];
   restrictionKey?: string;
   tier?: number;
   minLevel?: number;
@@ -84,6 +87,8 @@ export class SpellCodec implements Codec<SpellJsonSchema, DomainSpell> {
       color: data.color,
       iconName: data.iconName || data.icon || "Zap",
       character: data.character,
+      ownerType: data.ownerType,
+      requiredParticipants: data.requiredParticipants ? [...data.requiredParticipants] : undefined,
       restrictionKey: data.restrictionKey,
       tier: data.tier,
       minLevel: data.minLevel,
@@ -116,6 +121,8 @@ export class SpellCodec implements Codec<SpellJsonSchema, DomainSpell> {
       color: domain.color,
       iconName: domain.iconName,
       character: domain.character,
+      ownerType: domain.ownerType,
+      requiredParticipants: domain.requiredParticipants ? [...domain.requiredParticipants] : undefined,
       restrictionKey: domain.restrictionKey,
       tier: domain.tier,
       minLevel: domain.minLevel,

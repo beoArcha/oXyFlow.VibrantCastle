@@ -6,8 +6,19 @@
     "type": "weapon",
     "icon": "Sword",
     "rarity": "uncommon",
+    "damageType": "fire",
     "attackBonus": 15,
-    "maxStaminaBonus": 10
+    "maxStaminaBonus": 10,
+    "effectsOnHit": [
+      {
+        "type": "dot",
+        "effectId": "solar_burn",
+        "damageType": "fire",
+        "durationSeconds": 3,
+        "tickRateSeconds": 1,
+        "damagePerTick": 5
+      }
+    ]
   },
   "frost_rapier": {
     "id": "frost_rapier",
@@ -16,8 +27,19 @@
     "type": "weapon",
     "icon": "Zap",
     "rarity": "rare",
+    "damageType": "frost",
     "attackBonus": 22,
-    "maxManaBonus": 20
+    "maxManaBonus": 20,
+    "effectsOnHit": [
+      {
+        "type": "dot",
+        "effectId": "frostbite",
+        "damageType": "frost",
+        "durationSeconds": 3,
+        "tickRateSeconds": 1,
+        "damagePerTick": 4
+      }
+    ]
   },
   "aether_staff": {
     "id": "aether_staff",
@@ -26,9 +48,20 @@
     "type": "weapon",
     "icon": "Wand",
     "rarity": "rare",
+    "damageType": "aether",
     "attackBonus": 10,
     "maxManaBonus": 40,
-    "manaRegenBonus": 0.15
+    "manaRegenBonus": 0.15,
+    "effectsOnHit": [
+      {
+        "type": "dot",
+        "effectId": "aether_burn",
+        "damageType": "aether",
+        "durationSeconds": 3,
+        "tickRateSeconds": 1,
+        "damagePerTick": 4
+      }
+    ]
   },
   "brass_buckler": {
     "id": "brass_buckler",
@@ -140,7 +173,16 @@
     "type": "potion",
     "icon": "Heart",
     "rarity": "common",
-    "healHp": 45
+    "healHp": 45,
+    "overTimeEffects": [
+      {
+        "type": "hot",
+        "effectId": "health_regen",
+        "durationSeconds": 4,
+        "tickRateSeconds": 1,
+        "healPerTick": 5
+      }
+    ]
   },
   "potion_mana": {
     "id": "potion_mana",
@@ -149,7 +191,16 @@
     "type": "potion",
     "icon": "Zap",
     "rarity": "common",
-    "healMana": 40
+    "healMana": 40,
+    "overTimeEffects": [
+      {
+        "type": "hot",
+        "effectId": "mana_regen",
+        "durationSeconds": 4,
+        "tickRateSeconds": 1,
+        "healPerTick": 4
+      }
+    ]
   },
   "potion_elixir": {
     "id": "potion_elixir",
@@ -160,6 +211,15 @@
     "rarity": "rare",
     "healHp": 50,
     "healMana": 50,
-    "healStamina": 50
+    "healStamina": 50,
+    "overTimeEffects": [
+      {
+        "type": "hot",
+        "effectId": "rejuvenation_surge",
+        "durationSeconds": 5,
+        "tickRateSeconds": 1,
+        "healPerTick": 8
+      }
+    ]
   }
 }

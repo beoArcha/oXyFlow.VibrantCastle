@@ -19,7 +19,7 @@ describe("Schema Contracts & Validators (src/lib/schemas)", () => {
       }
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.length).toBe(19);
+        expect(result.data.length).toBe(28);
         const solarFlare = result.data.find((s) => s.id === "solar_flare");
         expect(solarFlare).toBeDefined();
         expect(solarFlare?.magicDomain).toBe("solar");

@@ -8,6 +8,7 @@ import { locationsTranslations } from "./modules/locations";
 import { narrationsTranslations } from "./modules/narrations";
 import { dialoguesTranslations } from "./modules/dialogues";
 import { loreTranslations } from "./modules/lore";
+import { bestiaryTranslations } from "./modules/bestiary";
 import { formatString } from "@lib/utils";
 
 export * from "./types";
@@ -20,6 +21,7 @@ export * from "./modules/locations";
 export * from "./modules/narrations";
 export * from "./modules/dialogues";
 export * from "./modules/lore";
+export * from "./modules/bestiary";
 
 const buildCombinedDictionary = (lang: LanguageCode): GameTranslationDictionary => {
   return {
@@ -32,6 +34,7 @@ const buildCombinedDictionary = (lang: LanguageCode): GameTranslationDictionary 
     ...narrationsTranslations[lang],
     ...dialoguesTranslations[lang],
     ...loreTranslations[lang],
+    ...bestiaryTranslations[lang],
   };
 };
 

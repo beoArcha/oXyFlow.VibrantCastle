@@ -8,7 +8,7 @@ import structuresJson from "@data/structures/structures.json";
 
 import { ErrorCode } from "../../errors";
 
-describe("Domain Codecs (Faza 2.2)", () => {
+describe("Domain Codecs", () => {
   describe("ItemCodec", () => {
     it("successfully decodes canonical items.json as a dictionary", () => {
       const result = itemCodec.decodeDictionary(itemsJson);

@@ -17,3 +17,6 @@ export { default as grandBastionBlueprint } from "./locations/grand_bastion.json
 
 // Declarative Spells Data (JSON)
 export { default as spellsData } from "./skills/spells.json";
+
+// DAG Skill Trees Progression Data (JSON)
+export { default as skillTreesData } from "./progression/skill_trees.json";

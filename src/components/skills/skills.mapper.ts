@@ -8,6 +8,8 @@ import type {
   SkillDetailVM,
   SkillCategoryType,
   SkillCategoryGroupVM,
+  SkillTreeDagNodeVM,
+  SkillTreeDagVM,
 } from "./types";
 
 export type {
@@ -17,6 +19,8 @@ export type {
   SkillDetailVM,
   SkillCategoryType,
   SkillCategoryGroupVM,
+  SkillTreeDagNodeVM,
+  SkillTreeDagVM,
 };
 
 export { formatFramesDuration };
@@ -192,4 +196,64 @@ export function createSkillCategoryGroups(
       nodes: catNodes,
     };
   });
+}
+
+export function toSkillTreeDagVM(
+  tree: {
+    treeId: string;
+    nameKey: string;
+    icon: string;
+    rootSkillIds: readonly string[] | string[];
+    nodes: Record<
+      string,
+      {
+        skillId: string;
+        tier: number;
+        pointCost: number;
+        prerequisites: string[];
+        gridPosition: { x: number; y: number };
+      }
+    >;
+  },
+  nodesLookup: Record<string, SkillTreeNode>,
+  evaluateSkill: (nodeId: string) => SkillUnlockEvaluation,
+  primarySpellId: string,
+  secondarySpellId: string
+): SkillTreeDagVM {
+  const dagNodes: SkillTreeDagNodeVM[] = Object.values(tree.nodes)
+    .sort((a, b) => a.tier - b.tier)
+    .map((dagNode) => {
+      const treeNode = nodesLookup[dagNode.skillId];
+      const evalResult = evaluateSkill(dagNode.skillId);
+      const isPrimary = primarySpellId === dagNode.skillId;
+      const isSecondary = secondarySpellId === dagNode.skillId;
+
+      const baseVM: SkillNodeVM = treeNode
+        ? toSkillNodeVM(treeNode, evalResult, isPrimary, isSecondary)
+        : {
+            id: dagNode.skillId,
+            nameKey: dagNode.skillId,
+            iconName: "Zap",
+            pointCost: dagNode.pointCost,
+            tier: dagNode.tier,
+            isUnlocked: evalResult.isUnlocked,
+            isUnlockable: evalResult.canUnlock,
+            isPrimary,
+            isSecondary,
+          };
+
+      return {
+        ...baseVM,
+        prerequisites: dagNode.prerequisites,
+        gridPosition: dagNode.gridPosition,
+      };
+    });
+
+  return {
+    treeId: tree.treeId,
+    nameKey: tree.nameKey,
+    icon: tree.icon,
+    rootSkillIds: tree.rootSkillIds,
+    nodes: dagNodes,
+  };
 }

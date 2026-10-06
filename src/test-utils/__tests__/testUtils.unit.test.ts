@@ -7,7 +7,7 @@ import {
   cleanupDom,
 } from "../index";
 
-describe("Test Utils Architecture & Helpers (Faza 4)", () => {
+describe("Test Utils Architecture & Helpers", () => {
   it("withSilencedConsole suppresses console error and warn during execution", async () => {
     let errorCalled = false;
     let warnCalled = false;

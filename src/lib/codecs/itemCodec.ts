@@ -10,6 +10,8 @@ import {
   ItemJsonSchema,
   ItemType,
   ItemRarity,
+  DamageType,
+  ItemStatusEffectSchema,
   validateItem,
   validateItemsDictionary,
   validateItemsList
@@ -23,6 +25,7 @@ export interface DomainItem {
   type: ItemType;
   icon: string;
   rarity: ItemRarity;
+  damageType?: DamageType;
   attackBonus?: number;
   defenseBonus?: number;
   maxHpBonus?: number;
@@ -35,6 +38,8 @@ export interface DomainItem {
   healMana?: number;
   healStamina?: number;
   count?: number;
+  effectsOnHit?: ItemStatusEffectSchema[];
+  overTimeEffects?: ItemStatusEffectSchema[];
 }
 
 export class ItemCodec implements Codec<ItemJsonSchema, DomainItem> {
@@ -62,6 +67,7 @@ export class ItemCodec implements Codec<ItemJsonSchema, DomainItem> {
       type: normalizedType as ItemType,
       icon: d.icon,
       rarity: d.rarity,
+      damageType: d.damageType,
       attackBonus: d.attackBonus,
       defenseBonus: d.defenseBonus,
       maxHpBonus: d.maxHpBonus,
@@ -73,7 +79,9 @@ export class ItemCodec implements Codec<ItemJsonSchema, DomainItem> {
       healHp: d.healHp,
       healMana: d.healMana,
       healStamina: d.healStamina,
-      count: d.count
+      count: d.count,
+      effectsOnHit: d.effectsOnHit ? d.effectsOnHit.map((e) => ({ ...e })) : undefined,
+      overTimeEffects: d.overTimeEffects ? d.overTimeEffects.map((e) => ({ ...e })) : undefined
     };
 
     return ok(domain);
@@ -87,6 +95,7 @@ export class ItemCodec implements Codec<ItemJsonSchema, DomainItem> {
       type: domain.type,
       icon: domain.icon,
       rarity: domain.rarity,
+      damageType: domain.damageType,
       attackBonus: domain.attackBonus,
       defenseBonus: domain.defenseBonus,
       maxHpBonus: domain.maxHpBonus,
@@ -98,7 +107,9 @@ export class ItemCodec implements Codec<ItemJsonSchema, DomainItem> {
       healHp: domain.healHp,
       healMana: domain.healMana,
       healStamina: domain.healStamina,
-      count: domain.count
+      count: domain.count,
+      effectsOnHit: domain.effectsOnHit ? domain.effectsOnHit.map((e) => ({ ...e })) : undefined,
+      overTimeEffects: domain.overTimeEffects ? domain.overTimeEffects.map((e) => ({ ...e })) : undefined
     };
 
     const valResult = validateItem(json);

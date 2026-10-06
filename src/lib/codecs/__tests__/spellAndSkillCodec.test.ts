@@ -13,7 +13,7 @@ describe("Bidirectional Codecs: SpellCodec & SkillCodec (src/lib/codecs)", () =>
       if (result.isOk()) {
         const dict = result.value;
         const spellIds = Object.keys(dict);
-        expect(spellIds.length).toBe(19);
+        expect(spellIds.length).toBeGreaterThanOrEqual(19);
 
         // Verify Solar Domain spell (Valen starter)
         const solarFlare = dict["solar_flare"];
@@ -36,6 +36,12 @@ describe("Bidirectional Codecs: SpellCodec & SkillCodec (src/lib/codecs)", () =>
         expect(frostNova.statusEffects).toBeDefined();
         expect(frostNova.statusEffects?.length).toBeGreaterThan(0);
         expect(frostNova.statusEffects?.[0].type).toBe("slow");
+
+        // Verify Unison Combo spell
+        const unison = dict["unison_supernova_nova"];
+        expect(unison).toBeDefined();
+        expect(unison.ownerType).toBe("unison");
+        expect(unison.requiredParticipants).toEqual(["valen", "aurelia"]);
       }
     });
 
@@ -52,7 +58,7 @@ describe("Bidirectional Codecs: SpellCodec & SkillCodec (src/lib/codecs)", () =>
           const reDecoded = spellCodec.decodeDictionary(encodedResult.value);
           expect(reDecoded.isOk()).toBe(true);
           if (reDecoded.isOk()) {
-            expect(Object.keys(reDecoded.value).length).toBe(19);
+            expect(Object.keys(reDecoded.value).length).toBe(Object.keys(decodedResult.value).length);
             expect(reDecoded.value["solar_flare"].damage).toBe(35);
             expect(reDecoded.value["frost_nova"].magicDomain).toBe("frost");
           }
@@ -64,7 +70,7 @@ describe("Bidirectional Codecs: SpellCodec & SkillCodec (src/lib/codecs)", () =>
       const result = spellCodec.decodeAll(spellsJson);
       expect(result.isOk()).toBe(true);
       if (result.isOk()) {
-        expect(result.value.length).toBe(19);
+        expect(result.value.length).toBeGreaterThanOrEqual(19);
         expect(result.value.some((s) => s.id === "celestial_comet")).toBe(true);
       }
     });

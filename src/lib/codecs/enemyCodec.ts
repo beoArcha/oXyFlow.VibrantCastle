@@ -12,6 +12,8 @@ import {
   EnemyStatsSchema,
   EnemyAtlasSchema,
   EnemyProceduralFallbackSchema,
+  EnemySoulDropSchema,
+  EnemyBestiaryConfigSchema,
   validateEnemy,
   validateEnemiesDocument,
   validateEnemiesJson
@@ -30,6 +32,10 @@ export interface DomainEnemyTemplate {
     height: number;
   };
   stats: EnemyStatsSchema;
+  abilities?: string[];
+  soulDrop?: EnemySoulDropSchema;
+  elementalResistances?: Record<string, number>;
+  bestiary?: EnemyBestiaryConfigSchema;
   atlas?: EnemyAtlasSchema;
   proceduralFallback?: EnemyProceduralFallbackSchema;
 }
@@ -63,6 +69,10 @@ export class EnemyCodec implements Codec<EnemyJsonSchema, DomainEnemyTemplate> {
         height: d.dimensions.height
       },
       stats: { ...d.stats },
+      abilities: d.abilities ? [...d.abilities] : undefined,
+      soulDrop: d.soulDrop ? { ...d.soulDrop, i18n: { ...d.soulDrop.i18n } } : undefined,
+      elementalResistances: d.elementalResistances ? { ...d.elementalResistances } : undefined,
+      bestiary: d.bestiary ? { ...d.bestiary } : undefined,
       atlas: d.atlas ? { ...d.atlas } : undefined,
       proceduralFallback: d.proceduralFallback ? { ...d.proceduralFallback } : undefined
     };
@@ -83,6 +93,10 @@ export class EnemyCodec implements Codec<EnemyJsonSchema, DomainEnemyTemplate> {
         height: domain.dimensions.height
       },
       stats: { ...domain.stats },
+      abilities: domain.abilities ? [...domain.abilities] : undefined,
+      soulDrop: domain.soulDrop ? { ...domain.soulDrop, i18n: { ...domain.soulDrop.i18n } } : undefined,
+      elementalResistances: domain.elementalResistances ? { ...domain.elementalResistances } : undefined,
+      bestiary: domain.bestiary ? { ...domain.bestiary } : undefined,
       atlas: domain.atlas ? { ...domain.atlas } : undefined,
       proceduralFallback: domain.proceduralFallback ? { ...domain.proceduralFallback } : undefined
     };

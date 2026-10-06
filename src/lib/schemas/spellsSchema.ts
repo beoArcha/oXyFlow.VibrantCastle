@@ -63,6 +63,9 @@ export type SpellTriggerType = (typeof SPELL_TRIGGER_TYPES)[number];
 export const CHARACTERS = ["valen", "aurelia"] as const;
 export type CharacterId = (typeof CHARACTERS)[number];
 
+export const SPELL_OWNER_TYPES = ["hero", "enemy", "boss", "unison"] as const;
+export type SpellOwnerType = (typeof SPELL_OWNER_TYPES)[number];
+
 export interface DamageComponentSchema {
   type: DamageType;
   amount: number;
@@ -114,6 +117,8 @@ export interface SpellJsonSchema {
   iconName: string;
   icon?: string;
   character?: CharacterId;
+  ownerType?: SpellOwnerType;
+  requiredParticipants?: CharacterId[];
   restrictionKey?: string;
   tier?: number;
   minLevel?: number;
@@ -164,6 +169,16 @@ export function validateSpell(raw: unknown, pathPrefix = ""): ValidationResult<S
   }
 
   validateOptionalEnum(raw.character, `${prefix}character`, CHARACTERS, errors);
+  validateOptionalEnum(raw.ownerType, `${prefix}ownerType`, SPELL_OWNER_TYPES, errors);
+
+  if (raw.requiredParticipants !== undefined && raw.requiredParticipants !== null) {
+    if (validateArray(raw.requiredParticipants, `${prefix}requiredParticipants`, errors)) {
+      raw.requiredParticipants.forEach((p, idx) => {
+        validateEnum(p, `${prefix}requiredParticipants[${idx}]`, CHARACTERS, errors);
+      });
+    }
+  }
+
   validateOptionalString(raw.restrictionKey, `${prefix}restrictionKey`, errors);
   validateOptionalNumber(raw.tier, `${prefix}tier`, errors, 1, 10);
   validateOptionalNumber(raw.minLevel, `${prefix}minLevel`, errors, 1, 100);

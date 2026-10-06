@@ -1,6 +1,7 @@
 import type { GameTranslationDictionary } from "@i18n/types";
 import type { GameSessionStats } from "./logic/stats/statsTypes";
 import type { AssetQuality } from "../types/assets";
+import type { DamageType, ItemStatusEffectSchema } from "@lib/schemas";
 
 /**
  * Shared types, interfaces, and enums for the 2D Game Engine.
@@ -145,6 +146,9 @@ export interface ItemBase {
   type: ItemType;
   icon: string;
   rarity: ItemRarity;
+  damageType?: DamageType;
+  effectsOnHit?: ItemStatusEffectSchema[];
+  overTimeEffects?: ItemStatusEffectSchema[];
 }
 
 export interface ICombatModifiers {

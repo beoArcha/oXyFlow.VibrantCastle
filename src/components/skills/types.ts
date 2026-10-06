@@ -55,3 +55,16 @@ export interface SkillCategoryGroupVM {
   readonly iconType: "flame" | "shield" | "zap";
   readonly nodes: readonly SkillNodeVM[];
 }
+
+export interface SkillTreeDagNodeVM extends SkillNodeVM {
+  readonly prerequisites: readonly string[];
+  readonly gridPosition: { readonly x: number; readonly y: number };
+}
+
+export interface SkillTreeDagVM {
+  readonly treeId: string;
+  readonly nameKey: string;
+  readonly icon: string;
+  readonly rootSkillIds: readonly string[];
+  readonly nodes: readonly SkillTreeDagNodeVM[];
+}

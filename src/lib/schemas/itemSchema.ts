@@ -18,6 +18,7 @@ import {
   validateArray,
   validateObject
 } from "./commonSchema";
+import { DamageType, DAMAGE_TYPES } from "./spellsSchema";
 
 export const ITEM_TYPES = [
   "weapon",
@@ -35,6 +36,19 @@ export type ItemType = (typeof ITEM_TYPES)[number];
 export const ITEM_RARITIES = ["common", "uncommon", "rare", "legendary"] as const;
 export type ItemRarity = (typeof ITEM_RARITIES)[number];
 
+export const STATUS_EFFECT_TYPES = ["dot", "hot", "buff", "debuff"] as const;
+export type StatusEffectType = (typeof STATUS_EFFECT_TYPES)[number];
+
+export interface ItemStatusEffectSchema {
+  type: StatusEffectType;
+  effectId: string;
+  damageType?: DamageType;
+  durationSeconds: number;
+  tickRateSeconds?: number;
+  damagePerTick?: number;
+  healPerTick?: number;
+}
+
 export interface ItemJsonSchema {
   id: string;
   nameKey: string;
@@ -42,6 +56,7 @@ export interface ItemJsonSchema {
   type: ItemType;
   icon: string;
   rarity: ItemRarity;
+  damageType?: DamageType;
   attackBonus?: number;
   defenseBonus?: number;
   maxHpBonus?: number;
@@ -54,6 +69,8 @@ export interface ItemJsonSchema {
   healMana?: number;
   healStamina?: number;
   count?: number;
+  effectsOnHit?: ItemStatusEffectSchema[];
+  overTimeEffects?: ItemStatusEffectSchema[];
 }
 
 export function validateItem(raw: unknown, pathPrefix = ""): ValidationResult<ItemJsonSchema> {
@@ -84,6 +101,34 @@ export function validateItem(raw: unknown, pathPrefix = ""): ValidationResult<It
   validateOptionalNumber(raw.healMana, `${prefix}healMana`, errors, 0);
   validateOptionalNumber(raw.healStamina, `${prefix}healStamina`, errors, 0);
   validateOptionalNumber(raw.count, `${prefix}count`, errors, 1);
+
+  if (raw.damageType !== undefined && raw.damageType !== null) {
+    validateEnum(raw.damageType, `${prefix}damageType`, DAMAGE_TYPES, errors);
+  }
+
+  const validateStatusEffects = (list: unknown, fieldName: string) => {
+    if (list !== undefined && list !== null) {
+      if (validateArray(list, `${prefix}${fieldName}`, errors)) {
+        list.forEach((eff, idx) => {
+          const ePath = `${prefix}${fieldName}[${idx}]`;
+          if (validateObject(eff, ePath, errors)) {
+            validateEnum(eff.type, `${ePath}.type`, STATUS_EFFECT_TYPES, errors);
+            validateNonEmptyString(eff.effectId, `${ePath}.effectId`, errors);
+            if (eff.damageType !== undefined && eff.damageType !== null) {
+              validateEnum(eff.damageType, `${ePath}.damageType`, DAMAGE_TYPES, errors);
+            }
+            validateNumber(eff.durationSeconds, `${ePath}.durationSeconds`, errors, 0);
+            validateOptionalNumber(eff.tickRateSeconds, `${ePath}.tickRateSeconds`, errors, 0);
+            validateOptionalNumber(eff.damagePerTick, `${ePath}.damagePerTick`, errors, 0);
+            validateOptionalNumber(eff.healPerTick, `${ePath}.healPerTick`, errors, 0);
+          }
+        });
+      }
+    }
+  };
+
+  validateStatusEffects(raw.effectsOnHit, "effectsOnHit");
+  validateStatusEffects(raw.overTimeEffects, "overTimeEffects");
 
   if (errors.length > 0) {
     return failureResult(errors);

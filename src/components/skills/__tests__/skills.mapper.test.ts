@@ -7,6 +7,7 @@ import {
   toSkillRestrictionVM,
   toSkillDetailVM,
   createSkillCategoryGroups,
+  toSkillTreeDagVM,
 } from "../skills.mapper";
 
 describe("skills.mapper", () => {
@@ -266,6 +267,72 @@ describe("skills.mapper", () => {
       expect(passiveGroup?.iconType).toBe("zap");
       expect(passiveGroup?.nodes).toHaveLength(1);
       expect(passiveGroup?.nodes[0].id).toBe("skill_mana_font");
+    });
+  });
+
+  describe("toSkillTreeDagVM", () => {
+    it("maps a DAG skill tree to SkillTreeDagVM with sorted tiers and prerequisite links", () => {
+      const mockTree = {
+        treeId: "solar_duelist",
+        nameKey: "treeValenSolarDuelist",
+        icon: "Swords",
+        rootSkillIds: ["skill_starter"],
+        nodes: {
+          skill_starter: {
+            skillId: "skill_starter",
+            tier: 1,
+            pointCost: 1,
+            prerequisites: [],
+            gridPosition: { x: 1, y: 1 },
+          },
+          skill_fireball: {
+            skillId: "skill_fireball",
+            tier: 2,
+            pointCost: 2,
+            prerequisites: ["skill_starter"],
+            gridPosition: { x: 2, y: 1 },
+          },
+        },
+      };
+
+      const nodesLookup: Record<string, SkillTreeNode> = {
+        skill_fireball: mockOffensiveNode,
+      };
+
+      const evaluate = (id: string): SkillUnlockEvaluation => ({
+        isUnlocked: id === "skill_starter",
+        canUnlock: id === "skill_fireball",
+        hasPrerequisite: true,
+        hasPoints: true,
+      });
+
+      const dagVM = toSkillTreeDagVM(
+        mockTree,
+        nodesLookup,
+        evaluate,
+        "skill_starter",
+        ""
+      );
+
+      expect(dagVM.treeId).toBe("solar_duelist");
+      expect(dagVM.nameKey).toBe("treeValenSolarDuelist");
+      expect(dagVM.nodes).toHaveLength(2);
+
+      // Verify node 0 (tier 1)
+      const rootNode = dagVM.nodes[0];
+      expect(rootNode.id).toBe("skill_starter");
+      expect(rootNode.tier).toBe(1);
+      expect(rootNode.isUnlocked).toBe(true);
+      expect(rootNode.isPrimary).toBe(true);
+      expect(rootNode.prerequisites).toEqual([]);
+
+      // Verify node 1 (tier 2)
+      const childNode = dagVM.nodes[1];
+      expect(childNode.id).toBe("skill_fireball");
+      expect(childNode.tier).toBe(2);
+      expect(childNode.nameKey).toBe("spellSolarFireballName");
+      expect(childNode.isUnlockable).toBe(true);
+      expect(childNode.prerequisites).toEqual(["skill_starter"]);
     });
   });
 });

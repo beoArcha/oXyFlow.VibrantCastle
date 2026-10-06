@@ -16,9 +16,37 @@ import {
   validateNumber,
   validateOptionalNumber,
   validateBoolean,
+  validateEnum,
   validateArray,
   validateObject
 } from "./commonSchema";
+
+export const SOUL_TYPES = ["bullet", "guardian", "enchant"] as const;
+export type SoulType = (typeof SOUL_TYPES)[number];
+
+export interface EnemySoulDropSchema {
+  soulId: string;
+  type: SoulType;
+  dropRate: number;
+  grantedSkillId: string;
+  manaCost?: number;
+  icon: string;
+  i18n: {
+    nameKey: string;
+    descriptionKey: string;
+  };
+}
+
+export interface EnemyBestiaryConfigSchema {
+  bestiaryKey: string;
+  tacticsKey: string;
+  loreQuoteKey: string;
+  killThresholds?: {
+    basic?: number;
+    tactics?: number;
+    lore?: number;
+  };
+}
 
 export interface EnemyStatsSchema {
   health: number;
@@ -56,6 +84,10 @@ export interface EnemyJsonSchema {
     height: number;
   };
   stats: EnemyStatsSchema;
+  abilities?: string[];
+  soulDrop?: EnemySoulDropSchema;
+  elementalResistances?: Record<string, number>;
+  bestiary?: EnemyBestiaryConfigSchema;
   atlas?: EnemyAtlasSchema;
   proceduralFallback?: EnemyProceduralFallbackSchema;
 }
@@ -102,6 +134,55 @@ export function validateEnemy(raw: unknown, pathPrefix = ""): ValidationResult<E
       validateOptionalString(raw.atlas.hitAnimation, `${prefix}atlas.hitAnimation`, errors);
       validateOptionalString(raw.atlas.attackAnimation, `${prefix}atlas.attackAnimation`, errors);
       validateOptionalString(raw.atlas.deathAnimation, `${prefix}atlas.deathAnimation`, errors);
+    }
+  }
+
+  if (raw.abilities !== undefined && raw.abilities !== null) {
+    if (validateArray(raw.abilities, `${prefix}abilities`, errors)) {
+      raw.abilities.forEach((ab, idx) => {
+        validateNonEmptyString(ab, `${prefix}abilities[${idx}]`, errors);
+      });
+    }
+  }
+
+  if (raw.soulDrop !== undefined && raw.soulDrop !== null) {
+    const sPath = `${prefix}soulDrop`;
+    if (validateObject(raw.soulDrop, sPath, errors)) {
+      validateNonEmptyString(raw.soulDrop.soulId, `${sPath}.soulId`, errors);
+      validateEnum(raw.soulDrop.type, `${sPath}.type`, SOUL_TYPES, errors);
+      validateNumber(raw.soulDrop.dropRate, `${sPath}.dropRate`, errors, 0, 1);
+      validateNonEmptyString(raw.soulDrop.grantedSkillId, `${sPath}.grantedSkillId`, errors);
+      validateOptionalNumber(raw.soulDrop.manaCost, `${sPath}.manaCost`, errors, 0);
+      validateNonEmptyString(raw.soulDrop.icon, `${sPath}.icon`, errors);
+      if (validateObject(raw.soulDrop.i18n, `${sPath}.i18n`, errors)) {
+        validateNonEmptyString(raw.soulDrop.i18n.nameKey, `${sPath}.i18n.nameKey`, errors);
+        validateNonEmptyString(raw.soulDrop.i18n.descriptionKey, `${sPath}.i18n.descriptionKey`, errors);
+      }
+    }
+  }
+
+  if (raw.elementalResistances !== undefined && raw.elementalResistances !== null) {
+    const rPath = `${prefix}elementalResistances`;
+    if (validateObject(raw.elementalResistances, rPath, errors)) {
+      for (const [resKey, resVal] of Object.entries(raw.elementalResistances)) {
+        validateNumber(resVal, `${rPath}.${resKey}`, errors);
+      }
+    }
+  }
+
+  if (raw.bestiary !== undefined && raw.bestiary !== null) {
+    const bPath = `${prefix}bestiary`;
+    if (validateObject(raw.bestiary, bPath, errors)) {
+      validateNonEmptyString(raw.bestiary.bestiaryKey, `${bPath}.bestiaryKey`, errors);
+      validateNonEmptyString(raw.bestiary.tacticsKey, `${bPath}.tacticsKey`, errors);
+      validateNonEmptyString(raw.bestiary.loreQuoteKey, `${bPath}.loreQuoteKey`, errors);
+      if (raw.bestiary.killThresholds !== undefined && raw.bestiary.killThresholds !== null) {
+        if (validateObject(raw.bestiary.killThresholds, `${bPath}.killThresholds`, errors)) {
+          validateOptionalNumber(raw.bestiary.killThresholds.basic, `${bPath}.killThresholds.basic`, errors, 1);
+          validateOptionalNumber(raw.bestiary.killThresholds.tactics, `${bPath}.killThresholds.tactics`, errors, 1);
+          validateOptionalNumber(raw.bestiary.killThresholds.lore, `${bPath}.killThresholds.lore`, errors, 1);
+        }
+      }
     }
   }
 

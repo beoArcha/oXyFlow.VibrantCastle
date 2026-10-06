@@ -11,3 +11,4 @@ export * from "./skillCodec";
 export * from "./itemCodec";
 export * from "./enemyCodec";
 export * from "./structureCodec";
+export * from "./progressionCodec";

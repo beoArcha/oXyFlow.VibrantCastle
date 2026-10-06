@@ -1,0 +1,171 @@
+{
+  "version": "2.0",
+  "characters": {
+    "valen": {
+      "trees": [
+        {
+          "treeId": "solar_duelist",
+          "nameKey": "treeValenSolarDuelist",
+          "icon": "Swords",
+          "rootSkillIds": ["solar_flare"],
+          "nodes": {
+            "solar_flare": {
+              "skillId": "solar_flare",
+              "tier": 1,
+              "pointCost": 1,
+              "prerequisites": [],
+              "gridPosition": { "x": 1, "y": 1 }
+            },
+            "solar_fireball": {
+              "skillId": "solar_fireball",
+              "tier": 2,
+              "pointCost": 2,
+              "prerequisites": ["solar_flare"],
+              "gridPosition": { "x": 2, "y": 1 }
+            },
+            "radiant_strike": {
+              "skillId": "radiant_strike",
+              "tier": 3,
+              "pointCost": 3,
+              "prerequisites": ["solar_fireball"],
+              "gridPosition": { "x": 3, "y": 1 }
+            },
+            "blade_infusion": {
+              "skillId": "blade_infusion",
+              "tier": 4,
+              "pointCost": 3,
+              "prerequisites": ["radiant_strike"],
+              "gridPosition": { "x": 4, "y": 1 }
+            }
+          }
+        },
+        {
+          "treeId": "sun_warden",
+          "nameKey": "treeValenSunWarden",
+          "icon": "Shield",
+          "rootSkillIds": ["shield_bash"],
+          "nodes": {
+            "shield_bash": {
+              "skillId": "shield_bash",
+              "tier": 1,
+              "pointCost": 1,
+              "prerequisites": [],
+              "gridPosition": { "x": 1, "y": 2 }
+            },
+            "prismatic_shield": {
+              "skillId": "prismatic_shield",
+              "tier": 2,
+              "pointCost": 2,
+              "prerequisites": ["shield_bash"],
+              "gridPosition": { "x": 2, "y": 2 }
+            },
+            "sun_sentinel": {
+              "skillId": "sun_sentinel",
+              "tier": 3,
+              "pointCost": 3,
+              "prerequisites": ["prismatic_shield"],
+              "gridPosition": { "x": 3, "y": 2 }
+            },
+            "stamina_surge": {
+              "skillId": "stamina_surge",
+              "tier": 1,
+              "pointCost": 1,
+              "prerequisites": ["shield_bash"],
+              "gridPosition": { "x": 2, "y": 3 }
+            },
+            "vitality_surge": {
+              "skillId": "vitality_surge",
+              "tier": 2,
+              "pointCost": 2,
+              "prerequisites": ["stamina_surge"],
+              "gridPosition": { "x": 3, "y": 3 }
+            }
+          }
+        }
+      ]
+    },
+    "aurelia": {
+      "trees": [
+        {
+          "treeId": "astral_sorcery",
+          "nameKey": "treeAureliaAstralSorcery",
+          "icon": "Sparkles",
+          "rootSkillIds": ["aether_bolt"],
+          "nodes": {
+            "aether_bolt": {
+              "skillId": "aether_bolt",
+              "tier": 1,
+              "pointCost": 1,
+              "prerequisites": [],
+              "gridPosition": { "x": 1, "y": 1 }
+            },
+            "celestial_comet": {
+              "skillId": "celestial_comet",
+              "tier": 2,
+              "pointCost": 2,
+              "prerequisites": ["aether_bolt"],
+              "gridPosition": { "x": 2, "y": 1 }
+            },
+            "aether_barrier": {
+              "skillId": "aether_barrier",
+              "tier": 3,
+              "pointCost": 3,
+              "prerequisites": ["celestial_comet"],
+              "gridPosition": { "x": 3, "y": 1 }
+            },
+            "mana_font": {
+              "skillId": "mana_font",
+              "tier": 1,
+              "pointCost": 1,
+              "prerequisites": ["aether_bolt"],
+              "gridPosition": { "x": 2, "y": 2 }
+            },
+            "scholarly_focus": {
+              "skillId": "scholarly_focus",
+              "tier": 2,
+              "pointCost": 2,
+              "prerequisites": ["mana_font"],
+              "gridPosition": { "x": 3, "y": 2 }
+            },
+            "astral_attunement": {
+              "skillId": "astral_attunement",
+              "tier": 3,
+              "pointCost": 3,
+              "prerequisites": ["scholarly_focus"],
+              "gridPosition": { "x": 4, "y": 2 }
+            }
+          }
+        },
+        {
+          "treeId": "time_weaver",
+          "nameKey": "treeAureliaTimeWeaver",
+          "icon": "Hourglass",
+          "rootSkillIds": ["sentinel_spark"],
+          "nodes": {
+            "sentinel_spark": {
+              "skillId": "sentinel_spark",
+              "tier": 1,
+              "pointCost": 1,
+              "prerequisites": [],
+              "gridPosition": { "x": 1, "y": 3 }
+            },
+            "frost_nova": {
+              "skillId": "frost_nova",
+              "tier": 2,
+              "pointCost": 2,
+              "prerequisites": ["sentinel_spark"],
+              "gridPosition": { "x": 2, "y": 3 }
+            },
+            "chrono_rewind": {
+              "skillId": "chrono_rewind",
+              "tier": 3,
+              "pointCost": 4,
+              "prerequisites": ["frost_nova"],
+              "gridPosition": { "x": 3, "y": 3 }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -462,6 +462,186 @@
         "piercing": false
       },
       "tier": 3
+    },
+    "gargoyle_dive_strike": {
+      "id": "gargoyle_dive_strike",
+      "ownerType": "enemy",
+      "magicDomain": "shadow",
+      "castType": "instant",
+      "category": "offensive",
+      "triggerType": "action",
+      "nameKey": "skillGargoyleDiveName",
+      "descriptionKey": "skillGargoyleDiveDesc",
+      "manaCost": 0,
+      "staminaCost": 0,
+      "cooldownFrames": 90,
+      "damage": 22,
+      "damageBreakdown": {
+        "primary": { "amount": 22, "type": "physical" }
+      },
+      "color": "#7c3aed",
+      "iconName": "Wind",
+      "tier": 1
+    },
+    "sentinel_aether_beam": {
+      "id": "sentinel_aether_beam",
+      "ownerType": "enemy",
+      "magicDomain": "astral",
+      "castType": "instant",
+      "category": "offensive",
+      "triggerType": "action",
+      "nameKey": "skillSentinelAetherBeamName",
+      "descriptionKey": "skillSentinelAetherBeamDesc",
+      "manaCost": 0,
+      "staminaCost": 0,
+      "cooldownFrames": 120,
+      "damage": 26,
+      "damageBreakdown": {
+        "primary": { "amount": 26, "type": "aether" }
+      },
+      "color": "#38bdf8",
+      "iconName": "Zap",
+      "tier": 2
+    },
+    "automaton_hammer_slam": {
+      "id": "automaton_hammer_slam",
+      "ownerType": "enemy",
+      "magicDomain": "solar",
+      "castType": "instant",
+      "category": "offensive",
+      "triggerType": "action",
+      "nameKey": "skillAutomatonHammerSlamName",
+      "descriptionKey": "skillAutomatonHammerSlamDesc",
+      "manaCost": 0,
+      "staminaCost": 0,
+      "cooldownFrames": 150,
+      "damage": 34,
+      "damageBreakdown": {
+        "primary": { "amount": 34, "type": "physical" }
+      },
+      "color": "#f59e0b",
+      "iconName": "Hammer",
+      "tier": 2
+    },
+    "chasm_crawler_bite": {
+      "id": "chasm_crawler_bite",
+      "ownerType": "enemy",
+      "magicDomain": "shadow",
+      "castType": "instant",
+      "category": "offensive",
+      "triggerType": "action",
+      "nameKey": "skillChasmCrawlerBiteName",
+      "descriptionKey": "skillChasmCrawlerBiteDesc",
+      "manaCost": 0,
+      "staminaCost": 0,
+      "cooldownFrames": 80,
+      "damage": 18,
+      "damageBreakdown": {
+        "primary": { "amount": 18, "type": "physical" }
+      },
+      "color": "#ea580c",
+      "iconName": "Scissors",
+      "tier": 1
+    },
+    "shadow_knight_slash": {
+      "id": "shadow_knight_slash",
+      "ownerType": "boss",
+      "magicDomain": "shadow",
+      "castType": "instant",
+      "category": "offensive",
+      "triggerType": "action",
+      "nameKey": "skillShadowKnightSlashName",
+      "descriptionKey": "skillShadowKnightSlashDesc",
+      "manaCost": 0,
+      "staminaCost": 0,
+      "cooldownFrames": 100,
+      "damage": 42,
+      "damageBreakdown": {
+        "primary": { "amount": 25, "type": "physical" },
+        "secondary": { "amount": 17, "type": "shadow" }
+      },
+      "color": "#475569",
+      "iconName": "Swords",
+      "tier": 3
+    },
+    "aether_archon_wrath": {
+      "id": "aether_archon_wrath",
+      "ownerType": "boss",
+      "magicDomain": "astral",
+      "castType": "instant",
+      "category": "offensive",
+      "triggerType": "action",
+      "nameKey": "skillAetherArchonWrathName",
+      "descriptionKey": "skillAetherArchonWrathDesc",
+      "manaCost": 0,
+      "staminaCost": 0,
+      "cooldownFrames": 180,
+      "damage": 50,
+      "damageBreakdown": {
+        "primary": { "amount": 50, "type": "astral" }
+      },
+      "color": "#818cf8",
+      "iconName": "Sun",
+      "tier": 3
+    },
+    "owl_wind_gust": {
+      "id": "owl_wind_gust",
+      "ownerType": "enemy",
+      "magicDomain": "frost",
+      "castType": "instant",
+      "category": "defensive",
+      "triggerType": "action",
+      "nameKey": "skillOwlWindGustName",
+      "descriptionKey": "skillOwlWindGustDesc",
+      "manaCost": 0,
+      "staminaCost": 0,
+      "cooldownFrames": 90,
+      "damage": 14,
+      "damageBreakdown": {
+        "primary": { "amount": 14, "type": "frost" }
+      },
+      "color": "#38bdf8",
+      "iconName": "Wind",
+      "tier": 1
+    },
+    "dummy_wobble": {
+      "id": "dummy_wobble",
+      "ownerType": "enemy",
+      "magicDomain": "solar",
+      "castType": "aura",
+      "category": "defensive",
+      "triggerType": "passive",
+      "nameKey": "skillDummyWobbleName",
+      "descriptionKey": "skillDummyWobbleDesc",
+      "manaCost": 0,
+      "staminaCost": 0,
+      "cooldownFrames": 0,
+      "damage": 0,
+      "color": "#a16207",
+      "iconName": "Shield",
+      "tier": 1
+    },
+    "unison_supernova_nova": {
+      "id": "unison_supernova_nova",
+      "ownerType": "unison",
+      "requiredParticipants": ["valen", "aurelia"],
+      "magicDomain": "solar",
+      "castType": "instant",
+      "category": "offensive",
+      "triggerType": "action",
+      "nameKey": "skillUnisonSupernovaName",
+      "descriptionKey": "skillUnisonSupernovaDesc",
+      "manaCost": 50,
+      "staminaCost": 40,
+      "cooldownFrames": 600,
+      "damage": 220,
+      "damageBreakdown": {
+        "primary": { "amount": 120, "type": "fire" },
+        "secondary": { "amount": 100, "type": "aether" }
+      },
+      "color": "#f59e0b",
+      "iconName": "Sparkles",
+      "tier": 4
     }
   }
 }

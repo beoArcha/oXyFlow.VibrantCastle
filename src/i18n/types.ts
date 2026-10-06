@@ -794,6 +794,32 @@ export interface SkillsI18n {
   restrictionAureliaManaFont: string;
   restrictionAureliaScholarlyFocus: string;
   restrictionAureliaAstralAttunement: string;
+
+  // DAG Skill Trees
+  treeValenSolarDuelist: string;
+  treeValenSunWarden: string;
+  treeAureliaAstralSorcery: string;
+  treeAureliaTimeWeaver: string;
+
+  // Enemy & Unison abilities
+  skillGargoyleDiveName: string;
+  skillGargoyleDiveDesc: string;
+  skillSentinelAetherBeamName: string;
+  skillSentinelAetherBeamDesc: string;
+  skillAutomatonHammerSlamName: string;
+  skillAutomatonHammerSlamDesc: string;
+  skillChasmCrawlerBiteName: string;
+  skillChasmCrawlerBiteDesc: string;
+  skillShadowKnightSlashName: string;
+  skillShadowKnightSlashDesc: string;
+  skillAetherArchonWrathName: string;
+  skillAetherArchonWrathDesc: string;
+  skillOwlWindGustName: string;
+  skillOwlWindGustDesc: string;
+  skillDummyWobbleName: string;
+  skillDummyWobbleDesc: string;
+  skillUnisonSupernovaName: string;
+  skillUnisonSupernovaDesc: string;
 }
 
 export interface ItemsI18n {
@@ -931,6 +957,93 @@ export interface LoreI18n {
   aureliaLore: string;
 }
 
+export interface BestiaryI18n {
+  // Bestiary entries
+  bestiaryTrainingDummyDesc: string;
+  bestiaryTrainingDummyTactics: string;
+  bestiaryTrainingDummyLore: string;
+
+  bestiaryClockworkOwlDesc: string;
+  bestiaryClockworkOwlTactics: string;
+  bestiaryClockworkOwlLore: string;
+
+  bestiaryCourtSentinelDesc: string;
+  bestiaryCourtSentinelTactics: string;
+  bestiaryCourtSentinelLore: string;
+
+  bestiaryChasmGargoyleDesc: string;
+  bestiaryChasmGargoyleTactics: string;
+  bestiaryChasmGargoyleLore: string;
+
+  bestiaryClockworkAutomatonDesc: string;
+  bestiaryClockworkAutomatonTactics: string;
+  bestiaryClockworkAutomatonLore: string;
+
+  bestiaryAetherSentinelDesc: string;
+  bestiaryAetherSentinelTactics: string;
+  bestiaryAetherSentinelLore: string;
+
+  bestiaryAetherArchonDesc: string;
+  bestiaryAetherArchonTactics: string;
+  bestiaryAetherArchonLore: string;
+
+  bestiaryShadowKnightDesc: string;
+  bestiaryShadowKnightTactics: string;
+  bestiaryShadowKnightLore: string;
+
+  bestiaryAetherWispDesc: string;
+  bestiaryAetherWispTactics: string;
+  bestiaryAetherWispLore: string;
+
+  bestiaryChasmCrawlerDesc: string;
+  bestiaryChasmCrawlerTactics: string;
+  bestiaryChasmCrawlerLore: string;
+
+  bestiaryGargoyleScoutDesc: string;
+  bestiaryGargoyleScoutTactics: string;
+  bestiaryGargoyleScoutLore: string;
+
+  bestiaryBastionGargoyleDesc: string;
+  bestiaryBastionGargoyleTactics: string;
+  bestiaryBastionGargoyleLore: string;
+
+  bestiaryBastionSentinelBossDesc: string;
+  bestiaryBastionSentinelBossTactics: string;
+  bestiaryBastionSentinelBossLore: string;
+
+  // Soul Drops & Tactical Souls
+  soulTrainingDummyName: string;
+  soulTrainingDummyDesc: string;
+  soulClockworkOwlName: string;
+  soulClockworkOwlDesc: string;
+  soulCourtSentinelName: string;
+  soulCourtSentinelDesc: string;
+  soulChasmGargoyleName: string;
+  soulChasmGargoyleDesc: string;
+  soulClockworkAutomatonName: string;
+  soulClockworkAutomatonDesc: string;
+  soulAetherSentinelName: string;
+  soulAetherSentinelDesc: string;
+  soulAetherArchonName: string;
+  soulAetherArchonDesc: string;
+  soulShadowKnightName: string;
+  soulShadowKnightDesc: string;
+  soulAetherWispName: string;
+  soulAetherWispDesc: string;
+  soulChasmCrawlerName: string;
+  soulChasmCrawlerDesc: string;
+  soulGargoyleScoutName: string;
+  soulGargoyleScoutDesc: string;
+  soulTrainingTargetName: string;
+  soulTrainingTargetDesc: string;
+  soulGrandDummyName: string;
+  soulGrandDummyDesc: string;
+  soulBastionGargoyleName: string;
+  soulBastionGargoyleDesc: string;
+  soulBastionSentinelBossName: string;
+  soulBastionSentinelBossDesc: string;
+}
+
 /**
  * Complete Flattened and Structured Translation Dictionary
  */
@@ -943,4 +1056,5 @@ export interface GameTranslationDictionary
     LocationsI18n,
     NarrationsI18n,
     DialoguesI18n,
-    LoreI18n {}
+    LoreI18n,
+    BestiaryI18n {}
