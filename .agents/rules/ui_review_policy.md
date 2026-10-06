@@ -17,7 +17,7 @@ Project-specific `AGENT.md`, UI-specific rule files, and design-system rules rem
 
 ---
 
-# 1. UI RESPONSIBILITY
+## 1. UI RESPONSIBILITY
 
 UI code SHOULD primarily be responsible for:
 
@@ -34,7 +34,7 @@ Review MUST identify logic that belongs to another layer.
 
 ---
 
-# 2. COMPONENT RESPONSIBILITY
+## 2. COMPONENT RESPONSIBILITY
 
 Every component SHOULD have one clear primary responsibility.
 
@@ -53,7 +53,7 @@ Do NOT split a component merely to reduce line count.
 
 ---
 
-# 3. COMPONENT CLASSIFICATION
+## 3. COMPONENT CLASSIFICATION
 
 When useful, classify components as:
 
@@ -66,7 +66,7 @@ A component that contains domain or business logic SHOULD be treated as a potent
 
 ---
 
-# 4. PRESENTATIONAL COMPONENTS
+## 4. PRESENTATIONAL COMPONENTS
 
 Pure presentational components SHOULD:
 
@@ -83,7 +83,7 @@ A presentational component SHOULD NOT secretly fetch data, mutate shared state, 
 
 ---
 
-# 5. CONTAINER COMPONENTS
+## 5. CONTAINER COMPONENTS
 
 Containers MAY coordinate:
 
@@ -107,7 +107,7 @@ Complex transformations SHOULD be separated when they have an independent respon
 
 ---
 
-# 6. FEATURE COMPONENTS
+## 6. FEATURE COMPONENTS
 
 Feature-specific components MAY combine multiple reusable UI elements.
 
@@ -119,7 +119,7 @@ Shared components should expose generic UI behavior rather than feature-specific
 
 ---
 
-# 7. COMPOSITION
+## 7. COMPOSITION
 
 Prefer composition over inheritance.
 
@@ -137,7 +137,7 @@ Avoid composite abstractions that merely hide several unrelated components behin
 
 ---
 
-# 8. DECOMPOSITION
+## 8. DECOMPOSITION
 
 Consider decomposition when a component has:
 
@@ -160,7 +160,7 @@ The goal is high cohesion and low unnecessary coupling.
 
 ---
 
-# 9. HOOKS
+## 9. HOOKS
 
 Hooks SHOULD encapsulate a clear UI behavior or reusable reactive concern.
 
@@ -180,7 +180,7 @@ A hook should make behavior clearer, not obscure where the behavior occurs.
 
 ---
 
-# 10. UI STATE
+## 10. UI STATE
 
 Local state SHOULD represent UI state.
 
@@ -199,7 +199,7 @@ Avoid synchronization patterns in which one state exists only to mirror another.
 
 ---
 
-# 11. VIEW MODELS AND DATA TRANSFORMATION
+## 11. VIEW MODELS AND DATA TRANSFORMATION
 
 UI SHOULD consume data in a form appropriate for presentation.
 
@@ -214,7 +214,7 @@ Presentation transformations SHOULD remain free of business rules unless the pro
 
 ---
 
-# 12. REUSABILITY
+## 12. REUSABILITY
 
 A reusable UI component SHOULD represent a genuinely reusable responsibility.
 
@@ -233,7 +233,7 @@ Do NOT introduce extensive configurability before multiple real use cases requir
 
 ---
 
-# 13. DESIGN SYSTEM
+## 13. DESIGN SYSTEM
 
 Review whether the UI consistently uses the project's established design system.
 
@@ -253,7 +253,7 @@ Do NOT duplicate a design-system primitive inside a feature without a concrete r
 
 ---
 
-# 14. PROPS AND COMPONENT CONTRACTS
+## 14. PROPS AND COMPONENT CONTRACTS
 
 Component APIs SHOULD be:
 
@@ -275,7 +275,7 @@ Prefer composition over increasingly complex configuration when it makes the con
 
 ---
 
-# 15. RENDERING LOGIC
+## 15. RENDERING LOGIC
 
 Rendering code SHOULD remain declarative and readable.
 
@@ -294,7 +294,7 @@ Do NOT extract every expression into a helper merely to reduce visual size.
 
 ---
 
-# 16. REACTIVE PERFORMANCE
+## 16. REACTIVE PERFORMANCE
 
 Review performance where the UI is sensitive to frequent updates or large amounts of data.
 
@@ -313,7 +313,7 @@ Do NOT use `memo`, callbacks, or derived caching mechanically.
 
 ---
 
-# 17. USER STATES
+## 17. USER STATES
 
 UI review SHOULD consider all meaningful states, including:
 
@@ -330,7 +330,7 @@ Missing states SHOULD be reported when they can create broken or ambiguous user 
 
 ---
 
-# 18. ACCESSIBILITY
+## 18. ACCESSIBILITY
 
 Review accessibility as part of UI correctness.
 
@@ -351,7 +351,7 @@ Follow the project's specific accessibility requirements where defined.
 
 ---
 
-# 19. UI TESTING
+## 19. UI TESTING
 
 UI tests SHOULD focus on user-visible behavior and important contracts.
 
@@ -375,7 +375,7 @@ Pure presentation MAY require little or no testing when it contains no meaningfu
 
 ---
 
-# 20. NAMING AND READABILITY
+## 20. NAMING AND READABILITY
 
 Names SHOULD communicate UI responsibility and intent.
 
@@ -392,7 +392,7 @@ Prefer readable composition over comments explaining unclear component structure
 
 ---
 
-# 21. UI CODE SMELLS
+## 21. UI CODE SMELLS
 
 Pay particular attention to:
 
@@ -414,7 +414,7 @@ These are signals for investigation, not automatic defects.
 
 ---
 
-# 22. UI ARCHITECTURE VIOLATIONS
+## 22. UI ARCHITECTURE VIOLATIONS
 
 When project architecture separates UI from other layers, explicitly check for:
 
@@ -429,7 +429,7 @@ A UI component can be visually correct and still be architecturally incorrect.
 
 ---
 
-# 23. REVIEW SCOPE
+## 23. REVIEW SCOPE
 
 Review only the requested UI scope unless inspecting another module is necessary to establish:
 
@@ -442,7 +442,7 @@ Do NOT turn a UI review into an unrelated application-wide refactor.
 
 ---
 
-# 24. FINDING QUALITY
+## 24. FINDING QUALITY
 
 UI findings SHOULD distinguish between:
 
@@ -468,7 +468,7 @@ Do NOT implement the recommendation during review.
 
 ---
 
-# 25. UI REVIEW STANDARD
+## 25. UI REVIEW STANDARD
 
 A high-quality UI review should establish:
 

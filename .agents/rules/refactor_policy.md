@@ -24,7 +24,7 @@ Project-specific `AGENT.md` and specialized rule files remain authoritative for 
 
 ---
 
-# 1. SOURCE OF TRUTH
+## 1. SOURCE OF TRUTH
 
 A refactoring plan MUST be based on:
 
@@ -40,7 +40,7 @@ Do NOT treat personal preference as a refactoring requirement.
 
 ---
 
-# 2. ANALYSIS BEFORE IMPLEMENTATION
+## 2. ANALYSIS BEFORE IMPLEMENTATION
 
 Non-trivial refactoring MUST follow:
 
@@ -61,7 +61,7 @@ The analysis SHOULD establish:
 
 ---
 
-# 3. CODE REVIEW IS THE PRIMARY INPUT
+## 3. CODE REVIEW IS THE PRIMARY INPUT
 
 When a Code Review exists, the refactoring plan MUST use its findings as the primary source of work.
 
@@ -73,7 +73,7 @@ A finding that does not require a code change MAY remain documented without bein
 
 ---
 
-# 4. ROOT CAUSE OVER SYMPTOMS
+## 4. ROOT CAUSE OVER SYMPTOMS
 
 Refactoring SHOULD address root causes rather than repeatedly fixing symptoms.
 
@@ -87,7 +87,7 @@ Do NOT create separate refactoring tasks for every superficial symptom when one 
 
 ---
 
-# 5. MINIMAL EFFECTIVE CHANGE
+## 5. MINIMAL EFFECTIVE CHANGE
 
 Use the smallest change that correctly resolves the identified problem.
 
@@ -111,7 +111,7 @@ The goal is improvement, not change for its own sake.
 
 ---
 
-# 6. BEHAVIOR PRESERVATION
+## 6. BEHAVIOR PRESERVATION
 
 Unless an explicit behavior change is required, refactoring MUST preserve existing behavior.
 
@@ -130,7 +130,7 @@ A refactor is unsuccessful if structural quality improves while required behavio
 
 ---
 
-# 7. PHASED IMPLEMENTATION
+## 7. PHASED IMPLEMENTATION
 
 Non-trivial refactors MUST be divided into phases.
 
@@ -148,7 +148,7 @@ Do NOT create phases that intentionally leave the codebase broken.
 
 ---
 
-# 8. PHASE ORDER
+## 8. PHASE ORDER
 
 Whenever practical, prefer this dependency order:
 
@@ -165,7 +165,7 @@ When project-specific architecture defines another safe order, follow the projec
 
 ---
 
-# 9. SUBPHASES
+## 9. SUBPHASES
 
 Each phase SHOULD be divided into small sequential subphases when the work is complex.
 
@@ -195,7 +195,7 @@ Prefer concrete actions with observable outcomes.
 
 ---
 
-# 10. PHASE ACCEPTANCE
+## 10. PHASE ACCEPTANCE
 
 Each phase MUST end with validation.
 
@@ -215,7 +215,7 @@ Do NOT continue to later phases while an earlier phase has unresolved review fee
 
 ---
 
-# 11. WORKING STATE AT EVERY PHASE
+## 11. WORKING STATE AT EVERY PHASE
 
 The codebase SHOULD remain:
 
@@ -237,7 +237,7 @@ Temporary adapters MAY be used when they reduce migration risk and are explicitl
 
 ---
 
-# 12. RISK MANAGEMENT
+## 12. RISK MANAGEMENT
 
 The refactoring plan MUST identify high-risk areas.
 
@@ -260,7 +260,7 @@ High-risk changes SHOULD be isolated from unrelated modifications.
 
 ---
 
-# 13. REGRESSION CONTROL
+## 13. REGRESSION CONTROL
 
 For each meaningful change, determine how regression will be detected.
 
@@ -280,7 +280,7 @@ Do NOT rely solely on compilation.
 
 ---
 
-# 14. TESTING DURING REFACTORING
+## 14. TESTING DURING REFACTORING
 
 Preserve existing tests unless they are demonstrably obsolete.
 
@@ -299,7 +299,7 @@ Do NOT rewrite a large test suite merely because internal structure changed if t
 
 ---
 
-# 15. SAFE EXTRACTION
+## 15. SAFE EXTRACTION
 
 When extracting a responsibility:
 
@@ -317,7 +317,7 @@ Avoid extracting incomplete fragments that leave the original responsibility spl
 
 ---
 
-# 16. SAFE CONSOLIDATION
+## 16. SAFE CONSOLIDATION
 
 When merging duplicated or fragmented implementations:
 
@@ -332,7 +332,7 @@ The resulting abstraction MUST remain understandable and appropriately scoped.
 
 ---
 
-# 17. SAFE REMOVAL
+## 17. SAFE REMOVAL
 
 Code SHOULD be removed only after confirming that it is:
 
@@ -348,7 +348,7 @@ Do NOT retain obsolete compatibility code indefinitely without a reason.
 
 ---
 
-# 18. ABSTRACTION CONTROL
+## 18. ABSTRACTION CONTROL
 
 Refactoring MUST NOT become an excuse for introducing unnecessary abstraction.
 
@@ -363,7 +363,7 @@ Prefer no abstraction over an abstraction with negative complexity.
 
 ---
 
-# 19. NO MIXING UNRELATED REFACTORS
+## 19. NO MIXING UNRELATED REFACTORS
 
 A refactor SHOULD have a coherent objective.
 
@@ -382,7 +382,7 @@ Unrelated improvements SHOULD be recorded separately.
 
 ---
 
-# 20. FILE AND FOLDER CHANGES
+## 20. FILE AND FOLDER CHANGES
 
 Moving files or changing folder structure is justified only when it improves:
 
@@ -398,7 +398,7 @@ When moving code, preserve behavior and update all affected references systemati
 
 ---
 
-# 21. COMMENTS AND DOCUMENTATION
+## 21. COMMENTS AND DOCUMENTATION
 
 Refactoring SHOULD improve code clarity rather than compensate for unclear code with comments.
 
@@ -415,7 +415,7 @@ Follow the project's documentation rules.
 
 ---
 
-# 22. NO COMMIT CREATION
+## 22. NO COMMIT CREATION
 
 Do NOT create commits during an AI-assisted refactoring workflow unless explicitly requested.
 
@@ -430,7 +430,7 @@ The human reviewer retains control over acceptance and version history.
 
 ---
 
-# 23. IMPLEMENTATION DISCIPLINE
+## 23. IMPLEMENTATION DISCIPLINE
 
 During implementation:
 
@@ -449,7 +449,7 @@ When discovering a new issue outside the current scope:
 
 ---
 
-# 24. VALIDATION AFTER IMPLEMENTATION
+## 24. VALIDATION AFTER IMPLEMENTATION
 
 Every phase MUST be validated against its intended outcome.
 
@@ -472,7 +472,7 @@ Validation SHOULD test both:
 
 ---
 
-# 25. REFACTORING COMPLETION
+## 25. REFACTORING COMPLETION
 
 A refactoring is complete only when:
 
@@ -489,7 +489,7 @@ A refactor is NOT complete merely because the code compiles.
 
 ---
 
-# 26. FINAL REFACTORING STANDARD
+## 26. FINAL REFACTORING STANDARD
 
 A good refactor should result in:
 

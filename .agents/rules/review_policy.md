@@ -481,7 +481,7 @@ For each important issue, establish:
 
 Prefer root causes over symptoms.
 
-Multiple symptoms caused by the same architectural problem SHOULD be grouped when appropriate.
+Multiple symptoms caused by the same architectural problem **should** be grouped when appropriate.
 
 Avoid producing a long list of low-value findings when several issues have one common cause.
 
