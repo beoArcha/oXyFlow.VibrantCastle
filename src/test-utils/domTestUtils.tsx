@@ -180,6 +180,7 @@ export async function renderIntoDom(ui: React.ReactElement, options?: RenderInto
 
   await act(async () => {
     root.render(Wrapper ? <Wrapper>{ui}</Wrapper> : ui);
+    await new Promise((resolve) => setTimeout(resolve, 0));
   });
 
   return {
@@ -187,6 +188,7 @@ export async function renderIntoDom(ui: React.ReactElement, options?: RenderInto
     unmount: async () => {
       await act(async () => {
         root.unmount();
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
       container.remove();
       activeRoot = null;
@@ -238,6 +240,7 @@ export async function cleanupDom() {
   if (activeRoot) {
     await act(async () => {
       activeRoot?.unmount();
+      await new Promise((resolve) => setTimeout(resolve, 0));
     });
     activeRoot = null;
   }
@@ -316,6 +319,7 @@ export async function renderCustomHook<T, P = void>(
 
   await act(async () => {
     root.render(renderTree(initialProps as P));
+    await new Promise((resolve) => setTimeout(resolve, 0));
   });
 
   return {
@@ -323,11 +327,13 @@ export async function renderCustomHook<T, P = void>(
     rerender: async (newProps?: P) => {
       await act(async () => {
         root.render(renderTree(newProps !== undefined ? newProps : (initialProps as P)));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
     },
     unmount: async () => {
       await act(async () => {
         root.unmount();
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
       container.remove();
     },
