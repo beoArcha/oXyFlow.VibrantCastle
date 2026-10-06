@@ -8,7 +8,7 @@ import { ItemEditorCard } from "../subtabs/datastudio/ItemEditorCard";
 import { VisualNovelPreviewCard } from "../subtabs/datastudio/VisualNovelPreviewCard";
 import { SkillTreeVisualizerCard } from "../subtabs/datastudio/SkillTreeVisualizerCard";
 import { AIGeneratorCard } from "../subtabs/datastudio/AIGeneratorCard";
-import { TestProviders, UiTestProviders, setupDomEnvironment, renderIntoDom, cleanupDom } from "@test-utils";
+import { TestProviders, setupDomEnvironment, renderIntoDom, cleanupDom } from "@test-utils";
 
 describe("DataStudio Developer Suite", () => {
   beforeEach(() => {
@@ -189,24 +189,18 @@ describe("DataStudio Developer Suite", () => {
       expect(html).toContain("Valen");
     });
 
-    it("renders speaker options including heroes, beasts, and narrator with accessibility attributes", async () => {
-      const { container } = await renderIntoDom(
+    it("renders speaker options including heroes, beasts, and narrator with accessibility attributes", () => {
+      const html = renderToString(
         <TestProviders defaultLanguage="en">
           <VisualNovelPreviewCard />
-        </TestProviders>,
-        { mode: "none" }
+        </TestProviders>
       );
 
-      const speakerSelect = container.querySelector<HTMLSelectElement>("#vn-select-character");
-      expect(speakerSelect).not.toBeNull();
-      const options = Array.from(speakerSelect?.options ?? []).map((o) => o.value);
-
-      expect(options).toContain("valen");
-      expect(options).toContain("aurelia");
-      expect(options).toContain("narrator");
-
-      const previewRegion = container.querySelector('section[aria-label="Dialogue Speech Bubble"]');
-      expect(previewRegion).not.toBeNull();
+      expect(html).toContain('id="vn-select-character"');
+      expect(html).toContain('value="valen"');
+      expect(html).toContain('value="aurelia"');
+      expect(html).toContain('value="narrator"');
+      expect(html).toContain('aria-label="Dialogue Speech Bubble"');
     });
   });
 
