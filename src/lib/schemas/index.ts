@@ -14,3 +14,4 @@ export * from "./structureSchema";
 export * from "./progressionSchema";
 export * from "./visualNovelSchema";
 export * from "./narratorSchema";
+export * from "./openapiExporter";

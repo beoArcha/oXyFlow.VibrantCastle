@@ -1,28 +1,21 @@
 import React, { useState, useMemo } from "react";
-import { Wrench, Activity, Grid, ScrollText } from "lucide-react";
+import { Wrench, Activity, Grid, ScrollText, Database } from "lucide-react";
 import { DeveloperTabLayout } from "./DeveloperTabLayout";
 import { TesterSubTab } from "./subtabs/TesterSubTab";
 import { DebugSubTab } from "./subtabs/DebugSubTab";
 import { LogsSubTab } from "./subtabs/LogsSubTab";
 import { AtlasMetaSubTab } from "./subtabs/AtlasMetaSubTab";
+import { DataStudioSubTab } from "./subtabs/DataStudioSubTab";
 import { useI18n } from "@context/I18nContext";
 import { useThrottledLogCount } from "./hooks/useThrottledLogs";
 import { TabItem } from "@ui";
 
-export type DeveloperSubTabId = "testing" | "debug" | "logs" | "atlas_slicer";
+export type DeveloperSubTabId = "testing" | "debug" | "logs" | "atlas_slicer" | "data_studio";
 
-/**
- * DeveloperTab Orchestrator Component.
- *
- * Responsibilities:
- * - Pure orchestrator of developer workspace state and active subtab view.
- * - Zero direct HTML elements and zero CSS classes (delegated to DeveloperTabLayout and subcomponents).
- */
 export const DeveloperTab: React.FC = () => {
   const [activeSubTab, setActiveSubTab] = useState<DeveloperSubTabId>("testing");
   const { t } = useI18n();
 
-  // Dynamic log count badge with throttled updates
   const logCount = useThrottledLogCount(250);
 
   const subTabItems: TabItem[] = useMemo(
@@ -49,6 +42,11 @@ export const DeveloperTab: React.FC = () => {
         icon: <Grid size={13} />,
         badge: "v2",
       },
+      {
+        id: "data_studio",
+        label: t("subtabDataStudio"),
+        icon: <Database size={13} />,
+      },
     ],
     [t, logCount]
   );
@@ -66,6 +64,7 @@ export const DeveloperTab: React.FC = () => {
       {activeSubTab === "atlas_slicer" && (
         <AtlasMetaSubTab onNavigateToLogs={() => setActiveSubTab("logs")} />
       )}
+      {activeSubTab === "data_studio" && <DataStudioSubTab />}
     </DeveloperTabLayout>
   );
 };

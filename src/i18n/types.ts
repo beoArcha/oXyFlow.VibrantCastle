@@ -133,6 +133,17 @@ export interface SettingsI18n {
   subtabDebug: string;
   subtabLogs: string;
   subtabAtlasSlicer: string;
+  subtabDataStudio: string;
+  dataStudioTitle: string;
+  dataStudioSubtitle: string;
+  dataStudioSpellsTab: string;
+  dataStudioEnemiesTab: string;
+  dataStudioItemsTab: string;
+  dataStudioVnTab: string;
+  dataStudioSkillTreeTab: string;
+  dataStudioAiTab: string;
+  dataStudioValidationValid: string;
+  dataStudioValidationInvalid: string;
   devSuiteSubtitle: string;
   testerSpawnPointsTitle: string;
   testerCheckpointsLabel: string;
