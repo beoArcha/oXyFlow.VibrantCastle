@@ -19,13 +19,17 @@ export function useEngineSubscription(
   onUpdateRef.current = onUpdate;
 
   useEffect(() => {
+    let isMounted = true;
     if (!engine || typeof engine.registerStateListener !== "function") return;
 
     const unsubscribe = engine.registerStateListener(() => {
-      onUpdateRef.current();
+      if (isMounted) {
+        onUpdateRef.current();
+      }
     });
 
     return () => {
+      isMounted = false;
       unsubscribe();
     };
   }, [engine]);

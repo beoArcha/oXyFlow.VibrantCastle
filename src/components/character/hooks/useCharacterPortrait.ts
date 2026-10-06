@@ -25,14 +25,25 @@ export function useCharacterPortrait(
 
   // Subscribe to engine asset readiness via adapter
   useEffect(() => {
-    return subscribeToAssetLoader(() => {
-      setTick((t) => t + 1);
+    let isMounted = true;
+    const unsubscribe = subscribeToAssetLoader(() => {
+      if (isMounted) {
+        setTick((t) => t + 1);
+      }
     });
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, []);
 
   // Preload portrait asset via adapter
   useEffect(() => {
-    preloadCharacterAssets(characterId, "high", 1).catch(() => { });
+    let isMounted = true;
+    preloadCharacterAssets(characterId, "high", 1).catch(() => {});
+    return () => {
+      isMounted = false;
+    };
   }, [characterId]);
 
   return resolveCharacterPortraitVM(characterId, mood);

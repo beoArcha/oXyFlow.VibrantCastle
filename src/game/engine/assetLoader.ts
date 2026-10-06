@@ -133,6 +133,10 @@ class AssetLoaderEngine {
     return () => this.listeners.delete(cb);
   }
 
+  public clearListeners(): void {
+    this.listeners.clear();
+  }
+
   private notifyListeners() {
     this.listeners.forEach((cb) => cb());
   }

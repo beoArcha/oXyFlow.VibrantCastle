@@ -8,7 +8,7 @@ import { ItemEditorCard } from "../subtabs/datastudio/ItemEditorCard";
 import { VisualNovelPreviewCard } from "../subtabs/datastudio/VisualNovelPreviewCard";
 import { SkillTreeVisualizerCard } from "../subtabs/datastudio/SkillTreeVisualizerCard";
 import { AIGeneratorCard } from "../subtabs/datastudio/AIGeneratorCard";
-import { TestProviders, setupDomEnvironment, renderIntoDom, cleanupDom } from "@test-utils";
+import { TestProviders, UiTestProviders, setupDomEnvironment, renderIntoDom, cleanupDom } from "@test-utils";
 
 describe("DataStudio Developer Suite", () => {
   beforeEach(() => {
@@ -20,9 +20,9 @@ describe("DataStudio Developer Suite", () => {
   });
 
   describe("DataStudioSubTab Orchestrator", () => {
-    it("renders the default active section and tab navigation items", () => {
+    it("renders the default active section and tab navigation items in English", () => {
       const html = renderToString(
-        <TestProviders>
+        <TestProviders defaultLanguage="en">
           <DataStudioSubTab />
         </TestProviders>
       );
@@ -31,11 +31,24 @@ describe("DataStudio Developer Suite", () => {
       expect(html).toContain("Spell &amp; Magic Editor");
     });
 
-    it("switches between sub-sections when interactive buttons are clicked", async () => {
-      const { container } = await renderIntoDom(
-        <TestProviders>
+    it("renders Polish localization with 100% parity when configured", () => {
+      const html = renderToString(
+        <TestProviders defaultLanguage="pl">
           <DataStudioSubTab />
         </TestProviders>
+      );
+
+      expect(html).toContain("Studio Danych i Schematów");
+      expect(html).toContain("Edytor czarów i magii");
+      expect(html).toContain("Prawidłowy");
+    });
+
+    it("switches between sub-sections when interactive buttons are clicked", async () => {
+      const { container } = await renderIntoDom(
+        <TestProviders defaultLanguage="en">
+          <DataStudioSubTab />
+        </TestProviders>,
+        { mode: "none" }
       );
 
       const enemyNavBtn = container.querySelector<HTMLButtonElement>(
@@ -47,15 +60,18 @@ describe("DataStudio Developer Suite", () => {
         await act(async () => {
           enemyNavBtn.click();
         });
-        expect(container.textContent).toContain("Enemy & Creature Editor");
+        expect(
+          container.textContent?.includes("Enemy & Creature Editor") ||
+          container.textContent?.includes("Edytor potworów i istot")
+        ).toBe(true);
       }
     });
   });
 
   describe("SpellAndSkillEditorCard", () => {
-    it("renders spell fields and shows valid badge for canonical presets", () => {
+    it("renders spell fields and shows valid badge for canonical presets in English", () => {
       const html = renderToString(
-        <TestProviders>
+        <TestProviders defaultLanguage="en">
           <SpellAndSkillEditorCard />
         </TestProviders>
       );
@@ -65,27 +81,53 @@ describe("DataStudio Developer Suite", () => {
       expect(html).toContain("Cast Type");
       expect(html).toContain("Valid");
     });
+
+    it("renders spell fields in Polish", () => {
+      const html = renderToString(
+        <TestProviders defaultLanguage="pl">
+          <SpellAndSkillEditorCard />
+        </TestProviders>
+      );
+
+      expect(html).toContain("ID czaru");
+      expect(html).toContain("Domena magii");
+      expect(html).toContain("Typ rzucenia");
+      expect(html).toContain("Prawidłowy");
+    });
   });
 
   describe("EnemyEditorCard", () => {
-    it("renders enemy form attributes and validates dimensions and stats", () => {
+    it("renders enemy form attributes and validates dimensions and stats in English", () => {
       const html = renderToString(
-        <TestProviders>
+        <TestProviders defaultLanguage="en">
           <EnemyEditorCard />
         </TestProviders>
       );
 
       expect(html).toContain("Enemy ID");
       expect(html).toContain("Attack Power");
-      expect(html).toContain("Speed");
+      expect(html).toContain("Movement Speed");
       expect(html).toContain("Valid");
+    });
+
+    it("renders enemy form attributes in Polish", () => {
+      const html = renderToString(
+        <TestProviders defaultLanguage="pl">
+          <EnemyEditorCard />
+        </TestProviders>
+      );
+
+      expect(html).toContain("ID potwora");
+      expect(html).toContain("Siła ataku");
+      expect(html).toContain("Prędkość ruchu");
+      expect(html).toContain("Prawidłowy");
     });
   });
 
   describe("ItemEditorCard", () => {
-    it("renders equipment attributes and validates gear schema", () => {
+    it("renders equipment attributes and validates gear schema in English", () => {
       const html = renderToString(
-        <TestProviders>
+        <TestProviders defaultLanguage="en">
           <ItemEditorCard />
         </TestProviders>
       );
@@ -95,12 +137,25 @@ describe("DataStudio Developer Suite", () => {
       expect(html).toContain("Rarity Tier");
       expect(html).toContain("Valid");
     });
+
+    it("renders equipment attributes in Polish", () => {
+      const html = renderToString(
+        <TestProviders defaultLanguage="pl">
+          <ItemEditorCard />
+        </TestProviders>
+      );
+
+      expect(html).toContain("Edytor ekwipunku i przedmiotów");
+      expect(html).toContain("Typ przedmiotu");
+      expect(html).toContain("Rzadkość przedmiotu");
+      expect(html).toContain("Prawidłowy");
+    });
   });
 
   describe("VisualNovelPreviewCard", () => {
-    it("renders portrait emotion grid and dialogue speech bubble preview", () => {
+    it("renders portrait emotion grid and dialogue speech bubble preview in English", () => {
       const html = renderToString(
-        <TestProviders>
+        <TestProviders defaultLanguage="en">
           <VisualNovelPreviewCard />
         </TestProviders>
       );
@@ -109,12 +164,24 @@ describe("DataStudio Developer Suite", () => {
       expect(html).toContain("5x5 Grid Cell");
       expect(html).toContain("Valen");
     });
+
+    it("renders portrait emotion grid and dialogue speech bubble preview in Polish", () => {
+      const html = renderToString(
+        <TestProviders defaultLanguage="pl">
+          <VisualNovelPreviewCard />
+        </TestProviders>
+      );
+
+      expect(html).toContain("Scena powieści wizualnej i podgląd emocji 5x5");
+      expect(html).toContain("Komórka 5x5");
+      expect(html).toContain("Valen");
+    });
   });
 
   describe("SkillTreeVisualizerCard", () => {
-    it("renders skill DAG canvas with character nodes and edge pathways", () => {
+    it("renders skill DAG canvas with character nodes and edge pathways in English", () => {
       const html = renderToString(
-        <TestProviders>
+        <TestProviders defaultLanguage="en">
           <SkillTreeVisualizerCard />
         </TestProviders>
       );
@@ -123,12 +190,24 @@ describe("DataStudio Developer Suite", () => {
       expect(html).toContain("Valid DAG");
       expect(html).toContain("<svg");
     });
+
+    it("renders skill DAG canvas with character nodes in Polish", () => {
+      const html = renderToString(
+        <TestProviders defaultLanguage="pl">
+          <SkillTreeVisualizerCard />
+        </TestProviders>
+      );
+
+      expect(html).toContain("Graf progresji drzewka umiejętności (DAG)");
+      expect(html).toContain("Prawidłowy DAG");
+      expect(html).toContain("<svg");
+    });
   });
 
   describe("AIGeneratorCard", () => {
-    it("renders system prompt generator and structured outputs validation sandbox", () => {
+    it("renders system prompt generator and structured outputs validation sandbox in English", () => {
       const html = renderToString(
-        <TestProviders>
+        <TestProviders defaultLanguage="en">
           <AIGeneratorCard />
         </TestProviders>
       );
@@ -137,6 +216,19 @@ describe("DataStudio Developer Suite", () => {
       expect(html).toContain("Target Entity Type:");
       expect(html).toContain("JSON Output Validation Sandbox:");
       expect(html).toContain("Valid Conforming Payload");
+    });
+
+    it("renders system prompt generator and structured outputs validation sandbox in Polish", () => {
+      const html = renderToString(
+        <TestProviders defaultLanguage="pl">
+          <AIGeneratorCard />
+        </TestProviders>
+      );
+
+      expect(html).toContain("Generator struktur AI i walidator schematów");
+      expect(html).toContain("Docelowy typ encji:");
+      expect(html).toContain("Piaskownica walidacji JSON:");
+      expect(html).toContain("Poprawny obiekt schematu");
     });
   });
 });

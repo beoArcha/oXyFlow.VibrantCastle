@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { MessageSquare, UserCheck, ChevronRight } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Button } from "@ui";
+import { Card, CardHeader, CardTitle, CardContent, Button, Select } from "@ui";
 import { CharacterPortrait } from "@components/character/CharacterPortrait";
 import dialoguesVnJson from "@data/narrative/dialogues_vn.json";
 import {
@@ -32,75 +32,84 @@ export const VisualNovelPreviewCard: React.FC = () => {
   const gridRow = emotionIndex >= 0 ? Math.floor(emotionIndex / 5) : 0;
   const gridCol = emotionIndex >= 0 ? emotionIndex % 5 : 0;
 
+  const nodeOptions = useMemo(
+    () => nodeKeys.map((key) => ({ value: key, label: key })),
+    [nodeKeys]
+  );
+
+  const characterOptions = useMemo(
+    () => [
+      { value: "valen", label: "Valen" },
+      { value: "aurelia", label: "Aurelia" },
+    ],
+    []
+  );
+
+  const emotionOptions = useMemo(
+    () => emotionList.map((emo) => ({ value: emo, label: emo })),
+    [emotionList]
+  );
+
   return (
     <Card variant="default">
       <CardHeader>
         <CardTitle icon={<MessageSquare className="w-4 h-4 text-sky-400" />}>
-          Visual Novel Scene & 5x5 Portrait Emotion Preview
+          {t("dataStudioVnCardTitle")}
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {/* Node & Character Selector */}
-        <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-1.5 text-xs">
-            <label className="text-amber-200/80 font-medium">Dialogue Node:</label>
-            <select
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={activeNodeId}
-              onChange={(e) => setActiveNodeId(e.target.value)}
-            >
-              {nodeKeys.map((nodeKey) => (
-                <option key={nodeKey} value={nodeKey}>
-                  {nodeKey}
-                </option>
-              ))}
-            </select>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3 bg-stone-950/60 border border-stone-800/80 rounded-lg">
+          <Select
+            id="vn-select-node"
+            label={t("dataStudioVnDialogueNode")}
+            value={activeNodeId}
+            onChange={(e) => setActiveNodeId(e.target.value)}
+            options={nodeOptions}
+            variant="castle"
+            size="sm"
+          />
 
-          <div className="flex items-center gap-1.5 text-xs">
-            <label className="text-amber-200/80 font-medium">Portrait Character:</label>
-            <select
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={selectedCharacter}
-              onChange={(e) => {
-                const char = e.target.value as "valen" | "aurelia";
-                setSelectedCharacter(char);
-                setSelectedEmotion(char === "valen" ? "stoic" : "curious");
-              }}
-            >
-              <option value="valen">Valen</option>
-              <option value="aurelia">Aurelia</option>
-            </select>
-          </div>
+          <Select
+            id="vn-select-character"
+            label={t("dataStudioVnPortraitCharacter")}
+            value={selectedCharacter}
+            onChange={(e) => {
+              const char = e.target.value as "valen" | "aurelia";
+              setSelectedCharacter(char);
+              setSelectedEmotion(char === "valen" ? "stoic" : "curious");
+            }}
+            options={characterOptions}
+            variant="castle"
+            size="sm"
+          />
 
-          <div className="flex items-center gap-1.5 text-xs">
-            <label className="text-amber-200/80 font-medium">5x5 Emotion Matrix:</label>
-            <select
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={selectedEmotion}
-              onChange={(e) => setSelectedEmotion(e.target.value)}
-            >
-              {emotionList.map((emo) => (
-                <option key={emo} value={emo}>
-                  {emo}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Select
+            id="vn-select-emotion"
+            label={t("dataStudioVnEmotionMatrix")}
+            value={selectedEmotion}
+            onChange={(e) => setSelectedEmotion(e.target.value)}
+            options={emotionOptions}
+            variant="castle"
+            size="sm"
+          />
         </div>
 
         {/* Emotion Matrix Info Badge */}
-        <div className="flex items-center gap-3 text-xs bg-[#140602]/80 border border-amber-900/40 rounded px-3 py-1.5 flex-wrap">
+        <div className="flex items-center gap-3 text-xs bg-[#140602]/80 border border-amber-900/40 rounded-lg px-3 py-2 flex-wrap">
           <span className="text-amber-200/70">
-            Active Emotion: <strong className="text-amber-300 font-mono">{currentEmotion}</strong>
+            {t("dataStudioVnActiveEmotion")}:{" "}
+            <strong className="text-amber-300 font-mono">{currentEmotion}</strong>
           </span>
           <span className="text-amber-200/70">
-            5x5 Grid Cell: Row <strong className="text-amber-300">{gridRow}</strong>, Col{" "}
-            <strong className="text-amber-300">{gridCol}</strong> (Index:{" "}
-            <strong className="text-amber-300">{emotionIndex >= 0 ? emotionIndex : 0}</strong>)
+            {t("dataStudioVnGridCell")}:{" "}
+            <span className="text-amber-100 font-medium">
+              R{gridRow}, C{gridCol} (Idx: {emotionIndex >= 0 ? emotionIndex : 0})
+            </span>
           </span>
           <span className="text-amber-200/70">
-            Position: <strong className="text-amber-300">{currentNode.position ?? "center"}</strong>
+            {t("dataStudioVnPosition")}:{" "}
+            <strong className="text-amber-300">{currentNode.position ?? "center"}</strong>
           </span>
         </div>
 
@@ -128,7 +137,7 @@ export const VisualNovelPreviewCard: React.FC = () => {
                   {currentNode.speakerNameKey ? t(currentNode.speakerNameKey) : currentSpeaker}
                 </span>
                 <span className="font-mono text-[10px] text-amber-200/50">
-                  Node: {currentNode.id}
+                  {t("dataStudioVnNodeLabel")}: {currentNode.id}
                 </span>
               </div>
               <p className="text-xs text-amber-100/90 leading-relaxed italic">
@@ -141,7 +150,7 @@ export const VisualNovelPreviewCard: React.FC = () => {
               {currentNode.choices && currentNode.choices.length > 0 ? (
                 <div className="flex flex-col gap-1">
                   <span className="text-[10px] font-medium text-amber-200/60">
-                    Player Decisions:
+                    {t("dataStudioVnPlayerDecisions")}
                   </span>
                   <div className="flex flex-wrap gap-2">
                     {currentNode.choices.map((choice) => (
@@ -172,11 +181,11 @@ export const VisualNovelPreviewCard: React.FC = () => {
                     }
                   }}
                 >
-                  Continue Dialogue
+                  {t("dataStudioVnContinueDialogue")}
                 </Button>
               ) : (
                 <span className="text-[11px] text-emerald-400 font-medium self-end">
-                  • End of Scene
+                  • {t("dataStudioVnEndOfScene")}
                 </span>
               )}
             </div>

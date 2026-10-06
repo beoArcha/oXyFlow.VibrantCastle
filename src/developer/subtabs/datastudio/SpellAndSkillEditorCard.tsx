@@ -1,6 +1,16 @@
 import React, { useState, useMemo } from "react";
-import { Wand2, CheckCircle2, AlertTriangle } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Button } from "@ui";
+import { Wand2 } from "lucide-react";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Input,
+  Select,
+  ColorPickerInput,
+  CompactNumberStepper,
+} from "@ui";
+import { useI18n } from "@context/I18nContext";
 import spellsJson from "@data/skills/spells.json";
 import {
   validateSpell,
@@ -10,9 +20,13 @@ import {
   SpellCastType,
   SpellJsonSchema,
 } from "@lib/schemas/spellsSchema";
-import { ValidationErrorDetail } from "@lib/schemas/commonSchema";
+import { PresetSelectorHeader } from "./components/PresetSelectorHeader";
+import { SchemaValidationAlert } from "./components/SchemaValidationAlert";
+import { SchemaValidationBadge } from "./components/SchemaValidationBadge";
 
 export const SpellAndSkillEditorCard: React.FC = () => {
+  const { t } = useI18n();
+
   const existingSpells = useMemo(
     () => Object.values(spellsJson.spells as Record<string, SpellJsonSchema>),
     []
@@ -53,6 +67,11 @@ export const SpellAndSkillEditorCard: React.FC = () => {
     return validateSpell(draft);
   }, [draft]);
 
+  const validationErrors = useMemo(
+    () => (validationResult.success ? [] : validationResult.errors),
+    [validationResult]
+  );
+
   const updateField = <K extends keyof SpellJsonSchema>(field: K, value: SpellJsonSchema[K]) => {
     setDraft((prev) => ({
       ...prev,
@@ -60,181 +79,152 @@ export const SpellAndSkillEditorCard: React.FC = () => {
     }));
   };
 
+  const domainOptions = useMemo(
+    () => MAGIC_DOMAINS.map((domain) => ({ value: domain, label: domain })),
+    []
+  );
+
+  const castTypeOptions = useMemo(
+    () => SPELL_CAST_TYPES.map((castType) => ({ value: castType, label: castType })),
+    []
+  );
+
+  const presetOptions = useMemo(
+    () =>
+      existingSpells.map((s) => ({
+        value: s.id,
+        label: `${s.id} (${s.magicDomain})`,
+      })),
+    [existingSpells]
+  );
+
   return (
     <Card variant="default">
       <CardHeader>
         <div className="flex items-center justify-between flex-wrap gap-2">
           <CardTitle icon={<Wand2 className="w-4 h-4 text-amber-400" />}>
-            Spell & Magic Editor
+            {t("dataStudioSpellCardTitle")}
           </CardTitle>
-          <div className="flex items-center gap-2">
-            {validationResult.success ? (
-              <span className="flex items-center gap-1 text-xs font-semibold text-emerald-400 bg-emerald-950/60 border border-emerald-700/50 px-2 py-0.5 rounded">
-                <CheckCircle2 size={13} /> Valid
-              </span>
-            ) : (
-              <span className="flex items-center gap-1 text-xs font-semibold text-rose-400 bg-rose-950/60 border border-rose-700/50 px-2 py-0.5 rounded">
-                <AlertTriangle size={13} /> {validationResult.errors.length} Error(s)
-              </span>
-            )}
-          </div>
+          <SchemaValidationBadge
+            isValid={validationResult.success}
+            errorCount={validationErrors.length}
+          />
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        {/* Spell Preset Selector */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <label className="text-xs font-medium text-amber-200/80">Select Preset:</label>
-          <select
-            className="bg-[#140602] border border-amber-900/60 text-amber-100 text-xs rounded px-2 py-1"
-            value={selectedSpellId}
-            onChange={(e) => handleSelectSpell(e.target.value)}
-          >
-            {existingSpells.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.id} ({s.magicDomain})
-              </option>
-            ))}
-          </select>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => {
-              setDraft({
-                id: `spell_custom_${Date.now().toString().slice(-4)}`,
-                nameKey: "spellCustomName",
-                descriptionKey: "spellCustomDesc",
-                category: "offensive",
-                triggerType: "action",
-                magicDomain: "solar",
-                castType: "instant",
-                manaCost: 25,
-                staminaCost: 0,
-                cooldownFrames: 30,
-                damage: 60,
-                projectileSpeed: 9,
-                color: "#f59e0b",
-                iconName: "Flame",
-              });
-            }}
-          >
-            Create New Spell
-          </Button>
-        </div>
+        {/* Preset Selector */}
+        <PresetSelectorHeader
+          selectedValue={selectedSpellId}
+          onSelect={handleSelectSpell}
+          options={presetOptions}
+          createButtonLabel={t("dataStudioSpellCreateNew")}
+          onCreateNew={() => {
+            setDraft({
+              id: `spell_custom_${Date.now().toString().slice(-4)}`,
+              nameKey: "spellCustomName",
+              descriptionKey: "spellCustomDesc",
+              category: "offensive",
+              triggerType: "action",
+              magicDomain: "solar",
+              castType: "instant",
+              manaCost: 25,
+              staminaCost: 0,
+              cooldownFrames: 30,
+              damage: 60,
+              projectileSpeed: 9,
+              color: "#f59e0b",
+              iconName: "Flame",
+            });
+          }}
+        />
 
-        {/* Form Fields Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs">
-          <div className="flex flex-col gap-1">
-            <label className="text-amber-200/70">Spell ID</label>
-            <input
-              type="text"
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={draft.id ?? ""}
-              onChange={(e) => updateField("id", e.target.value)}
-            />
-          </div>
+        {/* Form Controls Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+          <Input
+            id="spell-field-id"
+            label={t("dataStudioSpellId")}
+            value={draft.id ?? ""}
+            onChange={(e) => updateField("id", e.target.value)}
+          />
 
-          <div className="flex flex-col gap-1">
-            <label className="text-amber-200/70">Magic Domain</label>
-            <select
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={draft.magicDomain ?? "solar"}
-              onChange={(e) => updateField("magicDomain", e.target.value as MagicDomain)}
+          <Select
+            id="spell-field-magic-domain"
+            label={t("dataStudioSpellDomain")}
+            value={draft.magicDomain ?? "solar"}
+            onChange={(e) => updateField("magicDomain", e.target.value as MagicDomain)}
+            options={domainOptions}
+            variant="castle"
+          />
+
+          <Select
+            id="spell-field-cast-type"
+            label={t("dataStudioSpellCastType")}
+            value={draft.castType ?? "instant"}
+            onChange={(e) => updateField("castType", e.target.value as SpellCastType)}
+            options={castTypeOptions}
+            variant="castle"
+          />
+
+          <CompactNumberStepper
+            id="spell-field-mana-cost"
+            label={t("dataStudioSpellManaCost")}
+            value={draft.manaCost ?? 0}
+            min={0}
+            max={999}
+            onChange={(val) => updateField("manaCost", val)}
+          />
+
+          <CompactNumberStepper
+            id="spell-field-damage"
+            label={t("dataStudioSpellDamage")}
+            value={draft.damage ?? 0}
+            min={0}
+            max={9999}
+            onChange={(val) => updateField("damage", val)}
+          />
+
+          <CompactNumberStepper
+            id="spell-field-projectile-speed"
+            label={t("dataStudioSpellProjectileSpeed")}
+            value={draft.projectileSpeed ?? 0}
+            min={0}
+            max={100}
+            step={0.5}
+            onChange={(val) => updateField("projectileSpeed", val)}
+          />
+
+          <CompactNumberStepper
+            id="spell-field-cooldown"
+            label={t("dataStudioSpellCooldown")}
+            value={draft.cooldownFrames ?? 0}
+            min={0}
+            max={600}
+            onChange={(val) => updateField("cooldownFrames", val)}
+          />
+
+          <div className="flex flex-col gap-1 text-left">
+            <label
+              htmlFor="spell-field-color"
+              className="text-xs font-semibold uppercase tracking-wider text-stone-400 select-none"
             >
-              {MAGIC_DOMAINS.map((domain) => (
-                <option key={domain} value={domain}>
-                  {domain}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-amber-200/70">Cast Type</label>
-            <select
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={draft.castType ?? "instant"}
-              onChange={(e) => updateField("castType", e.target.value as SpellCastType)}
-            >
-              {SPELL_CAST_TYPES.map((castType) => (
-                <option key={castType} value={castType}>
-                  {castType}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-amber-200/70">Mana Cost</label>
-            <input
-              type="number"
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={draft.manaCost ?? 0}
-              onChange={(e) => updateField("manaCost", Number(e.target.value))}
+              {t("dataStudioSpellColor")}
+            </label>
+            <ColorPickerInput
+              value={draft.color ?? "#f59e0b"}
+              onChange={(hex) => updateField("color", hex)}
             />
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-amber-200/70">Damage</label>
-            <input
-              type="number"
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={draft.damage ?? 0}
-              onChange={(e) => updateField("damage", Number(e.target.value))}
-            />
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-amber-200/70">Projectile Speed</label>
-            <input
-              type="number"
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={draft.projectileSpeed ?? 0}
-              onChange={(e) => updateField("projectileSpeed", Number(e.target.value))}
-            />
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-amber-200/70">Cooldown Frames</label>
-            <input
-              type="number"
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={draft.cooldownFrames ?? 0}
-              onChange={(e) => updateField("cooldownFrames", Number(e.target.value))}
-            />
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-amber-200/70">Color (Hex)</label>
-            <input
-              type="text"
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={draft.color ?? ""}
-              onChange={(e) => updateField("color", e.target.value)}
-            />
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-amber-200/70">Icon Identifier</label>
-            <input
-              type="text"
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={draft.iconName ?? ""}
-              onChange={(e) => updateField("iconName", e.target.value)}
-            />
-          </div>
+          <Input
+            id="spell-field-icon"
+            label={t("dataStudioSpellIcon")}
+            value={draft.iconName ?? ""}
+            onChange={(e) => updateField("iconName", e.target.value)}
+          />
         </div>
 
         {/* Validation Errors List */}
-        {!validationResult.success && (
-          <div className="bg-rose-950/40 border border-rose-900/50 rounded p-2 text-xs text-rose-300 flex flex-col gap-1">
-            <div className="font-semibold text-rose-400">Schema Validation Errors:</div>
-            {validationResult.errors.map((err: ValidationErrorDetail, i: number) => (
-              <div key={i} className="font-mono text-[11px]">
-                • <span className="text-amber-300">{err.path}</span>: {err.message}
-              </div>
-            ))}
-          </div>
-        )}
+        <SchemaValidationAlert errors={validationErrors} />
       </CardContent>
     </Card>
   );

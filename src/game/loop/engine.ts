@@ -374,6 +374,11 @@ export class GameEngine {
     };
   }
 
+  public clearAllListeners(): void {
+    this.stateListeners.clear();
+    this.eventBus.clear();
+  }
+
   public setCanvasDimensions(
     width: number,
     height: number,

@@ -51,9 +51,16 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
 
   useEffect(() => {
     if (!engine?.eventBus) return;
-    return engine.eventBus.on("ITEM_CONSUMED", () => {
-      setStateVersion((v) => v + 1);
+    let isMounted = true;
+    const unsubscribe = engine.eventBus.on("ITEM_CONSUMED", () => {
+      if (isMounted) {
+        setStateVersion((v) => v + 1);
+      }
     });
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, [engine]);
 
   const activePlayer = useMemo(() => {

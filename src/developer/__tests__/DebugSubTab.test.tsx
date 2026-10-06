@@ -131,7 +131,7 @@ describe("DebugSubTab & Telemetry Cards", () => {
         </TestProviders>
       );
       expect(unmount).toBeDefined();
-      unmount();
+      await unmount();
     });
   });
 

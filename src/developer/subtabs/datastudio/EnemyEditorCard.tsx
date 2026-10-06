@@ -1,6 +1,17 @@
 import React, { useState, useMemo } from "react";
-import { Skull, CheckCircle2, AlertTriangle } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Button } from "@ui";
+import { Skull } from "lucide-react";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Input,
+  Select,
+  Switch,
+  ColorPickerInput,
+  CompactNumberStepper,
+} from "@ui";
+import { useI18n } from "@context/I18nContext";
 import enemiesJson from "@data/enemies/enemies.json";
 import {
   validateEnemy,
@@ -9,9 +20,13 @@ import {
   EnemyJsonSchema,
   EnemyStatsSchema,
 } from "@lib/schemas/enemySchema";
-import { ValidationErrorDetail } from "@lib/schemas/commonSchema";
+import { PresetSelectorHeader } from "./components/PresetSelectorHeader";
+import { SchemaValidationAlert } from "./components/SchemaValidationAlert";
+import { SchemaValidationBadge } from "./components/SchemaValidationBadge";
 
 export const EnemyEditorCard: React.FC = () => {
+  const { t } = useI18n();
+
   const existingEnemies = useMemo(
     () => Object.values(enemiesJson.enemies as Record<string, EnemyJsonSchema>),
     []
@@ -66,6 +81,11 @@ export const EnemyEditorCard: React.FC = () => {
     return validateEnemy(draft);
   }, [draft]);
 
+  const validationErrors = useMemo(
+    () => (validationResult.success ? [] : validationResult.errors),
+    [validationResult]
+  );
+
   const updateField = <K extends keyof EnemyJsonSchema>(
     field: K,
     value: EnemyJsonSchema[K]
@@ -91,256 +111,216 @@ export const EnemyEditorCard: React.FC = () => {
     }));
   };
 
+  const soulOptions = useMemo(
+    () => SOUL_TYPES.map((type) => ({ value: type, label: type })),
+    []
+  );
+
+  const presetOptions = useMemo(
+    () =>
+      existingEnemies.map((e) => ({
+        value: e.id,
+        label: `${e.defaultName} (${e.id})`,
+      })),
+    [existingEnemies]
+  );
+
   return (
     <Card variant="default">
       <CardHeader>
         <div className="flex items-center justify-between flex-wrap gap-2">
           <CardTitle icon={<Skull className="w-4 h-4 text-rose-400" />}>
-            Enemy & Creature Editor
+            {t("dataStudioEnemyCardTitle")}
           </CardTitle>
-          <div className="flex items-center gap-2">
-            {validationResult.success ? (
-              <span className="flex items-center gap-1 text-xs font-semibold text-emerald-400 bg-emerald-950/60 border border-emerald-700/50 px-2 py-0.5 rounded">
-                <CheckCircle2 size={13} /> Valid
-              </span>
-            ) : (
-              <span className="flex items-center gap-1 text-xs font-semibold text-rose-400 bg-rose-950/60 border border-rose-700/50 px-2 py-0.5 rounded">
-                <AlertTriangle size={13} /> {validationResult.errors.length} Error(s)
-              </span>
-            )}
-          </div>
+          <SchemaValidationBadge
+            isValid={validationResult.success}
+            errorCount={validationErrors.length}
+          />
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {/* Preset Selector */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <label className="text-xs font-medium text-amber-200/80">Select Preset:</label>
-          <select
-            className="bg-[#140602] border border-amber-900/60 text-amber-100 text-xs rounded px-2 py-1"
-            value={selectedEnemyId}
-            onChange={(e) => handleSelectEnemy(e.target.value)}
-          >
-            {existingEnemies.map((e) => (
-              <option key={e.id} value={e.id}>
-                {e.defaultName} ({e.id})
-              </option>
-            ))}
-          </select>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => {
-              setDraft({
-                id: `enemy_custom_${Date.now().toString().slice(-4)}`,
-                nameKey: "enemyCustomName",
-                defaultName: "Custom Beast",
-                category: "beast",
-                isDummy: false,
-                isAerial: false,
-                dimensions: { width: 40, height: 40 },
-                stats: {
-                  health: 120,
-                  maxHealth: 120,
-                  speed: 2,
-                  attackPower: 18,
-                  scoreReward: 60,
+        <PresetSelectorHeader
+          selectedValue={selectedEnemyId}
+          onSelect={handleSelectEnemy}
+          options={presetOptions}
+          createButtonLabel={t("dataStudioEnemyCreateNew")}
+          onCreateNew={() => {
+            setDraft({
+              id: `enemy_custom_${Date.now().toString().slice(-4)}`,
+              nameKey: "enemyCustomName",
+              defaultName: "Custom Beast",
+              category: "beast",
+              isDummy: false,
+              isAerial: false,
+              dimensions: { width: 40, height: 40 },
+              stats: {
+                health: 120,
+                maxHealth: 120,
+                speed: 2,
+                attackPower: 18,
+                scoreReward: 60,
+              },
+              soulDrop: {
+                soulId: "soul_custom",
+                type: "bullet",
+                dropRate: 0.2,
+                grantedSkillId: "skill_fireball",
+                icon: "Flame",
+                i18n: {
+                  nameKey: "soulCustomName",
+                  descriptionKey: "soulCustomDesc",
                 },
-                soulDrop: {
-                  soulId: "soul_custom",
-                  type: "bullet",
-                  dropRate: 0.2,
-                  grantedSkillId: "skill_fireball",
-                  icon: "Flame",
-                  i18n: {
-                    nameKey: "soulCustomName",
-                    descriptionKey: "soulCustomDesc",
-                  },
-                },
-                proceduralFallback: {
-                  bodyColor: "#b91c1c",
-                },
-              });
+              },
+              proceduralFallback: {
+                bodyColor: "#b91c1c",
+              },
+            });
+          }}
+        />
+
+        {/* Form Controls Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+          <Input
+            id="enemy-field-id"
+            label={t("dataStudioEnemyId")}
+            value={draft.id ?? ""}
+            onChange={(e) => updateField("id", e.target.value)}
+          />
+
+          <Input
+            id="enemy-field-name"
+            label={t("dataStudioEnemyDefaultName")}
+            value={draft.defaultName ?? ""}
+            onChange={(e) => updateField("defaultName", e.target.value)}
+          />
+
+          <Input
+            id="enemy-field-category"
+            label={t("dataStudioEnemyCategory")}
+            value={draft.category ?? "standard"}
+            onChange={(e) => updateField("category", e.target.value)}
+          />
+
+          <CompactNumberStepper
+            id="enemy-field-health"
+            label={t("dataStudioEnemyHealth")}
+            value={draft.stats?.health ?? 100}
+            min={1}
+            max={99999}
+            onChange={(val) => {
+              updateStat("health", val);
+              updateStat("maxHealth", val);
             }}
-          >
-            Create New Enemy
-          </Button>
-        </div>
+          />
 
-        {/* Form Fields Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs">
-          <div className="flex flex-col gap-1">
-            <label className="text-amber-200/70">Enemy ID</label>
-            <input
-              type="text"
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={draft.id ?? ""}
-              onChange={(e) => updateField("id", e.target.value)}
-            />
-          </div>
+          <CompactNumberStepper
+            id="enemy-field-attack"
+            label={t("dataStudioEnemyAttackPower")}
+            value={draft.stats?.attackPower ?? 10}
+            min={0}
+            max={9999}
+            onChange={(val) => updateStat("attackPower", val)}
+          />
 
-          <div className="flex flex-col gap-1">
-            <label className="text-amber-200/70">Default Name</label>
-            <input
-              type="text"
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={draft.defaultName ?? ""}
-              onChange={(e) => updateField("defaultName", e.target.value)}
-            />
-          </div>
+          <CompactNumberStepper
+            id="enemy-field-speed"
+            label={t("dataStudioEnemySpeed")}
+            value={draft.stats?.speed ?? 1}
+            min={0}
+            max={50}
+            step={0.1}
+            onChange={(val) => updateStat("speed", val)}
+          />
 
-          <div className="flex flex-col gap-1">
-            <label className="text-amber-200/70">Category</label>
-            <input
-              type="text"
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={draft.category ?? "standard"}
-              onChange={(e) => updateField("category", e.target.value)}
-            />
-          </div>
+          <CompactNumberStepper
+            id="enemy-field-width"
+            label={t("dataStudioEnemyWidth")}
+            value={draft.dimensions?.width ?? 32}
+            min={8}
+            max={512}
+            onChange={(val) =>
+              updateField("dimensions", {
+                width: val,
+                height: draft.dimensions?.height ?? 32,
+              })
+            }
+          />
 
-          <div className="flex flex-col gap-1">
-            <label className="text-amber-200/70">Health</label>
-            <input
-              type="number"
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={draft.stats?.health ?? 100}
-              onChange={(e) => {
-                const val = Number(e.target.value);
-                updateStat("health", val);
-                updateStat("maxHealth", val);
-              }}
-            />
-          </div>
+          <CompactNumberStepper
+            id="enemy-field-height"
+            label={t("dataStudioEnemyHeight")}
+            value={draft.dimensions?.height ?? 32}
+            min={8}
+            max={512}
+            onChange={(val) =>
+              updateField("dimensions", {
+                width: draft.dimensions?.width ?? 32,
+                height: val,
+              })
+            }
+          />
 
-          <div className="flex flex-col gap-1">
-            <label className="text-amber-200/70">Attack Power</label>
-            <input
-              type="number"
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={draft.stats?.attackPower ?? 10}
-              onChange={(e) => updateStat("attackPower", Number(e.target.value))}
-            />
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-amber-200/70">Speed</label>
-            <input
-              type="number"
-              step="0.1"
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={draft.stats?.speed ?? 1}
-              onChange={(e) => updateStat("speed", Number(e.target.value))}
-            />
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-amber-200/70">Width (px)</label>
-            <input
-              type="number"
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={draft.dimensions?.width ?? 32}
-              onChange={(e) =>
-                updateField("dimensions", {
-                  width: Number(e.target.value),
-                  height: draft.dimensions?.height ?? 32,
-                })
-              }
-            />
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-amber-200/70">Height (px)</label>
-            <input
-              type="number"
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={draft.dimensions?.height ?? 32}
-              onChange={(e) =>
-                updateField("dimensions", {
-                  width: draft.dimensions?.width ?? 32,
-                  height: Number(e.target.value),
-                })
-              }
-            />
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-amber-200/70">Color Hex</label>
-            <input
-              type="text"
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={draft.proceduralFallback?.bodyColor ?? "#dc2626"}
-              onChange={(e) =>
-                updateField("proceduralFallback", {
-                  bodyColor: e.target.value,
-                })
-              }
-            />
-          </div>
-
-          <div className="flex items-center gap-2 pt-2">
-            <input
-              type="checkbox"
-              id="isAerialCheckbox"
-              className="accent-amber-500 rounded"
-              checked={draft.isAerial ?? false}
-              onChange={(e) => updateField("isAerial", e.target.checked)}
-            />
-            <label htmlFor="isAerialCheckbox" className="text-amber-200/80 cursor-pointer">
-              Aerial Flying Enemy
-            </label>
-          </div>
-
-          <div className="flex items-center gap-2 pt-2">
-            <input
-              type="checkbox"
-              id="isDummyCheckbox"
-              className="accent-amber-500 rounded"
-              checked={draft.isDummy ?? false}
-              onChange={(e) => updateField("isDummy", e.target.checked)}
-            />
-            <label htmlFor="isDummyCheckbox" className="text-amber-200/80 cursor-pointer">
-              Training Dummy
-            </label>
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-amber-200/70">Soul Type</label>
-            <select
-              className="bg-[#140602] border border-amber-900/60 text-amber-100 rounded px-2 py-1"
-              value={draft.soulDrop?.type ?? "bullet"}
-              onChange={(e) => {
-                const newType = e.target.value as SoulType;
-                if (draft.soulDrop) {
-                  setDraft((prev: Partial<EnemyJsonSchema>) => ({
-                    ...prev,
-                    soulDrop: {
-                      ...prev.soulDrop!,
-                      type: newType,
-                    },
-                  }));
-                }
-              }}
+          <div className="flex flex-col gap-1 text-left">
+            <label
+              htmlFor="enemy-field-color"
+              className="text-xs font-semibold uppercase tracking-wider text-stone-400 select-none"
             >
-              {SOUL_TYPES.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
+              {t("dataStudioEnemyColor")}
+            </label>
+            <ColorPickerInput
+              value={draft.proceduralFallback?.bodyColor ?? "#dc2626"}
+              onChange={(hex) =>
+                updateField("proceduralFallback", {
+                  bodyColor: hex,
+                })
+              }
+            />
+          </div>
+
+          <Select
+            id="enemy-field-soul-type"
+            label={t("dataStudioEnemySoulType")}
+            value={draft.soulDrop?.type ?? "bullet"}
+            onChange={(e) => {
+              const newType = e.target.value as SoulType;
+              if (draft.soulDrop) {
+                setDraft((prev: Partial<EnemyJsonSchema>) => ({
+                  ...prev,
+                  soulDrop: {
+                    ...prev.soulDrop!,
+                    type: newType,
+                  },
+                }));
+              }
+            }}
+            options={soulOptions}
+            variant="castle"
+          />
+
+          <div className="flex items-center gap-3 p-2 bg-stone-950/40 border border-stone-800/60 rounded-lg">
+            <Switch
+              id="enemy-field-aerial"
+              size="sm"
+              checked={draft.isAerial ?? false}
+              onCheckedChange={(checked) => updateField("isAerial", checked)}
+              label={<span className="text-xs text-amber-200/90">{t("dataStudioEnemyIsAerial")}</span>}
+            />
+          </div>
+
+          <div className="flex items-center gap-3 p-2 bg-stone-950/40 border border-stone-800/60 rounded-lg">
+            <Switch
+              id="enemy-field-dummy"
+              size="sm"
+              checked={draft.isDummy ?? false}
+              onCheckedChange={(checked) => updateField("isDummy", checked)}
+              label={<span className="text-xs text-amber-200/90">{t("dataStudioEnemyIsDummy")}</span>}
+            />
           </div>
         </div>
 
         {/* Validation Errors List */}
-        {!validationResult.success && (
-          <div className="bg-rose-950/40 border border-rose-900/50 rounded p-2 text-xs text-rose-300 flex flex-col gap-1">
-            <div className="font-semibold text-rose-400">Schema Validation Errors:</div>
-            {validationResult.errors.map((err: ValidationErrorDetail, i: number) => (
-              <div key={i} className="font-mono text-[11px]">
-                • <span className="text-amber-300">{err.path}</span>: {err.message}
-              </div>
-            ))}
-          </div>
-        )}
+        <SchemaValidationAlert errors={validationErrors} />
       </CardContent>
     </Card>
   );
