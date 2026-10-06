@@ -1,8 +1,5 @@
 /**
- * types.ts
- *
  * Domain types and contracts for the Central Atlas Asset Registry.
- * Follows SOLID (Interface Segregation Principle & Open-Closed Principle).
  */
 
 import { AtlasMetaDoc } from "../types";

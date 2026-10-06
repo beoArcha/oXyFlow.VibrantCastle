@@ -1,5 +1,5 @@
 /**
- * Central Asset Registry Service implementing SOLID (OCP, DIP, SRP).
+ * Central asset registry service for atlas definitions.
  * Preloads registered assets from atlas_manifest.json and supports dynamic runtime additions.
  */
 

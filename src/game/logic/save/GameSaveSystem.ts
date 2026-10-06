@@ -22,9 +22,8 @@ export interface GameSaveSystemDependencies {
 }
 
 /**
- * Unified Facade for the Save & Persistence subsystem (SOLID & GoF Facade).
+ * Unified coordinator for the save and persistence subsystem.
  * Coordinates validation, compilation, entity application, storage, and file export.
- * Preserves 100% backward compatibility for all callers across the codebase.
  */
 export class GameSaveSystem {
   private readonly validator: ISaveValidator;

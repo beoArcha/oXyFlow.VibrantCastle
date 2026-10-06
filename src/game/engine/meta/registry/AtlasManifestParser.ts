@@ -1,8 +1,5 @@
 /**
- * AtlasManifestParser.ts
- *
  * Validates and parses the central atlas manifest JSON document.
- * Strictly enforces SOLID principles and relational path integrity.
  */
 
 import { IAtlasManifest, IAtlasAssetManifestItem, AtlasCategory } from "./types";

@@ -9,7 +9,7 @@ import { MonsterSpriteExtractor } from "./MonsterSpriteExtractor";
 import { AssetError, ErrorCode } from "@lib/errors";
 
 /**
- * Extensible factory for registering and resolving sprite extractors (SOLID / OCP).
+ * Factory for registering and resolving sprite extractors.
  */
 export class SpriteExtractorFactory {
   private static extractors: Map<string, ISpriteSheetExtractor<any, any>> = new Map();

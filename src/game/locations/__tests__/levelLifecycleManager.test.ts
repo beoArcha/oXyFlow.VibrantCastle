@@ -12,7 +12,7 @@ import {
   SoundType,
 } from "../../types";
 
-describe("LevelLifecycleManager (SOLID & SRP)", () => {
+describe("LevelLifecycleManager", () => {
   let players: Player[];
   let enemies: Enemy[];
   let entities: Entity[];

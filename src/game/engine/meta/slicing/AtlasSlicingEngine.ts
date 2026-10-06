@@ -21,8 +21,7 @@ export interface AtlasSlicingEngineDependencies {
 }
 
 /**
- * AtlasSlicingEngine: Master Composite & Factory for slicing sprite sheets (GoF Context/Composite).
- * Automatically resolves frame geometry across multiple slicing paradigms with 100% backwards compatibility.
+ * Automatically resolves frame geometry across multiple slicing paradigms.
  */
 export class AtlasSlicingEngine {
   private readonly strategies: Map<SlicingMethod, ISlicingStrategy>;

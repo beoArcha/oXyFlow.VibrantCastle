@@ -46,7 +46,7 @@ function createMockPlayer(overrides: Partial<Player> = {}): Player {
   } as Player;
 }
 
-describe("Domain & Gameplay Result Pattern", () => {
+describe("Domain & Gameplay Result", () => {
   let memoryStore: Record<string, string> = {};
   const origStorage = (globalThis as any).localStorage;
 

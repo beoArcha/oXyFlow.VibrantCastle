@@ -66,13 +66,7 @@ export interface IRendererDependencies {
 
 /**
  * High-performance 2D Canvas Scene Orchestrator & Renderer.
- * Delivers a "HiPixel" visual aesthetic blending the rich autumnal warmth of Owlboy
- * with kinetic visual flair (dashes, hit-flashes, sweeps, spells) of Hades.
- *
- * Refactored to adhere to SOLID principles:
- * - SRP: Delegates domain rendering to ParallaxRenderer, StructureRenderer, ActorRenderer, and FxRenderer.
- * - DIP: Injects sub-renderers via IRendererDependencies with robust defaults.
- * - OCP: Modular sub-renderers can be extended or replaced without modifying camera or viewport logic.
+ * Coordinates layered rendering across parallax backgrounds, structures, actors, visual effects, and overlays.
  */
 export class GameRenderer {
   private canvas: HTMLCanvasElement;

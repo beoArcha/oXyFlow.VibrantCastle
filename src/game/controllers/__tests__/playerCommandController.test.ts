@@ -7,7 +7,7 @@ import { Player, PlayerId } from "../../types";
 import { getDefaultSkillsForCharacter } from "../../logic/skills";
 import { createMockPlayer } from "@test-utils";
 
-describe("PlayerCommandController (SOLID & SRP)", () => {
+describe("PlayerCommandController", () => {
   let mockPlayer1: Player;
   let mockPlayer2: Player;
   let players: Player[];

@@ -1,6 +1,4 @@
 /**
- * ProceduralBackdropCache.ts
- *
  * GPU Texture Caching for Procedural Backdrops & Silhouette Geometry.
  * Pre-renders procedural skies, solar auras, castle profiles, and scenery trees
  * onto offscreen GPU canvas textures, replacing per-frame path rasterization
