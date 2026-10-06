@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "LocationBlueprint",
-  "description": "Blueprint schema for extensible gothic action-platformer levels with dictionaries, multi-portal routing, and parallax backgrounds",
+  "description": "Blueprint schema for level definitions, portal routing, and parallax backgrounds",
   "type": "object",
   "required": [
     "schemaVersion",

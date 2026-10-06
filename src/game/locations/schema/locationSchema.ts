@@ -1,5 +1,5 @@
 /**
- * Location Schema Definition for gothic action-adventure platformer.
+ * Location blueprint and scene schemas for interconnected rooms.
  */
 
 export type ParticleType = "leaf" | "dust" | "spark" | "magic" | "shield";

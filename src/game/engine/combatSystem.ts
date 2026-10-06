@@ -47,10 +47,7 @@ export interface ICombatSystem {
 }
 
 /**
- * CombatSystem
  * Encapsulates melee sword strikes, projectile dynamics, auto-skills, and damage resolution.
- * Strictly adheres to Single Responsibility Principle (SRP) by decoupling combat logic
- * from the main GameEngine loop.
  */
 export class CombatSystem implements ICombatSystem {
   public processMeleeAttacks(

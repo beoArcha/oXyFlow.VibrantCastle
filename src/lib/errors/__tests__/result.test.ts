@@ -20,7 +20,7 @@ import {
   wrapThrowable,
 } from "../index";
 
-describe("SOLID Result<T, E> Pattern", () => {
+describe("Result<T, E>", () => {
   describe("Basic Construction & Type Narrowing", () => {
     it("creates Ok result with boolean discriminator ok = true", () => {
       const res = ok(42);

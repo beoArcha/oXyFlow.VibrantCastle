@@ -61,8 +61,7 @@ const initialIconMap: Record<KnownItemIconName, IconComponentType> = {
 };
 
 /**
- * Extensible icon registry conforming to the Open/Closed Principle (OCP).
- * Enables runtime registration of custom item icons without modifying core code.
+ * Registry mapping icon identifier keys to React icon components.
  */
 export const itemIconRegistry = new Map<string, IconComponentType>(
   Object.entries(initialIconMap)

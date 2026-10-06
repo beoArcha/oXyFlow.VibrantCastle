@@ -20,8 +20,8 @@ import {
   UnwrapFailedError,
 } from "../index";
 
-describe("SOLID Error Hierarchy", () => {
-  describe("Liskov Substitution Principle & Inheritance", () => {
+describe("Domain Error Hierarchy", () => {
+  describe("Error Inheritance and Subtyping", () => {
     it("subclasses must be instances of GameBaseError and native Error", () => {
       const err = new EngineError("Canvas context failed", ErrorCode.ENGINE_CANVAS_CONTEXT_LOST);
 

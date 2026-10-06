@@ -9,7 +9,7 @@ export interface ICollisionContext {
 }
 
 /**
- * Interface for the Strategy Pattern handling collisions.
+ * Collision resolution handler for a specific collision type.
  */
 export interface CollisionStrategy {
   handle(player: Player, entity: Entity, context: ICollisionContext): void;
@@ -207,8 +207,7 @@ export interface ICollisionEngine {
 }
 
 /**
- * Main manager applying strategies dynamically based on entity CollisionType.
- * Excellent showcase of Open-Closed Principle (SOLID) and Strategy Pattern!
+ * Resolves player-entity collisions by delegating to registered handlers by CollisionType.
  */
 export class CollisionEngine implements ICollisionEngine {
   private strategies: Map<CollisionType, CollisionStrategy> = new Map();

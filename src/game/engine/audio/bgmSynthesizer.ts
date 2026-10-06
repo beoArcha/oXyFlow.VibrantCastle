@@ -7,7 +7,7 @@ export interface IBgmSynthesizer {
 }
 
 /**
- * Algorithmic dynamic background music synthesizer and step-sequencer using Web Audio API (SRP).
+ * Algorithmic dynamic background music synthesizer and step-sequencer using Web Audio API.
  * Dynamically shifts between bright exploration themes and high-tension combat drives.
  */
 export class BgmSynthesizer implements IBgmSynthesizer {

@@ -11,7 +11,7 @@ export interface SlicingContext {
 }
 
 /**
- * Strategy interface for slicing sprite sheets into discrete frames (GoF Strategy Pattern).
+ * Strategy interface for slicing sprite sheets into discrete frames.
  */
 export interface ISlicingStrategy {
   readonly method: SlicingMethod;

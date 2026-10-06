@@ -17,7 +17,6 @@ import { GameEventBus } from "../engine/eventBus";
 
 /**
  * Context provided to PlayerCommandController to interact with game state.
- * Implements Dependency Inversion Principle (DIP) to decouple command logic from GameEngine.
  */
 export interface IPlayerCommandContext {
   getPlayers(): Player[];
@@ -27,7 +26,6 @@ export interface IPlayerCommandContext {
 
 /**
  * Interface for unidirectional player command executions (equipment, potions, skill trees, spells).
- * Segregated interface following ISP and SRP.
  */
 export interface IPlayerCommandController {
   equipPlayerItem(playerIndex: number, backpackIndex: number): boolean;

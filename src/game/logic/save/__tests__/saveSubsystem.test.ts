@@ -215,7 +215,7 @@ describe("Save Subsystem (Decomposed Architecture)", () => {
     });
   });
 
-  describe("GameSaveSystem (GoF Facade)", () => {
+  describe("GameSaveSystem", () => {
     it("coordinates all services via unified facade with custom storage", () => {
       const store: Record<string, string> = {};
       const mockStorage = {

@@ -3,8 +3,7 @@ import { Player } from "@game/types";
 import { GameEngine } from "@game/loop/engine";
 
 /**
- * Granular capability interfaces following the Interface Segregation Principle (ISP)
- * and composition over inheritance.
+ * Capability interfaces for engine and React integration.
  */
 
 /**

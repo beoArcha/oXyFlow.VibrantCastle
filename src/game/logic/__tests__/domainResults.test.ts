@@ -173,7 +173,7 @@ describe("Domain & Gameplay Result Pattern", () => {
       expect(gameSave.loadSaveResult().ok).toBe(false);
     });
 
-    it("purely compiles state without storage side-effects via createSaveState (SRP)", () => {
+    it("purely compiles state without storage side-effects via createSaveState", () => {
       const p1 = createMockPlayer({ health: 85, score: 320 });
       const res = gameSave.createSaveState([p1], [], [], "throne_room");
       expect(res.ok).toBe(true);
@@ -185,7 +185,7 @@ describe("Domain & Gameplay Result Pattern", () => {
       expect(gameSave.loadSaveResult().ok).toBe(false);
     });
 
-    it("supports Dependency Inversion via custom storage provider (DIP)", () => {
+    it("supports custom storage provider injection", () => {
       const memoryStore: Record<string, string> = {};
       const customStorage = {
         getItem: (k: string) => memoryStore[k] ?? null,

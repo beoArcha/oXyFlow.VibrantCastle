@@ -2,10 +2,6 @@ import React from "react";
 import { Layers } from "lucide-react";
 import { cn } from "@lib/utils";
 import { KbdKey } from "@ui";
-
-/**
- * Common layout styling tokens and classes for consistent gothic dark-fantasy aesthetic.
- */
 const LAYOUT_STYLES = {
   root: "h-screen w-screen max-w-full max-h-full bg-[#120602] text-[#fef3c7] font-sans antialiased flex flex-col justify-between overflow-hidden",
   header: "border-b border-[#3a1a0f] bg-[#140602]/95 px-3 md:px-5 py-2 flex justify-between items-center z-10 shrink-0",

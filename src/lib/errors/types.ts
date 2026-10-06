@@ -85,14 +85,14 @@ export enum ErrorCode {
 }
 
 /**
- * Interface for any object or error carrying a standardized ErrorCode (ISP).
+ * Interface for any object or error carrying a standardized ErrorCode.
  */
 export interface IHasErrorCode {
   readonly code: ErrorCode;
 }
 
 /**
- * Interface for errors that provide structured metadata for logging (DIP).
+ * Interface for errors that provide structured metadata for logging.
  */
 export interface IHasLogContext {
   toLogContext(): Record<string, unknown>;

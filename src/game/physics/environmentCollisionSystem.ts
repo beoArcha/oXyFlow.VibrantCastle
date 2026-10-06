@@ -2,7 +2,7 @@ import { Player, Entity, CollisionType } from "@game/types";
 import { ICollisionEngine } from "./collisions";
 
 /**
- * Context callbacks and state queries for EnvironmentCollisionSystem (DIP).
+ * Context callbacks and state queries for EnvironmentCollisionSystem.
  */
 export interface IEnvironmentCollisionContext {
   collisionEngine: ICollisionEngine;
@@ -21,7 +21,7 @@ export interface IEnvironmentCollisionContext {
 }
 
 /**
- * Interface contract for EnvironmentCollisionSystem (ISP).
+ * Interface contract for EnvironmentCollisionSystem.
  */
 export interface IEnvironmentCollisionSystem {
   resolveEnvironmentCollisions(

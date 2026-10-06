@@ -11,7 +11,7 @@ import {
   cleanupGlobalErrorHandlers,
 } from "../index";
 
-describe("SOLID Logger Architecture", () => {
+describe("Logger System", () => {
   let manager: LoggerManager;
 
   beforeEach(() => {

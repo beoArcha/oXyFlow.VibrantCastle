@@ -69,7 +69,7 @@ describe("AtlasAssetRegistry & AtlasManifestParser", () => {
     });
   });
 
-  it("allows registering custom assets at runtime without mutating manifest (OCP)", () => {
+  it("allows registering custom assets at runtime without mutating manifest", () => {
     const initialCount = defaultAtlasAssetRegistry.getAll().length;
 
     defaultAtlasAssetRegistry.register({

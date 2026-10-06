@@ -6,7 +6,7 @@ export interface ISfxSynthesizer {
 }
 
 /**
- * Dedicated procedural sound effects synthesizer using Web Audio API (SRP).
+ * Procedural sound effects synthesizer using Web Audio API.
  */
 export class SfxSynthesizer implements ISfxSynthesizer {
   public playSFX(ctx: AudioContext, destination: AudioNode, type: SoundType): void {

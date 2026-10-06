@@ -56,7 +56,7 @@ export class GameSaveSystem {
   }
 
   /**
-   * Pure compilation of active game session state into a SaveState structure (SRP).
+   * Compiles active game session state into a SaveState structure.
    */
   public createSaveState(
     players: Player[],

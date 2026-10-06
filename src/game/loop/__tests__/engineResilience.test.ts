@@ -93,8 +93,8 @@ describe("GameEngine Error Resilience & Logging", () => {
     });
   });
 
-  describe("GameEngine DIP & Loop Error Trapping", () => {
-    it("injects custom logger and loopCircuitBreaker via IGameDependencies (DIP)", () => {
+  describe("GameEngine Loop Error Trapping", () => {
+    it("injects custom logger and loopCircuitBreaker via IGameDependencies", () => {
       const customLogger = manager.getLogger("game:engine:custom");
       let onTripCalled = false;
       const customBreaker = new LoopCircuitBreaker({

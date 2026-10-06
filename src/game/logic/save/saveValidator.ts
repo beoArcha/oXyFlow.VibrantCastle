@@ -3,7 +3,7 @@ import { Result, ok, err, SaveError, ErrorCode } from "@lib/errors";
 import { ISaveValidator } from "./saveTypes";
 
 /**
- * Validates and normalizes raw JSON data into a structured SaveState (SRP).
+ * Validates and normalizes raw JSON data into a structured SaveState.
  * Ensures numerical validity, finite bounds, and schema integrity.
  */
 export class SaveValidator implements ISaveValidator {

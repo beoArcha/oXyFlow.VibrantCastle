@@ -1,7 +1,7 @@
 import { Player, Enemy, Entity, InputMap, AnimationState, SoundType } from "@game/types";
 
 /**
- * Audio interface for kinematic physics SFX (e.g. jump takeoff) (DIP).
+ * Audio interface for kinematic physics SFX (e.g. jump takeoff).
  */
 export interface IPhysicsAudio {
   playSFX(type: SoundType): void;

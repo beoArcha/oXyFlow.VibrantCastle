@@ -10,7 +10,7 @@ export interface IFxRenderer {
 }
 
 /**
- * Dedicated visual effects renderer for magic projectiles, glow cores, and particle simulations (SRP).
+ * Dedicated visual effects renderer for magic projectiles, glow cores, and particle simulations.
  */
 export class FxRenderer implements IFxRenderer {
   private readonly projectileGradientCache: Map<string, CanvasGradient> = new Map();

@@ -33,7 +33,7 @@ export interface IHitboxRenderer {
 
 /**
  * Dedicated visual debugging renderer for physical collision boxes,
- * sensors, attack reaches, and navigation patrol lines (SRP).
+ * sensors, attack reaches, and navigation patrol lines.
  */
 export class HitboxRenderer implements IHitboxRenderer {
   private readonly entityTagCache: Map<string, string> = new Map();

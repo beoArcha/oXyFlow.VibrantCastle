@@ -30,8 +30,7 @@ const sizeStyles: Record<ButtonSize, string> = {
 };
 
 /**
- * Standard dark fantasy gothic interactive button primitive.
- * Supports forwardRef, semantic variants, sizes, icon slots, and accessible loading state.
+ * Interactive button primitive with variant styling, size options, and loading states.
  */
 export const Button = React.memo(
   React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(

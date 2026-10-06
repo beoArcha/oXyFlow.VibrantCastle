@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-/* Gothic dark fantasy stylized scrollbar */
-
 /* WebKit (Chrome, Edge, Safari, Opera) */
 ::-webkit-scrollbar {
   width: 8px;

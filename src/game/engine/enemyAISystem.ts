@@ -11,9 +11,7 @@ export interface IEnemyAISystem {
 }
 
 /**
- * EnemyAISystem
  * Coordinates enemy behavior, physics update calls, and combat alert/aggro evaluation.
- * Separates enemy domain logic from the main GameEngine loop (SRP).
  */
 export class EnemyAISystem implements IEnemyAISystem {
   public update(

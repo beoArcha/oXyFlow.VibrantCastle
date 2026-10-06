@@ -64,7 +64,7 @@ export abstract class GameBaseError extends Error implements IHasErrorCode, IHas
   }
 
   /**
-   * Produces a clean, non-circular key-value payload for logging and diagnostics (DIP).
+   * Produces a clean, non-circular key-value payload for logging and diagnostics.
    */
   public toLogContext(): Record<string, unknown> {
     const payload: Record<string, unknown> = {

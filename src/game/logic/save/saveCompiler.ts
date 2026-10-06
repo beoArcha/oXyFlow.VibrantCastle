@@ -4,7 +4,7 @@ import { Result, ok, err, SaveError, ErrorCode } from "@lib/errors";
 import { ISaveCompiler } from "./saveTypes";
 
 /**
- * Pure compiler that translates active session game entities into a SaveState DTO (SRP).
+ * Translates active session game entities into a SaveState DTO.
  * Operates without storage side-effects or I/O mutations.
  */
 export class SaveCompiler implements ISaveCompiler {

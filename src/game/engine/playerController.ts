@@ -2,14 +2,14 @@ import { Player, InputMap, SoundType } from "../types";
 import { calculatePlayerDerivedStats } from "../logic/inventory";
 
 /**
- * Audio interface for player action SFX (DIP).
+ * Audio interface for player action SFX.
  */
 export interface IPlayerControllerAudio {
   playSFX(type: SoundType): void;
 }
 
 /**
- * Interface for managing player states, action triggers, and resource lifecycles (ISP).
+ * Interface for managing player states, action triggers, and resource lifecycles.
  */
 export interface IPlayerController {
   updateResourcesAndActions(
@@ -23,7 +23,7 @@ export interface IPlayerController {
 /**
  * PlayerController encapsulates resource regeneration (stamina, mana),
  * action cooldowns, and combat action triggers (attacks, slide/backstep).
- * Decouples game logic and combat triggers from pure kinematic physics (SRP).
+ * Decouples game logic and combat triggers from kinematic physics.
  */
 export class PlayerController implements IPlayerController {
   private readonly slideDuration: number = 13;

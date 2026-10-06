@@ -76,7 +76,7 @@ describe("Collision Geometry & Strategy Resolution", () => {
       expect(engine.checkIntersection(player, entity)).toBe(false);
     });
 
-    it("registers and delegates to custom collision strategies (OCP)", () => {
+    it("registers and delegates to custom collision strategies", () => {
       let customHandled = false;
       const customStrategy = {
         handle: () => {

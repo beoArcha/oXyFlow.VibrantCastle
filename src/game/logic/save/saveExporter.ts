@@ -5,7 +5,7 @@ import { Result, ok, err, SaveError, ErrorCode } from "@lib/errors";
 import { ISaveExporter } from "./saveTypes";
 
 /**
- * Handles JSON file generation and browser download dispatch (SRP).
+ * Handles JSON file generation and browser download dispatch.
  * Isolated from game state compilation and storage persistence.
  */
 export class SaveExporter implements ISaveExporter {

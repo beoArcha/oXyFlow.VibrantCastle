@@ -6,7 +6,7 @@ import { Result, ok, err, SaveError, ErrorCode } from "@lib/errors";
 import { ISaveApplicator } from "./saveTypes";
 
 /**
- * Applies a verified SaveState onto live game session objects (SRP).
+ * Applies a verified SaveState onto live game session objects.
  * Restores player vitals, inventories, equipment, activated levers, and defeated enemies.
  */
 export class SaveApplicator implements ISaveApplicator {

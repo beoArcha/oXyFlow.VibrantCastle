@@ -15,7 +15,7 @@ export interface IActorRenderer {
 
 /**
  * Dedicated renderer for animated characters: players (with shield, squash & stretch)
- * and enemies (delegated via composition to EnemyRenderer) (SRP).
+ * and enemies (delegated via composition to EnemyRenderer).
  */
 export class ActorRenderer implements IActorRenderer {
   private readonly enemyRenderer: IEnemyRenderer;

@@ -5,7 +5,6 @@ import { statsManager } from "../logic/stats";
 
 /**
  * Context provided by the GameEngine or Test Harness to execute debug/cheat actions.
- * Follows Interface Segregation Principle (ISP) and Dependency Inversion Principle (DIP).
  */
 export interface IDebugCheatsContext {
   getPlayers: () => Player[];

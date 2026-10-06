@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import type { UseModalManagerResult } from "@components/menu/hooks/useModalManager";
 
 /**
- * Segregated modal manager interface for global hotkeys (ISP).
+ * Modal manager interface subset for global hotkeys.
  * Contains only properties and methods directly consumed by useAppHotkeys.
  */
 export type AppHotkeysModalManager = Readonly<

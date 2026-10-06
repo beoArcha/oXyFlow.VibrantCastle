@@ -66,7 +66,7 @@ function getAtlasDimensions(
 }
 
 /**
- * Builds a SpriteAtlasMap directly using the extensible SpriteExtractorFactory (SOLID)
+ * Builds a SpriteAtlasMap directly using the SpriteExtractorFactory.
  */
 function buildSpriteMapFromMeta(
   characterId: string,

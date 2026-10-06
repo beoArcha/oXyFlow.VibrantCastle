@@ -10,7 +10,7 @@ import { LevelDesigner } from "./levels";
 import { statsManager } from "../logic/stats";
 
 /**
- * Context interface provided by GameEngine to LevelLifecycleManager (DIP).
+ * Context interface provided by GameEngine to LevelLifecycleManager.
  * Allows level lifecycle operations without hard coupling to engine internals.
  */
 export interface ILevelLifecycleContext {
@@ -37,7 +37,7 @@ export interface ILevelLifecycleContext {
 }
 
 /**
- * Interface contract for Level Lifecycle management (ISP).
+ * Interface contract for Level Lifecycle management.
  */
 export interface ILevelLifecycleManager {
   currentLocationId: LocationId;
@@ -77,7 +77,7 @@ export interface ILevelLifecycleManager {
 
 /**
  * LevelLifecycleManager encapsulates level loading, state transitions,
- * portal teleportation, lever gates, and two-player spawn positioning (SRP).
+ * portal teleportation, lever gates, and two-player spawn positioning.
  */
 export class LevelLifecycleManager implements ILevelLifecycleManager {
   public currentLocationId: LocationId = "courtyard";

@@ -92,7 +92,7 @@ describe("Modular Parallax Subsystems", () => {
       expect(ctx.getSaveBalance()).toBe(0);
     });
 
-    it("allows injecting mock sub-renderers via dependency injection (DIP)", () => {
+    it("allows injecting mock sub-renderers via dependency injection", () => {
       let celestialCalled = false;
       let castleCalled = false;
       let mountainCalled = false;

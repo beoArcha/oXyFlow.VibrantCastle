@@ -72,7 +72,6 @@ export interface IGameDependencies {
 /**
  * Core Game Engine and Orchestrator.
  * Coordinates State, Inputs, Physics, Collisions, Magic/Projectiles, Synthesizer Audio, and Pixel Rendering.
- * TODO: Split into separate modules following Single Responsibility Principle (SRP).
  */
 export class GameEngine {
   // Game state
@@ -84,7 +83,7 @@ export class GameEngine {
   // Domain Event Bus
   public readonly eventBus: GameEventBus;
 
-  // Subsystems (DIP)
+  // Subsystems
   private readonly audio: GameAudioEngine;
   private readonly inputs: GameInputEngine;
   private readonly physics: GamePhysicsEngine;
@@ -789,7 +788,7 @@ export class GameEngine {
       onLeverActivated: (id: string) => this.levelLifecycleManager.handleLeverUnlocks(id),
     };
 
-    // 4. Process Melee sword attacks via CombatSystem (SRP)
+    // 4. Process Melee sword attacks via CombatSystem
     if (anyPlayerAttacking) {
       this.combatSystem.processMeleeAttacks(
         this.players,
@@ -799,7 +798,7 @@ export class GameEngine {
       );
     }
 
-    // 5. Update & collide Magic Projectiles via CombatSystem (SRP)
+    // 5. Update & collide Magic Projectiles via CombatSystem
     this.projectiles = this.combatSystem.updateProjectiles(
       this.projectiles,
       this.players,
@@ -811,7 +810,7 @@ export class GameEngine {
       combatContext
     );
 
-    // 6. Update Enemies via EnemyAISystem (SRP)
+    // 6. Update Enemies via EnemyAISystem
     if (!debugManager.state.freezeAI) {
       anyEnemyAggro = this.enemyAISystem.update(
         this.enemies,
