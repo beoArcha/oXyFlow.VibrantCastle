@@ -1,6 +1,7 @@
-import { LanguageCode, GameTranslationDictionary } from "./types";
+import { LanguageCode, SUPPORTED_LANGUAGES, GameTranslationDictionary } from "./types";
 import { hudTranslations } from "./modules/hud";
 import { settingsTranslations } from "./modules/settings";
+import { developerTranslations } from "./modules/developer";
 import { inventoryTranslations } from "./modules/inventory";
 import { skillsTranslations } from "./modules/skills";
 import { itemsTranslations } from "./modules/items";
@@ -14,6 +15,7 @@ import { formatString } from "@lib/utils";
 export * from "./types";
 export * from "./modules/hud";
 export * from "./modules/settings";
+export * from "./modules/developer";
 export * from "./modules/inventory";
 export * from "./modules/skills";
 export * from "./modules/items";
@@ -27,6 +29,7 @@ const buildCombinedDictionary = (lang: LanguageCode): GameTranslationDictionary 
   return {
     ...hudTranslations[lang],
     ...settingsTranslations[lang],
+    ...developerTranslations[lang],
     ...inventoryTranslations[lang],
     ...skillsTranslations[lang],
     ...itemsTranslations[lang],
@@ -38,17 +41,18 @@ const buildCombinedDictionary = (lang: LanguageCode): GameTranslationDictionary 
   };
 };
 
-export const translations: Record<LanguageCode, GameTranslationDictionary> = {
-  pl: buildCombinedDictionary("pl"),
-  en: buildCombinedDictionary("en"),
-};
+export const translations: Record<LanguageCode, GameTranslationDictionary> =
+  SUPPORTED_LANGUAGES.reduce((acc, lang) => {
+    acc[lang] = buildCombinedDictionary(lang);
+    return acc;
+  }, {} as Record<LanguageCode, GameTranslationDictionary>);
 
 /**
  * Type-safe translation getter with interpolation support.
  */
 export function t(
   lang: LanguageCode,
-  key: keyof GameTranslationDictionary | string,
+  key: (keyof GameTranslationDictionary) | (string & {}),
   params?: Record<string, string | number>
 ): string {
   const dict = translations[lang] || translations.pl;
@@ -63,6 +67,7 @@ export function getDomainI18n(lang: LanguageCode) {
   return {
     hud: hudTranslations[lang],
     settings: settingsTranslations[lang],
+    developer: developerTranslations[lang],
     inventory: inventoryTranslations[lang],
     skills: skillsTranslations[lang],
     items: itemsTranslations[lang],
@@ -70,6 +75,7 @@ export function getDomainI18n(lang: LanguageCode) {
     narrations: narrationsTranslations[lang],
     dialogues: dialoguesTranslations[lang],
     lore: loreTranslations[lang],
+    bestiary: bestiaryTranslations[lang],
   };
 }
 

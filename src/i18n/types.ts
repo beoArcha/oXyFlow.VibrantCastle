@@ -3,7 +3,16 @@
  * Modularized by domain (HUD, Settings, Inventory, Skills, Items, Locations, Narrations, Dialogues, Lore).
  */
 
-export type LanguageCode = "pl" | "en";
+/**
+ * HOW TO ADD A NEW LANGUAGE:
+ * 1. Add the ISO 639-1 language code to `SUPPORTED_LANGUAGES` below (e.g., "de", "es", "fr").
+ * 2. TypeScript will immediately flag all module translation objects requiring the new language.
+ *    Implement the translation dictionary for each module (e.g., `modules/hud.ts`, `modules/settings/`, etc.).
+ * 3. Run `bun test src/tests/arch/i18nParity.test.ts` to automatically verify 100% key parity and non-empty strings.
+ */
+export const SUPPORTED_LANGUAGES = ["pl", "en"] as const;
+
+export type LanguageCode = (typeof SUPPORTED_LANGUAGES)[number];
 
 export interface HudI18n {
   title: string;
@@ -119,20 +128,221 @@ export interface HudI18n {
   statsResetNotification: string;
 }
 
-export interface SettingsI18n {
+export interface SettingsGameplayI18n {
   tabGameplay: string;
   tabStats: string;
-  tabKeyboard: string;
-  tabGamepad: string;
-  tabDisplay: string;
-  tabAudio: string;
   tabLocations: string;
   tabTester: string;
   tabDeveloper: string;
-  subtabTesting: string;
-  subtabDebug: string;
-  subtabLogs: string;
-  subtabAtlasSlicer: string;
+  gameMode: string;
+  gameModeSinglePlayer: string;
+  gameModeLocalCoop: string;
+  play1P: string;
+  play2P: string;
+  characterSoloValenDesc: string;
+  characterCoopValenLyraDesc: string;
+  p1Tag: string;
+  p2Tag: string;
+  saveStorageBrowserTitle: string;
+  saveStorageBrowserDesc: string;
+  saveActionQuickSave: string;
+  saveActionQuickLoad: string;
+  saveStorageFileTitle: string;
+  saveStorageFileDesc: string;
+  saveActionExport: string;
+  saveActionImport: string;
+  hudInterfaceTitle: string;
+  hudRpgButtonsTitle: string;
+  hudRpgButtonsDesc: string;
+  hudHotkeyHintsTitle: string;
+  hudHotkeyHintsDesc: string;
+  hudNarratorSubtitlesTitle: string;
+  hudNarratorSubtitlesDesc: string;
+  hudStateEnabled: string;
+  hudStateDisabled: string;
+  settingsExportTooltip: string;
+  settingsExportBtn: string;
+  settingsImportBtn: string;
+  settingsDefaultsBtn: string;
+  menuSubtitle: string;
+  saveLoadTitle: string;
+  saveGame: string;
+  loadGame: string;
+  restartLocation: string;
+  quickPotionsTitle: string;
+  close: string;
+}
+
+export interface SettingsControlsI18n {
+  tabKeyboard: string;
+  tabGamepad: string;
+  resetDefaultBindings: string;
+  confirmResetControls: string;
+  confirmResetControlsPrompt: string;
+  remapKey: string;
+  rebindTitle: string;
+  rebindPrompt: string;
+  cancel: string;
+  rebindSuccess: string;
+  gamepadConnected: string;
+  gamepadDisconnected: string;
+  noGamepadDetected: string;
+  remapGamepadPrompt: string;
+  lastPressedButton: string;
+  p1Controls: string;
+  p2Controls: string;
+  movement: string;
+  jump: string;
+  attack: string;
+  dash: string;
+  magicPrimary: string;
+  magicSecondary: string;
+  crouchAim: string;
+  keyMoveLeft: string;
+  keyMoveRight: string;
+  keyAimUp: string;
+  keyCrouchDown: string;
+  keyJump: string;
+  keyMeleeAttack: string;
+  keyDashAction: string;
+  keyPrimaryMagic: string;
+  keySecondaryMagic: string;
+  keyPotion1: string;
+  keyPotion2: string;
+  keyPotion3: string;
+  buttonPrefix: string;
+  crouchAimTitle: string;
+  dashAction: string;
+  slideDescription: string;
+  backstepDescription: string;
+  directionalAimingTitle: string;
+  aimStraightUp: string;
+  aim45Up: string;
+  aim45Down: string;
+  aimStraightDown: string;
+}
+
+export interface SettingsDisplayI18n {
+  tabDisplay: string;
+  aspectRatioOption: string;
+  aspectRatioAuto: string;
+  scalingOption: string;
+  scalingPixel: string;
+  scalingSmooth: string;
+  assetQualityOption: string;
+  assetQualityLow: string;
+  assetQualityLowDesc: string;
+  assetQualityMid: string;
+  assetQualityMidDesc: string;
+  assetQualityHigh: string;
+  assetQualityHighDesc: string;
+  assetQualityPreviewTitle: string;
+  assetQualityHadesOwlboyMix: string;
+  assetValenIdentity: string;
+  assetCurrentQualityBadge: string;
+  viewportTipTitle: string;
+  viewportTipDesc: string;
+  fpsOption: string;
+  fpsCounterOption: string;
+  gpuAccelerationOption: string;
+  gpuAccelerationDesc: string;
+  gpuAccelerationBadge: string;
+  fps30Desc: string;
+  fps60Desc: string;
+  fps90Desc: string;
+  fps120Desc: string;
+  fpsMultipliersDesc: string;
+  displayResetNotification: string;
+  displayResetTitle: string;
+  displayResetDesc: string;
+  displayResetDefaultsBtn: string;
+  aspectRatioTitle: string;
+  aspectRatioAutoFill: string;
+  aspectRatioAutoFillDesc: string;
+  aspectRatio169Desc: string;
+  aspectRatio1610Desc: string;
+  aspectRatio43Desc: string;
+  fullscreenTitle: string;
+  fullscreenActiveDesc: string;
+  fullscreenInactiveDesc: string;
+  fullscreenExitBtn: string;
+  fullscreenEnterBtn: string;
+  scalingPixelTitle: string;
+  scalingPixelDesc: string;
+  scalingSmoothTitle: string;
+  scalingSmoothDesc: string;
+}
+
+export interface SettingsAudioI18n {
+  tabAudio: string;
+  audioPresetsLabel: string;
+  audioMute: string;
+  audioTestSfxBtn: string;
+  audioTestMagicBtn: string;
+  soundVolume: string;
+  musicVolume: string;
+  soundEffectsVolume: string;
+}
+
+export interface SettingsStudioI18n {
+  tabCreation: string;
+  creationTitle: string;
+  creationSubtitle: string;
+  toolTester: string;
+  toolAtlasViewer: string;
+  toolMetaBuilder: string;
+  toolLevelDesigner: string;
+  toolMetaBuilderDesc: string;
+  toolLevelDesignerDesc: string;
+  creationFlagLabel: string;
+  creationFlagDesc: string;
+  studioTitle: string;
+  studioStageTab: string;
+  studioAtlasTab: string;
+  studioPlay: string;
+  studioPause: string;
+  studioFlipTitle: string;
+  valenClassTitle: string;
+  valenClassTags: string;
+  aureliaClassTitle: string;
+  aureliaClassTags: string;
+  speedLabel: string;
+  dimensionsLabel: string;
+  animIdle: string;
+  animRun: string;
+  animJump: string;
+  animFall: string;
+  animAttack: string;
+  animDash: string;
+  animCast: string;
+  animCrouch: string;
+  playbackSpeedLabel: string;
+  zoomLabel: string;
+  atlasSheetTab: string;
+  atlasPortraitsTab: string;
+  atlasToggleGrid: string;
+  atlasToggleRows: string;
+  atlasGridLabel: string;
+  atlasRowsLabel: string;
+  atlasResetLabel: string;
+  characterTierBadge: string;
+  atlasZoomIn: string;
+  atlasZoomOut: string;
+  atlasResetZoom: string;
+  atlasDimensions: string;
+  atlasCellSize: string;
+  atlasGridFrames: string;
+  atlasLoading: string;
+}
+
+export interface SettingsI18n
+  extends SettingsGameplayI18n,
+    SettingsControlsI18n,
+    SettingsDisplayI18n,
+    SettingsAudioI18n,
+    SettingsStudioI18n {}
+
+export interface DataStudioI18n {
   subtabDataStudio: string;
   dataStudioTitle: string;
   dataStudioSubtitle: string;
@@ -261,6 +471,10 @@ export interface SettingsI18n {
   dataStudioBestiaryEmptyTitle: string;
   dataStudioBestiaryEmptyDesc: string;
   dataStudioBestiaryScoreReward: string;
+}
+
+export interface TesterI18n {
+  subtabTesting: string;
   devSuiteSubtitle: string;
   testerSpawnPointsTitle: string;
   testerCheckpointsLabel: string;
@@ -329,6 +543,11 @@ export interface SettingsI18n {
   enemyBastionSentinelBoss: string;
   enemyClockworkAutomaton: string;
   enemyAetherWisp: string;
+}
+
+export interface DebugTelemetryI18n {
+  subtabDebug: string;
+  subtabLogs: string;
   debugTelemetryTitle: string;
   debugPlayerInspectorTitle: string;
   debugEntityTableTitle: string;
@@ -393,6 +612,10 @@ export interface SettingsI18n {
   debugVitalsHp: string;
   debugVitalsMp: string;
   debugVitalsSp: string;
+}
+
+export interface AtlasStudioI18n {
+  subtabAtlasSlicer: string;
   atlasStudioPresetSelect: string;
   atlasStudioPresetCharacter: string;
   atlasStudioPresetEnemy: string;
@@ -587,190 +810,13 @@ export interface SettingsI18n {
   atlasStudioSelectTrackPlaceholder: string;
   atlasStudioNewTrackNamePlaceholder: string;
   atlasStudioCreateTrackBtn: string;
-  gameMode: string;
-  gameModeSinglePlayer: string;
-  gameModeLocalCoop: string;
-  play1P: string;
-  play2P: string;
-  characterSoloValenDesc: string;
-  characterCoopValenLyraDesc: string;
-  p1Tag: string;
-  p2Tag: string;
-  saveStorageBrowserTitle: string;
-  saveStorageBrowserDesc: string;
-  saveActionQuickSave: string;
-  saveActionQuickLoad: string;
-  saveStorageFileTitle: string;
-  saveStorageFileDesc: string;
-  saveActionExport: string;
-  saveActionImport: string;
-  hudInterfaceTitle: string;
-  hudRpgButtonsTitle: string;
-  hudRpgButtonsDesc: string;
-  hudHotkeyHintsTitle: string;
-  hudHotkeyHintsDesc: string;
-  hudNarratorSubtitlesTitle: string;
-  hudNarratorSubtitlesDesc: string;
-  hudStateEnabled: string;
-  hudStateDisabled: string;
-  settingsExportTooltip: string;
-  settingsExportBtn: string;
-  settingsImportBtn: string;
-  settingsDefaultsBtn: string;
-  menuSubtitle: string;
-  audioPresetsLabel: string;
-  audioMute: string;
-  audioTestSfxBtn: string;
-  audioTestMagicBtn: string;
-  crouchAimTitle: string;
-  dashAction: string;
-  slideDescription: string;
-  backstepDescription: string;
-  directionalAimingTitle: string;
-  aimStraightUp: string;
-  aim45Up: string;
-  aim45Down: string;
-  aimStraightDown: string;
-  saveLoadTitle: string;
-  saveGame: string;
-  loadGame: string;
-  restartLocation: string;
-  resetDefaultBindings: string;
-  confirmResetControls: string;
-  confirmResetControlsPrompt: string;
-  remapKey: string;
-  rebindTitle: string;
-  rebindPrompt: string;
-  cancel: string;
-  rebindSuccess: string;
-  aspectRatioOption: string;
-  aspectRatioAuto: string;
-  scalingOption: string;
-  scalingPixel: string;
-  scalingSmooth: string;
-  assetQualityOption: string;
-  assetQualityLow: string;
-  assetQualityLowDesc: string;
-  assetQualityMid: string;
-  assetQualityMidDesc: string;
-  assetQualityHigh: string;
-  assetQualityHighDesc: string;
-  assetQualityPreviewTitle: string;
-  assetQualityHadesOwlboyMix: string;
-  assetValenIdentity: string;
-  assetCurrentQualityBadge: string;
-  viewportTipTitle: string;
-  viewportTipDesc: string;
-  soundVolume: string;
-  musicVolume: string;
-  soundEffectsVolume: string;
-  gamepadConnected: string;
-  gamepadDisconnected: string;
-  noGamepadDetected: string;
-  remapGamepadPrompt: string;
-  lastPressedButton: string;
-  p1Controls: string;
-  p2Controls: string;
-  movement: string;
-  jump: string;
-  attack: string;
-  dash: string;
-  magicPrimary: string;
-  magicSecondary: string;
-  crouchAim: string;
-  quickPotionsTitle: string;
-  close: string;
-  keyMoveLeft: string;
-  keyMoveRight: string;
-  keyAimUp: string;
-  keyCrouchDown: string;
-  keyJump: string;
-  keyMeleeAttack: string;
-  keyDashAction: string;
-  keyPrimaryMagic: string;
-  keySecondaryMagic: string;
-  keyPotion1: string;
-  keyPotion2: string;
-  keyPotion3: string;
-  buttonPrefix: string;
-  dimensionsLabel: string;
-  animIdle: string;
-  animRun: string;
-  animJump: string;
-  animFall: string;
-  animAttack: string;
-  animDash: string;
-  animCast: string;
-  animCrouch: string;
-  playbackSpeedLabel: string;
-  zoomLabel: string;
-  fpsOption: string;
-  fpsCounterOption: string;
-  gpuAccelerationOption: string;
-  gpuAccelerationDesc: string;
-  gpuAccelerationBadge: string;
-  fps30Desc: string;
-  fps60Desc: string;
-  fps90Desc: string;
-  fps120Desc: string;
-  fpsMultipliersDesc: string;
-  displayResetNotification: string;
-  displayResetTitle: string;
-  displayResetDesc: string;
-  displayResetDefaultsBtn: string;
-  atlasSheetTab: string;
-  atlasPortraitsTab: string;
-  atlasToggleGrid: string;
-  atlasToggleRows: string;
-  atlasGridLabel: string;
-  atlasRowsLabel: string;
-  atlasResetLabel: string;
-  characterTierBadge: string;
-  atlasZoomIn: string;
-  atlasZoomOut: string;
-  atlasResetZoom: string;
-  atlasDimensions: string;
-  atlasCellSize: string;
-  atlasGridFrames: string;
-  atlasLoading: string;
-  aspectRatioTitle: string;
-  aspectRatioAutoFill: string;
-  aspectRatioAutoFillDesc: string;
-  aspectRatio169Desc: string;
-  aspectRatio1610Desc: string;
-  aspectRatio43Desc: string;
-  fullscreenTitle: string;
-  fullscreenActiveDesc: string;
-  fullscreenInactiveDesc: string;
-  fullscreenExitBtn: string;
-  fullscreenEnterBtn: string;
-  scalingPixelTitle: string;
-  scalingPixelDesc: string;
-  scalingSmoothTitle: string;
-  scalingSmoothDesc: string;
-  studioTitle: string;
-  studioStageTab: string;
-  studioAtlasTab: string;
-  studioPlay: string;
-  studioPause: string;
-  studioFlipTitle: string;
-  valenClassTitle: string;
-  valenClassTags: string;
-  aureliaClassTitle: string;
-  aureliaClassTags: string;
-  speedLabel: string;
-  tabCreation: string;
-  creationTitle: string;
-  creationSubtitle: string;
-  toolTester: string;
-  toolAtlasViewer: string;
-  toolMetaBuilder: string;
-  toolLevelDesigner: string;
-  toolMetaBuilderDesc: string;
-  toolLevelDesignerDesc: string;
-  creationFlagLabel: string;
-  creationFlagDesc: string;
 }
+
+export interface DeveloperI18n
+  extends DataStudioI18n,
+    TesterI18n,
+    DebugTelemetryI18n,
+    AtlasStudioI18n {}
 
 export interface InventoryI18n {
   inventoryTitle: string;
@@ -811,7 +857,7 @@ export interface InventoryI18n {
   switchCharacter: string;
 }
 
-export interface SkillsI18n {
+export interface SkillsProgressionI18n {
   skillTreeTitle: string;
   skillTreeSubtitle: string;
   offensiveCategory: string;
@@ -832,8 +878,6 @@ export interface SkillsI18n {
   cooldownLabel: string;
   constellationInspectHint: string;
   statusLearned: string;
-
-  // Requirements & Restrictions
   requirementsAndRestrictions: string;
   restrictionTitle: string;
   restrictionCharacterValen: string;
@@ -857,9 +901,31 @@ export interface SkillsI18n {
   equippedActiveSlot: string;
   passivePermanentDesc: string;
   autoCastDesc: string;
+  restrictionValenStarter: string;
+  restrictionValenSolarFireball: string;
+  restrictionValenRadiantStrike: string;
+  restrictionValenStarterDef: string;
+  restrictionValenPrismaticShield: string;
+  restrictionValenSunSentinel: string;
+  restrictionValenBladeInfusion: string;
+  restrictionValenStaminaSurge: string;
+  restrictionValenVitalitySurge: string;
+  restrictionAureliaStarter: string;
+  restrictionAureliaFrostNova: string;
+  restrictionAureliaCelestialComet: string;
+  restrictionAureliaStarterDef: string;
+  restrictionAureliaChronoRewind: string;
+  restrictionAureliaSentinelSpark: string;
+  restrictionAureliaManaFont: string;
+  restrictionAureliaScholarlyFocus: string;
+  restrictionAureliaAstralAttunement: string;
+  treeValenSolarDuelist: string;
+  treeValenSunWarden: string;
+  treeAureliaAstralSorcery: string;
+  treeAureliaTimeWeaver: string;
+}
 
-
-  // Spell names & descriptions
+export interface SkillsSpellsI18n {
   spellAetherBoltName: string;
   spellAetherBoltDesc: string;
   spellSolarFireballName: string;
@@ -878,8 +944,6 @@ export interface SkillsI18n {
   spellBladeInfusionDesc: string;
   spellFrostNovaName: string;
   spellFrostNovaDesc: string;
-
-  // Additional spells for Valen & Aurelia
   spellSolarFlareName: string;
   spellSolarFlareDesc: string;
   spellRadiantStrikeName: string;
@@ -890,7 +954,6 @@ export interface SkillsI18n {
   spellSunSentinelDesc: string;
   spellVitalitySurgeName: string;
   spellVitalitySurgeDesc: string;
-
   spellCelestialCometName: string;
   spellCelestialCometDesc: string;
   spellAetherBarrierName: string;
@@ -901,35 +964,6 @@ export interface SkillsI18n {
   spellScholarlyFocusDesc: string;
   spellAstralAttunementName: string;
   spellAstralAttunementDesc: string;
-
-  // Individual restriction explanations
-  restrictionValenStarter: string;
-  restrictionValenSolarFireball: string;
-  restrictionValenRadiantStrike: string;
-  restrictionValenStarterDef: string;
-  restrictionValenPrismaticShield: string;
-  restrictionValenSunSentinel: string;
-  restrictionValenBladeInfusion: string;
-  restrictionValenStaminaSurge: string;
-  restrictionValenVitalitySurge: string;
-
-  restrictionAureliaStarter: string;
-  restrictionAureliaFrostNova: string;
-  restrictionAureliaCelestialComet: string;
-  restrictionAureliaStarterDef: string;
-  restrictionAureliaChronoRewind: string;
-  restrictionAureliaSentinelSpark: string;
-  restrictionAureliaManaFont: string;
-  restrictionAureliaScholarlyFocus: string;
-  restrictionAureliaAstralAttunement: string;
-
-  // DAG Skill Trees
-  treeValenSolarDuelist: string;
-  treeValenSunWarden: string;
-  treeAureliaAstralSorcery: string;
-  treeAureliaTimeWeaver: string;
-
-  // Enemy & Unison abilities
   skillGargoyleDiveName: string;
   skillGargoyleDiveDesc: string;
   skillSentinelAetherBeamName: string;
@@ -949,6 +983,10 @@ export interface SkillsI18n {
   skillUnisonSupernovaName: string;
   skillUnisonSupernovaDesc: string;
 }
+
+export interface SkillsI18n
+  extends SkillsProgressionI18n,
+    SkillsSpellsI18n {}
 
 export interface ItemsI18n {
   itemSolarRapierName: string;
@@ -1201,6 +1239,7 @@ export interface BestiaryI18n {
 export interface GameTranslationDictionary
   extends HudI18n,
     SettingsI18n,
+    DeveloperI18n,
     InventoryI18n,
     SkillsI18n,
     ItemsI18n,

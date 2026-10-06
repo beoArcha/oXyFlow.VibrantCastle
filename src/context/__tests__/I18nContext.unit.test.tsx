@@ -25,6 +25,9 @@ describe("I18nContext & useI18n Hook", () => {
     expect(result.current.language).toBe("pl");
     expect(result.current.isPl).toBe(true);
     expect(result.current.isEn).toBe(false);
+    expect(result.current.isLanguage("pl")).toBe(true);
+    expect(result.current.isLanguage("en")).toBe(false);
+    expect(result.current.supportedLanguages).toEqual(["pl", "en"]);
     expect(result.current.dictionary).toBeDefined();
     expect(result.current.domains).toBeDefined();
 

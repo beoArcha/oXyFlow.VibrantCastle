@@ -1,65 +1,70 @@
 import { describe, it, expect } from "bun:test";
-import { translations, GameTranslationDictionary } from "@i18n";
+import { translations, GameTranslationDictionary, LanguageCode } from "@i18n";
 
 describe("i18n Architecture & Translation Parity", () => {
-  const plDict = translations.pl;
-  const enDict = translations.en;
+  const canonicalLang: LanguageCode = "en";
+  const enDict = translations[canonicalLang];
+  const allLanguages = Object.keys(translations) as LanguageCode[];
+  const nonCanonicalLanguages = allLanguages.filter((l) => l !== canonicalLang);
 
-  it("enforces 100% key parity between English (canonical) and Polish translations", () => {
-    const plKeys = Object.keys(plDict).sort();
+  it("enforces 100% key parity between English (canonical) and all supported translations", () => {
     const enKeys = Object.keys(enDict).sort();
+    expect(enKeys.length).toBeGreaterThan(0);
 
-    const missingInPl = enKeys.filter((key) => !(key in plDict));
-    const missingInEn = plKeys.filter((key) => !(key in enDict));
+    for (const lang of nonCanonicalLanguages) {
+      const targetDict = translations[lang];
+      const targetKeys = Object.keys(targetDict).sort();
 
-    expect(missingInPl).toEqual([]);
-    expect(missingInEn).toEqual([]);
-    expect(plKeys.length).toBe(enKeys.length);
-    expect(plKeys.length).toBeGreaterThan(0);
+      const missingInTarget = enKeys.filter((key) => !(key in targetDict));
+      const missingInEn = targetKeys.filter((key) => !(key in enDict));
+
+      expect(missingInTarget).toEqual([]);
+      expect(missingInEn).toEqual([]);
+      expect(targetKeys.length).toBe(enKeys.length);
+    }
   });
 
   it("ensures zero empty string values exist in translation dictionaries", () => {
-    const emptyPlKeys: string[] = [];
-    const emptyEnKeys: string[] = [];
+    for (const lang of allLanguages) {
+      const dict = translations[lang];
+      const emptyKeys: string[] = [];
 
-    for (const [key, value] of Object.entries(plDict)) {
-      if (typeof value !== "string" || value.trim().length === 0) {
-        emptyPlKeys.push(key);
+      for (const [key, value] of Object.entries(dict)) {
+        if (typeof value !== "string" || value.trim().length === 0) {
+          emptyKeys.push(`${lang}:${key}`);
+        }
       }
-    }
 
-    for (const [key, value] of Object.entries(enDict)) {
-      if (typeof value !== "string" || value.trim().length === 0) {
-        emptyEnKeys.push(key);
-      }
+      expect(emptyKeys).toEqual([]);
     }
-
-    expect(emptyPlKeys).toEqual([]);
-    expect(emptyEnKeys).toEqual([]);
   });
 
   it("verifies template placeholder parameter consistency between languages", () => {
     const placeholderRegex = /\{([a-zA-Z0-9_]+)\}/g;
-    const mismatchedKeys: Array<{ key: string; enParams: string[]; plParams: string[] }> = [];
 
-    for (const key of Object.keys(enDict) as Array<keyof GameTranslationDictionary>) {
-      const enVal = enDict[key];
-      const plVal = plDict[key];
+    for (const lang of nonCanonicalLanguages) {
+      const targetDict = translations[lang];
+      const mismatchedKeys: Array<{ key: string; enParams: string[]; targetParams: string[] }> = [];
 
-      if (typeof enVal === "string" && typeof plVal === "string") {
-        const enMatches = Array.from(enVal.matchAll(placeholderRegex), (m) => m[1]).sort();
-        const plMatches = Array.from(plVal.matchAll(placeholderRegex), (m) => m[1]).sort();
+      for (const key of Object.keys(enDict) as Array<keyof GameTranslationDictionary>) {
+        const enVal = enDict[key];
+        const targetVal = targetDict[key];
 
-        const areEqual =
-          enMatches.length === plMatches.length &&
-          enMatches.every((val, index) => val === plMatches[index]);
+        if (typeof enVal === "string" && typeof targetVal === "string") {
+          const enMatches = Array.from(enVal.matchAll(placeholderRegex), (m) => m[1]).sort();
+          const targetMatches = Array.from(targetVal.matchAll(placeholderRegex), (m) => m[1]).sort();
 
-        if (!areEqual) {
-          mismatchedKeys.push({ key, enParams: enMatches, plParams: plMatches });
+          const areEqual =
+            enMatches.length === targetMatches.length &&
+            enMatches.every((val, index) => val === targetMatches[index]);
+
+          if (!areEqual) {
+            mismatchedKeys.push({ key, enParams: enMatches, targetParams: targetMatches });
+          }
         }
       }
-    }
 
-    expect(mismatchedKeys).toEqual([]);
+      expect(mismatchedKeys).toEqual([]);
+    }
   });
 });

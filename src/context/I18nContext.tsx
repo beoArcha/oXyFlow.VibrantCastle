@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useMemo } from "react";
-import { LanguageCode, GameTranslationDictionary, translations, t as translateFn, getDomainI18n } from "@i18n";
+import { LanguageCode, SUPPORTED_LANGUAGES, GameTranslationDictionary, translations, t as translateFn, getDomainI18n } from "@i18n";
 import gameEngine from "@game/loop/engine";
 import { useEngineSubscription } from "./hooks/useEngineSubscription";
 import { BaseProviderProps } from "./IContext";
@@ -10,11 +10,15 @@ import { MissingContextProviderError } from "@lib/errors";
  */
 export interface I18nContextValue {
   language: LanguageCode;
+  supportedLanguages: readonly LanguageCode[];
   setLanguage: (lang: LanguageCode) => void;
+  isLanguage: (lang: LanguageCode) => boolean;
   t: (key: (keyof GameTranslationDictionary) | (string & {}), params?: Record<string, string | number>) => string;
   dictionary: GameTranslationDictionary;
   domains: ReturnType<typeof getDomainI18n>;
+  /** @deprecated Prefer `isLanguage("pl")` or `language === "pl"` */
   isPl: boolean;
+  /** @deprecated Prefer `isLanguage("en")` or `language === "en"` */
   isEn: boolean;
 }
 
@@ -42,6 +46,8 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children, defaultLan
     gameEngine.setLanguage(lang);
   }, []);
 
+  const isLanguage = useCallback((lang: LanguageCode) => language === lang, [language]);
+
   useEngineSubscription(() => {
     if (gameEngine.settings.language !== language) {
       setLanguageState(gameEngine.settings.language);
@@ -61,14 +67,16 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children, defaultLan
   const value = useMemo<I18nContextValue>(
     () => ({
       language,
+      supportedLanguages: SUPPORTED_LANGUAGES,
       setLanguage,
+      isLanguage,
       t,
       dictionary,
       domains,
       isPl: language === "pl",
       isEn: language === "en",
     }),
-    [language, setLanguage, t, dictionary, domains]
+    [language, setLanguage, isLanguage, t, dictionary, domains]
   );
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;

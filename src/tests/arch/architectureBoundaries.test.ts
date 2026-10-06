@@ -84,7 +84,7 @@ describe("Architectural Boundary Rules", () => {
 
   it("ensures i18n horizontal domain has zero dependencies on game engine, UI components, or React context", () => {
     const i18nFiles = getAllSourceFiles(i18nDir).filter((file) => !file.includes("__tests__"));
-    const forbiddenPattern = /from\s+["'](react|react-dom|@\/game|@game|\.\.?\/.*game|@\/components|@components|\.\.?\/.*components|@\/context|@context|\.\.?\/.*context)/;
+    const forbiddenPattern = /from\s+["'](react|react-dom|@\/game|@game|\.\.?\/.*game(\/|["'])|@\/components|@components|\.\.?\/.*components(\/|["'])|@\/context|@context|\.\.?\/.*context(\/|["']))/;
     const violations = findImportViolations(i18nFiles, forbiddenPattern, rootDir);
 
     assertZeroViolations(violations, "i18n domain must not depend on game engine, UI components, or React context");

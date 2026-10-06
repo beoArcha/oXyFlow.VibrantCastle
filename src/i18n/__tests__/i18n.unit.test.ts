@@ -1,12 +1,14 @@
 import { describe, it, expect } from "bun:test";
-import { translations, t, getDomainI18n } from "../index";
+import { translations, t, getDomainI18n, SUPPORTED_LANGUAGES } from "../index";
 
 describe("i18n Horizontal Domain Service", () => {
   it("provides populated translation dictionaries for supported languages", () => {
-    expect(translations.pl).toBeDefined();
-    expect(translations.en).toBeDefined();
-    expect(Object.keys(translations.pl).length).toBeGreaterThan(50);
-    expect(Object.keys(translations.en).length).toBeGreaterThan(50);
+    expect(SUPPORTED_LANGUAGES).toContain("pl");
+    expect(SUPPORTED_LANGUAGES).toContain("en");
+    for (const lang of SUPPORTED_LANGUAGES) {
+      expect(translations[lang]).toBeDefined();
+      expect(Object.keys(translations[lang]).length).toBeGreaterThan(50);
+    }
   });
 
   it("translates known keys correctly across languages", () => {
@@ -42,6 +44,7 @@ describe("i18n Horizontal Domain Service", () => {
     const domains = [
       "hud",
       "settings",
+      "developer",
       "inventory",
       "skills",
       "items",
@@ -49,6 +52,7 @@ describe("i18n Horizontal Domain Service", () => {
       "narrations",
       "dialogues",
       "lore",
+      "bestiary",
     ] as const;
 
     for (const domain of domains) {

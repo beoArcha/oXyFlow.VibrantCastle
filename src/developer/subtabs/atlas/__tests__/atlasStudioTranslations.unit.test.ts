@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test";
-import { settingsTranslations } from "@i18n/modules/settings";
+import { developerTranslations } from "@i18n/modules/developer";
 import { hudTranslations } from "@i18n/modules/hud";
 import { t } from "@/i18n";
 
@@ -12,45 +12,45 @@ describe("Atlas Studio Layout & Domain Translations (i18n)", () => {
   });
 
   it("verifies inspector toggle translations in both languages", () => {
-    expect(settingsTranslations.pl.atlasStudioToggleInspector).toBe("Przełącz panel boczny");
-    expect(settingsTranslations.pl.atlasStudioCollapseInspector).toBe("Zwiń panel boczny");
-    expect(settingsTranslations.pl.atlasStudioExpandInspector).toBe("Rozwiń panel boczny");
+    expect(developerTranslations.pl.atlasStudioToggleInspector).toBe("Przełącz panel boczny");
+    expect(developerTranslations.pl.atlasStudioCollapseInspector).toBe("Zwiń panel boczny");
+    expect(developerTranslations.pl.atlasStudioExpandInspector).toBe("Rozwiń panel boczny");
 
-    expect(settingsTranslations.en.atlasStudioToggleInspector).toBe("Toggle side panel");
-    expect(settingsTranslations.en.atlasStudioCollapseInspector).toBe("Collapse side panel");
-    expect(settingsTranslations.en.atlasStudioExpandInspector).toBe("Expand side panel");
+    expect(developerTranslations.en.atlasStudioToggleInspector).toBe("Toggle side panel");
+    expect(developerTranslations.en.atlasStudioCollapseInspector).toBe("Collapse side panel");
+    expect(developerTranslations.en.atlasStudioExpandInspector).toBe("Expand side panel");
   });
 
   it("verifies atlas studio tab names exist and are concise to avoid UI truncation", () => {
-    expect(settingsTranslations.pl.atlasStudioTabLivePreview).toContain("Podgląd");
-    expect(settingsTranslations.pl.atlasStudioTabSlicing).toBeDefined();
-    expect(settingsTranslations.pl.atlasStudioTabBackground).toBeDefined();
-    expect(settingsTranslations.pl.atlasStudioTabExport).toBeDefined();
+    expect(developerTranslations.pl.atlasStudioTabLivePreview).toContain("Podgląd");
+    expect(developerTranslations.pl.atlasStudioTabSlicing).toBeDefined();
+    expect(developerTranslations.pl.atlasStudioTabBackground).toBeDefined();
+    expect(developerTranslations.pl.atlasStudioTabExport).toBeDefined();
 
-    expect(settingsTranslations.en.atlasStudioTabLivePreview).toContain("Preview");
-    expect(settingsTranslations.en.atlasStudioTabSlicing).toBeDefined();
-    expect(settingsTranslations.en.atlasStudioTabBackground).toBeDefined();
-    expect(settingsTranslations.en.atlasStudioTabExport).toBeDefined();
+    expect(developerTranslations.en.atlasStudioTabLivePreview).toContain("Preview");
+    expect(developerTranslations.en.atlasStudioTabSlicing).toBeDefined();
+    expect(developerTranslations.en.atlasStudioTabBackground).toBeDefined();
+    expect(developerTranslations.en.atlasStudioTabExport).toBeDefined();
   });
 
   it("verifies status bar i18n keys are translated in PL and EN", () => {
-    expect(settingsTranslations.pl.atlasStudioStatusReady).toBe("Gotowy");
-    expect(settingsTranslations.pl.atlasStudioStatusError).toBe("Błąd");
-    expect(settingsTranslations.pl.atlasStudioDismissError).toBe("Zamknij błąd");
-    expect(settingsTranslations.pl.atlasStudioToggleLogs).toBe("Dziennik zdarzeń slicera");
-    expect(settingsTranslations.pl.atlasStudioLogs).toBe("Dziennik");
-    expect(settingsTranslations.pl.atlasStudioRecentLogs).toBe("Ostatnie zdarzenia slicera");
-    expect(settingsTranslations.pl.atlasStudioOpenLogsTab).toBe("Pełny podgląd (Logs)");
-    expect(settingsTranslations.pl.atlasStudioNoLogsYet).toBe("Brak zarejestrowanych zdarzeń slicera.");
+    expect(developerTranslations.pl.atlasStudioStatusReady).toBe("Gotowy");
+    expect(developerTranslations.pl.atlasStudioStatusError).toBe("Błąd");
+    expect(developerTranslations.pl.atlasStudioDismissError).toBe("Zamknij błąd");
+    expect(developerTranslations.pl.atlasStudioToggleLogs).toBe("Dziennik zdarzeń slicera");
+    expect(developerTranslations.pl.atlasStudioLogs).toBe("Dziennik");
+    expect(developerTranslations.pl.atlasStudioRecentLogs).toBe("Ostatnie zdarzenia slicera");
+    expect(developerTranslations.pl.atlasStudioOpenLogsTab).toBe("Pełny podgląd (Logs)");
+    expect(developerTranslations.pl.atlasStudioNoLogsYet).toBe("Brak zarejestrowanych zdarzeń slicera.");
 
-    expect(settingsTranslations.en.atlasStudioStatusReady).toBe("Ready");
-    expect(settingsTranslations.en.atlasStudioStatusError).toBe("Error");
-    expect(settingsTranslations.en.atlasStudioDismissError).toBe("Dismiss error");
-    expect(settingsTranslations.en.atlasStudioToggleLogs).toBe("Slicer event log");
-    expect(settingsTranslations.en.atlasStudioLogs).toBe("Logs");
-    expect(settingsTranslations.en.atlasStudioRecentLogs).toBe("Recent slicer events");
-    expect(settingsTranslations.en.atlasStudioOpenLogsTab).toBe("Full view (Logs)");
-    expect(settingsTranslations.en.atlasStudioNoLogsYet).toBe("No slicer events recorded yet.");
+    expect(developerTranslations.en.atlasStudioStatusReady).toBe("Ready");
+    expect(developerTranslations.en.atlasStudioStatusError).toBe("Error");
+    expect(developerTranslations.en.atlasStudioDismissError).toBe("Dismiss error");
+    expect(developerTranslations.en.atlasStudioToggleLogs).toBe("Slicer event log");
+    expect(developerTranslations.en.atlasStudioLogs).toBe("Logs");
+    expect(developerTranslations.en.atlasStudioRecentLogs).toBe("Recent slicer events");
+    expect(developerTranslations.en.atlasStudioOpenLogsTab).toBe("Full view (Logs)");
+    expect(developerTranslations.en.atlasStudioNoLogsYet).toBe("No slicer events recorded yet.");
   });
 
   it("verifies all atlas toolbar and studio keys are properly translated without exposing raw keys", () => {
