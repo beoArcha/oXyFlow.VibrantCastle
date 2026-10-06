@@ -92,7 +92,6 @@ export const SkillTreeVisualizerCard: React.FC = () => {
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        {/* Character Selector & Zoom Controls */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-stone-950/60 border border-stone-800/80 rounded-lg">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-xs font-medium text-amber-200/80">
@@ -122,7 +121,6 @@ export const SkillTreeVisualizerCard: React.FC = () => {
             </div>
           </div>
 
-          {/* Responsive Zoom Controls */}
           <div className="flex items-center gap-1.5 self-end sm:self-auto">
             <span className="text-xs font-mono text-amber-300/80 px-2">
               {Math.round(zoomScale * 100)}%
@@ -153,7 +151,6 @@ export const SkillTreeVisualizerCard: React.FC = () => {
           </div>
         </div>
 
-        {/* Visual Graph Canvas (Responsive Scroll Container) */}
         <div className="relative overflow-auto border border-amber-900/60 rounded-lg bg-[#0e0402] p-2 min-h-[360px] max-h-[560px] touch-pan-x touch-pan-y">
           <div
             style={{
@@ -182,7 +179,6 @@ export const SkillTreeVisualizerCard: React.FC = () => {
                 </marker>
               </defs>
 
-              {/* Connecting Edges */}
               {layout.edges.map((edge) => {
                 const from = nodeMap.get(edge.fromId);
                 const to = nodeMap.get(edge.toId);
@@ -206,7 +202,6 @@ export const SkillTreeVisualizerCard: React.FC = () => {
                 );
               })}
 
-              {/* Render Nodes */}
               {layout.nodes.map((pos) => {
                 const skill = characterSkills.find((s) => s.id === pos.id);
                 const isSelected = inspectedSkillId === pos.id;
@@ -270,7 +265,6 @@ export const SkillTreeVisualizerCard: React.FC = () => {
           </div>
         </div>
 
-        {/* Inspected Node Details */}
         {inspectedSkill && (
           <div
             role="region"

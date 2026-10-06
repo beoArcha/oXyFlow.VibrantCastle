@@ -12,26 +12,24 @@ export interface ColorPickerInputProps {
   readonly placeholder?: string;
   /** Custom container class */
   readonly className?: string;
+  /** Optional element ID for accessibility pairing */
+  readonly id?: string;
+  /** Accessible label description */
+  readonly ariaLabel?: string;
   /** Tooltip for the color picker button */
   readonly colorPickerTitle?: string;
   /** Tooltip for the color swatch */
   readonly sampleTitle?: string;
 }
 
-/**
- * ColorPickerInput
- *
- * Connected color picker control:
- * - Color swatch thumbnail.
- * - Monospaced HEX input with format cleanup.
- * - Integrated native system color picker.
- */
 export const ColorPickerInput: React.FC<ColorPickerInputProps> = React.memo(({
   value,
   onChange,
   disabled = false,
   placeholder = "#000000",
   className,
+  id,
+  ariaLabel,
   colorPickerTitle = "Open color picker",
   sampleTitle,
 }) => {
@@ -61,6 +59,8 @@ export const ColorPickerInput: React.FC<ColorPickerInputProps> = React.memo(({
 
       <div className="flex-1 flex items-center gap-1.5">
         <input
+          id={id}
+          aria-label={ariaLabel}
           type="text"
           value={value}
           disabled={disabled}

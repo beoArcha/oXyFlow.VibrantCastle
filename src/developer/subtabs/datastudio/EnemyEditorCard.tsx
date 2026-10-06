@@ -139,7 +139,6 @@ export const EnemyEditorCard: React.FC = () => {
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        {/* Preset Selector */}
         <PresetSelectorHeader
           selectedValue={selectedEnemyId}
           onSelect={handleSelectEnemy}
@@ -179,7 +178,6 @@ export const EnemyEditorCard: React.FC = () => {
           }}
         />
 
-        {/* Form Controls Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
           <Input
             id="enemy-field-id"
@@ -269,6 +267,8 @@ export const EnemyEditorCard: React.FC = () => {
               {t("dataStudioEnemyColor")}
             </label>
             <ColorPickerInput
+              id="enemy-field-color"
+              ariaLabel={t("dataStudioEnemyColor")}
               value={draft.proceduralFallback?.bodyColor ?? "#dc2626"}
               onChange={(hex) =>
                 updateField("proceduralFallback", {
@@ -319,7 +319,6 @@ export const EnemyEditorCard: React.FC = () => {
           </div>
         </div>
 
-        {/* Validation Errors List */}
         <SchemaValidationAlert errors={validationErrors} />
       </CardContent>
     </Card>

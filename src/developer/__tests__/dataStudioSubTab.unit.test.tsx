@@ -176,6 +176,26 @@ describe("DataStudio Developer Suite", () => {
       expect(html).toContain("Komórka 5x5");
       expect(html).toContain("Valen");
     });
+
+    it("renders speaker options including heroes, beasts, and narrator with accessibility attributes", async () => {
+      const { container } = await renderIntoDom(
+        <TestProviders defaultLanguage="en">
+          <VisualNovelPreviewCard />
+        </TestProviders>,
+        { mode: "none" }
+      );
+
+      const speakerSelect = container.querySelector<HTMLSelectElement>("#vn-select-character");
+      expect(speakerSelect).not.toBeNull();
+      const options = Array.from(speakerSelect?.options ?? []).map((o) => o.value);
+
+      expect(options).toContain("valen");
+      expect(options).toContain("aurelia");
+      expect(options).toContain("narrator");
+
+      const previewRegion = container.querySelector('section[aria-label="Dialogue Speech Bubble"]');
+      expect(previewRegion).not.toBeNull();
+    });
   });
 
   describe("SkillTreeVisualizerCard", () => {
@@ -229,6 +249,23 @@ describe("DataStudio Developer Suite", () => {
       expect(html).toContain("Docelowy typ encji:");
       expect(html).toContain("Piaskownica walidacji JSON:");
       expect(html).toContain("Poprawny obiekt schematu");
+    });
+
+    it("validates malformed JSON and updates validation badge", async () => {
+      const { container, changeInput } = await renderIntoDom(
+        <TestProviders defaultLanguage="en">
+          <AIGeneratorCard />
+        </TestProviders>,
+        { mode: "none" }
+      );
+
+      const textarea = container.querySelector<HTMLTextAreaElement>("#ai-json-sandbox");
+      expect(textarea).not.toBeNull();
+
+      if (textarea) {
+        await changeInput(textarea as unknown as HTMLInputElement, "{ invalid_json: ");
+        expect(container.textContent).toContain("1 Issue(s)");
+      }
     });
   });
 });

@@ -112,7 +112,6 @@ export const SpellAndSkillEditorCard: React.FC = () => {
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        {/* Preset Selector */}
         <PresetSelectorHeader
           selectedValue={selectedSpellId}
           onSelect={handleSelectSpell}
@@ -138,7 +137,6 @@ export const SpellAndSkillEditorCard: React.FC = () => {
           }}
         />
 
-        {/* Form Controls Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
           <Input
             id="spell-field-id"
@@ -210,6 +208,8 @@ export const SpellAndSkillEditorCard: React.FC = () => {
               {t("dataStudioSpellColor")}
             </label>
             <ColorPickerInput
+              id="spell-field-color"
+              ariaLabel={t("dataStudioSpellColor")}
               value={draft.color ?? "#f59e0b"}
               onChange={(hex) => updateField("color", hex)}
             />
@@ -223,7 +223,6 @@ export const SpellAndSkillEditorCard: React.FC = () => {
           />
         </div>
 
-        {/* Validation Errors List */}
         <SchemaValidationAlert errors={validationErrors} />
       </CardContent>
     </Card>

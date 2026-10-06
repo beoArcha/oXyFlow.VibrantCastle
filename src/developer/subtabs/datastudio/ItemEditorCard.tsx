@@ -114,7 +114,6 @@ export const ItemEditorCard: React.FC = () => {
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        {/* Preset Selector */}
         <PresetSelectorHeader
           selectedValue={selectedItemId}
           onSelect={handleSelectItem}
@@ -137,7 +136,6 @@ export const ItemEditorCard: React.FC = () => {
           }}
         />
 
-        {/* Form Controls Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
           <Input
             id="item-field-id"
@@ -217,7 +215,6 @@ export const ItemEditorCard: React.FC = () => {
           />
         </div>
 
-        {/* Validation Errors List */}
         <SchemaValidationAlert errors={validationErrors} />
       </CardContent>
     </Card>

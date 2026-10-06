@@ -1,14 +1,15 @@
 import React, { useState, useMemo } from "react";
-import { MessageSquare, UserCheck, ChevronRight } from "lucide-react";
+import { MessageSquare, UserCheck, ChevronRight, BookOpen, Skull } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent, Button, Select } from "@ui";
 import { CharacterPortrait } from "@components/character/CharacterPortrait";
 import dialoguesVnJson from "@data/narrative/dialogues_vn.json";
-import {
-  VALEN_PORTRAIT_EMOTIONS,
-  AURELIA_PORTRAIT_EMOTIONS,
-  VisualNovelSceneJsonSchema,
-} from "@lib/schemas/visualNovelSchema";
+import { VisualNovelSceneJsonSchema } from "@lib/schemas/visualNovelSchema";
 import { useI18n } from "@context/I18nContext";
+import {
+  discoverSceneSpeakers,
+  resolveEmotionsForSpeaker,
+  calculateGridCoordinates,
+} from "./services/visualNovelService";
 
 export const VisualNovelPreviewCard: React.FC = () => {
   const { t } = useI18n();
@@ -16,39 +17,51 @@ export const VisualNovelPreviewCard: React.FC = () => {
   const nodeKeys = useMemo(() => Object.keys(scene.nodes), [scene]);
 
   const [activeNodeId, setActiveNodeId] = useState<string>(scene.initialNodeId);
-  const [selectedCharacter, setSelectedCharacter] = useState<"valen" | "aurelia">("valen");
-  const [selectedEmotion, setSelectedEmotion] = useState<string>("stoic");
-
   const currentNode = useMemo(() => {
     return scene.nodes[activeNodeId] ?? scene.nodes[scene.initialNodeId];
   }, [scene, activeNodeId]);
 
-  const currentSpeaker = currentNode.speaker ?? selectedCharacter;
-  const currentEmotion = currentNode.emotion ?? selectedEmotion;
+  const speakerOptions = useMemo(
+    () =>
+      discoverSceneSpeakers(scene, {
+        heroValen: t("dataStudioVnSpeakerHeroValen"),
+        heroAurelia: t("dataStudioVnSpeakerHeroAurelia"),
+        narrator: t("dataStudioVnSpeakerNarrator"),
+        bossPrefix: t("dataStudioVnSpeakerBossPrefix"),
+        enemyPrefix: t("dataStudioVnSpeakerEnemyPrefix"),
+      }),
+    [scene, t]
+  );
 
-  // Calculate 5x5 grid index
-  const emotionList = selectedCharacter === "valen" ? VALEN_PORTRAIT_EMOTIONS : AURELIA_PORTRAIT_EMOTIONS;
-  const emotionIndex = emotionList.indexOf(currentEmotion as any);
-  const gridRow = emotionIndex >= 0 ? Math.floor(emotionIndex / 5) : 0;
-  const gridCol = emotionIndex >= 0 ? emotionIndex % 5 : 0;
+  const [selectedSpeakerId, setSelectedSpeakerId] = useState<string>(
+    currentNode.speaker || "valen"
+  );
+  const [selectedEmotion, setSelectedEmotion] = useState<string>("stoic");
+
+  const effectiveSpeaker = currentNode.speaker || selectedSpeakerId;
+  const availableEmotions = useMemo(
+    () => resolveEmotionsForSpeaker(effectiveSpeaker),
+    [effectiveSpeaker]
+  );
+  const effectiveEmotion = currentNode.emotion || selectedEmotion;
+
+  const { row, col, index } = useMemo(
+    () => calculateGridCoordinates(effectiveEmotion, availableEmotions),
+    [effectiveEmotion, availableEmotions]
+  );
 
   const nodeOptions = useMemo(
     () => nodeKeys.map((key) => ({ value: key, label: key })),
     [nodeKeys]
   );
 
-  const characterOptions = useMemo(
-    () => [
-      { value: "valen", label: "Valen" },
-      { value: "aurelia", label: "Aurelia" },
-    ],
-    []
+  const emotionSelectOptions = useMemo(
+    () => availableEmotions.map((emo) => ({ value: emo, label: emo })),
+    [availableEmotions]
   );
 
-  const emotionOptions = useMemo(
-    () => emotionList.map((emo) => ({ value: emo, label: emo })),
-    [emotionList]
-  );
+  const isNarrator = effectiveSpeaker === "narrator";
+  const isHero = effectiveSpeaker === "valen" || effectiveSpeaker === "aurelia";
 
   return (
     <Card variant="default">
@@ -58,13 +71,19 @@ export const VisualNovelPreviewCard: React.FC = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        {/* Node & Character Selector */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3 bg-stone-950/60 border border-stone-800/80 rounded-lg">
           <Select
             id="vn-select-node"
             label={t("dataStudioVnDialogueNode")}
             value={activeNodeId}
-            onChange={(e) => setActiveNodeId(e.target.value)}
+            onChange={(e) => {
+              const nextNodeId = e.target.value;
+              setActiveNodeId(nextNodeId);
+              const node = scene.nodes[nextNodeId];
+              if (node?.speaker) {
+                setSelectedSpeakerId(node.speaker);
+              }
+            }}
             options={nodeOptions}
             variant="castle"
             size="sm"
@@ -72,39 +91,39 @@ export const VisualNovelPreviewCard: React.FC = () => {
 
           <Select
             id="vn-select-character"
-            label={t("dataStudioVnPortraitCharacter")}
-            value={selectedCharacter}
+            label={t("dataStudioVnSpeakerSelectLabel")}
+            value={effectiveSpeaker}
             onChange={(e) => {
-              const char = e.target.value as "valen" | "aurelia";
-              setSelectedCharacter(char);
-              setSelectedEmotion(char === "valen" ? "stoic" : "curious");
+              const speaker = e.target.value;
+              setSelectedSpeakerId(speaker);
+              const nextEmotions = resolveEmotionsForSpeaker(speaker);
+              setSelectedEmotion(nextEmotions[0] || "neutral");
             }}
-            options={characterOptions}
+            options={speakerOptions}
             variant="castle"
             size="sm"
           />
 
           <Select
             id="vn-select-emotion"
-            label={t("dataStudioVnEmotionMatrix")}
-            value={selectedEmotion}
+            label={t("dataStudioVnStanceLabel")}
+            value={effectiveEmotion}
             onChange={(e) => setSelectedEmotion(e.target.value)}
-            options={emotionOptions}
+            options={emotionSelectOptions}
             variant="castle"
             size="sm"
           />
         </div>
 
-        {/* Emotion Matrix Info Badge */}
         <div className="flex items-center gap-3 text-xs bg-[#140602]/80 border border-amber-900/40 rounded-lg px-3 py-2 flex-wrap">
           <span className="text-amber-200/70">
             {t("dataStudioVnActiveEmotion")}:{" "}
-            <strong className="text-amber-300 font-mono">{currentEmotion}</strong>
+            <strong className="text-amber-300 font-mono">{effectiveEmotion}</strong>
           </span>
           <span className="text-amber-200/70">
             {t("dataStudioVnGridCell")}:{" "}
             <span className="text-amber-100 font-medium">
-              R{gridRow}, C{gridCol} (Idx: {emotionIndex >= 0 ? emotionIndex : 0})
+              R{row}, C{col} (Idx: {index})
             </span>
           </span>
           <span className="text-amber-200/70">
@@ -113,28 +132,53 @@ export const VisualNovelPreviewCard: React.FC = () => {
           </span>
         </div>
 
-        {/* Live Visual Novel Stage Mockup */}
         <div className="relative bg-[#0d0402] border border-amber-900/70 rounded-lg p-4 flex flex-col md:flex-row items-center gap-4 min-h-[160px]">
-          {/* Portrait Container */}
           <div className="shrink-0 flex flex-col items-center gap-1.5">
-            <CharacterPortrait
-              characterId={currentSpeaker}
-              mood={currentEmotion}
-              size="xl"
-              variant="framed"
-            />
+            {isHero ? (
+              <CharacterPortrait
+                characterId={effectiveSpeaker}
+                mood={effectiveEmotion}
+                size="xl"
+                variant="framed"
+              />
+            ) : isNarrator ? (
+              <div
+                className="w-32 h-32 rounded-lg border border-amber-600/60 bg-[#1e0e05] flex flex-col items-center justify-center gap-2 text-amber-300 shadow-md"
+                role="img"
+                aria-label={t("dataStudioVnSpeakerNarrator")}
+              >
+                <BookOpen size={36} className="text-amber-400" />
+                <span className="text-[10px] font-serif uppercase tracking-wider font-bold">
+                  {t("dataStudioVnSpeakerNarrator")}
+                </span>
+              </div>
+            ) : (
+              <div
+                className="w-32 h-32 rounded-lg border border-rose-700/60 bg-[#1c0604] flex flex-col items-center justify-center gap-2 text-rose-300 shadow-md"
+                role="img"
+                aria-label={effectiveSpeaker}
+              >
+                <Skull size={36} className="text-rose-400" />
+                <span className="text-[10px] font-mono uppercase tracking-wider font-bold px-1 text-center truncate max-w-full">
+                  {effectiveSpeaker}
+                </span>
+              </div>
+            )}
             <span className="text-[11px] font-semibold text-amber-300 uppercase tracking-wider">
-              {currentSpeaker}
+              {currentNode.speakerNameKey ? t(currentNode.speakerNameKey) : effectiveSpeaker}
             </span>
           </div>
 
-          {/* Dialogue Speech Bubble */}
-          <div className="flex-1 w-full bg-[#1c0803]/90 border border-amber-800/60 rounded-lg p-3.5 flex flex-col justify-between gap-3 shadow-lg">
+          <section
+            aria-label={t("dataStudioVnSpeakerSpeechAria")}
+            aria-live="polite"
+            className="flex-1 w-full bg-[#1c0803]/90 border border-amber-800/60 rounded-lg p-3.5 flex flex-col justify-between gap-3 shadow-lg"
+          >
             <div className="flex flex-col gap-1">
               <div className="flex items-center justify-between text-xs font-semibold text-amber-400">
                 <span className="flex items-center gap-1">
                   <UserCheck size={13} />
-                  {currentNode.speakerNameKey ? t(currentNode.speakerNameKey) : currentSpeaker}
+                  {currentNode.speakerNameKey ? t(currentNode.speakerNameKey) : effectiveSpeaker}
                 </span>
                 <span className="font-mono text-[10px] text-amber-200/50">
                   {t("dataStudioVnNodeLabel")}: {currentNode.id}
@@ -145,10 +189,9 @@ export const VisualNovelPreviewCard: React.FC = () => {
               </p>
             </div>
 
-            {/* Next / Choice Actions */}
             <div className="flex flex-col gap-1.5 pt-2 border-t border-amber-900/40">
               {currentNode.choices && currentNode.choices.length > 0 ? (
-                <div className="flex flex-col gap-1">
+                <div role="group" aria-label={t("dataStudioVnPlayerDecisions")} className="flex flex-col gap-1">
                   <span className="text-[10px] font-medium text-amber-200/60">
                     {t("dataStudioVnPlayerDecisions")}
                   </span>
@@ -189,7 +232,7 @@ export const VisualNovelPreviewCard: React.FC = () => {
                 </span>
               )}
             </div>
-          </div>
+          </section>
         </div>
       </CardContent>
     </Card>
