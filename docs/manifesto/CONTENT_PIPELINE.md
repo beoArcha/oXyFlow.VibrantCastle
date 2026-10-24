@@ -33,13 +33,13 @@ Static content is structured into specialized, domain-focused subdirectories:
 
 | Subdirectory | Canonical Files | Data Domain & Operational Purpose |
 | :--- | :--- | :--- |
-| **`locations/`** | `courtyard.json`<br/>`clocktower.json`<br/>`grand_bastion.json`<br/>`thorn_chasm.json`<br/>`aether_sanctuary.json` | **Level Blueprints**: World dimensions, camera bounding boxes, spawn points, parallax layers, collision geometry, and entity placements. |
+| **`locations/`** | `courtyard.json`;`clocktower.json`;`grand_bastion.json`;`thorn_chasm.json`;`aether_sanctuary.json` | **Level Blueprints**: World dimensions, camera bounding boxes, spawn points, parallax layers, collision geometry, and entity placements. |
 | **`enemies/`** | `enemies.json` | **Monster Bestiary**: Canonical template registry for all enemy types: dimensions, base health, speed, attack power, elemental resistances, soul drops, and lore entries. |
 | **`items/`** | `items.json` | **Item & Equipment Registry**: Weapons, shields, armor, rings, amulets, and consumable potions with combat modifiers and status effects. |
-| **`skills/`** | `skills.json`<br/>`spells.json` | **Skill Constellations**: Skill trees for Valen and Aurelia detailing tiers, mana/stamina costs, cooldown frames, projectiles, and prerequisite node connections. |
+| **`skills/`** | `skills.json`;`spells.json` | **Skill Constellations**: Skill trees for Valen and Aurelia detailing tiers, mana/stamina costs, cooldown frames, projectiles, and prerequisite node connections. |
 | **`structures/`** | `structures.json` | **Interactive Map Objects**: Levers, pressure plates, locked portcullises, chests, save shrines, and aether lanterns. |
-| **`narrative/`** | `dialogues_vn.json`<br/>`narrator_reactive.json`<br/>`scenario_act1.json`<br/>`triggers.json` | **Narrative Manifests**: Visual novel character dialogue sequences, reactive narrator cues, and world trigger definitions. |
-| **`defaults/`** | `defaultControls.json`<br/>`defaultSettings.json` | **System Defaults**: Baseline keybindings, gamepad mappings, audio volume levels, and display settings. |
+| **`narrative/`** | `dialogues_vn.json`;`narrator_reactive.json`;`scenario_act1.json`;`triggers.json` | **Narrative Manifests**: Visual novel character dialogue sequences, reactive narrator cues, and world trigger definitions. |
+| **`defaults/`** | `defaultControls.json`;`defaultSettings.json` | **System Defaults**: Baseline keybindings, gamepad mappings, audio volume levels, and display settings. |
 
 ---
 

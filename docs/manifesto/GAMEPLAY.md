@@ -5,6 +5,7 @@
 *Vibrant Castle* delivers a responsive, deliberate, and high-impact action-platformer experience inspired by classic *Castlevania* titles and modern action games like *Bastion* and *Celeste*.
 
 ### 1.1. Core Gameplay Tenets
+
 * **Animation-Driven & Readable**: Every strike, leap, and dodge possesses clearly defined startup, active, and recovery frames. No instant invisible threats or ambiguous damage sources.
 * **Telegraphed Enemy Offense**: Enemies visually wind up attacks, telegraphing danger zones to reward observation, parrying, and evasive positioning.
 * **Hitbox & Hurtbox Determinism**: Physics and combat rely on axis-aligned bounding boxes (AABB). Attacks connect only when active weapon/spell hitboxes physically intersect target hurtboxes.
@@ -33,6 +34,7 @@ graph TD
 ```
 
 ### 2.1. Kinematic Constants & Dynamic Gravity
+
 | Parameter | Value | Operational Purpose |
 | :--- | :--- | :--- |
 | **`baseGravity`** | 0.42 | Gravity applied during standard upward ascent. |
@@ -47,6 +49,7 @@ graph TD
 | **`maxRunSpeed`** | 4.8 | Maximum standard horizontal running velocity. |
 
 ### 2.2. Precision Platforming Enhancements
+
 1. **Variable Jump Height**: Players control jump height dynamically. Holding the jump button sustains upward force for up to 12 frames (`maxJumpHoldDuration`, ~200ms) at `jumpHoldAcceleration` (-0.32). Releasing the button triggers `lowJumpGravity`.
 2. **Coyote Time (`maxCoyoteFrames = 6`, ~100ms)**: When walking off a platform ledge into empty air, the player retains full jumping ability for 6 frames, eliminating frustrating input timing penalties.
 3. **Jump Buffering (`maxJumpBufferFrames = 6`, ~100ms)**: Pressing jump up to 6 frames prior to landing queues the jump; the takeoff executes deterministically on the exact frame ground contact is detected.
@@ -69,6 +72,7 @@ graph LR
 ```
 
 ### 3.1. Collision Strategies
+
 * **`Solid`**: Resolves penetration along the shallowest axis. Vertical landings snap feet to `entity.y - player.height`, zero out vertical velocity (`vy = 0`), reset `isJumping`, and adopt platform momentum if standing on moving structures.
 * **`OneWay` (Semi-Permeable Platforms)**:
   * Upward jumps freely pass through without collision.
@@ -84,6 +88,7 @@ graph LR
 Melee combat is fast-paced, animation-synchronized, and tactical.
 
 ### 4.1. Attack Parameters & Hitboxes
+
 * **Melee Weapon Reach**: 40 pixels forward reach from the player's bounding box edge:
   $$x_{hitbox} = \text{player.facingLeft} \ ? \ (x_{player} - 40) : (x_{player} + width_{player})$$
   $$y_{hitbox} = y_{player}, \quad width = 40, \quad height = height_{player}$$
@@ -96,7 +101,9 @@ Melee combat is fast-paced, animation-synchronized, and tactical.
   * Screen trauma is applied: `cameraManager.triggerShake(7, 4)`.
 
 ### 4.2. Evasive Maneuvers (Slide & Backstep)
+
 Tied to `Action 2` input and consuming 18 stamina:
+
 * **Forward Slide (`isDashing`)**: Triggered when moving forward or neutral. Duration: 13 frames. Cooldown: 38 frames. Horizontal speed: 10.5. Glides across ground under low obstacles.
 * **Tactical Backstep (`isBackstepping`)**: Triggered by pressing `Action 2` while holding the direction OPPOSITE to current facing orientation. Duration: 10 frames. Cooldown: 32 frames. Speed: 7.5 backwards with a small vertical hop ($v_y = -2.2$). Grants evasive disengagement.
 
@@ -106,7 +113,7 @@ Tied to `Action 2` input and consuming 18 stamina:
 
 *Vibrant Castle* features two complementary duelist champions:
 
-```
+```text
                                   CHAMPION ROSTER
          ┌───────────────────────────────┴───────────────────────────────┐
          ▼                                                               ▼
@@ -119,6 +126,7 @@ Tied to `Action 2` input and consuming 18 stamina:
 ```
 
 ### 5.1. Valen (The Chrono Duelist)
+
 * **Archetype**: Agile fencer specializing in rapid rapier thrusts, temporal acceleration, and fiery solar energy.
 * **Core Weapon**: Solar Rapier (`solar_rapier`).
 * **Signature Skills**:
@@ -128,6 +136,7 @@ Tied to `Action 2` input and consuming 18 stamina:
   * **`stamina_surge` / `chrono_burst`**: Passive boosts accelerating stamina regeneration and reducing evasive slide cooldowns.
 
 ### 5.2. Aurelia (The Aetherblade Warden)
+
 * **Archetype**: Battle-mage protector wielding heavy ethereal slashes, barrier wards, and cosmic frost magic.
 * **Core Weapon**: Aether Greatblade (`aether_blade`).
 * **Signature Skills**:
@@ -174,6 +183,7 @@ stateDiagram-v2
 ```
 
 ### 6.1. State Priority Rules
+
 1. **`Dead`**: Highest priority. Cancels all inputs, disables collisions, applies fall gravity with ground friction until rest.
 2. **`Hit`**: Stun duration overrides actions unless protected by invulnerability timers.
 3. **`Dash` / `Backstep`**: Uninterruptible by normal attacks during initial frames; preserves evasive trajectory.

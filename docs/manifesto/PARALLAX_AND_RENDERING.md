@@ -3,14 +3,16 @@
 ## 1. Visual Direction & Aesthetic Philosophy
 
 *Vibrant Castle* achieves its visual identity through a hybrid aesthetic marrying three iconic styles:
-* **Bastion / Hades**: Warm golden-autumn color palettes, rich ambient lighting, and high-contrast atmospheric tone.
-* **Owlboy**: Clean pixel art geometry, unmistakable silhouettes, and strict depth separation.
-* **Castlevania**: Gothic architectural motifs, interconnected vertical spires, and readable combat foregrounds.
+
+- **Bastion / Hades**: Warm golden-autumn color palettes, rich ambient lighting, and high-contrast atmospheric tone.
+- **Owlboy**: Clean pixel art geometry, unmistakable silhouettes, and strict depth separation.
+- **Castlevania**: Gothic architectural motifs, interconnected vertical spires, and readable combat foregrounds.
 
 ### Visual Invariants
-* ✅ **REQUIRED: Strong Silhouettes**: Entities, obstacles, and interactive structures must have immediately readable silhouettes distinguishable from the background in a split second.
-* ✅ **REQUIRED: Controlled Lighting**: Light sources (astral lamps, glowing glyphs, solar rifts) create localized focal points without blowing out sprite contrast.
-* ❌ **FORBIDDEN: Muddy Colors & Realistic Textures**: Hand-drawn and pixel-crafted art only. No noisy photorealistic textures, gradients with dithering artifacts, or indistinct color palettes.
+
+- ✅ **REQUIRED: Strong Silhouettes**: Entities, obstacles, and interactive structures must have immediately readable silhouettes distinguishable from the background in a split second.
+- ✅ **REQUIRED: Controlled Lighting**: Light sources (astral lamps, glowing glyphs, solar rifts) create localized focal points without blowing out sprite contrast.
+- ❌ **FORBIDDEN: Muddy Colors & Realistic Textures**: Hand-drawn and pixel-crafted art only. No noisy photorealistic textures, gradients with dithering artifacts, or indistinct color palettes.
 
 ---
 
@@ -33,12 +35,13 @@ graph BT
 ```
 
 ### 2.1. Tier Specifications
+
 | Tier | Layer Key | Alpha Contract | Scroll Speed Ratio | Visual & Spatial Purpose |
 | :--- | :--- | :--- | :--- | :--- |
 | **`FAR`** | `layer_far` | **100% Opaque (`opaque: true`)** | 0.05 – 0.15 | **The Infinite Horizon**. Deep skybox, astral clockface, and perpetual sunset. Covers the entire viewport without gaps. |
 | **`MID_FAR`** | `layer_mid_far` | True Transparency | 0.20 – 0.35 | **Distant Architecture**. Silhouette spires of the Citadel, suspended aqueducts, and massive clock gears slowly turning in the distance. |
 | **`MID`** | `layer_mid` | True Transparency | 1.00 (Anchor) | **The Gameplay Plane**. Walkable terrain, collision tiles, duelist champions, monsters, spell projectiles, and interactive map levers/chests. |
-| **`MID_CLOSE`**| `layer_mid_close`| True Transparency | 1.15 – 1.30 | **Near Environmental Framing**. Foreground gothic arches, stone columns, and hanging iron chandeliers that scroll slightly faster than the player. |
+| **`MID_CLOSE`** | `layer_mid_close` | True Transparency | 1.15 – 1.30 | **Near Environmental Framing**. Foreground gothic arches, stone columns, and hanging iron chandeliers that scroll slightly faster than the player. |
 | **`CLOSE`** | `layer_close` | True Transparency | 1.40 – 1.60 | **Foreground Atmospheric Veil**. Rapidly scrolling foreground elements: silhouettes of ancient banners, drifting golden leaves, and localized fog. |
 
 ---
@@ -80,14 +83,16 @@ graph TD
 ```
 
 ### 4.1. Parallax Scroll Calculation
+
 The screen position of any parallax layer element is calculated deterministically:
 $$\text{drawX} = \text{Math.round}((\text{cameraX} \times \text{speedX}) + \text{layerOffsetX})$$
 $$\text{drawY} = \text{Math.round}((\text{cameraY} \times \text{speedY}) + \text{layerOffsetY})$$
 
-* Coordinates passed to `ctx.drawImage()` are rounded to nearest whole pixels to prevent bilinear texture filtering blurriness on pixel art baselines.
-* Camera tracking itself maintains high-precision floating point coordinates to preserve sub-pixel interpolation smoothness.
+- Coordinates passed to `ctx.drawImage()` are rounded to nearest whole pixels to prevent bilinear texture filtering blurriness on pixel art baselines.
+- Camera tracking itself maintains high-precision floating point coordinates to preserve sub-pixel interpolation smoothness.
 
 ### 4.2. Entity Depth Sorting (Y-Sorting)
+
 Within the `MID` gameplay tier, dynamic entities (champions, monsters, particles) are rendered sorted by their bottom baseline Y-coordinate (`y + height`), ensuring that characters standing lower on the screen naturally overlap characters behind them.
 
 ---

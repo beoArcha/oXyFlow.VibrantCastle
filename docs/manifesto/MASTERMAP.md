@@ -5,12 +5,15 @@
 *Vibrant Castle* is a 2D action-adventure platformer set in a melancholic gothic fantasy world bathed in an eternal golden autumn. The game fuses kinetic combat, platforming agility, and rich atmospheric storytelling.
 
 ### 1.1. Design Triad
+
 The game draws its core pillars from three definitive inspirations:
-* **Bastion & Hades**: Responsive, contextual narration that observes player actions; kinetic, crunchy combat pacing; dynamic visual warmth with rich golden-autumn lighting.
-* **Castlevania (Aria of Sorrow)**: Interconnected gothic Citadel progression; precise AABB hit detection; distinct duelist archetypes; responsive movement (slides, dashes, parries).
-* **Owlboy**: Clean visual readability; depth separation without muddy noise; strong silhouettes and controlled lighting palettes.
+
+- **Bastion & Hades**: Responsive, contextual narration that observes player actions; kinetic, crunchy combat pacing; dynamic visual warmth with rich golden-autumn lighting.
+- **Castlevania (Aria of Sorrow)**: Interconnected gothic Citadel progression; precise AABB hit detection; distinct duelist archetypes; responsive movement (slides, dashes, parries).
+- **Owlboy**: Clean visual readability; depth separation without muddy noise; strong silhouettes and controlled lighting palettes.
 
 ### 1.2. Narrative Setting
+
 Players explore the ancient **Citadel of Aether** — once the pinnacle of horologists, astronomers, and fencing scholars — now suspended in temporal stasis following a catastrophic dimensional fracture. As the **Awakened Duelists**, players navigate ruined spires, reactivate dormant clockwork machinery, and overcome corrupted guardians under the guidance of an enigmatic, observant Narrator.
 
 ---
@@ -67,6 +70,7 @@ graph TD
 ```
 
 ### 2.1. Dual State Communication Streams
+
 1. **Continuous State Stream (60Hz Tick)**: Immutable `StateSnapshot` exposed to Context consumers for read-only HUD telemetry.
 2. **Discrete Domain Event Stream (Real-Time)**: `GameEventBus` instantly notifies subscribers of isolated domain occurrences (`PLAYER_DAMAGED`, `PLAYER_HEALED`, `ITEM_CONSUMED`, `NARRATION_TRIGGERED`, `LOCATION_CHANGED`) without coupling the engine to external modules.
 
@@ -86,8 +90,9 @@ gantt
 ```
 
 ### Milestone M0: Deterministic Engine Core `[COMPLETED]`
-* **Focus**: Foundational simulation loop and architecture boundaries.
-* **Key Deliverables**:
+
+- **Focus**: Foundational simulation loop and architecture boundaries.
+- **Key Deliverables**:
   - Decoupled fixed timestep loop (`update(fixedStep)` vs `render(interpolation)`).
   - AABB collision detection with spatial and layer filtering.
   - Zero-dependency `GameEventBus` with error-isolated dispatch.
@@ -95,8 +100,9 @@ gantt
   - 83 AST architecture tests securing boundary contracts (`src/tests/arch/`).
 
 ### Milestone M1: Awakened Duelists & Courtyard `[CURRENT]`
-* **Focus**: Hero kinetica, combat feel, and the inaugural campaign sector.
-* **Key Deliverables**:
+
+- **Focus**: Hero kinetica, combat feel, and the inaugural campaign sector.
+- **Key Deliverables**:
   - Playable Champions:
     - **Valen (Chrono Duelist)**: Rapier precision, thrust combos, parry frames, `Chrono Dash`.
     - **Aurelia (Aetherblade Warden)**: Manifested ethereal blade, sweeping arcs, `Phase Dash`.
@@ -105,16 +111,18 @@ gantt
   - Audio & Narrative: Dynamic reactive narration cues triggered on combat and environmental milestones.
 
 ### Milestone M2: Temporal Mechanics & Clocktower `[PLANNED]`
-* **Focus**: Environmental puzzle platforming and vertical gameplay.
-* **Key Deliverables**:
+
+- **Focus**: Environmental puzzle platforming and vertical gameplay.
+- **Key Deliverables**:
   - Level Sector: **Clockwork Tower** featuring rotating gear-platforms, pendulums, and steam vents.
   - Temporal Mechanics: Localized stasis fields and rewind triggers.
   - Skill Tree Progression: Node unlocks for Solar Glyphs and Astral Shielding.
   - Boss Encounter: The Corrupted Chrono-Archon Automaton.
 
 ### Milestone M3: Co-op Symphony & Citadel Climax `[PLANNED]`
-* **Focus**: Two-player cooperative synergy and full campaign delivery.
-* **Key Deliverables**:
+
+- **Focus**: Two-player cooperative synergy and full campaign delivery.
+- **Key Deliverables**:
   - Two-Player Local Co-op with synchronized camera viewport and dual-character combos.
   - Level Sectors: **Chasm of Thorns** and the summit **Aether Sky Sanctuary**.
   - Final Boss: The Shattered Timekeeper.
@@ -139,9 +147,10 @@ gantt
 ## 5. Definition of Done & Quality Invariants
 
 A milestone or feature is complete ONLY when:
-* **Determinism**: Game simulation runs at fixed 60 Hz with zero variable-timestep math.
-* **Performance**: 60 FPS verified with zero memory allocations (`new Vector`, lambdas, arrays) in `render()`.
-* **Architecture**: 83/83 AST tests pass in `src/tests/arch/`.
-* **Layer Leakage**: Zero UI or React imports in `src/game/`.
-* **Data Purity**: `src/data/` contains exclusively declarative JSON and the typed `index.ts` re-export facade.
-* **Localization**: 100% key parity between canonical English (`en`) and Polish (`pl`).
+
+- **Determinism**: Game simulation runs at fixed 60 Hz with zero variable-timestep math.
+- **Performance**: 60 FPS verified with zero memory allocations (`new Vector`, lambdas, arrays) in `render()`.
+- **Architecture**: 83/83 AST tests pass in `src/tests/arch/`.
+- **Layer Leakage**: Zero UI or React imports in `src/game/`.
+- **Data Purity**: `src/data/` contains exclusively declarative JSON and the typed `index.ts` re-export facade.
+- **Localization**: 100% key parity between canonical English (`en`) and Polish (`pl`).

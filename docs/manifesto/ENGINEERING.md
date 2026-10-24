@@ -5,12 +5,14 @@
 This document specifies the technical architecture, execution loop, subsystem contracts, and engineering principles of the **Vibrant Castle Game Engine** (`src/game/`).
 
 ### 1.1. Engineering Goals
+
 Every engineering decision in the engine must advance at least one of the following without compromising the others:
-* **Correctness**: Physics, combat calculations, and collision resolutions produce mathematically predictable results.
-* **Determinism**: Simulation logic depends strictly on fixed timesteps, never on variable frame rendering rates.
-* **Performance (60 FPS Stable)**: Frame times must remain below 16.666 ms, with zero Garbage Collection (GC) pauses during gameplay.
-* **Maintainability & Modularity**: The engine is composed of small, focused systems interacting via decoupled events rather than monolithic state trees.
-* **Testability**: Pure math, vector calculations, and state machines are executable in headless environments (Bun) with zero Canvas or DOM dependencies.
+
+- **Correctness**: Physics, combat calculations, and collision resolutions produce mathematically predictable results.
+- **Determinism**: Simulation logic depends strictly on fixed timesteps, never on variable frame rendering rates.
+- **Performance (60 FPS Stable)**: Frame times must remain below 16.666 ms, with zero Garbage Collection (GC) pauses during gameplay.
+- **Maintainability & Modularity**: The engine is composed of small, focused systems interacting via decoupled events rather than monolithic state trees.
+- **Testability**: Pure math, vector calculations, and state machines are executable in headless environments (Bun) with zero Canvas or DOM dependencies.
 
 ---
 
@@ -59,9 +61,10 @@ graph TD
 ```
 
 ### 3.1. Mathematical Contract
-* **Fixed Simulation Step (`FIXED_STEP`)**: Defaults to `1000 / 60` ms (16.666 ms). The simulation ticks at exactly 60 Hz regardless of monitor refresh rates (30, 60, 90, 120, or 144 Hz).
-* **Frame Clamping (`MAX_FRAME_TIME`)**: Delta time is clamped to 100 ms to prevent the "spiral of death" during browser tab switching or background throttling.
-* **Sub-Pixel Interpolation**: Visual positions are calculated using the interpolation alpha:
+
+- **Fixed Simulation Step (`FIXED_STEP`)**: Defaults to `1000 / 60` ms (16.666 ms). The simulation ticks at exactly 60 Hz regardless of monitor refresh rates (30, 60, 90, 120, or 144 Hz).
+- **Frame Clamping (`MAX_FRAME_TIME`)**: Delta time is clamped to 100 ms to prevent the "spiral of death" during browser tab switching or background throttling.
+- **Sub-Pixel Interpolation**: Visual positions are calculated using the interpolation alpha:
   $$\text{RenderPos} = \text{PrevPos} + (\text{CurrentPos} - \text{PrevPos}) \times \text{interpolation}$$
   This guarantees silky-smooth camera and entity locomotion without physics jittering.
 
@@ -96,15 +99,17 @@ graph LR
 ```
 
 ### 5.1. Domain Event Registry
-* `PLAYER_DAMAGED`: Dispatched when an attack resolves against a champion, carrying damage amount, source, and remaining HP.
-* `PLAYER_HEALED`: Dispatched on potion use or aether regeneration.
-* `ITEM_CONSUMED`: Dispatched when an inventory item is expended.
-* `NARRATION_TRIGGERED`: Dispatched on entering room sectors or achieving combat milestones, directing the Narrator to speak.
-* `LOCATION_CHANGED`: Dispatched upon traversing a portal into a new sector.
-* `LEVEL_RESET`: Dispatched on hero defeat or checkpoint reset.
-* `STATE_SNAPSHOT`: Emitted on simulation ticks for read-only React context synchronization.
+
+- `PLAYER_DAMAGED`: Dispatched when an attack resolves against a champion, carrying damage amount, source, and remaining HP.
+- `PLAYER_HEALED`: Dispatched on potion use or aether regeneration.
+- `ITEM_CONSUMED`: Dispatched when an inventory item is expended.
+- `NARRATION_TRIGGERED`: Dispatched on entering room sectors or achieving combat milestones, directing the Narrator to speak.
+- `LOCATION_CHANGED`: Dispatched upon traversing a portal into a new sector.
+- `LEVEL_RESET`: Dispatched on hero defeat or checkpoint reset.
+- `STATE_SNAPSHOT`: Emitted on simulation ticks for read-only React context synchronization.
 
 ### 5.2. Error-Isolated Dispatch
+
 Subscriber callbacks are executed inside isolated `try/catch` boundaries. If an external listener (e.g. a faulty React component or sound trigger) throws an error, it is caught, recorded in the diagnostic ring buffer, and the simulation loop continues uninterrupted at 60 Hz.
 
 ---
@@ -112,6 +117,7 @@ Subscriber callbacks are executed inside isolated `try/catch` boundaries. If an 
 ## 6. Error Handling & Diagnostics Architecture
 
 ### 6.1. Domain Error Hierarchy (`GameBaseError`)
+
 Generic `new Error(...)` is strictly forbidden in production code. All runtime failures instantiate structured subclasses inheriting from `GameBaseError` (`src/lib/errors/GameBaseError.ts`):
 
 ```mermaid
@@ -131,10 +137,12 @@ graph TD
 ```
 
 ### 6.2. RingBufferLogger
+
 The engine includes an in-memory, zero-allocation ring buffer logger (`src/lib/logger/RingBufferLogger.ts`):
-* Stores a fixed circular buffer (e.g. 500 entries) of structured log records: `{ timestamp, level, category, message, details }`.
-* Never writes directly to the DOM; accessible via developer tools (`src/developer/`) and the Atlas Studio debug console.
-* Overwrites oldest entries when full, preventing memory leaks during indefinite gameplay sessions.
+
+- Stores a fixed circular buffer (e.g. 500 entries) of structured log records: `{ timestamp, level, category, message, details }`.
+- Never writes directly to the DOM; accessible via developer tools (`src/developer/`) and the Atlas Studio debug console.
+- Overwrites oldest entries when full, preventing memory leaks during indefinite gameplay sessions.
 
 ---
 
