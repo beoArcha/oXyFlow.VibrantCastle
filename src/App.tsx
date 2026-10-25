@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 import { I18nProvider, useI18n } from "@context/I18nContext";
 import { GameProvider, useGameSession } from "@context/GameContext";
-import { useModalManager } from "@components/menu/hooks/useModalManager";
-import { HUDOverlay } from "@components/hud";
+import { useModalManager } from "@game-menu/menu/hooks/useModalManager";
+import { HUDOverlay } from "@hud";
 import { Swords, HelpCircle, Menu as MenuIcon } from "lucide-react";
 import {
   Badge,
@@ -10,15 +10,15 @@ import {
   Toast,
   useToast,
 } from "@ui";
-import { ModalType } from "@components/modal";
-import { KeyRebindDialog, useKeyRebind } from "@components/controls";
+import { ModalType } from "@game-menu/modal";
+import { KeyRebindDialog, useKeyRebind } from "@game-menu/controls";
 import {
   GameLayout,
   GameModalHost,
   useAppHotkeys,
-} from "@components/layout";
+} from "@game-menu/layout";
 import { formatGameDiagnosticReport } from "@lib/logger";
-import { LanguageSelector } from "@components/common";
+import { LanguageSelector } from "@game-menu/common";
 
 function GameScreen() {
   const { t } = useI18n();

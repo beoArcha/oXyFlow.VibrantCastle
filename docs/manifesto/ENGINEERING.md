@@ -22,7 +22,7 @@ Every engineering decision in the engine must advance at least one of the follow
    - `src/game/` (ENGINE) owns simulation, physics, combat, collision, and Canvas 2D rendering.
    - `src/data/` (DATA) is the universal, declarative source of truth (JSON).
    - `src/context/` (CONTEXT) provides bidirectional communication ports bridging React with the Engine.
-   - `src/components/` (UI) is a passive, read-only presentation overlay.
+   - `src/game-menu/` & `src/hud/` (UI) are passive, read-only presentation overlays.
 2. **Interpreter Pattern**: The engine acts as an **interpreter** of declarative data structures. It never hardcodes level geometry, enemy rosters, or item attributes in simulation logic.
 3. **Pure TypeScript Core**: The simulation core contains zero React imports, zero JSX, and zero DOM manipulations.
 

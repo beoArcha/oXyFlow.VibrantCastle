@@ -1,7 +1,7 @@
 import React, { act } from "react";
 import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
 import { renderIntoDom, cleanupDom } from "@test-utils/domTestUtils";
-import { ModalType } from "@components/modal";
+import { ModalType } from "@game-menu/modal";
 import { InventoryPanel } from "../InventoryPanel";
 import gameEngine from "@game/loop/engine";
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { PlayerId } from "@game/types";
-import { ModalType } from "@components/modal";
+import { ModalType } from "@game-menu/modal";
 import type { PlayerTheme } from "@styles/theme";
 
 export type HelpTab = "all" | "shortcuts" | "controls" | "mechanics";

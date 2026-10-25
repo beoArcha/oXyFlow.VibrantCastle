@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Eye, Layers, Film } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent, Tabs, TabsList, TabsTrigger } from "@ui";
-import { CharacterStage, AtlasSheetViewer } from "@components/character";
+import { CharacterStage, AtlasSheetViewer } from "@game-menu/character";
 import { useSettings } from "@context/GameContext";
 import { useI18n } from "@context/I18nContext";
 import { useSpritePreviewState } from "../hooks/useSpritePreviewState";

@@ -12,7 +12,7 @@ graph LR
     Scenario --> Art["Pixel Art & Atlases (src/assets)"]
     Data --> Engine["Simulation Engine (src/game)"]
     Art --> Engine
-    Data --> UI["React 19 Presentation (src/components)"]
+    Data --> UI["React 19 Presentation (src/game-menu, src/hud)"]
     Dev["Developer Workbench (src/developer - Atlas & Data Studio)"] -->|Author & Inspect| Data
     Dev -->|Slice & Align| Art
 ```

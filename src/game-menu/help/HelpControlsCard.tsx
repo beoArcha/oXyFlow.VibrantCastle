@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { PlayerId } from "@game/types";
 import { KbdGroup, Badge } from "@ui";
 import { useI18n } from "@context/I18nContext";
-import { useKeyboard, formatKeyLabel } from "@components/controls";
+import { useKeyboard, formatKeyLabel } from "@game-menu/controls";
 import { cn } from "@lib/utils";
 import { HelpControlsCardProps } from "./types";
 

@@ -1,8 +1,8 @@
 import React from "react";
 import { BookOpen } from "lucide-react";
 import { Modal } from "@ui";
-import { LanguageSelector } from "@components/common";
-import { ModalNavigationTabs, ModalType } from "@components/modal";
+import { LanguageSelector } from "@game-menu/common";
+import { ModalNavigationTabs, ModalType } from "@game-menu/modal";
 import { useI18n } from "@context/I18nContext";
 import { useSkills } from "@context/GameContext";
 import { useSettings } from "@context/SettingsContext";

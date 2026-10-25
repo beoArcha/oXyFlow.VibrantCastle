@@ -17,7 +17,8 @@ export interface DependencyGraphOptions {
 const TSCONFIG_ALIASES: Record<string, string> = {
   "@/": "src/",
   "@assets/": "src/assets/",
-  "@components/": "src/components/",
+  "@game-menu/": "src/game-menu/",
+  "@hud/": "src/hud/",
   "@context/": "src/context/",
   "@data/": "src/data/",
   "@game/": "src/game/",
@@ -31,6 +32,7 @@ const TSCONFIG_ALIASES: Record<string, string> = {
 
 const EXACT_ALIASES: Record<string, string> = {
   "@data": "src/data/index.ts",
+  "@hud": "src/hud/index.ts",
   "@i18n": "src/i18n/index.ts",
   "@test-utils": "src/test-utils/index.ts",
   "@ui": "src/ui/index.ts",

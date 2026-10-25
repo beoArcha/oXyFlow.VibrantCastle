@@ -20,13 +20,15 @@ function assertZeroLeakageViolations(
 
 describe("Layer Leakage & Engine Instantiation Boundaries", () => {
   const rootDir = process.cwd();
-  const componentsDir = path.join(rootDir, "src", "components");
+  const gameMenuDir = path.join(rootDir, "src", "game-menu");
+  const hudDir = path.join(rootDir, "src", "hud");
   const developerDir = path.join(rootDir, "src", "developer");
   const dataStudioDir = path.join(developerDir, "subtabs", "datastudio");
 
-  it("ensures UI components in src/components/ and src/developer/ never instantiate engine or manager classes directly", () => {
+  it("ensures UI components in src/game-menu/, src/hud/ and src/developer/ never instantiate engine or manager classes directly", () => {
     const uiFiles = [
-      ...getAllSourceFiles(componentsDir),
+      ...getAllSourceFiles(gameMenuDir),
+      ...getAllSourceFiles(hudDir),
       ...getAllSourceFiles(developerDir),
     ].filter((file) => !file.includes("__tests__"));
 
@@ -57,10 +59,11 @@ describe("Layer Leakage & Engine Instantiation Boundaries", () => {
     );
   });
 
-  it("ensures player UI components in src/components/ never import gameEngine singleton directly", () => {
-    const componentFiles = getAllSourceFiles(componentsDir).filter(
-      (file) => !file.includes("__tests__")
-    );
+  it("ensures player UI components in src/game-menu/ and src/hud/ never import gameEngine singleton directly", () => {
+    const componentFiles = [
+      ...getAllSourceFiles(gameMenuDir),
+      ...getAllSourceFiles(hudDir),
+    ].filter((file) => !file.includes("__tests__"));
 
     // Direct import of loop/engine in player UI components is prohibited
     const forbiddenEngineImportPattern = /from\s+["'].*loop\/engine["']/;
@@ -85,7 +88,7 @@ describe("Layer Leakage & Engine Instantiation Boundaries", () => {
 
     assertZeroLeakageViolations(
       violations,
-      "Player UI components (src/components) must consume game state via React Context (e.g. useGameSession) rather than importing gameEngine directly"
+      "Player UI components (src/game-menu, src/hud) must consume game state via React Context (e.g. useGameSession) rather than importing gameEngine directly"
     );
   });
 

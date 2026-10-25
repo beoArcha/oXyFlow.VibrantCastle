@@ -11,7 +11,7 @@ graph TD
     Engine["Engine Simulation Core (src/game)"] -->|Continuous Snapshots| Bridge["React Context Ports (src/context)"]
     EventBus["GameEventBus (Domain Events)"] -->|Discrete Events| Bridge
     Bridge --> Mappers["View Model Mappers (*.mapper.ts)"]
-    Mappers --> UI["React 19 Presentation Components (src/components)"]
+    Mappers --> UI["React 19 Presentation Overlays (src/game-menu, src/hud)"]
     UI --> Primitives["Design System Primitives (src/ui)"]
     UI -.->|Commands / Actions Only| Bridge
     Bridge -.->|Dispatch Command| Engine
@@ -22,7 +22,7 @@ graph TD
 * ✅ **Read-Only Presentation**: React components never own, simulate, or mutate gameplay state (champion health, velocities, cooldowns, positions). They consume immutable snapshots.
 * ✅ **Command-Driven Interactivity**: UI-triggered actions (using a potion, allocating skill points, changing settings, pausing) dispatch typed commands through Context ports into the engine.
 * ❌ **FORBIDDEN: Simulation in React**: No physics calculations, tick loops, or collision checks inside React hooks or effects.
-* ❌ **FORBIDDEN: Direct Engine Singleton Imports**: UI components (`src/components/`) must never import engine singletons (`gameEngine`, `physicsEngine`). All communication routes through `@context`.
+* ❌ **FORBIDDEN: Direct Engine Singleton Imports**: UI components (`src/game-menu/`, `src/hud/`) must never import engine singletons (`gameEngine`, `physicsEngine`). All communication routes through `@context`.
 * ❌ **FORBIDDEN: Per-Frame React Re-renders**: The continuous simulation loop runs on Canvas 2D at 60 Hz. The React layer subscribes only to throttled state changes or discrete events.
 
 ---

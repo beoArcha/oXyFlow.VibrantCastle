@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import type { UseModalManagerResult } from "@components/menu/hooks/useModalManager";
+import type { UseModalManagerResult } from "@game-menu/menu/hooks/useModalManager";
 
 /**
  * Modal manager interface subset for global hotkeys.

@@ -5,7 +5,7 @@
 *Vibrant Castle* is a responsive, gothic fantasy action-adventure platformer marrying *Castlevania*-style combat, *Bastion*-inspired warm atmospheric lighting, and *Owlboy*-level pixel art clarity.
 
 * **Simulation Core (`src/game/`)**: Deterministic Canvas 2D engine with decoupled fixed-update tick loop (30/60/90/120 Hz). Pure TypeScript, zero UI dependencies.
-* **Presentation Layer (`src/components/`, `src/ui/`)**: Passive React 19 UI overlay consuming immutable engine snapshots via React Context (`src/context/`).
+* **Presentation Layer (`src/game-menu/`, `src/hud/`, `src/ui/`)**: Passive React 19 UI overlay consuming immutable engine snapshots via React Context (`src/context/`).
 * **Content Layer (`src/data/`)**: Universal declarative JSON schemas as the Single Source of Truth (SSOT).
 * **Tooling**: Built and managed strictly with **Bun**. Node.js and npm are prohibited.
 
@@ -48,7 +48,7 @@ bun run build        # Production bundle build & packaging check
 * [ ] `[ENGINE]` Calibrate subpixel camera damping in `src/game/engine/cameraManager.ts` under ultrawide aspect ratios.
 * [ ] `[COMBAT]` Polish enemy stagger recovery and hurtbox invulnerability frames during dual-champion co-op strikes.
 * [ ] `[COMBAT]` Validate poise reduction thresholds for boss-type constructs in `src/game/engine/combatSystem.ts`.
-* [ ] `[UI]` Implement choice branching tree for visual novel scenes in `src/components/character/`.
+* [ ] `[UI]` Implement choice branching tree for visual novel scenes in `src/game-menu/character/`.
 * [ ] `[UI]` Expand `@ui` Design System with accessible gothic modal focus-trap primitives.
 * [ ] `[CONTENT]` Verify slicing presets in Atlas Studio for new clockwork gargoyle and lever variants.
 * [ ] `[LORE]` Complete narrative trigger manifests for Act 1 Courtyard transitions in `src/data/narrative/`.

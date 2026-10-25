@@ -9,8 +9,8 @@ import {
   EmptyState,
   ConfirmDialog,
 } from "@ui";
-import { LanguageSelector } from "@components/common";
-import { ModalNavigationTabs, ModalType } from "@components/modal";
+import { LanguageSelector } from "@game-menu/common";
+import { ModalNavigationTabs, ModalType } from "@game-menu/modal";
 import { CharacterPortrait } from "../character";
 import { useGameSession, useSettings, useInventory } from "@context/GameContext";
 import { useI18n } from "@context/I18nContext";

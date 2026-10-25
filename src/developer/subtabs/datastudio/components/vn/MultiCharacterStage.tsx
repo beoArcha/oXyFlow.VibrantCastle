@@ -1,6 +1,6 @@
 import React from "react";
 import { BookOpen, Skull, Volume2, User } from "lucide-react";
-import { CharacterPortrait } from "@components/character/CharacterPortrait";
+import { CharacterPortrait } from "@game-menu/character/CharacterPortrait";
 import { StageActor } from "../../types/visualNovelStudioTypes";
 import { useI18n } from "@context/I18nContext";
 

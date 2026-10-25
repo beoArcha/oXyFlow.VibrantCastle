@@ -1,11 +1,11 @@
 import React from "react";
-import { HelpModal } from "@components/help";
-import { MenuModal, type MenuModalProps } from "@components/menu/MenuModal";
-import { InventoryPanel } from "@components/inventory/InventoryPanel";
-import { SkillTreePanel } from "@components/skills/SkillTreePanel";
+import { HelpModal } from "@game-menu/help";
+import { MenuModal, type MenuModalProps } from "@game-menu/menu/MenuModal";
+import { InventoryPanel } from "@game-menu/inventory/InventoryPanel";
+import { SkillTreePanel } from "@game-menu/skills/SkillTreePanel";
 import { DeveloperModal } from "@developer";
-import type { ModalType } from "@components/modal";
-import type { UseModalManagerResult } from "@components/menu/hooks/useModalManager";
+import type { ModalType } from "@game-menu/modal";
+import type { UseModalManagerResult } from "@game-menu/menu/hooks/useModalManager";
 
 /**
  * Props for the application modal host router.

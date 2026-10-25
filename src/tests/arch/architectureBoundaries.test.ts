@@ -50,7 +50,7 @@ describe("Architectural Boundary Rules", () => {
 
   it("ensures zero production files in src/game import from UI components", () => {
     const gameFiles = getAllSourceFiles(gameDir).filter((file) => !file.includes("__tests__"));
-    const forbiddenPattern = /from\s+["'](@\/components|\.\.?\/.*components|\/components)/;
+    const forbiddenPattern = /from\s+["'](@\/components|@components|@\/game-menu|@game-menu|@\/hud|@hud|\.\.?\/.*(components|game-menu|hud)|\/(components|game-menu|hud))/;
     const violations = findImportViolations(gameFiles, forbiddenPattern, rootDir);
 
     assertZeroViolations(violations, "Game engine must not import UI components");
@@ -84,7 +84,7 @@ describe("Architectural Boundary Rules", () => {
 
   it("ensures i18n horizontal domain has zero dependencies on game engine, UI components, or React context", () => {
     const i18nFiles = getAllSourceFiles(i18nDir).filter((file) => !file.includes("__tests__"));
-    const forbiddenPattern = /from\s+["'](react|react-dom|@\/game|@game|\.\.?\/.*game(\/|["'])|@\/components|@components|\.\.?\/.*components(\/|["'])|@\/context|@context|\.\.?\/.*context(\/|["']))/;
+    const forbiddenPattern = /from\s+["'](react|react-dom|@\/game|@game|\.\.\/.*game(\/|["'])|@\/components|@components|@\/game-menu|@game-menu|\.\.\/.*game-menu(\/|["'])|@\/hud|@hud|\.\.\/.*hud(\/|["'])|@\/context|@context|\.\.\/.*context(\/|["']))/;
     const violations = findImportViolations(i18nFiles, forbiddenPattern, rootDir);
 
     assertZeroViolations(violations, "i18n domain must not depend on game engine, UI components, or React context");
@@ -149,10 +149,10 @@ describe("Architectural Boundary Rules", () => {
     assertZeroViolations(violations, "Simulation core must not access DOM globals directly");
   });
 
-  it("ensures utility layer src/lib has zero dependencies on application layers (game, context, components, i18n)", () => {
+  it("ensures utility layer src/lib has zero dependencies on application layers (game, context, game-menu, hud, i18n)", () => {
     const libDir = path.join(rootDir, "src", "lib");
     const libFiles = getAllSourceFiles(libDir).filter((file) => !file.includes("__tests__"));
-    const forbiddenPattern = /from\s+["'].*(game|context|components|i18n)/;
+    const forbiddenPattern = /from\s+["'].*(game|context|components|game-menu|hud|i18n)/;
     const violations = findImportViolations(libFiles, forbiddenPattern, rootDir);
 
     assertZeroViolations(violations, "Utility layer src/lib must not depend on application layers");
@@ -161,7 +161,7 @@ describe("Architectural Boundary Rules", () => {
   it("ensures React context layer src/context has zero dependencies on UI components", () => {
     const contextDir = path.join(rootDir, "src", "context");
     const contextFiles = getAllSourceFiles(contextDir).filter((file) => !file.includes("__tests__"));
-    const forbiddenPattern = /from\s+["'].*components/;
+    const forbiddenPattern = /from\s+["'].*(components|game-menu|hud)/;
     const violations = findImportViolations(contextFiles, forbiddenPattern, rootDir);
 
     assertZeroViolations(violations, "React context layer src/context must not depend on UI components");
@@ -208,23 +208,27 @@ describe("Architectural Boundary Rules", () => {
   it("ensures design system layer src/ui has zero dependencies on game, context, components, or developer", () => {
     const uiDir = path.join(rootDir, "src", "ui");
     const uiFiles = getAllSourceFiles(uiDir).filter((file) => !file.includes("__tests__"));
-    const forbiddenPattern = /from\s+["'].*(game|context|components|developer)/;
+    const forbiddenPattern = /from\s+["'].*(game|context|components|game-menu|hud|developer)/;
     const violations = findImportViolations(uiFiles, forbiddenPattern, rootDir);
 
     assertZeroViolations(violations, "Design system src/ui must not depend on game, context, components, or developer");
   });
 
-  it("ensures player UI components in src/components have zero dependencies on developer tools", () => {
-    const componentsDir = path.join(rootDir, "src", "components");
-    const componentFiles = getAllSourceFiles(componentsDir).filter(
+  it("ensures player UI and HUD components in src/game-menu and src/hud have zero dependencies on developer tools", () => {
+    const gameMenuDir = path.join(rootDir, "src", "game-menu");
+    const hudDir = path.join(rootDir, "src", "hud");
+    const componentFiles = [
+      ...getAllSourceFiles(gameMenuDir),
+      ...getAllSourceFiles(hudDir),
+    ].filter(
       (file) =>
         !file.includes("__tests__") &&
-        !file.replace(/\\/g, "/").endsWith("components/layout/GameModalHost.tsx")
+        !file.replace(/\\/g, "/").endsWith("game-menu/layout/GameModalHost.tsx")
     );
     const forbiddenPattern = /from\s+["'].*developer/;
     const violations = findImportViolations(componentFiles, forbiddenPattern, rootDir);
 
-    assertZeroViolations(violations, "Player UI components in src/components must not import developer tools");
+    assertZeroViolations(violations, "Player UI and HUD components in src/game-menu and src/hud must not import developer tools");
   });
 
   it("ensures game simulation and engine core has zero dependencies on developer tools", () => {

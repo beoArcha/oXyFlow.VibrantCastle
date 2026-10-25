@@ -1,11 +1,11 @@
 ---
 trigger: model_decision
-description: When modifying, creating, or reviewing React components, HUD overlays, Context ports, Design System primitives (@ui), styling, or i18n in src/components/, src/context/, or src/ui/
+description: When modifying, creating, or reviewing React components, HUD overlays, Context ports, Design System primitives (@ui), styling, or i18n in src/game-menu/, src/hud/, src/context/, or src/ui/
 ---
 
 # Frontend & UI Engineering Standards (React 19)
 
-Rules for presentation, HUD overlays, dialogs, Context ports, Design System, styling, and localization in `src/components/`, `src/context/`, and `src/ui/`.
+Rules for presentation, HUD overlays, dialogs, Context ports, Design System, styling, and localization in `src/game-menu/`, `src/hud/`, `src/context/`, and `src/ui/`.
 
 ---
 
@@ -23,7 +23,7 @@ Rules for presentation, HUD overlays, dialogs, Context ports, Design System, sty
 - ❌ **FORBIDDEN: Per-Frame React Re-renders**: Never bind `requestAnimationFrame` or high-frequency intervals to React state setters. State synchronizes via throttled snapshots or domain event subscriptions (`useEngineSubscription`).
 - ❌ **FORBIDDEN: Raw HTML Elements in Features**: Direct use of native `<button>`, `<input>`, `<select>`, `<textarea>`, `<table>`, or `<label>` is permitted ONLY inside Design System primitives (`src/ui/`). All feature cards, modals, and HUD overlays must import primitives from `@ui`. *(enforced: `designSystemBoundaries.test.ts`)*
 - ❌ **FORBIDDEN: Hardcoded Colors and Inline Theme Conditionals**: Never write hardcoded hex literals (e.g. `bg-[#2a1b18]`, `#e5c07b`) or theme branching in TSX (`resolvedTheme === 'dark' ? ...`). Styling must use semantic tokens (`bg-card`, `text-primary`, `border-border`) and CSS variables configured in `ThemeRegistry`. *(enforced: `designSystemBoundaries.test.ts`)*
-- ❌ **FORBIDDEN: Production UI importing Developer Tools**: Production components in `src/components/` must never import from `src/developer/`.
+- ❌ **FORBIDDEN: Production UI importing Developer Tools**: Production components in `src/game-menu/` and `src/hud/` must never import from `src/developer/`.
 - ❌ **FORBIDDEN: Hardcoded User-Facing Text**: Raw string literals in UI labels, tooltips, or dialogues are prohibited. Every string must be looked up via localization dictionaries (`@i18n`) with 100% key parity between English (`en`) and Polish (`pl`). *(enforced: `i18nParity.test.ts`)*
 - ✅ **REQUIRED: Headless View Model Mappers**: Transform complex engine state snapshots into lightweight, localized view models using pure mappers (`*.mapper.ts`).
 - ✅ **REQUIRED: Accessibility & Keyboard Operability**: All buttons, dialogs, and interactive widgets must support keyboard focus (`Tab`, `Enter`, `Escape`), provide ARIA attributes (`role="dialog"`, `aria-modal="true"`, `aria-label`), and trap focus in modals.
@@ -34,7 +34,7 @@ Rules for presentation, HUD overlays, dialogs, Context ports, Design System, sty
 
 ```mermaid
 graph LR
-    subgraph UI["React UI Layer (src/components/)"]
+    subgraph UI["React UI Layer (src/game-menu/, src/hud/)"]
         HUD["HUD / Overlays"]
         Menu["Pause / Settings Menu"]
         Dialog["Visual Novel Dialogue"]

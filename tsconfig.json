@@ -28,8 +28,14 @@
       "@assets/*": [
         "./src/assets/*"
       ],
-      "@components/*": [
-        "./src/components/*"
+      "@game-menu/*": [
+        "./src/game-menu/*"
+      ],
+      "@hud/*": [
+        "./src/hud/*"
+      ],
+      "@hud": [
+        "./src/hud/index.ts"
       ],
       "@context/*": [
         "./src/context/*"

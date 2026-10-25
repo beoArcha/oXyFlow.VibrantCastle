@@ -8,7 +8,7 @@ import {
   getItemIcon,
   itemIconRegistry,
 } from "@ui";
-import { ModalNavigationTabs, ModalType } from "@components/modal";
+import { ModalNavigationTabs, ModalType } from "@game-menu/modal";
 import { renderIntoDom, cleanupDom } from "@test-utils/domTestUtils";
 import { Item, ItemRarity, ItemType } from "@game/types";
 
