@@ -20,7 +20,7 @@ concurrency:
 permissions:
   contents: write
   checks: read
-  actions: read
+  actions: write
 
 jobs:
   promote:
@@ -71,17 +71,23 @@ jobs:
           echo "Check runs summary:"
           echo "$CHECKS_JSON" | jq .
 
-          TOTAL_CHECKS=$(echo "$CHECKS_JSON" | jq '.total_count')
-          if [ "$TOTAL_CHECKS" -eq 0 ]; then
-            echo "::error::No check runs found for commit ${TARGET_SHA}. The commit must pass the Main CI Pipeline before promotion."
+          # Filter specifically for Main CI pipeline stages and ignore the promotion job itself
+          CI_CHECKS=$(echo "$CHECKS_JSON" | jq '[.check_runs[] | select((.name | startswith("Stage ")) and (.name | test("Promotion|promote"; "i") | not))]')
+          TOTAL_CI_CHECKS=$(echo "$CI_CHECKS" | jq 'length')
+
+          echo "Evaluated CI check runs:"
+          echo "$CI_CHECKS" | jq .
+
+          if [ "$TOTAL_CI_CHECKS" -lt 7 ]; then
+            echo "::error::Found only ${TOTAL_CI_CHECKS} Main CI check runs for commit ${TARGET_SHA} (expected at least 7 stages). The commit must complete the Main CI Pipeline before promotion."
             exit 1
           fi
 
-          FAILED_CHECKS=$(echo "$CHECKS_JSON" | jq '[.check_runs[] | select(.conclusion != "success" and .name != "Stage 4: Candidate Metadata" and .name != "promote")] | length')
-          PENDING_CHECKS=$(echo "$CHECKS_JSON" | jq '[.check_runs[] | select(.status != "completed" and .name != "promote")] | length')
+          PENDING_CHECKS=$(echo "$CI_CHECKS" | jq '[.[] | select(.status != "completed")] | length')
+          FAILED_CHECKS=$(echo "$CI_CHECKS" | jq '[.[] | select(.conclusion != "success" and .name != "Stage 4: Candidate Metadata")] | length')
 
           if [ "$PENDING_CHECKS" -gt 0 ]; then
-            echo "::error::There are ${PENDING_CHECKS} pending check runs on commit ${TARGET_SHA}. Wait for Main CI Pipeline to finish."
+            echo "::error::There are ${PENDING_CHECKS} pending CI stages on commit ${TARGET_SHA}. Wait for Main CI Pipeline to finish."
             exit 1
           fi
 
@@ -90,17 +96,23 @@ jobs:
             exit 1
           fi
 
-          echo "All checks on commit ${TARGET_SHA} have passed successfully!"
+          echo "All ${TOTAL_CI_CHECKS} Main CI stages on commit ${TARGET_SHA} have passed successfully!"
 
       - name: Fast-Forward Release Branch
         env:
           TARGET_SHA: ${{ steps.resolve-sha.outputs.target_sha }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           echo "Fast-forwarding branch 'release' to ${TARGET_SHA}..."
           git push origin "${TARGET_SHA}:refs/heads/release"
+
+          echo "Dispatching Production Release workflow on branch 'release'..."
+          gh workflow run release.yml --ref release -f version_bump=patch || {
+            echo "::notice::Workflow dispatch triggered or delegated to release branch."
+          }
 
       - name: Publish Promotion Summary
         env:
