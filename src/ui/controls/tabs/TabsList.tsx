@@ -72,7 +72,7 @@ export const TabsList = React.memo(
         aria-orientation={orientation}
         onKeyDown={handleKeyDown}
         className={cn(
-          "shrink-0 flex items-center justify-between gap-1.5 p-1.5 bg-[#120502]/95 border border-amber-500/30 rounded-xl shadow-inner",
+          "shrink-0 flex items-center justify-between gap-1.5 p-1.5 bg-surface-darkest/95 border border-primary-500/30 rounded-xl shadow-inner",
           orientation === "horizontal" ? "flex-wrap" : "flex-col items-stretch",
           className
         )}

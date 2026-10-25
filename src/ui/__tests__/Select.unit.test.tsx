@@ -190,7 +190,7 @@ describe("Select Component", () => {
 
     const smSelect = smCastle.querySelector("select");
     expect(smSelect?.className).toContain("text-xs");
-    expect(smSelect?.className).toContain("bg-[#180904]");
+    expect(smSelect?.className).toContain("bg-surface-darker");
 
     const { container: lgDefault } = await renderIntoDom(
       <Select
@@ -204,7 +204,7 @@ describe("Select Component", () => {
 
     const lgSelect = lgDefault.querySelector("select");
     expect(lgSelect?.className).toContain("text-base");
-    expect(lgSelect?.className).toContain("bg-stone-950/90");
+    expect(lgSelect?.className).toContain("bg-surface-darkest/90");
   });
 
   it("forwards ref to the underlying HTMLSelectElement", async () => {
