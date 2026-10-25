@@ -409,8 +409,9 @@ describe("TesterSubTab & Interaction Domain Cards", () => {
         />
       );
 
+      const targetFormatted = (1000).toLocaleString();
       const goldBtn = Array.from(container.querySelectorAll("button")).find(
-        (b) => b.textContent?.includes("1000")
+        (b) => b.textContent?.includes(targetFormatted) || b.textContent?.replace(/\D/g, "") === "1000"
       );
       expect(goldBtn).toBeDefined();
       if (goldBtn) {

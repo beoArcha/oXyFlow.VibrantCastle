@@ -14,6 +14,10 @@ describe("Viewport Canvas Adapter Operations in GameSessionContext", () => {
     const startSpy = spyOn(gameEngine, "start").mockImplementation(() => {});
     const stopSpy = spyOn(gameEngine, "stop").mockImplementation(() => {});
 
+    attachSpy.mockClear();
+    startSpy.mockClear();
+    stopSpy.mockClear();
+
     const cleanup = attachViewportCanvas(mockCanvas);
 
     expect(attachSpy).toHaveBeenCalledWith(mockCanvas);

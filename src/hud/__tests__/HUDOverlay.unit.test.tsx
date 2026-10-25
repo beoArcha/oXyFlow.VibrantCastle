@@ -5,15 +5,22 @@ import gameEngine from "@game/loop/engine";
 import { HUDOverlay } from "../HUDOverlay";
 
 describe("HUDOverlay Orchestrator Component", () => {
+  let attachSpy: ReturnType<typeof spyOn> | undefined;
+  let startSpy: ReturnType<typeof spyOn> | undefined;
+  let stopSpy: ReturnType<typeof spyOn> | undefined;
+
   beforeEach(() => {
     setupDomEnvironment();
-    spyOn(gameEngine, "attachCanvas").mockImplementation(() => {});
-    spyOn(gameEngine, "start").mockImplementation(() => {});
-    spyOn(gameEngine, "stop").mockImplementation(() => {});
+    attachSpy = spyOn(gameEngine, "attachCanvas").mockImplementation(() => {});
+    startSpy = spyOn(gameEngine, "start").mockImplementation(() => {});
+    stopSpy = spyOn(gameEngine, "stop").mockImplementation(() => {});
   });
 
   afterEach(async () => {
     await cleanupDom();
+    attachSpy?.mockRestore();
+    startSpy?.mockRestore();
+    stopSpy?.mockRestore();
     gameEngine.stop();
   });
 
