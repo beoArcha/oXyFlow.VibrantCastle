@@ -1,5 +1,62 @@
 @import "tailwindcss";
 
+@theme {
+  --color-amber-primary: #f59e0b;
+  --color-amber-light: #fbbf24;
+  --color-amber-lighter: #fef3c7;
+  --color-amber-dark: #b45309;
+  --color-amber-darker: #78350f;
+
+  --color-surface-darkest: #120602;
+  --color-surface-darker: #1a0c07;
+  --color-surface-dark: #26120b;
+  --color-surface-card: #2d140a;
+  --color-surface-card-hover: #3d1b0e;
+
+  --color-border-subtle: #4a200e;
+  --color-border-medium: #5c2d18;
+  --color-border-strong: #8d4325;
+  --color-border-accent: #d97706;
+
+  --color-vital-health: #ef4444;
+  --color-vital-health-dark: #991b1b;
+  --color-vital-mana: #06b6d4;
+  --color-vital-mana-dark: #0e7490;
+  --color-vital-stamina: #eab308;
+  --color-vital-stamina-dark: #a16207;
+  --color-vital-score: #f59e0b;
+  --color-vital-skill-points: #8b5cf6;
+  --color-vital-skill-points-dark: #5b21b6;
+}
+
+:root {
+  --surface-darkest: #120602;
+  --surface-darker: #1a0c07;
+  --surface-dark: #26120b;
+  --surface-card: #2d140a;
+  --surface-card-hover: #3d1b0e;
+
+  --border-subtle: #4a200e;
+  --border-medium: #5c2d18;
+  --border-strong: #8d4325;
+  --border-accent: #d97706;
+
+  --amber-primary: #f59e0b;
+  --amber-light: #fbbf24;
+  --amber-lighter: #fef3c7;
+  --amber-dark: #b45309;
+  --amber-darker: #78350f;
+
+  --vital-health: #ef4444;
+  --vital-health-dark: #991b1b;
+  --vital-mana: #06b6d4;
+  --vital-mana-dark: #0e7490;
+  --vital-stamina: #eab308;
+  --vital-stamina-dark: #a16207;
+  --vital-score: #f59e0b;
+  --vital-skill-points: #8b5cf6;
+}
+
 /* WebKit (Chrome, Edge, Safari, Opera) */
 ::-webkit-scrollbar {
   width: 8px;
