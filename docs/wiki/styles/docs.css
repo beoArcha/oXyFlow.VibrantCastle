@@ -1,0 +1,281 @@
+/**
+ * Vibrant Castle Wiki — Documentation Reader & Markdown Styles
+ * Sidebar navigation, markdown article viewer, callout alerts, and code formatting.
+ */
+
+.docs-section {
+  margin-bottom: 4rem;
+}
+
+.docs-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* Sidebar Navigation */
+.docs-sidebar {
+  background: var(--surface-card);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 90px;
+}
+
+.sidebar-title {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--amber-light);
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.sidebar-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  list-style: none;
+}
+
+.sidebar-nav-item {
+  width: 100%;
+}
+
+.sidebar-nav-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.sidebar-nav-btn:hover {
+  background: var(--surface-elevated);
+  color: var(--amber-light);
+}
+
+.sidebar-nav-btn.active {
+  background: var(--surface-elevated);
+  border-color: var(--border-strong);
+  color: var(--amber-light);
+  box-shadow: inset 2px 0 0 var(--amber-primary);
+}
+
+.sidebar-nav-btn .btn-icon {
+  width: auto;
+  height: auto;
+  border: none;
+  color: var(--amber-primary);
+  font-size: 0.8rem;
+}
+
+/* Markdown Reader Article Container */
+.docs-viewer-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 2.25rem;
+  box-shadow: var(--shadow-lg);
+  min-height: 480px;
+}
+
+.markdown-body {
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+/* Markdown Typography & Elements */
+.markdown-body h1 {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border-strong);
+  background: linear-gradient(180deg, #ffffff 0%, var(--amber-light) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.markdown-body h2 {
+  font-family: var(--font-heading);
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--amber-light);
+  letter-spacing: 0.03em;
+  margin-top: 1.85rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.markdown-body h3 {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-top: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.markdown-body p {
+  margin-bottom: 1.1rem;
+}
+
+.markdown-body ul, .markdown-body ol {
+  margin: 0 0 1.25rem 1.5rem;
+}
+
+.markdown-body li {
+  margin-bottom: 0.45rem;
+}
+
+.markdown-body li::marker {
+  color: var(--amber-primary);
+}
+
+.markdown-body strong {
+  color: var(--amber-light);
+  font-weight: 600;
+}
+
+.markdown-body em {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.markdown-body a {
+  color: var(--amber-light);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--transition-fast);
+}
+
+.markdown-body a:hover {
+  color: #ffffff;
+}
+
+.markdown-body hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--border-strong) 50%, transparent 100%);
+  margin: 2rem 0;
+}
+
+/* Markdown Blockquotes */
+.markdown-body blockquote {
+  margin: 1.25rem 0;
+  padding: 0.85rem 1.25rem;
+  background: var(--surface-darker);
+  border-left: 3px solid var(--amber-primary);
+  border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Markdown Callout Alerts */
+.markdown-body .callout-alert {
+  margin: 1.25rem 0;
+  padding: 0.9rem 1.15rem;
+  border-radius: var(--radius-sm);
+  background: var(--surface-darker);
+  border: 1px solid var(--border-medium);
+  border-left-width: 4px;
+}
+
+.markdown-body .callout-alert.note {
+  border-left-color: var(--cyan-accent);
+}
+
+.markdown-body .callout-alert.tip {
+  border-left-color: var(--amber-primary);
+}
+
+.markdown-body .callout-alert.important {
+  border-left-color: #a855f7;
+}
+
+.markdown-body .callout-alert.warning {
+  border-left-color: var(--crimson-accent);
+}
+
+/* Markdown Tables */
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.88rem;
+  background: var(--surface-darker);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.markdown-body th {
+  background: var(--surface-elevated);
+  color: var(--amber-light);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 2px solid var(--border-strong);
+}
+
+.markdown-body td {
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+.markdown-body tr:last-child td {
+  border-bottom: none;
+}
+
+.markdown-body tr:hover td {
+  background: rgba(245, 158, 11, 0.04);
+}
+
+/* Markdown Code Blocks */
+.markdown-body pre {
+  background: var(--surface-darkest);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  margin: 1.25rem 0;
+}
+
+.markdown-body code {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--amber-light);
+}
+
+.markdown-body p code, .markdown-body li code {
+  background: var(--surface-darker);
+  border: 1px solid var(--border-subtle);
+  padding: 0.15rem 0.35rem;
+  border-radius: var(--radius-xs);
+}

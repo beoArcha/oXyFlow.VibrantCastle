@@ -1,0 +1,117 @@
+/**
+ * Vibrant Castle Wiki — Footer & Responsive Media Queries
+ * Citadel chronicle footer, dual-license credits, and responsive layouts.
+ */
+
+.site-footer {
+  background: var(--surface-darker);
+  border-top: 1px solid var(--border-medium);
+  padding: 3rem 0 2rem;
+  color: var(--text-dim);
+  font-size: 0.82rem;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.footer-description {
+  color: var(--text-muted);
+  max-width: 420px;
+  line-height: 1.6;
+}
+
+.footer-col-title {
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--amber-light);
+  margin-bottom: 0.85rem;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer-link {
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.footer-link:hover {
+  color: var(--amber-light);
+}
+
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 0.75rem;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Media Queries
+   -------------------------------------------------------------------------- */
+@media (max-width: 992px) {
+  .docs-layout {
+    grid-template-columns: 1fr;
+  }
+  .docs-sidebar {
+    position: static;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.1rem;
+  }
+  .header-container {
+    height: auto;
+    padding: 0.75rem 0;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .nav-links {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+  }
+  .viewport-header, .viewport-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .viewport-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .splash-title {
+    font-size: 1.6rem;
+  }
+  .btn-gothic-primary {
+    font-size: 0.95rem;
+    padding: 0.7rem 1.5rem;
+  }
+}

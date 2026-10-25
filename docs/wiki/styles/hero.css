@@ -1,0 +1,100 @@
+/**
+ * Vibrant Castle Wiki — Hero Section Styles
+ * Citadel introduction, animated status pill, glowing titles, and gothic divider.
+ */
+
+.hero-section {
+  text-align: center;
+  padding: 3rem 1rem 2.5rem;
+  position: relative;
+}
+
+.hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.9rem;
+  background: var(--amber-faint);
+  border: 1px solid var(--border-medium);
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--amber-light);
+  margin-bottom: 1.25rem;
+}
+
+.hero-pill .pill-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--amber-primary);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--amber-primary);
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+@keyframes pulse-dot {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+.hero-title {
+  font-family: var(--font-heading);
+  font-size: 2.85rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  background: linear-gradient(180deg, #ffffff 10%, var(--amber-light) 70%, var(--amber-dark) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+}
+
+.hero-tagline {
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  max-width: 760px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.6;
+}
+
+.hero-lore {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  max-width: 680px;
+  margin: 0 auto;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+/* Gothic Ornamental Divider */
+.gothic-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2.5rem auto;
+  max-width: 600px;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--border-strong) 50%, transparent 100%);
+}
+
+.divider-crest {
+  color: var(--amber-primary);
+  font-size: 0.9rem;
+  filter: drop-shadow(0 0 5px var(--amber-glow));
+}

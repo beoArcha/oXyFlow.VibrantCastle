@@ -1,0 +1,225 @@
+/**
+ * Vibrant Castle Wiki — Viewport & Game Stage Styles
+ * 16:9 canvas container, pre-game splash screen, gothic play button, and focus hints.
+ */
+
+.viewport-section {
+  margin-bottom: 3.5rem;
+}
+
+.viewport-card {
+  background: var(--surface-card);
+  border: 2px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+  overflow: hidden;
+  position: relative;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.viewport-card:hover {
+  border-color: var(--amber-primary);
+}
+
+.viewport-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(180deg, var(--surface-darker) 0%, var(--surface-card) 100%);
+  border-bottom: 1px solid var(--border-medium);
+}
+
+.viewport-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--amber-light);
+  letter-spacing: 0.05em;
+}
+
+.viewport-title-icon {
+  color: var(--amber-primary);
+}
+
+.viewport-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.viewport-badge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  background: var(--surface-darkest);
+  color: var(--amber-light);
+  border: 1px solid var(--border-subtle);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-xs);
+}
+
+.btn-icon {
+  background: transparent;
+  border: 1px solid var(--border-medium);
+  color: var(--text-secondary);
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all var(--transition-fast);
+}
+
+.btn-icon:hover {
+  background: var(--amber-subtle);
+  border-color: var(--amber-primary);
+  color: var(--amber-light);
+}
+
+/* 16:9 Aspect Ratio Container */
+.viewport-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000000;
+  overflow: hidden;
+}
+
+.game-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+/* Pre-Game Splash Screen Overlay */
+.viewport-splash {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: 
+    radial-gradient(circle at 50% 50%, rgba(39, 15, 7, 0.95) 0%, rgba(18, 6, 2, 0.98) 100%);
+  text-align: center;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.viewport-splash.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.splash-crest {
+  font-size: 3.5rem;
+  color: var(--amber-primary);
+  filter: drop-shadow(0 0 15px var(--amber-glow));
+  margin-bottom: 1rem;
+  animation: float-crest 3s ease-in-out infinite;
+}
+
+@keyframes float-crest {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.splash-title {
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  letter-spacing: 0.06em;
+  margin-bottom: 0.5rem;
+}
+
+.splash-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  max-width: 580px;
+  margin-bottom: 1.75rem;
+}
+
+.splash-meta {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.meta-item strong {
+  color: var(--text-secondary);
+}
+
+/* Gothic Action Buttons */
+.btn-gothic-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #120602;
+  background: linear-gradient(180deg, #fef3c7 0%, var(--amber-primary) 60%, var(--amber-dark) 100%);
+  border: 2px solid var(--amber-light);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 2.25rem;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7), 0 0 25px var(--amber-glow);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: all var(--transition-base);
+}
+
+.btn-gothic-primary:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.8), 0 0 35px var(--amber-glow-lg);
+  border-color: #ffffff;
+}
+
+.btn-gothic-primary:active {
+  transform: translateY(1px);
+}
+
+/* Viewport Footer Bar */
+.viewport-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1.25rem;
+  background: var(--surface-darker);
+  border-top: 1px solid var(--border-subtle);
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.viewport-footer-hints {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.hint-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}

@@ -1,0 +1,13 @@
+/**
+ * Vibrant Castle Wiki — Master Gothic Stylesheet Aggregator
+ * Decomposed into modular domain stylesheets adhering to the ~300 LOC clean code standard.
+ */
+
+@import './tokens.css';
+@import './base.css';
+@import './navigation.css';
+@import './hero.css';
+@import './viewport.css';
+@import './keycaps.css';
+@import './docs.css';
+@import './footer.css';
