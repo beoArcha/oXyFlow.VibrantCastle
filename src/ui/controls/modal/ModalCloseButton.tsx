@@ -27,7 +27,7 @@ export const ModalCloseButton = React.memo(
           type="button"
           onClick={handleClick}
           className={cn(
-            "p-1.5 md:p-2 rounded-xl bg-stone-900/90 hover:bg-[#2a130a] text-stone-300 hover:text-amber-300 border border-stone-800 hover:border-amber-500/60 transition-all cursor-pointer shadow-md active:translate-y-px",
+            "p-1.5 md:p-2 rounded-xl bg-stone-900/90 hover:bg-surface-card text-stone-300 hover:text-amber-300 border border-stone-800 hover:border-amber-500/60 transition-all cursor-pointer shadow-md active:translate-y-px",
             className
           )}
           aria-label={props["aria-label"] ?? "Close modal"}

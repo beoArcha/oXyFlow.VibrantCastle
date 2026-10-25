@@ -70,6 +70,8 @@ export function setupDomEnvironment() {
   globalThis.KeyboardEvent = globalWin.KeyboardEvent;
   globalThis.FileReader = (globalThis.FileReader || MockFileReader) as unknown as typeof FileReader;
   globalThis.ErrorEvent = ((win as unknown as { ErrorEvent?: typeof ErrorEvent }).ErrorEvent || globalThis.ErrorEvent) as typeof ErrorEvent;
+  globalThis.getComputedStyle = globalWin.getComputedStyle.bind(globalWin);
+  globalThis.MutationObserver = globalWin.MutationObserver;
   globalThis.requestAnimationFrame = win.requestAnimationFrame.bind(win) as unknown as typeof requestAnimationFrame;
   globalThis.cancelAnimationFrame = win.cancelAnimationFrame.bind(win) as unknown as typeof cancelAnimationFrame;
   globalThis.ResizeObserver =

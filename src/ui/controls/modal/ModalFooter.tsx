@@ -17,7 +17,7 @@ export const ModalFooter = React.memo(
       <div
         ref={ref}
         className={cn(
-          "shrink-0 px-4 md:px-6 py-3 border-t border-amber-500/30 bg-[#140602]/95 flex items-center justify-end gap-3",
+          "shrink-0 px-4 md:px-6 py-3 border-t border-amber-500/30 bg-surface-darkest/95 flex items-center justify-end gap-3",
           className
         )}
         {...props}

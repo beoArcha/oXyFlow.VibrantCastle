@@ -21,7 +21,7 @@ export const ModalTitle = React.memo(
         ref={ref}
         id={id ?? titleId}
         className={cn(
-          "text-lg md:text-xl font-serif font-black text-[#fbbf24] tracking-wide drop-shadow-md flex items-center gap-2 truncate",
+          "text-lg md:text-xl font-serif font-black text-primary-400 tracking-wide drop-shadow-md flex items-center gap-2 truncate",
           className
         )}
         {...props}

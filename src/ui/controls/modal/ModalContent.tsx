@@ -26,7 +26,7 @@ export const ModalContent = React.memo(
         aria-labelledby={titleId}
         tabIndex={-1}
         className={cn(
-          "bg-[#1c0c07]/95 border-2 border-amber-500/60 rounded-2xl shadow-2xl shadow-black/95 text-stone-100 flex flex-col relative animate-in zoom-in-95 duration-150 overflow-hidden transition-all duration-200 outline-none",
+          "bg-surface-darker/95 border-2 border-primary-500/60 rounded-2xl shadow-2xl shadow-black/95 text-stone-100 flex flex-col relative animate-in zoom-in-95 duration-150 overflow-hidden transition-all duration-200 outline-none",
           isMaximized
             ? "w-full max-w-[98vw] h-[95dvh] max-h-[95dvh]"
             : cn("w-full max-h-[92dvh] h-auto md:h-[88vh] md:max-h-[780px]", maxWidthClass),

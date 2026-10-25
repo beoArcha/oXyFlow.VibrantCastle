@@ -11,9 +11,11 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 import { afterEach } from "bun:test";
 import { LoggerManager } from "./lib/logger";
-import { cleanupDom } from "./test-utils/domTestUtils";
+import { cleanupDom, setupDomEnvironment } from "./test-utils/domTestUtils";
 import gameEngine from "./game/loop/engine";
 import { assetLoader } from "./game/engine/assetLoader";
+
+setupDomEnvironment();
 
 afterEach(async () => {
   const manager = LoggerManager.getInstance();

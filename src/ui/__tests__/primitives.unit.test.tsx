@@ -475,7 +475,7 @@ describe("Core UI Primitives (Button, Badge, KbdKey, StatRow, Input, Switch, Too
         button.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
       });
 
-      const tooltip = container.querySelector("[role='tooltip']");
+      const tooltip = document.querySelector("[role='tooltip']");
       expect(tooltip).not.toBeNull();
       expect(tooltip?.textContent).toBe("Attack power: +15");
 
@@ -483,7 +483,7 @@ describe("Core UI Primitives (Button, Badge, KbdKey, StatRow, Input, Switch, Too
         button.dispatchEvent(new MouseEvent("mouseout", { bubbles: true }));
       });
 
-      expect(container.querySelector("[role='tooltip']")).toBeNull();
+      expect(document.querySelector("[role='tooltip']")).toBeNull();
 
       await unmount();
     });
@@ -502,7 +502,7 @@ describe("Core UI Primitives (Button, Badge, KbdKey, StatRow, Input, Switch, Too
         button.dispatchEvent(new Event("focus", { bubbles: true }));
       });
 
-      const tooltip = container.querySelector("[role='tooltip']");
+      const tooltip = document.querySelector("[role='tooltip']");
       expect(tooltip).not.toBeNull();
       expect(tooltip?.textContent).toBe("Press [E] to interact");
       expect(button.getAttribute("aria-describedby")).toBe(tooltip?.id);
@@ -512,7 +512,7 @@ describe("Core UI Primitives (Button, Badge, KbdKey, StatRow, Input, Switch, Too
         button.dispatchEvent(new Event("blur", { bubbles: true }));
       });
 
-      expect(container.querySelector("[role='tooltip']")).toBeNull();
+      expect(document.querySelector("[role='tooltip']")).toBeNull();
 
       await unmount();
     });

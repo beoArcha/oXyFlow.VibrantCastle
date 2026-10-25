@@ -38,7 +38,7 @@ export const ModalHeader = React.memo(
       <div
         ref={ref}
         className={cn(
-          "shrink-0 px-4 md:px-6 py-3 border-b border-amber-500/40 bg-[#140602]/90 flex items-center justify-between gap-3 select-none",
+          "shrink-0 px-4 md:px-6 py-3 border-b border-amber-500/40 bg-surface-darkest/90 flex items-center justify-between gap-3 select-none",
           className
         )}
         {...props}
@@ -72,7 +72,7 @@ export const ModalHeader = React.memo(
             <button
               type="button"
               onClick={toggleMaximize}
-              className="p-1.5 md:p-2 rounded-xl bg-stone-900/90 hover:bg-[#2a130a] text-stone-300 hover:text-amber-300 border border-stone-800 hover:border-amber-500/60 transition-all cursor-pointer shadow-md active:translate-y-px"
+              className="p-1.5 md:p-2 rounded-xl bg-stone-900/90 hover:bg-surface-card text-stone-300 hover:text-amber-300 border border-stone-800 hover:border-amber-500/60 transition-all cursor-pointer shadow-md active:translate-y-px"
               aria-label={isMaximized ? "Restore window" : "Maximize window"}
               title={isMaximized ? "Restore window" : "Maximize window"}
             >
