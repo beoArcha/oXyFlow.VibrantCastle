@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vibrant Castle — Gotycka Wiki & Portal Dystrybucji</title>
+  <meta name="description" content="Autonomiczna gotycka wiki oraz portal dystrybucji platformówki 2D Vibrant Castle. Dokumentacja mechanik, sterowanie, bohaterowie oraz grywalna wersja w przeglądarce.">
+  <link rel="stylesheet" href="./styles/wiki.css">
+</head>
+<body>
+
+  <!-- Site Header & Sticky Gothic Navigation -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="#hero" class="site-brand" id="brand-link">
+        <div class="brand-crest">🏰</div>
+        <div class="brand-text-wrap">
+          <span class="brand-title">VIBRANT CASTLE</span>
+          <span class="brand-subtitle">Chronicles of Aether</span>
+        </div>
+      </a>
+
+      <nav class="nav-links" aria-label="Nawigacja Portalu">
+        <a href="#game-viewport" class="nav-link" data-i18n="wikiNavGame">Graj</a>
+        <a href="#controls-reference" class="nav-link" data-i18n="wikiNavControls">Sterowanie</a>
+        <a href="#knowledge-vault" class="nav-link" data-i18n="wikiNavDocs">Księgi Wiedzy</a>
+      </nav>
+
+      <div class="header-actions">
+        <!-- Multi-language Switcher -->
+        <div class="lang-switcher" role="group" aria-label="Wybór Języka">
+          <button type="button" class="lang-btn active" data-lang-btn="pl" aria-pressed="true">PL</button>
+          <button type="button" class="lang-btn" data-lang-btn="en" aria-pressed="false">EN</button>
+        </div>
+
+        <!-- Repository Link -->
+        <a href="https://github.com/beoArcha/vibrant_castle" target="_blank" rel="noopener noreferrer" class="btn-github">
+          <span>GitHub</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero-section container">
+      <div class="hero-pill">
+        <span class="pill-dot"></span>
+        <span data-i18n="wikiHeroBadgeEngine">Canvas 2D 60 Hz</span> •
+        <span data-i18n="wikiHeroBadgeNoPlugins">Zero Wtyczek</span>
+      </div>
+
+      <h1 class="hero-title" data-i18n="wikiHeroTitle">Cytadela Aether — Kronika Przebudzenia</h1>
+      <p class="hero-tagline" data-i18n="wikiHeroSubtitle">
+        Gotycka platformówka 2D w wiecznej złotej jesieni. Walcz, skacz i odkrywaj tajemnice stazy czasowej bezpośrednio w przeglądarce.
+      </p>
+
+      <div class="gothic-divider" aria-hidden="true">
+        <div class="divider-line"></div>
+        <div class="divider-crest">❖</div>
+        <div class="divider-line"></div>
+      </div>
+    </section>
+
+    <!-- Interactive Game Viewport (16:9, 1280 × 720) -->
+    <section id="game-viewport" class="viewport-section container">
+      <div class="viewport-card" id="viewport-container">
+        
+        <!-- Viewport Header -->
+        <div class="viewport-header">
+          <div class="viewport-title">
+            <span class="viewport-title-icon">⚔</span>
+            <span data-i18n="wikiNavGame">Graj</span>
+            <span class="viewport-badge">1280 × 720 (16:9)</span>
+          </div>
+
+          <div class="viewport-controls">
+            <span id="game-status-badge" class="viewport-badge" data-i18n="wikiClickToFocus">
+              Kliknij na obszar gry, aby aktywować sterowanie klawiaturą
+            </span>
+            <button type="button" id="btn-fullscreen" class="btn-icon" title="Pełny Ekran" aria-label="Pełny Ekran">
+              ⛶
+            </button>
+          </div>
+        </div>
+
+        <!-- 16:9 Stage -->
+        <div class="viewport-stage" id="stage-wrapper">
+          
+          <!-- Pre-Game Splash Screen Overlay -->
+          <div class="viewport-splash" id="viewport-splash">
+            <div class="splash-crest">🏰</div>
+            <h2 class="splash-title">VIBRANT CASTLE</h2>
+            <p class="splash-subtitle" data-i18n="wikiHeroSubtitle">
+              Gotycka platformówka 2D w wiecznej złotej jesieni.
+            </p>
+
+            <div class="splash-meta">
+              <div class="meta-item">
+                <span data-i18n="wikiHeroBadgeEngine">Canvas 2D 60 Hz</span>
+              </div>
+              <div class="meta-item">
+                <span data-i18n="wikiHeroBadgeCoop">Kooperacja na 1 Klawiaturze</span>
+              </div>
+            </div>
+
+            <button type="button" id="btn-start-game" class="btn-gothic-primary">
+              <span class="btn-icon" aria-hidden="true">⚔</span>
+              <span data-i18n="wikiPlayButton">Wejdź do Cytadeli</span>
+            </button>
+          </div>
+
+          <!-- Embedded Game Frame -->
+          <iframe 
+            id="game-frame" 
+            class="game-iframe" 
+            src="about:blank" 
+            tabindex="0" 
+            title="Vibrant Castle Game Engine" 
+            allow="fullscreen; autoplay">
+          </iframe>
+        </div>
+
+        <!-- Viewport Footer -->
+        <div class="viewport-footer">
+          <span id="footer-status-text" data-i18n="wikiClickToFocus">
+            Kliknij na obszar gry, aby aktywować sterowanie klawiaturą
+          </span>
+          <div class="viewport-footer-hints">
+            <span class="hint-pill">
+              <kbd class="kbd-key">P</kbd> <span data-i18n="wikiPauseGame">Pauza</span>
+            </span>
+            <span class="hint-pill">
+              <kbd class="kbd-key">F11</kbd> <span data-i18n="wikiFullscreen">Pełny Ekran</span>
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Quick Controls Reference Section -->
+    <section id="controls-reference" class="controls-section container">
+      <div class="section-header">
+        <h2 class="section-title" data-i18n="wikiQuickControlsTitle">Podręczny Przewodnik Klawiszologii</h2>
+        <p class="section-subtitle" data-i18n="wikiQuickControlsDesc">
+          Wszystkie akcje kinetyczne szermierzy są dostępne z poziomu klawiatury bez konieczności podłączania kontrolera.
+        </p>
+      </div>
+
+      <div class="controls-grid">
+        
+        <!-- Valen (Player 1) Card -->
+        <article class="control-card">
+          <div class="card-header-duelist">
+            <div class="duelist-meta">
+              <div class="duelist-crest valen">🗡</div>
+              <div>
+                <h3 class="duelist-name" data-i18n="p1Name">Gracz 1: Valen (Chrono Duelist)</h3>
+                <span class="duelist-role" data-i18n="roleValen">Szermierz Czasu (Rapier)</span>
+              </div>
+            </div>
+            <span class="duelist-tag">P1 SOLO / CO-OP</span>
+          </div>
+
+          <div class="control-rows">
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionMove">Ruch w lewo / w prawo</span>
+              <div class="control-keys">
+                <kbd class="kbd-key">A</kbd>
+                <kbd class="kbd-key">D</kbd>
+              </div>
+            </div>
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionJump">Skok sprężysty</span>
+              <div class="control-keys">
+                <kbd class="kbd-key wide">Spacja</kbd>
+              </div>
+            </div>
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionSlide">Wślizg / Unik niski</span>
+              <div class="control-keys">
+                <kbd class="kbd-key">S</kbd>
+                <span>+</span>
+                <kbd class="kbd-key wide">Spacja</kbd>
+              </div>
+            </div>
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionDash">Chrono Dash</span>
+              <div class="control-keys">
+                <kbd class="kbd-key wide">Shift</kbd>
+              </div>
+            </div>
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionAttack">Atak bronią białą</span>
+              <div class="control-keys">
+                <kbd class="kbd-key">J</kbd>
+              </div>
+            </div>
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionSpecial">Czar aetherowy</span>
+              <div class="control-keys">
+                <kbd class="kbd-key">K</kbd>
+              </div>
+            </div>
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionPotion">Użycie mikstury</span>
+              <div class="control-keys">
+                <kbd class="kbd-key">Q</kbd>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Aurelia (Player 2) Card -->
+        <article class="control-card">
+          <div class="card-header-duelist">
+            <div class="duelist-meta">
+              <div class="duelist-crest aurelia">✨</div>
+              <div>
+                <h3 class="duelist-name" data-i18n="p2Name">Gracz 2: Aurelia (Aetherblade Warden)</h3>
+                <span class="duelist-role" data-i18n="roleAurelia">Strażniczka Aetheru (Światło)</span>
+              </div>
+            </div>
+            <span class="duelist-tag">P2 CO-OP</span>
+          </div>
+
+          <div class="control-rows">
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionMove">Ruch w lewo / w prawo</span>
+              <div class="control-keys">
+                <kbd class="kbd-key">←</kbd>
+                <kbd class="kbd-key">→</kbd>
+              </div>
+            </div>
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionJump">Skok sprężysty</span>
+              <div class="control-keys">
+                <kbd class="kbd-key">↑</kbd>
+              </div>
+            </div>
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionDash">Phase Dash</span>
+              <div class="control-keys">
+                <kbd class="kbd-key wide">Num 0</kbd>
+              </div>
+            </div>
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionAttack">Atak bronią białą</span>
+              <div class="control-keys">
+                <kbd class="kbd-key">Num 1</kbd>
+              </div>
+            </div>
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionSpecial">Czar aetherowy</span>
+              <div class="control-keys">
+                <kbd class="kbd-key">Num 2</kbd>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Knowledge Vault / Documentation Viewer Section -->
+    <section id="knowledge-vault" class="docs-section container">
+      <div class="section-header">
+        <h2 class="section-title" data-i18n="wikiDocumentationTitle">Księgi Wiedzy i Dokumentacja</h2>
+        <p class="section-subtitle" data-i18n="wikiDocumentationDesc">
+          Kompendium wiedzy o mechanikach, bohaterach, uniwersum oraz architekturze silnika Vibrant Castle.
+        </p>
+      </div>
+
+      <div class="docs-layout">
+        
+        <!-- Sidebar Navigation Tabs -->
+        <aside class="docs-sidebar" aria-label="Wybór Kroniki">
+          <h3 class="sidebar-title" data-i18n="wikiNavDocs">Księgi Wiedzy</h3>
+          <ul class="sidebar-nav-list" role="tablist">
+            <li class="sidebar-nav-item" role="presentation">
+              <button type="button" class="sidebar-nav-btn active" data-doc-tab="intro" role="tab" aria-selected="true">
+                <span class="btn-icon">📜</span>
+                <span data-i18n="wikiTabIntro">Wprowadzenie</span>
+              </button>
+            </li>
+            <li class="sidebar-nav-item" role="presentation">
+              <button type="button" class="sidebar-nav-btn" data-doc-tab="controls" role="tab" aria-selected="false">
+                <span class="btn-icon">🎮</span>
+                <span data-i18n="wikiTabControls">Sterowanie</span>
+              </button>
+            </li>
+            <li class="sidebar-nav-item" role="presentation">
+              <button type="button" class="sidebar-nav-btn" data-doc-tab="characters" role="tab" aria-selected="false">
+                <span class="btn-icon">🛡</span>
+                <span data-i18n="wikiTabCharacters">Bohaterowie</span>
+              </button>
+            </li>
+            <li class="sidebar-nav-item" role="presentation">
+              <button type="button" class="sidebar-nav-btn" data-doc-tab="architecture" role="tab" aria-selected="false">
+                <span class="btn-icon">⚙</span>
+                <span data-i18n="wikiTabArchitecture">Architektura</span>
+              </button>
+            </li>
+          </ul>
+        </aside>
+
+        <!-- Markdown Document Viewer -->
+        <div class="docs-viewer-card">
+          <article id="markdown-viewer" class="markdown-body" role="tabpanel" tabindex="0">
+            <!-- Dynamic Markdown Content Loaded via wiki-app.js -->
+          </article>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Gothic Chronicle Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        
+        <div class="footer-brand">
+          <div class="site-brand">
+            <div class="brand-crest">🏰</div>
+            <span class="brand-title">VIBRANT CASTLE</span>
+          </div>
+          <p class="footer-description" data-i18n="wikiHeroSubtitle">
+            Gotycka platformówka 2D w wiecznej złotej jesieni. Walcz, skacz i odkrywaj tajemnice stazy czasowej bezpośrednio w przeglądarce.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title" data-i18n="wikiNavDocs">Księgi Wiedzy</h4>
+          <ul class="footer-links">
+            <li>
+              <a href="https://github.com/beoArcha/vibrant_castle/tree/main/docs/manifesto" target="_blank" rel="noopener noreferrer" class="footer-link" data-i18n="wikiFooterManifestoLink">
+                Manifesty Architektoniczne (docs/manifesto)
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/beoArcha/vibrant_castle/tree/main/docs/lore" target="_blank" rel="noopener noreferrer" class="footer-link" data-i18n="wikiFooterLoreLink">
+                Kroniki Fabularne (docs/lore)
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Repozytorium</h4>
+          <ul class="footer-links">
+            <li>
+              <a href="https://github.com/beoArcha/vibrant_castle" target="_blank" rel="noopener noreferrer" class="footer-link">
+                Kod Źródłowy GitHub
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/beoArcha/vibrant_castle/issues" target="_blank" rel="noopener noreferrer" class="footer-link">
+                Zgłoś Problem / Issue
+              </a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <span data-i18n="wikiFooterCopyright">
+          © Vibrant Castle. Oparty na podwójnej licencji MPL-2.0 (Kod & Silnik) oraz CC BY 4.0 (Lore & Grafika).
+        </span>
+        <span>Version 1.0.0 (M1 Courtyard)</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Coordinator Script -->
+  <script type="module" src="./scripts/wiki-app.js"></script>
+</body>
+</html>

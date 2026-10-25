@@ -31,5 +31,14 @@
   "wikiGameActiveStatus": "Simulation Active (60 Hz)",
   "wikiGamePausedStatus": "Temporal Stasis (Paused)",
   "p1Name": "Player 1: Valen (Chrono Duelist)",
-  "p2Name": "Player 2: Aurelia (Aetherblade Warden)"
+  "p2Name": "Player 2: Aurelia (Aetherblade Warden)",
+  "actionMove": "Move Left / Right",
+  "actionJump": "Kinetic Jump",
+  "actionSlide": "Fencing Slide / Crouch",
+  "actionDash": "Chrono / Phase Dash",
+  "actionAttack": "Melee Weapon Strike",
+  "actionSpecial": "Aether Glyph Spell",
+  "actionPotion": "Health Potion Sip",
+  "roleValen": "Chrono Duelist (Rapier)",
+  "roleAurelia": "Aetherblade Warden (Light)"
 }

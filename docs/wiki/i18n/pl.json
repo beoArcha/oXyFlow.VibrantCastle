@@ -31,5 +31,14 @@
   "wikiGameActiveStatus": "Symulacja Aktywna (60 Hz)",
   "wikiGamePausedStatus": "Staza Czasowa (Pauza)",
   "p1Name": "Gracz 1: Valen (Chrono Duelist)",
-  "p2Name": "Gracz 2: Aurelia (Aetherblade Warden)"
+  "p2Name": "Gracz 2: Aurelia (Aetherblade Warden)",
+  "actionMove": "Ruch w lewo / w prawo",
+  "actionJump": "Skok sprężysty",
+  "actionSlide": "Wślizg / Unik niski",
+  "actionDash": "Chrono / Phase Dash",
+  "actionAttack": "Atak bronią białą",
+  "actionSpecial": "Czar aetherowy",
+  "actionPotion": "Użycie mikstury",
+  "roleValen": "Szermierz Czasu (Rapier)",
+  "roleAurelia": "Strażniczka Aetheru (Światło)"
 }
