@@ -32,8 +32,8 @@ describe("UI Containers and Form Controls (Card, ProgressBar, Slider)", () => {
       const card = container.querySelector("[data-testid='test-card']");
       expect(card).not.toBeNull();
       expect(card?.textContent).toContain("Card Body");
-      expect(card?.className).toContain("bg-[#26120b]");
-      expect(card?.className).toContain("border-[#8d4325]");
+      expect(card?.className).toContain("bg-surface-dark");
+      expect(card?.className).toContain("border-border-strong");
     });
 
     it("forwards ref to the underlying HTMLDivElement", async () => {
@@ -52,7 +52,7 @@ describe("UI Containers and Form Controls (Card, ProgressBar, Slider)", () => {
         </Card>
       );
       const subtle = subtleContainer.querySelector("[data-testid='card-subtle']");
-      expect(subtle?.className).toContain("bg-[#1c0c07]");
+      expect(subtle?.className).toContain("bg-surface-darker");
 
       const { container: highlightContainer } = await renderIntoDom(
         <Card variant="highlight" data-testid="card-highlight">
@@ -60,7 +60,7 @@ describe("UI Containers and Form Controls (Card, ProgressBar, Slider)", () => {
         </Card>
       );
       const highlight = highlightContainer.querySelector("[data-testid='card-highlight']");
-      expect(highlight?.className).toContain("border-[#f59e0b]");
+      expect(highlight?.className).toContain("border-amber-primary");
 
       const { container: ghostContainer } = await renderIntoDom(
         <Card variant="ghost" data-testid="card-ghost">
@@ -79,7 +79,7 @@ describe("UI Containers and Form Controls (Card, ProgressBar, Slider)", () => {
       );
       const card = container.querySelector("[data-testid='interactive-card']");
       expect(card?.className).toContain("cursor-pointer");
-      expect(card?.className).toContain("hover:border-[#d97706]");
+      expect(card?.className).toContain("hover:border-border-accent");
     });
 
     it("supports complete compound composition (Card.Header, Title, Description, Content, Footer)", async () => {

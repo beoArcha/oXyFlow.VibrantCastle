@@ -89,7 +89,7 @@ export const MetricTile = React.memo(
       <div
         ref={ref}
         className={cn(
-          "flex flex-col bg-[#140602] rounded-xl border border-stone-800 transition-colors",
+          "flex flex-col bg-surface-darkest rounded-xl border border-stone-800 transition-colors",
           style.borderHover,
           compact ? "p-2 gap-0.5" : "p-2.5 gap-1",
           className
