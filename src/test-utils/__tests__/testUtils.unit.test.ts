@@ -1,19 +1,30 @@
-import { describe, it, expect } from "bun:test";
+import React, { useState } from "react";
+import { describe, it, expect, afterEach } from "bun:test";
 import {
   withSilencedConsole,
   createMockContext2D,
   createMockCanvas,
   createMockStorageProvider,
   cleanupDom,
+  renderIntoDom,
+  renderCustomHook,
+  getMountedRootsCount,
+  resolveTestProvider,
+  TestProviders,
+  UiTestProviders,
+  IntegrationTestProviders,
 } from "../index";
 
 describe("Test Utils Architecture & Helpers", () => {
+  afterEach(async () => {
+    await cleanupDom();
+  });
+
   it("withSilencedConsole suppresses console error and warn during execution", async () => {
     let errorCalled = false;
     let warnCalled = false;
 
     await withSilencedConsole(() => {
-      // These should not hit the real console output
       console.error("Test intentional error message");
       console.warn("Test intentional warn message");
       errorCalled = true;
@@ -80,8 +91,81 @@ describe("Test Utils Architecture & Helpers", () => {
     expect(storage.getItem("newKey")).toBeNull();
   });
 
-  it("cleanupDom safely executes when no DOM active root is present", async () => {
-    // Should safely execute without throwing
+  it("domRegistry tracks multiple mounted roots and cleans them up completely", async () => {
+    function SimpleBadge({ text }: { text: string }) {
+      return React.createElement("div", { className: "badge" }, text);
+    }
+
+    const first = await renderIntoDom(React.createElement(SimpleBadge, { text: "Alpha" }), { mode: "none" });
+    const second = await renderIntoDom(React.createElement(SimpleBadge, { text: "Beta" }), { mode: "none" });
+
+    expect(getMountedRootsCount()).toBe(2);
+    expect(first.container.textContent).toBe("Alpha");
+    expect(second.container.textContent).toBe("Beta");
+
+    await first.unmount();
+    expect(getMountedRootsCount()).toBe(1);
+
     await cleanupDom();
+    expect(getMountedRootsCount()).toBe(0);
+  });
+
+  it("renderIntoDom dispatches user interaction events cleanly", async () => {
+    function InteractiveForm() {
+      const [count, setCount] = useState(0);
+      const [text, setText] = useState("");
+
+      return React.createElement(
+        "div",
+        null,
+        React.createElement("button", { onClick: () => setCount((c) => c + 1) }, "Increment"),
+        React.createElement("span", { "data-testid": "count" }, count),
+        React.createElement("input", {
+          "data-testid": "input",
+          value: text,
+          onChange: (e: React.ChangeEvent<HTMLInputElement>) => setText(e.target.value),
+        }),
+        React.createElement("span", { "data-testid": "output" }, text)
+      );
+    }
+
+    const { container, click, changeInput } = await renderIntoDom(React.createElement(InteractiveForm), { mode: "none" });
+    const btn = container.querySelector("button")!;
+    const input = container.querySelector<HTMLInputElement>("[data-testid='input']")!;
+    const countSpan = container.querySelector("[data-testid='count']")!;
+    const outputSpan = container.querySelector("[data-testid='output']")!;
+
+    expect(countSpan.textContent).toBe("0");
+    await click(btn);
+    expect(countSpan.textContent).toBe("1");
+
+    await changeInput(input, "Gothic Citadel");
+    expect(outputSpan.textContent).toBe("Gothic Citadel");
+  });
+
+  it("renderCustomHook renders, tracks state updates, and supports rerender", async () => {
+    const { result, rerender } = await renderCustomHook(
+      ({ multiplier }: { multiplier: number }) => {
+        const [value, setValue] = useState(10);
+        return { total: value * multiplier, increment: () => setValue((v) => v + 1) };
+      },
+      { initialProps: { multiplier: 2 }, mode: "none" }
+    );
+
+    expect(result.current.total).toBe(20);
+
+    await rerender({ multiplier: 3 });
+    expect(result.current.total).toBe(30);
+  });
+
+  it("resolveTestProvider resolves correct wrappers based on mode and options", () => {
+    expect(resolveTestProvider("ui")).toBe(UiTestProviders);
+    expect(resolveTestProvider("integration")).toBe(IntegrationTestProviders);
+    expect(resolveTestProvider("none")).toBeNull();
+    expect(resolveTestProvider()).toBe(TestProviders);
+
+    const CustomWrapper = ({ children }: { children: React.ReactNode }) =>
+      React.createElement("section", null, children);
+    expect(resolveTestProvider("ui", CustomWrapper)).toBe(CustomWrapper);
   });
 });
