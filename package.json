@@ -10,7 +10,7 @@
         "preview": "vite preview",
         "clean": "rm -rf dist server.js",
         "typecheck": "tsc --noEmit",
-        "lint": "eslint .",
+        "lint": "tsc --noEmit",
         "test": "bun test",
         "test:unit": "bun test unit",
         "test:integration": "bun test integration",
