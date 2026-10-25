@@ -1,0 +1,117 @@
+name: Promote main to release
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_sha:
+        description: "Commit SHA from main to promote (leave empty for latest HEAD of main)"
+        required: false
+        default: ""
+        type: string
+      confirmation:
+        description: "Type 'PROMOTE' to confirm fast-forward promotion to branch release"
+        required: true
+        type: string
+
+concurrency:
+  group: promote-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  checks: read
+  actions: read
+
+jobs:
+  promote:
+    name: "Controlled Promotion (main -> release)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate Confirmation Input
+        run: |
+          if [ "${{ inputs.confirmation }}" != "PROMOTE" ]; then
+            echo "::error::Confirmation mismatch. You must enter 'PROMOTE' to proceed with production promotion."
+            exit 1
+          fi
+
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Resolve Target Commit SHA
+        id: resolve-sha
+        run: |
+          INPUT_SHA="${{ inputs.target_sha }}"
+          if [ -z "$INPUT_SHA" ]; then
+            TARGET_SHA=$(git rev-parse HEAD)
+            echo "Resolved latest HEAD of main: ${TARGET_SHA}"
+          else
+            TARGET_SHA=$(git rev-parse "${INPUT_SHA}")
+            echo "Resolved specified target commit: ${TARGET_SHA}"
+          fi
+
+          echo "target_sha=${TARGET_SHA}" >> $GITHUB_OUTPUT
+          echo "target_short_sha=${TARGET_SHA:0:7}" >> $GITHUB_OUTPUT
+
+      - name: Verify CI Checks for Target Commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_SHA: ${{ steps.resolve-sha.outputs.target_sha }}
+        run: |
+          echo "Verifying GitHub check runs for commit: ${TARGET_SHA}..."
+
+          CHECKS_JSON=$(gh api "repos/${{ github.repository }}/commits/${TARGET_SHA}/check-runs" \
+            --jq '{
+              total_count: .total_count,
+              check_runs: [.check_runs[] | { name: .name, status: .status, conclusion: .conclusion }]
+            }')
+
+          echo "Check runs summary:"
+          echo "$CHECKS_JSON" | jq .
+
+          TOTAL_CHECKS=$(echo "$CHECKS_JSON" | jq '.total_count')
+          if [ "$TOTAL_CHECKS" -eq 0 ]; then
+            echo "::error::No check runs found for commit ${TARGET_SHA}. The commit must pass the Main CI Pipeline before promotion."
+            exit 1
+          fi
+
+          FAILED_CHECKS=$(echo "$CHECKS_JSON" | jq '[.check_runs[] | select(.conclusion != "success" and .name != "Stage 4: Candidate Metadata" and .name != "promote")] | length')
+          PENDING_CHECKS=$(echo "$CHECKS_JSON" | jq '[.check_runs[] | select(.status != "completed" and .name != "promote")] | length')
+
+          if [ "$PENDING_CHECKS" -gt 0 ]; then
+            echo "::error::There are ${PENDING_CHECKS} pending check runs on commit ${TARGET_SHA}. Wait for Main CI Pipeline to finish."
+            exit 1
+          fi
+
+          if [ "$FAILED_CHECKS" -gt 0 ]; then
+            echo "::error::There are ${FAILED_CHECKS} failed or uncompleted checks on commit ${TARGET_SHA}. Cannot promote unstable commit."
+            exit 1
+          fi
+
+          echo "All checks on commit ${TARGET_SHA} have passed successfully!"
+
+      - name: Fast-Forward Release Branch
+        env:
+          TARGET_SHA: ${{ steps.resolve-sha.outputs.target_sha }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          echo "Fast-forwarding branch 'release' to ${TARGET_SHA}..."
+          git push origin "${TARGET_SHA}:refs/heads/release"
+
+      - name: Publish Promotion Summary
+        env:
+          TARGET_SHA: ${{ steps.resolve-sha.outputs.target_sha }}
+          SHORT_SHA: ${{ steps.resolve-sha.outputs.target_short_sha }}
+        run: |
+          echo "## 🚀 Promotion to Release Succeeded" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Promoted Commit SHA**: \`${TARGET_SHA}\` (\`${SHORT_SHA}\`)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Source Branch**: \`main\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Destination Branch**: \`release\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Triggered By**: @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📦 **Production Deployment Pipeline Triggered**: Branch \`release\` will now automatically execute \`.github/workflows/release.yml\` to deploy to GitHub Pages." >> $GITHUB_STEP_SUMMARY
