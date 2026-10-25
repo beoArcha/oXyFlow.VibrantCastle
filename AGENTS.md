@@ -28,7 +28,7 @@ All AI assistants must consult the authoritative documentation pillars rather th
 
 ```bash
 bun dev              # Launch local development server (Vite, port 3000)
-bun test:arch        # Execute AST Architecture & Boundary test suite (83/83 pass)
+bun test:arch        # Execute AST Architecture & Boundary test suite (84/84 pass)
 bun test             # Execute full test suite (Unit AAA, Integration BDT)
 bun lint             # Static TypeScript verification (tsc --noEmit)
 bun run build        # Production bundle build & packaging check
@@ -49,7 +49,7 @@ bun run build        # Production bundle build & packaging check
 * [ ] `[COMBAT]` Polish enemy stagger recovery and hurtbox invulnerability frames during dual-champion co-op strikes.
 * [ ] `[COMBAT]` Validate poise reduction thresholds for boss-type constructs in `src/game/engine/combatSystem.ts`.
 * [ ] `[UI]` Implement choice branching tree for visual novel scenes in `src/game-menu/character/`.
-* [ ] `[UI]` Expand `@ui` Design System with accessible gothic modal focus-trap primitives.
+* [x] `[UI]` Expand `@ui` Design System with accessible gothic modal focus-trap primitives, Base UI, CVA, and semantic tokens.
 * [ ] `[CONTENT]` Verify slicing presets in Atlas Studio for new clockwork gargoyle and lever variants.
 * [ ] `[LORE]` Complete narrative trigger manifests for Act 1 Courtyard transitions in `src/data/narrative/`.
 

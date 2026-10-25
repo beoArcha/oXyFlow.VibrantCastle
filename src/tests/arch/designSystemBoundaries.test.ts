@@ -112,4 +112,38 @@ describe("Design System Boundaries & UI Primitives Integrity", () => {
     expect(indexContent).toContain("./primitives");
     expect(indexContent).toContain("./controls");
   });
+
+  it("ensures zero hardcoded hex color literals in source code of src/ui/", () => {
+    const uiDir = path.join(rootDir, "src", "ui");
+    const uiFiles = getAllSourceFiles(uiDir, /\.(tsx|ts)$/).filter(
+      (file) =>
+        !file.includes("__tests__") &&
+        !file.replace(/\\/g, "/").includes("color-picker-input.tsx")
+    );
+
+    const hexColorPattern = /#[0-9a-fA-F]{3,8}\b/;
+    const violations: ImportViolation[] = [];
+
+    for (const file of uiFiles) {
+      const raw = fs.readFileSync(file, "utf-8");
+      const clean = stripComments(raw);
+      const lines = clean.split("\n");
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        if (hexColorPattern.test(line)) {
+          violations.push({
+            file: path.relative(rootDir, file).replace(/\\/g, "/"),
+            lineNo: i + 1,
+            line: line.trim(),
+          });
+        }
+      }
+    }
+
+    assertZeroDesignViolations(
+      violations,
+      "Design system source code in src/ui/ must use semantic tokens and CSS custom properties rather than hardcoded hex colors"
+    );
+  });
 });

@@ -16,5 +16,8 @@ export * from "./core";
 // RPG Domain Primitives
 export * from "./rpg";
 
+// Studio Controls
+export * from "./studio";
+
 // Tokens
 export * from "./tokens";
