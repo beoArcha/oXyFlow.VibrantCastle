@@ -39,6 +39,7 @@ function characterAssetsPlugin() {
 
 export default defineConfig(() => {
   return {
+    base: process.env.VITE_BASE_PATH || (process.env.NODE_ENV === 'production' ? '/vibrant_castle/game/' : '/'),
     plugins: [react(), tailwindcss(), characterAssetsPlugin(), tsconfigPaths()],
 
     server: {
