@@ -136,7 +136,7 @@ jobs:
       - name: Assemble Distribution for E2E
         run: bun run build:pages
         env:
-          VITE_BASE_PATH: /vibrant_castle/game/
+          VITE_BASE_PATH: ./
 
       - name: Run E2E Smoke Tests
         run: bun run test:e2e
@@ -155,7 +155,7 @@ jobs:
       - name: Compile Production Game Client
         run: bun run build:game
         env:
-          VITE_BASE_PATH: /vibrant_castle/game/
+          VITE_BASE_PATH: ./
 
       - name: Validate Compiled Game Artifacts
         run: |

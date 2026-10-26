@@ -65,7 +65,7 @@ export function assembleDistribution(options: { existingGameDist?: string } = {}
         env: {
           ...process.env,
           NODE_ENV: 'production',
-          VITE_BASE_PATH: '/vibrant_castle/game/',
+          VITE_BASE_PATH: process.env.VITE_BASE_PATH || './',
         },
       }
     );

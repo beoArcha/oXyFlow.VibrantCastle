@@ -61,7 +61,7 @@ jobs:
       - name: Compile Pure Game Client from src/
         run: bun run build:game
         env:
-          VITE_BASE_PATH: /vibrant_castle/game/
+          VITE_BASE_PATH: ./
 
       - name: Validate Compiled Game Artifacts
         run: |
