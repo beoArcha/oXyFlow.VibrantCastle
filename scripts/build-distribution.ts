@@ -1,6 +1,7 @@
 /**
- * Vibrant Castle — Distribution Packaging Script
- * Bundles the game client into dist/game/ and merges docs/wiki/ at root for GitHub Pages.
+ * Vibrant Castle — Distribution Assembly Script for GitHub Pages
+ * Merges docs/wiki/ at root (dist/) and mounts the compiled game client in dist/game/.
+ * Formats output for terminal logs and emits GitHub Actions workflow annotations.
  */
 
 import { existsSync, mkdirSync, cpSync, rmSync, writeFileSync } from 'node:fs';
@@ -12,48 +13,104 @@ const DIST_DIR = join(ROOT_DIR, 'dist');
 const GAME_DIST_DIR = join(DIST_DIR, 'game');
 const WIKI_DIR = join(ROOT_DIR, 'docs', 'wiki');
 
-console.log('[distribute] Packaging Vibrant Castle for GitHub Pages...');
-
-// Step 1: Clean dist directory
-if (existsSync(DIST_DIR)) {
-  rmSync(DIST_DIR, { recursive: true, force: true });
+function logInfo(message: string): void {
+  console.log(`[distribute] ${message}`);
 }
-mkdirSync(DIST_DIR, { recursive: true });
 
-// Step 2: Build game client with base path /vibrant_castle/game/
-console.log('[distribute] Compiling game client with Vite to dist/game/...');
-const viteBuild = spawnSync(
-  process.platform === 'win32' ? 'bun.exe' : 'bun',
-  ['run', 'vite', 'build', '--outDir', 'dist/game', '--emptyOutDir'],
-  {
-    cwd: ROOT_DIR,
-    stdio: 'inherit',
-    env: {
-      ...process.env,
-      NODE_ENV: 'production',
-      VITE_BASE_PATH: '/vibrant_castle/game/'
+function logError(title: string, message: string): void {
+  if (process.env.GITHUB_ACTIONS === 'true') {
+    console.error(`::error title=${title}::${message}`);
+  }
+  console.error(`[distribute:ERROR] [${title}] ${message}`);
+}
+
+function logNotice(title: string, message: string): void {
+  if (process.env.GITHUB_ACTIONS === 'true') {
+    console.log(`::notice title=${title}::${message}`);
+  }
+  console.log(`[distribute:NOTICE] [${title}] ${message}`);
+}
+
+function logWarning(title: string, message: string): void {
+  if (process.env.GITHUB_ACTIONS === 'true') {
+    console.warn(`::warning title=${title}::${message}`);
+  }
+  console.warn(`[distribute:WARN] [${title}] ${message}`);
+}
+
+export function assembleDistribution(options: { existingGameDist?: string } = {}): void {
+  logInfo('Starting distribution packaging for GitHub Pages...');
+
+  // Step 1: Clean and prepare dist directory
+  if (existsSync(DIST_DIR)) {
+    logInfo('Cleaning existing dist/ directory...');
+    rmSync(DIST_DIR, { recursive: true, force: true });
+  }
+  mkdirSync(DIST_DIR, { recursive: true });
+  mkdirSync(GAME_DIST_DIR, { recursive: true });
+
+  // Step 2: Populate dist/game/ with game client
+  if (options.existingGameDist && existsSync(options.existingGameDist)) {
+    logInfo(`Mounting existing game build from '${options.existingGameDist}' into dist/game/...`);
+    cpSync(options.existingGameDist, GAME_DIST_DIR, { recursive: true });
+  } else {
+    logInfo('Compiling game client from src/ with Vite to dist/game/...');
+    const viteBin = process.platform === 'win32' ? 'bun.exe' : 'bun';
+    const viteBuild = spawnSync(
+      viteBin,
+      ['run', 'vite', 'build', '--outDir', 'dist/game', '--emptyOutDir'],
+      {
+        cwd: ROOT_DIR,
+        stdio: 'inherit',
+        env: {
+          ...process.env,
+          NODE_ENV: 'production',
+          VITE_BASE_PATH: '/vibrant_castle/game/',
+        },
+      }
+    );
+
+    if (viteBuild.status !== 0) {
+      logError('Vite Compilation Failed', `Vite process exited with non-zero code ${viteBuild.status}`);
+      process.exit(viteBuild.status ?? 1);
     }
   }
-);
 
-if (viteBuild.status !== 0) {
-  console.error('[distribute] Vite compilation failed with exit code:', viteBuild.status);
-  process.exit(viteBuild.status ?? 1);
+  // Step 3: Copy wiki documentation portal into dist/ root
+  if (existsSync(WIKI_DIR)) {
+    logInfo('Copying docs/wiki/ portal assets into dist/ root...');
+    cpSync(WIKI_DIR, DIST_DIR, { recursive: true });
+  } else {
+    logWarning('Wiki Directory Missing', `Source documentation directory was not found at ${WIKI_DIR}`);
+  }
+
+  // Step 4: Write .nojekyll file for GitHub Pages
+  const noJekyllPath = join(DIST_DIR, '.nojekyll');
+  writeFileSync(noJekyllPath, '', 'utf8');
+
+  // Verify critical assets
+  const hasRootIndex = existsSync(join(DIST_DIR, 'index.html'));
+  const hasGameIndex = existsSync(join(GAME_DIST_DIR, 'index.html'));
+
+  if (!hasRootIndex || !hasGameIndex) {
+    logError(
+      'Distribution Verification Failed',
+      `Missing required artifacts (hasRootIndex: ${hasRootIndex}, hasGameIndex: ${hasGameIndex})`
+    );
+    process.exit(1);
+  }
+
+  logNotice('Assembly Succeeded', 'GitHub Pages distribution package assembled successfully.');
+  logInfo('Artifact structure:');
+  logInfo('  - Wiki Portal: dist/index.html');
+  logInfo('  - Game Client: dist/game/index.html');
+  logInfo('  - Pages Marker: dist/.nojekyll');
 }
 
-// Step 3: Copy wiki documentation & portal assets into dist/
-if (existsSync(WIKI_DIR)) {
-  console.log('[distribute] Merging docs/wiki/ into dist/ root...');
-  cpSync(WIKI_DIR, DIST_DIR, { recursive: true });
-} else {
-  console.warn('[distribute] Warning: docs/wiki directory not found at', WIKI_DIR);
+if (import.meta.main) {
+  const args = process.argv.slice(2);
+  const idx = args.indexOf('--game-dist');
+  const existingGameDist = idx !== -1 && idx + 1 < args.length ? args[idx + 1] : undefined;
+
+  assembleDistribution({ existingGameDist });
 }
-
-// Step 4: Write .nojekyll file for GitHub Pages
-const noJekyllPath = join(DIST_DIR, '.nojekyll');
-writeFileSync(noJekyllPath, '', 'utf8');
-
-console.log('[distribute] Distribution package assembled successfully:');
-console.log('  - Wiki Portal: dist/index.html');
-console.log('  - Game Client: dist/game/index.html');
-console.log('  - GitHub Pages Marker: dist/.nojekyll');
