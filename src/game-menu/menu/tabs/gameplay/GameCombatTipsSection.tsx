@@ -1,6 +1,6 @@
 import React from "react";
 import { Sparkles, Compass } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "@ui";
+import { Card, CardHeader, CardTitle, CardContent, Paragraph, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 
@@ -22,17 +22,17 @@ export const GameCombatTipsSection = ({
       </CardHeader>
       <CardContent className="text-xs text-stone-300 space-y-2.5 leading-relaxed">
         <div className="p-3 rounded-xl bg-[#140602] border border-[#5c2d18]">
-          <strong className="text-amber-300 block mb-1 font-serif text-sm">
+          <Text family="serif" weight="bold" size="sm" variant="amber" className="block mb-1">
             {t("dashAction")}:
-          </strong>
-          <p className="text-stone-300">{t("slideDescription")}</p>
-          <p className="text-stone-400 mt-1">{t("backstepDescription")}</p>
+          </Text>
+          <Paragraph size="xs" variant="default">{t("slideDescription")}</Paragraph>
+          <Paragraph size="xs" variant="muted" className="mt-1">{t("backstepDescription")}</Paragraph>
         </div>
 
         <div className="p-3 rounded-xl bg-[#140602] border border-[#5c2d18]">
-          <strong className="text-amber-300 block mb-1 font-serif text-sm">
+          <Text family="serif" weight="bold" size="sm" variant="amber" className="block mb-1">
             {t("directionalAimingTitle")}:
-          </strong>
+          </Text>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-stone-300">
             <li className="flex items-center gap-1.5">
               <Compass size={12} className="text-amber-400 shrink-0" />

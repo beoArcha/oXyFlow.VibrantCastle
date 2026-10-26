@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Sparkles, CheckCircle2, Zap } from "lucide-react";
 import { toSkillDetailVM, SkillDetailVM } from "./skills.mapper";
-import { Card, CardHeader, CardTitle, CardContent, Badge, Button, KbdKey, Alert } from "@ui";
+import { Card, CardHeader, CardTitle, CardContent, Badge, Button, KbdKey, Alert, Text } from "@ui";
 import { SkillIcon } from "./SkillIcon";
 import { SkillPropertyMatrix } from "./SkillPropertyMatrix";
 import { SkillRestrictionsBox } from "./SkillRestrictionsBox";
@@ -73,8 +73,8 @@ export const SkillDetailsCard = ({
               {t(detailVM.nameKey)}
             </CardTitle>
             <div className="flex flex-wrap gap-1.5 mt-1.5">
-              <Badge variant="amber" className="text-[10px] font-bold">
-                Tier {detailVM.tier}
+              <Badge variant="amber" className="text-[10px]">
+                <Text weight="bold" size="2xs" className="text-inherit">Tier {detailVM.tier}</Text>
               </Badge>
               <Badge variant="purple" className="text-[10px]">
                 {detailVM.isAction
@@ -119,9 +119,11 @@ export const SkillDetailsCard = ({
               disabled={!detailVM.canUnlock}
               icon={<Sparkles size={15} />}
               onClick={handleUnlock}
-              className="py-2 text-xs font-bold"
+              className="py-2 text-xs"
             >
-              {t("unlockSkill")} ({detailVM.pointCost} {t("skillPointsUnit")})
+              <Text weight="bold" size="xs" className="text-inherit">
+                {t("unlockSkill")} ({detailVM.pointCost} {t("skillPointsUnit")})
+              </Text>
             </Button>
           ) : (
             <>
@@ -155,11 +157,13 @@ export const SkillDetailsCard = ({
                 <Alert
                   variant="success"
                   icon={<Zap size={14} className="text-emerald-400" />}
-                  className="p-2.5 justify-center text-center font-semibold"
+                  className="p-2.5 justify-center text-center"
                 >
-                  {detailVM.isPassive
-                    ? t("passivePermanentDesc")
-                    : t("autoCastDesc")}
+                  <Text weight="semibold" size="xs" className="text-inherit">
+                    {detailVM.isPassive
+                      ? t("passivePermanentDesc")
+                      : t("autoCastDesc")}
+                  </Text>
                 </Alert>
               )}
             </>

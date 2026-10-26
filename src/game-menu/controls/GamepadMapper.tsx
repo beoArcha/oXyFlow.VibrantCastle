@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Gamepad as GamepadIcon, Sparkles } from "lucide-react";
 import { PlayerId } from "@game/types";
-import { Button, Badge, KbdKey } from "@ui";
+import { Button, Badge, KbdKey, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { useGamepad } from "./hooks/useGamepad";
 import { ControlBindingRow } from "./ControlBindingRow";
@@ -50,11 +50,11 @@ export const GamepadMapper: React.FC<GamepadMapperProps> = React.memo(
             <GamepadIcon
               className={cn("w-4 h-4", currentPad ? "text-emerald-400" : "text-stone-600")}
             />
-            <span className="text-xs font-semibold text-stone-200">
+            <Text size="xs" weight="semibold" className="text-stone-200">
               {currentPad
                 ? `${t("gamepadConnected")} (${currentPad.id.slice(0, 24)}...)`
                 : t("noGamepadDetected")}
-            </span>
+            </Text>
           </div>
 
           {lastPressedButton !== null && (
@@ -69,9 +69,9 @@ export const GamepadMapper: React.FC<GamepadMapperProps> = React.memo(
             id="gamepad-listening-banner"
             className="p-3 bg-amber-950/90 border-2 border-amber-500 rounded-xl text-center flex flex-col items-center gap-1.5 animate-pulse"
           >
-            <span className="text-xs font-bold text-amber-200 uppercase tracking-wider">
+            <Text size="xs" weight="bold" uppercase variant="secondary" className="tracking-wider">
               {t("remapGamepadPrompt")} {t(GAMEPAD_ACTION_I18N_MAP[listeningAction])}
-            </span>
+            </Text>
             <Button
               id="cancel-gamepad-rebind-btn"
               size="sm"

@@ -1,6 +1,6 @@
 import React from "react";
 import { Save, FolderOpen, HardDrive, FileJson } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, FileUploadButton } from "@ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, FileUploadButton, Paragraph, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 
@@ -34,12 +34,12 @@ export const GameSaveSection = ({
             <div className="flex items-start gap-2.5">
               <HardDrive className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
               <div>
-                <div className="text-xs font-bold text-amber-300">
+                <Text size="xs" weight="bold" variant="amber">
                   {t("saveStorageBrowserTitle")}
-                </div>
-                <div className="text-[11px] text-stone-400 mt-0.5">
+                </Text>
+                <Paragraph size="2xs" variant="muted" className="mt-0.5">
                   {t("saveStorageBrowserDesc")}
-                </div>
+                </Paragraph>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-2 pt-1">
@@ -68,12 +68,12 @@ export const GameSaveSection = ({
             <div className="flex items-start gap-2.5">
               <FileJson className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
               <div>
-                <div className="text-xs font-bold text-amber-300">
+                <Text size="xs" weight="bold" variant="amber">
                   {t("saveStorageFileTitle")}
-                </div>
-                <div className="text-[11px] text-stone-400 mt-0.5">
+                </Text>
+                <Paragraph size="2xs" variant="muted" className="mt-0.5">
                   {t("saveStorageFileDesc")}
-                </div>
+                </Paragraph>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-2 pt-1">

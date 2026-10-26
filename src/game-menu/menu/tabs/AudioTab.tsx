@@ -1,6 +1,6 @@
 import React from "react";
 import { Music, Volume2, VolumeX, Sparkles, Play } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Slider, Button, Badge } from "@ui";
+import { Card, CardHeader, CardTitle, CardContent, Slider, Button, Badge, Code } from "@ui";
 import { useSettings } from "@context/SettingsContext";
 import { useGameSession } from "@context/GameSessionContext";
 import { useI18n } from "@context/I18nContext";
@@ -35,8 +35,10 @@ export const AudioTab = ({ className }: AudioTabProps): React.ReactElement => {
             <CardTitle icon={<Music className="w-4 h-4 text-amber-400" />}>
               {t("musicVolume")}
             </CardTitle>
-            <Badge variant={musicPercent > 0 ? "amber" : "stone"} className="font-mono">
-              {musicPercent}%
+            <Badge variant={musicPercent > 0 ? "amber" : "stone"}>
+              <Code variant="plain" size="xs" className="text-inherit">
+                {musicPercent}%
+              </Code>
             </Badge>
           </div>
         </CardHeader>
@@ -65,8 +67,10 @@ export const AudioTab = ({ className }: AudioTabProps): React.ReactElement => {
             <CardTitle icon={<Volume2 className="w-4 h-4 text-amber-400" />}>
               {t("soundEffectsVolume")}
             </CardTitle>
-            <Badge variant={sfxPercent > 0 ? "amber" : "stone"} className="font-mono">
-              {sfxPercent}%
+            <Badge variant={sfxPercent > 0 ? "amber" : "stone"}>
+              <Code variant="plain" size="xs" className="text-inherit">
+                {sfxPercent}%
+              </Code>
             </Badge>
           </div>
         </CardHeader>

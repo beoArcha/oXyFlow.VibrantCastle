@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "@lib/utils";
+import { Text } from "@ui";
 
 export interface AtlasGridOverlayProps {
   readonly columns: number;
@@ -38,9 +39,12 @@ export const AtlasGridOverlay: React.FC<AtlasGridOverlayProps> = React.memo(({
               isActiveAnimationRow && "bg-amber-500/10 border-amber-400/50"
             )}
           >
-            <span className="absolute bottom-0.5 right-0.5 text-[8px] font-mono text-stone-500/60 leading-none">
+            <Text
+              family="mono"
+              className="absolute bottom-0.5 right-0.5 text-[8px] text-stone-500/60 leading-none"
+            >
               {r},{c}
-            </span>
+            </Text>
           </div>
         );
       })}

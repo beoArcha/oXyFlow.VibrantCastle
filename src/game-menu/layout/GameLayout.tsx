@@ -1,12 +1,12 @@
 import React from "react";
 import { Layers } from "lucide-react";
 import { cn } from "@lib/utils";
-import { KbdKey } from "@ui";
+import { KbdKey, Heading, Paragraph, Button, Text } from "@ui";
 const LAYOUT_STYLES = {
   root: "h-screen w-screen max-w-full max-h-full bg-[#120602] text-[#fef3c7] font-sans antialiased flex flex-col justify-between overflow-hidden",
   header: "border-b border-[#3a1a0f] bg-[#140602]/95 px-3 md:px-5 py-2 flex justify-between items-center z-10 shrink-0",
-  title: "text-base md:text-lg font-serif font-black tracking-tight text-amber-500 drop-shadow-md leading-none",
-  subtitle: "text-[11px] text-amber-600 font-medium hidden sm:block",
+  title: "text-base md:text-lg leading-none",
+  subtitle: "text-amber-600 hidden sm:block",
   icon: "text-amber-500 animate-pulse shrink-0",
 } as const;
 
@@ -102,16 +102,19 @@ export function GameLayoutBrand({
     <div className={cn("flex items-center gap-3", className)} {...props}>
       {icon ?? <Layers className={LAYOUT_STYLES.icon} size={22} />}
       <div>
-        <h1
+        <Heading
+          level={1}
           id="app-title"
-          className={LAYOUT_STYLES.title}
+          variant="gothic"
+          dropShadow
+          className={cn(LAYOUT_STYLES.title, "text-amber-500")}
         >
           {title}
-        </h1>
+        </Heading>
         {subtitle && (
-          <p id="app-description" className={LAYOUT_STYLES.subtitle}>
+          <Paragraph id="app-description" size="2xs" className={LAYOUT_STYLES.subtitle}>
             {subtitle}
-          </p>
+          </Paragraph>
         )}
       </div>
     </div>
@@ -191,21 +194,22 @@ export function GameLayoutHotkeyHint({
   const ariaLabel = typeof label === "string" ? `${label} (${hotkey})` : undefined;
 
   return (
-    <button
-      type="button"
+    <Button
+      variant="ghost"
+      size="sm"
       onClick={onClick}
       aria-keyshortcuts={hotkey}
       aria-label={ariaLabel}
       className={cn(
-        "flex items-center gap-1 hover:text-amber-300 transition-colors cursor-pointer",
+        "h-auto p-0 hover:bg-transparent flex items-center gap-1 text-stone-400 hover:text-amber-300 transition-colors font-normal",
         className
       )}
       {...props}
     >
       {icon && <span className="text-amber-400 flex items-center">{icon}</span>}
-      <span>{label}</span>
+      <Text size="xs">{label}</Text>
       <KbdKey variant="amber">{hotkey}</KbdKey>
-    </button>
+    </Button>
   );
 }
 

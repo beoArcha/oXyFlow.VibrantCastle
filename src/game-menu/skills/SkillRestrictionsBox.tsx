@@ -2,7 +2,7 @@ import React from "react";
 import { ShieldAlert, UserCheck } from "lucide-react";
 import { SkillRestrictionVM } from "./skills.mapper";
 import { useI18n } from "@context/I18nContext";
-import { Alert, Badge, Card } from "@ui";
+import { Alert, Badge, Card, Text } from "@ui";
 import { SkillRequirementRow } from "./SkillRequirementRow";
 
 export interface SkillRestrictionsBoxProps {
@@ -21,9 +21,9 @@ export const SkillRestrictionsBox = ({
   return (
     <Card variant="subtle" className={`p-3 flex flex-col gap-2.5 text-xs ${className}`}>
       <div className="flex items-center justify-between border-b border-[#3d1b0e] pb-1.5">
-        <div className="flex items-center gap-1.5 text-[#fbbf24] font-bold">
+        <div className="flex items-center gap-1.5 text-[#fbbf24]">
           <ShieldAlert size={14} className="text-amber-400" />
-          <span>{t("requirementsAndRestrictions")}</span>
+          <Text weight="bold" className="text-[#fbbf24]">{t("requirementsAndRestrictions")}</Text>
         </div>
         <Badge variant={isValen ? "amber" : "cyan"} className="text-[10px]" icon={<UserCheck size={10} />}>
           {restriction.characterName}
@@ -46,9 +46,9 @@ export const SkillRestrictionsBox = ({
           isMet={restriction.hasPrerequisite}
         >
           {restriction.reqSkillNameKey ? (
-            <span className="font-semibold text-stone-200 line-clamp-1 max-w-[90px]">
+            <Text weight="semibold" className="text-stone-200 line-clamp-1 max-w-[90px]">
               {t(restriction.reqSkillNameKey)}
-            </span>
+            </Text>
           ) : (
             <span className="text-emerald-400 text-xs">
               {t("restrictionNone")}
@@ -60,9 +60,9 @@ export const SkillRestrictionsBox = ({
           label={t("restrictionCost")}
           isMet={restriction.hasPoints}
         >
-          <span className={`font-mono font-bold ${restriction.hasPoints ? "text-amber-300" : "text-rose-400"}`}>
+          <Text family="mono" weight="bold" className={restriction.hasPoints ? "text-amber-300" : "text-rose-400"}>
             {restriction.pointCost} {t("skillPointsUnit")}
-          </span>
+          </Text>
           <span className="text-[10px] text-stone-500">
             ({restriction.availablePoints} {t("skillPointsUnit")})
           </span>

@@ -12,6 +12,7 @@ import { AtlasSheetType } from "./types";
 import { AtlasGridOverlay } from "./AtlasGridOverlay";
 import { AtlasRowHighlight } from "./AtlasRowHighlight";
 import { AtlasRowLabels } from "./AtlasRowLabels";
+import { Code } from "@ui";
 
 // Re-exported for backwards compatibility
 export { ANIMATION_ROW_MAP };
@@ -74,8 +75,10 @@ export const AtlasCanvasView: React.FC<AtlasCanvasViewProps> = React.memo(({
         }}
       >
         {!activeUrl && (
-          <div className="absolute inset-0 flex items-center justify-center text-xs font-mono text-stone-500">
-            {t("atlasLoading")}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Code size="xs" variant="plain" className="text-stone-500">
+              {t("atlasLoading")}
+            </Code>
           </div>
         )}
 

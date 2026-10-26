@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid, ZoomIn, ZoomOut, Layers, Image as ImageIcon, RotateCcw } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
-import { Tabs, TabsList, TabsTrigger, Button, Tooltip } from "@ui";
+import { Tabs, TabsList, TabsTrigger, Button, Tooltip, Text } from "@ui";
 import {
   AtlasSheetType,
   AtlasZoomControlsProps,
@@ -98,9 +98,9 @@ export const AtlasViewerToolbar: React.FC<AtlasViewerToolbarProps> = React.memo(
             </Button>
           </Tooltip>
 
-          <span className="text-[10px] font-mono font-bold text-amber-400 w-10 text-center select-none">
+          <Text family="mono" weight="bold" size="2xs" variant="primary" className="w-10 text-center select-none">
             {Math.round(zoom * 100)}%
-          </span>
+          </Text>
 
           <Tooltip content={t("atlasZoomIn")}>
             <Button
@@ -119,11 +119,13 @@ export const AtlasViewerToolbar: React.FC<AtlasViewerToolbarProps> = React.memo(
               size="sm"
               variant="ghost"
               onClick={onResetZoom}
-              className="px-1.5 py-0.5 min-h-0 h-6 text-[9px] font-mono text-stone-400 hover:text-amber-300 border-l border-stone-800 rounded-none"
+              className="px-1.5 py-0.5 min-h-0 h-6 text-stone-400 hover:text-amber-300 border-l border-stone-800 rounded-none"
               leftIcon={<RotateCcw size={10} />}
               aria-label={t("atlasResetZoom")}
             >
-              {t("atlasResetLabel")}
+              <Text family="mono" size="3xs" className="text-inherit">
+                {t("atlasResetLabel")}
+              </Text>
             </Button>
           </Tooltip>
         </div>

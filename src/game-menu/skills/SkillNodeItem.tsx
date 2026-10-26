@@ -2,7 +2,7 @@ import React from "react";
 import { CheckCircle2, Lock, Sparkles } from "lucide-react";
 import { SkillNodeVM } from "./skills.mapper";
 import { SkillIcon } from "./SkillIcon";
-import { Badge, KbdKey } from "@ui";
+import { Badge, KbdKey, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 
@@ -64,9 +64,9 @@ export const SkillNodeItem = ({
         <SkillIcon name={node.iconName} size={22} />
       </div>
 
-      <span className="text-[11px] font-bold text-center text-stone-200 line-clamp-1 w-full px-1">
+      <Text size="2xs" weight="bold" className="text-center text-stone-200 line-clamp-1 w-full px-1 block">
         {t(node.nameKey)}
-      </span>
+      </Text>
 
       <div className="flex items-center gap-1 mt-0.5">
         {node.isUnlocked ? (
@@ -76,10 +76,12 @@ export const SkillNodeItem = ({
         ) : (
           <Badge
             variant={node.isUnlockable ? "purple" : "stone"}
-            className="text-[9px] px-1.5 py-0.5 font-mono font-bold"
+            className="text-[9px] px-1.5 py-0.5"
             icon={node.isUnlockable ? <Sparkles size={9} /> : <Lock size={9} />}
           >
-            {node.pointCost} {t("skillPointsUnit")}
+            <Text family="mono" weight="bold" size="3xs" className="text-inherit">
+              {node.pointCost} {t("skillPointsUnit")}
+            </Text>
           </Badge>
         )}
       </div>

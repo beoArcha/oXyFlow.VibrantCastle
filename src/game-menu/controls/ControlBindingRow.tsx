@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@ui";
+import { Button, Text } from "@ui";
 import { cn } from "@lib/utils";
 import { ControlBindingRowProps } from "./types";
 
@@ -45,7 +45,7 @@ export const ControlBindingRow: React.FC<ControlBindingRowProps> = React.memo(
         )}
       >
         <div className="flex flex-col min-w-0">
-          <span className="text-xs font-bold text-[#fed7aa] truncate">{label}</span>
+          <Text weight="bold" size="xs" variant="secondary" truncate>{label}</Text>
           <div className="flex flex-wrap items-center gap-1.5 mt-1">{children}</div>
         </div>
 

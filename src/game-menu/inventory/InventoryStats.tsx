@@ -1,6 +1,6 @@
 import React from "react";
 import { Sword, Shield, Heart, Sparkles, Zap } from "lucide-react";
-import { StatRow, Card } from "@ui";
+import { StatRow, Card, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { InventoryStatsVM } from "./inventory.mapper";
 
@@ -18,9 +18,9 @@ export const InventoryStats = React.memo(function InventoryStats({
 
   return (
     <Card variant="dark" className="p-3 mt-2 flex flex-col gap-1.5 border-stone-800">
-      <span className="text-[11px] font-bold text-amber-300 uppercase tracking-wider mb-1">
+      <Text size="2xs" weight="bold" variant="amber" uppercase className="tracking-wider mb-1">
         {t("tabStats")}
-      </span>
+      </Text>
       <StatRow
         label={t("attackPower")}
         value={stats.attack}

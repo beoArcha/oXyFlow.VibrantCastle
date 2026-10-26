@@ -1,6 +1,6 @@
 import React from "react";
 import { MapPin, Compass, Check } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, Badge, Heading, Paragraph } from "@ui";
 import { useGameSession } from "@context/GameSessionContext";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
@@ -60,17 +60,17 @@ export const LocationsTab = ({
                 >
                   <div className="flex flex-col gap-1.5">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-serif font-bold text-amber-300 flex items-center gap-1.5">
+                      <Heading level={4} size="sm" variant="primary" className="flex items-center gap-1.5">
                         <Compass className="w-4 h-4 text-amber-400 shrink-0" />
-                        {locName}
-                      </h4>
+                        <span>{locName}</span>
+                      </Heading>
                       {isCurrent && (
                         <Badge variant="amber" icon={<Check size={10} />}>
                           {t("activeBadge")}
                         </Badge>
                       )}
                     </div>
-                    <p className="text-xs text-stone-300 leading-relaxed">{locDesc}</p>
+                    <Paragraph size="xs" variant="default" className="leading-relaxed">{locDesc}</Paragraph>
                   </div>
 
                   <div className="flex items-center justify-between border-t border-[#5c2d18]/50 pt-2 text-[11px] text-stone-400">

@@ -3,6 +3,7 @@ import { HelpCircle } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 import { HelpBannerProps } from "./types";
+import { Paragraph, Text } from "@ui";
 
 export type { HelpBannerProps };
 
@@ -23,12 +24,12 @@ export const HelpBanner: React.FC<HelpBannerProps> = React.memo(
       >
         <HelpCircle className="w-6 h-6 text-amber-400 shrink-0 mt-0.5" />
         <div className="flex flex-col gap-1">
-          <span className="font-bold text-amber-300">
+          <Text weight="bold" className="text-amber-300">
             {t("helpGuideSubtitle")}
-          </span>
-          <p className="text-xs text-stone-300 leading-relaxed">
+          </Text>
+          <Paragraph size="xs" variant="muted" className="leading-relaxed">
             {t("tipsTextShortcuts")}
-          </p>
+          </Paragraph>
         </div>
       </div>
     );

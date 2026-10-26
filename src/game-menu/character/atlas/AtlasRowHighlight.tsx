@@ -1,6 +1,7 @@
 import React from "react";
 import { Check } from "lucide-react";
 import { AnimationName } from "@game/engine/spriteTypes";
+import { Text } from "@ui";
 
 export interface AtlasRowHighlightProps {
   readonly activeRow: number;
@@ -28,11 +29,11 @@ export const AtlasRowHighlight: React.FC<AtlasRowHighlightProps> = React.memo(({
         backgroundColor: "rgba(217, 119, 6, 0.12)",
       }}
     >
-      <div className="absolute top-1 left-1.5 bg-amber-600 text-white text-[9px] font-mono font-bold px-1.5 py-0.5 rounded shadow-sm flex items-center gap-1">
+      <div className="absolute top-1 left-1.5 bg-amber-600 text-white px-1.5 py-0.5 rounded shadow-sm flex items-center gap-1">
         <Check size={10} />
-        <span>
+        <Text family="mono" weight="bold" size="3xs" className="text-white">
           {animationName.toUpperCase()} (ROW {activeRow})
-        </span>
+        </Text>
       </div>
     </div>
   );

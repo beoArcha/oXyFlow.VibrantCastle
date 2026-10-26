@@ -1,7 +1,7 @@
 import React from "react";
 import { Menu as MenuIcon, HelpCircle, Backpack, BookOpen, Play, Layers } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
-import { Tabs, TabItem } from "@ui";
+import { Tabs, TabItem, Button, Text, Code } from "@ui";
 
 export type ModalType = "menu" | "help" | "inventory" | "skillTree" | "creation";
 
@@ -68,19 +68,20 @@ export const ModalNavigationTabs: React.FC<ModalNavigationTabsProps> = React.mem
     }, [t, showCreation]);
 
     const resumeAction = (
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="sm"
         onClick={onResume}
-        className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 text-emerald-200 hover:text-white border border-emerald-600/60 text-xs font-bold transition-all cursor-pointer shadow-md hover:shadow-emerald-900/40 ml-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+        className="gap-1.5 px-3.5 py-1.5 bg-emerald-950/80 hover:bg-emerald-900 text-emerald-200 hover:text-white border border-emerald-600/60 transition-all shadow-md hover:shadow-emerald-900/40 ml-auto focus-visible:ring-emerald-400"
         title={`${t("resume")} [P]`}
         aria-label={`${t("resume")} [P]`}
       >
         <Play size={13} className="text-emerald-400 fill-emerald-400 shrink-0" />
-        <span>{t("resume")}</span>
-        <span className="text-[10px] bg-emerald-900/90 text-emerald-300 px-1 py-0.5 rounded font-mono font-bold leading-none">
+        <Text size="xs" weight="bold">{t("resume")}</Text>
+        <Code size="xs" className="text-[10px] bg-emerald-900/90 text-emerald-300 px-1 py-0.5 rounded leading-none border-0">
           [P]
-        </span>
-      </button>
+        </Code>
+      </Button>
     );
 
     return (

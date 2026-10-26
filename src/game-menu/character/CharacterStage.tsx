@@ -1,7 +1,7 @@
 import React from "react";
 import { AssetQuality } from "@game/types";
 import { AnimationName } from "@game/engine/spriteTypes";
-import { Badge } from "@ui";
+import { Badge, Text, Code } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { resolveCharacterProfileVM } from "./character.mapper";
 import { cn } from "@lib/utils";
@@ -91,10 +91,12 @@ export const CharacterStage: React.FC<CharacterStageProps> = React.memo(({
               className="w-28 h-28"
             />
             <div className="flex flex-col items-center text-center">
-              <span className="text-sm font-bold text-amber-300 capitalize">{characterId}</span>
-              <span className="text-[11px] font-mono text-stone-400">
+              <Text size="sm" weight="bold" variant="amber" className="capitalize">
+                {characterId}
+              </Text>
+              <Text family="mono" size="2xs" variant="muted">
                 {classTitle}
-              </span>
+              </Text>
               <Badge variant="amber" className="mt-1 text-[9px]">
                 {classTags}
               </Badge>
@@ -115,19 +117,27 @@ export const CharacterStage: React.FC<CharacterStageProps> = React.memo(({
 
             <div className="flex flex-wrap items-center justify-between pt-2.5 px-1 text-[11px] text-stone-400 border-t border-stone-800/80 mt-2.5 gap-2">
               <div className="flex flex-wrap items-center gap-1.5">
-                <Badge variant="amber" className="capitalize font-mono">
-                  {characterId} • {activeAction.toUpperCase()}
+                <Badge variant="amber" className="capitalize">
+                  <Code variant="plain" size="xs" className="text-inherit">
+                    {characterId} • {activeAction.toUpperCase()}
+                  </Code>
                 </Badge>
-                <Badge variant="stone" className="font-mono">
-                  {playbackSpeed}x {t("speedLabel")}
+                <Badge variant="stone">
+                  <Code variant="plain" size="xs" className="text-inherit">
+                    {playbackSpeed}x {t("speedLabel")}
+                  </Code>
                 </Badge>
-                <Badge variant="stone" className="font-mono">
-                  {scale}x {t("zoomLabel")}
+                <Badge variant="stone">
+                  <Code variant="plain" size="xs" className="text-inherit">
+                    {scale}x {t("zoomLabel")}
+                  </Code>
                 </Badge>
               </div>
               <div className="flex items-center gap-1.5">
-                <Badge variant="stone" className="font-mono">
-                  {quality.toUpperCase()} {t("characterTierBadge")} • {scalingFilter.toUpperCase()}
+                <Badge variant="stone">
+                  <Code variant="plain" size="xs" className="text-inherit">
+                    {quality.toUpperCase()} {t("characterTierBadge")} • {scalingFilter.toUpperCase()}
+                  </Code>
                 </Badge>
               </div>
             </div>

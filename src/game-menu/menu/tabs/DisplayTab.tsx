@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { RotateCcw, Check } from "lucide-react";
-import { Button } from "@ui";
+import { Button, Paragraph, Text } from "@ui";
 import { useSettings } from "@context/SettingsContext";
 import { useI18n } from "@context/I18nContext";
 import { useSafeTimeout } from "@context/hooks/useSafeTimeout";
@@ -41,8 +41,8 @@ export const DisplayTab = ({ className }: DisplayTabProps = {}): React.ReactElem
       className={cn("flex flex-col gap-4 animate-in fade-in duration-150 text-stone-200", className)}
     >
       {statusNotification && (
-        <div className="p-2.5 bg-amber-600/90 text-white rounded-xl shadow-lg border border-amber-400 text-xs font-semibold flex items-center justify-between animate-in fade-in">
-          <span>{statusNotification}</span>
+        <div className="p-2.5 bg-amber-600/90 text-white rounded-xl shadow-lg border border-amber-400 flex items-center justify-between animate-in fade-in">
+          <Text size="xs" weight="semibold" className="text-white">{statusNotification}</Text>
           <Check size={14} />
         </div>
       )}
@@ -55,10 +55,10 @@ export const DisplayTab = ({ className }: DisplayTabProps = {}): React.ReactElem
         <div className="flex items-center gap-2">
           <RotateCcw size={16} className="text-amber-400 shrink-0" />
           <div>
-            <p className="font-bold text-amber-400">{t("displayResetTitle")}</p>
-            <p className="text-[11px] text-stone-400">
+            <Text weight="bold" className="text-amber-400 block">{t("displayResetTitle")}</Text>
+            <Paragraph size="2xs" variant="muted">
               {t("displayResetDesc")}
-            </p>
+            </Paragraph>
           </div>
         </div>
         <Button

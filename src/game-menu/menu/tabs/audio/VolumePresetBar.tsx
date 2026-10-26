@@ -1,6 +1,7 @@
 import React from "react";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
+import { Button, Text } from "@ui";
 
 export interface VolumePresetBarProps {
   readonly activePercent: number;
@@ -25,23 +26,26 @@ export const VolumePresetBar: React.FC<VolumePresetBarProps> = React.memo(({
 
   return (
     <div className={cn("flex items-center gap-1.5 pt-1", className)}>
-      <span className="text-[11px] text-stone-400 mr-1">{t("audioPresetsLabel")}</span>
+      <Text size="2xs" variant="muted" className="mr-1">{t("audioPresetsLabel")}</Text>
       {presets.map((p) => {
         const isSelected = activePercent === p;
         return (
-          <button
+          <Button
             key={p}
-            type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => onSelectPercent(p)}
             className={cn(
-              "px-2 py-0.5 rounded text-[11px] font-mono font-bold transition-all cursor-pointer border",
+              "h-auto px-2 py-0.5 rounded transition-all border",
               isSelected
-                ? "bg-amber-600 text-white border-amber-400 shadow-sm"
+                ? "bg-amber-600 text-white border-amber-400 shadow-sm hover:bg-amber-500"
                 : "bg-[#140602] text-stone-400 hover:text-amber-200 border-stone-800 hover:border-amber-700/60"
             )}
           >
-            {p === 0 ? t("audioMute") : `${p}%`}
-          </button>
+            <Text family="mono" weight="bold" size="2xs" className="text-inherit">
+              {p === 0 ? t("audioMute") : `${p}%`}
+            </Text>
+          </Button>
         );
       })}
     </div>

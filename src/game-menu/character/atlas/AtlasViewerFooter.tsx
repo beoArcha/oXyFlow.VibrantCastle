@@ -1,7 +1,7 @@
 import React from "react";
 import { AssetQuality } from "@game/types";
 import { useI18n } from "@context/I18nContext";
-import { Badge } from "@ui";
+import { Badge, Text } from "@ui";
 import { ImageDimensions } from "../types";
 
 export interface AtlasViewerFooterProps {
@@ -28,29 +28,31 @@ export const AtlasViewerFooter: React.FC<AtlasViewerFooterProps> = React.memo(({
   const { t } = useI18n();
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2 px-2 text-[11px] text-stone-400 font-mono border-t border-stone-800/80 pt-2">
+    <div className="flex flex-wrap items-center justify-between gap-2 px-2 text-[11px] text-stone-400 border-t border-stone-800/80 pt-2">
       <div className="flex items-center gap-3">
-        <span>
+        <Text family="mono" size="2xs" variant="muted">
           {t("atlasDimensions")}{" "}
-          <strong className="text-amber-300">
+          <Text family="mono" weight="bold" size="2xs" variant="amber">
             {imageDimensions.width} × {imageDimensions.height} px
-          </strong>
-        </span>
+          </Text>
+        </Text>
         <span>•</span>
-        <span>
+        <Text family="mono" size="2xs" variant="muted">
           {t("atlasCellSize")}{" "}
-          <strong className="text-amber-300">
+          <Text family="mono" weight="bold" size="2xs" variant="amber">
             {Math.round(cellWidth)} × {Math.round(cellHeight)} px
-          </strong>
-        </span>
+          </Text>
+        </Text>
       </div>
 
       <div className="flex items-center gap-2">
-        <span className="text-stone-500">
+        <Text family="mono" size="2xs" className="text-stone-500">
           {columns * rows} {t("atlasGridFrames")} ({columns}×{rows})
-        </span>
-        <Badge variant="amber" className="text-[10px] font-bold">
-          {quality.toUpperCase()}
+        </Text>
+        <Badge variant="amber" className="text-[10px]">
+          <Text weight="bold" size="2xs" className="text-inherit">
+            {quality.toUpperCase()}
+          </Text>
         </Badge>
       </div>
     </div>

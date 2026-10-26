@@ -1,6 +1,6 @@
 import React from "react";
 import { Target, FlaskConical } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, ProgressBar } from "@ui";
+import { Card, CardHeader, CardTitle, CardContent, ProgressBar, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import type { KillsBreakdownVM, PotionsBreakdownVM } from "./stats.mapper";
 import { cn } from "@lib/utils";
@@ -35,7 +35,7 @@ export const StatsBreakdownCard = ({
           <div>
             <div className="flex justify-between text-xs mb-1">
               <span className="text-stone-300">{t("trainingDummiesKilled")}</span>
-              <span className="font-mono font-bold text-amber-300">{kills.dummy}</span>
+              <Text family="mono" weight="bold" className="text-amber-300">{kills.dummy}</Text>
             </div>
             <ProgressBar
               value={kills.dummy}
@@ -48,7 +48,7 @@ export const StatsBreakdownCard = ({
           <div>
             <div className="flex justify-between text-xs mb-1">
               <span className="text-stone-300">{t("automatonsKilled")}</span>
-              <span className="font-mono font-bold text-amber-300">{kills.automaton}</span>
+              <Text family="mono" weight="bold" className="text-amber-300">{kills.automaton}</Text>
             </div>
             <ProgressBar
               value={kills.automaton}
@@ -61,7 +61,7 @@ export const StatsBreakdownCard = ({
           <div>
             <div className="flex justify-between text-xs mb-1">
               <span className="text-stone-300">{t("gargoylesKilled")}</span>
-              <span className="font-mono font-bold text-amber-300">{kills.gargoyle}</span>
+              <Text family="mono" weight="bold" className="text-amber-300">{kills.gargoyle}</Text>
             </div>
             <ProgressBar
               value={kills.gargoyle}
@@ -74,7 +74,7 @@ export const StatsBreakdownCard = ({
           <div>
             <div className="flex justify-between text-xs mb-1">
               <span className="text-stone-300">{t("crawlersKilled")}</span>
-              <span className="font-mono font-bold text-amber-300">{kills.crawler}</span>
+              <Text family="mono" weight="bold" className="text-amber-300">{kills.crawler}</Text>
             </div>
             <ProgressBar
               value={kills.crawler}
@@ -99,7 +99,7 @@ export const StatsBreakdownCard = ({
                 <span className="w-2 h-2 rounded-full bg-red-500" />
                 {t("healthPotionStat")}
               </span>
-              <span className="font-mono font-bold text-red-300">{potions.health}</span>
+              <Text family="mono" weight="bold" className="text-red-300">{potions.health}</Text>
             </div>
             <ProgressBar
               value={potions.health}
@@ -115,7 +115,7 @@ export const StatsBreakdownCard = ({
                 <span className="w-2 h-2 rounded-full bg-cyan-400" />
                 {t("manaPotionStat")}
               </span>
-              <span className="font-mono font-bold text-cyan-300">{potions.mana}</span>
+              <Text family="mono" weight="bold" className="text-cyan-300">{potions.mana}</Text>
             </div>
             <ProgressBar
               value={potions.mana}
@@ -131,7 +131,7 @@ export const StatsBreakdownCard = ({
                 <span className="w-2 h-2 rounded-full bg-amber-400" />
                 {t("staminaPotionStat")}
               </span>
-              <span className="font-mono font-bold text-amber-300">{potions.stamina}</span>
+              <Text family="mono" weight="bold" className="text-amber-300">{potions.stamina}</Text>
             </div>
             <ProgressBar
               value={potions.stamina}
@@ -143,7 +143,7 @@ export const StatsBreakdownCard = ({
 
           <div className="mt-2 pt-2 border-t border-[#3a1a0f] flex justify-between text-xs">
             <span className="text-stone-400">{t("leversActivatedCount")}:</span>
-            <span className="font-mono font-bold text-amber-300">{leversPulled}</span>
+            <Text family="mono" weight="bold" className="text-amber-300">{leversPulled}</Text>
           </div>
         </CardContent>
       </Card>

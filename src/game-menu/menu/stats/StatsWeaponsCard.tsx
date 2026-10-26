@@ -1,6 +1,6 @@
 import React from "react";
 import { Award } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, ProgressBar, Badge } from "@ui";
+import { Card, CardHeader, CardTitle, CardContent, ProgressBar, Badge, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import type { WeaponEfficacyVM } from "./stats.mapper";
 import { cn } from "@lib/utils";
@@ -43,10 +43,10 @@ export const StatsWeaponsCard = ({
                 className="p-2 rounded-xl bg-[#140602]/80 border border-[#5c2d18] flex flex-col gap-1.5"
               >
                 <div className="flex justify-between items-center text-xs">
-                  <span className="font-bold text-amber-200">{item.name}</span>
-                  <span className="font-mono text-stone-300">
+                  <Text weight="bold" className="text-amber-200">{item.name}</Text>
+                  <Text family="mono" className="text-stone-300">
                     {item.damage} ({item.percentage}%)
-                  </span>
+                  </Text>
                 </div>
                 <ProgressBar
                   value={item.damage}

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { HelpCircle, Swords, Gamepad2 } from "lucide-react";
 import { PlayerId } from "@game/types";
-import { Modal, Button } from "@ui";
+import { Modal, Button, Text } from "@ui";
 import { LanguageSelector } from "@game-menu/common";
 import { ModalNavigationTabs } from "@game-menu/modal";
 import { useI18n } from "@context/I18nContext";
@@ -63,12 +63,11 @@ export const HelpModal: React.FC<HelpModalProps> = React.memo(
 
           {showControls && (
             <section className="flex flex-col gap-2.5" aria-labelledby="controls-heading">
-              <div
-                id="controls-heading"
-                className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-400"
-              >
-                <Swords size={14} />
-                <span>{t("combatAndMovement")}</span>
+              <div id="controls-heading" className="flex items-center gap-2">
+                <Swords size={14} className="text-amber-400" />
+                <Text size="xs" weight="bold" className="uppercase tracking-wider text-amber-400">
+                  {t("combatAndMovement")}
+                </Text>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

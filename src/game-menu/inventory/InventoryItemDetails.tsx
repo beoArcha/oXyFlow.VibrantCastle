@@ -1,6 +1,6 @@
 import React from "react";
 import { CheckCircle, ArrowDownToDot, Trash2, Heart } from "lucide-react";
-import { Card, Button, Badge, ItemIcon } from "@ui";
+import { Card, Button, Badge, ItemIcon, Heading, Paragraph, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import {
   ItemDetailsVM,
@@ -46,9 +46,9 @@ export const InventoryItemDetails = React.memo(function InventoryItemDetails({
             <ItemIcon name={details.iconName} size={28} className="text-amber-300 drop-shadow" />
           </div>
           <div>
-            <h4 className="text-base font-bold text-amber-200 leading-snug">
+            <Heading level={4} size="base" variant="secondary" className="leading-snug">
               {localizedName}
-            </h4>
+            </Heading>
             <div className="flex gap-1.5 mt-1">
               <Badge variant="stone">{t(details.typeLabelKey)}</Badge>
               <Badge variant={details.rarityVariant}>
@@ -111,20 +111,23 @@ export const InventoryItemDetails = React.memo(function InventoryItemDetails({
       {details.modifiers.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-2.5 pt-2 border-t border-amber-900/40 text-xs">
           {details.modifiers.map((modifier) => (
-            <span
+            <Text
               key={modifier.type}
-              className={cn("flex items-center gap-1 font-mono font-semibold", modifier.textColorClass)}
+              family="mono"
+              weight="semibold"
+              size="xs"
+              className={cn("flex items-center gap-1", modifier.textColorClass)}
             >
               <ItemIcon name={modifier.iconName} size={12} /> {modifier.formattedValue} {t(modifier.labelKey)}
-            </span>
+            </Text>
           ))}
         </div>
       )}
 
       {localizedDesc && (
-        <p className="text-xs text-stone-300 leading-relaxed mt-2 border-t border-amber-900/30 pt-2 italic">
+        <Paragraph size="xs" variant="default" italic className="leading-relaxed mt-2 border-t border-amber-900/30 pt-2">
           {localizedDesc}
-        </p>
+        </Paragraph>
       )}
     </Card>
   );

@@ -1,6 +1,6 @@
 import React from "react";
 import { Clock, Skull, Swords, FlaskConical, BarChart3, RotateCcw, HardDrive } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from "@ui";
+import { Card, CardHeader, CardTitle, CardContent, Button, Badge, Paragraph, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import type { SessionSummaryVM } from "./stats.mapper";
 import { cn } from "@lib/utils";
@@ -71,9 +71,9 @@ export const StatsSessionCard = ({
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-xs text-[#fed7aa] mb-3 leading-relaxed">
+        <Paragraph size="xs" className="text-[#fed7aa] mb-3 leading-relaxed">
           {t("gameStatsSubtitle")}
-        </p>
+        </Paragraph>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
           <div className="bg-[#140602]/90 border border-amber-500/30 rounded-xl p-2.5 flex flex-col">
@@ -81,9 +81,9 @@ export const StatsSessionCard = ({
               <Clock size={12} className="text-amber-400" />
               {t("playTime")}
             </span>
-            <span className="font-mono font-bold text-sm text-amber-200 mt-1">
+            <Text family="mono" weight="bold" size="sm" className="text-amber-200 mt-1">
               {summary.formattedPlayTime}
-            </span>
+            </Text>
           </div>
 
           <div className="bg-[#140602]/90 border border-amber-500/30 rounded-xl p-2.5 flex flex-col">
@@ -91,9 +91,9 @@ export const StatsSessionCard = ({
               <Skull size={12} className="text-red-400" />
               {t("totalKills")}
             </span>
-            <span className="font-mono font-bold text-sm text-red-300 mt-1">
+            <Text family="mono" weight="bold" size="sm" className="text-red-300 mt-1">
               {summary.totalKills}
-            </span>
+            </Text>
           </div>
 
           <div className="bg-[#140602]/90 border border-amber-500/30 rounded-xl p-2.5 flex flex-col">
@@ -101,9 +101,9 @@ export const StatsSessionCard = ({
               <Swords size={12} className="text-amber-400" />
               {t("damageDealt")}
             </span>
-            <span className="font-mono font-bold text-sm text-amber-300 mt-1">
+            <Text family="mono" weight="bold" size="sm" className="text-amber-300 mt-1">
               {summary.totalDamageDealt}
-            </span>
+            </Text>
           </div>
 
           <div className="bg-[#140602]/90 border border-amber-500/30 rounded-xl p-2.5 flex flex-col">
@@ -111,9 +111,9 @@ export const StatsSessionCard = ({
               <FlaskConical size={12} className="text-cyan-400" />
               {t("potionsConsumed")}
             </span>
-            <span className="font-mono font-bold text-sm text-cyan-300 mt-1">
+            <Text family="mono" weight="bold" size="sm" className="text-cyan-300 mt-1">
               {summary.totalPotionsConsumed}
-            </span>
+            </Text>
           </div>
         </div>
       </CardContent>

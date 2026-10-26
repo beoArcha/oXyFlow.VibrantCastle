@@ -8,6 +8,9 @@ import {
   Badge,
   SettingToggleRow,
   SettingOptionCard,
+  Paragraph,
+  Text,
+  Code,
 } from "@ui";
 import { useSettings } from "@context/SettingsContext";
 import { useI18n } from "@context/I18nContext";
@@ -72,8 +75,10 @@ export const GraphicsQualitySection = ({
             <CardTitle icon={<Activity className="w-4 h-4 text-amber-400" />}>
               {t("targetFpsOption")}
             </CardTitle>
-            <Badge variant="amber" className="font-mono text-[10px]">
-              {activeFps} FPS
+            <Badge variant="amber">
+              <Code variant="plain" size="2xs" className="text-inherit">
+                {activeFps} FPS
+              </Code>
             </Badge>
           </div>
         </CardHeader>
@@ -92,13 +97,13 @@ export const GraphicsQualitySection = ({
           </div>
 
           <div className="p-2.5 rounded-lg bg-black/40 border border-[#5c2d18]/50 text-xs text-stone-300 leading-relaxed">
-            <p className="font-medium text-amber-300/95">
+            <Paragraph size="xs" className="text-amber-300/95">
               {activeFps === 30 && t("fps30Desc")}
               {activeFps === 60 && t("fps60Desc")}
               {activeFps === 90 && t("fps90Desc")}
               {activeFps === 120 && t("fps120Desc")}
-            </p>
-            <p className="mt-1 text-[11px] text-stone-400">{t("fpsMultipliersDesc")}</p>
+            </Paragraph>
+            <Paragraph size="2xs" variant="muted" className="mt-1">{t("fpsMultipliersDesc")}</Paragraph>
           </div>
 
           <SettingToggleRow
@@ -119,9 +124,10 @@ export const GraphicsQualitySection = ({
             </CardTitle>
             <Badge
               variant={displaySettings.hardwareAcceleration !== false ? "amber" : "stone"}
-              className="font-mono text-[10px]"
             >
-              {displaySettings.hardwareAcceleration !== false ? "GPU: ACTIVE" : "GPU: DISABLED"}
+              <Code variant="plain" size="2xs" className="text-inherit">
+                {displaySettings.hardwareAcceleration !== false ? "GPU: ACTIVE" : "GPU: DISABLED"}
+              </Code>
             </Badge>
           </div>
         </CardHeader>
@@ -143,8 +149,10 @@ export const GraphicsQualitySection = ({
             <CardTitle icon={<Palette className="w-4 h-4 text-amber-400" />}>
               {t("assetQualityOption")}
             </CardTitle>
-            <Badge variant="amber" className="font-mono text-[10px]">
-              {displaySettings.assetQuality.toUpperCase()}
+            <Badge variant="amber">
+              <Code variant="plain" size="2xs" className="text-inherit">
+                {displaySettings.assetQuality.toUpperCase()}
+              </Code>
             </Badge>
           </div>
         </CardHeader>
@@ -158,18 +166,18 @@ export const GraphicsQualitySection = ({
                 onSelect={() => setDisplaySettings({ assetQuality: item.id })}
                 title={item.title}
                 badge={
-                  <span className="text-[10px] font-mono text-amber-400/90">
+                  <Code variant="plain" size="2xs" className="text-amber-400/90">
                     {item.tierTag}
-                  </span>
+                  </Code>
                 }
                 description={t(item.descKey)}
               />
             ))}
           </div>
 
-          <div className="flex items-center gap-1 text-[11px] text-amber-400/90 font-medium px-1">
+          <div className="flex items-center gap-1 text-[11px] px-1">
             <Flame className="w-3.5 h-3.5 text-amber-400" />
-            <span>{t("assetValenIdentity")}</span>
+            <Text size="2xs" weight="medium" className="text-amber-400/90">{t("assetValenIdentity")}</Text>
           </div>
         </CardContent>
       </Card>

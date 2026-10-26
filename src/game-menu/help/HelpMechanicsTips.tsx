@@ -3,6 +3,7 @@ import { Compass, CheckCircle2 } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 import { HelpMechanicsTipsProps } from "./types";
+import { Text } from "@ui";
 
 export type { HelpMechanicsTipsProps };
 
@@ -32,12 +33,11 @@ export const HelpMechanicsTips: React.FC<HelpMechanicsTipsProps> = React.memo(
         )}
         aria-labelledby="mechanics-heading"
       >
-        <div
-          id="mechanics-heading"
-          className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-400"
-        >
-          <Compass size={14} />
-          <span>{t("tipsMechanics")}</span>
+        <div id="mechanics-heading" className="flex items-center gap-2">
+          <Compass size={14} className="text-amber-400" />
+          <Text size="xs" weight="bold" className="uppercase tracking-wider text-amber-400">
+            {t("tipsMechanics")}
+          </Text>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-stone-300">
