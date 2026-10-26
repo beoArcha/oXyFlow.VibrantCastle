@@ -6,8 +6,8 @@ This document specifies the automated CI/CD pipeline, branching topology, releas
 
 *Vibrant Castle* is published as a client-side web application hosted on **GitHub Pages (`github.io`)**:
 
-- **Portal Landing Page & Wiki**: `https://beoarcha.github.io/vibrant_castle/`
-- **Playable Game Client**: `https://beoarcha.github.io/vibrant_castle/game/`
+- **Portal Landing Page & Wiki**: `https://beoarcha.github.io/oXyFlow.VibrantCastle/`
+- **Playable Game Client**: `https://beoarcha.github.io/oXyFlow.VibrantCastle/game/`
 
 ### 1.1. Core Pipeline Invariants
 
@@ -97,7 +97,7 @@ graph TD
   - `architecture`: `bun run test:arch` (84 AST boundary and SSOT tests).
   - `e2e`: `bun run test:e2e` (Distribution smoke checks).
 - **Stage 3 (Client Build Verification)**:
-  - Compiles pure game client with `bun run build:game` (`VITE_BASE_PATH: /vibrant_castle/game/`).
+  - Compiles pure game client with `bun run build:game` (`VITE_BASE_PATH: ./`).
   - Asserts existence of `dist/index.html` and `dist/assets/`.
 - **Stage 4 (Metadata)**:
   - Publishes candidate identifier (`0.2.2-dev.<run_number>.<sha>`) to `$GITHUB_STEP_SUMMARY`.
@@ -138,7 +138,7 @@ graph TD
   - Mounts game client into `dist/game/` and copies `docs/wiki/` to `dist/` root.
   - Generates `dist/.nojekyll`.
   - Deploys bundle to GitHub Pages via `actions/deploy-pages@v4`.
-  - Performs live HTTP 200 verification on `https://beoarcha.github.io/vibrant_castle/`.
+  - Performs live HTTP 200 verification on `https://beoarcha.github.io/oXyFlow.VibrantCastle/`.
 
 ---
 

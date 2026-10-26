@@ -1,6 +1,6 @@
 # Vibrant Castle
 
-[![Wiki & Play in Browser](https://img.shields.io/badge/Wiki_&_Web_Game-GitHub_Pages-amber.svg)](https://beoarcha.github.io/vibrant_castle/)
+[![Wiki & Play in Browser](https://img.shields.io/badge/Wiki_&_Web_Game-GitHub_Pages-amber.svg)](https://beoarcha.github.io/oXyFlow.VibrantCastle/)
 [![License: MPL-2.0](https://img.shields.io/badge/License-MPL_2.0-blue.svg)](LICENSE.md)
 [![Art License: CC BY 4.0](https://img.shields.io/badge/Lore_&_Art-CC_BY_4.0-lightgrey.svg)](LICENSE.md)
 
@@ -10,7 +10,7 @@
 
 Experience *Vibrant Castle* directly in your browser and explore the full documentation on our **GitHub Pages portal**:
 
-* **Interactive Wiki & Playable Game**: [https://beoarcha.github.io/vibrant_castle/](https://beoarcha.github.io/vibrant_castle/)
+* **Interactive Wiki & Playable Game**: [https://beoarcha.github.io/oXyFlow.VibrantCastle/](https://beoarcha.github.io/oXyFlow.VibrantCastle/)
 * Complete chronicles of lore, kinetic controls reference, champion attributes, and engine architecture specifications.
 
 ## Overview

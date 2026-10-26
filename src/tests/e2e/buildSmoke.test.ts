@@ -32,6 +32,9 @@ describe("E2E Distribution Package Smoke Tests", () => {
     expect(htmlContent).toContain("scripts/wiki-app.js");
     expect(htmlContent).toContain('id="game-viewport"');
     expect(htmlContent).toContain('id="viewport-splash"');
+    expect(htmlContent).toContain('<link rel="icon"');
+    expect(htmlContent).toContain('allow="fullscreen"');
+    expect(htmlContent).not.toContain('allow="fullscreen; autoplay"');
   });
 
   it("verifies wiki styles and scripts are properly assembled", () => {
@@ -71,5 +74,9 @@ describe("E2E Distribution Package Smoke Tests", () => {
 
     const gameHtml = readFileSync(gameIndexPath, "utf8");
     expect(gameHtml).toContain("<div id=\"root\">");
+    expect(gameHtml).toContain('<link rel="icon"');
+    expect(gameHtml).toMatch(/src="\.\/assets\/index-[a-zA-Z0-9_\-]+\.js"/);
+    expect(gameHtml).toMatch(/href="\.\/assets\/index-[a-zA-Z0-9_\-]+\.css"/);
+    expect(gameHtml).not.toContain("/vibrant_castle/");
   });
 });

@@ -84,7 +84,7 @@ jobs:
 
       - name: Post-Deployment Smoke Verification
         run: |
-          TARGET_URL="https://beoarcha.github.io/vibrant_castle/"
+          TARGET_URL="https://beoarcha.github.io/oXyFlow.VibrantCastle/"
           echo "Verifying live portal at ${TARGET_URL}..."
 
           SUCCESS=false
@@ -100,8 +100,8 @@ jobs:
 
           if [ "$SUCCESS" = "true" ]; then
             echo "### 🌐 Live Production Verification Passed" >> $GITHUB_STEP_SUMMARY
-            echo "- **Portal URL**: [https://beoarcha.github.io/vibrant_castle/](https://beoarcha.github.io/vibrant_castle/)" >> $GITHUB_STEP_SUMMARY
-            echo "- **Game Client**: [https://beoarcha.github.io/vibrant_castle/game/](https://beoarcha.github.io/vibrant_castle/game/)" >> $GITHUB_STEP_SUMMARY
+            echo "- **Portal URL**: [https://beoarcha.github.io/oXyFlow.VibrantCastle/](https://beoarcha.github.io/oXyFlow.VibrantCastle/)" >> $GITHUB_STEP_SUMMARY
+            echo "- **Game Client**: [https://beoarcha.github.io/oXyFlow.VibrantCastle/game/](https://beoarcha.github.io/oXyFlow.VibrantCastle/game/)" >> $GITHUB_STEP_SUMMARY
             echo "- **HTTP Status**: \`200 OK\`" >> $GITHUB_STEP_SUMMARY
           else
             echo "### ⚠️ Production Deployment Submitted" >> $GITHUB_STEP_SUMMARY
