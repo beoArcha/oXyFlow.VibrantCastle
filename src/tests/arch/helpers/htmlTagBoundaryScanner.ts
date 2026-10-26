@@ -24,6 +24,28 @@ export interface TagScanViolation {
 }
 
 /**
+ * Canonical registry of prohibited raw HTML tags outside @ui.
+ * Extensible: adding any new forbidden HTML tag requires only a 1-line entry here.
+ */
+export const FORBIDDEN_HTML_TAGS_REGISTRY: readonly ForbiddenTagRule[] = [
+  // Typography (Headings)
+  { tag: "h1", category: "typography", replacement: "<Heading level={1}>", reason: "Must use @ui Heading instead of raw <h1>" },
+  { tag: "h2", category: "typography", replacement: "<Heading level={2}>", reason: "Must use @ui Heading instead of raw <h2>" },
+  { tag: "h3", category: "typography", replacement: "<Heading level={3}>", reason: "Must use @ui Heading instead of raw <h3>" },
+  { tag: "h4", category: "typography", replacement: "<Heading level={4}>", reason: "Must use @ui Heading instead of raw <h4>" },
+  { tag: "h5", category: "typography", replacement: "<Heading level={5}>", reason: "Must use @ui Heading instead of raw <h5>" },
+  { tag: "h6", category: "typography", replacement: "<Heading level={6}>", reason: "Must use @ui Heading instead of raw <h6>" },
+  // Typography (Body)
+  { tag: "p", category: "typography", replacement: "<Paragraph>", reason: "Must use @ui Paragraph instead of raw <p>" },
+  // Interactive Controls
+  { tag: "button", category: "control", replacement: "<Button> or <IconButton>", reason: "Must use @ui Button/IconButton instead of raw <button>" },
+  // Forms
+  { tag: "input", category: "form", replacement: "<Input> or <SearchInput>", reason: "Must use @ui Input instead of raw <input>" },
+  { tag: "textarea", category: "form", replacement: "<Textarea>", reason: "Must use @ui Textarea instead of raw <textarea>" },
+  { tag: "select", category: "form", replacement: "<Select>", reason: "Must use @ui Select instead of raw <select>" },
+];
+
+/**
  * Builds an isolated tag matching regex that targets JSX element openings (<tag ...> or <tag/>)
  * while ignoring comparison operators (a < b), type generics (Promise<T>), or hyphenated tag names.
  */

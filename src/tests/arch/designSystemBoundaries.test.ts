@@ -3,6 +3,11 @@ import fs from "fs";
 import path from "path";
 import { ArchitectureError, LayerBoundaryViolationError } from "@lib/errors";
 import { getAllSourceFiles, stripComments, ImportViolation } from "./helpers/archScanner";
+import {
+  FORBIDDEN_HTML_TAGS_REGISTRY,
+  scanFilesForForbiddenTags,
+  assertZeroForbiddenTagViolations,
+} from "./helpers/htmlTagBoundaryScanner";
 
 function assertZeroDesignViolations(
   violations: ImportViolation[],
@@ -21,40 +26,40 @@ function assertZeroDesignViolations(
 describe("Design System Boundaries & UI Primitives Integrity", () => {
   const rootDir = process.cwd();
   const developerDir = path.join(rootDir, "src", "developer");
+  const hudDir = path.join(rootDir, "src", "hud");
+  const gameMenuDir = path.join(rootDir, "src", "game-menu");
   const dataStudioDir = path.join(developerDir, "subtabs", "datastudio");
   const componentsDir = path.join(rootDir, "src", "components");
   const uiPrimitivesDir = path.join(rootDir, "src", "ui", "primitives");
 
-  it("ensures zero native <button>, <input>, or <select> tags in src/developer/ subtabs and cards", () => {
+  it("ensures zero forbidden HTML tags in src/developer/ subtabs and views via extensible registry", () => {
     const devTsxFiles = getAllSourceFiles(developerDir, /\.tsx$/).filter(
       (file) => !file.includes("__tests__")
     );
 
-    // Forbidden raw HTML form control tags
-    const forbiddenRawTagPattern = /<(?:\bbutton\b|\binput\b|\bselect\b)/;
-    const violations: ImportViolation[] = [];
+    const violations = scanFilesForForbiddenTags(devTsxFiles, FORBIDDEN_HTML_TAGS_REGISTRY, rootDir);
+    assertZeroForbiddenTagViolations(violations, "src/developer/");
+    expect(violations).toHaveLength(0);
+  });
 
-    for (const file of devTsxFiles) {
-      const raw = fs.readFileSync(file, "utf-8");
-      const clean = stripComments(raw);
-      const lines = clean.split("\n");
-
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        if (forbiddenRawTagPattern.test(line)) {
-          violations.push({
-            file: path.relative(rootDir, file).replace(/\\/g, "/"),
-            lineNo: i + 1,
-            line: line.trim(),
-          });
-        }
-      }
-    }
-
-    assertZeroDesignViolations(
-      violations,
-      "Developer workbench cards must use @ui primitives (Button, Input, Select, etc.) instead of raw HTML tags"
+  it("ensures zero forbidden HTML tags in src/hud/ presentation layer via extensible registry", () => {
+    const hudTsxFiles = getAllSourceFiles(hudDir, /\.tsx$/).filter(
+      (file) => !file.includes("__tests__")
     );
+
+    const violations = scanFilesForForbiddenTags(hudTsxFiles, FORBIDDEN_HTML_TAGS_REGISTRY, rootDir);
+    assertZeroForbiddenTagViolations(violations, "src/hud/");
+    expect(violations).toHaveLength(0);
+  });
+
+  it("ensures zero forbidden HTML tags in src/game-menu/ views via extensible registry", () => {
+    const menuTsxFiles = getAllSourceFiles(gameMenuDir, /\.tsx$/).filter(
+      (file) => !file.includes("__tests__")
+    );
+
+    const violations = scanFilesForForbiddenTags(menuTsxFiles, FORBIDDEN_HTML_TAGS_REGISTRY, rootDir);
+    assertZeroForbiddenTagViolations(violations, "src/game-menu/");
+    expect(violations).toHaveLength(0);
   });
 
   it("ensures zero hardcoded hex color literals in JSX of src/developer/subtabs/datastudio/", () => {
