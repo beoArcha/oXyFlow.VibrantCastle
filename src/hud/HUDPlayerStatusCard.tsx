@@ -1,6 +1,6 @@
 import React from "react";
 import { Heart, Sparkles, Zap } from "lucide-react";
-import { ProgressBar, Badge, Button } from "@ui";
+import { ProgressBar, Badge, Button, Text, Code } from "@ui";
 import { CharacterPortrait } from "@game-menu/character";
 import { useI18n } from "@context/I18nContext";
 import { getPlayerThemeTokens } from "@styles/theme";
@@ -59,33 +59,42 @@ export const HUDPlayerStatusCard: React.FC<HUDPlayerStatusCardProps> = React.mem
               characterId={effectiveCharacterId}
               className="w-full h-full"
             />
-            <div
+            <Text
+              as="div"
+              family="mono"
+              weight="bold"
+              size="3xs"
               className={cn(
-                "absolute bottom-0 right-0 px-1 py-0.2 bg-black/80 text-[8px] font-mono font-bold rounded-tl",
+                "absolute bottom-0 right-0 px-1 py-0.2 bg-black/80 rounded-tl",
                 themeTokens.qualityBadgeColor
               )}
             >
               {qualityLabel}
-            </div>
+            </Text>
           </div>
 
           <div className="flex flex-col">
             <div className="flex items-center gap-1.5">
-              <span className={cn("text-xs font-bold leading-tight", themeTokens.nameColor)}>
+              <Text
+                weight="bold"
+                size="xs"
+                className={cn("leading-tight", themeTokens.nameColor)}
+              >
                 {effectiveName}
-              </span>
-              <span
+              </Text>
+              <Code
+                size="2xs"
                 className={cn(
-                  "text-[9px] font-mono px-1 rounded border",
+                  "px-1 rounded border",
                   themeTokens.tagClass
                 )}
               >
                 P{effectivePlayerNumber}
-              </span>
+              </Code>
             </div>
-            <span className="text-[10px] text-stone-400">
+            <Text size="2xs" variant="muted">
               {t("attackPower")}: {Math.round(effectiveAttackPower)}
-            </span>
+            </Text>
           </div>
         </div>
 
@@ -94,7 +103,7 @@ export const HUDPlayerStatusCard: React.FC<HUDPlayerStatusCardProps> = React.mem
             size="sm"
             variant="accent"
             onClick={onOpenSkillTree}
-            className="h-6 px-2 py-0.5 text-[10px] font-bold rounded-full animate-pulse gap-1"
+            className="h-6 px-2 py-0.5 rounded-full animate-pulse gap-1"
             leftIcon={<Sparkles size={11} />}
           >
             +{effectiveSkillPoints} {t("skillPointsUnit")}

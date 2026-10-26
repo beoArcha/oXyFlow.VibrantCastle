@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowRight, RotateCcw, Menu as MenuIcon, Trophy, Skull } from "lucide-react";
-import { Dialog, Button } from "@ui";
+import { Dialog, Button, Heading, Paragraph } from "@ui";
 import { useI18n } from "@context/I18nContext";
 
 export interface HUDOutcomeDialogProps {
@@ -27,7 +27,6 @@ export const HUDOutcomeDialog: React.FC<HUDOutcomeDialogProps> = React.memo(({
   const { t } = useI18n();
   const isVictory = variant === "victory";
 
-  const titleColor = isVictory ? "text-amber-400" : "text-red-500";
   const icon = isVictory ? (
     <Trophy className="w-7 h-7 text-amber-400" />
   ) : (
@@ -49,12 +48,18 @@ export const HUDOutcomeDialog: React.FC<HUDOutcomeDialogProps> = React.memo(({
         <div className="w-14 h-14 rounded-full border border-stone-700/60 bg-black/60 flex items-center justify-center shadow-inner">
           {icon}
         </div>
-        <h2 className={`text-3xl md:text-4xl font-serif font-black tracking-wider ${titleColor} drop-shadow-lg`}>
+        <Heading
+          level={2}
+          variant={isVictory ? "gothic" : "danger"}
+          size="3xl"
+          dropShadow
+          className="md:text-4xl tracking-wider"
+        >
           {title}
-        </h2>
-        <p className="text-sm md:text-base text-stone-300 max-w-sm leading-relaxed">
+        </Heading>
+        <Paragraph size="sm" className="md:text-base text-stone-300 max-w-sm">
           {description}
-        </p>
+        </Paragraph>
         <div className="flex flex-wrap items-center justify-center gap-3 mt-4">
           {isVictory && onNextLocation && (
             <Button

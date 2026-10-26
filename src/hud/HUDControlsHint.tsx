@@ -1,6 +1,6 @@
 import React from "react";
 import { Swords, Wind, VolumeX } from "lucide-react";
-import { Badge, Button } from "@ui";
+import { Badge, Button, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { useKeyboard, formatKeyLabel } from "@game-menu/controls";
 import { PlayerId } from "@game/types";
@@ -35,7 +35,7 @@ export const HUDControlsHint: React.FC<HUDControlsHintProps> = React.memo(({
             variant="accent"
             onClick={onInitializeAudio}
             leftIcon={<VolumeX size={13} />}
-            className="h-6 px-2 py-0.5 text-[11px] font-bold rounded-lg animate-pulse"
+            className="h-6 px-2 py-0.5 rounded-lg animate-pulse"
           >
             {t("enableAudio")}
           </Button>
@@ -43,14 +43,14 @@ export const HUDControlsHint: React.FC<HUDControlsHintProps> = React.memo(({
       </div>
 
       <div className="hidden md:flex flex-col gap-2 bg-stone-950/70 backdrop-blur-md p-2.5 rounded-2xl border border-stone-900/60 max-w-[170px] text-[11px] text-stone-400">
-        <div className="flex items-center gap-1.5 text-amber-400 font-bold">
+        <Text as="div" weight="bold" variant="primary" size="2xs" className="flex items-center gap-1.5">
           <Swords size={12} />
           <span>{t("meleeAttack")}: [{meleeKey}]</span>
-        </div>
-        <div className="flex items-center gap-1.5 text-stone-300 font-bold">
+        </Text>
+        <Text as="div" weight="bold" variant="default" size="2xs" className="flex items-center gap-1.5">
           <Wind size={12} className="text-cyan-400" />
           <span>{t("dashAction")}: [{dashKey}]</span>
-        </div>
+        </Text>
       </div>
     </div>
   );

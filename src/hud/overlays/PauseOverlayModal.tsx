@@ -1,6 +1,6 @@
 import React from "react";
 import { Pause, Play, HelpCircle, Menu as MenuIcon, Backpack, BookOpen } from "lucide-react";
-import { Dialog, Button } from "@ui";
+import { Dialog, Button, Heading, Paragraph } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import type { PauseOverlayProps } from "../types";
 
@@ -29,10 +29,18 @@ export const PauseOverlayModal: React.FC<PauseOverlayProps> = React.memo(({
           <Pause size={28} />
         </div>
         <div>
-          <h2 className="text-2xl md:text-3xl font-serif font-black text-amber-400 tracking-wide drop-shadow-md">
+          <Heading
+            level={2}
+            variant="gothic"
+            size="2xl"
+            dropShadow
+            className="md:text-3xl"
+          >
             {t("gamePaused")}
-          </h2>
-          <p className="text-xs text-stone-300 mt-1">{t("pressToResume")}</p>
+          </Heading>
+          <Paragraph size="xs" className="text-stone-300 mt-1">
+            {t("pressToResume")}
+          </Paragraph>
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-2.5 mt-2">

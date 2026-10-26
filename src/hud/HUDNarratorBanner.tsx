@@ -1,8 +1,9 @@
 import React from "react";
 import { Sparkles } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
-import type { HUDNarratorBannerProps } from "./types";
+import { Paragraph, Text } from "@ui";
 import { cn } from "@lib/utils";
+import type { HUDNarratorBannerProps } from "./types";
 
 export const HUDNarratorBanner: React.FC<HUDNarratorBannerProps> = React.memo(({
   narration,
@@ -18,20 +19,35 @@ export const HUDNarratorBanner: React.FC<HUDNarratorBannerProps> = React.memo(({
           isAnimating ? "scale-105 border-amber-400" : "scale-100"
         )}
       >
-        <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 flex items-center gap-1.5">
+        <Text
+          size="2xs"
+          weight="black"
+          uppercase
+          variant="primary"
+          className="flex items-center gap-1.5 tracking-widest"
+        >
           <Sparkles size={12} />
           {t("narratorTitle")}
-        </span>
-        <p className="text-xs md:text-sm font-serif text-amber-100 italic leading-relaxed">
+        </Text>
+        <Paragraph
+          variant="narrator"
+          size="xs"
+          className="md:text-sm text-amber-100"
+        >
           "{narration}"
-        </p>
+        </Paragraph>
       </div>
     );
   }
 
   return (
-    <div className="opacity-40 hover:opacity-100 text-[10px] text-stone-400 transition-opacity bg-black/40 px-3 py-1 rounded-full border border-stone-800">
+    <Text
+      as="div"
+      size="3xs"
+      variant="muted"
+      className="opacity-40 hover:opacity-100 transition-opacity bg-black/40 px-3 py-1 rounded-full border border-stone-800"
+    >
       {t("narratorIdlePrompt")}
-    </div>
+    </Text>
   );
 });

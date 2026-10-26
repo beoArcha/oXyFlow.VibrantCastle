@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Sparkles, Shield, FlaskConical, Backpack, BookOpen } from "lucide-react";
-import { Button, KbdKey } from "@ui";
+import { Button, KbdKey, Text, Code } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { resolvePotionSlotsVM } from "./hud.mapper";
 import type { HUDQuickBeltProps, PotionSlotVM } from "./types";
@@ -55,9 +55,9 @@ export const HUDQuickBelt: React.FC<HUDQuickBeltProps> = React.memo(({
       )}
     >
       <div className="flex flex-col gap-1.5">
-        <span className={cn("text-[10px] font-bold tracking-wider uppercase", titleColor)}>
+        <Text as="span" size="2xs" weight="bold" uppercase className={cn("tracking-wider", titleColor)}>
           {isP1 ? t("tabSkills") : `P2 ${t("tabSkills")}`}
-        </span>
+        </Text>
 
         {effectivePrimarySpell && (
           <div className="flex items-center justify-between p-1.5 bg-black/50 border border-cyan-800/60 rounded-xl">
@@ -66,9 +66,9 @@ export const HUDQuickBelt: React.FC<HUDQuickBeltProps> = React.memo(({
                 <Sparkles size={12} />
               </div>
               <div className="flex flex-col">
-                <span className="text-[11px] font-bold text-cyan-300 leading-tight">
+                <Text weight="bold" size="2xs" className="text-cyan-300 leading-tight">
                   {effectivePrimarySpellName}
-                </span>
+                </Text>
                 <span className="text-[9px] text-cyan-500">
                   {effectivePrimarySpell.manaCost} {t("manaUnit")}
                 </span>
@@ -85,9 +85,9 @@ export const HUDQuickBelt: React.FC<HUDQuickBeltProps> = React.memo(({
                 <Shield size={12} />
               </div>
               <div className="flex flex-col">
-                <span className="text-[11px] font-bold text-purple-300 leading-tight">
+                <Text weight="bold" size="2xs" className="text-purple-300 leading-tight">
                   {effectiveSecondarySpellName}
-                </span>
+                </Text>
                 <span className="text-[9px] text-purple-500">
                   {effectiveSecondarySpell.manaCost} {t("manaUnit")}
                 </span>
@@ -99,9 +99,11 @@ export const HUDQuickBelt: React.FC<HUDQuickBeltProps> = React.memo(({
       </div>
 
       <div className="flex flex-col gap-1.5 border-t border-stone-800/80 pt-2">
-        <div className="flex items-center justify-between text-[10px] font-bold tracking-wider uppercase text-amber-400">
-          <span>{t("quickPotions")}</span>
-          <span className="text-[9px] text-stone-500">{effectivePotionKeyRangeLabel}</span>
+        <div className="flex items-center justify-between">
+          <Text weight="bold" size="2xs" uppercase className="tracking-wider text-amber-400">
+            {t("quickPotions")}
+          </Text>
+          <Text size="3xs" variant="subtle">{effectivePotionKeyRangeLabel}</Text>
         </div>
 
         <div className="grid grid-cols-3 gap-1.5">
@@ -112,14 +114,16 @@ export const HUDQuickBelt: React.FC<HUDQuickBeltProps> = React.memo(({
               : t("potionEmpty");
 
             return (
-              <button
+              <Button
                 key={`pot-${effectivePlayerNumber}-${pot.slotIndex}`}
                 type="button"
+                variant="ghost"
+                size="sm"
                 title={potionTitle}
                 aria-label={potionTitle}
                 onClick={() => onUsePotion(pot.slotIndex)}
                 className={cn(
-                  "relative aspect-square rounded-xl flex flex-col items-center justify-center p-1 border transition-all cursor-pointer",
+                  "relative aspect-square h-auto p-1 rounded-xl flex flex-col items-center justify-center border transition-all cursor-pointer shadow-none",
                   hasPotion
                     ? `bg-stone-900/80 ${potionBorderColor} hover:scale-105`
                     : "bg-black/30 border-stone-800 text-stone-700 opacity-60"
@@ -138,14 +142,14 @@ export const HUDQuickBelt: React.FC<HUDQuickBeltProps> = React.memo(({
                   }
                 />
                 {hasPotion && (
-                  <span className={cn("text-[9px] font-bold mt-0.5", potionTextColor)}>
+                  <Text weight="bold" size="3xs" className={cn("mt-0.5", potionTextColor)}>
                     x{pot.count}
-                  </span>
+                  </Text>
                 )}
-                <span className="absolute -bottom-1 -right-1 text-[8px] bg-black/80 px-1 rounded font-mono text-stone-400">
+                <Code size="2xs" className="absolute -bottom-1 -right-1 text-[8px] bg-black/80 px-1 rounded text-stone-400">
                   {pot.keyLabel}
-                </span>
-              </button>
+                </Code>
+              </Button>
             );
           })}
         </div>
@@ -160,7 +164,7 @@ export const HUDQuickBelt: React.FC<HUDQuickBeltProps> = React.memo(({
             title={`${t("inventoryBtn")} [I]`}
             onClick={onOpenInventory}
             leftIcon={<Backpack size={13} />}
-            className="h-7 py-1 px-2 rounded-xl bg-stone-900/80 hover:bg-stone-800 border-amber-700/60 text-amber-300 text-[11px] font-bold"
+            className="h-7 py-1 px-2 rounded-xl bg-stone-900/80 hover:bg-stone-800 border-amber-700/60 text-amber-300"
           >
             <span>[I]</span>
           </Button>
@@ -172,7 +176,7 @@ export const HUDQuickBelt: React.FC<HUDQuickBeltProps> = React.memo(({
             title={`${t("skillTreeBtn")} [K]`}
             onClick={onOpenSkillTree}
             leftIcon={<BookOpen size={13} />}
-            className="h-7 py-1 px-2 rounded-xl bg-stone-900/80 hover:bg-stone-800 border-purple-700/60 text-purple-300 text-[11px] font-bold"
+            className="h-7 py-1 px-2 rounded-xl bg-stone-900/80 hover:bg-stone-800 border-purple-700/60 text-purple-300"
           >
             <span>[K]</span>
           </Button>
