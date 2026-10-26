@@ -83,7 +83,7 @@ jobs:
           retention-days: 1
 
   coverage-gate:
-    name: "Stage 2: Coverage Quality Gate"
+    name: "Stage 3: Coverage Quality Gate"
     needs: [unit, integration]
     runs-on: ubuntu-latest
     steps:
@@ -142,7 +142,7 @@ jobs:
         run: bun run test:e2e
 
   build-verify:
-    name: "Stage 3: Build Verification"
+    name: "Stage 4: Build Verification"
     needs: [coverage-gate, architecture, e2e]
     runs-on: ubuntu-latest
     steps:
@@ -171,7 +171,7 @@ jobs:
           echo "- **Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
 
   ci-summary:
-    name: "Stage 4: Candidate Metadata"
+    name: "Stage 5: Candidate Metadata"
     needs: [build-verify]
     runs-on: ubuntu-latest
     steps:
