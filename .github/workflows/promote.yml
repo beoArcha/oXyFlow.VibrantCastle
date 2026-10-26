@@ -4,52 +4,48 @@ on:
   workflow_dispatch:
     inputs:
       target_sha:
-        description: "Commit SHA from main to promote (leave empty for latest HEAD of main)"
+        description: "Commit SHA on main to promote (leave empty for latest HEAD of main)"
         required: false
         default: ""
         type: string
-      confirmation:
-        description: "Type 'PROMOTE' to confirm fast-forward promotion to branch release"
-        required: true
-        type: string
 
 concurrency:
-  group: promote-${{ github.ref }}
+  group: promote-gate
   cancel-in-progress: false
 
 permissions:
   contents: write
   checks: read
-  actions: write
 
 jobs:
   promote:
     name: "Controlled Promotion (main -> release)"
     runs-on: ubuntu-latest
     steps:
-      - name: Validate Confirmation Input
-        run: |
-          if [ "${{ inputs.confirmation }}" != "PROMOTE" ]; then
-            echo "::error::Confirmation mismatch. You must enter 'PROMOTE' to proceed with production promotion."
-            exit 1
-          fi
-
-      - name: Checkout Source Code
-        uses: actions/checkout@v4
+      - name: Setup Environment with Full Git History
+        uses: ./.github/actions/setup-project
         with:
-          ref: main
           fetch-depth: 0
+          install-deps: false
 
-      - name: Resolve Target Commit SHA
-        id: resolve-sha
+      - name: Resolve and Validate Target Commit from main
+        id: resolve-target
         run: |
+          git fetch origin main release
+
           INPUT_SHA="${{ inputs.target_sha }}"
           if [ -z "$INPUT_SHA" ]; then
-            TARGET_SHA=$(git rev-parse HEAD)
-            echo "Resolved latest HEAD of main: ${TARGET_SHA}"
+            TARGET_SHA=$(git rev-parse origin/main)
+            echo "Using latest HEAD of origin/main: ${TARGET_SHA}"
           else
             TARGET_SHA=$(git rev-parse "${INPUT_SHA}")
-            echo "Resolved specified target commit: ${TARGET_SHA}"
+            echo "Specified commit SHA: ${TARGET_SHA}"
+
+            # Invariant: Commit MUST belong to branch main
+            if ! git merge-base --is-ancestor "${TARGET_SHA}" origin/main; then
+              echo "::error::Commit ${TARGET_SHA} is not an ancestor of origin/main. Promotion must strictly originate from main."
+              exit 1
+            fi
           fi
 
           echo "target_sha=${TARGET_SHA}" >> $GITHUB_OUTPUT
@@ -58,7 +54,7 @@ jobs:
       - name: Verify CI Checks for Target Commit
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TARGET_SHA: ${{ steps.resolve-sha.outputs.target_sha }}
+          TARGET_SHA: ${{ steps.resolve-target.outputs.target_sha }}
         run: |
           echo "Verifying GitHub check runs for commit: ${TARGET_SHA}..."
 
@@ -71,11 +67,11 @@ jobs:
           echo "Check runs summary:"
           echo "$CHECKS_JSON" | jq .
 
-          # Filter specifically for Main CI pipeline stages and ignore the promotion job itself
+          # Filter specifically for Main CI pipeline stages and ignore promotion itself
           CI_CHECKS=$(echo "$CHECKS_JSON" | jq '[.check_runs[] | select((.name | startswith("Stage ")) and (.name | test("Promotion|promote"; "i") | not))]')
           TOTAL_CI_CHECKS=$(echo "$CI_CHECKS" | jq 'length')
 
-          echo "Evaluated CI check runs:"
+          echo "Evaluated CI check runs (count: ${TOTAL_CI_CHECKS}):"
           echo "$CI_CHECKS" | jq .
 
           if [ "$TOTAL_CI_CHECKS" -lt 7 ]; then
@@ -100,24 +96,19 @@ jobs:
 
       - name: Fast-Forward Release Branch
         env:
-          TARGET_SHA: ${{ steps.resolve-sha.outputs.target_sha }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_SHA: ${{ steps.resolve-target.outputs.target_sha }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          echo "Fast-forwarding branch 'release' to ${TARGET_SHA}..."
+          echo "Fast-forwarding branch 'release' to validated commit ${TARGET_SHA}..."
           git push origin "${TARGET_SHA}:refs/heads/release"
-
-          echo "Dispatching Production Release workflow on branch 'release'..."
-          gh workflow run release.yml --ref release -f version_bump=patch || {
-            echo "::notice::Workflow dispatch triggered or delegated to release branch."
-          }
+          echo "Branch 'release' successfully updated to commit ${TARGET_SHA}."
 
       - name: Publish Promotion Summary
         env:
-          TARGET_SHA: ${{ steps.resolve-sha.outputs.target_sha }}
-          SHORT_SHA: ${{ steps.resolve-sha.outputs.target_short_sha }}
+          TARGET_SHA: ${{ steps.resolve-target.outputs.target_sha }}
+          SHORT_SHA: ${{ steps.resolve-target.outputs.target_short_sha }}
         run: |
           echo "## 🚀 Promotion to Release Succeeded" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -126,4 +117,4 @@ jobs:
           echo "- **Destination Branch**: \`release\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Triggered By**: @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "📦 **Production Deployment Pipeline Triggered**: Branch \`release\` will now automatically execute \`.github/workflows/release.yml\` to deploy to GitHub Pages." >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Release Branch Synchronized**: Branch \`release\` is up to date with \`main\`. You can now trigger a production release at any time via \`.github/workflows/release.yml\`." >> $GITHUB_STEP_SUMMARY

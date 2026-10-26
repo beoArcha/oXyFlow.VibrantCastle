@@ -1,10 +1,13 @@
-name: Production Release & GitHub Pages Deployment
+name: Production Game Release
 
 on:
-  push:
-    branches: [release]
   workflow_dispatch:
     inputs:
+      target_ref:
+        description: "Branch, tag, or commit SHA to release from"
+        required: true
+        default: "release"
+        type: string
       version_bump:
         description: "SemVer bump mode (patch, minor, major, or none to keep package.json version)"
         required: true
@@ -17,29 +20,21 @@ on:
           - none
 
 concurrency:
-  group: release-deploy
+  group: release-creation
   cancel-in-progress: false
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 jobs:
   preflight:
-    name: "Release Preflight Checks"
+    name: "Stage 1: Preflight Sanity"
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Source Code
-        uses: actions/checkout@v4
-
-      - name: Setup Bun Runtime
-        uses: oven-sh/setup-bun@v2
+      - name: Setup Environment
+        uses: ./.github/actions/setup-project
         with:
-          bun-version: latest
-
-      - name: Install Dependencies
-        run: bun install --frozen-lockfile
+          ref: ${{ inputs.target_ref }}
 
       - name: Run Static Typecheck
         run: bun run typecheck
@@ -47,70 +42,56 @@ jobs:
       - name: Run Architecture Boundary Tests
         run: bun run test:arch
 
-  build-and-package:
-    name: "Production Build & Asset Packaging"
+  build-game:
+    name: "Stage 2: Compile & Package Pure Game Client"
     needs: [preflight]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Source Code
-        uses: actions/checkout@v4
-
-      - name: Setup Bun Runtime
-        uses: oven-sh/setup-bun@v2
+      - name: Setup Environment
+        uses: ./.github/actions/setup-project
         with:
-          bun-version: latest
+          ref: ${{ inputs.target_ref }}
 
-      - name: Install Dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Build Web Distribution
-        run: bun run build:pages
+      - name: Compile Pure Game Client from src/
+        run: bun run build:game
         env:
           VITE_BASE_PATH: /vibrant_castle/game/
 
-      - name: Validate Built Artifacts
+      - name: Validate Compiled Game Artifacts
         run: |
           test -f dist/index.html || { echo "Missing dist/index.html"; exit 1; }
-          test -f dist/game/index.html || { echo "Missing dist/game/index.html"; exit 1; }
-          test -f dist/.nojekyll || { echo "Missing dist/.nojekyll"; exit 1; }
+          test -d dist/assets || { echo "Missing dist/assets directory"; exit 1; }
+          echo "Game client compiled cleanly without wiki documentation."
 
-      - name: Package Release Archive
+      - name: Package Game Release Archive
         run: |
           cd dist
-          zip -r ../vibrant-castle-web.zip .
+          zip -r ../vibrant-castle-game.zip .
           cd ..
+          echo "Packaged vibrant-castle-game.zip successfully."
 
-      - name: Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist/
-
-      - name: Upload Release Archive Artifact
+      - name: Upload Game Archive Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vibrant-castle-web-zip
-          path: vibrant-castle-web.zip
+          name: vibrant-castle-game-zip
+          path: vibrant-castle-game.zip
           retention-days: 14
 
   create-release:
-    name: "GitHub Tag & Release"
-    needs: [build-and-package]
+    name: "Stage 3: GitHub Tag & Release"
+    needs: [build-game]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Source Code
-        uses: actions/checkout@v4
+      - name: Setup Environment with Full Git History
+        uses: ./.github/actions/setup-project
         with:
+          ref: ${{ inputs.target_ref }}
           fetch-depth: 0
 
-      - name: Setup Bun Runtime
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - name: Download Release Archive Artifact
+      - name: Download Game Archive Artifact
         uses: actions/download-artifact@v4
         with:
-          name: vibrant-castle-web-zip
+          name: vibrant-castle-game-zip
 
       - name: Compute Release Tag
         id: tagger
@@ -136,7 +117,7 @@ jobs:
           echo "release_tag=${TAG}" >> $GITHUB_OUTPUT
           echo "release_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
 
-      - name: Create Git Tag and GitHub Release
+      - name: Create Git Tag and Publish GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ steps.tagger.outputs.release_tag }}
@@ -148,50 +129,20 @@ jobs:
           git tag -a "$TAG" -m "Release ${TAG}"
           git push origin "$TAG"
 
-          echo "Creating GitHub Release for ${TAG}..."
-          gh release create "$TAG" vibrant-castle-web.zip \
+          echo "Creating GitHub Release for ${TAG} with pure game asset..."
+          gh release create "$TAG" vibrant-castle-game.zip \
             --title "Vibrant Castle ${TAG}" \
             --generate-notes
 
-  deploy-pages:
-    name: "Deploy to GitHub Pages"
-    needs: [build-and-package, create-release]
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy Pages Bundle
-        id: deployment
-        uses: actions/deploy-pages@v4
-
-  verify-deployment:
-    name: "Post-Deployment Smoke Verification"
-    needs: [deploy-pages]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Verify Live Deployment URL
+      - name: Publish Release Summary
+        env:
+          TAG: ${{ steps.tagger.outputs.release_tag }}
         run: |
-          TARGET_URL="https://beoarcha.github.io/vibrant_castle/"
-          echo "Checking live portal at ${TARGET_URL}..."
-
-          SUCCESS=false
-          for attempt in $(seq 1 12); do
-            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET_URL" || true)
-            echo "Attempt $attempt: HTTP response code ${HTTP_STATUS}"
-            if [ "$HTTP_STATUS" = "200" ]; then
-              SUCCESS=true
-              break
-            fi
-            sleep 10
-          done
-
-          if [ "$SUCCESS" = "true" ]; then
-            echo "### 🌐 Live Production Verification Passed" >> $GITHUB_STEP_SUMMARY
-            echo "- **Portal URL**: [https://beoarcha.github.io/vibrant_castle/](https://beoarcha.github.io/vibrant_castle/)" >> $GITHUB_STEP_SUMMARY
-            echo "- **Game Client**: [https://beoarcha.github.io/vibrant_castle/game/](https://beoarcha.github.io/vibrant_castle/game/)" >> $GITHUB_STEP_SUMMARY
-            echo "- **HTTP Status**: \`200 OK\`" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "### ⚠️ Production Deployment Submitted" >> $GITHUB_STEP_SUMMARY
-            echo "Deployment was pushed to GitHub Pages. CDN edge propagation may take 1-2 minutes to return HTTP 200." >> $GITHUB_STEP_SUMMARY
-          fi
+          echo "## 📦 Production Game Release Published" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Release Tag**: \`${TAG}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Source Ref**: \`${{ inputs.target_ref }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Package**: \`vibrant-castle-game.zip\` (Pure Game Client from \`src/\`)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Triggered By**: @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🚀 **Documentation & Pages Deployment**: The documentation pipeline (\`.github/workflows/deploy-pages.yml\`) will automatically embed this game release into the wiki and deploy to GitHub Pages." >> $GITHUB_STEP_SUMMARY

@@ -32,9 +32,12 @@ bun run typecheck    # Static TypeScript typecheck (tsc --noEmit)
 bun run lint         # Static TypeScript verification (tsc --noEmit)
 bun test:unit        # Execute AAA unit test suite (1310 pass)
 bun test:integration # Execute integration test suite (94 pass)
+bun test:scripts     # Execute tooling & scripts test suite (8 pass)
 bun test:arch        # Execute AST Architecture & Boundary test suite (84 pass)
 bun test:e2e         # Execute distribution package smoke test suite (6 pass)
 bun test             # Execute full test suite
+bun run coverage:gate # Evaluate test suite coverage quality gates
+bun run build:game   # Compile pure production game client (src/)
 bun run build:pages  # Full production distribution assembly (dist/)
 bun run build        # Production bundle build & packaging check
 ```

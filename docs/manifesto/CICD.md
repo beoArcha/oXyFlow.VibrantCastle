@@ -11,15 +11,16 @@ This document specifies the automated CI/CD pipeline, branching topology, releas
 
 ### 1.1. Core Pipeline Invariants
 
-1. **Bun Runtime Discipline**: All pipeline steps execute natively via `oven-sh/setup-bun@v2` with `bun.lock` caching (~2s setup time). Node.js and npm are prohibited.
-2. **Strict Two-Branch Topology**:
+1. **Bun Runtime Discipline**: All pipeline steps execute natively via Bun with `bun.lock` caching. Node.js and npm are prohibited.
+2. **Reusable Composite Action (`.github/actions/setup-project`)**: Standardized checkout, Bun environment provisioning, and dependency installation eliminating DRY across all workflow jobs.
+3. **Strict Two-Branch Topology**:
    - `main`: Active development and integration branch.
-   - `release`: Production-only branch mirror deployed to GitHub Pages.
-3. **Zero Automated Commits on `main`**: Pushes to `main` never generate empty automated commits (e.g. `chore(release): bump version`), avoiding CI trigger loops and git history noise.
-4. **Verified Promotion Gate**: Direct pushes or merges into `release` by developers are forbidden. Code moves from `main` to `release` exclusively via the verified promotion workflow (`.github/workflows/promote.yml`).
-5. **Cost & Concurrency Optimization**:
-   - On `main`: `concurrency: { group: main-${{ github.ref }}, cancel-in-progress: true }` cancels obsolete runs on new pushes.
-   - On `release`: `concurrency: { group: release-deploy, cancel-in-progress: false }` queues deployments sequentially to preserve deployment atomicity.
+   - `release`: Production-only branch mirror for releases and live deployments.
+4. **Verified Promotion Gate (`promote.yml`)**: Direct pushes or merges into `release` by developers are forbidden. Code moves from `main` to `release` exclusively via the verified promotion workflow, which validates all CI stages on `main` before fast-forwarding `release`.
+5. **Decoupled Game Release vs Documentation**:
+   - `release.yml` produces a pure production build of the game client from `src/` (packaged as `vibrant-castle-game.zip`) and mints a GitHub Release.
+   - `deploy-pages.yml` takes the released game build and embeds it into the `docs/wiki/` documentation portal for GitHub Pages deployment.
+6. **Automated Coverage Quality Gate**: Enforces minimum coverage thresholds (`scripts/coverage.json`) with discrete reporting for Unit Tests ($\ge 60\%$), Integration Tests ($\ge 40\%$), and Combined Coverage ($\ge 80\%$).
 
 ---
 
@@ -27,22 +28,24 @@ This document specifies the automated CI/CD pipeline, branching topology, releas
 
 ```mermaid
 graph TD
-    subgraph MainBranch["main branch (Integration & Verification)"]
+    subgraph MainBranch["1. main branch (Integration & Verification — main.yml)"]
         P1["git push to main / PR"]
         S1["Stage 1: Static Analysis<br/>(Parallel: typecheck & lint)"]
-        S2["Stage 2: Test Suite<br/>(Parallel: unit, integration, arch, e2e)"]
-        S3["Stage 3: Build Verification<br/>(build:pages + artifact check)"]
-        S4["Stage 4: Candidate Metadata<br/>(Generates release candidate ID)"]
+        S2["Stage 2: Tests & Coverage<br/>(unit + integration + arch + e2e)"]
+        CG["Stage 2: Coverage Quality Gate<br/>(scripts/coverage-gate.ts)"]
+        S3["Stage 3: Game Client Build<br/>(vite build z src/)"]
+        S4["Stage 4: Candidate Metadata<br/>(Release candidate ID)"]
 
         P1 --> S1
         S1 -- Pass --> S2
-        S2 -- Pass --> S3
+        S2 --> CG
+        CG -- Pass --> S3
         S3 -- Pass --> S4
     end
 
-    subgraph PromotionGate["Controlled Promotion (promote.yml)"]
-        Trigger["workflow_dispatch<br/>(Confirmation: 'PROMOTE')"]
-        VerifyChecks["Verify GitHub Checks API<br/>(All main.yml jobs passed?)"]
+    subgraph PromotionGate["2. Controlled Promotion (promote.yml)"]
+        Trigger["workflow_dispatch<br/>(Commit on main)"]
+        VerifyChecks["Verify GitHub Checks API<br/>(All main.yml stages passed?)"]
         FastForward["git push origin $SHA:refs/heads/release<br/>(Fast-Forward)"]
 
         S4 -. Validated SHA .-> Trigger
@@ -50,20 +53,30 @@ graph TD
         VerifyChecks -- Yes --> FastForward
     end
 
-    subgraph ReleaseBranch["release branch (Production Deployment)"]
-        RPush["Push triggered on release"]
+    subgraph GameRelease["3. Production Game Release (release.yml)"]
+        RTrigger["workflow_dispatch<br/>(Ref: release / main, Bump: SemVer)"]
         Preflight["Stage 1: Preflight Sanity<br/>(typecheck + test:arch)"]
-        Build["Stage 2: Production Build<br/>(build:pages + zip archive)"]
+        RBuild["Stage 2: Compile Pure Game<br/>(vite build z src/ -> vibrant-castle-game.zip)"]
         GHRelease["Stage 3: GitHub Release<br/>(Tag vX.Y.Z + release notes)"]
-        Deploy["Stage 4: GitHub Pages<br/>(actions/deploy-pages@v4)"]
-        VerifyLive["Stage 5: Smoke Check<br/>(curl HTTP 200 verification)"]
 
-        FastForward --> RPush
-        RPush --> Preflight
-        Preflight --> Build
-        Build --> GHRelease
-        Build --> Deploy
-        Deploy --> VerifyLive
+        FastForward -. Synchronized .-> RTrigger
+        RTrigger --> Preflight
+        Preflight --> RBuild
+        RBuild --> GHRelease
+    end
+
+    subgraph PagesDeploy["4. Documentation & Portal Deploy (deploy-pages.yml)"]
+        DTrigger["Release Published<br/>OR workflow_dispatch"]
+        Fetch["Fetch vibrant-castle-game.zip<br/>from GitHub Release"]
+        Assemble["Assemble Portal<br/>(docs/wiki/ + game/ client)"]
+        Deploy["Deploy to GitHub Pages<br/>(actions/deploy-pages@v4)"]
+        Smoke["Live HTTP 200 Verification"]
+
+        GHRelease -. Event Trigger .-> DTrigger
+        DTrigger --> Fetch
+        Fetch --> Assemble
+        Assemble --> Deploy
+        Deploy --> Smoke
     end
 ```
 
@@ -77,24 +90,24 @@ graph TD
 - **Stage 1 (Static Analysis)**:
   - `typecheck`: `bun run typecheck` (`tsc --noEmit`).
   - `lint`: `bun run lint` (`tsc --noEmit`).
-  - Both run in parallel. Fails immediately on compiler error.
-- **Stage 2 (Tests)** (`needs: [typecheck, lint]`):
-  - `unit`: `bun run test:unit` (1310 unit tests).
-  - `integration`: `bun run test:integration` (94 integration tests).
+- **Stage 2 (Test Suite & Coverage Gate)**:
+  - `unit`: `bun run test:unit:coverage` (generates `coverage/unit/lcov.info`).
+  - `integration`: `bun run test:integration:coverage` (generates `coverage/integration/lcov.info`).
+  - `coverage-gate`: Runs `bun run coverage:gate`, validates against `scripts/coverage.json` thresholds, outputs terminal ASCII table, emits GitHub Actions error annotations on failure, and publishes Markdown to `$GITHUB_STEP_SUMMARY`.
   - `architecture`: `bun run test:arch` (84 AST boundary and SSOT tests).
-  - `e2e`: `bun run test:e2e` (6 distribution package smoke tests).
-- **Stage 3 (Build Verification)** (`needs: [unit, integration, architecture, e2e]`):
-  - Assembles `dist/` with `VITE_BASE_PATH: /vibrant_castle/game/`.
-  - Asserts existence of `dist/index.html`, `dist/game/index.html`, and `dist/.nojekyll`.
-- **Stage 4 (Metadata)** (`needs: [build-verify]`):
-  - Publishes candidate identifier (`0.2.1-dev.<run_number>.<sha>`) to `$GITHUB_STEP_SUMMARY`.
+  - `e2e`: `bun run test:e2e` (Distribution smoke checks).
+- **Stage 3 (Client Build Verification)**:
+  - Compiles pure game client with `bun run build:game` (`VITE_BASE_PATH: /vibrant_castle/game/`).
+  - Asserts existence of `dist/index.html` and `dist/assets/`.
+- **Stage 4 (Metadata)**:
+  - Publishes candidate identifier (`0.2.2-dev.<run_number>.<sha>`) to `$GITHUB_STEP_SUMMARY`.
 
-### 3.2. `promote.yml` — Verified Promotion
+### 3.2. `promote.yml` — Controlled Promotion
 
 - **Trigger**: Manual `workflow_dispatch`.
+- **Invariant**: **Always promotes from `main` to `release`**, regardless of options chosen in GitHub Actions dispatch dialog.
 - **Inputs**:
-  - `target_sha`: Commit SHA from `main` to promote (default: latest HEAD).
-  - `confirmation`: Required string literal `"PROMOTE"`.
+  - `target_sha`: Commit SHA from `main` to promote (default: latest HEAD of `main`).
 - **Checks Verification**: Queries `gh api "repos/${{ github.repository }}/commits/${TARGET_SHA}/check-runs"`. Enforces that every required test and build verification from `main.yml` has `conclusion: "success"`.
 - **Action**: Atomically fast-forwards `release`:
 
@@ -102,28 +115,41 @@ graph TD
   git push origin "${TARGET_SHA}:refs/heads/release"
   ```
 
-### 3.3. `release.yml` — Production Release & Deployment
+- **Independent**: Does **not** automatically trigger releases; synchronizes branches cleanly.
 
-- **Trigger**: `push` to `release` or manual `workflow_dispatch` with SemVer bump choice (`patch`, `minor`, `major`, `none`).
-- **Preflight**: Runs static typecheck and architectural boundary tests (~8s).
-- **Build**: Compiles production package and archives `vibrant-castle-web.zip`.
-- **Release**: Calculates SemVer tag `vX.Y.Z`, creates Git tag, and publishes GitHub Release with auto-generated notes.
-- **Pages Deployment**: Uses `actions/upload-pages-artifact@v3` and `actions/deploy-pages@v4` in `environment: github-pages`.
-- **Smoke Check**: Verifies live URL `https://beoarcha.github.io/vibrant_castle/` returns `HTTP 200 OK`.
+### 3.3. `release.yml` — Production Game Release
+
+- **Trigger**: Strictly manual `workflow_dispatch`.
+- **Inputs**:
+  - `target_ref`: Git reference to release from (default: `release`, allows `main` or specific tag/branch).
+  - `version_bump`: SemVer bump mode (`patch`, `minor`, `major`, `none`).
+- **Preflight**: Runs static typecheck and architectural boundary tests.
+- **Build**: Compiles production game client from `src/` only and packages `vibrant-castle-game.zip`.
+- **Release**: Calculates SemVer tag `vX.Y.Z`, creates Git tag, and publishes GitHub Release with auto-generated notes and attached game client zip.
+
+### 3.4. `deploy-pages.yml` — Documentation & Portal Deployment
+
+- **Trigger**:
+  - `release`: `types: [published]` (automatically triggers upon new GitHub Release).
+  - `workflow_dispatch`: Manual trigger (with optional `release_tag` input, defaulting to latest release).
+  - `push`: On `release` branch when `docs/wiki/**` files change.
+- **Action**:
+  - Downloads `vibrant-castle-game.zip` from the specified or latest release.
+  - Mounts game client into `dist/game/` and copies `docs/wiki/` to `dist/` root.
+  - Generates `dist/.nojekyll`.
+  - Deploys bundle to GitHub Pages via `actions/deploy-pages@v4`.
+  - Performs live HTTP 200 verification on `https://beoarcha.github.io/vibrant_castle/`.
 
 ---
 
 ## 4. GitHub Repository Configuration Requirements
 
-To complete end-to-end automation on GitHub:
-
 1. **GitHub Pages Settings**:
    - Navigate to **Settings $\rightarrow$ Pages**.
    - Under **Build and deployment $\rightarrow$ Source**, select **GitHub Actions**.
 2. **Branch Protection Rules**:
-   - **`main`**: Require pull request reviews, require status checks to pass (`typecheck`, `lint`, `unit`, `integration`, `architecture`, `e2e`, `build-verify`).
+   - **`main`**: Require status checks to pass (`Stage 1: Typecheck`, `Stage 1: Lint`, `Stage 2: Unit Tests & Coverage`, `Stage 2: Integration Tests & Coverage`, `Stage 2: Coverage Quality Gate`, `Stage 2: Architecture Boundary Tests`, `Stage 2: E2E Smoke Tests`, `Stage 3: Build Verification`).
    - **`release`**: Restrict pushes to GitHub Actions bot (`github-actions[bot]`).
 3. **Actions Permissions**:
    - Under **Settings $\rightarrow$ Actions $\rightarrow$ General**:
      - **Workflow permissions**: Select **Read and write permissions**.
-     - Check **Allow GitHub Actions to create and approve pull requests**.

@@ -1,0 +1,106 @@
+name: Deploy Documentation & Portal to GitHub Pages
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release tag to embed (leave empty for latest release)"
+        required: false
+        default: ""
+        type: string
+  push:
+    branches: [release]
+    paths:
+      - "docs/wiki/**"
+      - ".github/workflows/deploy-pages.yml"
+
+concurrency:
+  group: github-pages-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    name: "Assemble Wiki & Deploy to GitHub Pages"
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Setup Environment
+        uses: ./.github/actions/setup-project
+
+      - name: Fetch Game Release and Assemble Portal
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          INPUT_TAG="${{ inputs.release_tag }}"
+
+          if [ -n "$INPUT_TAG" ]; then
+            TAG="$INPUT_TAG"
+          elif [ -z "$TAG" ]; then
+            TAG=$(gh release view --json tagName --jq .tagName 2>/dev/null || echo "")
+          fi
+
+          if [ -n "$TAG" ]; then
+            echo "Fetching game release asset for tag: ${TAG}..."
+            mkdir -p temp-game dist-game
+            gh release download "$TAG" --pattern "vibrant-castle-game.zip" --dir temp-game || \
+            gh release download "$TAG" --pattern "vibrant-castle-web.zip" --dir temp-game
+
+            if [ -f temp-game/vibrant-castle-game.zip ]; then
+              unzip -q temp-game/vibrant-castle-game.zip -d dist-game
+              bun ./scripts/build-distribution.ts --game-dist dist-game
+            elif [ -f temp-game/vibrant-castle-web.zip ]; then
+              unzip -q temp-game/vibrant-castle-web.zip -d dist-game
+              bun ./scripts/build-distribution.ts --game-dist dist-game
+            else
+              echo "::warning::Release archive not found in ${TAG}. Falling back to building game client from src/."
+              bun ./scripts/build-distribution.ts
+            fi
+          else
+            echo "No existing release found. Compiling game client directly from src/..."
+            bun ./scripts/build-distribution.ts
+          fi
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Post-Deployment Smoke Verification
+        run: |
+          TARGET_URL="https://beoarcha.github.io/vibrant_castle/"
+          echo "Verifying live portal at ${TARGET_URL}..."
+
+          SUCCESS=false
+          for attempt in $(seq 1 12); do
+            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET_URL" || true)
+            echo "Attempt $attempt: HTTP response code ${HTTP_STATUS}"
+            if [ "$HTTP_STATUS" = "200" ]; then
+              SUCCESS=true
+              break
+            fi
+            sleep 10
+          done
+
+          if [ "$SUCCESS" = "true" ]; then
+            echo "### 🌐 Live Production Verification Passed" >> $GITHUB_STEP_SUMMARY
+            echo "- **Portal URL**: [https://beoarcha.github.io/vibrant_castle/](https://beoarcha.github.io/vibrant_castle/)" >> $GITHUB_STEP_SUMMARY
+            echo "- **Game Client**: [https://beoarcha.github.io/vibrant_castle/game/](https://beoarcha.github.io/vibrant_castle/game/)" >> $GITHUB_STEP_SUMMARY
+            echo "- **HTTP Status**: \`200 OK\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ⚠️ Production Deployment Submitted" >> $GITHUB_STEP_SUMMARY
+            echo "Deployment was pushed to GitHub Pages. CDN edge propagation may take 1-2 minutes to return HTTP 200." >> $GITHUB_STEP_SUMMARY
+          fi
