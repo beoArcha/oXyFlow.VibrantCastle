@@ -6,6 +6,11 @@ import {
   type TextWeight,
   type TextSize,
   type TextVariant,
+  type TextTransform,
+  type TextTracking,
+  type TextDecoration,
+  type TextLeading,
+  type TextAlign,
   type TextVariantProps,
 } from "./typographyVariants";
 
@@ -13,7 +18,18 @@ export type TextAs = "span" | "div" | "strong" | "em" | "small";
 
 export interface TextProps
   extends React.HTMLAttributes<HTMLElement>,
-    Omit<TextVariantProps, "family" | "weight" | "size" | "variant"> {
+    Omit<
+      TextVariantProps,
+      | "family"
+      | "weight"
+      | "size"
+      | "variant"
+      | "transform"
+      | "tracking"
+      | "decoration"
+      | "leading"
+      | "align"
+    > {
   /** Underlying HTML tag to render. Defaults to 'span'. */
   as?: TextAs;
   /** Typography font family */
@@ -24,6 +40,16 @@ export interface TextProps
   size?: TextSize;
   /** Visual presentation theme */
   variant?: TextVariant;
+  /** Text transformation case */
+  transform?: TextTransform;
+  /** Letter spacing */
+  tracking?: TextTracking;
+  /** Text decoration (underline, line-through) */
+  decoration?: TextDecoration;
+  /** Line height */
+  leading?: TextLeading;
+  /** Text alignment */
+  align?: TextAlign;
 }
 
 /**
@@ -37,6 +63,11 @@ export const Text = React.memo(
       weight = "normal",
       size,
       variant = "default",
+      transform,
+      tracking,
+      decoration,
+      leading,
+      align,
       uppercase = false,
       italic = false,
       truncate = false,
@@ -59,6 +90,11 @@ export const Text = React.memo(
             weight,
             size,
             variant,
+            transform,
+            tracking,
+            decoration,
+            leading,
+            align,
             uppercase,
             italic,
             truncate,

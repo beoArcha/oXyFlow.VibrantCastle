@@ -109,7 +109,7 @@ export const HUDPlayerStatusCard: React.FC<HUDPlayerStatusCardProps> = React.mem
             +{effectiveSkillPoints} {t("skillPointsUnit")}
           </Button>
         ) : effectivePlayerNumber === 2 ? (
-          <Badge variant="cyan" className="text-[10px]">
+          <Badge variant="cyan" size="sm">
             Co-op
           </Badge>
         ) : null}

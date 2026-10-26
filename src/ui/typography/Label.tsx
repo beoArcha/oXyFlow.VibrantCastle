@@ -4,6 +4,9 @@ import {
   labelVariants,
   type LabelVariant,
   type LabelSize,
+  type LabelWeight,
+  type LabelTransform,
+  type LabelTracking,
   type LabelVariantProps,
 } from "./typographyVariants";
 
@@ -11,7 +14,10 @@ export type LabelAs = "label" | "span";
 
 export interface LabelProps
   extends React.LabelHTMLAttributes<HTMLLabelElement>,
-    Omit<LabelVariantProps, "variant" | "size" | "weight"> {
+    Omit<
+      LabelVariantProps,
+      "variant" | "size" | "weight" | "transform" | "tracking"
+    > {
   /** Underlying tag to render. Defaults to 'label'. */
   as?: LabelAs;
   /** Visual presentation theme */
@@ -19,7 +25,11 @@ export interface LabelProps
   /** Size variant */
   size?: LabelSize;
   /** Font weight */
-  weight?: NonNullable<LabelVariantProps["weight"]>;
+  weight?: LabelWeight;
+  /** Text transform */
+  transform?: LabelTransform;
+  /** Letter spacing */
+  tracking?: LabelTracking;
   /** Indicates field is mandatory by appending an accessible asterisk */
   required?: boolean;
 }
@@ -34,6 +44,8 @@ export const Label = React.memo(
       variant = "default",
       size = "xs",
       weight = "medium",
+      transform,
+      tracking,
       uppercase = false,
       required = false,
       children,
@@ -49,7 +61,10 @@ export const Label = React.memo(
       {
         ref,
         "data-slot": "label",
-        className: cn(labelVariants({ variant, size, weight, uppercase }), className),
+        className: cn(
+          labelVariants({ variant, size, weight, transform, tracking, uppercase }),
+          className
+        ),
         ...props,
       },
       children,

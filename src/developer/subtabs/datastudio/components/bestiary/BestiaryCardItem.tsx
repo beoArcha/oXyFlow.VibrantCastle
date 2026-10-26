@@ -1,6 +1,6 @@
 import React from "react";
 import { Heart, Swords, Zap, Sparkles } from "lucide-react";
-import { Card, Badge, Heading, Text } from "@ui";
+import { Card, Badge, Heading, Text, IconText } from "@ui";
 import { EnemyJsonSchema } from "@lib/schemas/enemySchema";
 import { cn } from "@lib/utils";
 
@@ -93,34 +93,49 @@ export const BestiaryCardItem: React.FC<BestiaryCardItemProps> = React.memo(
         </div>
 
         <div className="grid grid-cols-3 gap-1.5 pt-2 border-t border-stone-800/70 text-xs w-full">
-          <div className="flex items-center gap-1 text-rose-400" title="Health">
-            <Heart className="w-3 h-3 shrink-0" />
-            <Text as="span" size="2xs" weight="semibold" className="truncate">
-              {enemy.stats?.health ?? 0}
-            </Text>
-          </div>
+          <IconText
+            icon={<Heart className="w-3 h-3 shrink-0" />}
+            size="2xs"
+            weight="semibold"
+            variant="danger"
+            className="truncate"
+            title="Health"
+          >
+            {enemy.stats?.health ?? 0}
+          </IconText>
 
-          <div className="flex items-center gap-1 text-amber-400" title="Attack Power">
-            <Swords className="w-3 h-3 shrink-0" />
-            <Text as="span" size="2xs" weight="semibold" className="truncate">
-              {enemy.stats?.attackPower ?? 0}
-            </Text>
-          </div>
+          <IconText
+            icon={<Swords className="w-3 h-3 shrink-0" />}
+            size="2xs"
+            weight="semibold"
+            variant="amber"
+            className="truncate"
+            title="Attack Power"
+          >
+            {enemy.stats?.attackPower ?? 0}
+          </IconText>
 
-          <div className="flex items-center gap-1 text-cyan-400" title="Speed">
-            <Zap className="w-3 h-3 shrink-0" />
-            <Text as="span" size="2xs" weight="semibold" className="truncate">
-              {enemy.stats?.speed ?? 0}
-            </Text>
-          </div>
+          <IconText
+            icon={<Zap className="w-3 h-3 shrink-0" />}
+            size="2xs"
+            weight="semibold"
+            variant="info"
+            className="truncate"
+            title="Speed"
+          >
+            {enemy.stats?.speed ?? 0}
+          </IconText>
         </div>
 
         {enemy.soulDrop && (
-          <div className="mt-2 flex items-center justify-between text-[10px] text-purple-300 bg-purple-950/30 px-2 py-0.5 rounded border border-purple-800/40">
-            <span className="flex items-center gap-1">
-              <Sparkles className="w-2.5 h-2.5" />
+          <div className="mt-2 flex items-center justify-between text-2xs text-purple-300 bg-purple-950/30 px-2 py-0.5 rounded border border-purple-800/40">
+            <IconText
+              icon={<Sparkles className="w-2.5 h-2.5" />}
+              size="2xs"
+              className="text-purple-300"
+            >
               {enemy.soulDrop.type}
-            </span>
+            </IconText>
             <Text as="span" family="mono" size="3xs" className="text-stone-400">
               {Math.round(enemy.soulDrop.dropRate * 100)}%
             </Text>

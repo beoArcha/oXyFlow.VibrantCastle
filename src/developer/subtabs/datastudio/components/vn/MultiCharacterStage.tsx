@@ -1,7 +1,7 @@
 import React from "react";
 import { BookOpen, Skull, Volume2, User } from "lucide-react";
 import { CharacterPortrait } from "@game-menu/character/CharacterPortrait";
-import { Text } from "@ui";
+import { Text, IconText } from "@ui";
 import { StageActor } from "../../types/visualNovelStudioTypes";
 import { useI18n } from "@context/I18nContext";
 
@@ -79,16 +79,16 @@ export const MultiCharacterStage: React.FC<MultiCharacterStageProps> = ({
           )}
 
           {isSpeaking && (
-            <Text
+            <IconText
+              icon={<Volume2 size={10} />}
               as="span"
               weight="black"
-              uppercase
+              transform="uppercase"
               size="3xs"
-              className="absolute -top-2.5 -right-2 bg-amber-500 text-stone-950 px-1.5 py-0.5 rounded-full shadow flex items-center gap-0.5"
+              className="absolute -top-2.5 -right-2 bg-amber-500 text-stone-950 px-1.5 py-0.5 rounded-full shadow gap-0.5"
             >
-              <Volume2 size={10} />
-              <span>Voice</span>
-            </Text>
+              Voice
+            </IconText>
           )}
         </div>
 
@@ -120,11 +120,18 @@ export const MultiCharacterStage: React.FC<MultiCharacterStageProps> = ({
       </Text>
 
       {isNarratorSpeaking && (
-        <div className="self-center z-20 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-950/90 border border-amber-500/70 text-amber-300 shadow-md animate-pulse">
-          <BookOpen size={14} className="text-amber-400 shrink-0" />
-          <Text as="span" family="serif" size="xs" weight="bold" uppercase className="tracking-wider">
+        <div className="self-center z-20 px-3.5 py-1.5 rounded-full bg-amber-950/90 border border-amber-500/70 shadow-md animate-pulse">
+          <IconText
+            icon={<BookOpen size={14} className="text-amber-400 shrink-0" />}
+            family="serif"
+            size="xs"
+            weight="bold"
+            transform="uppercase"
+            tracking="wider"
+            className="text-amber-300 gap-2"
+          >
             {t("dataStudioVnSpeakerNarrator")}
-          </Text>
+          </IconText>
         </div>
       )}
 

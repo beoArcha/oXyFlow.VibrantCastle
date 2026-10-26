@@ -1,6 +1,6 @@
 import React from "react";
 import { Sparkles, Compass } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Paragraph, Text, IconText } from "@ui";
+import { Card, CardHeader, CardTitle, CardContent, Paragraph, Text, IconText, List, ListItem } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 
@@ -33,28 +33,28 @@ export const GameCombatTipsSection = ({
           <Text family="serif" weight="bold" size="sm" variant="amber" className="block mb-1">
             {t("directionalAimingTitle")}:
           </Text>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-stone-300">
-            <li>
+          <List variant="none" columns={2} className="gap-1.5 text-stone-300">
+            <ListItem>
               <IconText size="xs" icon={<Compass size={12} className="text-amber-400" />}>
                 {t("aimStraightUp")}
               </IconText>
-            </li>
-            <li>
+            </ListItem>
+            <ListItem>
               <IconText size="xs" icon={<Compass size={12} className="text-amber-400" />}>
                 {t("aim45Up")}
               </IconText>
-            </li>
-            <li>
+            </ListItem>
+            <ListItem>
               <IconText size="xs" icon={<Compass size={12} className="text-amber-400" />}>
                 {t("aim45Down")}
               </IconText>
-            </li>
-            <li>
+            </ListItem>
+            <ListItem>
               <IconText size="xs" icon={<Compass size={12} className="text-amber-400" />}>
                 {t("aimStraightDown")}
               </IconText>
-            </li>
-          </ul>
+            </ListItem>
+          </List>
         </div>
       </CardContent>
     </Card>

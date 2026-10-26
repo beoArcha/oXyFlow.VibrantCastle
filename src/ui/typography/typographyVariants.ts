@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 /**
  * CVA styling definitions for Gothic Castle semantic headings (h1..h6).
  */
-export const headingVariants = cva("font-serif tracking-wide select-none transition-colors", {
+export const headingVariants = cva("font-serif select-none transition-colors", {
   variants: {
     variant: {
       gothic: "text-amber-400 font-black tracking-wider",
@@ -23,6 +23,36 @@ export const headingVariants = cva("font-serif tracking-wide select-none transit
       "3xl": "text-3xl md:text-4xl",
       "4xl": "text-4xl md:text-5xl",
     },
+    weight: {
+      normal: "font-normal",
+      medium: "font-medium",
+      semibold: "font-semibold",
+      bold: "font-bold",
+      black: "font-black",
+    },
+    tracking: {
+      tight: "tracking-tight",
+      normal: "tracking-normal",
+      wide: "tracking-wide",
+      wider: "tracking-wider",
+      widest: "tracking-widest",
+    },
+    align: {
+      left: "text-left",
+      center: "text-center",
+      right: "text-right",
+    },
+    transform: {
+      uppercase: "uppercase",
+      capitalize: "capitalize",
+      lowercase: "lowercase",
+      "normal-case": "normal-case",
+      none: "",
+    },
+    italic: {
+      true: "italic",
+      false: "",
+    },
     dropShadow: {
       true: "drop-shadow-md",
       false: "",
@@ -35,6 +65,7 @@ export const headingVariants = cva("font-serif tracking-wide select-none transit
   defaultVariants: {
     variant: "default",
     size: "base",
+    tracking: "wide",
     dropShadow: false,
     truncate: false,
   },
@@ -42,6 +73,10 @@ export const headingVariants = cva("font-serif tracking-wide select-none transit
 
 export type HeadingVariant = NonNullable<VariantProps<typeof headingVariants>["variant"]>;
 export type HeadingSize = NonNullable<VariantProps<typeof headingVariants>["size"]>;
+export type HeadingWeight = NonNullable<VariantProps<typeof headingVariants>["weight"]>;
+export type HeadingTracking = NonNullable<VariantProps<typeof headingVariants>["tracking"]>;
+export type HeadingAlign = NonNullable<VariantProps<typeof headingVariants>["align"]>;
+export type HeadingTransform = NonNullable<VariantProps<typeof headingVariants>["transform"]>;
 export type HeadingVariantProps = VariantProps<typeof headingVariants>;
 
 /**
@@ -59,11 +94,27 @@ export const paragraphVariants = cva("leading-relaxed", {
       danger: "text-red-400 font-sans",
     },
     size: {
-      "2xs": "text-[11px]",
+      micro: "text-[8px]",
+      "3xs": "text-[9px]",
+      "2xs": "text-[10px]",
       xs: "text-xs",
       sm: "text-sm",
       base: "text-base",
       lg: "text-lg",
+    },
+    align: {
+      left: "text-left",
+      center: "text-center",
+      right: "text-right",
+      justify: "text-justify",
+    },
+    leading: {
+      none: "leading-none",
+      tight: "leading-tight",
+      snug: "leading-snug",
+      normal: "leading-normal",
+      relaxed: "leading-relaxed",
+      loose: "leading-loose",
     },
     italic: {
       true: "italic",
@@ -79,6 +130,8 @@ export const paragraphVariants = cva("leading-relaxed", {
 
 export type ParagraphVariant = NonNullable<VariantProps<typeof paragraphVariants>["variant"]>;
 export type ParagraphSize = NonNullable<VariantProps<typeof paragraphVariants>["size"]>;
+export type ParagraphAlign = NonNullable<VariantProps<typeof paragraphVariants>["align"]>;
+export type ParagraphLeading = NonNullable<VariantProps<typeof paragraphVariants>["leading"]>;
 export type ParagraphVariantProps = VariantProps<typeof paragraphVariants>;
 
 /**
@@ -99,8 +152,9 @@ export const textVariants = cva("transition-colors", {
       black: "font-black",
     },
     size: {
+      micro: "text-[8px]",
       "3xs": "text-[9px]",
-      "2xs": "text-[11px]",
+      "2xs": "text-[10px]",
       xs: "text-xs",
       sm: "text-sm",
       base: "text-base",
@@ -118,6 +172,40 @@ export const textVariants = cva("transition-colors", {
       success: "text-emerald-400",
       info: "text-sky-400",
       white: "text-stone-100",
+    },
+    transform: {
+      uppercase: "uppercase",
+      capitalize: "capitalize",
+      lowercase: "lowercase",
+      "normal-case": "normal-case",
+      none: "",
+    },
+    tracking: {
+      tighter: "tracking-tighter",
+      tight: "tracking-tight",
+      normal: "tracking-normal",
+      wide: "tracking-wide",
+      wider: "tracking-wider",
+      widest: "tracking-widest",
+      none: "",
+    },
+    decoration: {
+      underline: "underline underline-offset-2",
+      "line-through": "line-through",
+      none: "no-underline",
+    },
+    leading: {
+      none: "leading-none",
+      tight: "leading-tight",
+      snug: "leading-snug",
+      normal: "leading-normal",
+      relaxed: "leading-relaxed",
+      loose: "leading-loose",
+    },
+    align: {
+      left: "text-left",
+      center: "text-center",
+      right: "text-right",
     },
     uppercase: {
       true: "uppercase tracking-wider",
@@ -147,6 +235,11 @@ export type TextFamily = NonNullable<VariantProps<typeof textVariants>["family"]
 export type TextWeight = NonNullable<VariantProps<typeof textVariants>["weight"]>;
 export type TextSize = NonNullable<VariantProps<typeof textVariants>["size"]>;
 export type TextVariant = NonNullable<VariantProps<typeof textVariants>["variant"]>;
+export type TextTransform = NonNullable<VariantProps<typeof textVariants>["transform"]>;
+export type TextTracking = NonNullable<VariantProps<typeof textVariants>["tracking"]>;
+export type TextDecoration = NonNullable<VariantProps<typeof textVariants>["decoration"]>;
+export type TextLeading = NonNullable<VariantProps<typeof textVariants>["leading"]>;
+export type TextAlign = NonNullable<VariantProps<typeof textVariants>["align"]>;
 export type TextVariantProps = VariantProps<typeof textVariants>;
 
 /**
@@ -161,7 +254,9 @@ export const labelVariants = cva("font-sans select-none block", {
       subtle: "text-stone-500",
     },
     size: {
-      "2xs": "text-[11px]",
+      micro: "text-[8px]",
+      "3xs": "text-[9px]",
+      "2xs": "text-[10px]",
       xs: "text-xs",
       sm: "text-sm",
       base: "text-base",
@@ -171,6 +266,20 @@ export const labelVariants = cva("font-sans select-none block", {
       medium: "font-medium",
       semibold: "font-semibold",
       bold: "font-bold",
+    },
+    transform: {
+      uppercase: "uppercase",
+      capitalize: "capitalize",
+      lowercase: "lowercase",
+      "normal-case": "normal-case",
+      none: "",
+    },
+    tracking: {
+      tight: "tracking-tight",
+      normal: "tracking-normal",
+      wide: "tracking-wide",
+      wider: "tracking-wider",
+      widest: "tracking-widest",
     },
     uppercase: {
       true: "uppercase tracking-wider",
@@ -187,6 +296,9 @@ export const labelVariants = cva("font-sans select-none block", {
 
 export type LabelVariant = NonNullable<VariantProps<typeof labelVariants>["variant"]>;
 export type LabelSize = NonNullable<VariantProps<typeof labelVariants>["size"]>;
+export type LabelWeight = NonNullable<VariantProps<typeof labelVariants>["weight"]>;
+export type LabelTransform = NonNullable<VariantProps<typeof labelVariants>["transform"]>;
+export type LabelTracking = NonNullable<VariantProps<typeof labelVariants>["tracking"]>;
 export type LabelVariantProps = VariantProps<typeof labelVariants>;
 
 /**
@@ -202,6 +314,8 @@ export const codeVariants = cva("font-mono font-normal inline-block select-text"
       plain: "text-stone-300 bg-transparent p-0 border-0",
     },
     size: {
+      micro: "text-[8px]",
+      "3xs": "text-[9px]",
       "2xs": "text-[10px]",
       xs: "text-xs",
       sm: "text-sm",

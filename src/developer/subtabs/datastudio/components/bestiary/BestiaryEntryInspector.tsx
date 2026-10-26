@@ -19,6 +19,8 @@ import {
   ProgressBar,
   Heading,
   Text,
+  IconText,
+  MetaItem,
 } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { EnemyJsonSchema } from "@lib/schemas/enemySchema";
@@ -263,7 +265,7 @@ export const BestiaryEntryInspector: React.FC<BestiaryEntryInspectorProps> = Rea
                       key={element}
                       variant={isResistant ? "green" : isWeak ? "red" : "stone"}
                     >
-                      <span className="capitalize">{element}:</span>
+                      <Text as="span" transform="capitalize">{element}:</Text>
                       <Text as="span" family="mono" weight="bold">
                         {percent > 0 ? `+${percent}%` : `${percent}%`}
                       </Text>
@@ -278,56 +280,58 @@ export const BestiaryEntryInspector: React.FC<BestiaryEntryInspectorProps> = Rea
         {enemy.soulDrop && (
           <Card variant="dark" className="flex flex-col gap-2 p-3 border-purple-800/50">
             <div className="flex items-center justify-between">
-              <Text as="span" size="2xs" weight="semibold" uppercase className="text-purple-300 tracking-wider flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5" />
+              <IconText
+                icon={<Sparkles className="w-3.5 h-3.5" />}
+                size="2xs"
+                weight="semibold"
+                transform="uppercase"
+                tracking="wider"
+                className="text-purple-300"
+              >
                 {t("dataStudioBestiarySoulDrop")}
-              </Text>
+              </IconText>
               <Badge variant="purple">
                 {enemy.soulDrop.type}
               </Badge>
             </div>
 
             <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="flex flex-col">
-                <span className="text-stone-400 text-[10px]">
-                  {t("dataStudioBestiaryDropRate")}:
-                </span>
-                <Text as="span" family="mono" weight="bold" className="text-stone-200">
-                  {Math.round(enemy.soulDrop.dropRate * 100)}%
-                </Text>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-stone-400 text-[10px]">
-                  Skill ID:
-                </span>
-                <Text as="span" family="mono" weight="bold" className="text-purple-200 truncate">
-                  {enemy.soulDrop.grantedSkillId}
-                </Text>
-              </div>
+              <MetaItem
+                layout="stacked"
+                label={t("dataStudioBestiaryDropRate")}
+                value={`${Math.round(enemy.soulDrop.dropRate * 100)}%`}
+                mono
+                valueClassName="text-stone-200"
+              />
+              <MetaItem
+                layout="stacked"
+                label="Skill ID"
+                value={enemy.soulDrop.grantedSkillId}
+                mono
+                truncate
+                valueClassName="text-purple-200"
+              />
             </div>
           </Card>
         )}
 
         {enemy.bestiary && (
           <Card variant="dark" className="flex flex-col gap-2 p-3 text-xs">
-            <Text as="span" size="2xs" weight="semibold" uppercase className="text-stone-400 tracking-wider flex items-center gap-1.5">
-              <BookOpen className="w-3.5 h-3.5" />
+            <IconText
+              icon={<BookOpen className="w-3.5 h-3.5" />}
+              size="2xs"
+              weight="semibold"
+              transform="uppercase"
+              tracking="wider"
+              color="stone-400"
+            >
               {t("dataStudioBestiaryLoreQuote")}
-            </Text>
-            <Text as="div" family="mono" size="2xs" className="flex flex-col gap-1 text-stone-300">
-              <div>
-                <span className="text-stone-400">Bestiary Key: </span>
-                <span>{enemy.bestiary.bestiaryKey}</span>
-              </div>
-              <div>
-                <span className="text-stone-400">Tactics Key: </span>
-                <span>{enemy.bestiary.tacticsKey}</span>
-              </div>
-              <div>
-                <span className="text-stone-400">Lore Key: </span>
-                <span>{enemy.bestiary.loreQuoteKey}</span>
-              </div>
-            </Text>
+            </IconText>
+            <div className="flex flex-col gap-1 pt-1">
+              <MetaItem layout="inline" mono label="Bestiary Key" value={enemy.bestiary.bestiaryKey} />
+              <MetaItem layout="inline" mono label="Tactics Key" value={enemy.bestiary.tacticsKey} />
+              <MetaItem layout="inline" mono label="Lore Key" value={enemy.bestiary.loreQuoteKey} />
+            </div>
           </Card>
         )}
       </Card>

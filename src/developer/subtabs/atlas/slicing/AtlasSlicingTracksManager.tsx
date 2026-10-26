@@ -9,6 +9,7 @@ import {
   ConfirmDialog,
   Card,
   Text,
+  IconText,
 } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
@@ -108,10 +109,16 @@ export const AtlasSlicingTracksManager: React.FC<AtlasSlicingTracksManagerProps>
   return (
     <Card variant="subtle" className="p-2.5 gap-2">
       <div className="flex items-center justify-between gap-2">
-        <Text as="span" size="2xs" weight="bold" uppercase className="text-stone-300 tracking-wider flex items-center gap-1.5">
-          <Layers size={13} className="text-amber-400" />
+        <IconText
+          icon={<Layers size={13} className="text-amber-400" />}
+          size="2xs"
+          weight="bold"
+          transform="uppercase"
+          tracking="wider"
+          className="text-stone-300"
+        >
           {t("atlasStudioToggleTracks")} ({tracks.length})
-        </Text>
+        </IconText>
 
         <Button
           size="sm"

@@ -8,7 +8,7 @@ import {
   ZoomOut,
   RotateCcw,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Button, Badge, Text, Paragraph } from "@ui";
+import { Card, CardHeader, CardTitle, CardContent, Button, Badge, Text, Paragraph, IconText, MetaItem } from "@ui";
 import { cn } from "@lib/utils";
 import skillsJson from "@data/skills/skills.json";
 import { calculateDagNodePositions, DagNodePosition } from "@lib/math/dagLayout";
@@ -272,10 +272,13 @@ export const SkillTreeVisualizerCard: React.FC = () => {
             className="p-3 text-xs flex flex-col gap-2 shadow-sm"
           >
             <div className="flex items-center justify-between flex-wrap gap-1">
-              <Text as="span" weight="semibold" className="text-amber-300 flex items-center gap-1.5">
-                <Sparkles size={13} className="text-amber-400 shrink-0" />
+              <IconText
+                icon={<Sparkles size={13} className="text-amber-400 shrink-0" />}
+                weight="semibold"
+                className="text-amber-300"
+              >
                 {t(inspectedSkill.nameKey)} ({inspectedSkill.id})
-              </Text>
+              </IconText>
               <Text as="span" family="mono" className="text-amber-400">
                 {t("dataStudioSkillTreeTier")} {inspectedSkill.tier} | {t("dataStudioSkillTreeCost")}:{" "}
                 {inspectedSkill.pointCost} SP
@@ -284,20 +287,15 @@ export const SkillTreeVisualizerCard: React.FC = () => {
             <Paragraph size="xs" variant="amber" italic className="text-amber-100/80">
               {t(inspectedSkill.descKey)}
             </Paragraph>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 border-t border-amber-900/40 text-[11px] text-amber-200/70">
-              <div>
-                {t("dataStudioSkillTreeMana")}: {inspectedSkill.manaCost}
-              </div>
-              <div>
-                {t("dataStudioSkillTreeStamina")}: {inspectedSkill.staminaCost}
-              </div>
-              <div>
-                {t("dataStudioSkillTreeDamage")}: {inspectedSkill.damage}
-              </div>
-              <div>
-                {t("dataStudioSkillTreeRequires")}:{" "}
-                {inspectedSkill.reqSkillId ?? t("dataStudioSkillTreeRequiresNone")}
-              </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 border-t border-amber-900/40">
+              <MetaItem label={t("dataStudioSkillTreeMana")} value={inspectedSkill.manaCost} size="2xs" />
+              <MetaItem label={t("dataStudioSkillTreeStamina")} value={inspectedSkill.staminaCost} size="2xs" />
+              <MetaItem label={t("dataStudioSkillTreeDamage")} value={inspectedSkill.damage} size="2xs" />
+              <MetaItem
+                label={t("dataStudioSkillTreeRequires")}
+                value={inspectedSkill.reqSkillId ?? t("dataStudioSkillTreeRequiresNone")}
+                size="2xs"
+              />
             </div>
           </Card>
         )}

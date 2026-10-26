@@ -4,6 +4,10 @@ import {
   headingVariants,
   type HeadingVariant,
   type HeadingSize,
+  type HeadingWeight,
+  type HeadingTracking,
+  type HeadingAlign,
+  type HeadingTransform,
   type HeadingVariantProps,
 } from "./typographyVariants";
 
@@ -11,13 +15,26 @@ export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
 export interface HeadingProps
   extends React.HTMLAttributes<HTMLHeadingElement>,
-    Omit<HeadingVariantProps, "variant" | "size"> {
+    Omit<
+      HeadingVariantProps,
+      "variant" | "size" | "weight" | "tracking" | "align" | "transform"
+    > {
   /** Semantic hierarchy heading level (1 to 6). Defaults to 2. */
   level?: HeadingLevel;
   /** Visual presentation theme */
   variant?: HeadingVariant;
   /** Size variant */
   size?: HeadingSize;
+  /** Font weight */
+  weight?: HeadingWeight;
+  /** Letter spacing */
+  tracking?: HeadingTracking;
+  /** Text alignment */
+  align?: HeadingAlign;
+  /** Text case transform */
+  transform?: HeadingTransform;
+  /** Italic styling */
+  italic?: boolean;
   /** Optional icon rendered before heading text */
   icon?: React.ReactNode;
 }
@@ -31,6 +48,11 @@ export const Heading = React.memo(
       level = 2,
       variant = "default",
       size,
+      weight,
+      tracking,
+      align,
+      transform,
+      italic,
       dropShadow = false,
       truncate = false,
       icon,
@@ -49,7 +71,20 @@ export const Heading = React.memo(
         ref,
         "data-slot": "heading",
         "data-level": level,
-        className: cn(headingVariants({ variant, size, dropShadow, truncate }), className),
+        className: cn(
+          headingVariants({
+            variant,
+            size,
+            weight,
+            tracking,
+            align,
+            transform,
+            italic,
+            dropShadow,
+            truncate,
+          }),
+          className
+        ),
         ...props,
       },
       icon ? (

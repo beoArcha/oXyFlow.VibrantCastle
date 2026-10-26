@@ -8,7 +8,7 @@ import {
   Code,
   Sliders,
 } from "lucide-react";
-import { Button, Badge, SegmentedControl, Textarea, ActionBar, Alert, Text } from "@ui";
+import { Button, Badge, SegmentedControl, Textarea, ActionBar, Alert, Text, List, ListItem } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import {
   AtlasGridConfig,
@@ -369,13 +369,13 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
           title={`${t("atlasStudioValidationWarning")}:`}
           className="text-xs"
         >
-          <ul className="list-disc pl-5 text-amber-200/90 space-y-0.5">
+          <List variant="disc" spacing="dense" className="text-amber-200/90 pl-5">
             {validationIssues.map((issue, idx) => (
-              <li key={idx}>
+              <ListItem key={idx}>
                 <Text as="span" family="mono" size="3xs">{issue}</Text>
-              </li>
+              </ListItem>
             ))}
-          </ul>
+          </List>
         </Alert>
       )}
 

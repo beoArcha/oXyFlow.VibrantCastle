@@ -254,4 +254,81 @@ describe("Typography Design System Primitives (@ui)", () => {
       await unmount();
     });
   });
+
+  describe("Typography Modernization Enhancements", () => {
+    it("applies transform ('capitalize', 'lowercase', 'uppercase') cleanly", async () => {
+      const { unmount } = await renderIntoDom(
+        <div>
+          <Text data-testid="cap" transform="capitalize">elemental beast</Text>
+          <Text data-testid="low" transform="lowercase">SHIELD BLOCK</Text>
+          <Text data-testid="upp" transform="uppercase">parry window</Text>
+        </div>
+      );
+
+      expect(document.querySelector("[data-testid='cap']")?.className).toContain("capitalize");
+      expect(document.querySelector("[data-testid='low']")?.className).toContain("lowercase");
+      expect(document.querySelector("[data-testid='upp']")?.className).toContain("uppercase");
+
+      await unmount();
+    });
+
+    it("applies standardized micro-sizes (2xs=10px, micro=8px, 3xs=9px)", async () => {
+      const { unmount } = await renderIntoDom(
+        <div>
+          <Text data-testid="micro" size="micro">Subpixel</Text>
+          <Text data-testid="3xs" size="3xs">Dense</Text>
+          <Text data-testid="2xs" size="2xs">Micro Standard</Text>
+          <Code data-testid="code-2xs" size="2xs">10px Code</Code>
+        </div>
+      );
+
+      expect(document.querySelector("[data-testid='micro']")?.className).toContain("text-[8px]");
+      expect(document.querySelector("[data-testid='3xs']")?.className).toContain("text-[9px]");
+      expect(document.querySelector("[data-testid='2xs']")?.className).toContain("text-[10px]");
+      expect(document.querySelector("[data-testid='code-2xs']")?.className).toContain("text-[10px]");
+
+      await unmount();
+    });
+
+    it("applies tracking, decoration, and leading tokens", async () => {
+      const { unmount } = await renderIntoDom(
+        <div>
+          <Text data-testid="track" tracking="widest">Spaced</Text>
+          <Text data-testid="under" decoration="underline">Linked</Text>
+          <Text data-testid="strike" decoration="line-through">Discounted</Text>
+          <Text data-testid="lead" leading="none">Tight Box</Text>
+        </div>
+      );
+
+      expect(document.querySelector("[data-testid='track']")?.className).toContain("tracking-widest");
+      expect(document.querySelector("[data-testid='under']")?.className).toContain("underline");
+      expect(document.querySelector("[data-testid='strike']")?.className).toContain("line-through");
+      expect(document.querySelector("[data-testid='lead']")?.className).toContain("leading-none");
+
+      await unmount();
+    });
+
+    it("applies heading tracking, weight, align, and italic options", async () => {
+      const { unmount } = await renderIntoDom(
+        <Heading
+          level={2}
+          weight="semibold"
+          tracking="tight"
+          align="center"
+          italic
+          data-testid="heading-opt"
+        >
+          Centered Gothic Subtitle
+        </Heading>
+      );
+
+      const heading = document.querySelector("[data-testid='heading-opt']");
+      expect(heading?.className).toContain("font-semibold");
+      expect(heading?.className).toContain("tracking-tight");
+      expect(heading?.className).toContain("text-center");
+      expect(heading?.className).toContain("italic");
+
+      await unmount();
+    });
+  });
 });

@@ -1,6 +1,6 @@
 import React from "react";
 import { Activity, ExternalLink } from "lucide-react";
-import { Badge, Button, EmptyState, Text } from "@ui";
+import { Badge, Button, EmptyState, Text, IconText } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { LogLevel, LogRecord } from "@lib/logger";
 
@@ -32,10 +32,16 @@ export const AtlasStatusBarLogDrawer: React.FC<AtlasStatusBarLogDrawerProps> = (
   return (
     <div className="flex flex-col border-t border-stone-800 bg-black/90 p-2.5 max-h-[160px] overflow-y-auto custom-scrollbar animate-in slide-in-from-top-2 duration-150 select-none">
       <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-stone-800/80 text-[11px]">
-        <Text as="span" size="2xs" weight="bold" uppercase className="text-stone-400 tracking-wider flex items-center gap-1.5">
-          <Activity size={12} className="text-amber-400" />
+        <IconText
+          icon={<Activity size={12} className="text-amber-400" />}
+          size="2xs"
+          weight="bold"
+          transform="uppercase"
+          tracking="wider"
+          className="text-stone-400"
+        >
           {t("atlasStudioRecentLogs") || "Recent slicer events"}
-        </Text>
+        </IconText>
 
         {onNavigateToLogs && (
           <Button

@@ -11,6 +11,8 @@ import {
   ItemSlot,
   Text,
   Paragraph,
+  MetaItem,
+  Badge,
 } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import itemsJson from "@data/items/items.json";
@@ -131,13 +133,13 @@ export const ItemEditorCard: React.FC = () => {
             <Paragraph size="2xs" variant="muted" italic>
               {draft.descriptionKey ? t(draft.descriptionKey) : draft.descriptionKey}
             </Paragraph>
-            <Text as="div" family="mono" size="2xs" className="flex items-center gap-3 text-stone-300 pt-1 flex-wrap">
-              {draft.attackBonus ? <span>ATK: +{draft.attackBonus}</span> : null}
-              {draft.defenseBonus ? <span>DEF: +{draft.defenseBonus}</span> : null}
-              {draft.maxHpBonus ? <span>HP: +{draft.maxHpBonus}</span> : null}
-              {draft.maxManaBonus ? <span>MP: +{draft.maxManaBonus}</span> : null}
-              {draft.damageType ? <span className="text-amber-300">[{draft.damageType}]</span> : null}
-            </Text>
+            <div className="flex items-center gap-3 text-stone-300 pt-1 flex-wrap">
+              {draft.attackBonus ? <MetaItem label="ATK" value={`+${draft.attackBonus}`} size="2xs" mono /> : null}
+              {draft.defenseBonus ? <MetaItem label="DEF" value={`+${draft.defenseBonus}`} size="2xs" mono /> : null}
+              {draft.maxHpBonus ? <MetaItem label="HP" value={`+${draft.maxHpBonus}`} size="2xs" mono /> : null}
+              {draft.maxManaBonus ? <MetaItem label="MP" value={`+${draft.maxManaBonus}`} size="2xs" mono /> : null}
+              {draft.damageType ? <Badge size="sm" variant="amber" className="text-amber-300">[{draft.damageType}]</Badge> : null}
+            </div>
           </div>
         </div>
 

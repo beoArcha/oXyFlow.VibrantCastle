@@ -1,6 +1,6 @@
 import React from "react";
 import { UserCheck, ChevronRight, BookOpen } from "lucide-react";
-import { Button, Paragraph, Text } from "@ui";
+import { Button, Paragraph, Text, IconText } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { VisualNovelNodeSchema } from "@lib/schemas/visualNovelSchema";
 
@@ -32,19 +32,27 @@ export const DialogueBubble: React.FC<DialogueBubbleProps> = ({
       className={`w-full bg-stone-950/90 border border-amber-800/60 rounded-lg p-3.5 flex flex-col justify-between gap-3 shadow-lg ${className}`}
     >
       <div className="flex flex-col gap-1.5">
-        <Text as="div" size="xs" weight="semibold" className="flex items-center justify-between text-amber-400">
-          <span className="flex items-center gap-1.5">
-            {isNarrator ? (
-              <BookOpen size={14} className="text-amber-400" />
-            ) : (
-              <UserCheck size={14} className="text-amber-300" />
-            )}
-            <span className="uppercase tracking-wider">{activeSpeakerName}</span>
-          </span>
+        <div className="flex items-center justify-between text-amber-400">
+          <IconText
+            icon={
+              isNarrator ? (
+                <BookOpen size={14} className="text-amber-400" />
+              ) : (
+                <UserCheck size={14} className="text-amber-300" />
+              )
+            }
+            size="xs"
+            weight="semibold"
+            transform="uppercase"
+            tracking="wider"
+            variant="amber"
+          >
+            {activeSpeakerName}
+          </IconText>
           <Text as="span" family="mono" size="3xs" className="text-amber-200/50">
             {t("dataStudioVnNodeLabel")}: {node.id}
           </Text>
-        </Text>
+        </div>
         <Paragraph size="xs" variant="amber" italic className="text-amber-100/90 leading-relaxed bg-black/30 p-2.5 rounded border border-amber-950/40">
           "{t(node.dialogueKey)}"
         </Paragraph>

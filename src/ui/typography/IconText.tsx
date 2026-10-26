@@ -7,7 +7,10 @@ import {
   type TextWeight,
   type TextSize,
   type TextVariant,
-  type TextVariantProps,
+  type TextTransform,
+  type TextTracking,
+  type TextDecoration,
+  type TextLeading,
   type IconTextGap,
   type IconTextAlign,
 } from "./typographyVariants";
@@ -40,6 +43,14 @@ export interface IconTextBaseProps {
   size?: TextSize;
   /** Visual presentation theme */
   variant?: TextVariant;
+  /** Text transformation case */
+  transform?: TextTransform;
+  /** Letter spacing */
+  tracking?: TextTracking;
+  /** Text decoration (underline, line-through) */
+  decoration?: TextDecoration;
+  /** Line height */
+  leading?: TextLeading;
   /** Uppercase text transform with letter spacing */
   uppercase?: boolean;
   /** Italic font style */
@@ -84,6 +95,10 @@ export const IconText = React.memo(
       weight = "normal",
       size,
       variant = "default",
+      transform,
+      tracking,
+      decoration,
+      leading,
       uppercase = false,
       italic = false,
       truncate = false,
@@ -128,6 +143,10 @@ export const IconText = React.memo(
             weight,
             size,
             variant,
+            transform,
+            tracking,
+            decoration,
+            leading,
             uppercase,
             italic,
             truncate,

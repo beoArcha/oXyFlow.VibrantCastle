@@ -43,6 +43,10 @@ export const FORBIDDEN_HTML_TAGS_REGISTRY: readonly ForbiddenTagRule[] = [
   { tag: "input", category: "form", replacement: "<Input> or <SearchInput>", reason: "Must use @ui Input instead of raw <input>" },
   { tag: "textarea", category: "form", replacement: "<Textarea>", reason: "Must use @ui Textarea instead of raw <textarea>" },
   { tag: "select", category: "form", replacement: "<Select>", reason: "Must use @ui Select instead of raw <select>" },
+  { tag: "option", category: "form", replacement: "<OptionItem> or Select options prop", reason: "Must use @ui OptionItem or Select options prop instead of raw <option>" },
+  // Lists
+  { tag: "ul", category: "typography", replacement: "<List>", reason: "Must use @ui List instead of raw <ul>" },
+  { tag: "li", category: "typography", replacement: "<ListItem>", reason: "Must use @ui ListItem instead of raw <li>" },
 ];
 
 /**

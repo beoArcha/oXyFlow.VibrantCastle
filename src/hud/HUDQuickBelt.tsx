@@ -69,9 +69,9 @@ export const HUDQuickBelt: React.FC<HUDQuickBeltProps> = React.memo(({
                 <Text weight="bold" size="2xs" className="text-cyan-300 leading-tight">
                   {effectivePrimarySpellName}
                 </Text>
-                <span className="text-[9px] text-cyan-500">
+                <Text size="3xs" className="text-cyan-500">
                   {effectivePrimarySpell.manaCost} {t("manaUnit")}
-                </span>
+                </Text>
               </div>
             </div>
             <KbdKey variant="cyan">{effectivePrimaryKeyLabel}</KbdKey>
@@ -88,9 +88,9 @@ export const HUDQuickBelt: React.FC<HUDQuickBeltProps> = React.memo(({
                 <Text weight="bold" size="2xs" className="text-purple-300 leading-tight">
                   {effectiveSecondarySpellName}
                 </Text>
-                <span className="text-[9px] text-purple-500">
+                <Text size="3xs" className="text-purple-500">
                   {effectiveSecondarySpell.manaCost} {t("manaUnit")}
-                </span>
+                </Text>
               </div>
             </div>
             <KbdKey variant="purple">{effectiveSecondaryKeyLabel}</KbdKey>
@@ -146,7 +146,7 @@ export const HUDQuickBelt: React.FC<HUDQuickBeltProps> = React.memo(({
                     x{pot.count}
                   </Text>
                 )}
-                <Code size="2xs" className="absolute -bottom-1 -right-1 text-[8px] bg-black/80 px-1 rounded text-stone-400">
+                <Code size="micro" className="absolute -bottom-1 -right-1 bg-black/80 px-1 rounded text-stone-400">
                   {pot.keyLabel}
                 </Code>
               </Button>

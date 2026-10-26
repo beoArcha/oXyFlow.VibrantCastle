@@ -8,7 +8,7 @@ import {
   ShieldCheck,
   Eye,
 } from "lucide-react";
-import { Button, Slider, Badge, Switch, SegmentedControl, ColorPickerInput, Card, Text, Paragraph } from "@ui";
+import { Button, Slider, Badge, Switch, SegmentedControl, ColorPickerInput, Card, Text, Paragraph, IconText } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { IAtlasBackgroundConfig } from "./types";
 import { BackgroundProcessor } from "@/game/engine/meta/slicing";
@@ -208,10 +208,16 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
       {currentMode === "color" && (
         <Card variant="subtle" className="p-2.5 flex flex-col gap-2.5">
           <div className="flex items-center justify-between">
-            <Text as="span" size="2xs" weight="bold" uppercase className="text-stone-300 tracking-wider flex items-center gap-1.5">
-              <Pipette size={13} className="text-amber-400" />
+            <IconText
+              icon={<Pipette size={13} className="text-amber-400" />}
+              size="2xs"
+              weight="bold"
+              transform="uppercase"
+              tracking="wider"
+              className="text-stone-300"
+            >
               {t("atlasStudioChromaKeyTitle")}
-            </Text>
+            </IconText>
 
             <Button
               size="sm"
@@ -292,10 +298,14 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
       {/* 3. Export Clean PNG (Bake Alpha) Card */}
       <Card variant="subtle" className="p-3 flex flex-col gap-2 shadow-lg">
         <div className="flex items-center justify-between">
-          <Text as="span" size="xs" weight="bold" className="text-amber-300 flex items-center gap-1.5">
-            <Sparkles size={13} className="text-amber-400" />
+          <IconText
+            icon={<Sparkles size={13} className="text-amber-400" />}
+            size="xs"
+            weight="bold"
+            className="text-amber-300"
+          >
             {t("atlasStudioAlphaBakerTitle")}
-          </Text>
+          </IconText>
           {bakedSuccess && (
             <Badge variant="green">
               <Check size={10} className="mr-0.5 inline" /> {t("atlasStudioDownloadedBadge")}
