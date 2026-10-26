@@ -1,4 +1,4 @@
-name: Production Game Release
+name: 3. Production Game Release
 
 on:
   workflow_dispatch:

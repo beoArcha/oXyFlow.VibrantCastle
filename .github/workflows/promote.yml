@@ -1,4 +1,4 @@
-name: Promote main to release
+name: 2. Promote main to release
 
 on:
   workflow_dispatch:
