@@ -1,7 +1,8 @@
 import React from "react";
 import { Sparkles } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
-import { Paragraph, Text } from "@ui";
+import { Paragraph, Text, IconText } from "@ui";
+import { HUDPanel } from "./components/common/HUDPanel";
 import { cn } from "@lib/utils";
 import type { HUDNarratorBannerProps } from "./types";
 
@@ -13,22 +14,25 @@ export const HUDNarratorBanner: React.FC<HUDNarratorBannerProps> = React.memo(({
 
   if (narration) {
     return (
-      <div
+      <HUDPanel
+        variant="active"
+        borderColor={isAnimating ? "border-amber-400" : "border-amber-500/40"}
+        padding="none"
         className={cn(
-          "max-w-2xl bg-stone-950/90 backdrop-blur-md border border-amber-500/40 rounded-2xl px-5 py-3 shadow-2xl text-center flex flex-col items-center gap-1 transition-all",
-          isAnimating ? "scale-105 border-amber-400" : "scale-100"
+          "max-w-2xl px-5 py-3 text-center flex flex-col items-center gap-1 transition-all",
+          isAnimating ? "scale-105" : "scale-100"
         )}
       >
-        <Text
+        <IconText
           size="2xs"
           weight="black"
           uppercase
           variant="primary"
-          className="flex items-center gap-1.5 tracking-widest"
+          icon={<Sparkles size={12} />}
+          className="tracking-widest"
         >
-          <Sparkles size={12} />
           {t("narratorTitle")}
-        </Text>
+        </IconText>
         <Paragraph
           variant="narrator"
           size="xs"
@@ -36,7 +40,7 @@ export const HUDNarratorBanner: React.FC<HUDNarratorBannerProps> = React.memo(({
         >
           "{narration}"
         </Paragraph>
-      </div>
+      </HUDPanel>
     );
   }
 
@@ -51,3 +55,6 @@ export const HUDNarratorBanner: React.FC<HUDNarratorBannerProps> = React.memo(({
     </Text>
   );
 });
+
+HUDNarratorBanner.displayName = "HUDNarratorBanner";
+export default HUDNarratorBanner;

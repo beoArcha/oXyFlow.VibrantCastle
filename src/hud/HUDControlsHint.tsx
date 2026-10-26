@@ -1,9 +1,10 @@
 import React from "react";
 import { Swords, Wind, VolumeX } from "lucide-react";
-import { Badge, Button, Text, IconText } from "@ui";
+import { Badge, Button, IconText } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { useKeyboard, formatKeyLabel } from "@game-menu/controls";
 import { PlayerId } from "@game/types";
+import { HUDPanel } from "./components/common/HUDPanel";
 import type { HUDControlsHintProps } from "./types";
 
 export type { HUDControlsHintProps };
@@ -25,7 +26,11 @@ export const HUDControlsHint: React.FC<HUDControlsHintProps> = React.memo(({
 
   return (
     <div className="flex flex-col items-end gap-2">
-      <div className="hidden md:flex items-center gap-2 bg-stone-950/80 backdrop-blur-md px-3 py-2 rounded-2xl border border-amber-900/40">
+      <HUDPanel
+        borderColor="border-amber-900/40"
+        padding="none"
+        className="hidden md:flex items-center gap-2 px-3 py-2"
+      >
         <Badge variant="amber" icon={<Swords size={12} />}>
           {t("singlePlayerMode")}
         </Badge>
@@ -40,9 +45,13 @@ export const HUDControlsHint: React.FC<HUDControlsHintProps> = React.memo(({
             {t("enableAudio")}
           </Button>
         )}
-      </div>
+      </HUDPanel>
 
-      <div className="hidden md:flex flex-col gap-2 bg-stone-950/70 backdrop-blur-md p-2.5 rounded-2xl border border-stone-900/60 max-w-[170px] text-[11px] text-stone-400">
+      <HUDPanel
+        variant="subtle"
+        padding="none"
+        className="hidden md:flex flex-col gap-2 p-2.5 max-w-[170px] text-[11px] text-stone-400"
+      >
         <IconText
           as="div"
           weight="bold"
@@ -61,7 +70,10 @@ export const HUDControlsHint: React.FC<HUDControlsHintProps> = React.memo(({
         >
           {t("dashAction")}: [{dashKey}]
         </IconText>
-      </div>
+      </HUDPanel>
     </div>
   );
 });
+
+HUDControlsHint.displayName = "HUDControlsHint";
+export default HUDControlsHint;

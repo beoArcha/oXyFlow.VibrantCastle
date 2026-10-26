@@ -23,3 +23,4 @@ export * from "./ItemSlot";
 export * from "./SettingToggleRow";
 export * from "./SettingOptionCard";
 export * from "./ControlField";
+export * from "./KeyboundButton";

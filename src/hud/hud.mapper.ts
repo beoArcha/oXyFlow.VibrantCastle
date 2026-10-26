@@ -1,6 +1,6 @@
 import { SPELL_REGISTRY } from "@game/logic/magic";
 import { calculatePlayerDerivedStats } from "@game/logic/inventory";
-import { type InventoryState, type Item } from "@game/types";
+import { type EquipmentState, type InventoryState, type Item, type Player } from "@game/types";
 import { resolvePlayerTheme } from "@styles/theme";
 import { clampPositiveInt } from "@lib/math";
 import { getLogger } from "@lib/logger";
@@ -135,12 +135,19 @@ export function resolveQuickBeltVM(
 
 export { resolveViewportCameraProjection } from "@context/GameSessionContext";
 
+export interface PlayerStatsSource {
+  readonly inventory?: {
+    readonly equipment?: Partial<EquipmentState> | null;
+  } | null;
+  readonly unlockedSkills?: readonly string[];
+}
+
 /**
  * Calculates derived stats for a player, shielding UI components from direct @game/logic/inventory imports.
  */
 export function resolvePlayerDerivedStats(
-  player: any | null | undefined
+  player: PlayerStatsSource | null | undefined
 ): PlayerDerivedStats | null {
   if (!player || !player.inventory || !player.inventory.equipment) return null;
-  return calculatePlayerDerivedStats(player);
+  return calculatePlayerDerivedStats(player as unknown as Player);
 }
