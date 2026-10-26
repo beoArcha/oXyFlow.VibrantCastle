@@ -2,7 +2,7 @@ import { GameBaseError } from "./GameBaseError";
 import { UnwrapFailedError } from "./domainErrors";
 
 /**
- * Successful Result class representing a valid computation and carrying value T (LSP).
+ * Successful Result class representing a valid computation and carrying value T.
  */
 export class Ok<T, E = never> {
   public readonly ok = true as const;
@@ -45,7 +45,7 @@ export class Ok<T, E = never> {
 }
 
 /**
- * Failed Result class representing an error condition and carrying error E (LSP).
+ * Failed Result class representing an error condition and carrying error E.
  */
 export class Err<T = never, E = GameBaseError> {
   public readonly ok = false as const;

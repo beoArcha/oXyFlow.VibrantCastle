@@ -97,3 +97,12 @@ export interface IHasErrorCode {
 export interface IHasLogContext {
   toLogContext(): Record<string, unknown>;
 }
+
+/**
+ * Options accepted by domain-specific GameBaseError subclasses.
+ */
+export interface DomainErrorOptions {
+  details?: Record<string, unknown>;
+  cause?: unknown;
+  severity?: ErrorSeverity;
+}

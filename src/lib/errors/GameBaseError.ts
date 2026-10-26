@@ -19,11 +19,12 @@ function serializeCause(cause: unknown): unknown {
     return cause.toLogContext();
   }
   if (cause instanceof Error) {
+    const nextCause = "cause" in cause ? (cause as { cause?: unknown }).cause : undefined;
     return {
       name: cause.name,
       message: cause.message,
       stack: cause.stack,
-      cause: (cause as any).cause ? serializeCause((cause as any).cause) : undefined,
+      cause: nextCause !== undefined ? serializeCause(nextCause) : undefined,
     };
   }
   if (typeof cause === "object") {
@@ -37,7 +38,7 @@ function serializeCause(cause: unknown): unknown {
 }
 
 /**
- * Abstract base class for all typed game and system errors (LSP & OCP).
+ * Abstract base class for all typed game and system errors.
  * Fully compatible with native JavaScript Error and ES2022 cause chaining.
  */
 export abstract class GameBaseError extends Error implements IHasErrorCode, IHasLogContext {
