@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "@lib/utils";
+import { Heading } from "../../typography";
 import { useModalContext } from "./ModalContext";
 
 export interface ModalTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
@@ -17,18 +18,20 @@ export const ModalTitle = React.memo(
     const { titleId } = useModalContext("Title");
 
     return (
-      <h2
+      <Heading
         ref={ref}
+        level={2}
+        variant="gothic"
+        size="lg"
+        dropShadow
+        truncate
+        icon={icon}
         id={id ?? titleId}
-        className={cn(
-          "text-lg md:text-xl font-serif font-black text-primary-400 tracking-wide drop-shadow-md flex items-center gap-2 truncate",
-          className
-        )}
+        className={cn("text-primary-400 tracking-wide", className)}
         {...props}
       >
-        {icon && <span className="flex items-center shrink-0">{icon}</span>}
-        <span>{children}</span>
-      </h2>
+        {children}
+      </Heading>
     );
   })
 );

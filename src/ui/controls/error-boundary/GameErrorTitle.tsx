@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "@lib/utils";
+import { Heading } from "../../typography";
 import { useGameErrorContext } from "./GameErrorContext";
 
 export interface GameErrorTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
@@ -18,16 +19,19 @@ export const GameErrorTitle = React.memo(
     const content = children ?? context.fallbackTitle;
 
     return (
-      <h2
+      <Heading
         ref={ref}
+        level={2}
+        variant="danger"
+        size="xl"
         className={cn(
-          "text-xl font-black text-red-300 tracking-wide uppercase font-serif",
+          "uppercase tracking-wide",
           className
         )}
         {...props}
       >
         {content}
-      </h2>
+      </Heading>
     );
   })
 );

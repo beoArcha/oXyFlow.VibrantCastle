@@ -2,6 +2,7 @@ import React from "react";
 import { AlertTriangle } from "lucide-react";
 import { Dialog } from "../../core/dialog";
 import { Button, type ButtonVariant } from "../../core/button";
+import { Paragraph } from "../../typography";
 
 export interface ConfirmDialogProps {
   isOpen: boolean;
@@ -64,7 +65,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = React.memo(
         </Dialog.Header>
 
         <Dialog.Body className="py-4 text-stone-300 text-sm leading-relaxed">
-          {typeof message === "string" ? <p>{message}</p> : message}
+          {typeof message === "string" ? <Paragraph size="sm">{message}</Paragraph> : message}
         </Dialog.Body>
 
         <Dialog.Footer className="flex items-center justify-end gap-2.5">

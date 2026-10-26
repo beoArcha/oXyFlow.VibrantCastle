@@ -19,5 +19,8 @@ export * from "./rpg";
 // Studio Controls
 export * from "./studio";
 
+// Typography
+export * from "./typography";
+
 // Tokens
 export * from "./tokens";

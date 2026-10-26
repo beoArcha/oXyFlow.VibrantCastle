@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "@lib/utils";
+import { Paragraph } from "../../typography";
 import { useGameErrorContext } from "./GameErrorContext";
 
 export interface GameErrorDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {
@@ -18,13 +19,14 @@ export const GameErrorDescription = React.memo(
     const content = children ?? context.fallbackMessage;
 
     return (
-      <p
+      <Paragraph
         ref={ref}
-        className={cn("text-xs text-stone-400 max-w-md mx-auto leading-relaxed", className)}
+        size="xs"
+        className={cn("text-stone-400 max-w-md mx-auto", className)}
         {...props}
       >
         {content}
-      </p>
+      </Paragraph>
     );
   })
 );

@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "@lib/utils";
+import { Heading, Paragraph } from "../typography";
 
 export interface EmptyStateProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   readonly icon?: React.ReactNode;
@@ -34,24 +35,21 @@ export const EmptyState = React.memo(
         )}
 
         <div className="flex flex-col gap-1 max-w-sm">
-          <h4
-            className={cn(
-              "font-bold text-stone-300",
-              compact ? "text-xs" : "text-sm"
-            )}
+          <Heading
+            level={4}
+            size={compact ? "xs" : "sm"}
+            className="text-stone-300 font-bold"
           >
             {title}
-          </h4>
+          </Heading>
 
           {description && (
-            <p
-              className={cn(
-                "text-stone-500 leading-relaxed",
-                compact ? "text-[11px]" : "text-xs"
-              )}
+            <Paragraph
+              variant="subtle"
+              size={compact ? "2xs" : "xs"}
             >
               {description}
-            </p>
+            </Paragraph>
           )}
         </div>
 

@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "@lib/utils";
+import { Heading, Paragraph } from "../../typography";
 import { cardVariants, type CardVariant, type CardVariantProps } from "./card-variants";
 
 export interface CardProps
@@ -40,18 +41,17 @@ export const CardTitle = React.memo(
     ref
   ) {
     return (
-      <h3
+      <Heading
         ref={ref}
+        level={3}
+        size="base"
         data-slot="card-title"
-        className={cn(
-          "text-sm md:text-base font-bold text-amber-lighter flex items-center gap-2",
-          className
-        )}
+        icon={icon}
+        className={cn("font-bold text-amber-lighter", className)}
         {...props}
       >
-        {icon && <span className="text-amber-primary flex items-center shrink-0">{icon}</span>}
-        <span>{children}</span>
-      </h3>
+        {children}
+      </Heading>
     );
   })
 );
@@ -61,14 +61,15 @@ export const CardDescription = React.memo(
   React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
     function CardDescription({ children, className, ...props }, ref) {
       return (
-        <p
+        <Paragraph
           ref={ref}
+          size="xs"
           data-slot="card-description"
-          className={cn("text-xs text-border-accent font-normal leading-relaxed", className)}
+          className={cn("text-border-accent font-normal", className)}
           {...props}
         >
           {children}
-        </p>
+        </Paragraph>
       );
     }
   )

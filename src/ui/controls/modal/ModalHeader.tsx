@@ -4,6 +4,7 @@ import { cn } from "@lib/utils";
 import { useModalContext } from "./ModalContext";
 import { ModalTitle } from "./ModalTitle";
 import { ModalCloseButton } from "./ModalCloseButton";
+import { Paragraph } from "../../typography";
 
 export interface ModalHeaderProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
@@ -59,7 +60,9 @@ export const ModalHeader = React.memo(
                 title
               )}
               {subtitle && (
-                <p className="text-xs text-stone-300 font-sans mt-0.5 truncate">{subtitle}</p>
+                <Paragraph size="xs" className="text-stone-300 mt-0.5 truncate">
+                  {subtitle}
+                </Paragraph>
               )}
             </div>
           </div>
