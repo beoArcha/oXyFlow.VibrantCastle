@@ -1,5 +1,5 @@
 import { ILogger } from "./types";
-import { getLogger } from "./Logger";
+import { getLogger } from "./LoggerManager";
 import { ErrorCode, SystemError } from "../errors";
 
 let isInitialized = false;

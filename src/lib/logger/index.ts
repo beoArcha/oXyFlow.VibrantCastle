@@ -1,5 +1,7 @@
 export * from "./types";
+export * from "./loggerEnv";
 export * from "./Logger";
+export * from "./LoggerManager";
 export * from "./formatters/DefaultFormatter";
 export * from "./transports/ConsoleTransport";
 export * from "./transports/RingBufferTransport";

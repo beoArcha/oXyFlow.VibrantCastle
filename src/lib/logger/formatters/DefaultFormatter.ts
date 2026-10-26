@@ -1,32 +1,35 @@
 import { ILogFormatter, LogLevel, LogRecord, SerializedError } from "../types";
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
 export function serializeError(error: unknown): SerializedError | undefined {
   if (!error) return undefined;
 
   if (error instanceof Error) {
-    const errObj = error as any;
+    const record = error as unknown as Record<string, unknown>;
     return {
       name: error.name,
       message: error.message,
       stack: error.stack,
-      cause: errObj.cause,
-      code: typeof errObj.code === "string" ? errObj.code : undefined,
-      domain: typeof errObj.domain === "string" ? errObj.domain : undefined,
-      details: errObj.details && typeof errObj.details === "object" ? errObj.details : undefined,
+      cause: record.cause,
+      code: typeof record.code === "string" ? record.code : undefined,
+      domain: typeof record.domain === "string" ? record.domain : undefined,
+      details: isRecord(record.details) ? record.details : undefined,
     };
   }
 
-  if (typeof error === "object") {
+  if (isRecord(error)) {
     try {
-      const errObj = error as any;
       return {
-        name: errObj.name || "Error",
-        message: errObj.message || JSON.stringify(error),
-        stack: errObj.stack,
-        cause: errObj.cause,
-        code: typeof errObj.code === "string" ? errObj.code : undefined,
-        domain: typeof errObj.domain === "string" ? errObj.domain : undefined,
-        details: errObj.details && typeof errObj.details === "object" ? errObj.details : undefined,
+        name: typeof error.name === "string" ? error.name : "Error",
+        message: typeof error.message === "string" ? error.message : JSON.stringify(error),
+        stack: typeof error.stack === "string" ? error.stack : undefined,
+        cause: error.cause,
+        code: typeof error.code === "string" ? error.code : undefined,
+        domain: typeof error.domain === "string" ? error.domain : undefined,
+        details: isRecord(error.details) ? error.details : undefined,
       };
     } catch {
       return {

@@ -1,4 +1,4 @@
-import { LoggerManager } from "./Logger";
+import { LoggerManager } from "./LoggerManager";
 import { GameBaseError } from "../errors";
 
 /**
