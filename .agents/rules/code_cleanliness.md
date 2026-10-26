@@ -26,6 +26,7 @@ Rules for code quality, architectural comments, error handling, and formatting i
 - ❌ **FORBIDDEN: Dead Code & Commit Metadata**: Commented-out code, author tags, and date stamps are prohibited. Version control (git) is the authoritative history.
 - ❌ **FORBIDDEN: Deep Nesting (Rule of 3 Ifs)**: Maximum allowable nested condition depth is 2 ($\le 2$). Use early return guard clauses or extract helper methods.
 - ❌ **FORBIDDEN: `any` and compiler suppression**: `strict` TypeScript mode is required. `any` is forbidden; use `unknown` with type guards. Never use `@ts-ignore` or `@ts-expect-error`.
+- ❌ **FORBIDDEN: Empty `catch` blocks & fake error handling**: Never write empty `catch` blocks or use `try/catch` with dummy comments (`// ignore error`, `// silence linter`) to paper over unverified property accesses or swallow exceptions. Use idiomatic language guards (`typeof`, `in`, optional chaining `?.`, type guards) instead of `try/catch` for feature detection. When catching real exceptions, handle them explicitly, log them via `Logger`, or propagate via `Result<T, GameBaseError>`.
 - ✅ **REQUIRED: Explain the "WHY", never the "WHAT" or "HOW"**: Clean code self-documents what it executes. Comments exist solely to document non-obvious intent: physics math trade-offs, delta time accumulation, sub-pixel rendering interpolation, or external library quirks.
 - ✅ **REQUIRED: Technical English Only**: All comments, docstrings, error messages, and log entries must be in technical English.
 - ✅ **REQUIRED: File Length Discipline (~300 LOC)**: Proactively decompose files that exceed ~300 lines of code or accumulate multiple distinct responsibilities.
@@ -144,6 +145,25 @@ this.renderEntities(ctx);
 ctx.clearRect(0, 0, width, height);
 this.renderBackground(ctx);
 this.renderEntities(ctx);
+```
+
+### 3.6. Fake Catch Blocks vs Idiomatic Guards
+❌ **BAD:**
+```ts
+try {
+  // Check process env
+  if (typeof process !== "undefined" && process.env) {
+    if (process.env.NODE_ENV === "test") return "test";
+  }
+} catch {
+  // Ignore error if process is unavailable
+}
+```
+✅ **GOOD:**
+```ts
+if (typeof process !== "undefined" && process.env?.NODE_ENV === "test") {
+  return "test";
+}
 ```
 
 ---
