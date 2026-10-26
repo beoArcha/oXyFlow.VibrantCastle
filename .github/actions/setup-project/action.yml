@@ -1,15 +1,7 @@
 name: "Setup Vibrant Castle Environment"
-description: "Composite action that checks out source code, sets up Bun runtime, and installs dependencies"
+description: "Configures Bun runtime and installs dependencies for Vibrant Castle"
 
 inputs:
-  ref:
-    description: "Git ref to checkout (branch, tag, or SHA). Leave empty for workflow triggering ref."
-    required: false
-    default: ""
-  fetch-depth:
-    description: "Commit depth for checkout (0 for full history)."
-    required: false
-    default: "1"
   bun-version:
     description: "Bun version to install."
     required: false
@@ -22,19 +14,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Checkout Source Code (Default Ref)
-      if: ${{ inputs.ref == '' }}
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: ${{ inputs.fetch-depth }}
-
-    - name: Checkout Source Code (Explicit Ref)
-      if: ${{ inputs.ref != '' }}
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ inputs.ref }}
-        fetch-depth: ${{ inputs.fetch-depth }}
-
     - name: Setup Bun Runtime
       uses: oven-sh/setup-bun@v2
       with:

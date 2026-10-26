@@ -33,7 +33,10 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Setup Environment
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun Environment
         uses: ./.github/actions/setup-project
 
       - name: Fetch Game Release and Assemble Portal

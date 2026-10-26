@@ -31,10 +31,13 @@ jobs:
     name: "Stage 1: Preflight Sanity"
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Environment
-        uses: ./.github/actions/setup-project
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.target_ref }}
+
+      - name: Setup Bun Environment
+        uses: ./.github/actions/setup-project
 
       - name: Run Static Typecheck
         run: bun run typecheck
@@ -47,10 +50,13 @@ jobs:
     needs: [preflight]
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Environment
-        uses: ./.github/actions/setup-project
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.target_ref }}
+
+      - name: Setup Bun Environment
+        uses: ./.github/actions/setup-project
 
       - name: Compile Pure Game Client from src/
         run: bun run build:game
@@ -82,11 +88,14 @@ jobs:
     needs: [build-game]
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Environment with Full Git History
-        uses: ./.github/actions/setup-project
+      - name: Checkout Source Code with Full Git History
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.target_ref }}
           fetch-depth: 0
+
+      - name: Setup Bun Environment
+        uses: ./.github/actions/setup-project
 
       - name: Download Game Archive Artifact
         uses: actions/download-artifact@v4

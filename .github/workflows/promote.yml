@@ -22,10 +22,14 @@ jobs:
     name: "Controlled Promotion (main -> release)"
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Environment with Full Git History
-        uses: ./.github/actions/setup-project
+      - name: Checkout Source Code with Full History
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Setup Bun Environment
+        uses: ./.github/actions/setup-project
+        with:
           install-deps: false
 
       - name: Resolve and Validate Target Commit from main
