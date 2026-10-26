@@ -17,17 +17,23 @@ import {
   validateBoolean,
   validateEnum,
   validateArray,
-  validateObject
+  validateObject,
+  CHARACTER_IDS,
+  CharacterId,
+  COMBAT_CATEGORIES,
+  CombatCategory,
+  COMBAT_TRIGGER_TYPES,
+  CombatTriggerType
 } from "./commonSchema";
 
-export const SKILL_CHARACTERS = ["valen", "aurelia"] as const;
-export type SkillCharacter = (typeof SKILL_CHARACTERS)[number];
+export const SKILL_CHARACTERS = CHARACTER_IDS;
+export type SkillCharacter = CharacterId;
 
-export const SKILL_CATEGORIES = ["offensive", "defensive", "passive"] as const;
-export type SkillCategory = (typeof SKILL_CATEGORIES)[number];
+export const SKILL_CATEGORIES = COMBAT_CATEGORIES;
+export type SkillCategory = CombatCategory;
 
-export const SKILL_TRIGGER_TYPES = ["action", "automatic", "passive"] as const;
-export type SkillTriggerType = (typeof SKILL_TRIGGER_TYPES)[number];
+export const SKILL_TRIGGER_TYPES = COMBAT_TRIGGER_TYPES;
+export type SkillTriggerType = CombatTriggerType;
 
 export interface SkillNodeJsonSchema {
   id: string;

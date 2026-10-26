@@ -7,14 +7,14 @@
 import {
   ValidationErrorDetail,
   ValidationResult,
-  successResult,
   failureResult,
+  successResult,
   validateNonEmptyString,
   validateNumber,
   validateOptionalNumber,
-  validateArray,
   validateObject
 } from "./commonSchema";
+import { validateList } from "./collectionValidation";
 
 export interface NarratorQuoteConditionSchema {
   minPlayerLevel?: number;
@@ -93,24 +93,16 @@ export function validateNarratorDocument(
 
   validateNonEmptyString(raw.version, "version", errors);
 
-  if (validateArray(raw.quotes, "quotes", errors)) {
-    const seenIds = new Set<string>();
-    raw.quotes.forEach((q, idx) => {
-      const qRes = validateNarratorQuote(q, `quotes[${idx}]`);
-      if (!qRes.success) {
-        errors.push(...qRes.errors);
-      } else {
-        if (seenIds.has(qRes.data.id)) {
-          errors.push({
-            path: `quotes[${idx}].id`,
-            message: `Duplicate narrator quote id '${qRes.data.id}'`,
-            received: qRes.data.id
-          });
-        }
-        seenIds.add(qRes.data.id);
-      }
-    });
-  }
+  validateList(
+    raw.quotes,
+    "quotes",
+    errors,
+    validateNarratorQuote,
+    {
+      getId: (q) => q.id,
+      duplicateErrorMessage: (id) => `Duplicate narrator quote id '${id}'`
+    }
+  );
 
   if (errors.length > 0) {
     return failureResult(errors);

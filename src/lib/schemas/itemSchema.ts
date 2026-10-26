@@ -7,8 +7,8 @@
 import {
   ValidationErrorDetail,
   ValidationResult,
-  successResult,
   failureResult,
+  successResult,
   validateNonEmptyString,
   validateNumber,
   validateOptionalNumber,
@@ -16,6 +16,7 @@ import {
   validateArray,
   validateObject
 } from "./commonSchema";
+import { validateDictionary, validateList } from "./collectionValidation";
 import { DamageType, DAMAGE_TYPES } from "./spellsSchema";
 
 export const ITEM_TYPES = [
@@ -142,25 +143,15 @@ export function validateItemsDictionary(raw: unknown): ValidationResult<Record<s
     return failureResult(errors);
   }
 
-  const dictionary: Record<string, ItemJsonSchema> = {};
+  const dictionary = validateDictionary(
+    raw,
+    "items",
+    errors,
+    validateItem,
+    (item) => item.id
+  );
 
-  for (const [key, value] of Object.entries(raw)) {
-    const itemRes = validateItem(value, `items.${key}`);
-    if (!itemRes.success) {
-      errors.push(...itemRes.errors);
-    } else {
-      if (itemRes.data.id !== key) {
-        errors.push({
-          path: `items.${key}.id`,
-          message: `Item dictionary key '${key}' does not match item id '${itemRes.data.id}'`,
-          received: itemRes.data.id
-        });
-      }
-      dictionary[key] = itemRes.data;
-    }
-  }
-
-  if (errors.length > 0) {
+  if (!dictionary || errors.length > 0) {
     return failureResult(errors);
   }
 
@@ -170,32 +161,18 @@ export function validateItemsDictionary(raw: unknown): ValidationResult<Record<s
 export function validateItemsList(raw: unknown): ValidationResult<ItemJsonSchema[]> {
   const errors: ValidationErrorDetail[] = [];
 
-  if (!validateArray(raw, "itemsList", errors)) {
-    return failureResult(errors);
-  }
-
-  const items: ItemJsonSchema[] = [];
-  const seenIds = new Set<string>();
-
-  raw.forEach((item, index) => {
-    const itemRes = validateItem(item, `itemsList[${index}]`);
-    if (!itemRes.success) {
-      errors.push(...itemRes.errors);
-    } else {
-      if (seenIds.has(itemRes.data.id)) {
-        errors.push({
-          path: `itemsList[${index}].id`,
-          message: `Duplicate item id '${itemRes.data.id}' found in list`,
-          received: itemRes.data.id
-        });
-      } else {
-        seenIds.add(itemRes.data.id);
-        items.push(itemRes.data);
-      }
+  const items = validateList(
+    raw,
+    "itemsList",
+    errors,
+    validateItem,
+    {
+      getId: (item) => item.id,
+      duplicateErrorMessage: (id) => `Duplicate item id '${id}' found in list`
     }
-  });
+  );
 
-  if (errors.length > 0) {
+  if (!items || errors.length > 0) {
     return failureResult(errors);
   }
 

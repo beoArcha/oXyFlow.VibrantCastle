@@ -1,6 +1,6 @@
 /**
  * Common Schema Primitives and Validation Helpers
- * 
+ *
  * Provides foundational contracts, types, and composable validator utilities
  * for domain and data validation across the game engine, UI, and developer tools.
  */
@@ -19,7 +19,9 @@ export function successResult<T>(data: T): ValidationResult<T> {
   return { success: true, data };
 }
 
-export function failureResult<T>(errors: ValidationErrorDetail[]): ValidationResult<T> {
+export function failureResult<T>(
+  errors: ValidationErrorDetail[],
+): ValidationResult<T> {
   return { success: false, errors };
 }
 
@@ -52,18 +54,27 @@ export interface ProgressionCostSchema {
   tier: number;
 }
 
+export const CHARACTER_IDS = ["valen", "aurelia"] as const;
+export type CharacterId = (typeof CHARACTER_IDS)[number];
+
+export const COMBAT_CATEGORIES = ["offensive", "defensive", "passive"] as const;
+export type CombatCategory = (typeof COMBAT_CATEGORIES)[number];
+
+export const COMBAT_TRIGGER_TYPES = ["action", "automatic", "passive"] as const;
+export type CombatTriggerType = (typeof COMBAT_TRIGGER_TYPES)[number];
+
 // Validator primitives
 
 export function validateNonEmptyString(
   value: unknown,
   path: string,
-  errors: ValidationErrorDetail[]
+  errors: ValidationErrorDetail[],
 ): value is string {
   if (typeof value !== "string" || value.trim().length === 0) {
     errors.push({
       path,
       message: `Expected non-empty string at '${path}'`,
-      received: value
+      received: value,
     });
     return false;
   }
@@ -73,7 +84,7 @@ export function validateNonEmptyString(
 export function validateOptionalString(
   value: unknown,
   path: string,
-  errors: ValidationErrorDetail[]
+  errors: ValidationErrorDetail[],
 ): value is string | undefined {
   if (value === undefined || value === null) {
     return true;
@@ -82,7 +93,7 @@ export function validateOptionalString(
     errors.push({
       path,
       message: `Expected string at '${path}' if defined`,
-      received: value
+      received: value,
     });
     return false;
   }
@@ -94,13 +105,17 @@ export function validateNumber(
   path: string,
   errors: ValidationErrorDetail[],
   min?: number,
-  max?: number
+  max?: number,
 ): value is number {
-  if (typeof value !== "number" || Number.isNaN(value) || !Number.isFinite(value)) {
+  if (
+    typeof value !== "number" ||
+    Number.isNaN(value) ||
+    !Number.isFinite(value)
+  ) {
     errors.push({
       path,
       message: `Expected valid finite number at '${path}'`,
-      received: value
+      received: value,
     });
     return false;
   }
@@ -108,7 +123,7 @@ export function validateNumber(
     errors.push({
       path,
       message: `Number at '${path}' must be >= ${min}`,
-      received: value
+      received: value,
     });
     return false;
   }
@@ -116,7 +131,7 @@ export function validateNumber(
     errors.push({
       path,
       message: `Number at '${path}' must be <= ${max}`,
-      received: value
+      received: value,
     });
     return false;
   }
@@ -128,7 +143,7 @@ export function validateOptionalNumber(
   path: string,
   errors: ValidationErrorDetail[],
   min?: number,
-  max?: number
+  max?: number,
 ): value is number | undefined {
   if (value === undefined || value === null) {
     return true;
@@ -139,13 +154,13 @@ export function validateOptionalNumber(
 export function validateBoolean(
   value: unknown,
   path: string,
-  errors: ValidationErrorDetail[]
+  errors: ValidationErrorDetail[],
 ): value is boolean {
   if (typeof value !== "boolean") {
     errors.push({
       path,
       message: `Expected boolean at '${path}'`,
-      received: value
+      received: value,
     });
     return false;
   }
@@ -156,13 +171,13 @@ export function validateEnum<T extends string>(
   value: unknown,
   path: string,
   allowed: readonly T[],
-  errors: ValidationErrorDetail[]
+  errors: ValidationErrorDetail[],
 ): value is T {
   if (typeof value !== "string" || !allowed.includes(value as T)) {
     errors.push({
       path,
       message: `Expected one of [${allowed.join(", ")}] at '${path}'`,
-      received: value
+      received: value,
     });
     return false;
   }
@@ -173,7 +188,7 @@ export function validateOptionalEnum<T extends string>(
   value: unknown,
   path: string,
   allowed: readonly T[],
-  errors: ValidationErrorDetail[]
+  errors: ValidationErrorDetail[],
 ): value is T | undefined {
   if (value === undefined || value === null) {
     return true;
@@ -184,13 +199,13 @@ export function validateOptionalEnum<T extends string>(
 export function validateArray<T>(
   value: unknown,
   path: string,
-  errors: ValidationErrorDetail[]
+  errors: ValidationErrorDetail[],
 ): value is unknown[] {
   if (!Array.isArray(value)) {
     errors.push({
       path,
       message: `Expected array at '${path}'`,
-      received: value
+      received: value,
     });
     return false;
   }
@@ -200,13 +215,13 @@ export function validateArray<T>(
 export function validateObject(
   value: unknown,
   path: string,
-  errors: ValidationErrorDetail[]
+  errors: ValidationErrorDetail[],
 ): value is Record<string, unknown> {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     errors.push({
       path,
       message: `Expected object at '${path}'`,
-      received: value
+      received: value,
     });
     return false;
   }

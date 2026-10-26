@@ -8,14 +8,15 @@
 import {
   ValidationErrorDetail,
   ValidationResult,
-  successResult,
   failureResult,
+  successResult,
   validateNonEmptyString,
   validateOptionalNumber,
   validateEnum,
   validateArray,
   validateObject
 } from "./commonSchema";
+import { validateDictionary, validateDocumentWrapper } from "./collectionValidation";
 
 export const VN_SPEAKER_POSITIONS = ["left", "right", "center"] as const;
 export type VnSpeakerPosition = (typeof VN_SPEAKER_POSITIONS)[number];
@@ -216,27 +217,16 @@ export function validateVisualNovelScene(
     }
   }
 
-  const nodesObj = raw.nodes;
-  if (!validateObject(nodesObj, `${prefix}nodes`, errors)) {
+  const validatedNodes = validateDictionary(
+    raw.nodes,
+    `${prefix}nodes`,
+    errors,
+    validateVisualNovelNode,
+    (node) => node.id
+  );
+
+  if (!validatedNodes) {
     return failureResult(errors);
-  }
-
-  const validatedNodes: Record<string, VisualNovelNodeSchema> = {};
-
-  for (const [nodeKey, nodeVal] of Object.entries(nodesObj)) {
-    const nodeRes = validateVisualNovelNode(nodeVal, `${prefix}nodes.${nodeKey}`);
-    if (!nodeRes.success) {
-      errors.push(...nodeRes.errors);
-    } else {
-      if (nodeRes.data.id !== nodeKey) {
-        errors.push({
-          path: `${prefix}nodes.${nodeKey}.id`,
-          message: `Node key '${nodeKey}' does not match node id '${nodeRes.data.id}'`,
-          received: nodeRes.data.id
-        });
-      }
-      validatedNodes[nodeKey] = nodeRes.data;
-    }
   }
 
   // Referential graph integrity check within scene
@@ -280,40 +270,20 @@ export function validateVisualNovelScene(
 export function validateVisualNovelDocument(
   raw: unknown
 ): ValidationResult<VisualNovelDocumentJsonSchema> {
-  const errors: ValidationErrorDetail[] = [];
+  const docRes = validateDocumentWrapper(
+    raw,
+    "visualNovelDocument",
+    "scenes",
+    validateVisualNovelScene,
+    (scene) => scene.sceneId
+  );
 
-  if (!validateObject(raw, "visualNovelDocument", errors)) {
-    return failureResult(errors);
+  if (!docRes.success) {
+    return docRes;
   }
 
-  validateNonEmptyString(raw.version, "version", errors);
-
-  const scenesObj = raw.scenes;
-  if (!validateObject(scenesObj, "scenes", errors)) {
-    return failureResult(errors);
-  }
-
-  const validatedScenes: Record<string, VisualNovelSceneJsonSchema> = {};
-
-  for (const [sceneKey, sceneVal] of Object.entries(scenesObj)) {
-    const sceneRes = validateVisualNovelScene(sceneVal, `scenes.${sceneKey}`);
-    if (!sceneRes.success) {
-      errors.push(...sceneRes.errors);
-    } else {
-      if (sceneRes.data.sceneId !== sceneKey) {
-        errors.push({
-          path: `scenes.${sceneKey}.sceneId`,
-          message: `Scene key '${sceneKey}' does not match scene id '${sceneRes.data.sceneId}'`,
-          received: sceneRes.data.sceneId
-        });
-      }
-      validatedScenes[sceneKey] = sceneRes.data;
-    }
-  }
-
-  if (errors.length > 0) {
-    return failureResult(errors);
-  }
-
-  return successResult(raw as unknown as VisualNovelDocumentJsonSchema);
+  return successResult({
+    version: docRes.data.version,
+    scenes: docRes.data.items
+  } as VisualNovelDocumentJsonSchema);
 }

@@ -9,13 +9,15 @@
 import {
   ValidationErrorDetail,
   ValidationResult,
-  successResult,
   failureResult,
+  successResult,
   validateNonEmptyString,
   validateNumber,
   validateArray,
-  validateObject
+  validateObject,
+  CHARACTER_IDS
 } from "./commonSchema";
+import { validateDictionary, validateList } from "./collectionValidation";
 
 export interface SkillTreeNodeDagJsonSchema {
   skillId: string;
@@ -173,29 +175,15 @@ export function validateSkillTreeDag(
     });
   }
 
-  if (!validateObject(raw.nodes, `${prefix}nodes`, errors)) {
-    return failureResult(errors);
-  }
+  const validatedNodes = validateDictionary(
+    raw.nodes,
+    `${prefix}nodes`,
+    errors,
+    validateSkillTreeNodeDag,
+    (node) => node.skillId
+  );
 
-  const validatedNodes: Record<string, SkillTreeNodeDagJsonSchema> = {};
-
-  for (const [key, value] of Object.entries(raw.nodes)) {
-    const nodeRes = validateSkillTreeNodeDag(value, `${prefix}nodes.${key}`);
-    if (!nodeRes.success) {
-      errors.push(...nodeRes.errors);
-    } else {
-      if (nodeRes.data.skillId !== key) {
-        errors.push({
-          path: `${prefix}nodes.${key}.skillId`,
-          message: `Node key '${key}' does not match skillId '${nodeRes.data.skillId}'`,
-          received: nodeRes.data.skillId
-        });
-      }
-      validatedNodes[key] = nodeRes.data;
-    }
-  }
-
-  if (errors.length > 0) {
+  if (!validatedNodes || errors.length > 0) {
     return failureResult(errors);
   }
 
@@ -272,9 +260,7 @@ export function validateSkillProgressionDocument(
     aurelia: { trees: [] }
   };
 
-  const characterKeys = ["valen", "aurelia"] as const;
-
-  for (const charKey of characterKeys) {
+  for (const charKey of CHARACTER_IDS) {
     const charObj = raw.characters[charKey];
     const charPath = `progressionDocument.characters.${charKey}`;
 
@@ -282,29 +268,20 @@ export function validateSkillProgressionDocument(
       continue;
     }
 
-    if (!validateArray(charObj.trees, `${charPath}.trees`, errors)) {
-      continue;
-    }
-
-    const seenTreeIds = new Set<string>();
-
-    charObj.trees.forEach((treeRaw, index) => {
-      const treeRes = validateSkillTreeDag(treeRaw, `${charPath}.trees[${index}]`);
-      if (!treeRes.success) {
-        errors.push(...treeRes.errors);
-      } else {
-        if (seenTreeIds.has(treeRes.data.treeId)) {
-          errors.push({
-            path: `${charPath}.trees[${index}].treeId`,
-            message: `Duplicate treeId '${treeRes.data.treeId}' found for character '${charKey}'`,
-            received: treeRes.data.treeId
-          });
-        } else {
-          seenTreeIds.add(treeRes.data.treeId);
-          charactersResult[charKey].trees.push(treeRes.data);
-        }
+    const trees = validateList(
+      charObj.trees,
+      `${charPath}.trees`,
+      errors,
+      validateSkillTreeDag,
+      {
+        getId: (tree) => tree.treeId,
+        duplicateErrorMessage: (id) => `Duplicate treeId '${id}' found for character '${charKey}'`
       }
-    });
+    );
+
+    if (trees) {
+      charactersResult[charKey].trees = trees;
+    }
   }
 
   if (errors.length > 0) {

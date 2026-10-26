@@ -6,6 +6,7 @@
  */
 
 export * from "./commonSchema";
+export * from "./collectionValidation";
 export * from "./spellsSchema";
 export * from "./skillsSchema";
 export * from "./itemSchema";

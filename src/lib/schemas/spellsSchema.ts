@@ -8,8 +8,8 @@
 import {
   ValidationErrorDetail,
   ValidationResult,
-  successResult,
   failureResult,
+  successResult,
   validateNonEmptyString,
   validateOptionalString,
   validateNumber,
@@ -17,8 +17,15 @@ import {
   validateEnum,
   validateOptionalEnum,
   validateArray,
-  validateObject
+  validateObject,
+  CHARACTER_IDS,
+  CharacterId,
+  COMBAT_CATEGORIES,
+  CombatCategory,
+  COMBAT_TRIGGER_TYPES,
+  CombatTriggerType
 } from "./commonSchema";
+import { validateDocumentWrapper, validateFlexibleCollection } from "./collectionValidation";
 
 export const MAGIC_DOMAINS = ["solar", "astral", "chrono", "frost", "shadow"] as const;
 export type MagicDomain = (typeof MAGIC_DOMAINS)[number];
@@ -54,14 +61,14 @@ export const PROJECTILE_TRAJECTORIES = [
 ] as const;
 export type ProjectileTrajectory = (typeof PROJECTILE_TRAJECTORIES)[number];
 
-export const SPELL_CATEGORIES = ["offensive", "defensive", "passive"] as const;
-export type SpellCategory = (typeof SPELL_CATEGORIES)[number];
+export const SPELL_CATEGORIES = COMBAT_CATEGORIES;
+export type SpellCategory = CombatCategory;
 
-export const SPELL_TRIGGER_TYPES = ["action", "automatic", "passive"] as const;
-export type SpellTriggerType = (typeof SPELL_TRIGGER_TYPES)[number];
+export const SPELL_TRIGGER_TYPES = COMBAT_TRIGGER_TYPES;
+export type SpellTriggerType = CombatTriggerType;
 
-export const CHARACTERS = ["valen", "aurelia"] as const;
-export type CharacterId = (typeof CHARACTERS)[number];
+export const CHARACTERS = CHARACTER_IDS;
+export type { CharacterId };
 
 export const SPELL_OWNER_TYPES = ["hero", "enemy", "boss", "unison"] as const;
 export type SpellOwnerType = (typeof SPELL_OWNER_TYPES)[number];
@@ -252,111 +259,31 @@ export function validateSpell(raw: unknown, pathPrefix = ""): ValidationResult<S
 }
 
 export function validateSpellsDocument(raw: unknown): ValidationResult<SpellsDocumentJsonSchema> {
-  const errors: ValidationErrorDetail[] = [];
+  const docRes = validateDocumentWrapper(
+    raw,
+    "spellsDocument",
+    "spells",
+    validateSpell,
+    (spell) => spell.id
+  );
 
-  if (!validateObject(raw, "spellsDocument", errors)) {
-    return failureResult(errors);
-  }
-
-  validateNonEmptyString(raw.version, "spellsDocument.version", errors);
-  if (!validateObject(raw.spells, "spellsDocument.spells", errors)) {
-    return failureResult(errors);
-  }
-
-  const validatedDictionary: Record<string, SpellJsonSchema> = {};
-
-  for (const [key, value] of Object.entries(raw.spells)) {
-    const spellRes = validateSpell(value, `spellsDocument.spells.${key}`);
-    if (!spellRes.success) {
-      errors.push(...spellRes.errors);
-    } else {
-      if (spellRes.data.id !== key) {
-        errors.push({
-          path: `spellsDocument.spells.${key}.id`,
-          message: `Spell dictionary key '${key}' does not match spell id '${spellRes.data.id}'`,
-          received: spellRes.data.id
-        });
-      }
-      validatedDictionary[key] = spellRes.data;
-    }
-  }
-
-  if (errors.length > 0) {
-    return failureResult(errors);
+  if (!docRes.success) {
+    return docRes;
   }
 
   return successResult({
-    version: raw.version as string,
-    spells: validatedDictionary
+    version: docRes.data.version,
+    spells: docRes.data.items
   });
 }
 
 export function validateSpellsJson(raw: unknown): ValidationResult<SpellJsonSchema[]> {
-  const errors: ValidationErrorDetail[] = [];
-
-  // Case 1: Document wrapper { version: "2.0", spells: { ... } }
-  if (typeof raw === "object" && raw !== null && !Array.isArray(raw) && "spells" in raw) {
-    const docRes = validateSpellsDocument(raw);
-    if (!docRes.success) {
-      return failureResult(docRes.errors);
-    }
-    return successResult(Object.values(docRes.data.spells));
-  }
-
-  // Case 2: Direct array of spells
-  if (Array.isArray(raw)) {
-    const validatedSpells: SpellJsonSchema[] = [];
-    const seenIds = new Set<string>();
-
-    raw.forEach((item, index) => {
-      const spellRes = validateSpell(item, `spells[${index}]`);
-      if (!spellRes.success) {
-        errors.push(...spellRes.errors);
-      } else {
-        if (seenIds.has(spellRes.data.id)) {
-          errors.push({
-            path: `spells[${index}].id`,
-            message: `Duplicate spell identifier '${spellRes.data.id}' found`,
-            received: spellRes.data.id
-          });
-        } else {
-          seenIds.add(spellRes.data.id);
-          validatedSpells.push(spellRes.data);
-        }
-      }
-    });
-
-    if (errors.length > 0) {
-      return failureResult(errors);
-    }
-
-    return successResult(validatedSpells);
-  }
-
-  // Case 3: Dictionary keyed by spell ID
-  if (typeof raw === "object" && raw !== null) {
-    const validatedSpells: SpellJsonSchema[] = [];
-    for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
-      const spellRes = validateSpell(value, `spells.${key}`);
-      if (!spellRes.success) {
-        errors.push(...spellRes.errors);
-      } else {
-        validatedSpells.push(spellRes.data);
-      }
-    }
-
-    if (errors.length > 0) {
-      return failureResult(errors);
-    }
-
-    return successResult(validatedSpells);
-  }
-
-  return failureResult([
-    {
-      path: "spells",
-      message: "Expected SpellsDocument, dictionary or array of spells",
-      received: raw
-    }
-  ]);
+  return validateFlexibleCollection(raw, {
+    collectionName: "spells",
+    itemsKey: "spells",
+    itemValidator: validateSpell,
+    getId: (spell) => spell.id,
+    duplicateErrorMessage: (id) => `Duplicate spell identifier '${id}' found`,
+    expectedTypeMessage: "Expected SpellsDocument, dictionary or array of spells"
+  });
 }

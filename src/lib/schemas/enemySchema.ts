@@ -8,8 +8,8 @@
 import {
   ValidationErrorDetail,
   ValidationResult,
-  successResult,
   failureResult,
+  successResult,
   validateNonEmptyString,
   validateOptionalString,
   validateNumber,
@@ -19,6 +19,7 @@ import {
   validateArray,
   validateObject
 } from "./commonSchema";
+import { validateDocumentWrapper, validateFlexibleCollection } from "./collectionValidation";
 
 export const SOUL_TYPES = ["bullet", "guardian", "enchant"] as const;
 export type SoulType = (typeof SOUL_TYPES)[number];
@@ -201,111 +202,31 @@ export function validateEnemy(raw: unknown, pathPrefix = ""): ValidationResult<E
 }
 
 export function validateEnemiesDocument(raw: unknown): ValidationResult<EnemiesDocumentJsonSchema> {
-  const errors: ValidationErrorDetail[] = [];
+  const docRes = validateDocumentWrapper(
+    raw,
+    "enemiesDocument",
+    "enemies",
+    validateEnemy,
+    (enemy) => enemy.id
+  );
 
-  if (!validateObject(raw, "enemiesDocument", errors)) {
-    return failureResult(errors);
-  }
-
-  validateNonEmptyString(raw.version, "enemiesDocument.version", errors);
-  if (!validateObject(raw.enemies, "enemiesDocument.enemies", errors)) {
-    return failureResult(errors);
-  }
-
-  const dictionary: Record<string, EnemyJsonSchema> = {};
-
-  for (const [key, value] of Object.entries(raw.enemies)) {
-    const enemyRes = validateEnemy(value, `enemiesDocument.enemies.${key}`);
-    if (!enemyRes.success) {
-      errors.push(...enemyRes.errors);
-    } else {
-      if (enemyRes.data.id !== key) {
-        errors.push({
-          path: `enemiesDocument.enemies.${key}.id`,
-          message: `Enemy key '${key}' does not match enemy id '${enemyRes.data.id}'`,
-          received: enemyRes.data.id
-        });
-      }
-      dictionary[key] = enemyRes.data;
-    }
-  }
-
-  if (errors.length > 0) {
-    return failureResult(errors);
+  if (!docRes.success) {
+    return docRes;
   }
 
   return successResult({
-    version: raw.version as string,
-    enemies: dictionary
+    version: docRes.data.version,
+    enemies: docRes.data.items
   });
 }
 
 export function validateEnemiesJson(raw: unknown): ValidationResult<EnemyJsonSchema[]> {
-  const errors: ValidationErrorDetail[] = [];
-
-  // Case 1: Document wrapper { version: "1.0", enemies: { ... } }
-  if (typeof raw === "object" && raw !== null && !Array.isArray(raw) && "enemies" in raw) {
-    const docRes = validateEnemiesDocument(raw);
-    if (!docRes.success) {
-      return failureResult(docRes.errors);
-    }
-    return successResult(Object.values(docRes.data.enemies));
-  }
-
-  // Case 2: Array of enemies
-  if (Array.isArray(raw)) {
-    const enemies: EnemyJsonSchema[] = [];
-    const seenIds = new Set<string>();
-
-    raw.forEach((item, index) => {
-      const enemyRes = validateEnemy(item, `enemies[${index}]`);
-      if (!enemyRes.success) {
-        errors.push(...enemyRes.errors);
-      } else {
-        if (seenIds.has(enemyRes.data.id)) {
-          errors.push({
-            path: `enemies[${index}].id`,
-            message: `Duplicate enemy ID '${enemyRes.data.id}' found`,
-            received: enemyRes.data.id
-          });
-        } else {
-          seenIds.add(enemyRes.data.id);
-          enemies.push(enemyRes.data);
-        }
-      }
-    });
-
-    if (errors.length > 0) {
-      return failureResult(errors);
-    }
-
-    return successResult(enemies);
-  }
-
-  // Case 3: Dictionary of enemies
-  if (typeof raw === "object" && raw !== null) {
-    const enemies: EnemyJsonSchema[] = [];
-    for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
-      const enemyRes = validateEnemy(value, `enemies.${key}`);
-      if (!enemyRes.success) {
-        errors.push(...enemyRes.errors);
-      } else {
-        enemies.push(enemyRes.data);
-      }
-    }
-
-    if (errors.length > 0) {
-      return failureResult(errors);
-    }
-
-    return successResult(enemies);
-  }
-
-  return failureResult([
-    {
-      path: "enemies",
-      message: "Expected EnemiesDocument, dictionary or array of enemies",
-      received: raw
-    }
-  ]);
+  return validateFlexibleCollection(raw, {
+    collectionName: "enemies",
+    itemsKey: "enemies",
+    itemValidator: validateEnemy,
+    getId: (enemy) => enemy.id,
+    duplicateErrorMessage: (id) => `Duplicate enemy ID '${id}' found`,
+    expectedTypeMessage: "Expected EnemiesDocument, dictionary or array of enemies"
+  });
 }
