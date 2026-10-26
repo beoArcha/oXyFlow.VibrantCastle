@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Wand2, Skull, Shield, MessageSquare, GitFork, Bot } from "lucide-react";
-import { Button } from "@ui";
+import { Button, Heading, Paragraph } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { SpellAndSkillEditorCard } from "./datastudio/SpellAndSkillEditorCard";
 import { EnemyEditorCard } from "./datastudio/EnemyEditorCard";
@@ -30,10 +30,12 @@ export const DataStudioSubTab: React.FC = () => {
       <div className="flex flex-col gap-2 pb-2 border-b border-amber-900/50">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div>
-            <h2 className="text-base md:text-lg font-serif font-black text-amber-400">
+            <Heading level={2} variant="gothic" size="lg" className="text-base md:text-lg">
               {t("dataStudioTitle")}
-            </h2>
-            <p className="text-xs text-amber-200/70">{t("dataStudioSubtitle")}</p>
+            </Heading>
+            <Paragraph size="xs" variant="amber" className="text-amber-200/70">
+              {t("dataStudioSubtitle")}
+            </Paragraph>
           </div>
         </div>
 

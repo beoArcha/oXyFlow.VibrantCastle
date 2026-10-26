@@ -1,6 +1,6 @@
 import React from "react";
 import { ScrollText, ArrowDownCircle, Copy, Check, Download, Trash2 } from "lucide-react";
-import { Button } from "@ui";
+import { Button, Heading, Paragraph, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { LogsHeaderToolbarProps } from "./types";
 
@@ -27,16 +27,16 @@ export const LogsHeaderToolbar: React.FC<LogsHeaderToolbarProps> = ({
         </div>
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-sm font-bold text-amber-300 tracking-wide font-serif">
+            <Heading level={2} size="sm" variant="gothic" className="tracking-wide">
               {t("debugEventLogTitle")}
-            </h2>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+            </Heading>
+            <Text as="span" family="mono" weight="bold" size="2xs" className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
               {filteredCount} / {totalCount}
-            </span>
+            </Text>
           </div>
-          <p className="text-[11px] text-stone-400">
+          <Paragraph size="xs" variant="muted" className="text-[11px]">
             {t("debugEventLogSubtitle")}
-          </p>
+          </Paragraph>
         </div>
       </div>
 
@@ -53,7 +53,7 @@ export const LogsHeaderToolbar: React.FC<LogsHeaderToolbarProps> = ({
           onClick={onToggleAutoScroll}
           title={t("debugAutoScrollToggle")}
           aria-pressed={autoScroll}
-          className="text-xs font-mono"
+          className="text-xs"
         >
           {t("debugAutoScrollLabel")}
         </Button>

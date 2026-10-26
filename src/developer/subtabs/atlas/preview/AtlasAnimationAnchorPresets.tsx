@@ -1,6 +1,6 @@
 import React from "react";
 import { Crosshair } from "lucide-react";
-import { Slider, SegmentedControl, SegmentedControlOption } from "@ui";
+import { Slider, SegmentedControl, SegmentedControlOption, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasOriginDefinition } from "../types";
 
@@ -73,15 +73,15 @@ export const AtlasAnimationAnchorPresets: React.FC<AtlasAnimationAnchorPresetsPr
 
       {/* Pivot Presets */}
       <div className="flex flex-col gap-1">
-        <span className="text-xs text-[#fed7aa] font-medium flex items-center justify-between">
+        <Text as="span" size="xs" weight="medium" className="text-[#fed7aa] flex items-center justify-between">
           <span className="flex items-center gap-1">
             <Crosshair size={11} className="text-[#d97706]" />
             {t("atlasStudioAnchor")}
           </span>
-          <span className="font-mono text-[10px] text-rose-300">
+          <Text as="span" family="mono" size="3xs" className="text-rose-300">
             ({origin?.normalized?.x ?? 0.5}, {origin?.normalized?.y ?? 1.0})
-          </span>
-        </span>
+          </Text>
+        </Text>
         <SegmentedControl<OriginPresetType>
           options={options}
           value={activeType}

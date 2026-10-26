@@ -1,6 +1,6 @@
 import React from "react";
 import { Cpu } from "lucide-react";
-import { Button, Select, SearchInput, SegmentedControl } from "@ui";
+import { Button, Select, SearchInput, SegmentedControl, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { LogLevel } from "@lib/logger";
 import { LogsFilterControlsProps, LogFilterLevel } from "./types";
@@ -37,7 +37,7 @@ export const LogsFilterControls: React.FC<LogsFilterControlsProps> = ({
           value={searchQuery}
           onChange={onSearchQueryChange}
           placeholder={t("debugFilterPlaceholder")}
-          className="h-7 text-xs font-mono bg-black/60 border-stone-800"
+          className="h-7 text-xs bg-black/60 border-stone-800"
           containerClassName="flex-1 min-w-[180px] max-w-sm"
         />
 
@@ -54,15 +54,15 @@ export const LogsFilterControls: React.FC<LogsFilterControlsProps> = ({
               size="sm"
               onClick={() => onLevelFilterChange(id)}
               aria-pressed={levelFilter === id}
-              className={`px-2 py-0.5 min-h-0 h-6 rounded font-mono font-bold transition-all cursor-pointer flex items-center gap-1 ${levelFilter === id
+              className={`px-2 py-0.5 min-h-0 h-6 rounded transition-all cursor-pointer flex items-center gap-1 ${levelFilter === id
                   ? "bg-amber-600 text-white shadow-sm"
                   : "text-stone-400 hover:text-stone-200"
                 }`}
             >
-              <span>{label}</span>
-              <span className={`text-[9px] ${levelFilter === id ? "text-white/80" : color || "text-stone-500"}`}>
+              <Text as="span" family="mono" weight="bold">{label}</Text>
+              <Text as="span" family="mono" size="3xs" className={levelFilter === id ? "text-white/80" : color || "text-stone-500"}>
                 ({count})
-              </span>
+              </Text>
             </Button>
           ))}
         </div>
@@ -77,12 +77,12 @@ export const LogsFilterControls: React.FC<LogsFilterControlsProps> = ({
               { value: "all", label: t("debugAllCategories") },
               ...availableCategories.map((cat) => ({ value: cat, label: cat })),
             ]}
-            className="font-mono text-xs min-w-32"
+            className="text-xs min-w-32"
           />
         )}
       </div>
 
-      <div className="flex items-center gap-1.5 font-mono text-[11px] text-stone-400 shrink-0">
+      <div className="flex items-center gap-1.5 text-[11px] text-stone-400 shrink-0">
         <Cpu size={13} className="text-amber-500" />
         <span className="text-[10px] text-stone-400">{t("debugGlobalLogLevelLabel")}</span>
         <SegmentedControl<LogLevel>
@@ -95,7 +95,7 @@ export const LogsFilterControls: React.FC<LogsFilterControlsProps> = ({
             { value: LogLevel.WARN, label: "WARN" },
             { value: LogLevel.ERROR, label: "ERROR" },
           ]}
-          className="font-mono text-[10px]"
+          className="text-[10px]"
         />
       </div>
     </div>

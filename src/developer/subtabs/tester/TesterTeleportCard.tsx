@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { MapPin, Compass, Crosshair, RefreshCw } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge, CompactNumberStepper } from "@ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, Badge, CompactNumberStepper, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { SpawnPreset, debugManager } from "@game/debug/debugManager";
 import { getLocation, LocationId } from "@game/locations";
@@ -76,10 +76,10 @@ export const TesterTeleportCard: React.FC<TesterTeleportCardProps> = ({
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <div>
-          <div className="text-xs font-semibold text-stone-300 mb-2 flex items-center gap-1.5">
+          <Text as="div" size="xs" weight="semibold" className="text-stone-300 mb-2 flex items-center gap-1.5">
             <Compass size={13} className="text-amber-400" />
             <span>{t("testerCheckpointsLabel")}</span>
-          </div>
+          </Text>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {presets.map((preset: SpawnPreset) => (
               <Button
@@ -89,12 +89,12 @@ export const TesterTeleportCard: React.FC<TesterTeleportCardProps> = ({
                 onClick={() => handlePresetTeleport(preset.x, preset.y)}
                 className="flex flex-col items-start py-2 px-3 text-left h-auto"
               >
-                <span className="font-bold text-amber-300 text-xs">
+                <Text as="span" weight="bold" size="xs" className="text-amber-300">
                   {getPresetLabel(preset)}
-                </span>
-                <span className="text-[10px] text-stone-400 font-mono">
+                </Text>
+                <Text as="span" family="mono" size="2xs" className="text-stone-400">
                   X: {preset.x}, Y: {preset.y}
-                </span>
+                </Text>
               </Button>
             ))}
           </div>
@@ -103,9 +103,9 @@ export const TesterTeleportCard: React.FC<TesterTeleportCardProps> = ({
         <Card variant="dark" className="p-3 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Crosshair size={15} className="text-amber-400" />
-            <span className="text-xs font-bold text-stone-200">
+            <Text as="span" size="xs" weight="bold" className="text-stone-200">
               {t("testerCoordsLabel")}
-            </span>
+            </Text>
             {playerX !== undefined && (
               <Button
                 size="sm"
@@ -126,7 +126,7 @@ export const TesterTeleportCard: React.FC<TesterTeleportCardProps> = ({
               onChange={setCustomX}
               min={0}
               step={10}
-              className="w-24 text-xs font-mono"
+              className="w-24 text-xs"
             />
             <CompactNumberStepper
               label="Y"
@@ -134,7 +134,7 @@ export const TesterTeleportCard: React.FC<TesterTeleportCardProps> = ({
               onChange={setCustomY}
               min={0}
               step={10}
-              className="w-24 text-xs font-mono"
+              className="w-24 text-xs"
             />
             <Button size="sm" variant="primary" onClick={handleCustomTeleport}>
               {t("testerTeleportBtn")}
@@ -154,9 +154,9 @@ export const TesterTeleportCard: React.FC<TesterTeleportCardProps> = ({
           </Button>
 
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-xs text-stone-400 font-medium">
+            <Text as="span" size="xs" weight="medium" className="text-stone-400">
               {t("testerSwitchLocationLabel")}
-            </span>
+            </Text>
             {LOCATION_IDS.map((locId: LocationId) => {
               const locDef = getLocation(locId);
               const locName = locDef ? t(locDef.nameKey) : locId;

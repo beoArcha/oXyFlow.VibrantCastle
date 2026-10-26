@@ -17,6 +17,8 @@ import {
   EmptyState,
   StatRow,
   ProgressBar,
+  Heading,
+  Text,
 } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { EnemyJsonSchema } from "@lib/schemas/enemySchema";
@@ -71,9 +73,9 @@ export const BestiaryEntryInspector: React.FC<BestiaryEntryInspectorProps> = Rea
         <div className="flex items-start justify-between gap-3 border-b border-stone-800/70 pb-3">
           <div className="flex flex-col gap-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-base font-bold text-stone-100 truncate">
+              <Heading level={3} size="base" className="truncate text-stone-100">
                 {enemy.defaultName}
-              </h3>
+              </Heading>
               <Badge
                 variant={
                   enemy.category === "boss"
@@ -96,9 +98,9 @@ export const BestiaryEntryInspector: React.FC<BestiaryEntryInspectorProps> = Rea
                 </Badge>
               )}
             </div>
-            <span className="text-xs font-mono text-stone-400">
+            <Text as="span" family="mono" size="xs" className="text-stone-400">
               ID: {enemy.id} ({enemy.nameKey})
-            </span>
+            </Text>
           </div>
 
           {onOpenInEditor && (
@@ -141,25 +143,25 @@ export const BestiaryEntryInspector: React.FC<BestiaryEntryInspectorProps> = Rea
           </div>
 
           <div className="flex flex-col gap-1.5 flex-1 w-full text-xs">
-            <span className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider">
+            <Text as="span" size="2xs" weight="semibold" uppercase className="text-stone-400 tracking-wider">
               {t("dataStudioBestiaryDimensions")}
-            </span>
+            </Text>
             <div className="grid grid-cols-2 gap-2">
               <div className="p-2 bg-stone-950/50 rounded border border-stone-800/60">
                 <span className="text-stone-400 block text-[10px]">
                   {t("dataStudioEnemyWidth")}
                 </span>
-                <span className="font-mono font-bold text-stone-200">
+                <Text as="span" family="mono" weight="bold" className="text-stone-200">
                   {width} px
-                </span>
+                </Text>
               </div>
               <div className="p-2 bg-stone-950/50 rounded border border-stone-800/60">
                 <span className="text-stone-400 block text-[10px]">
                   {t("dataStudioEnemyHeight")}
                 </span>
-                <span className="font-mono font-bold text-stone-200">
+                <Text as="span" family="mono" weight="bold" className="text-stone-200">
                   {height} px
-                </span>
+                </Text>
               </div>
             </div>
 
@@ -191,9 +193,9 @@ export const BestiaryEntryInspector: React.FC<BestiaryEntryInspectorProps> = Rea
         </Card>
 
         <Card variant="subtle" className="flex flex-col gap-2.5 p-3">
-          <span className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider">
+          <Text as="span" size="2xs" weight="semibold" uppercase className="text-stone-400 tracking-wider">
             Parametry Bojowe
-          </span>
+          </Text>
 
           <div className="flex flex-col gap-1">
             <div className="flex justify-between items-center text-xs">
@@ -201,9 +203,9 @@ export const BestiaryEntryInspector: React.FC<BestiaryEntryInspectorProps> = Rea
                 <Heart className="w-3.5 h-3.5" />
                 <span>{t("dataStudioEnemyHealth")}:</span>
               </span>
-              <span className="font-mono font-bold text-stone-100">
+              <Text as="span" family="mono" weight="bold" className="text-stone-100">
                 {enemy.stats?.health ?? 0} / {enemy.stats?.maxHealth ?? enemy.stats?.health ?? 0}
-              </span>
+              </Text>
             </div>
             <ProgressBar
               value={hpProgress}
@@ -246,9 +248,9 @@ export const BestiaryEntryInspector: React.FC<BestiaryEntryInspectorProps> = Rea
 
         {enemy.elementalResistances && (
           <Card variant="subtle" className="flex flex-col gap-2 p-3">
-            <span className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider">
+            <Text as="span" size="2xs" weight="semibold" uppercase className="text-stone-400 tracking-wider">
               {t("dataStudioBestiaryResistances")}
-            </span>
+            </Text>
             <div className="flex flex-wrap gap-1.5">
               {Object.entries(enemy.elementalResistances).map(
                 ([element, val]) => {
@@ -262,9 +264,9 @@ export const BestiaryEntryInspector: React.FC<BestiaryEntryInspectorProps> = Rea
                       variant={isResistant ? "green" : isWeak ? "red" : "stone"}
                     >
                       <span className="capitalize">{element}:</span>
-                      <span className="font-mono font-bold">
+                      <Text as="span" family="mono" weight="bold">
                         {percent > 0 ? `+${percent}%` : `${percent}%`}
-                      </span>
+                      </Text>
                     </Badge>
                   );
                 }
@@ -276,10 +278,10 @@ export const BestiaryEntryInspector: React.FC<BestiaryEntryInspectorProps> = Rea
         {enemy.soulDrop && (
           <Card variant="dark" className="flex flex-col gap-2 p-3 border-purple-800/50">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold text-purple-300 uppercase tracking-wider flex items-center gap-1.5">
+              <Text as="span" size="2xs" weight="semibold" uppercase className="text-purple-300 tracking-wider flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
                 {t("dataStudioBestiarySoulDrop")}
-              </span>
+              </Text>
               <Badge variant="purple">
                 {enemy.soulDrop.type}
               </Badge>
@@ -290,17 +292,17 @@ export const BestiaryEntryInspector: React.FC<BestiaryEntryInspectorProps> = Rea
                 <span className="text-stone-400 text-[10px]">
                   {t("dataStudioBestiaryDropRate")}:
                 </span>
-                <span className="font-mono font-bold text-stone-200">
+                <Text as="span" family="mono" weight="bold" className="text-stone-200">
                   {Math.round(enemy.soulDrop.dropRate * 100)}%
-                </span>
+                </Text>
               </div>
               <div className="flex flex-col">
                 <span className="text-stone-400 text-[10px]">
                   Skill ID:
                 </span>
-                <span className="font-mono font-bold text-purple-200 truncate">
+                <Text as="span" family="mono" weight="bold" className="text-purple-200 truncate">
                   {enemy.soulDrop.grantedSkillId}
-                </span>
+                </Text>
               </div>
             </div>
           </Card>
@@ -308,11 +310,11 @@ export const BestiaryEntryInspector: React.FC<BestiaryEntryInspectorProps> = Rea
 
         {enemy.bestiary && (
           <Card variant="dark" className="flex flex-col gap-2 p-3 text-xs">
-            <span className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider flex items-center gap-1.5">
+            <Text as="span" size="2xs" weight="semibold" uppercase className="text-stone-400 tracking-wider flex items-center gap-1.5">
               <BookOpen className="w-3.5 h-3.5" />
               {t("dataStudioBestiaryLoreQuote")}
-            </span>
-            <div className="flex flex-col gap-1 text-stone-300 font-mono text-[11px]">
+            </Text>
+            <Text as="div" family="mono" size="2xs" className="flex flex-col gap-1 text-stone-300">
               <div>
                 <span className="text-stone-400">Bestiary Key: </span>
                 <span>{enemy.bestiary.bestiaryKey}</span>
@@ -325,7 +327,7 @@ export const BestiaryEntryInspector: React.FC<BestiaryEntryInspectorProps> = Rea
                 <span className="text-stone-400">Lore Key: </span>
                 <span>{enemy.bestiary.loreQuoteKey}</span>
               </div>
-            </div>
+            </Text>
           </Card>
         )}
       </Card>

@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowRight, Plus, X } from "lucide-react";
-import { Button, Badge, Select, ActionBar, Input } from "@ui";
+import { Button, Badge, Select, ActionBar, Input, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasAnimationTrackDefinition } from "../types";
 
@@ -53,9 +53,9 @@ export const AtlasSlicingTrackAssignmentBar: React.FC<AtlasSlicingTrackAssignmen
           {/* Assign to existing track */}
           {tracks.length > 0 && (
             <div className="flex items-center gap-1.5">
-              <span className="text-[11px] text-stone-300 font-medium">
+              <Text as="span" size="2xs" weight="medium" className="text-stone-300">
                 {t("atlasStudioAssignToTrack")}:
-              </span>
+              </Text>
               <Select
                 size="sm"
                 variant="castle"
@@ -70,7 +70,7 @@ export const AtlasSlicingTrackAssignmentBar: React.FC<AtlasSlicingTrackAssignmen
                   value: tr.name,
                   label: tr.name,
                 }))}
-                className="font-mono text-xs w-36"
+                className="text-xs w-36"
               />
             </div>
           )}
@@ -78,12 +78,13 @@ export const AtlasSlicingTrackAssignmentBar: React.FC<AtlasSlicingTrackAssignmen
           {/* Or create new track */}
           <div className="flex items-center gap-1">
             <Input
+              family="mono"
               type="text"
               placeholder={t("atlasStudioNewTrackNamePlaceholder")}
               value={newTrackName}
               onChange={(e) => onNewTrackNameChange(e.target.value)}
               containerClassName="w-28"
-              className="h-7 px-2 text-xs font-mono text-amber-200 bg-black/60 border-stone-800"
+              className="h-7 px-2 text-xs text-amber-200 bg-black/60 border-stone-800"
             />
             <Button
               size="sm"

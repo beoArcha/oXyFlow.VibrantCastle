@@ -8,7 +8,7 @@ import {
   ZoomOut,
   RotateCcw,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from "@ui";
+import { Card, CardHeader, CardTitle, CardContent, Button, Badge, Text, Paragraph } from "@ui";
 import { cn } from "@lib/utils";
 import skillsJson from "@data/skills/skills.json";
 import { calculateDagNodePositions, DagNodePosition } from "@lib/math/dagLayout";
@@ -92,9 +92,9 @@ export const SkillTreeVisualizerCard: React.FC = () => {
       <CardContent className="flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-stone-950/60 border border-stone-800/80 rounded-lg">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs font-medium text-amber-200/80">
+            <Text as="span" size="xs" weight="medium" className="text-amber-200/80">
               {t("dataStudioSkillTreeCharacter")}
-            </span>
+            </Text>
             <div className="flex gap-1.5">
               <Button
                 variant={selectedCharacter === "valen" ? "primary" : "secondary"}
@@ -120,9 +120,9 @@ export const SkillTreeVisualizerCard: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-1.5 self-end sm:self-auto">
-            <span className="text-xs font-mono text-amber-300/80 px-2">
+            <Text as="span" size="xs" family="mono" className="text-amber-300/80 px-2">
               {Math.round(zoomScale * 100)}%
-            </span>
+            </Text>
             <Button
               variant="secondary"
               size="sm"
@@ -234,7 +234,8 @@ export const SkillTreeVisualizerCard: React.FC = () => {
                       y="22"
                       fontSize="11"
                       fontWeight="bold"
-                      className="select-none font-sans fill-amber-200"
+                      fontFamily="sans-serif"
+                      className="select-none fill-amber-200"
                     >
                       {skill?.nameKey ? t(skill.nameKey).slice(0, 15) : pos.id.slice(0, 15)}
                     </text>
@@ -242,7 +243,8 @@ export const SkillTreeVisualizerCard: React.FC = () => {
                       x="10"
                       y="38"
                       fontSize="9.5"
-                      className="select-none font-mono fill-amber-500"
+                      fontFamily="monospace"
+                      className="select-none fill-amber-500"
                     >
                       {t("dataStudioSkillTreeTier")} {pos.tier} • {skill?.pointCost ?? 1} SP
                     </text>
@@ -250,7 +252,8 @@ export const SkillTreeVisualizerCard: React.FC = () => {
                       x="10"
                       y="52"
                       fontSize="9"
-                      className="select-none font-mono fill-stone-400"
+                      fontFamily="monospace"
+                      className="select-none fill-stone-400"
                     >
                       {skill?.category ?? "active"}
                     </text>
@@ -269,16 +272,18 @@ export const SkillTreeVisualizerCard: React.FC = () => {
             className="p-3 text-xs flex flex-col gap-2 shadow-sm"
           >
             <div className="flex items-center justify-between flex-wrap gap-1">
-              <span className="font-semibold text-amber-300 flex items-center gap-1.5">
+              <Text as="span" weight="semibold" className="text-amber-300 flex items-center gap-1.5">
                 <Sparkles size={13} className="text-amber-400 shrink-0" />
                 {t(inspectedSkill.nameKey)} ({inspectedSkill.id})
-              </span>
-              <span className="text-amber-400 font-mono">
+              </Text>
+              <Text as="span" family="mono" className="text-amber-400">
                 {t("dataStudioSkillTreeTier")} {inspectedSkill.tier} | {t("dataStudioSkillTreeCost")}:{" "}
                 {inspectedSkill.pointCost} SP
-              </span>
+              </Text>
             </div>
-            <p className="text-amber-100/80 italic">{t(inspectedSkill.descKey)}</p>
+            <Paragraph size="xs" variant="amber" italic className="text-amber-100/80">
+              {t(inspectedSkill.descKey)}
+            </Paragraph>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 border-t border-amber-900/40 text-[11px] text-amber-200/70">
               <div>
                 {t("dataStudioSkillTreeMana")}: {inspectedSkill.manaCost}

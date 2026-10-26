@@ -1,6 +1,6 @@
 import React from "react";
 import { UserCheck, ChevronRight, BookOpen } from "lucide-react";
-import { Button } from "@ui";
+import { Button, Paragraph, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { VisualNovelNodeSchema } from "@lib/schemas/visualNovelSchema";
 
@@ -32,7 +32,7 @@ export const DialogueBubble: React.FC<DialogueBubbleProps> = ({
       className={`w-full bg-stone-950/90 border border-amber-800/60 rounded-lg p-3.5 flex flex-col justify-between gap-3 shadow-lg ${className}`}
     >
       <div className="flex flex-col gap-1.5">
-        <div className="flex items-center justify-between text-xs font-semibold text-amber-400">
+        <Text as="div" size="xs" weight="semibold" className="flex items-center justify-between text-amber-400">
           <span className="flex items-center gap-1.5">
             {isNarrator ? (
               <BookOpen size={14} className="text-amber-400" />
@@ -41,21 +41,21 @@ export const DialogueBubble: React.FC<DialogueBubbleProps> = ({
             )}
             <span className="uppercase tracking-wider">{activeSpeakerName}</span>
           </span>
-          <span className="font-mono text-[10px] text-amber-200/50">
+          <Text as="span" family="mono" size="3xs" className="text-amber-200/50">
             {t("dataStudioVnNodeLabel")}: {node.id}
-          </span>
-        </div>
-        <p className="text-xs text-amber-100/90 leading-relaxed italic bg-black/30 p-2.5 rounded border border-amber-950/40">
+          </Text>
+        </Text>
+        <Paragraph size="xs" variant="amber" italic className="text-amber-100/90 leading-relaxed bg-black/30 p-2.5 rounded border border-amber-950/40">
           "{t(node.dialogueKey)}"
-        </p>
+        </Paragraph>
       </div>
 
       <div className="flex flex-col gap-1.5 pt-2 border-t border-amber-900/40">
         {node.choices && node.choices.length > 0 ? (
           <div role="group" aria-label={t("dataStudioVnPlayerDecisions")} className="flex flex-col gap-1">
-            <span className="text-[10px] font-medium text-amber-200/60 uppercase tracking-wider">
+            <Text as="span" size="3xs" weight="medium" uppercase className="text-amber-200/60 tracking-wider">
               {t("dataStudioVnPlayerDecisions")}
-            </span>
+            </Text>
             <div className="flex flex-wrap gap-2">
               {node.choices.map((choice) => (
                 <Button
@@ -84,9 +84,9 @@ export const DialogueBubble: React.FC<DialogueBubbleProps> = ({
             {t("dataStudioVnContinueDialogue")}
           </Button>
         ) : (
-          <span className="text-[11px] text-emerald-400 font-medium self-end">
+          <Text as="span" size="2xs" weight="medium" className="text-emerald-400 self-end">
             • {t("dataStudioVnEndOfScene")}
-          </span>
+          </Text>
         )}
       </div>
     </section>

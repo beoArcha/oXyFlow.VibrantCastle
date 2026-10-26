@@ -1,6 +1,6 @@
 import React from "react";
 import { Heart, Swords, Zap, Sparkles } from "lucide-react";
-import { Card, Badge } from "@ui";
+import { Card, Badge, Heading, Text } from "@ui";
 import { EnemyJsonSchema } from "@lib/schemas/enemySchema";
 import { cn } from "@lib/utils";
 
@@ -45,12 +45,12 @@ export const BestiaryCardItem: React.FC<BestiaryCardItemProps> = React.memo(
       >
         <div className="flex items-start justify-between gap-2 mb-2 w-full">
           <div className="min-w-0 flex-1">
-            <h4 className="text-sm font-bold text-stone-100 truncate group-hover:text-amber-200 transition-colors">
+            <Heading level={4} size="sm" className="truncate group-hover:text-amber-200 transition-colors">
               {enemy.defaultName}
-            </h4>
-            <span className="text-[10px] font-mono text-stone-400 truncate block">
+            </Heading>
+            <Text as="span" family="mono" size="3xs" className="text-stone-400 truncate block">
               {enemy.id}
-            </span>
+            </Text>
           </div>
           <Badge variant={getCategoryVariant()}>
             {enemy.category}
@@ -87,31 +87,31 @@ export const BestiaryCardItem: React.FC<BestiaryCardItemProps> = React.memo(
             )}
           </div>
 
-          <div className="absolute bottom-1 right-1.5 text-[9px] font-mono text-stone-400">
+          <Text as="div" family="mono" size="3xs" className="absolute bottom-1 right-1.5 text-stone-400">
             {width}x{height}
-          </div>
+          </Text>
         </div>
 
         <div className="grid grid-cols-3 gap-1.5 pt-2 border-t border-stone-800/70 text-xs w-full">
           <div className="flex items-center gap-1 text-rose-400" title="Health">
             <Heart className="w-3 h-3 shrink-0" />
-            <span className="font-semibold text-[11px] truncate">
+            <Text as="span" size="2xs" weight="semibold" className="truncate">
               {enemy.stats?.health ?? 0}
-            </span>
+            </Text>
           </div>
 
           <div className="flex items-center gap-1 text-amber-400" title="Attack Power">
             <Swords className="w-3 h-3 shrink-0" />
-            <span className="font-semibold text-[11px] truncate">
+            <Text as="span" size="2xs" weight="semibold" className="truncate">
               {enemy.stats?.attackPower ?? 0}
-            </span>
+            </Text>
           </div>
 
           <div className="flex items-center gap-1 text-cyan-400" title="Speed">
             <Zap className="w-3 h-3 shrink-0" />
-            <span className="font-semibold text-[11px] truncate">
+            <Text as="span" size="2xs" weight="semibold" className="truncate">
               {enemy.stats?.speed ?? 0}
-            </span>
+            </Text>
           </div>
         </div>
 
@@ -121,9 +121,9 @@ export const BestiaryCardItem: React.FC<BestiaryCardItemProps> = React.memo(
               <Sparkles className="w-2.5 h-2.5" />
               {enemy.soulDrop.type}
             </span>
-            <span className="font-mono text-stone-400">
+            <Text as="span" family="mono" size="3xs" className="text-stone-400">
               {Math.round(enemy.soulDrop.dropRate * 100)}%
-            </span>
+            </Text>
           </div>
         )}
       </Card>

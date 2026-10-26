@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Grid as GridIcon } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Badge } from "@ui";
+import { Card, CardHeader, CardTitle, CardContent, Badge, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import {
   AtlasGridConfig,
@@ -195,8 +195,10 @@ export const AtlasTextureViewer: React.FC<AtlasTextureViewerProps> = ({
             </Badge>
           )}
           {slicingConfig?.method && (
-            <Badge variant="purple" className="text-[10px] font-mono uppercase">
-              {slicingConfig.method}
+            <Badge variant="purple" className="text-[10px]">
+              <Text as="span" family="mono" size="3xs" uppercase>
+                {slicingConfig.method}
+              </Text>
             </Badge>
           )}
           <Badge variant="green" className="text-[10px]">

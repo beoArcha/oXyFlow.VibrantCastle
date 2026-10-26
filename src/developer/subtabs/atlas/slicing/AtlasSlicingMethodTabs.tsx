@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid, Box, Sparkles, Layers } from "lucide-react";
-import { SegmentedControl } from "@ui";
+import { SegmentedControl, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { SlicingMethod } from "../types";
 
@@ -40,10 +40,10 @@ export const AtlasSlicingMethodTabs: React.FC<AtlasSlicingMethodTabsProps> = ({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex items-center gap-1.5 text-xs font-semibold text-stone-300">
+      <Text as="div" size="xs" weight="semibold" className="flex items-center gap-1.5 text-stone-300">
         <Layers size={13} className="text-amber-400" />
         <span>{t("atlasStudioSlicingStrategyLabel")}</span>
-      </div>
+      </Text>
       <SegmentedControl<SlicingMethod>
         options={options}
         value={currentMethod}

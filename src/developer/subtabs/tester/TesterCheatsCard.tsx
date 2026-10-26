@@ -1,6 +1,6 @@
 import React from "react";
 import { Shield, Zap, FastForward, Ghost, Heart } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Switch } from "@ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, Switch, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { QUICK_HP_PRESETS } from "./constants";
 import { TesterCheatsCardProps } from "./types";
@@ -69,7 +69,7 @@ export const TesterCheatsCard: React.FC<TesterCheatsCardProps> = ({
             >
               <div className="flex items-center gap-2">
                 {cheat.icon}
-                <span className="text-xs font-semibold text-stone-200">{cheat.label}</span>
+                <Text as="span" size="xs" weight="semibold" className="text-stone-200">{cheat.label}</Text>
               </div>
               <Switch
                 checked={cheat.checked}
@@ -84,9 +84,9 @@ export const TesterCheatsCard: React.FC<TesterCheatsCardProps> = ({
         <Card variant="dark" className="p-3 flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Heart size={15} className="text-red-400" />
-            <span className="text-xs font-bold text-stone-200">
+            <Text as="span" size="xs" weight="bold" className="text-stone-200">
               {t("testerHpControlsLabel")}
-            </span>
+            </Text>
           </div>
           <div className="flex items-center gap-1.5 flex-wrap">
             <Button size="sm" variant="secondary" onClick={() => onSetPlayerHp(QUICK_HP_PRESETS[0])}>

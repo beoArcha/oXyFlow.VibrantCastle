@@ -10,7 +10,7 @@ import {
   Clock,
   Info,
 } from "lucide-react";
-import { Button, Badge, Tooltip, ConfirmDialog, EmptyState } from "@ui";
+import { Button, Badge, Tooltip, ConfirmDialog, EmptyState, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import {
   AtlasGridConfig,
@@ -116,14 +116,18 @@ const FrameThumbnail: React.FC<FrameThumbnailProps> = ({
     >
       {/* Frame Sequence Number Badge */}
       <div className="absolute top-1 left-1 z-10">
-        <span
-          className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded shadow ${isSelected
-              ? "bg-amber-500 text-stone-950 font-black"
+        <Text
+          as="span"
+          family="mono"
+          size="3xs"
+          weight={isSelected ? "black" : "bold"}
+          className={`px-1.5 py-0.5 rounded shadow ${isSelected
+              ? "bg-amber-500 text-stone-950"
               : "bg-black/75 text-amber-300 border border-stone-800"
             }`}
         >
           #{frameIndex + 1}
-        </span>
+        </Text>
       </div>
 
       {/* Frame Canvas Thumbnail */}
@@ -134,13 +138,13 @@ const FrameThumbnail: React.FC<FrameThumbnailProps> = ({
 
       {/* Frame Delay / Hold indicator */}
       {delayMs ? (
-        <span className="text-[8px] font-mono text-cyan-300 flex items-center gap-0.5">
+        <Text as="span" family="mono" size="3xs" className="text-cyan-300 flex items-center gap-0.5">
           <Clock size={8} /> {delayMs}ms
-        </span>
+        </Text>
       ) : (
-        <span className="text-[8px] font-mono text-stone-500">
+        <Text as="span" family="mono" size="3xs" className="text-stone-500">
           f:{frameIndex}
-        </span>
+        </Text>
       )}
 
       {/* Hover Action Overlay */}
@@ -266,16 +270,16 @@ export const AtlasAnimationFilmstrip: React.FC<AtlasAnimationFilmstripProps> = (
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-800/80 pb-2">
         <div className="flex items-center gap-2">
           <Film size={15} className="text-amber-400" />
-          <span className="text-xs font-bold text-stone-200">
+          <Text as="span" size="xs" weight="bold" className="text-stone-200">
             {t("atlasStudioFilmstripTitle")}
-          </span>
-          <Badge variant="amber" className="font-mono text-xs">
-            {currentTrack.name}
+          </Text>
+          <Badge variant="amber" className="text-xs">
+            <Text as="span" family="mono" size="xs">{currentTrack.name}</Text>
           </Badge>
-          <span className="text-[11px] font-mono text-stone-400">
+          <Text as="span" family="mono" size="2xs" className="text-stone-400">
             {frameItems.length} {t("atlasStudioTrackFrames").toLowerCase()} • {currentTrack.fps} FPS
             {currentTrack.pingPong ? " • Ping-Pong" : currentTrack.loop ? " • Loop" : ""}
-          </span>
+          </Text>
         </div>
 
         {/* Quick Sequence Actions */}

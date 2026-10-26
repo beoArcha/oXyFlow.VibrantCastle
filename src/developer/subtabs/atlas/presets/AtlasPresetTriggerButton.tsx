@@ -1,6 +1,6 @@
 import React from "react";
 import { ChevronDown } from "lucide-react";
-import { Button, Badge } from "@ui";
+import { Button, Badge, Text } from "@ui";
 import { IAtlasAssetManifestItem } from "@game/engine/meta/registry";
 import { getCategoryMeta } from "./categoryMeta";
 
@@ -27,9 +27,9 @@ export const AtlasPresetTriggerButton: React.FC<AtlasPresetTriggerButtonProps> =
     >
       <div className="flex items-center gap-1.5">
         {activeMeta?.icon}
-        <span className="font-bold text-xs text-amber-200 group-hover:text-amber-100 max-w-[160px] sm:max-w-[200px] truncate">
+        <Text as="span" size="xs" weight="bold" className="text-amber-200 group-hover:text-amber-100 max-w-[160px] sm:max-w-[200px] truncate">
           {activeAsset?.name || "Select Atlas"}
-        </span>
+        </Text>
       </div>
 
       {activeAsset && activeMeta && (

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ScrollText, ChevronUp, ChevronDown } from "lucide-react";
-import { Button } from "@ui";
+import { Button, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { useThrottledLogs } from "../../hooks/useThrottledLogs";
 import { GameBaseError } from "@lib/errors";
@@ -92,9 +92,9 @@ export const AtlasStatusBar: React.FC<AtlasStatusBarProps> = ({
           >
             <ScrollText size={12} />
             <span>{t("atlasStudioLogs") || "Logs"}</span>
-            <span className="px-1 py-0 bg-black/60 rounded text-[9px] text-amber-300 font-mono">
+            <Text as="span" family="mono" size="3xs" className="px-1 py-0 bg-black/60 rounded text-amber-300">
               {atlasLogs.length}
-            </span>
+            </Text>
             {isLogsOpen ? <ChevronDown size={12} /> : <ChevronUp size={12} />}
           </Button>
         </div>

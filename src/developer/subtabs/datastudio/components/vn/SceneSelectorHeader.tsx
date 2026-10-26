@@ -1,6 +1,6 @@
 import React from "react";
 import { BookOpen, MapPin, Music } from "lucide-react";
-import { Select, SelectOption, Badge } from "@ui";
+import { Select, SelectOption, Badge, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { VisualNovelSceneJsonSchema } from "@lib/schemas/visualNovelSchema";
 
@@ -42,7 +42,7 @@ export const SceneSelectorHeader: React.FC<SceneSelectorHeaderProps> = ({
             variant="amber"
             icon={<MapPin size={12} className="text-amber-400 shrink-0" />}
           >
-            <span className="font-mono">{currentScene.metadata.locationId}</span>
+            <Text as="span" family="mono">{currentScene.metadata.locationId}</Text>
           </Badge>
         )}
         {currentScene.metadata?.actId && (
@@ -50,7 +50,7 @@ export const SceneSelectorHeader: React.FC<SceneSelectorHeaderProps> = ({
             variant="amber"
             icon={<BookOpen size={12} className="text-amber-400 shrink-0" />}
           >
-            <span className="font-mono">{currentScene.metadata.actId}</span>
+            <Text as="span" family="mono">{currentScene.metadata.actId}</Text>
           </Badge>
         )}
         {currentScene.musicCue && (
@@ -58,9 +58,9 @@ export const SceneSelectorHeader: React.FC<SceneSelectorHeaderProps> = ({
             variant="cyan"
             icon={<Music size={12} className="text-cyan-400 shrink-0" />}
           >
-            <span className="font-mono text-stone-300 truncate max-w-[140px]">
+            <Text as="span" family="mono" className="text-stone-300 truncate max-w-[140px]">
               {currentScene.musicCue}
-            </span>
+            </Text>
           </Badge>
         )}
       </div>

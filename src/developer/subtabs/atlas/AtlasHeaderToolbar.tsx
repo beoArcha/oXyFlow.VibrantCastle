@@ -16,6 +16,7 @@ import {
   FileUploadButton,
   Tooltip,
   ConfirmDialog,
+  Text,
 } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasPresetSelector } from "./AtlasPresetSelector";
@@ -104,11 +105,11 @@ export const AtlasHeaderToolbar: React.FC<AtlasHeaderToolbarProps> = ({
                 ) : (
                   <PanelRightOpen size={13} />
                 )}
-                <span className="hidden sm:inline text-xs font-semibold">
+                <Text as="span" size="xs" weight="semibold" className="hidden sm:inline">
                   {isInspectorOpen
                     ? t("atlasStudioCollapseInspector")
                     : t("atlasStudioExpandInspector")}
-                </span>
+                </Text>
               </Button>
             </Tooltip>
           </div>

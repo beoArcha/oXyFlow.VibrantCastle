@@ -1,6 +1,6 @@
 import React from "react";
 import { Activity, ExternalLink } from "lucide-react";
-import { Badge, Button, EmptyState } from "@ui";
+import { Badge, Button, EmptyState, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { LogLevel, LogRecord } from "@lib/logger";
 
@@ -32,10 +32,10 @@ export const AtlasStatusBarLogDrawer: React.FC<AtlasStatusBarLogDrawerProps> = (
   return (
     <div className="flex flex-col border-t border-stone-800 bg-black/90 p-2.5 max-h-[160px] overflow-y-auto custom-scrollbar animate-in slide-in-from-top-2 duration-150 select-none">
       <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-stone-800/80 text-[11px]">
-        <span className="text-stone-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+        <Text as="span" size="2xs" weight="bold" uppercase className="text-stone-400 tracking-wider flex items-center gap-1.5">
           <Activity size={12} className="text-amber-400" />
           {t("atlasStudioRecentLogs") || "Recent slicer events"}
-        </span>
+        </Text>
 
         {onNavigateToLogs && (
           <Button
@@ -58,7 +58,7 @@ export const AtlasStatusBarLogDrawer: React.FC<AtlasStatusBarLogDrawerProps> = (
           className="border-dashed py-3"
         />
       ) : (
-        <div className="flex flex-col gap-1 font-mono text-[10px]">
+        <Text as="div" family="mono" size="3xs" className="flex flex-col gap-1">
           {logs.slice(-10).reverse().map((entry, idx) => (
             <div
               key={`${entry.timestamp}_${idx}`}
@@ -67,7 +67,7 @@ export const AtlasStatusBarLogDrawer: React.FC<AtlasStatusBarLogDrawerProps> = (
               <div className="flex items-center gap-2 min-w-0">
                 <span className="text-stone-600">{entry.timeFormatted}</span>
                 {getLevelBadge(entry.level)}
-                <span className="text-amber-400/90 font-bold">[{entry.category}]</span>
+                <Text as="span" weight="bold" className="text-amber-400/90">[{entry.category}]</Text>
                 <span className="text-stone-300 truncate">{entry.message}</span>
               </div>
               {entry.context && (
@@ -77,7 +77,7 @@ export const AtlasStatusBarLogDrawer: React.FC<AtlasStatusBarLogDrawerProps> = (
               )}
             </div>
           ))}
-        </div>
+        </Text>
       )}
     </div>
   );

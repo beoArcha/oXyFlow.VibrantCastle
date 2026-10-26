@@ -1,5 +1,5 @@
 import React from "react";
-import { Badge, Alert } from "@ui";
+import { Badge, Alert, Text } from "@ui";
 import { GameBaseError } from "@lib/errors";
 
 export interface AtlasStatusBarErrorBannerProps {
@@ -19,17 +19,17 @@ export const AtlasStatusBarErrorBanner: React.FC<AtlasStatusBarErrorBannerProps>
       className="rounded-none border-x-0 border-b-0 border-t py-1.5 px-3 select-none"
       title={
         <div className="flex items-center gap-2 min-w-0">
-          <Badge variant="red" className="text-[9px] uppercase font-mono shrink-0">
-            {error.code}
+          <Badge variant="red" className="text-[9px] uppercase shrink-0">
+            <Text as="span" family="mono" size="3xs">{error.code}</Text>
           </Badge>
-          <span className="truncate font-semibold">{error.message}</span>
+          <Text as="span" weight="semibold" className="truncate">{error.message}</Text>
         </div>
       }
     >
       {error.details && (
-        <span className="text-[10px] text-rose-400/80 font-mono truncate block">
+        <Text as="span" family="mono" size="3xs" className="text-rose-400/80 truncate block">
           {JSON.stringify(error.details)}
-        </span>
+        </Text>
       )}
     </Alert>
   );

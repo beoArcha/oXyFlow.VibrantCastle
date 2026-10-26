@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { MessageSquare } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Select } from "@ui";
+import { Card, CardHeader, CardTitle, CardContent, Select, Text } from "@ui";
 import dialoguesVnJson from "@data/narrative/dialogues_vn.json";
 import {
   VisualNovelSceneJsonSchema,
@@ -200,20 +200,20 @@ export const VisualNovelPreviewCard: React.FC = () => {
         <div className="flex items-center gap-3 text-xs bg-stone-950/80 border border-amber-900/40 rounded-lg px-3 py-2 flex-wrap">
           <span className="text-amber-200/70">
             {t("dataStudioVnActiveEmotion")}:{" "}
-            <strong className="text-amber-300 font-mono">{effectiveEmotion}</strong>
+            <Text as="strong" family="mono" className="text-amber-300">{effectiveEmotion}</Text>
           </span>
           <span className="text-amber-200/70">
             {t("dataStudioVnGridCell")}:{" "}
-            <span className="text-amber-100 font-medium font-mono">
+            <Text as="span" family="mono" weight="medium" className="text-amber-100">
               R{row}, C{col} (Idx: {index})
-            </span>
+            </Text>
           </span>
           <span className="text-amber-200/70">
             {t("dataStudioVnPosition")}:{" "}
-            <strong className="text-amber-300 font-mono">{currentNode.position ?? "center"}</strong>
+            <Text as="strong" family="mono" className="text-amber-300">{currentNode.position ?? "center"}</Text>
           </span>
           <span className="text-amber-200/70">
-            Cast: <strong className="text-amber-300">{stageActors.length} characters on stage</strong>
+            Cast: <Text as="strong" className="text-amber-300">{stageActors.length} characters on stage</Text>
           </span>
         </div>
 

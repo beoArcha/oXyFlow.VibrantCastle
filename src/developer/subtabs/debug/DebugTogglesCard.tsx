@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Eye, Activity, Crosshair, Ghost } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Switch } from "@ui";
+import { Card, CardHeader, CardTitle, CardContent, Switch, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { DebugSensorToggle } from "./types";
 
@@ -86,7 +86,7 @@ export const DebugTogglesCard: React.FC<DebugTogglesProps> = React.memo(function
           >
             <div className="flex items-center gap-2">
               {sensor.icon}
-              <span className="text-xs font-semibold text-stone-200">{sensor.label}</span>
+              <Text as="span" size="xs" weight="semibold" className="text-stone-200">{sensor.label}</Text>
             </div>
             <Switch
               checked={sensor.checked}

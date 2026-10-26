@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert } from "@ui";
+import { Alert, Text, Code } from "@ui";
 import { ValidationErrorDetail } from "@lib/schemas/commonSchema";
 import { useI18n } from "@context/I18nContext";
 
@@ -30,10 +30,10 @@ export const SchemaValidationAlert: React.FC<SchemaValidationAlertProps> = ({
     >
       <ul className="flex flex-col gap-1 pl-1 list-none m-0">
         {errors.map((err, idx) => (
-          <li key={`${err.path}-${idx}`} className="font-mono text-[11px] leading-snug">
+          <li key={`${err.path}-${idx}`} className="text-[11px] leading-snug">
             <span className="text-rose-400/70 select-none mr-1">•</span>
-            <span className="text-amber-300 font-semibold">{err.path}</span>
-            <span className="text-rose-200/90">: {err.message}</span>
+            <Code variant="amber" size="2xs">{err.path}</Code>
+            <Text as="span" variant="danger" size="2xs" className="text-rose-200/90">: {err.message}</Text>
           </li>
         ))}
       </ul>

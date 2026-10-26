@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Layers, Music, Sparkles } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, SegmentedControl } from "@ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, SegmentedControl, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { BackgroundLayerTier } from "@game/locations/schema/locationSchema";
 import { PARALLAX_TIERS, MUSIC_INTENSITY_PRESETS } from "./constants";
@@ -35,10 +35,10 @@ export const TesterParallaxCard: React.FC<TesterParallaxCardProps> = ({
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <div>
-          <div className="text-xs font-semibold text-stone-300 mb-2 flex items-center gap-1.5">
+          <Text as="div" size="xs" weight="semibold" className="text-stone-300 mb-2 flex items-center gap-1.5">
             <Layers size={13} className="text-amber-400" />
             <span>{t("testerParallaxTiersLabel")}</span>
-          </div>
+          </Text>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
             {PARALLAX_TIERS.map((tier: BackgroundLayerTier) => (
               <Button
@@ -58,9 +58,9 @@ export const TesterParallaxCard: React.FC<TesterParallaxCardProps> = ({
         <Card variant="dark" className="p-3 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Music size={15} className="text-purple-400" />
-            <span className="text-xs font-bold text-stone-200">
+            <Text as="span" size="xs" weight="bold" className="text-stone-200">
               {t("testerMusicIntensityLabel")}
-            </span>
+            </Text>
           </div>
           <SegmentedControl
             options={musicOptions}
@@ -73,9 +73,9 @@ export const TesterParallaxCard: React.FC<TesterParallaxCardProps> = ({
         <Card variant="dark" className="p-2.5 flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-2">
             <Sparkles size={15} className="text-amber-400" />
-            <span className="text-xs font-bold text-stone-200">
+            <Text as="span" size="xs" weight="bold" className="text-stone-200">
               {t("testerParticlesTestLabel")}
-            </span>
+            </Text>
           </div>
           <div className="flex items-center gap-1.5">
             <Button

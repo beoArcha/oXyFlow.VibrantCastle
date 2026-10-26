@@ -1,4 +1,5 @@
 import React from "react";
+import { Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasGridConfig } from "../types";
 
@@ -22,7 +23,7 @@ export const AtlasViewerStatusBar: React.FC<AtlasViewerStatusBarProps> = ({
   const { t } = useI18n();
 
   return (
-    <div className="flex items-center justify-between px-3 py-1.5 bg-[#120603] rounded border border-stone-800 text-[11px] font-mono text-stone-400">
+    <Text as="div" family="mono" size="2xs" className="flex items-center justify-between px-3 py-1.5 bg-[#120603] rounded border border-stone-800 text-stone-400">
       <div className="flex items-center gap-4">
         {hoverInfo ? (
           <span className="flex items-center gap-2">
@@ -66,7 +67,7 @@ export const AtlasViewerStatusBar: React.FC<AtlasViewerStatusBarProps> = ({
           </span>
         )}
       </div>
-    </div>
+    </Text>
   );
 };
 

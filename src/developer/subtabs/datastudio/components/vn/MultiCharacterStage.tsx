@@ -1,6 +1,7 @@
 import React from "react";
 import { BookOpen, Skull, Volume2, User } from "lucide-react";
 import { CharacterPortrait } from "@game-menu/character/CharacterPortrait";
+import { Text } from "@ui";
 import { StageActor } from "../../types/visualNovelStudioTypes";
 import { useI18n } from "@context/I18nContext";
 
@@ -60,9 +61,9 @@ export const MultiCharacterStage: React.FC<MultiCharacterStageProps> = ({
               aria-label={actor.displayName}
             >
               <Skull size={36} className="text-rose-400" />
-              <span className="text-[10px] font-mono uppercase tracking-wider font-bold px-1 text-center truncate max-w-full">
+              <Text as="span" family="mono" size="2xs" uppercase weight="bold" className="tracking-wider px-1 text-center truncate max-w-full">
                 {actor.id}
-              </span>
+              </Text>
             </div>
           ) : (
             <div
@@ -71,31 +72,40 @@ export const MultiCharacterStage: React.FC<MultiCharacterStageProps> = ({
               aria-label={actor.displayName}
             >
               <User size={36} className="text-amber-400/80" />
-              <span className="text-[10px] font-mono uppercase tracking-wider font-bold px-1 text-center truncate max-w-full">
+              <Text as="span" family="mono" size="2xs" uppercase weight="bold" className="tracking-wider px-1 text-center truncate max-w-full">
                 {actor.displayName}
-              </span>
+              </Text>
             </div>
           )}
 
           {isSpeaking && (
-            <span className="absolute -top-2.5 -right-2 bg-amber-500 text-stone-950 text-[9px] font-black uppercase px-1.5 py-0.5 rounded-full shadow flex items-center gap-0.5">
+            <Text
+              as="span"
+              weight="black"
+              uppercase
+              size="3xs"
+              className="absolute -top-2.5 -right-2 bg-amber-500 text-stone-950 px-1.5 py-0.5 rounded-full shadow flex items-center gap-0.5"
+            >
               <Volume2 size={10} />
               <span>Voice</span>
-            </span>
+            </Text>
           )}
         </div>
 
         <div className="flex flex-col items-center text-center">
-          <span
-            className={`text-xs font-semibold tracking-wider ${
+          <Text
+            as="span"
+            size="xs"
+            weight="semibold"
+            className={`tracking-wider ${
               isSpeaking ? "text-amber-300" : "text-stone-400"
             }`}
           >
             {actor.displayName}
-          </span>
-          <span className="text-[10px] font-mono text-amber-400/70">
+          </Text>
+          <Text as="span" family="mono" size="2xs" className="text-amber-400/70">
             {actor.emotion}
-          </span>
+          </Text>
         </div>
       </div>
     );
@@ -105,16 +115,16 @@ export const MultiCharacterStage: React.FC<MultiCharacterStageProps> = ({
     <div
       className={`relative w-full min-h-[220px] rounded-lg border border-amber-900/60 bg-stone-950 p-4 flex flex-col justify-between overflow-hidden shadow-inner ${className}`}
     >
-      <div className="absolute top-2 left-3 text-[10px] font-mono uppercase tracking-widest text-amber-200/40 select-none">
+      <Text as="div" family="mono" size="2xs" uppercase className="absolute top-2 left-3 tracking-widest text-amber-200/40 select-none">
         Stage: {backgroundId}
-      </div>
+      </Text>
 
       {isNarratorSpeaking && (
         <div className="self-center z-20 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-950/90 border border-amber-500/70 text-amber-300 shadow-md animate-pulse">
           <BookOpen size={14} className="text-amber-400 shrink-0" />
-          <span className="text-xs font-serif font-bold uppercase tracking-wider">
+          <Text as="span" family="serif" size="xs" weight="bold" uppercase className="tracking-wider">
             {t("dataStudioVnSpeakerNarrator")}
-          </span>
+          </Text>
         </div>
       )}
 

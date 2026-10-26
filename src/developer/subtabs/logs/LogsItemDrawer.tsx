@@ -1,7 +1,7 @@
 import React from "react";
 import { AlertTriangle, Braces } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
-import { CopyableSnippet } from "@ui";
+import { CopyableSnippet, Text } from "@ui";
 import { LogItemDrawerProps } from "./types";
 import { safeStringify } from "./utils";
 
@@ -34,12 +34,12 @@ export const LogsItemDrawer: React.FC<LogItemDrawerProps> = ({ context, error })
               className="border-rose-900/50 bg-rose-950/20 text-rose-200"
             />
           ) : (
-            <div className="p-2 rounded bg-rose-950/30 border border-rose-900/50 text-rose-200 flex items-center gap-1.5 font-mono">
+            <Text as="div" family="mono" size="xs" className="p-2 rounded bg-rose-950/30 border border-rose-900/50 text-rose-200 flex items-center gap-1.5">
               <AlertTriangle size={12} className="text-rose-400 shrink-0" />
               <span>
                 {error.name}: {error.message}
               </span>
-            </div>
+            </Text>
           )}
         </div>
       )}

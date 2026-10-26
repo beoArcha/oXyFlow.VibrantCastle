@@ -1,10 +1,12 @@
 import React, { useId } from "react";
 import { cn } from "@lib/utils";
-import { textareaVariants, type InputVariantProps } from "./input-variants";
+import { textareaVariants, type TextareaVariantProps } from "./input-variants";
+import { Label } from "../../typography/Label";
+import { Paragraph } from "../../typography/Paragraph";
 
 export interface TextareaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement>,
-    InputVariantProps {
+    TextareaVariantProps {
   label?: string;
   error?: string;
   helperText?: string;
@@ -26,6 +28,7 @@ export const Textarea = React.memo(
       className,
       containerClassName,
       rows = 4,
+      family = "sans",
       ...props
     },
     ref
@@ -41,12 +44,16 @@ export const Textarea = React.memo(
     return (
       <div className={cn("relative w-full flex flex-col gap-1 text-left", containerClassName)}>
         {label && (
-          <label
+          <Label
             htmlFor={textareaId}
-            className="text-xs font-semibold uppercase tracking-wider text-stone-400 select-none"
+            size="xs"
+            weight="semibold"
+            uppercase
+            variant="muted"
+            className="select-none tracking-wider"
           >
             {label}
-          </label>
+          </Label>
         )}
 
         <textarea
@@ -57,7 +64,7 @@ export const Textarea = React.memo(
           aria-invalid={Boolean(error)}
           aria-describedby={helperId}
           className={cn(
-            textareaVariants({ hasError: Boolean(error) }),
+            textareaVariants({ hasError: Boolean(error), family }),
             disabled && "opacity-50 cursor-not-allowed bg-stone-900/60 border-stone-800 text-stone-500",
             className
           )}
@@ -65,15 +72,15 @@ export const Textarea = React.memo(
         />
 
         {error && (
-          <p id={helperId} role="alert" className="text-xs text-rose-400 font-medium">
+          <Paragraph id={helperId} role="alert" size="xs" variant="danger">
             {error}
-          </p>
+          </Paragraph>
         )}
 
         {!error && helperText && (
-          <p id={helperId} className="text-xs text-stone-500">
+          <Paragraph id={helperId} size="xs" variant="muted">
             {helperText}
-          </p>
+          </Paragraph>
         )}
       </div>
     );

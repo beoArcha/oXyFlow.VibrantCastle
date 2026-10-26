@@ -9,6 +9,7 @@ import {
   Select,
   ColorPickerInput,
   CompactNumberStepper,
+  Label,
 } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import spellsJson from "@data/skills/spells.json";
@@ -162,12 +163,14 @@ export const SpellAndSkillEditorCard: React.FC = () => {
           />
 
           <div className="flex flex-col gap-1 text-left">
-            <label
+            <Label
               htmlFor="spell-field-color"
-              className="text-xs font-semibold uppercase tracking-wider text-stone-400 select-none"
+              size="xs"
+              uppercase
+              className="text-stone-400 select-none"
             >
               {t("dataStudioSpellColor")}
-            </label>
+            </Label>
             <ColorPickerInput
               id="spell-field-color"
               ariaLabel={t("dataStudioSpellColor")}

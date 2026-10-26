@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Skull, Ghost, Trophy, AlertTriangle, Plus } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Select, Switch } from "@ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, Select, Switch, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { MONSTER_ID_LIST } from "./constants";
 import { TesterCombatCardProps } from "./types";
@@ -48,7 +48,7 @@ export const TesterCombatCard: React.FC<TesterCombatCardProps> = ({
           <div className="flex items-center justify-between px-3 py-1.5 bg-stone-900/70 border border-stone-800 rounded-lg h-9">
             <div className="flex items-center gap-1.5">
               <Ghost size={14} className={freezeAI ? "text-amber-400" : "text-stone-400"} />
-              <span className="text-xs font-semibold text-stone-200">{t("testerFreezeAiLabel")}</span>
+              <Text as="span" size="xs" weight="semibold" className="text-stone-200">{t("testerFreezeAiLabel")}</Text>
             </div>
             <Switch
               checked={freezeAI}
@@ -78,9 +78,9 @@ export const TesterCombatCard: React.FC<TesterCombatCardProps> = ({
         <Card variant="dark" className="p-3 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Plus size={15} className="text-amber-400" />
-            <span className="text-xs font-bold text-stone-200">
+            <Text as="span" size="xs" weight="bold" className="text-stone-200">
               {t("testerSpawnMonsterLabel")}
-            </span>
+            </Text>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <Select
@@ -89,7 +89,7 @@ export const TesterCombatCard: React.FC<TesterCombatCardProps> = ({
               value={selectedEnemy}
               onChange={(e) => setSelectedEnemy(e.target.value)}
               options={monsterOptions}
-              className="w-48 font-semibold text-xs"
+              className="w-48 text-xs"
             />
             <Button
               size="sm"

@@ -1,6 +1,6 @@
 import React from "react";
 import { Eye, Activity } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Switch } from "@ui";
+import { Card, CardHeader, CardTitle, CardContent, Switch, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { TesterDiagnosticsCardProps } from "./types";
 
@@ -26,7 +26,7 @@ export const TesterDiagnosticsCard: React.FC<TesterDiagnosticsCardProps> = ({
         <div className="flex items-center justify-between p-2.5 bg-stone-900/60 border border-stone-800 rounded-lg hover:border-stone-700 transition-colors">
           <div className="flex items-center gap-2">
             <Eye size={14} className={showHitboxes ? "text-amber-400" : "text-stone-400"} />
-            <span className="text-xs font-semibold text-stone-200">{t("testerHitboxesLabel")}</span>
+            <Text as="span" size="xs" weight="semibold" className="text-stone-200">{t("testerHitboxesLabel")}</Text>
           </div>
           <Switch
             checked={showHitboxes}
@@ -38,7 +38,7 @@ export const TesterDiagnosticsCard: React.FC<TesterDiagnosticsCardProps> = ({
         <div className="flex items-center justify-between p-2.5 bg-stone-900/60 border border-stone-800 rounded-lg hover:border-stone-700 transition-colors">
           <div className="flex items-center gap-2">
             <Activity size={14} className={showProfiler ? "text-amber-400" : "text-stone-400"} />
-            <span className="text-xs font-semibold text-stone-200">{t("testerProfilerLabel")}</span>
+            <Text as="span" size="xs" weight="semibold" className="text-stone-200">{t("testerProfilerLabel")}</Text>
           </div>
           <Switch
             checked={showProfiler}

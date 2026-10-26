@@ -11,6 +11,7 @@ import {
   ColorPickerInput,
   CompactNumberStepper,
   SegmentedControl,
+  Label,
 } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import enemiesJson from "@data/enemies/enemies.json";
@@ -308,12 +309,14 @@ export const EnemyEditorCard: React.FC<EnemyEditorCardProps> = ({
               />
 
               <div className="flex flex-col gap-1 text-left">
-                <label
+                <Label
                   htmlFor="enemy-field-color"
-                  className="text-xs font-semibold uppercase tracking-wider text-stone-400 select-none"
+                  size="xs"
+                  uppercase
+                  className="text-stone-400 select-none"
                 >
                   {t("dataStudioEnemyColor")}
-                </label>
+                </Label>
                 <ColorPickerInput
                   id="enemy-field-color"
                   ariaLabel={t("dataStudioEnemyColor")}

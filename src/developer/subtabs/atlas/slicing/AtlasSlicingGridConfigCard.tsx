@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid } from "lucide-react";
-import { CompactNumberStepper, Card } from "@ui";
+import { CompactNumberStepper, Card, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasGridConfig, SlicingMethod } from "../types";
 
@@ -26,11 +26,11 @@ export const AtlasSlicingGridConfigCard: React.FC<AtlasSlicingGridConfigCardProp
 
   return (
     <Card variant="subtle" className="p-3 gap-2.5">
-      <div className="flex items-center gap-1.5 text-xs font-semibold text-stone-300">
+      <div className="flex items-center gap-1.5 text-xs text-stone-300">
         <Card.Title icon={<Grid size={13} className="text-amber-400" />} className="text-xs">
           {t("atlasStudioGridConfigTitle")}
         </Card.Title>
-        <span className="text-[10px] text-stone-500 font-mono">({method})</span>
+        <Text as="span" family="mono" size="3xs" className="text-stone-500">({method})</Text>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">

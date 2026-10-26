@@ -2,18 +2,18 @@ import React from "react";
 import { ListFilter, ChevronDown, ChevronRight } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
 import { LogLevel } from "@lib/logger";
-import { EmptyState } from "@ui";
+import { EmptyState, Text } from "@ui";
 import { LogsTerminalListProps } from "./types";
 import { LogsItemDrawer } from "./LogsItemDrawer";
 
 const getLevelBadgeClass = (level: LogLevel) => {
   switch (level) {
     case LogLevel.FATAL:
-      return "bg-red-600 text-white border-red-400 font-black animate-pulse shadow-red-900/50 shadow-sm";
+      return "bg-red-600 text-white border-red-400 animate-pulse shadow-red-900/50 shadow-sm";
     case LogLevel.ERROR:
-      return "bg-rose-950/90 text-rose-300 border-rose-700 font-bold";
+      return "bg-rose-950/90 text-rose-300 border-rose-700";
     case LogLevel.WARN:
-      return "bg-amber-950/90 text-amber-300 border-amber-700 font-semibold";
+      return "bg-amber-950/90 text-amber-300 border-amber-700";
     case LogLevel.INFO:
       return "bg-cyan-950/90 text-cyan-300 border-cyan-800";
     case LogLevel.DEBUG:
@@ -37,7 +37,7 @@ export const LogsTerminalList: React.FC<LogsTerminalListProps> = ({
   return (
     <div
       ref={scrollContainerRef}
-      className="flex-1 min-h-0 bg-[#0e0402]/95 border border-amber-500/30 rounded-xl p-3 overflow-y-auto custom-scrollbar flex flex-col gap-1.5 font-mono text-xs shadow-inner shadow-black/80"
+      className="flex-1 min-h-0 bg-[#0e0402]/95 border border-amber-500/30 rounded-xl p-3 overflow-y-auto custom-scrollbar flex flex-col gap-1.5 text-xs shadow-inner shadow-black/80"
     >
       {logs.length === 0 ? (
         <div className="flex-1 flex items-center justify-center p-4">
@@ -85,25 +85,33 @@ export const LogsTerminalList: React.FC<LogsTerminalListProps> = ({
                   <span className="w-3.5" />
                 )}
 
-                <span className="text-stone-500 text-[10px] shrink-0 font-mono pt-0.5">
+                <Text as="span" family="mono" size="2xs" className="text-stone-500 shrink-0 pt-0.5">
                   {entry.timeFormatted}
-                </span>
+                </Text>
 
-                <span
-                  className={`px-1.5 py-0.2 rounded text-[9px] uppercase font-bold border shrink-0 ${getLevelBadgeClass(
+                <Text
+                  as="span"
+                  size="3xs"
+                  weight={entry.level === LogLevel.FATAL ? "black" : "bold"}
+                  uppercase
+                  className={`px-1.5 py-0.2 rounded border shrink-0 ${getLevelBadgeClass(
                     entry.level
                   )}`}
                 >
                   {entry.levelName}
-                </span>
+                </Text>
 
-                <span className="px-1.5 py-0.2 rounded text-[9px] font-bold border border-stone-800 bg-stone-900/80 text-stone-300 shrink-0">
+                <Text as="span" size="3xs" weight="bold" className="px-1.5 py-0.2 rounded border border-stone-800 bg-stone-900/80 text-stone-300 shrink-0">
                   {entry.category}
-                </span>
+                </Text>
 
-                <span
+                <Text
+                  as="span"
+                  family="mono"
+                  size="xs"
+                  weight={entry.level >= LogLevel.ERROR ? "semibold" : "normal"}
                   className={`flex-1 break-words leading-tight ${entry.level >= LogLevel.ERROR
-                      ? "text-rose-300 font-semibold"
+                      ? "text-rose-300"
                       : entry.level === LogLevel.WARN
                         ? "text-amber-200"
                         : entry.level === LogLevel.INFO
@@ -112,12 +120,12 @@ export const LogsTerminalList: React.FC<LogsTerminalListProps> = ({
                     }`}
                 >
                   {entry.message}
-                </span>
+                </Text>
 
                 {hasDetails && (
-                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 shrink-0">
+                  <Text as="span" family="mono" size="3xs" className="px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 shrink-0">
                     {entry.error ? "error" : "context"}
-                  </span>
+                  </Text>
                 )}
               </div>
 

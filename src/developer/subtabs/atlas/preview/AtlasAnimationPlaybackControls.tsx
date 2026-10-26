@@ -68,7 +68,7 @@ export const AtlasAnimationPlaybackControls: React.FC<AtlasAnimationPlaybackCont
             size="sm"
             variant={isPlaying ? "secondary" : "primary"}
             onClick={onTogglePlay}
-            className="h-7 px-2.5 text-xs font-bold"
+            className="h-7 px-2.5 text-xs"
           >
             {isPlaying ? (
               <>

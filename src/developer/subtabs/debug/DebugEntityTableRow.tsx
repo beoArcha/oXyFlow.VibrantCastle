@@ -1,6 +1,6 @@
 import React from "react";
 import { Crosshair, Zap, Trash2 } from "lucide-react";
-import { TableRow, TableCell, Button, IconButton } from "@ui";
+import { TableRow, TableCell, Button, IconButton, Text, Code } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { DebugEntityTableRowProps } from "./types";
 
@@ -23,22 +23,22 @@ export const DebugEntityTableRow: React.FC<DebugEntityTableRowProps> = React.mem
     const displayName = enemy.defaultName || enemy.id;
 
     return (
-      <TableRow className="font-mono text-xs">
+      <TableRow className="text-xs">
         <TableCell className="py-2 px-3">
           <div className="flex flex-col">
-            <span className="font-bold text-stone-200">{displayName}</span>
-            <span className="text-[10px] text-stone-500">{enemy.id}</span>
+            <Text as="span" weight="bold" className="text-stone-200">{displayName}</Text>
+            <Text as="span" family="mono" size="2xs" className="text-stone-500">{enemy.id}</Text>
           </div>
         </TableCell>
 
         <TableCell className="py-2 px-3 whitespace-nowrap text-amber-300">
-          X: {posX}, Y: {posY}
+          <Code variant="amber" size="xs">X: {posX}, Y: {posY}</Code>
         </TableCell>
 
         <TableCell className="py-2 px-3 whitespace-nowrap">
-          <span className={`font-bold ${hpColorClass}`}>
+          <Text as="span" weight="bold" family="mono" className={hpColorClass}>
             {currentHp} / {maxHp}
-          </span>
+          </Text>
         </TableCell>
 
         <TableCell className="py-2 px-3 whitespace-nowrap text-right">

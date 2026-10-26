@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useMemo, useCallback } from "react";
 import { Sparkles, ChevronUp, ChevronDown } from "lucide-react";
-import { Button, Badge, Select } from "@ui";
+import { Button, Badge, Select, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import {
   AtlasGridConfig,
@@ -270,9 +270,9 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-800 pb-2">
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-cyan-400" />
-          <span className="text-xs font-bold text-stone-200">
+          <Text as="span" size="xs" weight="bold" className="text-stone-200">
             {t("atlasStudioAnimPreviewTitle")}
-          </span>
+          </Text>
           {currentTrack && (
             <Badge variant="cyan">
               {currentTrack.name} (<span ref={frameBadgeRef}>{currentFrame + 1}</span>/{totalFrames || currentTrack.frames})
@@ -290,7 +290,7 @@ export const AtlasAnimationPreview: React.FC<AtlasAnimationPreviewProps> = ({
               value: tr.name,
               label: `${tr.name} (row ${tr.row}, ${tr.frames}f)`,
             }))}
-            className="font-mono text-xs font-bold"
+            className="text-xs"
           />
 
           <Button

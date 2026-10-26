@@ -1,6 +1,6 @@
 import React from "react";
 import { User, Zap, Heart, Compass } from "lucide-react";
-import { Badge, ProgressBar, BarVariant } from "@ui";
+import { Badge, ProgressBar, BarVariant, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { DebugPlayerStatsSectionProps } from "./types";
 
@@ -24,14 +24,14 @@ const VitalsRow: React.FC<VitalsRowProps> = React.memo(function VitalsRow({
 
   return (
     <div className="flex flex-col gap-0.5">
-      <div className="flex justify-between text-[10px] font-mono text-stone-400 select-none">
+      <Text as="div" family="mono" size="2xs" className="flex justify-between text-stone-400 select-none">
         <span className="flex items-center gap-1">
           {icon} {label}
         </span>
         <span>
           {safeCurrent} / {safeMax}
         </span>
-      </div>
+      </Text>
       <ProgressBar
         value={safeCurrent}
         max={safeMax}
@@ -58,54 +58,58 @@ export const DebugPlayerStatsSection: React.FC<DebugPlayerStatsSectionProps> = R
     return (
       <div className="flex flex-col gap-2.5 p-3 rounded-xl bg-[#140602] border border-stone-800">
         <div className="flex items-center justify-between border-b border-stone-800/80 pb-2">
-          <div className="flex items-center gap-1.5 font-bold text-xs text-amber-300">
+          <Text as="div" weight="bold" size="xs" className="flex items-center gap-1.5 text-amber-300">
             <User size={14} className="text-amber-400" />
             <span>
               {label} (P{playerNumber})
             </span>
-          </div>
+          </Text>
           <Badge variant={playerNumber === 1 ? "amber" : "cyan"}>
             {player.facingLeft ? t("debugPlayerFacingLeft") : t("debugPlayerFacingRight")}
           </Badge>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+        <div className="grid grid-cols-2 gap-2 text-xs">
           <div className="flex flex-col p-1.5 bg-black/40 rounded border border-stone-900">
             <span className="text-[10px] text-stone-500 select-none">{t("debugPlayerPos")}</span>
-            <span className="text-amber-200 font-bold">
+            <Text as="span" family="mono" weight="bold" className="text-amber-200">
               X: {posX}, Y: {posY}
-            </span>
+            </Text>
           </div>
           <div className="flex flex-col p-1.5 bg-black/40 rounded border border-stone-900">
             <span className="text-[10px] text-stone-500 select-none">{t("debugPlayerVel")}</span>
-            <span className="text-cyan-200 font-bold">
+            <Text as="span" family="mono" weight="bold" className="text-cyan-200">
               vx: {velX}, vy: {velY}
-            </span>
+            </Text>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap text-[11px] font-mono">
+        <div className="flex items-center gap-2 flex-wrap text-[11px]">
           <span className="text-stone-400 select-none">{t("debugPlayerState")}:</span>
-          <span className="px-1.5 py-0.5 rounded bg-black/60 border border-stone-800 text-stone-300 font-bold">
+          <Text as="span" family="mono" weight="bold" className="px-1.5 py-0.5 rounded bg-black/60 border border-stone-800 text-stone-300">
             {player.animationState || t("debugPlayerIdleState")}
-          </span>
-          <span
-            className={`px-1.5 py-0.5 rounded text-[10px] font-bold border ${isGrounded
+          </Text>
+          <Text
+            as="span"
+            family="mono"
+            size="2xs"
+            weight="bold"
+            className={`px-1.5 py-0.5 rounded border ${isGrounded
                 ? "bg-emerald-950/60 text-emerald-300 border-emerald-700/60"
                 : "bg-amber-950/60 text-amber-300 border-amber-700/60"
               }`}
           >
             {t("debugPlayerGrounded")}: {isGrounded ? t("debugYes") : t("debugNo")}
-          </span>
+          </Text>
           {isAttacking && (
-            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-950/60 text-rose-300 border border-rose-700/60">
+            <Text as="span" family="mono" size="2xs" weight="bold" className="px-1.5 py-0.5 rounded bg-rose-950/60 text-rose-300 border border-rose-700/60">
               {t("debugPlayerAttack")}
-            </span>
+            </Text>
           )}
           {isDashing && (
-            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-yellow-950/60 text-yellow-300 border border-yellow-700/60">
+            <Text as="span" family="mono" size="2xs" weight="bold" className="px-1.5 py-0.5 rounded bg-yellow-950/60 text-yellow-300 border border-yellow-700/60">
               {t("debugPlayerDash")}
-            </span>
+            </Text>
           )}
         </div>
 

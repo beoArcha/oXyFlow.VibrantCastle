@@ -9,6 +9,8 @@ import {
   Select,
   CompactNumberStepper,
   ItemSlot,
+  Text,
+  Paragraph,
 } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import itemsJson from "@data/items/items.json";
@@ -117,25 +119,25 @@ export const ItemEditorCard: React.FC = () => {
                 label: draft.id,
               }}
             />
-            <span className="text-[10px] uppercase font-mono tracking-wider text-amber-300 font-semibold">
+            <Text as="span" family="mono" size="3xs" weight="semibold" uppercase className="tracking-wider text-amber-300">
               {draft.rarity ?? "common"}
-            </span>
+            </Text>
           </div>
           <div className="flex-1 flex flex-col gap-1 text-xs text-stone-300">
             <div className="flex items-center justify-between">
-              <strong className="text-amber-200 text-sm font-semibold">{draft.id}</strong>
-              <span className="font-mono text-amber-400 font-semibold uppercase">{draft.type}</span>
+              <Text as="strong" size="sm" weight="semibold" className="text-amber-200">{draft.id}</Text>
+              <Text as="span" family="mono" weight="semibold" uppercase className="text-amber-400">{draft.type}</Text>
             </div>
-            <p className="text-[11px] text-stone-400 italic">
+            <Paragraph size="2xs" variant="muted" italic>
               {draft.descriptionKey ? t(draft.descriptionKey) : draft.descriptionKey}
-            </p>
-            <div className="flex items-center gap-3 text-[11px] text-stone-300 font-mono pt-1 flex-wrap">
+            </Paragraph>
+            <Text as="div" family="mono" size="2xs" className="flex items-center gap-3 text-stone-300 pt-1 flex-wrap">
               {draft.attackBonus ? <span>ATK: +{draft.attackBonus}</span> : null}
               {draft.defenseBonus ? <span>DEF: +{draft.defenseBonus}</span> : null}
               {draft.maxHpBonus ? <span>HP: +{draft.maxHpBonus}</span> : null}
               {draft.maxManaBonus ? <span>MP: +{draft.maxManaBonus}</span> : null}
               {draft.damageType ? <span className="text-amber-300">[{draft.damageType}]</span> : null}
-            </div>
+            </Text>
           </div>
         </div>
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { Activity, AlertCircle, CheckCircle2, Layers } from "lucide-react";
-import { Badge } from "@ui";
+import { Badge, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { GameBaseError } from "@lib/errors";
 
@@ -33,21 +33,21 @@ export const AtlasStatusBarMetrics: React.FC<AtlasStatusBarMetricsProps> = ({
     <div className="flex items-center gap-2.5 flex-wrap">
       {/* Health Status Indicator */}
       {error ? (
-        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-red-950/60 border border-red-700/80 text-rose-300 font-semibold animate-pulse">
+        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-red-950/60 border border-red-700/80 text-rose-300 animate-pulse">
           <AlertCircle size={13} className="text-red-400" />
-          <span>{t("atlasStudioStatusError") || "Error"}</span>
+          <Text as="span" weight="semibold">{t("atlasStudioStatusError") || "Error"}</Text>
         </div>
       ) : (
-        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-950/40 border border-emerald-700/60 text-emerald-300 font-semibold">
+        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-950/40 border border-emerald-700/60 text-emerald-300">
           <CheckCircle2 size={13} className="text-emerald-400" />
-          <span>{t("atlasStudioStatusReady") || "Ready"}</span>
+          <Text as="span" weight="semibold">{t("atlasStudioStatusReady") || "Ready"}</Text>
         </div>
       )}
 
       {/* Asset Info */}
       <div className="flex items-center gap-1.5 text-stone-300">
-        <span className="font-bold text-amber-200">{assetName}</span>
-        <span className="text-[10px] font-mono text-stone-500">[{assetId}]</span>
+        <Text as="span" weight="bold" className="text-amber-200">{assetName}</Text>
+        <Text as="span" family="mono" size="3xs" className="text-stone-500">[{assetId}]</Text>
         <Badge variant="stone" className="text-[9px] px-1 py-0 uppercase">
           {category}
         </Badge>
@@ -57,10 +57,10 @@ export const AtlasStatusBarMetrics: React.FC<AtlasStatusBarMetricsProps> = ({
 
       {/* Slicing Metrics */}
       <div className="flex items-center gap-2">
-        <span className="flex items-center gap-1 text-[11px] text-stone-400 font-mono">
+        <Text as="span" family="mono" size="2xs" className="flex items-center gap-1 text-stone-400">
           <Layers size={11} className="text-amber-400" />
           <strong className="text-amber-300">{slicingMethod}</strong>
-        </span>
+        </Text>
 
         <span className="text-[11px] text-stone-400">
           <strong className="text-emerald-400">{frameCount}</strong>{" "}
@@ -68,9 +68,9 @@ export const AtlasStatusBarMetrics: React.FC<AtlasStatusBarMetricsProps> = ({
         </span>
 
         {textureWidth && textureHeight && (
-          <span className="text-[11px] text-stone-500 font-mono">
+          <Text as="span" family="mono" size="2xs" className="text-stone-500">
             ({textureWidth}×{textureHeight}px)
-          </span>
+          </Text>
         )}
 
         {durationMs !== undefined && (

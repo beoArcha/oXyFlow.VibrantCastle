@@ -22,6 +22,7 @@ import {
   IconButton,
   Tooltip,
   KbdKey,
+  Text,
 } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { SlicerViewerTool } from "../types";
@@ -204,13 +205,13 @@ export const AtlasViewportToolbar: React.FC<AtlasViewportToolbarProps> = ({
       {/* Zoom Controls & Dimension Readout */}
       <div className="flex items-center gap-1.5">
         {textureWidth && textureHeight && (
-          <span className="text-[10px] font-mono text-stone-400 mr-1 hidden sm:inline">
+          <Text as="span" family="mono" size="3xs" className="text-stone-400 mr-1 hidden sm:inline">
             {textureWidth}×{textureHeight}px
-          </span>
+          </Text>
         )}
 
-        <Badge variant="stone" className="font-mono text-[10px] h-6 px-1.5">
-          {Math.round(zoom * 100)}%
+        <Badge variant="stone" className="text-[10px] h-6 px-1.5">
+          <Text as="span" family="mono" size="3xs">{Math.round(zoom * 100)}%</Text>
         </Badge>
 
         <IconButton

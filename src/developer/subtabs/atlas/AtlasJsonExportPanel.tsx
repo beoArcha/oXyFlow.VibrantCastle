@@ -8,7 +8,7 @@ import {
   Code,
   Sliders,
 } from "lucide-react";
-import { Button, Badge, SegmentedControl, Textarea, ActionBar, Alert } from "@ui";
+import { Button, Badge, SegmentedControl, Textarea, ActionBar, Alert, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import {
   AtlasGridConfig,
@@ -269,9 +269,9 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
       <ActionBar variant="plain" className="border-b border-stone-800 pb-2">
         <div className="flex items-center gap-2">
           <FileCode className="w-4 h-4 text-emerald-400" />
-          <span className="text-xs font-bold text-stone-200">
+          <Text as="span" size="xs" weight="bold" className="text-stone-200">
             {t("atlasStudioMetaEditorTitle")}
-          </span>
+          </Text>
           <Badge variant={validationIssues.length === 0 ? "green" : "amber"}>
             {validationIssues.length === 0
               ? t("atlasStudioValidationValid")
@@ -369,9 +369,11 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
           title={`${t("atlasStudioValidationWarning")}:`}
           className="text-xs"
         >
-          <ul className="list-disc pl-5 text-[10px] text-amber-200/90 font-mono space-y-0.5">
+          <ul className="list-disc pl-5 text-amber-200/90 space-y-0.5">
             {validationIssues.map((issue, idx) => (
-              <li key={idx}>{issue}</li>
+              <li key={idx}>
+                <Text as="span" family="mono" size="3xs">{issue}</Text>
+              </li>
             ))}
           </ul>
         </Alert>
@@ -379,19 +381,22 @@ export const AtlasJsonExportPanel: React.FC<AtlasJsonExportPanelProps> = ({
 
       {/* Syntax Error Alert */}
       {syntaxError && (
-        <Alert variant="danger" className="text-xs font-mono">
-          {t("atlasStudioSyntaxErrorPrefix")} {syntaxError}
+        <Alert variant="danger" className="text-xs">
+          <Text as="span" family="mono" size="xs">
+            {t("atlasStudioSyntaxErrorPrefix")} {syntaxError}
+          </Text>
         </Alert>
       )}
 
       {/* JSON Viewer / Editor Textarea */}
       <div className="relative">
         <Textarea
+          family="mono"
           readOnly={editorMode === "formatted"}
           value={rawText}
           onChange={handleRawChange}
           rows={14}
-          className={`font-mono text-[11px] p-2.5 leading-relaxed custom-scrollbar ${editorMode === "formatted" ? "select-text cursor-default" : ""
+          className={`text-[11px] p-2.5 leading-relaxed custom-scrollbar ${editorMode === "formatted" ? "select-text cursor-default" : ""
             }`}
           spellCheck={false}
         />

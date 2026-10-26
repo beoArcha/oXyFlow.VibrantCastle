@@ -11,6 +11,7 @@ import {
   TableRow,
   TableHead,
   TableCell,
+  Text,
 } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { IFreeformFrameRect } from "@game/engine/meta/types";
@@ -69,9 +70,9 @@ export const AtlasSlicingFreeformTable: React.FC<AtlasSlicingFreeformTableProps>
               )
             }
           />
-          <span className="text-xs font-semibold text-stone-300">
+          <Text as="span" size="xs" weight="semibold" className="text-stone-300">
             {t("atlasStudioFreeformFramesTitle")} ({frames.length})
-          </span>
+          </Text>
         </div>
 
         <Button
@@ -133,11 +134,12 @@ export const AtlasSlicingFreeformTable: React.FC<AtlasSlicingFreeformTableProps>
                       }
                     />
                   </TableCell>
-                  <TableCell className="p-1.5 text-amber-200/90 font-bold truncate max-w-[90px]">
-                    {frameId}
+                  <TableCell className="p-1.5 text-amber-200/90 truncate max-w-[90px]">
+                    <Text as="span" size="xs" weight="bold">{frameId}</Text>
                   </TableCell>
                   <TableCell className="p-1 text-stone-300">
                     <Input
+                      family="mono"
                       type="number"
                       value={frame.x}
                       onClick={(e) => e.stopPropagation()}
@@ -145,11 +147,12 @@ export const AtlasSlicingFreeformTable: React.FC<AtlasSlicingFreeformTableProps>
                         onUpdateFrameField(frameId, "x", parseInt(e.target.value, 10))
                       }
                       containerClassName="w-12 max-w-[48px]"
-                      className="h-5.5 px-0.5 text-center font-mono text-[10px] bg-black/60 border-stone-800 rounded"
+                      className="h-5.5 px-0.5 text-center text-[10px] bg-black/60 border-stone-800 rounded"
                     />
                   </TableCell>
                   <TableCell className="p-1 text-stone-300">
                     <Input
+                      family="mono"
                       type="number"
                       value={frame.y}
                       onClick={(e) => e.stopPropagation()}
@@ -157,11 +160,12 @@ export const AtlasSlicingFreeformTable: React.FC<AtlasSlicingFreeformTableProps>
                         onUpdateFrameField(frameId, "y", parseInt(e.target.value, 10))
                       }
                       containerClassName="w-12 max-w-[48px]"
-                      className="h-5.5 px-0.5 text-center font-mono text-[10px] bg-black/60 border-stone-800 rounded"
+                      className="h-5.5 px-0.5 text-center text-[10px] bg-black/60 border-stone-800 rounded"
                     />
                   </TableCell>
                   <TableCell className="p-1 text-stone-300">
                     <Input
+                      family="mono"
                       type="number"
                       value={frame.width}
                       onClick={(e) => e.stopPropagation()}
@@ -169,11 +173,12 @@ export const AtlasSlicingFreeformTable: React.FC<AtlasSlicingFreeformTableProps>
                         onUpdateFrameField(frameId, "width", parseInt(e.target.value, 10))
                       }
                       containerClassName="w-12 max-w-[48px]"
-                      className="h-5.5 px-0.5 text-center font-mono text-[10px] bg-black/60 border-stone-800 rounded"
+                      className="h-5.5 px-0.5 text-center text-[10px] bg-black/60 border-stone-800 rounded"
                     />
                   </TableCell>
                   <TableCell className="p-1 text-stone-300">
                     <Input
+                      family="mono"
                       type="number"
                       value={frame.height}
                       onClick={(e) => e.stopPropagation()}
@@ -181,7 +186,7 @@ export const AtlasSlicingFreeformTable: React.FC<AtlasSlicingFreeformTableProps>
                         onUpdateFrameField(frameId, "height", parseInt(e.target.value, 10))
                       }
                       containerClassName="w-12 max-w-[48px]"
-                      className="h-5.5 px-0.5 text-center font-mono text-[10px] bg-black/60 border-stone-800 rounded"
+                      className="h-5.5 px-0.5 text-center text-[10px] bg-black/60 border-stone-800 rounded"
                     />
                   </TableCell>
                   <TableCell className="p-1.5 text-stone-400 truncate max-w-[80px]">

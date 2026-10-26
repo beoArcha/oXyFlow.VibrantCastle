@@ -9,6 +9,7 @@ import {
   Input,
   Select,
   Textarea,
+  Label,
   CopyableSnippet,
 } from "@ui";
 import { useI18n } from "@context/I18nContext";
@@ -112,12 +113,14 @@ export const AIGeneratorCard: React.FC = () => {
 
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <label
+            <Label
               htmlFor="ai-json-sandbox"
-              className="text-xs font-semibold uppercase tracking-wider text-stone-400 select-none"
+              size="xs"
+              uppercase
+              className="text-stone-400 select-none"
             >
               {t("dataStudioAiSandbox")}
-            </label>
+            </Label>
             <Button
               variant="secondary"
               size="sm"
@@ -130,7 +133,8 @@ export const AIGeneratorCard: React.FC = () => {
           <Textarea
             id="ai-json-sandbox"
             rows={8}
-            className="font-mono text-xs"
+            family="mono"
+            className="text-xs"
             value={jsonInput}
             onChange={(e) => setJsonInput(e.target.value)}
             placeholder={t("dataStudioAiPlaceholder")}

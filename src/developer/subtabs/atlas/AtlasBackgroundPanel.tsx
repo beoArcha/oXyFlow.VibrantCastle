@@ -8,7 +8,7 @@ import {
   ShieldCheck,
   Eye,
 } from "lucide-react";
-import { Button, Slider, Badge, Switch, SegmentedControl, ColorPickerInput, Card } from "@ui";
+import { Button, Slider, Badge, Switch, SegmentedControl, ColorPickerInput, Card, Text, Paragraph } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { IAtlasBackgroundConfig } from "./types";
 import { BackgroundProcessor } from "@/game/engine/meta/slicing";
@@ -173,7 +173,7 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
     <div className="flex flex-col gap-3">
       {/* 1. Background Mode Switcher */}
       <Card variant="subtle" className="p-2.5 flex flex-col gap-2">
-        <span className="text-[11px] font-bold text-stone-300 uppercase tracking-wider flex items-center justify-between">
+        <Text as="span" size="2xs" weight="bold" uppercase className="text-stone-300 tracking-wider flex items-center justify-between">
           <span className="flex items-center gap-1.5">
             <Sliders size={13} className="text-amber-400" />
             {t("atlasStudioBgMode")}
@@ -181,7 +181,7 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
           <Badge variant={currentMode === "transparent" ? "green" : "amber"}>
             {currentMode}
           </Badge>
-        </span>
+        </Text>
 
         {/* Mode Switcher */}
         <SegmentedControl<"transparent" | "color">
@@ -208,16 +208,16 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
       {currentMode === "color" && (
         <Card variant="subtle" className="p-2.5 flex flex-col gap-2.5">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-stone-300 uppercase tracking-wider flex items-center gap-1.5">
+            <Text as="span" size="2xs" weight="bold" uppercase className="text-stone-300 tracking-wider flex items-center gap-1.5">
               <Pipette size={13} className="text-amber-400" />
               {t("atlasStudioChromaKeyTitle")}
-            </span>
+            </Text>
 
             <Button
               size="sm"
               variant="primary"
               onClick={onRequestEyedropper}
-              className="h-6 text-[11px] px-2 font-bold"
+              className="h-6 text-[11px] px-2"
             >
               <Pipette size={11} className="mr-1" />
               {t("atlasStudioEyedropperPick")}
@@ -235,7 +235,7 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
 
           {/* Quick Presets Swatches */}
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[10px] text-stone-400 mr-1 font-medium">{t("atlasStudioPresetsLabel")}</span>
+            <Text as="span" size="3xs" weight="medium" className="text-stone-400 mr-1">{t("atlasStudioPresetsLabel")}</Text>
             {COMMON_PRESETS.map((p) => {
               const isSelected = currentColor.toLowerCase() === p.hex.toLowerCase();
               return (
@@ -244,7 +244,7 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
                   size="sm"
                   variant={isSelected ? "primary" : "secondary"}
                   onClick={() => handleColorChange(p.hex)}
-                  className={`h-6 px-1.5 text-[10px] font-mono min-h-0 ${
+                  className={`h-6 px-1.5 text-[10px] min-h-0 ${
                     !isSelected ? "bg-black/50 border-stone-800 text-stone-400 hover:text-stone-200" : ""
                   }`}
                   leftIcon={
@@ -254,7 +254,7 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
                     />
                   }
                 >
-                  {p.name}
+                  <Text as="span" family="mono" size="3xs">{p.name}</Text>
                 </Button>
               );
             })}
@@ -279,9 +279,9 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
               checked={currentRemoveRuntime}
               onCheckedChange={handleRuntimeToggle}
               label={
-                <span className="text-[11px] text-stone-300 font-medium select-none">
+                <Text as="span" size="2xs" weight="medium" className="text-stone-300 select-none">
                   {t("atlasStudioBgRemoveRuntime")}
-                </span>
+                </Text>
               }
               size="sm"
             />
@@ -292,10 +292,10 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
       {/* 3. Export Clean PNG (Bake Alpha) Card */}
       <Card variant="subtle" className="p-3 flex flex-col gap-2 shadow-lg">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+          <Text as="span" size="xs" weight="bold" className="text-amber-300 flex items-center gap-1.5">
             <Sparkles size={13} className="text-amber-400" />
             {t("atlasStudioAlphaBakerTitle")}
-          </span>
+          </Text>
           {bakedSuccess && (
             <Badge variant="green">
               <Check size={10} className="mr-0.5 inline" /> {t("atlasStudioDownloadedBadge")}
@@ -303,16 +303,16 @@ export const AtlasBackgroundPanel: React.FC<AtlasBackgroundPanelProps> = ({
           )}
         </div>
 
-        <p className="text-[11px] text-stone-400 leading-relaxed">
+        <Paragraph size="2xs" variant="muted" className="leading-relaxed">
           {t("atlasStudioAlphaBakerDesc")}
-        </p>
+        </Paragraph>
 
         <Button
           size="sm"
           variant="primary"
           onClick={handleBakeCleanPng}
           disabled={isBaking}
-          className="h-8 text-xs font-bold w-full mt-1 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white shadow-md shadow-amber-950/60"
+          className="h-8 text-xs w-full mt-1 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white shadow-md shadow-amber-950/60"
         >
           {isBaking ? (
             <>

@@ -1,6 +1,6 @@
 import React from "react";
 import { Star, Check } from "lucide-react";
-import { Button, Badge } from "@ui";
+import { Button, Badge, Text } from "@ui";
 import { IAtlasAssetManifestItem } from "@game/engine/meta/registry";
 import { getCategoryMeta } from "./categoryMeta";
 
@@ -34,19 +34,22 @@ export const AtlasPresetItemRow: React.FC<AtlasPresetItemRowProps> = ({
 
         <div className="flex flex-col min-w-0">
           <div className="flex items-center gap-1.5">
-            <span
-              className={`text-xs font-bold truncate ${isSelected ? "text-amber-200" : "text-stone-300 group-hover:text-amber-200"
+            <Text
+              as="span"
+              size="xs"
+              weight="bold"
+              className={`truncate ${isSelected ? "text-amber-200" : "text-stone-300 group-hover:text-amber-200"
                 }`}
             >
               {asset.name}
-            </span>
+            </Text>
             {asset.isPopular && (
               <Star size={11} className="text-amber-400 fill-amber-400 flex-shrink-0" />
             )}
           </div>
 
           <div className="flex items-center gap-1.5 mt-0.5">
-            <span className="text-[10px] font-mono text-stone-500">{asset.id}</span>
+            <Text as="span" family="mono" size="3xs" className="text-stone-500">{asset.id}</Text>
             {asset.tags && asset.tags.length > 0 && (
               <span className="text-[9px] text-stone-400 truncate max-w-[140px]">
                 • {asset.tags.slice(0, 3).join(", ")}

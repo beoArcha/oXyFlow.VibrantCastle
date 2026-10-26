@@ -1,6 +1,6 @@
 import React from "react";
 import { Plus, Check, Split, Box, X } from "lucide-react";
-import { Button, ActionBar, IconButton } from "@ui";
+import { Button, ActionBar, IconButton, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasGridConfig } from "../types";
 
@@ -65,9 +65,9 @@ export const AtlasSelectionFloatingAction: React.FC<AtlasSelectionFloatingAction
       bordered={false}
       className="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex-nowrap items-center gap-2 p-1.5 shadow-2xl shadow-black animate-in fade-in slide-in-from-top-2 duration-150"
     >
-      <span className="text-[11px] font-mono text-amber-300 font-bold px-2 border-r border-stone-800 shrink-0">
+      <Text as="span" family="mono" size="2xs" weight="bold" className="text-amber-300 px-2 border-r border-stone-800 shrink-0">
         {t("atlasStudioSelectionSize")}: {Math.round(activeSelection.width)}×{Math.round(activeSelection.height)}px
-      </span>
+      </Text>
 
       {onCreateTrackFromSelection && (
         <Button
@@ -85,7 +85,7 @@ export const AtlasSelectionFloatingAction: React.FC<AtlasSelectionFloatingAction
             });
             onClose();
           }}
-          className="h-7 px-2.5 text-xs font-bold shadow"
+          className="h-7 px-2.5 text-xs shadow"
         >
           {t("atlasStudioCreateTrackFromSelection")}
         </Button>
@@ -107,7 +107,7 @@ export const AtlasSelectionFloatingAction: React.FC<AtlasSelectionFloatingAction
             });
             onClose();
           }}
-          className="h-7 px-2.5 text-xs font-bold"
+          className="h-7 px-2.5 text-xs"
         >
           {t("atlasStudioAssignSelection")}
         </Button>
@@ -129,7 +129,7 @@ export const AtlasSelectionFloatingAction: React.FC<AtlasSelectionFloatingAction
             });
             onClose();
           }}
-          className="h-7 px-2.5 text-xs font-bold"
+          className="h-7 px-2.5 text-xs"
         >
           {t("atlasStudioMergeWide")}
         </Button>
@@ -151,7 +151,7 @@ export const AtlasSelectionFloatingAction: React.FC<AtlasSelectionFloatingAction
             });
             onClose();
           }}
-          className="h-7 px-2.5 text-xs font-bold"
+          className="h-7 px-2.5 text-xs"
         >
           {t("atlasStudioAddFreeformFrame")}
         </Button>

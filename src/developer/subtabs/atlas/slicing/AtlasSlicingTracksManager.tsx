@@ -8,6 +8,7 @@ import {
   Tooltip,
   ConfirmDialog,
   Card,
+  Text,
 } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
@@ -107,10 +108,10 @@ export const AtlasSlicingTracksManager: React.FC<AtlasSlicingTracksManagerProps>
   return (
     <Card variant="subtle" className="p-2.5 gap-2">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[11px] font-bold text-stone-300 uppercase tracking-wider flex items-center gap-1.5">
+        <Text as="span" size="2xs" weight="bold" uppercase className="text-stone-300 tracking-wider flex items-center gap-1.5">
           <Layers size={13} className="text-amber-400" />
           {t("atlasStudioToggleTracks")} ({tracks.length})
-        </span>
+        </Text>
 
         <Button
           size="sm"
@@ -134,11 +135,13 @@ export const AtlasSlicingTracksManager: React.FC<AtlasSlicingTracksManagerProps>
               variant={isSelected ? "primary" : "secondary"}
               onClick={() => onSelectTrack(tr.name)}
               className={cn(
-                "h-7 px-2.5 text-xs font-mono font-bold whitespace-nowrap",
+                "h-7 px-2.5 text-xs whitespace-nowrap",
                 !isSelected && "bg-black/50 border-stone-800 text-stone-400 hover:text-stone-200"
               )}
             >
-              {tr.name} (r{tr.row})
+              <Text as="span" family="mono" size="xs" weight="bold">
+                {tr.name} (r{tr.row})
+              </Text>
             </Button>
           );
         })}
@@ -148,9 +151,9 @@ export const AtlasSlicingTracksManager: React.FC<AtlasSlicingTracksManagerProps>
       {activeTrack && (
         <Card variant="dark" className="p-2 gap-2 mt-1">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-xs font-bold text-amber-300 font-mono">
+            <Text as="span" family="mono" size="xs" weight="bold" className="text-amber-300">
               {activeTrack.name}
-            </span>
+            </Text>
             <div className="flex items-center gap-1">
               <IconButton
                 size="xs"
@@ -179,13 +182,14 @@ export const AtlasSlicingTracksManager: React.FC<AtlasSlicingTracksManagerProps>
           {/* Inputs: Name, Row, Frames, FPS */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <Input
+              family="mono"
               type="text"
               value={activeTrack.name}
               onChange={(e) =>
                 handleUpdateTrack(activeTrackIndex, "name", e.target.value)
               }
               label={t("atlasStudioTrackName")}
-              className="font-mono text-xs text-amber-200 py-1 px-2 h-7"
+              className="text-xs text-amber-200 py-1 px-2 h-7"
               containerClassName="gap-0.5"
             />
 
