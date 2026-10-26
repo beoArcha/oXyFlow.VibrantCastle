@@ -1,6 +1,6 @@
 import React from "react";
 import { Shield, Zap, FastForward, Ghost, Heart } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Switch, Text } from "@ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, Switch, Text, IconText } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { QUICK_HP_PRESETS } from "./constants";
 import { TesterCheatsCardProps } from "./types";
@@ -67,10 +67,15 @@ export const TesterCheatsCard: React.FC<TesterCheatsCardProps> = ({
               key={cheat.id}
               className="flex items-center justify-between p-2.5 bg-stone-900/60 border border-stone-800 rounded-lg hover:border-stone-700 transition-colors"
             >
-              <div className="flex items-center gap-2">
-                {cheat.icon}
-                <Text as="span" size="xs" weight="semibold" className="text-stone-200">{cheat.label}</Text>
-              </div>
+              <IconText
+                icon={cheat.icon}
+                gap="2"
+                size="xs"
+                weight="semibold"
+                className="text-stone-200"
+              >
+                {cheat.label}
+              </IconText>
               <Switch
                 checked={cheat.checked}
                 onCheckedChange={cheat.onToggle}
@@ -82,12 +87,15 @@ export const TesterCheatsCard: React.FC<TesterCheatsCardProps> = ({
         </div>
 
         <Card variant="dark" className="p-3 flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <Heart size={15} className="text-red-400" />
-            <Text as="span" size="xs" weight="bold" className="text-stone-200">
-              {t("testerHpControlsLabel")}
-            </Text>
-          </div>
+          <IconText
+            icon={<Heart size={15} className="text-red-400" />}
+            gap="2"
+            size="xs"
+            weight="bold"
+            className="text-stone-200"
+          >
+            {t("testerHpControlsLabel")}
+          </IconText>
           <div className="flex items-center gap-1.5 flex-wrap">
             <Button size="sm" variant="secondary" onClick={() => onSetPlayerHp(QUICK_HP_PRESETS[0])}>
               {t("tester1HpBtn")}

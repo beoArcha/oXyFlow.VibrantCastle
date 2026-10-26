@@ -1,6 +1,6 @@
 import React from "react";
 import { User, Zap, Heart, Compass } from "lucide-react";
-import { Badge, ProgressBar, BarVariant, Text } from "@ui";
+import { Badge, ProgressBar, BarVariant, Text, IconText } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { DebugPlayerStatsSectionProps } from "./types";
 
@@ -58,12 +58,15 @@ export const DebugPlayerStatsSection: React.FC<DebugPlayerStatsSectionProps> = R
     return (
       <div className="flex flex-col gap-2.5 p-3 rounded-xl bg-[#140602] border border-stone-800">
         <div className="flex items-center justify-between border-b border-stone-800/80 pb-2">
-          <Text as="div" weight="bold" size="xs" className="flex items-center gap-1.5 text-amber-300">
-            <User size={14} className="text-amber-400" />
-            <span>
-              {label} (P{playerNumber})
-            </span>
-          </Text>
+          <IconText
+            as="div"
+            weight="bold"
+            size="xs"
+            variant="amber"
+            icon={<User size={14} className="text-amber-400" />}
+          >
+            {label} (P{playerNumber})
+          </IconText>
           <Badge variant={playerNumber === 1 ? "amber" : "cyan"}>
             {player.facingLeft ? t("debugPlayerFacingLeft") : t("debugPlayerFacingRight")}
           </Badge>

@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { MapPin, Compass, Crosshair, RefreshCw } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge, CompactNumberStepper, Text } from "@ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, Badge, CompactNumberStepper, Text, IconText } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { SpawnPreset, debugManager } from "@game/debug/debugManager";
 import { getLocation, LocationId } from "@game/locations";
@@ -76,10 +76,15 @@ export const TesterTeleportCard: React.FC<TesterTeleportCardProps> = ({
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <div>
-          <Text as="div" size="xs" weight="semibold" className="text-stone-300 mb-2 flex items-center gap-1.5">
-            <Compass size={13} className="text-amber-400" />
-            <span>{t("testerCheckpointsLabel")}</span>
-          </Text>
+          <IconText
+            as="div"
+            size="xs"
+            weight="semibold"
+            className="text-stone-300 mb-2"
+            icon={<Compass size={13} className="text-amber-400" />}
+          >
+            {t("testerCheckpointsLabel")}
+          </IconText>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {presets.map((preset: SpawnPreset) => (
               <Button
@@ -102,10 +107,15 @@ export const TesterTeleportCard: React.FC<TesterTeleportCardProps> = ({
 
         <Card variant="dark" className="p-3 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <Crosshair size={15} className="text-amber-400" />
-            <Text as="span" size="xs" weight="bold" className="text-stone-200">
+            <IconText
+              icon={<Crosshair size={15} className="text-amber-400" />}
+              gap="2"
+              size="xs"
+              weight="bold"
+              className="text-stone-200"
+            >
               {t("testerCoordsLabel")}
-            </Text>
+            </IconText>
             {playerX !== undefined && (
               <Button
                 size="sm"

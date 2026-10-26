@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "@lib/utils";
+import { IconText } from "../typography";
 
 export type StatRowVariant = "red" | "cyan" | "amber" | "purple" | "default";
 
@@ -33,10 +34,9 @@ export const StatRow = React.memo(
         className={cn("flex justify-between items-center text-xs", className)}
         {...props}
       >
-        <span className={cn("flex items-center gap-1.5", textStyles[variant])}>
-          {icon && <span className="flex items-center shrink-0">{icon}</span>}
-          <span>{label}:</span>
-        </span>
+        <IconText icon={icon} className={textStyles[variant]}>
+          {label}:
+        </IconText>
         <span className="font-mono font-bold text-stone-100">{value}</span>
       </div>
     );

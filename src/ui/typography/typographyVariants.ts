@@ -217,3 +217,37 @@ export const codeVariants = cva("font-mono font-normal inline-block select-text"
 export type CodeVariant = NonNullable<VariantProps<typeof codeVariants>["variant"]>;
 export type CodeSize = NonNullable<VariantProps<typeof codeVariants>["size"]>;
 export type CodeVariantProps = VariantProps<typeof codeVariants>;
+
+/**
+ * CVA styling definitions for icon-text layouts pairing Lucide SVG icons with typographic labels.
+ */
+export const iconTextVariants = cva("min-w-0 transition-colors", {
+  variants: {
+    inline: {
+      true: "inline-flex",
+      false: "flex",
+    },
+    align: {
+      center: "items-center",
+      start: "items-start",
+      end: "items-end",
+      baseline: "items-baseline",
+    },
+    gap: {
+      "1": "gap-1",
+      "1.5": "gap-1.5",
+      "2": "gap-2",
+      "2.5": "gap-2.5",
+      "3": "gap-3",
+    },
+  },
+  defaultVariants: {
+    inline: true,
+    align: "center",
+    gap: "1.5",
+  },
+});
+
+export type IconTextGap = NonNullable<VariantProps<typeof iconTextVariants>["gap"]>;
+export type IconTextAlign = NonNullable<VariantProps<typeof iconTextVariants>["align"]>;
+export type IconTextVariantProps = VariantProps<typeof iconTextVariants>;

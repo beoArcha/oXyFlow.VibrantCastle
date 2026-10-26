@@ -1,6 +1,6 @@
 import React from "react";
 import { Swords, Sparkles, Heart, Trash2, Coins } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Text } from "@ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, Text, IconText } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { GOLD_PRESETS } from "./constants";
 import { TesterInventoryCardProps } from "./types";
@@ -57,12 +57,15 @@ export const TesterInventoryCard: React.FC<TesterInventoryCardProps> = ({
         </div>
 
         <Card variant="dark" className="flex items-center justify-between p-2.5 flex-wrap gap-2">
-          <div className="flex items-center gap-2">
-            <Coins size={15} className="text-yellow-400" />
-            <Text as="span" size="xs" weight="bold" className="text-stone-200">
-              {t("testerAddGoldLabel")}
-            </Text>
-          </div>
+          <IconText
+            icon={<Coins size={15} className="text-yellow-400" />}
+            gap="2"
+            size="xs"
+            weight="bold"
+            className="text-stone-200"
+          >
+            {t("testerAddGoldLabel")}
+          </IconText>
           <div className="flex items-center gap-1.5">
             {GOLD_PRESETS.map((amount) => (
               <Button

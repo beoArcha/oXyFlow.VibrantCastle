@@ -1,6 +1,6 @@
 import React from "react";
 import { Target, FlaskConical } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, ProgressBar, Text } from "@ui";
+import { Card, CardHeader, CardTitle, CardContent, ProgressBar, Text, IconText } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import type { KillsBreakdownVM, PotionsBreakdownVM } from "./stats.mapper";
 import { cn } from "@lib/utils";
@@ -95,10 +95,9 @@ export const StatsBreakdownCard = ({
         <CardContent className="flex flex-col gap-2.5">
           <div>
             <div className="flex justify-between text-xs mb-1">
-              <span className="text-red-300 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-red-500" />
+              <IconText size="xs" className="text-red-300" icon={<span className="w-2 h-2 rounded-full bg-red-500" />}>
                 {t("healthPotionStat")}
-              </span>
+              </IconText>
               <Text family="mono" weight="bold" className="text-red-300">{potions.health}</Text>
             </div>
             <ProgressBar
@@ -111,10 +110,9 @@ export const StatsBreakdownCard = ({
 
           <div>
             <div className="flex justify-between text-xs mb-1">
-              <span className="text-cyan-300 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-cyan-400" />
+              <IconText size="xs" className="text-cyan-300" icon={<span className="w-2 h-2 rounded-full bg-cyan-400" />}>
                 {t("manaPotionStat")}
-              </span>
+              </IconText>
               <Text family="mono" weight="bold" className="text-cyan-300">{potions.mana}</Text>
             </div>
             <ProgressBar
@@ -127,10 +125,9 @@ export const StatsBreakdownCard = ({
 
           <div>
             <div className="flex justify-between text-xs mb-1">
-              <span className="text-amber-300 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-amber-400" />
+              <IconText size="xs" className="text-amber-300" icon={<span className="w-2 h-2 rounded-full bg-amber-400" />}>
                 {t("staminaPotionStat")}
-              </span>
+              </IconText>
               <Text family="mono" weight="bold" className="text-amber-300">{potions.stamina}</Text>
             </div>
             <ProgressBar

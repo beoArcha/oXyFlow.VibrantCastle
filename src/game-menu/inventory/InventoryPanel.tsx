@@ -9,6 +9,7 @@ import {
   EmptyState,
   ConfirmDialog,
   Code,
+  IconText,
 } from "@ui";
 import { LanguageSelector } from "@game-menu/common";
 import { ModalNavigationTabs, ModalType } from "@game-menu/modal";
@@ -274,10 +275,13 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
             <Card variant="default">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-stone-300">
-                    <BackpackIcon size={15} className="text-amber-400" />
+                  <IconText
+                    size="sm"
+                    className="text-stone-300"
+                    icon={<BackpackIcon size={15} className="text-amber-400" />}
+                  >
                     {t("backpack")}
-                  </span>
+                  </IconText>
                   <Code size="xs" variant="plain" className="text-stone-500">
                     {backpackVM.occupiedCount} / {backpackVM.totalCapacity}
                   </Code>

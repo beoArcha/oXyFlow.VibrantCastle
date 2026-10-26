@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Skull, Ghost, Trophy, AlertTriangle, Plus } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Select, Switch, Text } from "@ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, Select, Switch, Text, IconText } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { MONSTER_ID_LIST } from "./constants";
 import { TesterCombatCardProps } from "./types";
@@ -46,10 +46,14 @@ export const TesterCombatCard: React.FC<TesterCombatCardProps> = ({
             {t("testerKillEnemiesBtn")}
           </Button>
           <div className="flex items-center justify-between px-3 py-1.5 bg-stone-900/70 border border-stone-800 rounded-lg h-9">
-            <div className="flex items-center gap-1.5">
-              <Ghost size={14} className={freezeAI ? "text-amber-400" : "text-stone-400"} />
-              <Text as="span" size="xs" weight="semibold" className="text-stone-200">{t("testerFreezeAiLabel")}</Text>
-            </div>
+            <IconText
+              icon={<Ghost size={14} className={freezeAI ? "text-amber-400" : "text-stone-400"} />}
+              size="xs"
+              weight="semibold"
+              className="text-stone-200"
+            >
+              {t("testerFreezeAiLabel")}
+            </IconText>
             <Switch
               checked={freezeAI}
               onCheckedChange={onToggleFreezeAI}
@@ -76,12 +80,15 @@ export const TesterCombatCard: React.FC<TesterCombatCardProps> = ({
         </div>
 
         <Card variant="dark" className="p-3 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <Plus size={15} className="text-amber-400" />
-            <Text as="span" size="xs" weight="bold" className="text-stone-200">
-              {t("testerSpawnMonsterLabel")}
-            </Text>
-          </div>
+          <IconText
+            icon={<Plus size={15} className="text-amber-400" />}
+            gap="2"
+            size="xs"
+            weight="bold"
+            className="text-stone-200"
+          >
+            {t("testerSpawnMonsterLabel")}
+          </IconText>
           <div className="flex items-center gap-2 flex-wrap">
             <Select
               size="sm"

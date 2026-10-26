@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "@lib/utils";
+import { IconText } from "../typography";
 
 export type MetricTileVariant =
   | "emerald"
@@ -96,10 +97,17 @@ export const MetricTile = React.memo(
         )}
         {...props}
       >
-        <div className="flex items-center gap-1.5 text-stone-400 text-xs font-semibold select-none">
-          {icon && <span className={cn("flex items-center shrink-0", style.icon)}>{icon}</span>}
-          <span className="truncate">{label}</span>
-        </div>
+        <IconText
+          as="div"
+          size="xs"
+          weight="semibold"
+          truncate
+          icon={icon}
+          iconClassName={style.icon}
+          className="text-stone-400 select-none"
+        >
+          {label}
+        </IconText>
         <div className="flex items-baseline mt-0.5">
           <span
             className={cn(

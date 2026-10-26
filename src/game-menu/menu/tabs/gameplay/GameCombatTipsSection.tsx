@@ -1,6 +1,6 @@
 import React from "react";
 import { Sparkles, Compass } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Paragraph, Text } from "@ui";
+import { Card, CardHeader, CardTitle, CardContent, Paragraph, Text, IconText } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 
@@ -34,21 +34,25 @@ export const GameCombatTipsSection = ({
             {t("directionalAimingTitle")}:
           </Text>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-stone-300">
-            <li className="flex items-center gap-1.5">
-              <Compass size={12} className="text-amber-400 shrink-0" />
-              {t("aimStraightUp")}
+            <li>
+              <IconText size="xs" icon={<Compass size={12} className="text-amber-400" />}>
+                {t("aimStraightUp")}
+              </IconText>
             </li>
-            <li className="flex items-center gap-1.5">
-              <Compass size={12} className="text-amber-400 shrink-0" />
-              {t("aim45Up")}
+            <li>
+              <IconText size="xs" icon={<Compass size={12} className="text-amber-400" />}>
+                {t("aim45Up")}
+              </IconText>
             </li>
-            <li className="flex items-center gap-1.5">
-              <Compass size={12} className="text-amber-400 shrink-0" />
-              {t("aim45Down")}
+            <li>
+              <IconText size="xs" icon={<Compass size={12} className="text-amber-400" />}>
+                {t("aim45Down")}
+              </IconText>
             </li>
-            <li className="flex items-center gap-1.5">
-              <Compass size={12} className="text-amber-400 shrink-0" />
-              {t("aimStraightDown")}
+            <li>
+              <IconText size="xs" icon={<Compass size={12} className="text-amber-400" />}>
+                {t("aimStraightDown")}
+              </IconText>
             </li>
           </ul>
         </div>

@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Layers, Music, Sparkles } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, SegmentedControl, Text } from "@ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, SegmentedControl, Text, IconText } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { BackgroundLayerTier } from "@game/locations/schema/locationSchema";
 import { PARALLAX_TIERS, MUSIC_INTENSITY_PRESETS } from "./constants";
@@ -35,10 +35,15 @@ export const TesterParallaxCard: React.FC<TesterParallaxCardProps> = ({
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <div>
-          <Text as="div" size="xs" weight="semibold" className="text-stone-300 mb-2 flex items-center gap-1.5">
-            <Layers size={13} className="text-amber-400" />
-            <span>{t("testerParallaxTiersLabel")}</span>
-          </Text>
+          <IconText
+            as="div"
+            size="xs"
+            weight="semibold"
+            className="text-stone-300 mb-2"
+            icon={<Layers size={13} className="text-amber-400" />}
+          >
+            {t("testerParallaxTiersLabel")}
+          </IconText>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
             {PARALLAX_TIERS.map((tier: BackgroundLayerTier) => (
               <Button
@@ -56,12 +61,15 @@ export const TesterParallaxCard: React.FC<TesterParallaxCardProps> = ({
         </div>
 
         <Card variant="dark" className="p-3 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <Music size={15} className="text-purple-400" />
-            <Text as="span" size="xs" weight="bold" className="text-stone-200">
-              {t("testerMusicIntensityLabel")}
-            </Text>
-          </div>
+          <IconText
+            icon={<Music size={15} className="text-purple-400" />}
+            gap="2"
+            size="xs"
+            weight="bold"
+            className="text-stone-200"
+          >
+            {t("testerMusicIntensityLabel")}
+          </IconText>
           <SegmentedControl
             options={musicOptions}
             value={0.4}
@@ -71,12 +79,15 @@ export const TesterParallaxCard: React.FC<TesterParallaxCardProps> = ({
         </Card>
 
         <Card variant="dark" className="p-2.5 flex items-center justify-between flex-wrap gap-2">
-          <div className="flex items-center gap-2">
-            <Sparkles size={15} className="text-amber-400" />
-            <Text as="span" size="xs" weight="bold" className="text-stone-200">
-              {t("testerParticlesTestLabel")}
-            </Text>
-          </div>
+          <IconText
+            icon={<Sparkles size={15} className="text-amber-400" />}
+            gap="2"
+            size="xs"
+            weight="bold"
+            className="text-stone-200"
+          >
+            {t("testerParticlesTestLabel")}
+          </IconText>
           <div className="flex items-center gap-1.5">
             <Button
               size="sm"

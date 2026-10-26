@@ -1,6 +1,6 @@
 import React from "react";
 import { HelpCircle, Pause, Play, Menu as MenuIcon, MapPin } from "lucide-react";
-import { Button, KbdKey, Text } from "@ui";
+import { Button, KbdKey, Text, IconText } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import type { HUDTopControlsProps } from "./types";
 import { cn } from "@lib/utils";
@@ -85,16 +85,16 @@ export const HUDTopControls: React.FC<HUDTopControlsProps> = React.memo(({
       )}
 
       {locationName && (
-        <Text
+        <IconText
           as="div"
           size="xs"
           weight="semibold"
           variant="secondary"
-          className="hidden lg:flex items-center gap-1.5 pl-2 border-l border-amber-900/40"
+          icon={<MapPin size={13} className="text-amber-400" />}
+          className="hidden lg:flex pl-2 border-l border-amber-900/40"
         >
-          <MapPin size={13} className="text-amber-400" />
-          <span>{locationName}</span>
-        </Text>
+          {locationName}
+        </IconText>
       )}
     </div>
   );

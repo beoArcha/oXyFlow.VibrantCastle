@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { PlayerId } from "@game/types";
-import { KbdGroup, Badge } from "@ui";
+import { KbdGroup, Badge, IconText } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { useKeyboard, formatKeyLabel } from "@game-menu/controls";
 import { cn } from "@lib/utils";
@@ -99,10 +99,14 @@ export const HelpControlsCard: React.FC<HelpControlsCardProps> = React.memo(
         )}
       >
         <div className={cn("flex items-center justify-between border-b pb-2", headerBorder)}>
-          <span className={cn("font-bold text-xs flex items-center gap-1.5", titleColor)}>
-            {icon}
+          <IconText
+            weight="bold"
+            size="xs"
+            className={titleColor}
+            icon={icon}
+          >
             {title}
-          </span>
+          </IconText>
           <Badge variant={isCrimson ? "red" : "cyan"} className="text-[10px]">
             {flankBadge}
           </Badge>
