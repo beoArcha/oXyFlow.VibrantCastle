@@ -37,11 +37,14 @@ export class SaveStorage {
     if (typeof localStorage !== "undefined") {
       return localStorage;
     }
-    if (typeof window !== "undefined" && (window as any).localStorage) {
-      return (window as any).localStorage;
+    if (typeof window !== "undefined" && window.localStorage) {
+      return window.localStorage;
     }
-    if (typeof globalThis !== "undefined" && (globalThis as any).localStorage) {
-      return (globalThis as any).localStorage;
+    if (typeof globalThis !== "undefined" && "localStorage" in globalThis) {
+      const glob = globalThis as unknown as Record<string, unknown>;
+      if (glob.localStorage) {
+        return glob.localStorage as unknown as ISaveStorage;
+      }
     }
     return null;
   }
@@ -66,8 +69,11 @@ export class SaveStorage {
     try {
       storage.setItem(this.storageKey, JSON.stringify(state));
       return ok(true);
-    } catch (e: any) {
-      const isQuota = e?.name === "QuotaExceededError" || e?.code === 22;
+    } catch (e: unknown) {
+      const isQuota =
+        typeof e === "object" &&
+        e !== null &&
+        (("name" in e && e.name === "QuotaExceededError") || ("code" in e && e.code === 22));
       const saveError = new SaveError(
         isQuota ? "Storage quota exceeded while saving game" : "Failed to persist save state to storage",
         isQuota ? ErrorCode.SAVE_STORAGE_QUOTA_EXCEEDED : ErrorCode.SAVE_WRITE_FAILED,

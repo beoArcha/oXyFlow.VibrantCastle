@@ -82,8 +82,9 @@ export class FreeformRectSlicingStrategy implements ISlicingStrategy {
       if (Array.isArray(rawConfig)) {
         return { frames: rawConfig };
       }
-      if ("frames" in rawConfig && (rawConfig as any).frames) {
-        return { frames: (rawConfig as any).frames };
+      const record = rawConfig as Record<string, unknown>;
+      if ("frames" in record && record.frames) {
+        return { frames: record.frames as IFreeformFrameRect[] | Record<string, IFreeformFrameRect> };
       }
       return { frames: rawConfig as Record<string, IFreeformFrameRect> };
     }

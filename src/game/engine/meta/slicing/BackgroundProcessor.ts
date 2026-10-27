@@ -217,12 +217,33 @@ export class BackgroundProcessor {
   /**
    * Safe extraction of pixel buffer from an HTMLCanvasElement in DOM environment.
    */
-  public static extractFromCanvas(canvas: any): IPixelBuffer | null {
-    if (!canvas || typeof canvas.getContext !== "function") return null;
-    const ctx = canvas.getContext("2d");
+  public static extractFromCanvas(
+    canvas: HTMLCanvasElement | { width: number; height: number; getContext: (type: string) => unknown } | unknown
+  ): IPixelBuffer | null {
+    if (
+      !canvas ||
+      typeof canvas !== "object" ||
+      !("getContext" in canvas) ||
+      typeof (canvas as { getContext: unknown }).getContext !== "function"
+    ) {
+      return null;
+    }
+    const canvasObj = canvas as {
+      width: number;
+      height: number;
+      getContext: (type: string) => {
+        getImageData?: (
+          sx: number,
+          sy: number,
+          sw: number,
+          sh: number
+        ) => { width: number; height: number; data: Uint8ClampedArray };
+      } | null;
+    };
+    const ctx = canvasObj.getContext("2d");
     if (!ctx || typeof ctx.getImageData !== "function") return null;
     try {
-      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const imgData = ctx.getImageData(0, 0, canvasObj.width, canvasObj.height);
       return {
         width: imgData.width,
         height: imgData.height,

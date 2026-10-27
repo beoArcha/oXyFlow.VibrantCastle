@@ -124,10 +124,12 @@ describe("Architectural Boundary Rules", () => {
     // Explicit list of permitted browser adapters on the periphery of the game engine:
     // - loop/input.ts: Browser window/document keyboard event listeners
     // - logic/save/saveExporter.ts: Triggers file download via document.createElement('a')
+    // - logic/save/saveStorage.ts: Persists gameplay save state to window.localStorage
     // - logic/stats/statsStorage.ts: Persists gameplay statistics to window.localStorage
     const knownBrowserAdapters = new Set([
       "src/game/loop/input.ts",
       "src/game/logic/save/saveExporter.ts",
+      "src/game/logic/save/saveStorage.ts",
       "src/game/logic/stats/statsStorage.ts",
     ]);
 

@@ -2,6 +2,7 @@ import {
   CharacterAnimationFrame,
   CharacterAnimationTrack,
   CharacterSpriteQuality,
+  AnimationName,
 } from "../spriteTypes";
 import {
   BaseExtractionMeta,
@@ -77,7 +78,7 @@ export class ObjectSpriteExtractor
       }
 
       animations[animKey] = {
-        name: animKey as any,
+        name: animKey as AnimationName,
         frameCount: frames.length,
         frameDuration,
         loop,
@@ -90,12 +91,15 @@ export class ObjectSpriteExtractor
       if (!defaultAnim) defaultAnim = animKey;
     }
 
+    const idleAnchor = meta.animations?.idle?.anchor;
+    const resolvedAnchor = idleAnchor === "center" || idleAnchor === "top_left" ? idleAnchor : "bottom_center";
+
     return {
       objectId,
       textureUrl: "",
       animations,
       defaultAnimation: defaultAnim,
-      anchor: (meta.animations?.idle?.anchor as any) || "bottom_center",
+      anchor: resolvedAnchor,
     };
   }
 
@@ -154,7 +158,7 @@ export class ObjectSpriteExtractor
       });
 
       animations[animKey] = {
-        name: animKey as any,
+        name: animKey as AnimationName,
         frameCount: frames.length,
         frameDuration,
         loop,
@@ -192,7 +196,7 @@ export class ObjectSpriteExtractor
         });
 
         animations[trackName] = {
-          name: trackName as any,
+          name: trackName as AnimationName,
           frameCount: frames.length,
           frameDuration,
           loop,
@@ -206,12 +210,15 @@ export class ObjectSpriteExtractor
       }
     }
 
+    const idleAnchor = meta.animations?.idle?.anchor;
+    const resolvedAnchor = idleAnchor === "center" || idleAnchor === "top_left" ? idleAnchor : "bottom_center";
+
     return {
       objectId,
       textureUrl: "",
       animations,
       defaultAnimation: defaultAnim || "idle",
-      anchor: (meta.animations?.idle?.anchor as any) || "bottom_center",
+      anchor: resolvedAnchor,
     };
   }
 }

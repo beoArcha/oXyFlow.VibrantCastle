@@ -6,13 +6,17 @@ import { HumanoidSpriteExtractor } from "./HumanoidSpriteExtractor";
 import { PortraitSpriteExtractor } from "./PortraitSpriteExtractor";
 import { ObjectSpriteExtractor } from "./ObjectSpriteExtractor";
 import { MonsterSpriteExtractor } from "./MonsterSpriteExtractor";
+import {
+  CharacterAnimationTrack,
+  CharacterSpriteQuality,
+} from "../spriteTypes";
 import { AssetError, ErrorCode } from "@lib/errors";
 
 /**
  * Factory for registering and resolving sprite extractors.
  */
 export class SpriteExtractorFactory {
-  private static extractors: Map<string, ISpriteSheetExtractor<any, any>> = new Map();
+  private static extractors: Map<string, ISpriteSheetExtractor<BaseExtractionMeta, unknown>> = new Map();
 
   static {
     // Register default core extractors
@@ -36,16 +40,23 @@ export class SpriteExtractorFactory {
   /**
    * Registers a custom or specialized extractor (Open/Closed Principle).
    */
-  public static register(entityType: string, extractor: ISpriteSheetExtractor<any, any>): void {
+  public static register(entityType: string, extractor: ISpriteSheetExtractor<BaseExtractionMeta, unknown>): void {
     this.extractors.set(entityType.toLowerCase(), extractor);
   }
 
   /**
    * Retrieves an extractor for the given entity type, with fallback to humanoid.
    */
-  public static getExtractor<T extends ISpriteSheetExtractor<any, any> = ISpriteSheetExtractor>(
+  public static getExtractor(entityType: "portrait" | "portraits"): PortraitSpriteExtractor;
+  public static getExtractor(entityType: "interactive_object" | "object" | "prop"): ObjectSpriteExtractor;
+  public static getExtractor(entityType: "monster" | "animal" | "beast"): MonsterSpriteExtractor;
+  public static getExtractor(entityType: "humanoid" | "character"): HumanoidSpriteExtractor;
+  public static getExtractor<T extends ISpriteSheetExtractor = ISpriteSheetExtractor>(
     entityType?: string
-  ): T {
+  ): T;
+  public static getExtractor(
+    entityType?: string
+  ): ISpriteSheetExtractor {
     const key = (entityType || "humanoid").toLowerCase();
     const extractor = this.extractors.get(key) || this.extractors.get("humanoid");
     if (!extractor) {
@@ -57,7 +68,7 @@ export class SpriteExtractorFactory {
         }
       );
     }
-    return extractor as T;
+    return extractor;
   }
 
   /**
@@ -97,13 +108,13 @@ export class SpriteExtractorFactory {
    * Convenience helper to extract from metadata directly using appropriate extractor.
    * Dynamically injects scale, fps timing, and registration points from character schema.
    */
-  public static extract(
+  public static extract<T = Record<string, CharacterAnimationTrack>>(
     meta: BaseExtractionMeta,
-    quality: any = "mid",
+    quality: CharacterSpriteQuality = "mid",
     dimensions: { width: number; height: number } = { width: 1024, height: 683 }
-  ): any {
+  ): T {
     const entityType = meta.entityType || "humanoid";
     const extractor = this.getExtractor(entityType);
-    return extractor.extract(meta, quality, dimensions);
+    return extractor.extract(meta, quality, dimensions) as unknown as T;
   }
 }

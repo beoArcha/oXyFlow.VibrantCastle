@@ -5,3 +5,4 @@ export * from "./PortraitSpriteExtractor";
 export * from "./ObjectSpriteExtractor";
 export * from "./MonsterSpriteExtractor";
 export * from "./SpriteExtractorFactory";
+export * from "./IslandDetector";

@@ -2,6 +2,7 @@ import {
   CharacterAnimationFrame,
   CharacterAnimationTrack,
   CharacterSpriteQuality,
+  AnimationName,
 } from "../spriteTypes";
 import {
   BaseExtractionMeta,
@@ -81,7 +82,7 @@ export class MonsterSpriteExtractor
       }
 
       tracks[animKey] = {
-        name: animKey as any,
+        name: animKey as AnimationName,
         frameCount: frames.length,
         frameDuration,
         loop,
@@ -147,7 +148,7 @@ export class MonsterSpriteExtractor
       });
 
       tracks[animKey] = {
-        name: animKey as any,
+        name: animKey as AnimationName,
         frameCount: frames.length,
         frameDuration,
         loop,
@@ -183,7 +184,7 @@ export class MonsterSpriteExtractor
         });
 
         tracks[trackName] = {
-          name: trackName as any,
+          name: trackName as AnimationName,
           frameCount: frames.length,
           frameDuration,
           loop,

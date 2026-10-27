@@ -68,7 +68,7 @@ export class CombatSystem implements ICombatSystem {
       };
 
       const stats = calculatePlayerDerivedStats(player);
-      const weaponId = (player.inventory.equipment.mainHand?.id as any) || "solar_rapier";
+      const weaponId = player.inventory.equipment.mainHand?.id || "solar_rapier";
 
       // 1. Strike enemies within weapon hitbox
       enemies.forEach((enemy) => {
@@ -160,7 +160,7 @@ export class CombatSystem implements ICombatSystem {
           context.audio.playSFX(SoundType.SFX_HIT);
 
           const owner = players.find((pl) => pl.id === p.ownerId) || players[0];
-          statsManager.recordDamageDealt(owner.id, p.damage, (p.skillId as any) || "other");
+          statsManager.recordDamageDealt(owner.id, p.damage, p.skillId || "other");
 
           context.cameraManager.triggerShake(8, 5);
           context.particleSystem.spawnBurst(p.x, p.y, p.color, "spark", 12);

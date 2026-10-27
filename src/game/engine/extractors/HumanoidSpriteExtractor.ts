@@ -2,6 +2,7 @@ import {
   CharacterAnimationTrack,
   CharacterAnimationFrame,
   CharacterSpriteQuality,
+  AnimationName,
 } from "../spriteTypes";
 import {
   BaseExtractionMeta,
@@ -142,7 +143,7 @@ export class HumanoidSpriteExtractor
       }
 
       tracks[animKey] = {
-        name: animKey as any,
+        name: animKey as AnimationName,
         frameCount: frames.length,
         frameDuration,
         loop,
@@ -155,10 +156,10 @@ export class HumanoidSpriteExtractor
 
     // Alias run <-> move
     if (tracks.run && !tracks.move) {
-      tracks.move = { ...tracks.run, name: "move" as any };
+      tracks.move = { ...tracks.run, name: "move" };
     }
     if (tracks.move && !tracks.run) {
-      tracks.run = { ...tracks.move, name: "run" as any };
+      tracks.run = { ...tracks.move, name: "run" };
     }
 
     return tracks;
@@ -216,7 +217,7 @@ export class HumanoidSpriteExtractor
       });
 
       tracks[animKey] = {
-        name: animKey as any,
+        name: animKey as AnimationName,
         frameCount: frames.length,
         frameDuration,
         loop,
@@ -253,7 +254,7 @@ export class HumanoidSpriteExtractor
         });
 
         tracks[trackName] = {
-          name: trackName as any,
+          name: trackName as AnimationName,
           frameCount: frames.length,
           frameDuration,
           loop,
@@ -267,10 +268,10 @@ export class HumanoidSpriteExtractor
 
     // Alias run <-> move
     if (tracks.run && !tracks.move) {
-      tracks.move = { ...tracks.run, name: "move" as any };
+      tracks.move = { ...tracks.run, name: "move" };
     }
     if (tracks.move && !tracks.run) {
-      tracks.run = { ...tracks.move, name: "run" as any };
+      tracks.run = { ...tracks.move, name: "run" };
     }
 
     return tracks;

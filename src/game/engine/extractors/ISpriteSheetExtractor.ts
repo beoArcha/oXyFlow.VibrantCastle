@@ -86,7 +86,7 @@ export interface ExtractedObjectResult {
 /**
  * Generic interface for sprite extractors.
  */
-export interface ISpriteSheetExtractor<TMeta extends BaseExtractionMeta = BaseExtractionMeta, TResult = any> {
+export interface ISpriteSheetExtractor<TMeta extends BaseExtractionMeta = BaseExtractionMeta, TResult = unknown> {
   readonly supportedEntityType: string;
   extract(
     meta: TMeta,

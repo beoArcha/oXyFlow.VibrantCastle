@@ -10,13 +10,14 @@ import {
   IAtlasAssetRegistry,
   ResolvedAtlasAssetItem,
 } from "./types";
+import { AtlasMetaDoc } from "../types";
 import { defaultAtlasManifestParser } from "./AtlasManifestParser";
 
 import { LoggerManager } from "@lib/logger";
 
 // Vite eager module globs (evaluated at build/serve time by Vite AST compiler)
 let viteImageModules: Record<string, string> = {};
-let viteMetaModules: Record<string, any> = {};
+let viteMetaModules: Record<string, unknown> = {};
 
 try {
   viteImageModules = import.meta.glob("../../../../assets/**/*.{png,jpg,jpeg,webp}", {
@@ -32,8 +33,8 @@ try {
 }
 
 // Node / Bun fallback for server-side / unit test environments
-let nodeFs: any = null;
-let nodePath: any = null;
+let nodeFs: { existsSync(p: string): boolean; readFileSync(p: string, enc: string): string } | null = null;
+let nodePath: { resolve(...p: string[]): string } | null = null;
 if (typeof process !== "undefined" && typeof require !== "undefined") {
   try {
     nodeFs = require("node:fs");
@@ -60,12 +61,12 @@ export class AtlasAssetRegistry implements IAtlasAssetRegistry {
    */
   private resolveBundledPayload(
     item: IAtlasAssetManifestItem
-  ): { imageSrc: string; defaultMeta: any } | undefined {
+  ): { imageSrc: string; defaultMeta: AtlasMetaDoc } | undefined {
     const cleanImageRel = item.imageRelPath.replace(/^\.\//, "").replace(/\\/g, "/");
     const cleanMetaRel = item.metaRelPath.replace(/^\.\//, "").replace(/\\/g, "/");
 
     let imageSrc: string | undefined;
-    let defaultMeta: any;
+    let defaultMeta: AtlasMetaDoc | undefined;
 
     // 1. Vite eager import.meta.glob resolution (Browser runtime & Vite builds)
     const imageEntries = Object.entries(viteImageModules);
@@ -92,7 +93,7 @@ export class AtlasAssetRegistry implements IAtlasAssetRegistry {
           normalizedKey === cleanMetaRel ||
           normalizedKey.endsWith(cleanMetaRel)
         ) {
-          defaultMeta = mod;
+          defaultMeta = mod as AtlasMetaDoc;
           break;
         }
       }
@@ -111,10 +112,11 @@ export class AtlasAssetRegistry implements IAtlasAssetRegistry {
 
         if (!defaultMeta && nodeFs.existsSync(fullMetaPath)) {
           const raw = nodeFs.readFileSync(fullMetaPath, "utf-8");
-          defaultMeta = JSON.parse(raw);
+          defaultMeta = JSON.parse(raw) as AtlasMetaDoc;
         }
-      } catch (err: any) {
-        this.logger.debug(`Filesystem fallback error for '${item.id}': ${err?.message}`);
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        this.logger.debug(`Filesystem fallback error for '${item.id}': ${msg}`);
       }
     }
 
@@ -130,7 +132,7 @@ export class AtlasAssetRegistry implements IAtlasAssetRegistry {
 
   public register(
     item: IAtlasAssetManifestItem,
-    resolvedPayload?: { imageSrc: string; defaultMeta: any }
+    resolvedPayload?: { imageSrc: string; defaultMeta: AtlasMetaDoc }
   ): void {
     this.items.set(item.id, item);
 

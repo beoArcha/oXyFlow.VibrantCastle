@@ -26,15 +26,22 @@ import aureliaMidPng from "@assets/characters/aurelia/aurelia_level_1_mid.png";
 import aureliaHighPng from "@assets/characters/aurelia/aurelia_level_1_high.png";
 import aureliaMetaJson from "@assets/characters/aurelia/aurelia_meta.json";
 
+interface ICharacterVariantLike {
+  scale?: number;
+  cellWidth?: number;
+  cellHeight?: number;
+}
+
 /**
  * Resolves exact atlas sheet dimensions based on bundled spritesheet asset characteristics
  */
 function getAtlasDimensions(
   characterId: string,
   quality: AssetQuality,
-  metaJson: any
+  metaJson: Record<string, unknown>
 ): { cellWidth: number; cellHeight: number; sheetWidth: number; sheetHeight: number; scale: number } {
-  const variant = metaJson.variants?.[quality] || metaJson.variants?.mid;
+  const variants = metaJson.variants as Record<string, ICharacterVariantLike> | undefined;
+  const variant = variants?.[quality] || variants?.mid;
   const scale = variant?.scale ?? (quality === "low" ? 0.67 : quality === "high" ? 1.5 : 1);
 
   if (characterId === "valen") {
@@ -70,12 +77,13 @@ function getAtlasDimensions(
  */
 function buildSpriteMapFromMeta(
   characterId: string,
-  metaJson: any,
+  metaJson: Record<string, unknown>,
   quality: AssetQuality,
   imageUrl: string,
   tier: CharacterProgressionTier = 1
 ): SpriteAtlasMap {
-  const variant = metaJson.variants?.[quality] || metaJson.variants?.mid;
+  const variants = metaJson.variants as Record<string, ICharacterVariantLike> | undefined;
+  const variant = variants?.[quality] || variants?.mid;
   const { cellWidth, cellHeight, sheetWidth, sheetHeight, scale } = getAtlasDimensions(
     characterId,
     quality,
@@ -95,7 +103,7 @@ function buildSpriteMapFromMeta(
     { width: sheetWidth, height: sheetHeight }
   );
 
-  const animations: Record<AnimationName, SpriteAnimationTrack> = extractedTracks as any;
+  const animations = extractedTracks as unknown as Record<AnimationName, SpriteAnimationTrack>;
 
   return {
     meta: {

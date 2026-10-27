@@ -45,7 +45,7 @@ export class AtlasManifestParser {
       return { manifest: { version: "1.0", assets: [] }, issues };
     }
 
-    const doc = raw as Record<string, any>;
+    const doc = raw as Record<string, unknown>;
     const version = String(doc.version || "1.0");
 
     if (!Array.isArray(doc.assets)) {
@@ -59,7 +59,8 @@ export class AtlasManifestParser {
     const assets: IAtlasAssetManifestItem[] = [];
     const seenIds = new Set<string>();
 
-    doc.assets.forEach((item: any, idx: number) => {
+    doc.assets.forEach((rawItem: unknown, idx: number) => {
+      const item = (rawItem && typeof rawItem === "object" ? rawItem : {}) as Record<string, unknown>;
       const fallbackId = `asset_${idx + 1}`;
       const id = typeof item.id === "string" ? item.id.trim() : fallbackId;
 

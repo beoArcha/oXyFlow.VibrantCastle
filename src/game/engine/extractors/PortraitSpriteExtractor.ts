@@ -1,4 +1,4 @@
-import { CharacterPortraitMood } from "../spriteTypes";
+import { CharacterPortraitMood, CharacterSpriteQuality } from "../spriteTypes";
 import {
   BaseExtractionMeta,
   ExtractedPortraitResult,
@@ -18,7 +18,7 @@ export class PortraitSpriteExtractor
 
   public extract(
     meta: BaseExtractionMeta,
-    _quality: any,
+    _quality: CharacterSpriteQuality,
     textureOrDimensions: { width: number; height: number } | HTMLImageElement
   ): ExtractedPortraitResult {
     const characterId = meta.characterId || "character";

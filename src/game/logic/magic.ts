@@ -4,8 +4,14 @@ import spellsData from "@data/skills/spells.json";
 import { Result, ok, err, GameplayError, ErrorCode } from "@lib/errors";
 import { magicLogger } from "@game/logger/gameLogger";
 
-// Master SPELL_REGISTRY loaded from declarative JSON data
-export const SPELL_REGISTRY: Record<string, MagicSkill> = (spellsData as any).spells || (spellsData as any);
+interface ISpellsJson {
+  spells?: Record<string, MagicSkill>;
+  [key: string]: unknown;
+}
+
+const rawSpells = spellsData as unknown as ISpellsJson;
+export const SPELL_REGISTRY: Record<string, MagicSkill> =
+  rawSpells.spells || (rawSpells as unknown as Record<string, MagicSkill>);
 
 export interface IMagicAudio {
   playSFX(type: SoundType): void;

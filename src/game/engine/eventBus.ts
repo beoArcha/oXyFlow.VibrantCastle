@@ -52,24 +52,28 @@ export type GameEventListener<T extends GameEventType> = (payload: GameEventPayl
  * Pure TypeScript, zero UI or React dependencies.
  */
 export class GameEventBus {
-  private readonly listeners: {
-    [K in GameEventType]?: Set<GameEventListener<K>>;
-  } = {};
+  private readonly listeners = new Map<GameEventType, Set<(payload: unknown) => void>>();
 
   public on<T extends GameEventType>(type: T, listener: GameEventListener<T>): () => void {
-    if (!this.listeners[type]) {
-      this.listeners[type] = new Set() as any;
+    let set = this.listeners.get(type);
+    if (!set) {
+      set = new Set();
+      this.listeners.set(type, set);
     }
-    (this.listeners[type] as Set<GameEventListener<T>>).add(listener);
+    const rawListener = listener as (payload: unknown) => void;
+    set.add(rawListener);
     return () => this.off(type, listener);
   }
 
   public off<T extends GameEventType>(type: T, listener: GameEventListener<T>): void {
-    this.listeners[type]?.delete(listener as any);
+    const set = this.listeners.get(type);
+    if (set) {
+      set.delete(listener as (payload: unknown) => void);
+    }
   }
 
   public emit<T extends GameEventType>(type: T, payload: GameEventPayloads[T]): void {
-    const set = this.listeners[type];
+    const set = this.listeners.get(type);
     if (set && set.size > 0) {
       set.forEach((listener) => {
         try {
@@ -82,13 +86,11 @@ export class GameEventBus {
   }
 
   public listenerCount<T extends GameEventType>(type: T): number {
-    return this.listeners[type]?.size ?? 0;
+    return this.listeners.get(type)?.size ?? 0;
   }
 
   public clear(): void {
-    for (const key of Object.keys(this.listeners) as GameEventType[]) {
-      this.listeners[key]?.clear();
-    }
+    this.listeners.clear();
   }
 }
 

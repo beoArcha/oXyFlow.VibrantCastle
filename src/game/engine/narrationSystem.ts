@@ -10,9 +10,7 @@ export interface INarrationSystem {
 }
 
 /**
- * NarrationSystem
- * Handles timed narrative subtitles, language switching, and playback tracking.
- * Encapsulates narration logic out of the core GameEngine (Single Responsibility Principle).
+ * Manages timed narrative subtitles, language switching, and playback tracking.
  */
 export class NarrationSystem implements INarrationSystem {
   private currentText: string = "";
@@ -25,8 +23,8 @@ export class NarrationSystem implements INarrationSystem {
   }
 
   public trigger(key: string, language: "pl" | "en"): boolean {
-    const dict = translations[language];
-    const text = (dict as any)[key];
+    const dict = translations[language] as unknown as Record<string, string>;
+    const text = dict[key];
 
     if (text) {
       this.currentText = text;

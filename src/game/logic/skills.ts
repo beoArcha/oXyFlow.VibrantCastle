@@ -4,7 +4,32 @@ import { gameAudio } from "../engine/audioEngine";
 import { calculatePlayerDerivedStats } from "./inventory";
 import skillsData from "@data/skills/skills.json";
 
-function parseJsonToNodes(data: any[], character: "valen" | "aurelia"): SkillTreeNode[] {
+interface ISkillNodeJson {
+  id: string;
+  nameKey?: string;
+  descKey?: string;
+  restrictionKey?: string;
+  category?: string;
+  triggerType?: string;
+  manaCost?: number;
+  staminaCost?: number;
+  cooldownFrames?: number;
+  damage?: number;
+  color?: string;
+  icon?: string;
+  projectileSpeed?: number;
+  shieldDurationFrames?: number;
+  autoIntervalFrames?: number;
+  reqSkillId?: string | null;
+  pointCost?: number;
+  unlocked?: boolean;
+  tier?: number;
+  minLevel?: number;
+  gridX?: number;
+  gridY?: number;
+}
+
+function parseJsonToNodes(data: readonly ISkillNodeJson[], character: "valen" | "aurelia"): SkillTreeNode[] {
   return data.map(item => {
     const spell = SPELL_REGISTRY[item.id] || {
       id: item.id,

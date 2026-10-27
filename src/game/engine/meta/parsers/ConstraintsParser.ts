@@ -6,17 +6,17 @@ export class ConstraintsParser implements ISectionParser<IValidationConstraints 
 
   public canParse(raw: unknown): boolean {
     if (typeof raw !== "object" || raw === null) return false;
-    const doc = raw as Record<string, any>;
+    const doc = raw as Record<string, unknown>;
     return !!doc.constraints || !!doc.validation || !!doc.generationConstraints;
   }
 
   public parse(raw: unknown): IValidationConstraints | undefined {
     if (!this.canParse(raw)) return undefined;
 
-    const doc = raw as Record<string, any>;
-    const c = doc.constraints || {};
-    const v = doc.validation || {};
-    const g = doc.generationConstraints || {};
+    const doc = raw as Record<string, unknown>;
+    const c = (doc.constraints && typeof doc.constraints === "object" ? doc.constraints : {}) as Record<string, unknown>;
+    const v = (doc.validation && typeof doc.validation === "object" ? doc.validation : {}) as Record<string, unknown>;
+    const g = (doc.generationConstraints && typeof doc.generationConstraints === "object" ? doc.generationConstraints : {}) as Record<string, unknown>;
 
     const merged: IValidationConstraints = {
       strictGrid: v.strictGrid !== undefined ? Boolean(v.strictGrid) : c.strictGrid !== undefined ? Boolean(c.strictGrid) : undefined,
@@ -32,10 +32,10 @@ export class ConstraintsParser implements ISectionParser<IValidationConstraints 
     };
 
     // Clean undefined fields
-    const result: Record<string, any> = {};
-    Object.keys(merged).forEach((k) => {
-      if ((merged as any)[k] !== undefined) {
-        result[k] = (merged as any)[k];
+    const result: Partial<Record<keyof IValidationConstraints, unknown>> = {};
+    (Object.keys(merged) as Array<keyof IValidationConstraints>).forEach((k) => {
+      if (merged[k] !== undefined) {
+        result[k] = merged[k];
       }
     });
 
