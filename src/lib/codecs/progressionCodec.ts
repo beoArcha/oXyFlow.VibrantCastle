@@ -10,11 +10,11 @@ import {
   SkillTreeNodeDagJsonSchema,
   SkillTreeDagJsonSchema,
   SkillProgressionDocumentJsonSchema,
-  validateSkillTreeNodeDag,
   validateSkillTreeDag,
   validateSkillProgressionDocument
 } from "../schemas/progressionSchema";
 import { Codec } from "./codecInterface";
+import { failCodecDecode, failCodecEncode } from "./codecUtils";
 
 export interface DomainSkillTreeNodeDag {
   skillId: string;
@@ -47,6 +47,32 @@ export interface DomainSkillProgressionDocument {
   };
 }
 
+function cloneSkillTreeNodes(
+  nodes: Record<string, SkillTreeNodeDagJsonSchema | DomainSkillTreeNodeDag>
+): Record<string, DomainSkillTreeNodeDag> {
+  const result: Record<string, DomainSkillTreeNodeDag> = {};
+  for (const [key, n] of Object.entries(nodes)) {
+    result[key] = {
+      skillId: n.skillId,
+      tier: n.tier,
+      pointCost: n.pointCost,
+      prerequisites: [...n.prerequisites],
+      gridPosition: { ...n.gridPosition }
+    };
+  }
+  return result;
+}
+
+function cloneSkillTree(tree: SkillTreeDagJsonSchema | DomainSkillTreeDag): DomainSkillTreeDag {
+  return {
+    treeId: tree.treeId,
+    nameKey: tree.nameKey,
+    icon: tree.icon,
+    rootSkillIds: [...tree.rootSkillIds],
+    nodes: cloneSkillTreeNodes(tree.nodes)
+  };
+}
+
 export class ProgressionCodec
   implements Codec<SkillProgressionDocumentJsonSchema, DomainSkillProgressionDocument> {
   public readonly name = "ProgressionCodec";
@@ -54,50 +80,21 @@ export class ProgressionCodec
   public decode(raw: unknown): Result<DomainSkillProgressionDocument, CodecError> {
     const valResult = validateSkillProgressionDocument(raw);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to decode SkillProgressionDocument: ${messages}`,
-          ErrorCode.CODEC_DECODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecDecode("SkillProgressionDocument", valResult.errors);
     }
 
     const doc = valResult.data;
-    const mapTree = (tree: SkillTreeDagJsonSchema): DomainSkillTreeDag => {
-      const nodesMap: Record<string, DomainSkillTreeNodeDag> = {};
-      for (const [key, n] of Object.entries(tree.nodes)) {
-        nodesMap[key] = {
-          skillId: n.skillId,
-          tier: n.tier,
-          pointCost: n.pointCost,
-          prerequisites: [...n.prerequisites],
-          gridPosition: { ...n.gridPosition }
-        };
-      }
-      return {
-        treeId: tree.treeId,
-        nameKey: tree.nameKey,
-        icon: tree.icon,
-        rootSkillIds: [...tree.rootSkillIds],
-        nodes: nodesMap
-      };
-    };
-
-    const domain: DomainSkillProgressionDocument = {
+    return ok({
       version: doc.version,
       characters: {
         valen: {
-          trees: doc.characters.valen.trees.map(mapTree)
+          trees: doc.characters.valen.trees.map(cloneSkillTree)
         },
         aurelia: {
-          trees: doc.characters.aurelia.trees.map(mapTree)
+          trees: doc.characters.aurelia.trees.map(cloneSkillTree)
         }
       }
-    };
-
-    return ok(domain);
+    });
   }
 
   public encode(
@@ -112,47 +109,21 @@ export class ProgressionCodec
       );
     }
 
-    const mapTreeJson = (tree: DomainSkillTreeDag): SkillTreeDagJsonSchema => {
-      const nodesMap: Record<string, SkillTreeNodeDagJsonSchema> = {};
-      for (const [key, n] of Object.entries(tree.nodes)) {
-        nodesMap[key] = {
-          skillId: n.skillId,
-          tier: n.tier,
-          pointCost: n.pointCost,
-          prerequisites: [...n.prerequisites],
-          gridPosition: { ...n.gridPosition }
-        };
-      }
-      return {
-        treeId: tree.treeId,
-        nameKey: tree.nameKey,
-        icon: tree.icon,
-        rootSkillIds: [...tree.rootSkillIds],
-        nodes: nodesMap
-      };
-    };
-
     const jsonDoc: SkillProgressionDocumentJsonSchema = {
       version: domain.version,
       characters: {
         valen: {
-          trees: domain.characters.valen.trees.map(mapTreeJson)
+          trees: domain.characters.valen.trees.map(cloneSkillTree)
         },
         aurelia: {
-          trees: domain.characters.aurelia.trees.map(mapTreeJson)
+          trees: domain.characters.aurelia.trees.map(cloneSkillTree)
         }
       }
     };
 
     const valResult = validateSkillProgressionDocument(jsonDoc);
     if (!valResult.success) {
-      return err(
-        new CodecError(
-          "Encoded progression document failed schema validation",
-          ErrorCode.CODEC_ENCODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecEncode("SkillProgressionDocument", valResult.errors);
     }
 
     return ok(valResult.data);
@@ -161,68 +132,21 @@ export class ProgressionCodec
   public decodeTree(raw: unknown): Result<DomainSkillTreeDag, CodecError> {
     const valResult = validateSkillTreeDag(raw);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to decode SkillTree DAG: ${messages}`,
-          ErrorCode.CODEC_DECODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecDecode("SkillTree DAG", valResult.errors);
     }
 
-    const tree = valResult.data;
-    const nodesMap: Record<string, DomainSkillTreeNodeDag> = {};
-    for (const [key, n] of Object.entries(tree.nodes)) {
-      nodesMap[key] = {
-        skillId: n.skillId,
-        tier: n.tier,
-        pointCost: n.pointCost,
-        prerequisites: [...n.prerequisites],
-        gridPosition: { ...n.gridPosition }
-      };
-    }
-
-    return ok({
-      treeId: tree.treeId,
-      nameKey: tree.nameKey,
-      icon: tree.icon,
-      rootSkillIds: [...tree.rootSkillIds],
-      nodes: nodesMap
-    });
+    return ok(cloneSkillTree(valResult.data));
   }
 
   public encodeTree(domain: DomainSkillTreeDag): Result<SkillTreeDagJsonSchema, CodecError> {
-    const nodesMap: Record<string, SkillTreeNodeDagJsonSchema> = {};
-    for (const [key, n] of Object.entries(domain.nodes)) {
-      nodesMap[key] = {
-        skillId: n.skillId,
-        tier: n.tier,
-        pointCost: n.pointCost,
-        prerequisites: [...n.prerequisites],
-        gridPosition: { ...n.gridPosition }
-      };
-    }
-
-    const treeJson: SkillTreeDagJsonSchema = {
-      treeId: domain.treeId,
-      nameKey: domain.nameKey,
-      icon: domain.icon,
-      rootSkillIds: [...domain.rootSkillIds],
-      nodes: nodesMap
-    };
-
+    const treeJson = cloneSkillTree(domain);
     const valResult = validateSkillTreeDag(treeJson);
     if (!valResult.success) {
-      return err(
-        new CodecError(
-          "Encoded skill tree DAG failed schema validation",
-          ErrorCode.CODEC_ENCODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecEncode("SkillTree DAG", valResult.errors);
     }
 
     return ok(valResult.data);
   }
 }
+
+export const progressionCodec = new ProgressionCodec();

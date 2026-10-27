@@ -5,6 +5,7 @@
  */
 
 export * from "./codecInterface";
+export * from "./codecUtils";
 export * from "./spellCodec";
 export * from "./skillCodec";
 export * from "./itemCodec";

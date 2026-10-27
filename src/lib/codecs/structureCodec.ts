@@ -3,7 +3,7 @@
  * Translates between external structures.json format and internal DomainStructureTemplate models.
  */
 
-import { Result, ok, err, CodecError, ErrorCode } from "../errors";
+import { Result, ok, err, CodecError } from "../errors";
 import {
   StructureJsonSchema,
   StructuresDocumentJsonSchema,
@@ -15,6 +15,7 @@ import {
   validateStructuresJson
 } from "../schemas";
 import { Codec } from "./codecInterface";
+import { failCodecDecode, failCodecEncode, transformArrayResult } from "./codecUtils";
 
 export interface DomainStructureTemplate {
   id: string;
@@ -33,14 +34,7 @@ export class StructureCodec implements Codec<StructureJsonSchema, DomainStructur
   public decode(raw: unknown): Result<DomainStructureTemplate, CodecError> {
     const valResult = validateStructure(raw);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to decode Structure: ${messages}`,
-          ErrorCode.CODEC_DECODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecDecode("Structure", valResult.errors);
     }
 
     const d = valResult.data;
@@ -102,14 +96,7 @@ export class StructureCodec implements Codec<StructureJsonSchema, DomainStructur
 
     const valResult = validateStructure(json);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to encode Structure: ${messages}`,
-          ErrorCode.CODEC_ENCODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecEncode("Structure", valResult.errors);
     }
 
     return ok(valResult.data);
@@ -118,14 +105,7 @@ export class StructureCodec implements Codec<StructureJsonSchema, DomainStructur
   public decodeDictionary(raw: unknown): Result<Record<string, DomainStructureTemplate>, CodecError> {
     const valResult = validateStructuresJson(raw);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to decode Structures dictionary: ${messages}`,
-          ErrorCode.CODEC_DECODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecDecode("Structures dictionary", valResult.errors);
     }
 
     const dict: Record<string, DomainStructureTemplate> = {};
@@ -153,14 +133,7 @@ export class StructureCodec implements Codec<StructureJsonSchema, DomainStructur
 
     const valResult = validateStructuresDocument(doc);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to encode StructuresDocument: ${messages}`,
-          ErrorCode.CODEC_ENCODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecEncode("StructuresDocument", valResult.errors);
     }
 
     return ok(valResult.data);
@@ -175,13 +148,7 @@ export class StructureCodec implements Codec<StructureJsonSchema, DomainStructur
   }
 
   public encodeAll(domain: DomainStructureTemplate[]): Result<StructureJsonSchema[], CodecError> {
-    const list: StructureJsonSchema[] = [];
-    for (const structure of domain) {
-      const res = this.encode(structure);
-      if (!res.isOk()) return err(res.error);
-      list.push(res.value);
-    }
-    return ok(list);
+    return transformArrayResult(domain, (structure) => this.encode(structure));
   }
 }
 

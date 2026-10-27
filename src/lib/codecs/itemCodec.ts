@@ -4,7 +4,7 @@
  * Translates between external items.json format and internal DomainItem models.
  */
 
-import { Result, ok, err, CodecError, ErrorCode } from "../errors";
+import { Result, ok, err, CodecError } from "../errors";
 import {
   ItemJsonSchema,
   ItemType,
@@ -16,6 +16,12 @@ import {
   validateItemsList
 } from "../schemas";
 import { Codec } from "./codecInterface";
+import {
+  failCodecDecode,
+  failCodecEncode,
+  transformArrayResult,
+  transformDictionaryResult
+} from "./codecUtils";
 
 export interface DomainItem {
   id: string;
@@ -47,14 +53,7 @@ export class ItemCodec implements Codec<ItemJsonSchema, DomainItem> {
   public decode(raw: unknown): Result<DomainItem, CodecError> {
     const valResult = validateItem(raw);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to decode Item: ${messages}`,
-          ErrorCode.CODEC_DECODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecDecode("Item", valResult.errors);
     }
 
     const d = valResult.data;
@@ -113,14 +112,7 @@ export class ItemCodec implements Codec<ItemJsonSchema, DomainItem> {
 
     const valResult = validateItem(json);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to encode Item: ${messages}`,
-          ErrorCode.CODEC_ENCODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecEncode("Item", valResult.errors);
     }
 
     return ok(valResult.data);
@@ -129,44 +121,19 @@ export class ItemCodec implements Codec<ItemJsonSchema, DomainItem> {
   public decodeDictionary(raw: unknown): Result<Record<string, DomainItem>, CodecError> {
     const valResult = validateItemsDictionary(raw);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to decode Items dictionary: ${messages}`,
-          ErrorCode.CODEC_DECODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecDecode("Items dictionary", valResult.errors);
     }
 
-    const dict: Record<string, DomainItem> = {};
-    for (const [key, itemJson] of Object.entries(valResult.data)) {
-      const res = this.decode(itemJson);
-      if (!res.isOk()) return err(res.error);
-      dict[key] = res.value;
-    }
-
-    return ok(dict);
+    return transformDictionaryResult(valResult.data, (itemJson) => this.decode(itemJson));
   }
 
   public encodeDictionary(domain: Record<string, DomainItem>): Result<Record<string, ItemJsonSchema>, CodecError> {
-    const dict: Record<string, ItemJsonSchema> = {};
-    for (const [key, item] of Object.entries(domain)) {
-      const res = this.encode(item);
-      if (!res.isOk()) return err(res.error);
-      dict[key] = res.value;
-    }
+    const dictRes = transformDictionaryResult(domain, (item) => this.encode(item));
+    if (!dictRes.isOk()) return err(dictRes.error);
 
-    const valResult = validateItemsDictionary(dict);
+    const valResult = validateItemsDictionary(dictRes.value);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to encode Items dictionary: ${messages}`,
-          ErrorCode.CODEC_ENCODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecEncode("Items dictionary", valResult.errors);
     }
 
     return ok(valResult.data);
@@ -176,22 +143,9 @@ export class ItemCodec implements Codec<ItemJsonSchema, DomainItem> {
     if (Array.isArray(raw)) {
       const valResult = validateItemsList(raw);
       if (!valResult.success) {
-        const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-        return err(
-          new CodecError(
-            `Failed to decode Items list: ${messages}`,
-            ErrorCode.CODEC_DECODE_FAILED,
-            { details: { errors: valResult.errors } }
-          )
-        );
+        return failCodecDecode("Items list", valResult.errors);
       }
-      const list: DomainItem[] = [];
-      for (const itemJson of valResult.data) {
-        const res = this.decode(itemJson);
-        if (!res.isOk()) return err(res.error);
-        list.push(res.value);
-      }
-      return ok(list);
+      return transformArrayResult(valResult.data, (itemJson) => this.decode(itemJson));
     }
 
     const dictRes = this.decodeDictionary(raw);
@@ -202,23 +156,12 @@ export class ItemCodec implements Codec<ItemJsonSchema, DomainItem> {
   }
 
   public encodeAll(domain: DomainItem[]): Result<ItemJsonSchema[], CodecError> {
-    const list: ItemJsonSchema[] = [];
-    for (const item of domain) {
-      const res = this.encode(item);
-      if (!res.isOk()) return err(res.error);
-      list.push(res.value);
-    }
+    const listRes = transformArrayResult(domain, (item) => this.encode(item));
+    if (!listRes.isOk()) return err(listRes.error);
 
-    const valResult = validateItemsList(list);
+    const valResult = validateItemsList(listRes.value);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to encode Items list: ${messages}`,
-          ErrorCode.CODEC_ENCODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecEncode("Items list", valResult.errors);
     }
 
     return ok(valResult.data);

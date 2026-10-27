@@ -4,7 +4,7 @@
  * Translates between external enemies.json format and internal DomainEnemyTemplate models.
  */
 
-import { Result, ok, err, CodecError, ErrorCode } from "../errors";
+import { Result, ok, err, CodecError } from "../errors";
 import {
   EnemyJsonSchema,
   EnemiesDocumentJsonSchema,
@@ -18,6 +18,7 @@ import {
   validateEnemiesJson
 } from "../schemas";
 import { Codec } from "./codecInterface";
+import { failCodecDecode, failCodecEncode, transformArrayResult } from "./codecUtils";
 
 export interface DomainEnemyTemplate {
   id: string;
@@ -45,14 +46,7 @@ export class EnemyCodec implements Codec<EnemyJsonSchema, DomainEnemyTemplate> {
   public decode(raw: unknown): Result<DomainEnemyTemplate, CodecError> {
     const valResult = validateEnemy(raw);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to decode Enemy: ${messages}`,
-          ErrorCode.CODEC_DECODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecDecode("Enemy", valResult.errors);
     }
 
     const d = valResult.data;
@@ -102,14 +96,7 @@ export class EnemyCodec implements Codec<EnemyJsonSchema, DomainEnemyTemplate> {
 
     const valResult = validateEnemy(json);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to encode Enemy: ${messages}`,
-          ErrorCode.CODEC_ENCODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecEncode("Enemy", valResult.errors);
     }
 
     return ok(valResult.data);
@@ -118,14 +105,7 @@ export class EnemyCodec implements Codec<EnemyJsonSchema, DomainEnemyTemplate> {
   public decodeDictionary(raw: unknown): Result<Record<string, DomainEnemyTemplate>, CodecError> {
     const valResult = validateEnemiesJson(raw);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to decode Enemies dictionary: ${messages}`,
-          ErrorCode.CODEC_DECODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecDecode("Enemies dictionary", valResult.errors);
     }
 
     const dict: Record<string, DomainEnemyTemplate> = {};
@@ -153,14 +133,7 @@ export class EnemyCodec implements Codec<EnemyJsonSchema, DomainEnemyTemplate> {
 
     const valResult = validateEnemiesDocument(doc);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to encode EnemiesDocument: ${messages}`,
-          ErrorCode.CODEC_ENCODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecEncode("EnemiesDocument", valResult.errors);
     }
 
     return ok(valResult.data);
@@ -175,13 +148,7 @@ export class EnemyCodec implements Codec<EnemyJsonSchema, DomainEnemyTemplate> {
   }
 
   public encodeAll(domain: DomainEnemyTemplate[]): Result<EnemyJsonSchema[], CodecError> {
-    const list: EnemyJsonSchema[] = [];
-    for (const enemy of domain) {
-      const res = this.encode(enemy);
-      if (!res.isOk()) return err(res.error);
-      list.push(res.value);
-    }
-    return ok(list);
+    return transformArrayResult(domain, (enemy) => this.encode(enemy));
   }
 }
 

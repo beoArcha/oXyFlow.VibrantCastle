@@ -5,7 +5,7 @@
  * and internal DomainSpell models.
  */
 
-import { Result, ok, err, CodecError, ErrorCode } from "../errors";
+import { Result, ok, err, CodecError } from "../errors";
 import {
   SpellJsonSchema,
   SpellsDocumentJsonSchema,
@@ -23,6 +23,7 @@ import {
   SpellOwnerType
 } from "../schemas";
 import { Codec } from "./codecInterface";
+import { failCodecDecode, failCodecEncode, transformArrayResult } from "./codecUtils";
 
 export interface DomainSpell {
   id: string;
@@ -60,14 +61,7 @@ export class SpellCodec implements Codec<SpellJsonSchema, DomainSpell> {
   public decode(raw: unknown): Result<DomainSpell, CodecError> {
     const valResult = validateSpell(raw);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to decode Spell: ${messages}`,
-          ErrorCode.CODEC_DECODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecDecode("Spell", valResult.errors);
     }
 
     const data = valResult.data;
@@ -137,14 +131,7 @@ export class SpellCodec implements Codec<SpellJsonSchema, DomainSpell> {
 
     const valResult = validateSpell(json);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to encode Spell: ${messages}`,
-          ErrorCode.CODEC_ENCODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecEncode("Spell", valResult.errors);
     }
 
     return ok(valResult.data);
@@ -153,14 +140,7 @@ export class SpellCodec implements Codec<SpellJsonSchema, DomainSpell> {
   public decodeDictionary(raw: unknown): Result<Record<string, DomainSpell>, CodecError> {
     const valResult = validateSpellsJson(raw);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to decode Spells dictionary: ${messages}`,
-          ErrorCode.CODEC_DECODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecDecode("Spells dictionary", valResult.errors);
     }
 
     const dict: Record<string, DomainSpell> = {};
@@ -193,14 +173,7 @@ export class SpellCodec implements Codec<SpellJsonSchema, DomainSpell> {
 
     const valResult = validateSpellsDocument(doc);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to encode SpellsDocument: ${messages}`,
-          ErrorCode.CODEC_ENCODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecEncode("SpellsDocument", valResult.errors);
     }
 
     return ok(valResult.data);
@@ -215,15 +188,7 @@ export class SpellCodec implements Codec<SpellJsonSchema, DomainSpell> {
   }
 
   public encodeAll(domain: DomainSpell[]): Result<SpellJsonSchema[], CodecError> {
-    const encodedList: SpellJsonSchema[] = [];
-    for (const spell of domain) {
-      const encoded = this.encode(spell);
-      if (!encoded.isOk()) {
-        return err(encoded.error);
-      }
-      encodedList.push(encoded.value);
-    }
-    return ok(encodedList);
+    return transformArrayResult(domain, (spell) => this.encode(spell));
   }
 }
 

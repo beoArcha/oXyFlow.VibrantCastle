@@ -5,17 +5,17 @@
  * DomainVisualNovelScene models with graph integrity and choice validation.
  */
 
-import { Result, ok, err, CodecError, ErrorCode } from "../errors";
+import { Result, ok, err, CodecError } from "../errors";
 import {
   VisualNovelNodeSchema,
   VisualNovelSceneJsonSchema,
   VisualNovelDocumentJsonSchema,
-  VnChoiceSchema,
   VnSpeakerPosition,
   validateVisualNovelScene,
   validateVisualNovelDocument
 } from "../schemas/visualNovelSchema";
 import { Codec } from "./codecInterface";
+import { failCodecDecode, failCodecEncode, transformDictionaryResult } from "./codecUtils";
 
 export interface DomainVnChoice {
   choiceId: string;
@@ -60,6 +60,34 @@ export interface DomainVisualNovelDocument {
   scenes: Record<string, DomainVisualNovelScene>;
 }
 
+function cloneVisualNovelNode(node: DomainVisualNovelNode | VisualNovelNodeSchema): DomainVisualNovelNode {
+  return {
+    id: node.id,
+    speaker: node.speaker,
+    speakerNameKey: node.speakerNameKey,
+    position: node.position,
+    emotion: node.emotion,
+    dialogueKey: node.dialogueKey,
+    choices: node.choices?.map((c) => ({
+      choiceId: c.choiceId,
+      textKey: c.textKey,
+      targetNodeId: c.targetNodeId,
+      conditions: c.conditions ? { ...c.conditions } : undefined
+    })),
+    nextNodeId: node.nextNodeId,
+    soundCue: node.soundCue,
+    backgroundId: node.backgroundId
+  };
+}
+
+function cloneSceneMetadata(metadata?: VisualNovelSceneJsonSchema["metadata"]) {
+  if (!metadata) return undefined;
+  return {
+    ...metadata,
+    characters: metadata.characters ? [...metadata.characters] : undefined
+  };
+}
+
 export class VisualNovelCodec
   implements Codec<VisualNovelDocumentJsonSchema, DomainVisualNovelDocument> {
   public readonly name = "VisualNovelCodec";
@@ -67,59 +95,35 @@ export class VisualNovelCodec
   public decode(raw: unknown): Result<DomainVisualNovelDocument, CodecError> {
     const valResult = validateVisualNovelDocument(raw);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to decode Visual Novel document: ${messages}`,
-          ErrorCode.CODEC_DECODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecDecode("Visual Novel document", valResult.errors);
     }
 
     const doc = valResult.data;
-    const domainScenes: Record<string, DomainVisualNovelScene> = {};
-
-    for (const [sKey, sVal] of Object.entries(doc.scenes)) {
-      const sceneRes = this.decodeScene(sVal);
-      if (!sceneRes.isOk()) {
-        return err(sceneRes.error);
-      }
-      domainScenes[sKey] = sceneRes.value;
+    const scenesRes = transformDictionaryResult(doc.scenes, (s) => this.decodeScene(s));
+    if (!scenesRes.isOk()) {
+      return err(scenesRes.error);
     }
 
     return ok({
       version: doc.version,
-      scenes: domainScenes
+      scenes: scenesRes.value
     });
   }
 
   public encode(domain: DomainVisualNovelDocument): Result<VisualNovelDocumentJsonSchema, CodecError> {
-    const scenesJson: Record<string, VisualNovelSceneJsonSchema> = {};
-
-    for (const [sKey, sVal] of Object.entries(domain.scenes)) {
-      const sceneRes = this.encodeScene(sVal);
-      if (!sceneRes.isOk()) {
-        return err(sceneRes.error);
-      }
-      scenesJson[sKey] = sceneRes.value;
+    const scenesRes = transformDictionaryResult(domain.scenes, (s) => this.encodeScene(s));
+    if (!scenesRes.isOk()) {
+      return err(scenesRes.error);
     }
 
     const docJson: VisualNovelDocumentJsonSchema = {
       version: domain.version,
-      scenes: scenesJson
+      scenes: scenesRes.value
     };
 
     const valResult = validateVisualNovelDocument(docJson);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to encode Visual Novel document: ${messages}`,
-          ErrorCode.CODEC_ENCODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecEncode("Visual Novel document", valResult.errors);
     }
 
     return ok(valResult.data);
@@ -128,37 +132,13 @@ export class VisualNovelCodec
   public decodeScene(raw: unknown): Result<DomainVisualNovelScene, CodecError> {
     const valResult = validateVisualNovelScene(raw);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to decode Visual Novel scene: ${messages}`,
-          ErrorCode.CODEC_DECODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecDecode("Visual Novel scene", valResult.errors);
     }
 
     const s = valResult.data;
     const domainNodes: Record<string, DomainVisualNovelNode> = {};
-
     for (const [nKey, nVal] of Object.entries(s.nodes)) {
-      domainNodes[nKey] = {
-        id: nVal.id,
-        speaker: nVal.speaker,
-        speakerNameKey: nVal.speakerNameKey,
-        position: nVal.position,
-        emotion: nVal.emotion,
-        dialogueKey: nVal.dialogueKey,
-        choices: nVal.choices?.map((c) => ({
-          choiceId: c.choiceId,
-          textKey: c.textKey,
-          targetNodeId: c.targetNodeId,
-          conditions: c.conditions ? { ...c.conditions } : undefined
-        })),
-        nextNodeId: nVal.nextNodeId,
-        soundCue: nVal.soundCue,
-        backgroundId: nVal.backgroundId
-      };
+      domainNodes[nKey] = cloneVisualNovelNode(nVal);
     }
 
     return ok({
@@ -167,32 +147,15 @@ export class VisualNovelCodec
       initialNodeId: s.initialNodeId,
       backgroundId: s.backgroundId,
       musicCue: s.musicCue,
-      metadata: s.metadata ? { ...s.metadata, characters: s.metadata.characters ? [...s.metadata.characters] : undefined } : undefined,
+      metadata: cloneSceneMetadata(s.metadata),
       nodes: domainNodes
     });
   }
 
   public encodeScene(domain: DomainVisualNovelScene): Result<VisualNovelSceneJsonSchema, CodecError> {
     const nodesJson: Record<string, VisualNovelNodeSchema> = {};
-
     for (const [nKey, nVal] of Object.entries(domain.nodes)) {
-      nodesJson[nKey] = {
-        id: nVal.id,
-        speaker: nVal.speaker,
-        speakerNameKey: nVal.speakerNameKey,
-        position: nVal.position,
-        emotion: nVal.emotion,
-        dialogueKey: nVal.dialogueKey,
-        choices: nVal.choices?.map((c) => ({
-          choiceId: c.choiceId,
-          textKey: c.textKey,
-          targetNodeId: c.targetNodeId,
-          conditions: c.conditions ? { ...c.conditions } : undefined
-        })),
-        nextNodeId: nVal.nextNodeId,
-        soundCue: nVal.soundCue,
-        backgroundId: nVal.backgroundId
-      };
+      nodesJson[nKey] = cloneVisualNovelNode(nVal);
     }
 
     const sceneJson: VisualNovelSceneJsonSchema = {
@@ -201,20 +164,13 @@ export class VisualNovelCodec
       initialNodeId: domain.initialNodeId,
       backgroundId: domain.backgroundId,
       musicCue: domain.musicCue,
-      metadata: domain.metadata ? { ...domain.metadata, characters: domain.metadata.characters ? [...domain.metadata.characters] : undefined } : undefined,
+      metadata: cloneSceneMetadata(domain.metadata),
       nodes: nodesJson
     };
 
     const valResult = validateVisualNovelScene(sceneJson);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to encode Visual Novel scene: ${messages}`,
-          ErrorCode.CODEC_ENCODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecEncode("Visual Novel scene", valResult.errors);
     }
 
     return ok(valResult.data);

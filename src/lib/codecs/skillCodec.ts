@@ -5,7 +5,7 @@
  * and internal DomainSkillNode models.
  */
 
-import { Result, ok, err, CodecError, ErrorCode } from "../errors";
+import { Result, ok, err, CodecError } from "../errors";
 import {
   SkillNodeJsonSchema,
   SkillsDictionaryJsonSchema,
@@ -16,6 +16,7 @@ import {
   SkillTriggerType
 } from "../schemas";
 import { Codec } from "./codecInterface";
+import { failCodecDecode, failCodecEncode, transformArrayResult } from "./codecUtils";
 
 export interface DomainSkillNode {
   id: string;
@@ -54,14 +55,7 @@ export class SkillCodec implements Codec<SkillNodeJsonSchema, DomainSkillNode> {
   public decode(raw: unknown): Result<DomainSkillNode, CodecError> {
     const valResult = validateSkillNode(raw);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to decode SkillNode: ${messages}`,
-          ErrorCode.CODEC_DECODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecDecode("SkillNode", valResult.errors);
     }
 
     const data = valResult.data;
@@ -123,14 +117,7 @@ export class SkillCodec implements Codec<SkillNodeJsonSchema, DomainSkillNode> {
 
     const valResult = validateSkillNode(json);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to encode SkillNode: ${messages}`,
-          ErrorCode.CODEC_ENCODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecEncode("SkillNode", valResult.errors);
     }
 
     return ok(valResult.data);
@@ -139,66 +126,36 @@ export class SkillCodec implements Codec<SkillNodeJsonSchema, DomainSkillNode> {
   public decodeDictionary(raw: unknown): Result<DomainSkillsByCharacter, CodecError> {
     const valResult = validateSkillsDictionary(raw);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to decode Skills dictionary: ${messages}`,
-          ErrorCode.CODEC_DECODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecDecode("Skills dictionary", valResult.errors);
     }
 
-    const valenDecoded: DomainSkillNode[] = [];
-    for (const node of valResult.data.valen) {
-      const res = this.decode(node);
-      if (!res.isOk()) return err(res.error);
-      valenDecoded.push(res.value);
-    }
+    const valenDecoded = transformArrayResult(valResult.data.valen, (node) => this.decode(node));
+    if (!valenDecoded.isOk()) return err(valenDecoded.error);
 
-    const aureliaDecoded: DomainSkillNode[] = [];
-    for (const node of valResult.data.aurelia) {
-      const res = this.decode(node);
-      if (!res.isOk()) return err(res.error);
-      aureliaDecoded.push(res.value);
-    }
+    const aureliaDecoded = transformArrayResult(valResult.data.aurelia, (node) => this.decode(node));
+    if (!aureliaDecoded.isOk()) return err(aureliaDecoded.error);
 
     return ok({
-      valen: valenDecoded,
-      aurelia: aureliaDecoded
+      valen: valenDecoded.value,
+      aurelia: aureliaDecoded.value
     });
   }
 
   public encodeDictionary(domain: DomainSkillsByCharacter): Result<SkillsDictionaryJsonSchema, CodecError> {
-    const valenEncoded: SkillNodeJsonSchema[] = [];
-    for (const node of domain.valen) {
-      const res = this.encode(node);
-      if (!res.isOk()) return err(res.error);
-      valenEncoded.push(res.value);
-    }
+    const valenEncoded = transformArrayResult(domain.valen, (node) => this.encode(node));
+    if (!valenEncoded.isOk()) return err(valenEncoded.error);
 
-    const aureliaEncoded: SkillNodeJsonSchema[] = [];
-    for (const node of domain.aurelia) {
-      const res = this.encode(node);
-      if (!res.isOk()) return err(res.error);
-      aureliaEncoded.push(res.value);
-    }
+    const aureliaEncoded = transformArrayResult(domain.aurelia, (node) => this.encode(node));
+    if (!aureliaEncoded.isOk()) return err(aureliaEncoded.error);
 
     const dict: SkillsDictionaryJsonSchema = {
-      valen: valenEncoded,
-      aurelia: aureliaEncoded
+      valen: valenEncoded.value,
+      aurelia: aureliaEncoded.value
     };
 
     const valResult = validateSkillsDictionary(dict);
     if (!valResult.success) {
-      const messages = valResult.errors.map((e) => `${e.path}: ${e.message}`).join("; ");
-      return err(
-        new CodecError(
-          `Failed to encode Skills dictionary: ${messages}`,
-          ErrorCode.CODEC_ENCODE_FAILED,
-          { details: { errors: valResult.errors } }
-        )
-      );
+      return failCodecEncode("Skills dictionary", valResult.errors);
     }
 
     return ok(valResult.data);
