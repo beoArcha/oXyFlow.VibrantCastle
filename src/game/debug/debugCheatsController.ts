@@ -177,7 +177,7 @@ export class DebugCheatsController {
     };
 
     this.context.getEnemies().push(newEnemy);
-    this.context.spawnBurst(spawnX + width / 2, spawnY + height / 2, "#f43f5e", "magic", 20);
+    this.context.spawnBurst(spawnX + props.width / 2, spawnY + props.height / 2, "#f43f5e", "magic", 20);
     this.context.playSFX(SoundType.SFX_SKILL_UNLOCK);
     this.context.notifyReact();
     return newEnemy;

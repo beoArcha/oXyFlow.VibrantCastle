@@ -20,6 +20,12 @@ export interface ISectorAtmosphericRenderer {
   clearCaches(): void;
 }
 
+const PROCEDURAL_FAR_THEMES: Record<string, { glow: string; mountain: string }> = {
+  thorn_chasm: { glow: "rgba(147, 51, 234, 0.18)", mountain: "#15041c" },
+  aether_sanctuary: { glow: "rgba(56, 189, 248, 0.20)", mountain: "#0f172a" },
+  clocktower: { glow: "rgba(245, 158, 11, 0.16)", mountain: "#1c0b05" },
+};
+
 /**
  * Dedicated renderer for sector-specific atmospheric blending phenomena
  * (Chasm Mist, Bastion Solar, Clocktower Steam, Aether Aura, Courtyard Haze)
@@ -107,19 +113,10 @@ export class AtmosphericSectorRenderer implements ISectorAtmosphericRenderer {
     viewportHeight: number,
     _tickCount: number
   ): void {
-    let glowColor = "rgba(251, 191, 36, 0.22)";
-    let mountainColor = "#2a150b";
-
-    if (location.id === "thorn_chasm") {
-      glowColor = "rgba(147, 51, 234, 0.18)";
-      mountainColor = "#15041c";
-    } else if (location.id === "aether_sanctuary") {
-      glowColor = "rgba(56, 189, 248, 0.20)";
-      mountainColor = "#0f172a";
-    } else if (location.id === "clocktower") {
-      glowColor = "rgba(245, 158, 11, 0.16)";
-      mountainColor = "#1c0b05";
-    }
+    const theme = PROCEDURAL_FAR_THEMES[location.id] ?? {
+      glow: "rgba(251, 191, 36, 0.22)",
+      mountain: "#2a150b",
+    };
 
     const key = `proc_far_${location.id}_${viewportWidth}_${viewportHeight}`;
     const grad = this.getOrCreateRadialGradient(
@@ -132,7 +129,7 @@ export class AtmosphericSectorRenderer implements ISectorAtmosphericRenderer {
       viewportHeight * 0.4,
       viewportWidth * 0.7,
       [
-        [0, glowColor],
+        [0, theme.glow],
         [1, "rgba(0,0,0,0)"],
       ]
     );
@@ -140,7 +137,7 @@ export class AtmosphericSectorRenderer implements ISectorAtmosphericRenderer {
     ctx.fillRect(0, 0, viewportWidth, viewportHeight);
 
     // Distant mountain silhouette
-    ctx.fillStyle = mountainColor;
+    ctx.fillStyle = theme.mountain;
     ctx.beginPath();
     ctx.moveTo(0, viewportHeight);
     for (let x = 0; x <= viewportWidth; x += 40) {

@@ -4,44 +4,21 @@ import { CameraState } from "../engine/cameraManager";
 import { LocationDefinition } from "../locations/types";
 import { LanguageCode } from "@i18n";
 import { ParallaxRenderer } from "./parallaxRenderer";
-import {
-  IStructureRenderer,
-  defaultStructureRenderer,
-} from "./structureRenderer";
-import {
-  ILevelEntityRenderer,
-} from "./levelEntityRenderer";
-import {
-  IActorRenderer,
-  ActorRenderer,
-  defaultActorRenderer,
-} from "./actorRenderer";
-import {
-  IFxRenderer,
-  FxRenderer,
-  defaultFxRenderer,
-} from "./fxRenderer";
+import { IStructureRenderer, defaultStructureRenderer } from "./structureRenderer";
+import { ILevelEntityRenderer } from "./levelEntityRenderer";
+import { IActorRenderer, ActorRenderer, defaultActorRenderer } from "./actorRenderer";
+import { IFxRenderer, FxRenderer, defaultFxRenderer } from "./fxRenderer";
 import {
   IMultiLayerBackgroundSystem,
   MultiLayerBackgroundSystem,
   defaultMultiLayerBackgroundSystem,
 } from "./multiLayerBackgroundSystem";
-import {
-  IHitboxRenderer,
-  HitboxRenderer,
-  defaultHitboxRenderer,
-} from "./hitboxRenderer";
+import { IHitboxRenderer, HitboxRenderer, defaultHitboxRenderer } from "./hitboxRenderer";
 import { debugManager } from "@game/debug/debugManager";
-import {
-  ProceduralBackdropCache,
-  defaultProceduralBackdropCache,
-} from "./proceduralBackdropCache";
-import { rendererLogger } from "@game/logger/gameLogger";
-import {
-  IDebugProfilerOverlay,
-  defaultDebugProfilerOverlay,
-} from "./debugProfilerOverlay";
-import { EngineError, ErrorCode } from "@lib/errors";
+import { ProceduralBackdropCache, defaultProceduralBackdropCache } from "./proceduralBackdropCache";
+import { IDebugProfilerOverlay, defaultDebugProfilerOverlay } from "./debugProfilerOverlay";
+import { acquireCanvas2DContext } from "./canvasContextAcquisition";
+import { renderFpsBadge } from "./fpsOverlayRenderer";
 
 const SCENERY_TREE_OFFSETS = [350, 1100, 1600, 2450, 3050, 3500] as const;
 
@@ -72,7 +49,6 @@ export class GameRenderer {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
 
-  // Viewport & Relative Scaling
   public viewportWidth: number = 1000;
   public viewportHeight: number = 625;
   public scaleFactor: number = 1;
@@ -80,12 +56,10 @@ export class GameRenderer {
   public isHardwareAccelerated: boolean = true;
   private tickCount: number = 0;
 
-  // Camera settings (cached for parallax computations)
   public cameraX: number = 0;
   public cameraY: number = 0;
   public language: LanguageCode = "en";
 
-  // Sub-renderers (DIP & SRP)
   private readonly parallaxRenderer: ParallaxRenderer;
   private readonly structureRenderer: IStructureRenderer;
   private readonly actorRenderer: IActorRenderer;
@@ -101,41 +75,7 @@ export class GameRenderer {
   ) {
     this.canvas = canvas;
     this.isHardwareAccelerated = config.hardwareAcceleration !== false;
-
-    let context: CanvasRenderingContext2D | null = null;
-    if (this.isHardwareAccelerated) {
-      try {
-        context = canvas.getContext("2d", {
-          alpha: false,
-          desynchronized: true,
-          willReadFrequently: false,
-        });
-      } catch (err) {
-        rendererLogger.warn("Failed to acquire accelerated 2D context, falling back:", { mode: "accelerated_2d" }, err);
-      }
-    }
-    if (!context) {
-      context =
-        canvas.getContext("2d", {
-          alpha: true,
-          willReadFrequently: false,
-        }) || canvas.getContext("2d");
-    }
-    if (!context) {
-      throw new EngineError(
-        "Could not acquire 2D context from canvas",
-        ErrorCode.ENGINE_CANVAS_CONTEXT_LOST,
-        {
-          severity: "FATAL",
-          details: {
-            canvasWidth: canvas.width,
-            canvasHeight: canvas.height,
-            isHardwareAccelerated: this.isHardwareAccelerated,
-          },
-        }
-      );
-    }
-    this.ctx = context;
+    this.ctx = acquireCanvas2DContext(canvas, this.isHardwareAccelerated);
     this.ctx.imageSmoothingEnabled = false;
 
     this.parallaxRenderer =
@@ -170,8 +110,7 @@ export class GameRenderer {
   }
 
   /**
-   * Dynamically resizes canvas buffer and sets up relative scaling based on container dimensions,
-   * aspect ratio mode, and device pixel ratio.
+   * Resizes canvas buffer and updates viewport scaling factors based on display dimensions and pixel ratio.
    */
   public setDimensions(
     displayWidth: number,
@@ -187,7 +126,6 @@ export class GameRenderer {
       this.canvas.height = height;
     }
 
-    // Baseline reference: 1000 logical units wide for standard 16:10 view
     const baseWidth = 1000;
     this.scaleFactor = Math.max(0.2, this.canvas.width / baseWidth);
     this.viewportWidth = this.canvas.width / this.scaleFactor;
@@ -235,15 +173,13 @@ export class GameRenderer {
     }
     this.ctx.save();
 
-    // Scale from logical world coordinates to physical pixels
     this.ctx.scale(this.scaleFactor, this.scaleFactor);
 
-    // Screen Shake offset
     if (camera.shakeOffsetX !== 0 || camera.shakeOffsetY !== 0) {
       this.ctx.translate(camera.shakeOffsetX, camera.shakeOffsetY);
     }
 
-    // 1. BACKDROP & DYNAMIC PARALLAX (Screen-space projection utilizing oversized background box)
+    // 1. BACKDROP & DYNAMIC PARALLAX
     this.ctx.save();
     if (location?.parallaxBackground) {
       this.parallaxRenderer.render(
@@ -263,33 +199,32 @@ export class GameRenderer {
     }
     this.ctx.restore();
 
-    // Camera translation for all world entities, enemies, players, projectiles
     this.ctx.translate(-camera.x, -camera.y);
 
-    // 2. AMBIENT PARTICLES (SRP via FxRenderer)
+    // 2. AMBIENT PARTICLES
     this.fxRenderer.renderParticles(this.ctx, particles, "dust");
     this.fxRenderer.renderParticles(this.ctx, particles, "leaf");
 
-    // 3. SCENERY DECORATIONS (Fallback if location has no dynamic parallax scenery)
+    // 3. SCENERY DECORATIONS
     if (!location?.parallaxBackground) {
       for (let i = 0; i < SCENERY_TREE_OFFSETS.length; i++) {
         this.backdropCache.renderTree(this.ctx, SCENERY_TREE_OFFSETS[i], 260);
       }
     }
 
-    // 4. LEVEL ENTITIES & STRUCTURES (Platforms, Hazards, Levers, Portals - SRP via StructureRenderer)
+    // 4. LEVEL ENTITIES & STRUCTURES
     this.structureRenderer.render(this.ctx, entities, this.language, this.tickCount);
 
-    // 5. ENEMIES & TARGET DUMMIES (SRP via ActorRenderer)
+    // 5. ENEMIES & TARGET DUMMIES
     this.actorRenderer.renderEnemies(this.ctx, enemies, this.tickCount);
 
-    // 6. MAGIC PROJECTILES (SRP via FxRenderer)
+    // 6. MAGIC PROJECTILES
     this.fxRenderer.renderProjectiles(this.ctx, projectiles);
 
-    // 7. PLAYERS (With Crouch, Slide, Shield & Slash - SRP via ActorRenderer)
+    // 7. PLAYERS
     this.actorRenderer.renderPlayers(this.ctx, players, this.assetQuality, this.tickCount);
 
-    // 8. COMBAT SPARKS (SRP via FxRenderer)
+    // 8. COMBAT SPARKS
     this.fxRenderer.renderParticles(this.ctx, particles, "spark");
 
     // 9. DEBUG HITBOX OVERLAY
@@ -299,9 +234,15 @@ export class GameRenderer {
 
     this.ctx.restore();
 
-    // 10. ON-SCREEN FPS COUNTER OVERLAY (when enabled)
+    // 10. ON-SCREEN FPS COUNTER OVERLAY
     if (fpsInfo?.showFps && !debugManager.state.showProfiler) {
-      this.drawFpsOverlay(fpsInfo.targetFps, fpsInfo.measuredFps);
+      renderFpsBadge(
+        this.ctx,
+        this.canvas.width,
+        fpsInfo.targetFps,
+        fpsInfo.measuredFps,
+        this.isHardwareAccelerated
+      );
     }
 
     // 11. DEBUG PROFILER OVERLAY
@@ -323,31 +264,6 @@ export class GameRenderer {
         this.isHardwareAccelerated
       );
     }
-  }
-
-  private drawFpsOverlay(targetFps: number, measuredFps: number) {
-    this.ctx.save();
-    const pad = 12;
-    const badgeW = this.isHardwareAccelerated ? 138 : 100;
-    const badgeH = 24;
-    const x = this.canvas.width - badgeW - pad;
-    const y = pad;
-
-    this.ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
-    this.ctx.strokeStyle = "rgba(245, 158, 11, 0.6)";
-    this.ctx.lineWidth = 1.5;
-    this.ctx.beginPath();
-    this.ctx.roundRect(x, y, badgeW, badgeH, 6);
-    this.ctx.fill();
-    this.ctx.stroke();
-
-    this.ctx.font = "bold 11px system-ui, -apple-system, sans-serif";
-    this.ctx.fillStyle = "#fbbf24";
-    this.ctx.textAlign = "center";
-    this.ctx.textBaseline = "middle";
-    const gpuTag = this.isHardwareAccelerated ? " • GPU" : "";
-    this.ctx.fillText(`${measuredFps} / ${targetFps} FPS${gpuTag}`, x + badgeW / 2, y + badgeH / 2);
-    this.ctx.restore();
   }
 }
 
