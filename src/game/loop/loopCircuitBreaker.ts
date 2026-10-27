@@ -53,7 +53,7 @@ export class LoopCircuitBreaker {
         this.consecutiveErrors = 0;
       }
       return true;
-    } catch (err) {
+    } catch (err: unknown) {
       this.consecutiveErrors++;
       const now = Date.now();
 
@@ -91,8 +91,8 @@ export class LoopCircuitBreaker {
         if (this.onTrip) {
           try {
             this.onTrip(err);
-          } catch {
-            // Ignore onTrip failure
+          } catch (tripErr: unknown) {
+            this.logger.error("Failed to execute onTrip callback in LoopCircuitBreaker:", undefined, tripErr);
           }
         }
       }

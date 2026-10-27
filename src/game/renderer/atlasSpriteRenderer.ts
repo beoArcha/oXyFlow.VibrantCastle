@@ -1,5 +1,6 @@
 import { AssetQuality } from "@game/types";
 import { assetLoader } from "@game/engine/assetLoader";
+import { rendererLogger } from "@game/logger/gameLogger";
 import { BackgroundProcessor } from "@game/engine/meta/slicing/BackgroundProcessor";
 import {
   IAtlasMetaLike,
@@ -80,7 +81,8 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
 
       this.chromaCache.set(atlasId, canvas);
       return canvas;
-    } catch {
+    } catch (err: unknown) {
+      rendererLogger.warn(`Failed to process chroma key for atlas '${atlasId}':`, undefined, err);
       return texture;
     }
   }

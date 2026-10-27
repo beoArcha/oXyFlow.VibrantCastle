@@ -1,3 +1,7 @@
+import { getLogger } from "@lib/logger";
+
+const eventBusLogger = getLogger("game:eventBus");
+
 export type GameEventType =
   | "PLAYER_DAMAGED"
   | "PLAYER_HEALED"
@@ -78,8 +82,8 @@ export class GameEventBus {
       set.forEach((listener) => {
         try {
           listener(payload);
-        } catch {
-          // Prevent listener errors from breaking engine loops
+        } catch (err: unknown) {
+          eventBusLogger.error(`Unhandled error in listener for event '${type}':`, { eventType: type }, err);
         }
       });
     }

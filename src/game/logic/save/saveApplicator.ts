@@ -16,7 +16,8 @@ export class SaveApplicator implements ISaveApplicator {
     }
     try {
       return JSON.parse(JSON.stringify(data));
-    } catch {
+    } catch (error: unknown) {
+      saveLogger.warn("Failed to safely clone inventory data in SaveApplicator", undefined, error);
       return undefined;
     }
   }
@@ -28,20 +29,29 @@ export class SaveApplicator implements ISaveApplicator {
     entities: Entity[] = []
   ): Result<true, SaveError> {
     if (!state || typeof state !== "object") {
-      return err(
-        new SaveError("Cannot apply invalid save state object", ErrorCode.SAVE_CORRUPTED_JSON)
+      const error = new SaveError(
+        "Cannot apply invalid save state object",
+        ErrorCode.SAVE_CORRUPTED_JSON
       );
+      saveLogger.error(error.message, error.toLogContext(), error);
+      return err(error);
     }
     if (!Array.isArray(players)) {
-      return err(
-        new SaveError("Cannot apply save: Invalid players list", ErrorCode.SAVE_WRITE_FAILED)
+      const error = new SaveError(
+        "Cannot apply save: Invalid players list",
+        ErrorCode.SAVE_WRITE_FAILED
       );
+      saveLogger.error(error.message, error.toLogContext(), error);
+      return err(error);
     }
     const p1 = players.find((p) => p && p.id === "player1");
     if (!p1) {
-      return err(
-        new SaveError("Cannot apply save: Player 1 not found in session", ErrorCode.SAVE_WRITE_FAILED)
+      const error = new SaveError(
+        "Cannot apply save: Player 1 not found in session",
+        ErrorCode.SAVE_WRITE_FAILED
       );
+      saveLogger.error(error.message, error.toLogContext(), error);
+      return err(error);
     }
 
     try {

@@ -122,17 +122,30 @@ export class LoggerManager implements ILoggerManagerContext {
 
   public dispatch(record: LogRecord): void {
     for (let i = 0; i < this.transports.length; i++) {
+      const transport = this.transports[i];
       try {
-        this.transports[i].write(record);
-      } catch {
-        // Prevent transport failures from bringing down application
+        transport.write(record);
+      } catch (err: unknown) {
+        if (typeof console !== "undefined" && typeof console.error === "function") {
+          console.error(
+            `[LoggerManager] Transport "${transport.name}" failed to write log record:`,
+            err
+          );
+        }
       }
     }
   }
 }
 
+import { registerErrorLogSink } from "../errors";
+
 // Wire the active context provider so standalone Logger instances delegate to LoggerManager
 registerLoggerContextProvider(() => LoggerManager.getInstance());
+
+// Wire error logger sink so GameBaseError logs through LoggerManager without circular imports
+registerErrorLogSink((message: string, error?: unknown) => {
+  LoggerManager.getInstance().getLogger("system:error").warn(message, undefined, error);
+});
 
 /**
  * Primary helper factory to retrieve a scoped logger.

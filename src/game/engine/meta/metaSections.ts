@@ -108,8 +108,11 @@ export interface ResolvedFrameRect {
   y: number;
   width: number;
   height: number;
-  pivotX: number;
-  pivotY: number;
+  col?: number;
+  row?: number;
+  pivotX?: number;
+  pivotY?: number;
+  pivot?: { x: number; y: number };
   trackName?: string;
   frameIndex?: number;
 }
@@ -119,9 +122,14 @@ export interface IAtlasSlicingConfig {
   cellSize?: ICellSizeSlicingParams;
   autoIslands?: IAutoIslandSlicingParams;
   frames?: IFreeformFrameRect[] | Record<string, IFreeformFrameRect>;
+  freeformFrames?: IFreeformFrameRect[];
   grid?: {
     columns: number;
     rows: number;
+    cellWidth?: number;
+    cellHeight?: number;
+    spacing?: number;
+    safeMargin?: number;
   };
 }
 
@@ -184,7 +192,7 @@ export interface IPortraitMatrix {
   cellWidth: number;
   cellHeight: number;
   spacing: number;
-  map?: string[][];
+  map: string[][];
   subRects?: Record<string, { x: number; y: number; width: number; height: number }>;
 }
 
@@ -195,6 +203,7 @@ export interface IStateMapping {
 
 /** Showcase / Icon Info Frames */
 export interface IInfoFrames {
+  infoFrames: Record<string, number>;
   showcaseFrame?: { x: number; y: number; width: number; height: number };
   iconFrame?: { x: number; y: number; width: number; height: number };
 }

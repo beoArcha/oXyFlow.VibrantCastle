@@ -30,8 +30,8 @@ export class SaveStorage {
       try {
         const custom = this.customStorage();
         if (custom) return custom;
-      } catch {
-        // Fall back to runtime detection
+      } catch (err: unknown) {
+        saveLogger.warn("Custom storage resolution failed, falling back to runtime detection", undefined, err);
       }
     }
     if (typeof localStorage !== "undefined") {
@@ -59,11 +59,11 @@ export class SaveStorage {
   public saveStateToStorage(state: SaveState): Result<true, SaveError> {
     const storage = this.getStorage();
     if (!storage) {
-      return err(
-        new SaveError("Storage environment unavailable", ErrorCode.SAVE_WRITE_FAILED, {
-          details: { storageKey: this.storageKey },
-        })
-      );
+      const error = new SaveError("Storage environment unavailable", ErrorCode.SAVE_WRITE_FAILED, {
+        details: { storageKey: this.storageKey },
+      });
+      saveLogger.error(error.message, error.toLogContext(), error);
+      return err(error);
     }
 
     try {
@@ -93,11 +93,11 @@ export class SaveStorage {
   public loadSaveResult(): Result<SaveState, SaveError> {
     const storage = this.getStorage();
     if (!storage) {
-      return err(
-        new SaveError("Storage environment unavailable", ErrorCode.SAVE_WRITE_FAILED, {
-          details: { storageKey: this.storageKey },
-        })
-      );
+      const error = new SaveError("Storage environment unavailable", ErrorCode.SAVE_WRITE_FAILED, {
+        details: { storageKey: this.storageKey },
+      });
+      saveLogger.error(error.message, error.toLogContext(), error);
+      return err(error);
     }
 
     let data: string | null = null;
@@ -117,11 +117,11 @@ export class SaveStorage {
     }
 
     if (!data) {
-      return err(
-        new SaveError("Save slot is empty", ErrorCode.SAVE_SLOT_EMPTY, {
-          details: { storageKey: this.storageKey },
-        })
-      );
+      const error = new SaveError("Save slot is empty", ErrorCode.SAVE_SLOT_EMPTY, {
+        details: { storageKey: this.storageKey },
+      });
+      saveLogger.info(error.message, error.toLogContext());
+      return err(error);
     }
 
     const parseResult = this.validator.parseSaveJson(data);
@@ -143,22 +143,22 @@ export class SaveStorage {
   public clearSave(): Result<true, SaveError> {
     const storage = this.getStorage();
     if (!storage) {
-      return err(
-        new SaveError("Storage environment unavailable", ErrorCode.SAVE_WRITE_FAILED, {
-          details: { storageKey: this.storageKey },
-        })
-      );
+      const error = new SaveError("Storage environment unavailable", ErrorCode.SAVE_WRITE_FAILED, {
+        details: { storageKey: this.storageKey },
+      });
+      saveLogger.error(error.message, error.toLogContext(), error);
+      return err(error);
     }
     try {
       storage.removeItem(this.storageKey);
       return ok(true);
     } catch (e) {
-      return err(
-        new SaveError("Failed to remove save from storage", ErrorCode.SAVE_WRITE_FAILED, {
-          cause: e,
-          details: { storageKey: this.storageKey },
-        })
-      );
+      const error = new SaveError("Failed to remove save from storage", ErrorCode.SAVE_WRITE_FAILED, {
+        cause: e,
+        details: { storageKey: this.storageKey },
+      });
+      saveLogger.error(error.message, error.toLogContext(), error);
+      return err(error);
     }
   }
 }

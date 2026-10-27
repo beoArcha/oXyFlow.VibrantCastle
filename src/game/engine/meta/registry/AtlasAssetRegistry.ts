@@ -15,21 +15,25 @@ import { defaultAtlasManifestParser } from "./AtlasManifestParser";
 
 import { LoggerManager } from "@lib/logger";
 
+const registryLogger = LoggerManager.getInstance().getLogger("AtlasAssetRegistry");
+
 // Vite eager module globs (evaluated at build/serve time by Vite AST compiler)
 let viteImageModules: Record<string, string> = {};
 let viteMetaModules: Record<string, unknown> = {};
 
-try {
-  viteImageModules = import.meta.glob("../../../../assets/**/*.{png,jpg,jpeg,webp}", {
-    eager: true,
-    import: "default",
-  });
-  viteMetaModules = import.meta.glob("../../../../assets/**/*.json", {
-    eager: true,
-    import: "default",
-  });
-} catch {
-  // Fallback for non-Vite environments (e.g. Bun test runner or Node.js)
+if (typeof import.meta !== "undefined" && typeof (import.meta as { glob?: unknown }).glob === "function") {
+  try {
+    viteImageModules = import.meta.glob("../../../../assets/**/*.{png,jpg,jpeg,webp}", {
+      eager: true,
+      import: "default",
+    });
+    viteMetaModules = import.meta.glob("../../../../assets/**/*.json", {
+      eager: true,
+      import: "default",
+    });
+  } catch (err: unknown) {
+    registryLogger.debug("Vite glob resolution fallback triggered:", undefined, err);
+  }
 }
 
 // Node / Bun fallback for server-side / unit test environments
@@ -39,8 +43,8 @@ if (typeof process !== "undefined" && typeof require !== "undefined") {
   try {
     nodeFs = require("node:fs");
     nodePath = require("node:path");
-  } catch {
-    // browser or sandboxed environment
+  } catch (err: unknown) {
+    registryLogger.debug("Node filesystem modules unavailable:", undefined, err);
   }
 }
 
@@ -115,8 +119,7 @@ export class AtlasAssetRegistry implements IAtlasAssetRegistry {
           defaultMeta = JSON.parse(raw) as AtlasMetaDoc;
         }
       } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : String(err);
-        this.logger.debug(`Filesystem fallback error for '${item.id}': ${msg}`);
+        this.logger.warn(`Filesystem fallback error for '${item.id}':`, { assetId: item.id }, err);
       }
     }
 

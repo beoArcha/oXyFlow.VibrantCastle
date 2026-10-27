@@ -1,4 +1,7 @@
 import { IAtlasBackgroundConfig } from "../types";
+import { LoggerManager } from "@lib/logger";
+
+const backgroundProcessorLogger = LoggerManager.getInstance().getLogger("AtlasSlicing:BackgroundProcessor");
 
 export interface IPixelBuffer {
   readonly width: number;
@@ -249,7 +252,8 @@ export class BackgroundProcessor {
         height: imgData.height,
         data: imgData.data,
       };
-    } catch {
+    } catch (err: unknown) {
+      backgroundProcessorLogger.warn("Failed to extract ImageData from canvas:", undefined, err);
       return null;
     }
   }

@@ -1,5 +1,6 @@
 import { SaveState, Player, Enemy, Entity } from "@game/types";
 import { statsManager } from "../stats";
+import { saveLogger } from "@game/logger/gameLogger";
 import { Result, ok, err, SaveError, ErrorCode } from "@lib/errors";
 import { ISaveCompiler } from "./saveTypes";
 
@@ -17,7 +18,8 @@ export class SaveCompiler implements ISaveCompiler {
     }
     try {
       return JSON.parse(JSON.stringify(data));
-    } catch {
+    } catch (error: unknown) {
+      saveLogger.warn("Failed to safely clone data in SaveCompiler safeClone", undefined, error);
       return undefined;
     }
   }
@@ -32,16 +34,22 @@ export class SaveCompiler implements ISaveCompiler {
     levelId: string = "courtyard"
   ): Result<SaveState, SaveError> {
     if (!Array.isArray(players)) {
-      return err(
-        new SaveError("Cannot save: Invalid players collection", ErrorCode.SAVE_WRITE_FAILED)
+      const error = new SaveError(
+        "Cannot save: Invalid players collection",
+        ErrorCode.SAVE_WRITE_FAILED
       );
+      saveLogger.error(error.message, error.toLogContext(), error);
+      return err(error);
     }
 
     const p1 = players.find((p) => p && p.id === "player1");
     if (!p1) {
-      return err(
-        new SaveError("Cannot save: Primary player not found in active session", ErrorCode.SAVE_WRITE_FAILED)
+      const error = new SaveError(
+        "Cannot save: Primary player not found in active session",
+        ErrorCode.SAVE_WRITE_FAILED
       );
+      saveLogger.error(error.message, error.toLogContext(), error);
+      return err(error);
     }
     const p2 = players.find((p) => p && p.id === "player2");
 
@@ -97,6 +105,12 @@ export class SaveCompiler implements ISaveCompiler {
     if (res.ok) {
       return res.value;
     }
+
+    saveLogger.warn(
+      "Failed to create full save state, compiling fallback defaults",
+      res.error.toLogContext(),
+      res.error
+    );
 
     const p1 = Array.isArray(players) ? players.find((p) => p && p.id === "player1") : undefined;
     return {

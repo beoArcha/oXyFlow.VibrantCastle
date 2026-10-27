@@ -68,8 +68,10 @@ export class RingBufferTransport implements ILogTransport, ISubscribableLogBuffe
     this.listeners.forEach((listener) => {
       try {
         listener(record);
-      } catch {
-        // Prevent subscriber failures from breaking logging
+      } catch (err: unknown) {
+        if (typeof console !== "undefined" && typeof console.error === "function") {
+          console.error("[RingBufferTransport] Subscriber listener threw unhandled exception:", err);
+        }
       }
     });
   }

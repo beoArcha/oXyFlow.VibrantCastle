@@ -1,5 +1,15 @@
 import { ErrorCode, ErrorDomain, ErrorSeverity, IHasErrorCode, IHasLogContext } from "./types";
 
+export type ErrorLogSink = (message: string, error?: unknown) => void;
+let activeErrorLogSink: ErrorLogSink | null = null;
+
+/**
+ * Registers a decoupled logging sink (e.g. from @lib/logger) to avoid circular module dependencies.
+ */
+export function registerErrorLogSink(sink: ErrorLogSink): void {
+  activeErrorLogSink = sink;
+}
+
 export interface GameBaseErrorOptions {
   code: ErrorCode;
   domain: ErrorDomain;
@@ -30,7 +40,10 @@ function serializeCause(cause: unknown): unknown {
   if (typeof cause === "object") {
     try {
       return JSON.parse(JSON.stringify(cause));
-    } catch {
+    } catch (err: unknown) {
+      if (activeErrorLogSink) {
+        activeErrorLogSink("Could not serialize error cause object:", err);
+      }
       return String(cause);
     }
   }
