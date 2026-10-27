@@ -71,7 +71,7 @@ export class LoggerManager implements ILoggerManagerContext {
   public getLogger(category: string): ILogger {
     let logger = this.loggers.get(category);
     if (!logger) {
-      logger = new Logger(category, this);
+      logger = new Logger(category);
       this.loggers.set(category, logger);
     }
     return logger;
