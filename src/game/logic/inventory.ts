@@ -4,8 +4,15 @@ import { statsManager } from "./stats";
 import itemsData from "@data/items/items.json";
 import { inventoryLogger } from "@game/logger/gameLogger";
 import { Result, ok, err, GameplayError, ErrorCode } from "@lib/errors";
-
 import { itemCodec } from "@lib/codecs";
+import {
+  calculatePlayerDerivedStats,
+  createDefaultInventory as createDefaultInvWithRegistry,
+  PlayerDerivedStats,
+} from "./inventoryStats";
+
+export { calculatePlayerDerivedStats };
+export type { PlayerDerivedStats };
 
 /**
  * Master Registry of Items available in the game (loaded and validated via itemCodec).
@@ -13,7 +20,7 @@ import { itemCodec } from "@lib/codecs";
 const decodedItemsRes = itemCodec.decodeDictionary(itemsData);
 if (!decodedItemsRes.isOk()) {
   inventoryLogger.error("Failed to decode canonical items.json via itemCodec", {
-    error: decodedItemsRes.error.message
+    error: decodedItemsRes.error.message,
   });
 }
 
@@ -26,92 +33,7 @@ export const ITEM_REGISTRY: Record<string, Item> = decodedItemsRes.isOk()
  * Matches classic isometric RPGs layout with equipped starter gear and a few potions in the belt.
  */
 export function createDefaultInventory(): InventoryState {
-  const backpack: (Item | null)[] = new Array(16).fill(null);
-  backpack[0] = ITEM_REGISTRY.frost_rapier ? { ...ITEM_REGISTRY.frost_rapier } : null;
-  backpack[1] = ITEM_REGISTRY.spell_grimoire ? { ...ITEM_REGISTRY.spell_grimoire } : null;
-  backpack[2] = ITEM_REGISTRY.scholar_robe ? { ...ITEM_REGISTRY.scholar_robe } : null;
-  backpack[3] = ITEM_REGISTRY.swift_ring ? { ...ITEM_REGISTRY.swift_ring } : null;
-
-  const quickPotions: (Item | null)[] = [
-    ITEM_REGISTRY.potion_health ? { ...ITEM_REGISTRY.potion_health, count: 2 } : null,
-    ITEM_REGISTRY.potion_mana ? { ...ITEM_REGISTRY.potion_mana, count: 2 } : null,
-    ITEM_REGISTRY.potion_elixir ? { ...ITEM_REGISTRY.potion_elixir, count: 2 } : null,
-  ];
-
-  const equipment: EquipmentState = {
-    mainHand: ITEM_REGISTRY.solar_rapier ? { ...ITEM_REGISTRY.solar_rapier } : null,
-    offHand: ITEM_REGISTRY.brass_buckler ? { ...ITEM_REGISTRY.brass_buckler } : null,
-    helmet: ITEM_REGISTRY.velvet_hat ? { ...ITEM_REGISTRY.velvet_hat } : null,
-    armor: ITEM_REGISTRY.crimson_coat ? { ...ITEM_REGISTRY.crimson_coat } : null,
-    amulet: ITEM_REGISTRY.amber_amulet ? { ...ITEM_REGISTRY.amber_amulet } : null,
-    ring: null,
-  };
-
-  return {
-    equipment,
-    quickPotions,
-    backpack,
-  };
-}
-
-/**
- * Recalculates total stats given base stats and active equipped gear.
- */
-export function calculatePlayerDerivedStats(player: Player): {
-  totalAttack: number;
-  totalDefense: number;
-  maxHp: number;
-  maxMana: number;
-  maxStamina: number;
-  manaRegen: number;
-  staminaRegen: number;
-} {
-  const baseHp = 100;
-  const baseMana = 100;
-  const baseStamina = 100;
-  let totalAttack = 20; // base rapier damage
-  let totalDefense = 5;
-  let hpBonus = 0;
-  let manaBonus = 0;
-  let staminaBonus = 0;
-  let manaRegen = 0.08;
-  let staminaRegen = 0.25;
-
-  const eq = player.inventory.equipment;
-  const equippedItems = [eq.mainHand, eq.offHand, eq.helmet, eq.armor, eq.amulet, eq.ring].filter(Boolean) as Item[];
-
-  equippedItems.forEach(item => {
-    if (item.attackBonus) totalAttack += item.attackBonus;
-    if (item.defenseBonus) totalDefense += item.defenseBonus;
-    if (item.maxHpBonus) hpBonus += item.maxHpBonus;
-    if (item.maxManaBonus) manaBonus += item.maxManaBonus;
-    if (item.maxStaminaBonus) staminaBonus += item.maxStaminaBonus;
-    if (item.manaRegenBonus) manaRegen += item.manaRegenBonus;
-    if (item.staminaRegenBonus) staminaRegen += item.staminaRegenBonus;
-  });
-
-  // Passive skill bonuses
-  if (player.unlockedSkills.includes("mana_font")) {
-    manaRegen += 0.15;
-    manaBonus += 25;
-  }
-  if (player.unlockedSkills.includes("stamina_surge")) {
-    staminaRegen += 0.2;
-    staminaBonus += 25;
-  }
-  if (player.unlockedSkills.includes("blade_infusion")) {
-    totalAttack += 15;
-  }
-
-  return {
-    totalAttack,
-    totalDefense,
-    maxHp: baseHp + hpBonus,
-    maxMana: baseMana + manaBonus,
-    maxStamina: baseStamina + staminaBonus,
-    manaRegen,
-    staminaRegen
-  };
+  return createDefaultInvWithRegistry(ITEM_REGISTRY);
 }
 
 export interface EquipResult {
