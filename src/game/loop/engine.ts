@@ -1,13 +1,6 @@
 import {
-  Player,
-  Enemy,
-  Entity,
-  SoundType,
-  GameSettings,
-  SaveState,
-  Projectile,
-  PlayerId,
-  EquipmentState,
+  Player, Enemy, Entity, SoundType, GameSettings, SaveState, Projectile,
+  PlayerId, EquipmentState, SupportedLanguage, PlayerStatKey, ParticleBurstType, ScalingFilterMode,
 } from "@game/types";
 import { gameAudio, GameAudioEngine } from "@game/engine/audioEngine";
 import { gameInputs, GameInputEngine } from "./input";
@@ -142,7 +135,7 @@ export class GameEngine implements IEngineSubsystemHost {
   public setPaused(paused: boolean): void { this.c.loopRunner.setPaused(paused); }
   public togglePause(forceState?: boolean): boolean { return this.c.loopRunner.togglePause(forceState); }
   public applySettings(settings: Partial<GameSettings>): void { this.c.settingsController.applySettings(settings); }
-  public setLanguage(lang: "pl" | "en"): void { this.c.settingsController.setLanguage(lang); }
+  public setLanguage(lang: SupportedLanguage): void { this.c.settingsController.setLanguage(lang); }
   public setTargetFps(fps: TargetFps): void { this.c.settingsController.setTargetFps(fps); }
   public setShowFpsCounter(show: boolean): void { this.c.settingsController.setShowFpsCounter(show); }
   public setHardwareAcceleration(enabled: boolean): void { this.c.settingsController.setHardwareAcceleration(enabled); }
@@ -152,7 +145,7 @@ export class GameEngine implements IEngineSubsystemHost {
     this.renderer = new GameRenderer(canvas, {}, { hardwareAcceleration: isGpu });
   }
 
-  public setCanvasDimensions(width: number, height: number, dpr: number, filterMode: "pixel" | "smooth" = "pixel"): void {
+  public setCanvasDimensions(width: number, height: number, dpr: number, filterMode: ScalingFilterMode = "pixel"): void {
     this.renderer?.setDimensions(width, height, dpr, filterMode);
   }
 
@@ -267,15 +260,13 @@ export class GameEngine implements IEngineSubsystemHost {
   public removeEnemy(enemyId: string): boolean { return this.c.debugCheats.removeEnemy(enemyId); }
   public spawnEnemy(enemyType: string, customX?: number, customY?: number): Enemy { return this.c.debugCheats.spawnEnemy(enemyType, customX, customY); }
   public refillVitals(playerIndex: number = 0): void { this.c.debugCheats.refillVitals(playerIndex); }
-  public setPlayerStat(playerIndex: number, stat: "health" | "maxHealth" | "mana" | "maxMana" | "stamina" | "maxStamina", value: number): void {
-    this.c.debugCheats.setPlayerStat(playerIndex, stat, value);
-  }
+  public setPlayerStat(playerIndex: number, stat: PlayerStatKey, value: number): void { this.c.debugCheats.setPlayerStat(playerIndex, stat, value); }
   public unlockAllSkills(playerIndex: number = 0): void { this.c.debugCheats.unlockAllSkills(playerIndex); }
   public giveAllWeapons(playerIndex: number = 0): void { this.c.debugCheats.giveAllWeapons(playerIndex); }
   public givePotions(playerIndex: number = 0): void { this.c.debugCheats.givePotions(playerIndex); }
   public addGold(amount: number): void { this.c.debugCheats.addGold(amount); }
   public clearInventory(playerIndex: number = 0): void { this.c.debugCheats.clearInventory(playerIndex); }
-  public triggerParticleBurst(type: "dust" | "spark" | "magic", count: number = 25): void { this.c.debugCheats.triggerParticleBurst(type, count); }
+  public triggerParticleBurst(type: ParticleBurstType, count: number = 25): void { this.c.debugCheats.triggerParticleBurst(type, count); }
   public forceVictory(): void { this.c.debugCheats.forceVictory(); }
   public forceDefeat(): void { this.c.debugCheats.forceDefeat(); }
 

@@ -1,4 +1,11 @@
-import { GameSettings, TargetFps, AssetQuality } from "@game/types";
+import {
+  GameSettings,
+  TargetFps,
+  AssetQuality,
+  AspectRatioMode,
+  ScalingFilterMode,
+  SupportedLanguage,
+} from "@game/types";
 import { GameAudioEngine } from "@game/engine/audioEngine";
 import { INarrationSystem } from "@game/engine/narrationSystem";
 import { fpsManager } from "@game/engine/fpsManager";
@@ -22,13 +29,13 @@ export class EngineSettingsController {
 
   constructor(private readonly context: IEngineSettingsContext) {
     this.settings = {
-      language: defaultSettingsJson.language as "pl" | "en",
+      language: defaultSettingsJson.language as SupportedLanguage,
       volumeMusic: defaultSettingsJson.volumeMusic,
       volumeSFX: defaultSettingsJson.volumeSFX,
       isTwoPlayer: defaultSettingsJson.isTwoPlayer,
       display: {
-        aspectRatio: defaultSettingsJson.display.aspectRatio as "16:10" | "16:9" | "4:3",
-        scalingFilter: defaultSettingsJson.display.scalingFilter as "pixel" | "smooth",
+        aspectRatio: defaultSettingsJson.display.aspectRatio as AspectRatioMode,
+        scalingFilter: defaultSettingsJson.display.scalingFilter as ScalingFilterMode,
         assetQuality: defaultSettingsJson.display.assetQuality as AssetQuality,
         hardwareAcceleration: defaultSettingsJson.display.hardwareAcceleration,
         targetFps: (defaultSettingsJson.display.targetFps as TargetFps) || 60,
@@ -37,7 +44,7 @@ export class EngineSettingsController {
     };
   }
 
-  public setLanguage(lang: "pl" | "en"): void {
+  public setLanguage(lang: SupportedLanguage): void {
     this.settings.language = lang;
     this.context.narration.setLanguage(lang);
     this.context.notifyStateChanged();

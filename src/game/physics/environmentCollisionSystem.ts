@@ -1,4 +1,4 @@
-import { Player, Entity, CollisionType } from "@game/types";
+import { Player, Entity, CollisionType, ParticleBurstType } from "@game/types";
 import { ICollisionEngine } from "./collisions";
 
 /**
@@ -13,7 +13,7 @@ export interface IEnvironmentCollisionContext {
     x: number,
     y: number,
     color: string,
-    type: "dust" | "spark" | "magic",
+    type: ParticleBurstType,
     count: number
   ): void;
   isNoClip(): boolean;

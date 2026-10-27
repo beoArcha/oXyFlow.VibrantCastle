@@ -1,4 +1,4 @@
-import { Player, Enemy, PlayerId, SoundType } from "../types";
+import { Player, Enemy, PlayerId, SoundType, PlayerStatKey, ParticleBurstType } from "../types";
 import { SPELL_REGISTRY } from "../logic/magic";
 import { ITEM_REGISTRY } from "../logic/inventory";
 import { statsManager } from "../logic/stats";
@@ -10,7 +10,7 @@ export interface IDebugCheatsContext {
   getPlayers: () => Player[];
   getEnemies: () => Enemy[];
   getLevelDimensions: () => { width: number; height: number };
-  spawnBurst: (x: number, y: number, color: string, type: "spark" | "dust" | "magic", count: number) => void;
+  spawnBurst: (x: number, y: number, color: string, type: ParticleBurstType, count: number) => void;
   playSFX: (type: SoundType) => void;
   recordKill?: (playerId: PlayerId, enemyId: string) => void;
   triggerNarration?: (key: string) => void;
@@ -203,7 +203,7 @@ export class DebugCheatsController {
 
   public setPlayerStat(
     playerIndex: number,
-    stat: "health" | "maxHealth" | "mana" | "maxMana" | "stamina" | "maxStamina",
+    stat: PlayerStatKey,
     value: number
   ): void {
     const player = this.context.getPlayers()[playerIndex];
@@ -272,18 +272,17 @@ export class DebugCheatsController {
     this.context.notifyReact();
   }
 
-  public triggerParticleBurst(type: "dust" | "spark" | "magic", count: number = 25): void {
+  public triggerParticleBurst(type: ParticleBurstType, count: number = 25): void {
     const p1 = this.context.getPlayers()[0];
     const { width: levelWidth, height: levelHeight } = this.context.getLevelDimensions();
     const x = p1 ? p1.x + p1.width / 2 : levelWidth / 2;
     const y = p1 ? p1.y + p1.height / 2 : levelHeight / 2;
-    const color =
-      type === "spark"
-        ? "#f59e0b"
-        : type === "magic"
-        ? "#a855f7"
-        : "#d97706";
-    this.context.spawnBurst(x, y, color, type, count);
+    const burstColors: Record<ParticleBurstType, string> = {
+      spark: "#f59e0b",
+      magic: "#a855f7",
+      dust: "#d97706",
+    };
+    this.context.spawnBurst(x, y, burstColors[type], type, count);
   }
 
   public forceVictory(): void {

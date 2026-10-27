@@ -4,6 +4,7 @@ import {
   Entity,
   CollisionType,
   SoundType,
+  ParticleBurstType,
 } from "../types";
 import { LocationId, LocationDefinition, getLocation, getNextLocation } from "./index";
 import { LevelDesigner } from "./levels";
@@ -29,7 +30,7 @@ export interface ILevelLifecycleContext {
   resetNarration(): void;
   playSFX(type: SoundType): void;
   setMusicIntensity(intensity: number): void;
-  spawnBurst(x: number, y: number, color: string, type: "dust" | "spark" | "magic", count: number): void;
+  spawnBurst(x: number, y: number, color: string, type: ParticleBurstType, count: number): void;
   stopEngine(): void;
   startEngine(): void;
   isRunning(): boolean;

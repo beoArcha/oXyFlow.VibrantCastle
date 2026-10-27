@@ -423,8 +423,12 @@ export interface DisplaySettings {
   hardwareAcceleration?: boolean;
 }
 
+export type SupportedLanguage = "pl" | "en";
+export type PlayerStatKey = "health" | "maxHealth" | "mana" | "maxMana" | "stamina" | "maxStamina";
+export type ParticleBurstType = "dust" | "spark" | "magic";
+
 export interface GameSettings {
-  language: "pl" | "en";
+  language: SupportedLanguage;
   volumeMusic: number;
   volumeSFX: number;
   isTwoPlayer: boolean;

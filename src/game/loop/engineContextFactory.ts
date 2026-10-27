@@ -1,4 +1,4 @@
-import { Player, Enemy, Entity, SoundType, PlayerId, GameSettings } from "@game/types";
+import { Player, Enemy, Entity, SoundType, PlayerId, GameSettings, ParticleBurstType } from "@game/types";
 import { IDebugCheatsContext } from "../debug/debugCheatsController";
 import { ILevelLifecycleContext } from "../locations/levelLifecycleManager";
 import { ParticleSystem } from "../engine/particleSystem";
@@ -34,7 +34,7 @@ export function createDebugCheatsContext(host: IEngineContextHost): IDebugCheats
     getPlayers: () => host.players,
     getEnemies: () => host.enemies,
     getLevelDimensions: () => ({ width: host.levelWidth, height: host.levelHeight }),
-    spawnBurst: (x: number, y: number, color: string, type: "dust" | "spark" | "magic", count: number) =>
+    spawnBurst: (x: number, y: number, color: string, type: ParticleBurstType, count: number) =>
       host.particleSystem.spawnBurst(x, y, color, type, count),
     playSFX: (type: SoundType) => host.audio.playSFX(type),
     recordKill: (playerId: PlayerId, enemyId: string) => statsManager.recordKill(playerId, enemyId),
@@ -73,7 +73,7 @@ export function createLevelLifecycleContext(host: IEngineContextHost): ILevelLif
     resetNarration: () => host.resetNarration(),
     playSFX: (type: SoundType) => host.audio.playSFX(type),
     setMusicIntensity: (intensity: number) => host.audio.setMusicIntensity(intensity),
-    spawnBurst: (x: number, y: number, color: string, type: "dust" | "spark" | "magic", count: number) =>
+    spawnBurst: (x: number, y: number, color: string, type: ParticleBurstType, count: number) =>
       host.particleSystem.spawnBurst(x, y, color, type, count),
     stopEngine: () => host.stop(),
     startEngine: () => host.start(),
