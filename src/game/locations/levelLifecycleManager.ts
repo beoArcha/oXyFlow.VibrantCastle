@@ -5,6 +5,7 @@ import {
   CollisionType,
   SoundType,
   ParticleBurstType,
+  PlayerId,
 } from "../types";
 import { LocationId, LocationDefinition, getLocation, getNextLocation } from "./index";
 import { LevelDesigner } from "./levels";
@@ -60,7 +61,8 @@ export interface ILevelLifecycleManager {
   resetLevel(
     locationId?: LocationId,
     customSpawnPoint?: { x: number; y: number },
-    preservePlayerStats?: boolean
+    preservePlayerStats?: boolean,
+    p1CharacterId?: "valen" | "aurelia"
   ): void;
 
   setTwoPlayerMode(enabled: boolean, preserveStats?: boolean): void;
@@ -108,7 +110,8 @@ export class LevelLifecycleManager implements ILevelLifecycleManager {
   public resetLevel(
     locationId?: LocationId,
     customSpawnPoint?: { x: number; y: number },
-    preservePlayerStats: boolean = false
+    preservePlayerStats: boolean = false,
+    p1CharacterId: "valen" | "aurelia" = "valen"
   ): void {
     if (locationId) {
       this.currentLocationId = locationId;
@@ -118,7 +121,8 @@ export class LevelLifecycleManager implements ILevelLifecycleManager {
       targetLocId,
       this.context.getIsTwoPlayer(),
       customSpawnPoint,
-      preservePlayerStats ? this.context.getPlayers() : undefined
+      preservePlayerStats ? this.context.getPlayers() : undefined,
+      p1CharacterId
     );
 
     this.context.setPlayers(data.players);
@@ -156,7 +160,9 @@ export class LevelLifecycleManager implements ILevelLifecycleManager {
         const p2Offset = this.currentLocation?.p2SpawnOffset || { x: 40, y: 0 };
         const p2X = Math.max(0, Math.min(this.levelWidth - 32, p1.x + p2Offset.x));
         const p2Y = p1.y;
-        players.push(LevelDesigner.createDefaultP2(p2X, p2Y));
+        const p1CharacterId = p1.characterId || "valen";
+        const p2CharacterId: "valen" | "aurelia" = p1CharacterId === "valen" ? "aurelia" : "valen";
+        players.push(LevelDesigner.createPlayerEntity(PlayerId.Player2, p2CharacterId, p2X, p2Y));
       } else if (!enabled && players.length > 1) {
         this.context.setPlayers([players[0]]);
       }

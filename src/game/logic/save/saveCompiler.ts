@@ -61,8 +61,15 @@ export class SaveCompiler implements ISaveCompiler {
       ? enemies.filter((e) => e && e.isDead).map((e) => e.id)
       : [];
 
+    const p1CharacterId: "valen" | "aurelia" =
+      p1.characterId === "aurelia" ? "aurelia" : "valen";
+    const p2CharacterId: "valen" | "aurelia" | undefined = p2
+      ? p2.characterId === "valen" ? "valen" : "aurelia"
+      : undefined;
+
     const state: SaveState = {
       timestamp: new Date().toISOString(),
+      p1CharacterId,
       p1Health: p1.health,
       p1Mana: p1.mana,
       p1Stamina: p1.stamina,
@@ -72,6 +79,7 @@ export class SaveCompiler implements ISaveCompiler {
       p1PrimarySpellId: p1.primarySpellId,
       p1SecondarySpellId: p1.secondarySpellId,
       p1Inventory: this.safeClone(p1.inventory),
+      p2CharacterId,
       p2Health: p2 ? p2.health : 0,
       p2Mana: p2 ? p2.mana : 0,
       p2Stamina: p2 ? p2.stamina : 0,
@@ -108,19 +116,21 @@ export class SaveCompiler implements ISaveCompiler {
 
     saveLogger.warn(
       "Failed to create full save state, compiling fallback defaults",
-      res.error.toLogContext(),
+      undefined,
       res.error
     );
 
     const p1 = Array.isArray(players) ? players.find((p) => p && p.id === "player1") : undefined;
     return {
       timestamp: new Date().toISOString(),
+      p1CharacterId: "valen",
       p1Health: p1?.health ?? 100,
       p1Mana: p1?.mana ?? 100,
       p1Stamina: p1?.stamina ?? 100,
       p1Score: p1?.score ?? 0,
       p1SkillPoints: p1?.skillPoints ?? 0,
       p1UnlockedSkills: p1?.unlockedSkills ?? [],
+      p2CharacterId: undefined,
       p2Health: 0,
       p2Mana: 0,
       p2Stamina: 0,

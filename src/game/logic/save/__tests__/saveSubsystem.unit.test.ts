@@ -61,7 +61,8 @@ describe("Save Subsystem (Decomposed Architecture)", () => {
     const compiler = new SaveCompiler();
 
     it("purely compiles Player and entity state into SaveState DTO", () => {
-      const p1 = createMockPlayer({ health: 75, score: 250 });
+      const p1 = createMockPlayer({ health: 75, score: 250, characterId: "aurelia", characterName: "Aurelia" });
+      const p2 = createMockPlayer({ id: PlayerId.Player2, health: 50, score: 100, characterId: "valen", characterName: "Valen" });
       const enemies: Enemy[] = [
         { id: "bat1", type: "bat", x: 0, y: 0, vx: 0, vy: 0, width: 16, height: 16, health: 0, maxHealth: 20, isDead: true } as any,
         { id: "bat2", type: "bat", x: 0, y: 0, vx: 0, vy: 0, width: 16, height: 16, health: 20, maxHealth: 20, isDead: false } as any,
@@ -71,12 +72,14 @@ describe("Save Subsystem (Decomposed Architecture)", () => {
         { id: "lever_2", type: "lever", x: 0, y: 0, width: 32, height: 32, isActivated: false } as any,
       ];
 
-      const res = compiler.createSaveState([p1], enemies, entities, "chasm");
+      const res = compiler.createSaveState([p1, p2], enemies, entities, "chasm");
       expect(res.ok).toBe(true);
       if (res.ok) {
         expect(res.value.levelId).toBe("chasm");
         expect(res.value.p1Health).toBe(75);
         expect(res.value.p1Score).toBe(250);
+        expect(res.value.p1CharacterId).toBe("aurelia");
+        expect(res.value.p2CharacterId).toBe("valen");
         expect(res.value.defeatedEnemies).toEqual(["bat1"]);
         expect(res.value.activatedLevers).toEqual(["lever_1"]);
       }
@@ -111,6 +114,7 @@ describe("Save Subsystem (Decomposed Architecture)", () => {
         p1Score: 1200,
         p1SkillPoints: 2,
         p1UnlockedSkills: [],
+        p1CharacterId: "aurelia",
         p2Health: 0,
         p2Mana: 0,
         p2Stamina: 0,
@@ -128,6 +132,8 @@ describe("Save Subsystem (Decomposed Architecture)", () => {
       expect(p1.mana).toBe(80);
       expect(p1.x).toBe(340);
       expect(p1.y).toBe(450);
+      expect(p1.characterId).toBe("aurelia");
+      expect(p1.characterName).toBe("Aurelia");
       expect(entities[0].isActivated).toBe(true);
       expect(enemies[0].isDead).toBe(true);
     });
