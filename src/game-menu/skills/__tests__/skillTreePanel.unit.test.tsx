@@ -18,7 +18,7 @@ describe("SkillTreePanel", () => {
     // Modal renders title and subtitles into document.body portal
     expect(document.body.textContent).toMatch(/Grimuar|Grimoire|Magii|Skills/);
     expect(document.body.textContent).toContain("Valen (P1)");
-    expect(document.body.textContent).toContain("Aurelia (P2)");
+    expect(document.body.textContent).not.toContain("Aurelia (P2)");
 
     // Verify presence of skill tree constellation
     const nodes = document.body.querySelectorAll('[id^="skill-node-"]');

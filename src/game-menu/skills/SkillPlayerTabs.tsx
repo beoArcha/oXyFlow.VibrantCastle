@@ -1,9 +1,8 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Sparkles, Swords, Wand2 } from "lucide-react";
 import { Badge, MetricTile, Tabs, TabsList, TabsTrigger, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
-import { useSkills, useSettings } from "@context/GameContext";
-import { GameEngineContext } from "@context/GameEngineContext";
+import { useSkills } from "@context/GameContext";
 
 export interface SkillPlayerTabsProps {
   readonly className?: string;
@@ -12,13 +11,8 @@ export interface SkillPlayerTabsProps {
 export const SkillPlayerTabs = ({
   className = "",
 }: SkillPlayerTabsProps): React.ReactElement => {
-  const { activePlayerIndex, setActivePlayerIndex, skillPoints } = useSkills();
-  const gameEngine = useContext(GameEngineContext);
-  const { isTwoPlayer } = useSettings();
+  const { activePlayerIndex, setActivePlayerIndex, skillPoints, p1, p2, isTwoPlayer } = useSkills();
   const { t } = useI18n();
-
-  const p1 = gameEngine?.p1;
-  const p2 = gameEngine?.p2;
 
   const isCoOp = Boolean(isTwoPlayer && p2);
 
@@ -72,9 +66,7 @@ export const SkillPlayerTabs = ({
       <MetricTile
         label={`${t("skillPointsUnit")}:`}
         value={`${skillPoints} ${t("skillPointsUnit")}`}
-        icon={<Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />}
-        variant="amber"
-        compact
+        icon={<Sparkles size={16} className="text-amber-400" />}
       />
     </div>
   );

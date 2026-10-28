@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { GameEngine } from "@game/loop/engine";
 import { PlayerId } from "@game/types";
+import { createDefaultInventory } from "@game/logic/inventory";
 
 /**
  * INTEGRATION TEST SUITE: End-to-End Character Selection Lifecycle
@@ -11,6 +12,8 @@ import { PlayerId } from "@game/types";
  * 3. Complementary auto-assignment on 2P co-op spawn (P1 = Aurelia -> P2 = Valen).
  * 4. Complementary character swap (swapCharacters).
  * 5. Persistence round-trip (save/load retains character identities).
+ * 6. Non-destructive progression preservation across character switches.
+ * 7. Two-player session topology restoration including dead P2 (health = 0).
  */
 describe("Given a fresh GameEngine instance", () => {
   let engine: GameEngine;
@@ -57,6 +60,26 @@ describe("Given a fresh GameEngine instance", () => {
       expect(p1.primarySpellId).toBe("aether_bolt");
       expect(p1.unlockedSkills).toEqual(["aether_bolt", "aether_barrier"]);
       expect(p1.unlockedSkills).not.toContain("solar_flare");
+    });
+
+    it("Then skill points, score, and progression are non-destructively preserved", () => {
+      // Given
+      engine.resetLevel("courtyard");
+      const p1 = engine.players[0];
+      p1.skillPoints = 7;
+      p1.score = 350;
+      p1.inventory = createDefaultInventory();
+
+      // When switching character to Aurelia
+      const success = engine.setPlayerCharacter(0, "aurelia");
+
+      // Then
+      expect(success).toBe(true);
+      expect(p1.characterId).toBe("aurelia");
+      expect(p1.skillPoints).toBe(7);
+      expect(p1.score).toBe(350);
+      expect(p1.maxHealth).toBeGreaterThan(0);
+      expect(p1.maxMana).toBeGreaterThan(0);
     });
   });
 
@@ -125,6 +148,43 @@ describe("Given a fresh GameEngine instance", () => {
       expect(restoredP1.primarySpellId).toBe("aether_bolt");
       expect(restoredP1.unlockedSkills).toEqual(["aether_bolt", "aether_barrier"]);
       expect(restoredP1.health).toBe(75);
+
+      newEngine.stop();
+    });
+
+    it("Then two-player co-op session shape and dead Player 2 vitals restore accurately", () => {
+      // Given a 2P session with dead P2 (health = 0)
+      engine.setTwoPlayerMode(true, true);
+      engine.resetLevel("courtyard");
+      expect(engine.players.length).toBe(2);
+
+      const [p1, p2] = engine.players;
+      p1.health = 80;
+      p2.health = 0; // dead P2
+      p2.skillPoints = 3;
+
+      // When
+      const savedState = engine.createSaveSnapshot();
+      expect(savedState.playerCount).toBe(2);
+      expect(savedState.p2Health).toBe(0);
+      expect(savedState.p2SkillPoints).toBe(3);
+
+      // Restore into fresh single-player engine instance
+      const newEngine = new GameEngine();
+      newEngine.resetLevel("courtyard");
+      expect(newEngine.players.length).toBe(1);
+
+      const restoreSuccess = newEngine.restoreFromSnapshot(savedState);
+
+      // Then
+      expect(restoreSuccess).toBe(true);
+      expect(newEngine.players.length).toBe(2);
+      expect(newEngine.settings.isTwoPlayer).toBe(true);
+
+      const [restoredP1, restoredP2] = newEngine.players;
+      expect(restoredP1.health).toBe(80);
+      expect(restoredP2.health).toBe(0);
+      expect(restoredP2.skillPoints).toBe(3);
 
       newEngine.stop();
     });

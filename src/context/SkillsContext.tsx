@@ -37,6 +37,9 @@ export interface SkillsContextValue extends IPlayerScopedContext {
   unlockSkill: (nodeId: string, playerIndex?: number) => { success: boolean; messageKey?: string };
   assignSpell: (spellId: string, slot: "primary" | "secondary", playerIndex?: number) => boolean;
   evaluateSkill: (nodeId: string, playerIndex?: number) => SkillUnlockEvaluation;
+  p1?: Player;
+  p2?: Player;
+  isTwoPlayer: boolean;
 }
 
 const SkillsContext = createContext<SkillsContextValue | null>(null);
@@ -65,6 +68,10 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
     };
   }, [engine.players, activePlayerIndex, stateVersion]);
 
+  const p1 = useMemo(() => engine.players[0], [engine.players, stateVersion]);
+  const p2 = useMemo(() => engine.players[1], [engine.players, stateVersion]);
+  const isTwoPlayer = useMemo(() => engine.players.length > 1, [engine.players, stateVersion]);
+
   const activeCharacter = useMemo(() => {
     return getCharacterKey(activePlayer?.characterId || "valen");
   }, [activePlayer?.characterId]);
@@ -83,7 +90,7 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
         setSelectedSkillId(skillTreeNodes[0].id);
       }
     }
-  }, [activeCharacter, skillTreeNodes, selectedSkillId]);
+  }, [skillTreeNodes, selectedSkillId]);
 
   const selectedNode = useMemo(() => {
     if (!selectedSkillId) return undefined;
@@ -92,24 +99,19 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
 
   const unlockedSkills = useMemo(() => {
     return activePlayer?.unlockedSkills || [];
-  }, [activePlayer?.unlockedSkills, stateVersion]);
+  }, [activePlayer?.unlockedSkills]);
 
-  const skillPoints = useMemo(() => {
-    return activePlayer?.skillPoints ?? 0;
-  }, [activePlayer?.skillPoints, stateVersion]);
-
-  const primarySpellId = useMemo(() => {
-    return activePlayer?.primarySpellId || "";
-  }, [activePlayer?.primarySpellId, stateVersion]);
-
-  const secondarySpellId = useMemo(() => {
-    return activePlayer?.secondarySpellId || "";
-  }, [activePlayer?.secondarySpellId, stateVersion]);
+  const skillPoints = activePlayer?.skillPoints ?? 0;
+  const primarySpellId = activePlayer?.primarySpellId || "";
+  const secondarySpellId = activePlayer?.secondarySpellId || "";
 
   const getTargetPlayer = useCallback(
-    (index?: number): Player | undefined => {
-      const idx = typeof index === "number" ? index : activePlayerIndex;
-      return resolveActivePlayer(engine.players, idx, { allowFallback: typeof index !== "number" });
+    (playerIndex?: number): Player | undefined => {
+      const pIdx = typeof playerIndex === "number" ? playerIndex : activePlayerIndex;
+      if (!isValidPlayerIndex(engine.players, pIdx)) {
+        return undefined;
+      }
+      return engine.players[pIdx];
     },
     [engine.players, activePlayerIndex]
   );
@@ -135,7 +137,7 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
     (nodeId: string, playerIndex?: number): { success: boolean; messageKey?: string } => {
       const pIdx = typeof playerIndex === "number" ? playerIndex : activePlayerIndex;
       if (!isValidPlayerIndex(engine.players, pIdx)) {
-        return { success: false, messageKey: "invalidPlayerIndex" };
+        return { success: false, messageKey: "noActivePlayer" };
       }
       return engine.unlockPlayerSkill(pIdx, nodeId);
     },
@@ -177,6 +179,9 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
       unlockSkill,
       assignSpell,
       evaluateSkill,
+      p1,
+      p2,
+      isTwoPlayer,
     }),
     [
       isLoaded,
@@ -196,26 +201,23 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
       unlockSkill,
       assignSpell,
       evaluateSkill,
+      p1,
+      p2,
+      isTwoPlayer,
     ]
   );
 
-  return (
-    <SkillsContext.Provider value={value}>
-      {children}
-    </SkillsContext.Provider>
-  );
+  return <SkillsContext.Provider value={value}>{children}</SkillsContext.Provider>;
 };
 
 /**
- * Hook providing access to character skill progression, unlocks, and spell bindings.
- * Canonical hook complying with frontend_ui.md.
- *
- * @throws {MissingContextProviderError} when used outside a SkillsProvider.
+ * Hook to consume the skills context.
+ * Throws MissingContextProviderError if used outside of SkillsProvider.
  */
-export function useSkills(): SkillsContextValue {
+export const useSkills = (): SkillsContextValue => {
   const context = useContext(SkillsContext);
   if (!context) {
     throw new MissingContextProviderError("useSkills", "SkillsProvider");
   }
   return context;
-}
+};

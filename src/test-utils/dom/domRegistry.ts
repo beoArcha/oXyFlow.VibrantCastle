@@ -57,6 +57,14 @@ export async function cleanupDom(): Promise<void> {
     }
   }
 
+  if (typeof window !== "undefined" && window.localStorage && typeof window.localStorage.clear === "function") {
+    try {
+      window.localStorage.clear();
+    } catch {
+      // ignore in environments where clear is restricted
+    }
+  }
+
   if (typeof document !== "undefined" && document.body) {
     document.body.innerHTML = "";
   }
