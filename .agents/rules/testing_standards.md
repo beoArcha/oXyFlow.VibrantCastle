@@ -3,7 +3,7 @@ trigger: model_decision
 description: When designing, authoring, refactoring, or running automated tests (unit AAA, integration BDT, architecture AST rules, or smoke performance tests) in src/tests/
 ---
 
-# Testing Standards (Unit, Integration & Architecture)
+# Testing Standards (Unit, Integration, Architecture & Agent Manual)
 
 The single source of truth for test structure, naming, isolation, and assertion discipline in **Vibrant Castle**.
 
@@ -11,26 +11,29 @@ The single source of truth for test structure, naming, isolation, and assertion 
 
 ## 0. PURPOSE & BOUNDARIES
 
-1. Governs all automated test suites executed by Bun: unit tests, integration tests, and AST architecture tests in `src/tests/`.
+1. Governs all automated and manual verification tiers: unit tests, integration tests, AST architecture tests, and Chrome MCP manual preview tests.
 2. Enforces structural separation between AAA (unit) and BDT (integration) paradigms.
 3. Architecture tests in `src/tests/arch/` are non-negotiable gates that protect layer boundaries and data purity.
+4. Agent manual runtime verification via Chrome MCP / `preview_*` is mandatory in the final testing stage before sign-off.
 
 ---
 
 ## 1. TEST TIERS & HARD INVARIANTS
 
-| Tier | File Pattern | Target | Paradigm | Allowed Side-Effects |
+| Tier | File Pattern / Tool | Target | Paradigm | Allowed Side-Effects |
 | :--- | :--- | :--- | :--- | :--- |
 | **Unit** | `src/**/__tests__/*.unit.test.ts` | Vector math, AABB intersections, damage formulas, state mappers, atlas slicing. | **AAA** | **None.** Pure in-memory logic. Zero Canvas API, zero DOM, zero mock timers. |
 | **Integration** | `src/**/__tests__/*.integration.test.ts` | Engine $\rightarrow$ Context $\rightarrow$ UI data flow, GameEventBus listeners, composite panels. | **BDT** | Mock Context providers, event bus subscribers, memory repositories. |
 | **Architecture** | `src/tests/arch/*.test.ts` | AST source scanning, boundary violations, circular cycles, data purity, design system rules. | **Rule Assertions** | Read-only file system traversal and TypeScript AST inspection. |
 | **Smoke / Perf** | `src/tests/smoke/`, CI smoke | Game boot, loop initialization, zero GC allocations in render. | Minimal | Canvas mock / headless initialization. |
+| **Agent Manual** | Chrome MCP / `preview_*` | Live Vite runtime (`http://localhost:3000`), UI modals, Canvas rendering, state reactivity. | **Interactive Journey** | Live browser DOM interaction, clicking UI triggers, inspecting real console logs. |
 
 ### Hard Invariants
 - ❌ **FORBIDDEN: Mixing AAA and BDT Paradigms**: Never place `// Arrange` markers in integration tests, and never place `// Given` markers in unit tests. Never combine them (`// Given (Arrange)`).
 - ❌ **FORBIDDEN: Vague Test Names**: Generic names like `it('works')`, `it('renders properly')`, or snake_case titles are forbidden. Unit tests MUST follow `it('should <expected outcome> when <action or condition>')`.
 - ❌ **FORBIDDEN: Canvas 2D or DOM in Engine Unit Tests**: Simulation math, collision physics, and combat formulas must be verified purely as mathematical functions without instantiating canvas contexts.
 - ❌ **FORBIDDEN: Modifying or Weakening Architecture Tests**: Disabling, deleting, or skipping tests in `src/tests/arch/` to pass a build is strictly forbidden.
+- ❌ **FORBIDDEN: Omitting Agent Manual Testing in Final Gate**: In Stage 4 (Unified Verification Gate), passing automated tests alone is insufficient. The agent MUST perform manual visual and functional verification in a real browser via Chrome MCP / `preview_*`.
 - ✅ **REQUIRED: Triple Decoupling**:
   1. *From Localization*: Never assert translated copy (e.g. `expect(el.text()).toBe('Wznów')`). Assert semantic keys, roles, or `data-testid`.
   2. *From Theming & CSS*: Never assert hex color codes, theme variant names, or arbitrary CSS classes.
@@ -112,7 +115,22 @@ Architecture tests act as executable linters guarding the codebase:
 
 ---
 
-## 5. ENFORCEMENT & COMMANDS
+## 5. AGENT MANUAL TESTING VIA CHROME MCP (`preview_*`)
+
+During Stage 4 (Unified Verification Gate), the agent must validate user interactions and rendering in the live application:
+
+1. **Launch Environment**: Start Vite dev server in background using `bun dev` (default `http://localhost:3000`).
+2. **Browser Tooling**: Use `preview_status` and `preview_open` or Chrome MCP to connect to the running instance.
+3. **Execution Journey**:
+   - Navigate to feature views (`preview_navigate`).
+   - Trigger user flows using locators and `preview_act` (e.g. clicking buttons, toggling modes, switching characters, keyboard triggers).
+   - Verify layout, visual feedback, and responsive presentation via `preview_snapshot`.
+4. **Console Log Cleanliness**:
+   - Inspect console messages via `preview_evaluate` to ensure zero runtime uncaught exceptions, unhandled Promise rejections, or React warning regressions.
+
+---
+
+## 6. ENFORCEMENT & COMMANDS
 
 | Command | Target | Expected Result |
 | :--- | :--- | :--- |
@@ -120,3 +138,4 @@ Architecture tests act as executable linters guarding the codebase:
 | `bun test:integration` | Context and composite integration suites | All integration flows pass |
 | `bun test:arch` | Full AST architecture and contract suite | 83/83 checks pass with zero violations |
 | `bun test` | Complete test suite execution | Full green suite |
+| `preview_*` / Chrome MCP | Agent manual verification in live browser | Visual correctness & 0 console errors |
