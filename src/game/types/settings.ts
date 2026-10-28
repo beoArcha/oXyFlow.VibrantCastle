@@ -48,6 +48,7 @@ export interface GameSettings {
   volumeMusic: number;
   volumeSFX: number;
   isTwoPlayer: boolean;
+  primaryCharacter?: "valen" | "aurelia";
   display: DisplaySettings;
 }
 

@@ -137,7 +137,12 @@ export class GameEngine implements IEngineSubsystemHost {
   public stepSingleFrame(): void { this.c.loopRunner.stepSingleFrame(); }
   public setPaused(paused: boolean): void { this.c.loopRunner.setPaused(paused); }
   public togglePause(forceState?: boolean): boolean { return this.c.loopRunner.togglePause(forceState); }
-  public applySettings(settings: Partial<GameSettings>): void { this.c.settingsController.applySettings(settings); }
+  public applySettings(settings: Partial<GameSettings>): void {
+    if (settings.primaryCharacter !== undefined) {
+      this.defaultPrimaryCharacter = settings.primaryCharacter;
+    }
+    this.c.settingsController.applySettings(settings);
+  }
   public setLanguage(lang: SupportedLanguage): void { this.c.settingsController.setLanguage(lang); }
   public setTargetFps(fps: TargetFps): void { this.c.settingsController.setTargetFps(fps); }
   public setShowFpsCounter(show: boolean): void { this.c.settingsController.setShowFpsCounter(show); }
@@ -288,7 +293,12 @@ export class GameEngine implements IEngineSubsystemHost {
   public assignPlayerSpell(playerIndex: number, spellId: string, slot: "primary" | "secondary"): boolean { return this.c.playerCommandController.assignPlayerSpell(playerIndex, spellId, slot); }
   public resetPlayerSkillsToDefaults(): void { this.c.playerCommandController.resetPlayerSkillsToDefaults(); }
   public getDefaultPrimaryCharacter(): "valen" | "aurelia" { return this.defaultPrimaryCharacter; }
-  public setDefaultPrimaryCharacter(characterId: "valen" | "aurelia"): void { this.defaultPrimaryCharacter = characterId; }
+  public setDefaultPrimaryCharacter(characterId: "valen" | "aurelia"): void {
+    this.defaultPrimaryCharacter = characterId;
+    if (this.c?.settingsController?.settings) {
+      this.c.settingsController.settings.primaryCharacter = characterId;
+    }
+  }
   public swapCharacters(): boolean {
     const success = this.c.playerCommandController.swapPlayerCharacters();
     if (success && this.players[0]) {

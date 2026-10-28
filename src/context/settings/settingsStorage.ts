@@ -44,7 +44,11 @@ export class SettingsStorage implements ISettingsStorage {
       if (raw) {
         const parsed = JSON.parse(raw);
         if (parsed && typeof parsed === "object") {
-          return this.mergeWithDefaults(parsed);
+          const merged = this.mergeWithDefaults(parsed);
+          if (defaultGameEngine && merged.primaryCharacter) {
+            defaultGameEngine.applySettings({ primaryCharacter: merged.primaryCharacter });
+          }
+          return merged;
         }
       }
 
@@ -116,6 +120,9 @@ export class SettingsStorage implements ISettingsStorage {
       if (!parsed || typeof parsed !== "object") return null;
       const merged = this.mergeWithDefaults(parsed);
       this.save(merged);
+      if (defaultGameEngine && merged.primaryCharacter) {
+        defaultGameEngine.applySettings({ primaryCharacter: merged.primaryCharacter });
+      }
       return merged;
     } catch (err) {
       this.logger.error("Failed to import settings JSON:", { context: "importSettingsFromJson" }, err);

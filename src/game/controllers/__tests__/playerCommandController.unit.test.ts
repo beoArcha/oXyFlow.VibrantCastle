@@ -190,6 +190,13 @@ describe("PlayerCommandController", () => {
   });
 
   describe("Character Selection & Swapping", () => {
+    it("returns false when setPlayerCharacter playerIndex is out of range", () => {
+      expect(controller.setPlayerCharacter(-1, "valen")).toBe(false);
+      expect(controller.setPlayerCharacter(2, "valen")).toBe(false);
+      expect(controller.setPlayerCharacter(99, "aurelia")).toBe(false);
+      expect(stateChangedCount).toBe(0);
+    });
+
     it("swaps characters cleanly between two players", () => {
       expect(mockPlayer1.characterId).toBe("valen");
       expect(mockPlayer2.characterId).toBe("aurelia");
@@ -232,7 +239,7 @@ describe("PlayerCommandController", () => {
       expect(stateChangedCount).toBe(1);
     });
 
-    it("swaps players when setPlayerCharacter is called in 2P mode to prevent duplicates", () => {
+    it("swaps players when setPlayerCharacter is called in 2P mode for P1", () => {
       expect(mockPlayer1.characterId).toBe("valen");
       expect(mockPlayer2.characterId).toBe("aurelia");
 
@@ -240,6 +247,71 @@ describe("PlayerCommandController", () => {
       expect(success).toBe(true);
       expect(mockPlayer1.characterId).toBe("aurelia");
       expect(mockPlayer2.characterId).toBe("valen");
+    });
+
+    it("swaps players when setPlayerCharacter is called in 2P mode for P2", () => {
+      expect(mockPlayer1.characterId).toBe("valen");
+      expect(mockPlayer2.characterId).toBe("aurelia");
+
+      const success = controller.setPlayerCharacter(1, "valen");
+      expect(success).toBe(true);
+      expect(mockPlayer1.characterId).toBe("aurelia");
+      expect(mockPlayer2.characterId).toBe("valen");
+    });
+
+    it("reconciles inconsistent initial roster where both players share the same character", () => {
+      mockPlayer1.characterId = "valen";
+      mockPlayer2.characterId = "valen";
+
+      const success = controller.setPlayerCharacter(0, "valen");
+      expect(success).toBe(true);
+      expect(mockPlayer1.characterId).toBe("valen");
+      expect(mockPlayer2.characterId).toBe("aurelia");
+    });
+
+    it("preserves progression non-destructively across character switches (skills, spells, equipment)", () => {
+      players = [mockPlayer1];
+      // Seed custom progression on Valen
+      mockPlayer1.unlockedSkills = ["solar_flare", "prismatic_shield", "valen_custom_skill"];
+      mockPlayer1.primarySpellId = "prismatic_shield";
+      mockPlayer1.secondarySpellId = "solar_flare";
+      mockPlayer1.skillPoints = 12;
+      mockPlayer1.inventory.backpack[3] = {
+        id: "legendary_relic",
+        nameKey: "item.legendary_relic",
+        descriptionKey: "desc",
+        type: 0 as any,
+        icon: "relic.png",
+        rarity: "legendary",
+      };
+
+      // Switch to Aurelia
+      const toAurelia = controller.setPlayerCharacter(0, "aurelia");
+      expect(toAurelia).toBe(true);
+      expect(mockPlayer1.characterId).toBe("aurelia");
+      expect(mockPlayer1.primarySpellId).toBe("aether_bolt");
+      expect(mockPlayer1.unlockedSkills).not.toContain("valen_custom_skill");
+
+      // Customize Aurelia progression
+      mockPlayer1.unlockedSkills.push("aurelia_custom_arcane");
+      mockPlayer1.primarySpellId = "aether_barrier";
+
+      // Switch back to Valen
+      const backToValen = controller.setPlayerCharacter(0, "valen");
+      expect(backToValen).toBe(true);
+      expect(mockPlayer1.characterId).toBe("valen");
+      // Assert Valen's previous non-default progression was restored
+      expect(mockPlayer1.unlockedSkills).toEqual(["solar_flare", "prismatic_shield", "valen_custom_skill"]);
+      expect(mockPlayer1.primarySpellId).toBe("prismatic_shield");
+      expect(mockPlayer1.secondarySpellId).toBe("solar_flare");
+      expect(mockPlayer1.skillPoints).toBe(12);
+      expect(mockPlayer1.inventory.backpack[3]?.id).toBe("legendary_relic");
+
+      // Switch back to Aurelia again
+      controller.setPlayerCharacter(0, "aurelia");
+      expect(mockPlayer1.characterId).toBe("aurelia");
+      expect(mockPlayer1.unlockedSkills).toContain("aurelia_custom_arcane");
+      expect(mockPlayer1.primarySpellId).toBe("aether_barrier");
     });
 
     it("resets skills dynamically to current character archetype", () => {

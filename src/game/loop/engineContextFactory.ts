@@ -18,6 +18,7 @@ export interface IEngineContextHost {
   isDefeat: boolean;
   settings: GameSettings;
   defaultPrimaryCharacter?: "valen" | "aurelia";
+  setDefaultPrimaryCharacter?(characterId: "valen" | "aurelia"): void;
   particleSystem: ParticleSystem;
   cameraManager: CameraManager;
   audio: GameAudioEngine;

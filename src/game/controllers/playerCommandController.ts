@@ -12,6 +12,11 @@ import {
   assignSpellToSlot,
   getDefaultSkillsForCharacter,
 } from "../logic/skills";
+import {
+  applyCharacterToPlayer,
+  swapPlayerProgression,
+  cloneInventoryState,
+} from "./characterSwitchingHelper";
 
 import { GameEventBus } from "../engine/eventBus";
 
@@ -103,6 +108,10 @@ export class PlayerCommandController implements IPlayerCommandController {
       players[0].maxHealth = stats.maxHp;
       players[0].maxMana = stats.maxMana;
       players[0].maxStamina = stats.maxStamina;
+      const p1Char = players[0].characterId || "valen";
+      if (players[0].characterProfiles?.[p1Char]) {
+        players[0].characterProfiles[p1Char]!.inventory = cloneInventoryState(players[0].inventory);
+      }
     }
     if (players[1]) {
       players[1].inventory = createDefaultInventory();
@@ -110,6 +119,10 @@ export class PlayerCommandController implements IPlayerCommandController {
       players[1].maxHealth = stats.maxHp;
       players[1].maxMana = stats.maxMana;
       players[1].maxStamina = stats.maxStamina;
+      const p2Char = players[1].characterId || "aurelia";
+      if (players[1].characterProfiles?.[p2Char]) {
+        players[1].characterProfiles[p2Char]!.inventory = cloneInventoryState(players[1].inventory);
+      }
     }
     this.context.notifyStateChanged();
   }
@@ -145,6 +158,16 @@ export class PlayerCommandController implements IPlayerCommandController {
       players[0].skillPoints = p1Defaults.skillPoints;
       players[0].primarySpellId = p1Defaults.primarySpellId;
       players[0].secondarySpellId = p1Defaults.secondarySpellId;
+      if (players[0].characterProfiles?.[p1Char]) {
+        players[0].characterProfiles[p1Char] = {
+          characterId: p1Char,
+          unlockedSkills: [...p1Defaults.unlockedSkills],
+          skillPoints: p1Defaults.skillPoints,
+          primarySpellId: p1Defaults.primarySpellId,
+          secondarySpellId: p1Defaults.secondarySpellId,
+          inventory: cloneInventoryState(players[0].inventory),
+        };
+      }
     }
     if (players[1]) {
       const p2Char = players[1].characterId || "aurelia";
@@ -153,6 +176,16 @@ export class PlayerCommandController implements IPlayerCommandController {
       players[1].skillPoints = p2Defaults.skillPoints;
       players[1].primarySpellId = p2Defaults.primarySpellId;
       players[1].secondarySpellId = p2Defaults.secondarySpellId;
+      if (players[1].characterProfiles?.[p2Char]) {
+        players[1].characterProfiles[p2Char] = {
+          characterId: p2Char,
+          unlockedSkills: [...p2Defaults.unlockedSkills],
+          skillPoints: p2Defaults.skillPoints,
+          primarySpellId: p2Defaults.primarySpellId,
+          secondarySpellId: p2Defaults.secondarySpellId,
+          inventory: cloneInventoryState(players[1].inventory),
+        };
+      }
     }
     this.context.notifyStateChanged();
   }
@@ -167,76 +200,50 @@ export class PlayerCommandController implements IPlayerCommandController {
       return this.setPlayerCharacter(0, nextChar);
     }
 
-    const p1 = players[0];
-    const p2 = players[1];
-
-    const tempCharId = p1.characterId;
-    const tempCharName = p1.characterName;
-    p1.characterId = p2.characterId;
-    p1.characterName = p2.characterName;
-    p2.characterId = tempCharId;
-    p2.characterName = tempCharName;
-
-    const tempSkills = p1.unlockedSkills;
-    const tempPoints = p1.skillPoints;
-    const tempPrimary = p1.primarySpellId;
-    const tempSecondary = p1.secondarySpellId;
-
-    p1.unlockedSkills = p2.unlockedSkills;
-    p1.skillPoints = p2.skillPoints;
-    p1.primarySpellId = p2.primarySpellId;
-    p1.secondarySpellId = p2.secondarySpellId;
-
-    p2.unlockedSkills = tempSkills;
-    p2.skillPoints = tempPoints;
-    p2.primarySpellId = tempPrimary;
-    p2.secondarySpellId = tempSecondary;
-
-    const tempInventory = p1.inventory;
-    p1.inventory = p2.inventory;
-    p2.inventory = tempInventory;
-
-    const p1Stats = calculatePlayerDerivedStats(p1);
-    p1.maxHealth = p1Stats.maxHp;
-    p1.maxMana = p1Stats.maxMana;
-    p1.maxStamina = p1Stats.maxStamina;
-
-    const p2Stats = calculatePlayerDerivedStats(p2);
-    p2.maxHealth = p2Stats.maxHp;
-    p2.maxMana = p2Stats.maxMana;
-    p2.maxStamina = p2Stats.maxStamina;
-
+    swapPlayerProgression(players[0], players[1]);
     this.context.notifyStateChanged();
     return true;
   }
 
   public setPlayerCharacter(playerIndex: number, characterId: "valen" | "aurelia"): boolean {
     const players = this.context.getPlayers();
-    const player = players[playerIndex];
-    if (!player) return false;
+    if (playerIndex < 0 || playerIndex >= players.length) {
+      return false;
+    }
 
-    if (player.characterId === characterId) {
+    const targetPlayer = players[playerIndex];
+    if (!targetPlayer) return false;
+
+    if (players.length === 1) {
+      if (targetPlayer.characterId === characterId) {
+        return true;
+      }
+      applyCharacterToPlayer(targetPlayer, characterId);
+      this.context.notifyStateChanged();
       return true;
     }
 
-    if (players.length > 1) {
+    // Two-player co-op mode: validate playerIndex & enforce mutual exclusion
+    const otherIndex = 1 - playerIndex;
+    const otherPlayer = players[otherIndex];
+    const complementaryId: "valen" | "aurelia" = characterId === "aurelia" ? "valen" : "aurelia";
+
+    if (targetPlayer.characterId === characterId) {
+      if (otherPlayer && otherPlayer.characterId === characterId) {
+        applyCharacterToPlayer(otherPlayer, complementaryId);
+        this.context.notifyStateChanged();
+      }
+      return true;
+    }
+
+    if (otherPlayer && otherPlayer.characterId === characterId) {
       return this.swapPlayerCharacters();
     }
 
-    player.characterId = characterId;
-    player.characterName = characterId === "aurelia" ? "Aurelia" : "Valen";
-
-    const defaults = getDefaultSkillsForCharacter(characterId);
-    player.unlockedSkills = [...defaults.unlockedSkills];
-    player.skillPoints = Math.max(player.skillPoints, defaults.skillPoints);
-    player.primarySpellId = defaults.primarySpellId;
-    player.secondarySpellId = defaults.secondarySpellId;
-
-    const stats = calculatePlayerDerivedStats(player);
-    player.maxHealth = stats.maxHp;
-    player.maxMana = stats.maxMana;
-    player.maxStamina = stats.maxStamina;
-
+    applyCharacterToPlayer(targetPlayer, characterId);
+    if (otherPlayer) {
+      applyCharacterToPlayer(otherPlayer, complementaryId);
+    }
     this.context.notifyStateChanged();
     return true;
   }

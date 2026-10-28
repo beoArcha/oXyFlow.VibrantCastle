@@ -1,18 +1,26 @@
-import { describe, it, expect, beforeEach } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import {
   SettingsStorage,
   ISettingsStorageProvider,
 } from "../settingsStorage";
 import { DEFAULT_SETTINGS, GameSettingsState } from "../settingsTypes";
 import { createMockStorageProvider, MockStorageProvider } from "@test-utils";
+import defaultGameEngine from "@game/loop/engine";
 
 describe("SettingsStorage - Domain & Persistence", () => {
   let mockStorage: MockStorageProvider;
   let settingsStorage: SettingsStorage;
 
   beforeEach(() => {
+    defaultGameEngine.setDefaultPrimaryCharacter("valen");
+    defaultGameEngine.applySettings({ isTwoPlayer: false, primaryCharacter: "valen" });
     mockStorage = createMockStorageProvider();
     settingsStorage = new SettingsStorage(mockStorage);
+  });
+
+  afterEach(() => {
+    defaultGameEngine.setDefaultPrimaryCharacter("valen");
+    defaultGameEngine.applySettings({ isTwoPlayer: false, primaryCharacter: "valen" });
   });
 
   describe("Settings Loading & Fallbacks", () => {
@@ -128,7 +136,9 @@ describe("SettingsStorage - Domain & Persistence", () => {
       expect(parsed.display.aspectRatio).toBe(DEFAULT_SETTINGS.display.aspectRatio);
     });
 
-    it("imports settings from valid JSON, deep merges, and persists", () => {
+    it("imports settings from valid JSON, deep merges, persists, and synchronizes engine default", () => {
+      expect(defaultGameEngine.defaultPrimaryCharacter).toBe("valen");
+
       const importedJson = JSON.stringify({
         volumeSFX: 0.95,
         primaryCharacter: "aurelia",
@@ -148,6 +158,9 @@ describe("SettingsStorage - Domain & Persistence", () => {
       const inStore = JSON.parse(mockStorage.store[SettingsStorage.SETTINGS_STORAGE_KEY]);
       expect(inStore.volumeSFX).toBe(0.95);
       expect(inStore.primaryCharacter).toBe("aurelia");
+
+      // Verifies engine primary character was synchronized
+      expect(defaultGameEngine.defaultPrimaryCharacter).toBe("aurelia");
     });
 
     it("returns null when importing invalid JSON without throwing", () => {
