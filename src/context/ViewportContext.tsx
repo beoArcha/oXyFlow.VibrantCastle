@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useCallback, useMemo } from "react";
 import { ScalingFilterMode, PlayerId } from "@game/types";
-import gameEngine from "@game/loop/engine";
+import defaultGameEngine, { GameEngine } from "@game/loop/engine";
 import { debugManager } from "@game/debug/debugManager";
 import { BaseProviderProps } from "./IContext";
 import { MissingContextProviderError } from "@lib/errors";
@@ -24,11 +24,14 @@ export interface ViewportContextValue {
  * Attaches the HTMLCanvasElement to the game engine renderer and starts the loop.
  * Returns a cleanup function that stops the engine on unmount.
  */
-export function attachViewportCanvas(canvas: HTMLCanvasElement): () => void {
-  gameEngine.attachCanvas(canvas);
-  gameEngine.start();
+export function attachViewportCanvas(
+  canvas: HTMLCanvasElement,
+  engine: GameEngine = defaultGameEngine
+): () => void {
+  engine.attachCanvas(canvas);
+  engine.start();
   return () => {
-    gameEngine.stop();
+    engine.stop();
   };
 }
 
@@ -39,9 +42,10 @@ export function resizeViewportCanvas(
   width: number,
   height: number,
   dpr: number,
-  scalingFilter: ScalingFilterMode
+  scalingFilter: ScalingFilterMode,
+  engine: GameEngine = defaultGameEngine
 ): void {
-  gameEngine.setCanvasDimensions(width, height, dpr, scalingFilter);
+  engine.setCanvasDimensions(width, height, dpr, scalingFilter);
 }
 
 /**
@@ -82,7 +86,8 @@ export function resolveViewportCameraProjection(
 export function executeCanvasClickTeleport(
   canvas: HTMLCanvasElement,
   clientX: number,
-  clientY: number
+  clientY: number,
+  engine: GameEngine = defaultGameEngine
 ): boolean {
   if (!debugManager.state.clickToTeleport) return false;
 
@@ -90,11 +95,11 @@ export function executeCanvasClickTeleport(
     canvas,
     clientX,
     clientY,
-    gameEngine.cameraManager,
-    gameEngine.getRendererScaleFactor()
+    engine.cameraManager,
+    engine.getRendererScaleFactor()
   );
 
-  gameEngine.teleportPlayer(
+  engine.teleportPlayer(
     PlayerId.Player1,
     projection.worldX,
     projection.worldY
@@ -104,15 +109,23 @@ export function executeCanvasClickTeleport(
 
 const ViewportContext = createContext<ViewportContextValue | null>(null);
 
-export interface ViewportProviderProps extends BaseProviderProps {}
+export interface ViewportProviderProps extends BaseProviderProps {
+  engine?: GameEngine;
+}
 
 /**
  * Context provider managing viewport canvas lifecycle, dimension adaptation, and click coordinates.
  */
-export const ViewportProvider: React.FC<ViewportProviderProps> = ({ children }) => {
-  const attachCanvas = useCallback((canvas: HTMLCanvasElement) => {
-    return attachViewportCanvas(canvas);
-  }, []);
+export const ViewportProvider: React.FC<ViewportProviderProps> = ({
+  children,
+  engine = defaultGameEngine,
+}) => {
+  const attachCanvas = useCallback(
+    (canvas: HTMLCanvasElement) => {
+      return attachViewportCanvas(canvas, engine);
+    },
+    [engine]
+  );
 
   const resizeCanvas = useCallback(
     (
@@ -121,16 +134,16 @@ export const ViewportProvider: React.FC<ViewportProviderProps> = ({ children }) 
       dpr: number,
       scalingFilter: ScalingFilterMode
     ) => {
-      resizeViewportCanvas(width, height, dpr, scalingFilter);
+      resizeViewportCanvas(width, height, dpr, scalingFilter, engine);
     },
-    []
+    [engine]
   );
 
   const teleportPlayerAtViewport = useCallback(
     (canvas: HTMLCanvasElement, clientX: number, clientY: number): boolean => {
-      return executeCanvasClickTeleport(canvas, clientX, clientY);
+      return executeCanvasClickTeleport(canvas, clientX, clientY, engine);
     },
-    []
+    [engine]
   );
 
   const value = useMemo<ViewportContextValue>(

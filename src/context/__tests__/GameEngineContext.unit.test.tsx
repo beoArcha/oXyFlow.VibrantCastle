@@ -81,6 +81,39 @@ describe("GameEngineContext & useGameEngine Hook", () => {
     await unmount();
   });
 
+  it("should reactively update player snapshot when vitals or spells change even while paused", async () => {
+    // Arrange
+    const { result, unmount } = await renderCustomHook(() => useGameEngine(), {
+      wrapper,
+    });
+
+    await act(async () => {
+      result.current.setPaused(true);
+    });
+
+    const initialHealth = result.current.p1?.health ?? 100;
+
+    // Act: mutate player health directly on engine while paused and trigger notification
+    await act(async () => {
+      const p1 = gameEngine.players.find((p) => p.id === "player1");
+      if (p1) {
+        p1.health = initialHealth - 25;
+      }
+      result.current.notifyEngineUpdate();
+    });
+
+    // Assert
+    expect(result.current.p1?.health).toBe(initialHealth - 25);
+
+    // Cleanup
+    const p1 = gameEngine.players.find((p) => p.id === "player1");
+    if (p1) {
+      p1.health = initialHealth;
+    }
+
+    await unmount();
+  });
+
   it("should dispatch level navigation commands", async () => {
     // Arrange
     const { result, unmount } = await renderCustomHook(() => useGameEngine(), {

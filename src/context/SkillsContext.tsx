@@ -10,7 +10,7 @@ import {
   getCharacterKey,
 } from "@game/logic/skills";
 import { MissingContextProviderError } from "@lib/errors";
-import { resolveActivePlayer } from "./utils/playerResolver";
+import { resolveActivePlayer, isValidPlayerIndex } from "./utils/playerResolver";
 
 export interface SkillUnlockEvaluation {
   canUnlock: boolean;
@@ -50,7 +50,6 @@ export interface SkillsProviderProps extends EngineBoundProviderProps {}
 export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine }) => {
   const isLoaded = true;
   const [activePlayerIndex, setActivePlayerIndex] = useState(0);
-  const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
   const [stateVersion, setStateVersion] = useState(0);
 
   useEngineSubscription(() => {
@@ -58,25 +57,29 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
   }, engine);
 
   const activePlayer = useMemo(() => {
-    const raw = resolveActivePlayer(engine.players, activePlayerIndex);
+    const raw = resolveActivePlayer(engine.players, activePlayerIndex, { allowFallback: true });
     if (!raw) return undefined;
     return {
       ...raw,
-      unlockedSkills: raw.unlockedSkills ? [...raw.unlockedSkills] : [],
+      unlockedSkills: [...raw.unlockedSkills],
     };
   }, [engine.players, activePlayerIndex, stateVersion]);
 
-  const activeCharacter = useMemo<"valen" | "aurelia">(() => {
-    return getCharacterKey(activePlayer?.id || "valen");
-  }, [activePlayer]);
+  const activeCharacter = useMemo(() => {
+    return getCharacterKey(activePlayer?.characterId || "valen");
+  }, [activePlayer?.characterId]);
 
   const skillTreeNodes = useMemo(() => {
     return getSkillTreeNodesForCharacter(activeCharacter);
   }, [activeCharacter]);
 
+  const [selectedSkillId, setSelectedSkillId] = useState<string | null>(() => {
+    return skillTreeNodes[0]?.id || null;
+  });
+
   useEffect(() => {
     if (skillTreeNodes.length > 0) {
-      if (!selectedSkillId || !skillTreeNodes.some(n => n.id === selectedSkillId)) {
+      if (!selectedSkillId || !skillTreeNodes.some((n) => n.id === selectedSkillId)) {
         setSelectedSkillId(skillTreeNodes[0].id);
       }
     }
@@ -106,7 +109,7 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
   const getTargetPlayer = useCallback(
     (index?: number): Player | undefined => {
       const idx = typeof index === "number" ? index : activePlayerIndex;
-      return resolveActivePlayer(engine.players, idx);
+      return resolveActivePlayer(engine.players, idx, { allowFallback: typeof index !== "number" });
     },
     [engine.players, activePlayerIndex]
   );
@@ -120,7 +123,7 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
           isUnlocked: false,
           hasPrerequisite: false,
           hasPoints: false,
-          reasonKey: "noSkillFound"
+          reasonKey: "noSkillFound",
         };
       }
       return checkSkillUnlockConditions(player, nodeId);
@@ -131,6 +134,9 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
   const unlockSkill = useCallback(
     (nodeId: string, playerIndex?: number): { success: boolean; messageKey?: string } => {
       const pIdx = typeof playerIndex === "number" ? playerIndex : activePlayerIndex;
+      if (!isValidPlayerIndex(engine.players, pIdx)) {
+        return { success: false, messageKey: "invalidPlayerIndex" };
+      }
       return engine.unlockPlayerSkill(pIdx, nodeId);
     },
     [engine, activePlayerIndex]
@@ -139,6 +145,9 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
   const assignSpell = useCallback(
     (spellId: string, slot: "primary" | "secondary", playerIndex?: number): boolean => {
       const pIdx = typeof playerIndex === "number" ? playerIndex : activePlayerIndex;
+      if (!isValidPlayerIndex(engine.players, pIdx)) {
+        return false;
+      }
       return engine.assignPlayerSpell(pIdx, spellId, slot);
     },
     [engine, activePlayerIndex]
@@ -170,12 +179,15 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
       evaluateSkill,
     }),
     [
+      isLoaded,
       resetToDefaults,
       activePlayerIndex,
+      setActivePlayerIndex,
       activePlayer,
       activeCharacter,
       skillTreeNodes,
       selectedSkillId,
+      setSelectedSkillId,
       selectedNode,
       unlockedSkills,
       skillPoints,
@@ -187,18 +199,23 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
     ]
   );
 
-  return <SkillsContext.Provider value={value}>{children}</SkillsContext.Provider>;
+  return (
+    <SkillsContext.Provider value={value}>
+      {children}
+    </SkillsContext.Provider>
+  );
 };
 
 /**
- * Hook providing access to character skills, skill points, spell assignments, and skill tree actions.
+ * Hook providing access to character skill progression, unlocks, and spell bindings.
+ * Canonical hook complying with frontend_ui.md.
  *
  * @throws {MissingContextProviderError} when used outside a SkillsProvider.
  */
 export function useSkills(): SkillsContextValue {
-  const ctx = useContext(SkillsContext);
-  if (!ctx) {
+  const context = useContext(SkillsContext);
+  if (!context) {
     throw new MissingContextProviderError("useSkills", "SkillsProvider");
   }
-  return ctx;
+  return context;
 }

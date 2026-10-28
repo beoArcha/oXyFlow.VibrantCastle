@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useMemo } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 import {
   LanguageCode,
   SUPPORTED_LANGUAGES,
@@ -7,7 +7,7 @@ import {
   t as translateFn,
   getDomainI18n,
 } from "@i18n";
-import gameEngine from "@game/loop/engine";
+import defaultGameEngine, { GameEngine } from "@game/loop/engine";
 import { useEngineSubscription } from "./hooks/useEngineSubscription";
 import { BaseProviderProps } from "./IContext";
 import { MissingContextProviderError } from "@lib/errors";
@@ -39,6 +39,7 @@ export const LocaleContext = createContext<LocaleContextValue | null>(null);
 
 export interface LocaleProviderProps extends BaseProviderProps {
   defaultLanguage?: LanguageCode;
+  engine?: GameEngine;
 }
 
 /** Legacy alias for backwards compatibility */
@@ -51,19 +52,25 @@ export type I18nProviderProps = LocaleProviderProps;
 export const LocaleProvider: React.FC<LocaleProviderProps> = ({
   children,
   defaultLanguage,
+  engine = defaultGameEngine,
 }) => {
   const [language, setLanguageState] = useState<LanguageCode>(() => {
-    if (defaultLanguage) {
-      gameEngine.setLanguage(defaultLanguage);
-      return defaultLanguage;
-    }
-    return gameEngine.settings.language || "pl";
+    return defaultLanguage || engine.settings.language || "pl";
   });
 
-  const setLanguage = useCallback((lang: LanguageCode) => {
-    setLanguageState(lang);
-    gameEngine.setLanguage(lang);
-  }, []);
+  useEffect(() => {
+    if (defaultLanguage && engine.settings.language !== defaultLanguage) {
+      engine.setLanguage(defaultLanguage);
+    }
+  }, [defaultLanguage, engine]);
+
+  const setLanguage = useCallback(
+    (lang: LanguageCode) => {
+      setLanguageState(lang);
+      engine.setLanguage(lang);
+    },
+    [engine]
+  );
 
   const isLanguage = useCallback(
     (lang: LanguageCode) => language === lang,
@@ -71,10 +78,10 @@ export const LocaleProvider: React.FC<LocaleProviderProps> = ({
   );
 
   useEngineSubscription(() => {
-    if (gameEngine.settings.language !== language) {
-      setLanguageState(gameEngine.settings.language);
+    if (engine.settings.language !== language) {
+      setLanguageState(engine.settings.language);
     }
-  }, gameEngine);
+  }, engine);
 
   const dictionary = useMemo(
     () => translations[language] || translations.pl,

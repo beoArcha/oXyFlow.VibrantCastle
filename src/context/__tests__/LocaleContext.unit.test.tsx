@@ -6,6 +6,7 @@ import {
   useLocale,
   useI18n,
 } from "../LocaleContext";
+import { GameEngine } from "@game/loop/engine";
 import { MissingContextProviderError } from "@lib/errors";
 
 describe("LocaleContext, useLocale Hook, and useI18n compatibility", () => {
@@ -52,6 +53,38 @@ describe("LocaleContext, useLocale Hook, and useI18n compatibility", () => {
     expect(result.current.language).toBe("pl");
     expect(result.current.isLanguage("pl")).toBe(true);
     expect(result.current.isPl).toBe(true);
+
+    await unmount();
+  });
+
+  it("should support injected custom GameEngine instance", async () => {
+    // Arrange
+    const customEngine = new GameEngine();
+    customEngine.settings.language = "pl";
+
+    const wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+      <LocaleProvider engine={customEngine} defaultLanguage="en">
+        {children}
+      </LocaleProvider>
+    );
+
+    // Act
+    const { result, unmount } = await renderCustomHook(() => useLocale(), {
+      wrapper,
+    });
+
+    // Assert
+    expect(result.current.language).toBe("en");
+    expect(customEngine.settings.language).toBe("en");
+
+    // Act
+    await act(async () => {
+      result.current.setLanguage("pl");
+    });
+
+    // Assert
+    expect(customEngine.settings.language).toBe("pl");
+    expect(result.current.language).toBe("pl");
 
     await unmount();
   });

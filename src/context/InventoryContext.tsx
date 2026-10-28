@@ -10,7 +10,7 @@ import {
   calculatePlayerDerivedStats,
 } from "@game/logic/inventory";
 import { MissingContextProviderError } from "@lib/errors";
-import { resolveActivePlayer } from "./utils/playerResolver";
+import { resolveActivePlayer, isValidPlayerIndex } from "./utils/playerResolver";
 
 /**
  * Public contract for inventory domain UI state and actions.
@@ -51,7 +51,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   }, engine);
 
   const activePlayer = useMemo(() => {
-    const raw = resolveActivePlayer(engine.players, activePlayerIndex);
+    const raw = resolveActivePlayer(engine.players, activePlayerIndex, { allowFallback: true });
     if (!raw) return undefined;
     return {
       ...raw,
@@ -88,6 +88,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   const equipItem = useCallback(
     (backpackIndex: number, playerIndex?: number): boolean => {
       const pIdx = playerIndex !== undefined ? playerIndex : activePlayerIndex;
+      if (!isValidPlayerIndex(engine.players, pIdx)) return false;
       return engine.equipPlayerItem(pIdx, backpackIndex);
     },
     [engine, activePlayerIndex]
@@ -96,6 +97,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   const unequipItem = useCallback(
     (slot: keyof EquipmentState, playerIndex?: number): boolean => {
       const pIdx = playerIndex !== undefined ? playerIndex : activePlayerIndex;
+      if (!isValidPlayerIndex(engine.players, pIdx)) return false;
       return engine.unequipPlayerItem(pIdx, slot);
     },
     [engine, activePlayerIndex]
@@ -104,6 +106,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   const usePotion = useCallback(
     (slotIndex: number, playerIndex?: number): boolean => {
       const pIdx = playerIndex !== undefined ? playerIndex : activePlayerIndex;
+      if (!isValidPlayerIndex(engine.players, pIdx)) return false;
       return engine.usePlayerPotion(pIdx, slotIndex);
     },
     [engine, activePlayerIndex]
@@ -112,6 +115,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   const discardItem = useCallback(
     (backpackIndex: number, playerIndex?: number): boolean => {
       const pIdx = playerIndex !== undefined ? playerIndex : activePlayerIndex;
+      if (!isValidPlayerIndex(engine.players, pIdx)) return false;
       return engine.discardPlayerItem(pIdx, backpackIndex);
     },
     [engine, activePlayerIndex]

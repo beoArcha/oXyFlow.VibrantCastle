@@ -13,8 +13,9 @@ describe("gamepadCaptureService", () => {
     gameInputs.getConnectedGamepads = originalPads as typeof gameInputs.getConnectedGamepads;
   });
 
-  it("should detect pressed button and invoke onDetected callback", async () => {
+  it("should detect pressed button and invoke onDetected callback exactly once", async () => {
     // Arrange
+    let detectedCount = 0;
     let detectedButton = -1;
     const mockPad = {
       index: 0,
@@ -32,19 +33,22 @@ describe("gamepadCaptureService", () => {
 
     // Act
     const cancel = startGamepadButtonCapture(0, (btn) => {
+      detectedCount++;
       detectedButton = btn;
     });
 
-    await new Promise((resolve) => setTimeout(resolve, 80));
+    // Wait for multiple interval intervals (50ms interval)
+    await new Promise((resolve) => setTimeout(resolve, 160));
     cancel();
 
     // Assert
+    expect(detectedCount).toBe(1);
     expect(detectedButton).toBe(1);
   });
 
-  it("should trigger onDisconnected when target controller is missing", async () => {
+  it("should trigger onDisconnected exactly once when target controller is missing", async () => {
     // Arrange
-    let disconnected = false;
+    let disconnectCount = 0;
     spyOn(gameInputs, "getConnectedGamepads").mockReturnValue([]);
 
     // Act
@@ -52,14 +56,15 @@ describe("gamepadCaptureService", () => {
       0,
       () => {},
       () => {
-        disconnected = true;
+        disconnectCount++;
       }
     );
 
-    await new Promise((resolve) => setTimeout(resolve, 80));
+    // Wait for multiple interval intervals
+    await new Promise((resolve) => setTimeout(resolve, 160));
     cancel();
 
     // Assert
-    expect(disconnected).toBe(true);
+    expect(disconnectCount).toBe(1);
   });
 });

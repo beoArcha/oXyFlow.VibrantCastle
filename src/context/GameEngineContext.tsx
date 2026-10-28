@@ -96,16 +96,40 @@ export const GameEngineProvider: React.FC<GameEngineProviderProps> = ({
   const rawP1 = engine.players.find((p) => p.id === "player1");
   const rawP2 = engine.players.find((p) => p.id === "player2");
 
-  // Derive shallow snapshot clones reactively driven by engine tick updates
+  // Derive shallow snapshot clones reactively driven by engine tick updates and player mutations
   const p1 = useMemo(() => {
     if (!rawP1) return undefined;
     return { ...rawP1 };
-  }, [rawP1, tick]);
+  }, [
+    rawP1,
+    rawP1?.health,
+    rawP1?.mana,
+    rawP1?.stamina,
+    rawP1?.skillPoints,
+    rawP1?.primarySpellId,
+    rawP1?.secondarySpellId,
+    rawP1?.isDead,
+    rawP1?.inventory,
+    rawP1?.unlockedSkills,
+    tick,
+  ]);
 
   const p2 = useMemo(() => {
     if (!rawP2) return undefined;
     return { ...rawP2 };
-  }, [rawP2, tick]);
+  }, [
+    rawP2,
+    rawP2?.health,
+    rawP2?.mana,
+    rawP2?.stamina,
+    rawP2?.skillPoints,
+    rawP2?.primarySpellId,
+    rawP2?.secondarySpellId,
+    rawP2?.isDead,
+    rawP2?.inventory,
+    rawP2?.unlockedSkills,
+    tick,
+  ]);
 
   const isVictory = engine.isVictory;
   const isDefeat = engine.isDefeat;

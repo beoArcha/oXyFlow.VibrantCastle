@@ -98,7 +98,7 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
 }) => {
   return (
     <AudioSessionProvider onNotification={onNotification}>
-      <ViewportProvider>
+      <ViewportProvider engine={engine}>
         <GameEngineProvider engine={engine}>
           <GameSessionBridge>{children}</GameSessionBridge>
         </GameEngineProvider>

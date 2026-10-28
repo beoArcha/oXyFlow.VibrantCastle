@@ -3,6 +3,7 @@ import gameInputs from "@game/loop/input";
 /**
  * Initiates polling for the next pressed gamepad button on the specified controller.
  * Encapsulates hardware inspection and analog button thresholding outside of React components.
+ * Immediately deactivates polling upon detection or disconnection.
  * Returns an unpoll / cancel cleanup function.
  */
 export function startGamepadButtonCapture(
@@ -10,11 +11,20 @@ export function startGamepadButtonCapture(
   onDetected: (buttonIndex: number) => void,
   onDisconnected?: () => void
 ): () => void {
+  let isActive = true;
+
   const interval = setInterval(() => {
+    if (!isActive) {
+      clearInterval(interval);
+      return;
+    }
+
     const rawPads = gameInputs.getConnectedGamepads();
     const pad = rawPads.find((p) => p.index === padIndex);
 
     if (!pad) {
+      isActive = false;
+      clearInterval(interval);
       onDisconnected?.();
       return;
     }
@@ -24,11 +34,16 @@ export function startGamepadButtonCapture(
       if (!btn) continue;
 
       if (btn.pressed || btn.value > 0.5) {
+        isActive = false;
+        clearInterval(interval);
         onDetected(i);
-        break;
+        return;
       }
     }
   }, 50);
 
-  return () => clearInterval(interval);
+  return () => {
+    isActive = false;
+    clearInterval(interval);
+  };
 }
