@@ -34,6 +34,25 @@ describe("InventoryPlayerTabs", () => {
     expect(badge?.className).toContain("border-amber-600/50");
   });
 
+  it("renders Badge with Aurelia when P1 is Aurelia in solo player mode", async () => {
+    const onSelectPlayer = mock((_idx: number) => {});
+    const { container } = await renderIntoDom(
+      <InventoryPlayerTabs
+        p1={{ characterId: "aurelia", characterName: "Aurelia" }}
+        p2={null}
+        isTwoPlayer={false}
+        activePlayerIndex={0}
+        onSelectPlayer={onSelectPlayer}
+        p1Name="Aurelia"
+        p2Name="Valen"
+      />,
+      { mode: "ui" }
+    );
+
+    expect(container.textContent).toContain("Aurelia");
+    expect(container.querySelectorAll("[role='tab']").length).toBe(0);
+  });
+
   it("renders Tabs with P1 and P2 triggers in two-player mode", async () => {
     const onSelectPlayer = mock((_idx: number) => {});
     const { container } = await renderIntoDom(
@@ -56,6 +75,29 @@ describe("InventoryPlayerTabs", () => {
     expect(container.textContent).toContain("Valen");
     expect(container.textContent).toContain("P1");
     expect(container.textContent).toContain("Aurelia");
+    expect(container.textContent).toContain("P2");
+  });
+
+  it("renders P1 as Aurelia and P2 as Valen when swapped in two-player mode", async () => {
+    const onSelectPlayer = mock((_idx: number) => {});
+    const { container } = await renderIntoDom(
+      <InventoryPlayerTabs
+        p1={{ characterId: "aurelia", characterName: "Aurelia" }}
+        p2={{ characterId: "valen", characterName: "Valen" }}
+        isTwoPlayer={true}
+        activePlayerIndex={0}
+        onSelectPlayer={onSelectPlayer}
+        p1Name="Aurelia"
+        p2Name="Valen"
+      />,
+      { mode: "ui" }
+    );
+
+    const tabs = container.querySelectorAll("[role='tab']");
+    expect(tabs.length).toBe(2);
+    expect(container.textContent).toContain("Aurelia");
+    expect(container.textContent).toContain("P1");
+    expect(container.textContent).toContain("Valen");
     expect(container.textContent).toContain("P2");
   });
 

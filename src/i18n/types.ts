@@ -171,6 +171,13 @@ export interface SettingsGameplayI18n {
   restartLocation: string;
   quickPotionsTitle: string;
   close: string;
+  characterSelectTitle: string;
+  characterSelectP1: string;
+  characterValenTitle: string;
+  characterValenDesc: string;
+  characterAureliaTitle: string;
+  characterAureliaDesc: string;
+  characterSwapNotice: string;
 }
 
 export interface SettingsControlsI18n {
