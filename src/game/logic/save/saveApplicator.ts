@@ -55,6 +55,11 @@ export class SaveApplicator implements ISaveApplicator {
     }
 
     try {
+      if (state.p1CharacterId) {
+        p1.characterId = state.p1CharacterId;
+        p1.characterName = state.p1CharacterId === "aurelia" ? "Aurelia" : "Valen";
+      }
+
       p1.x = state.checkpointX;
       p1.y = state.checkpointY;
       p1.health = state.p1Health;
@@ -76,8 +81,17 @@ export class SaveApplicator implements ISaveApplicator {
       p1.vx = 0;
       p1.vy = 0;
 
+      const isTwoPlayerSave =
+        state.playerCount !== undefined
+          ? state.playerCount === 2
+          : Boolean(state.p2CharacterId || (state.p2Health !== undefined && state.p2Health > 0));
+
       const p2 = players.find((p) => p && p.id === "player2");
-      if (p2 && typeof state.p2Health === "number" && state.p2Health > 0) {
+      if (p2 && isTwoPlayerSave && typeof state.p2Health === "number") {
+        if (state.p2CharacterId) {
+          p2.characterId = state.p2CharacterId;
+          p2.characterName = state.p2CharacterId === "valen" ? "Valen" : "Aurelia";
+        }
         p2.x = state.checkpointX - 30;
         p2.y = state.checkpointY;
         p2.health = state.p2Health;

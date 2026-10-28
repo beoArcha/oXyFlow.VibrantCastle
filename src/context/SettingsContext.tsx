@@ -123,6 +123,10 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
     setSettings((prev) => ({ ...prev, isTwoPlayer: val }));
   }, []);
 
+  const setPrimaryCharacter = useCallback((charId: "valen" | "aurelia") => {
+    setSettings((prev) => ({ ...prev, primaryCharacter: charId }));
+  }, []);
+
   const setHudSettings = useCallback((hudUpdates: Partial<HudSettings>) => {
     setSettings((prev) => ({
       ...prev,
@@ -142,11 +146,13 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
       volumeMusic: settings.volumeMusic,
       volumeSFX: settings.volumeSFX,
       isTwoPlayer: settings.isTwoPlayer,
+      primaryCharacter: settings.primaryCharacter || "valen",
       hudSettings: settings.hud,
       setDisplaySettings,
       setVolumeMusic,
       setVolumeSFX,
       setTwoPlayer,
+      setPrimaryCharacter,
       setHudSettings,
       updateSettings,
       resetToDefaults,
@@ -165,6 +171,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
       setVolumeMusic,
       setVolumeSFX,
       setTwoPlayer,
+      setPrimaryCharacter,
       setHudSettings,
       updateSettings,
       resetToDefaults,

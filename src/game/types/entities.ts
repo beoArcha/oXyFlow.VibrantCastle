@@ -64,12 +64,22 @@ export interface ISpellcasterState {
   secondarySpellId: string;
 }
 
+export interface CharacterProgressionProfile {
+  characterId: "valen" | "aurelia";
+  unlockedSkills: string[];
+  skillPoints: number;
+  primarySpellId: string;
+  secondarySpellId: string;
+  inventory: InventoryState;
+}
+
 export interface IPlayerProgression {
   skillPoints: number;
   score: number;
   unlockedSkills: string[];
   autoSkillTimer: number;
   inventory: InventoryState;
+  characterProfiles?: Partial<Record<"valen" | "aurelia", CharacterProgressionProfile>>;
 }
 
 export interface Player

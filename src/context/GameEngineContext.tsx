@@ -41,6 +41,8 @@ export interface GameEngineContextValue {
   advanceLocation: () => void;
   notifyEngineUpdate: () => void;
   useQuickPotion: (playerIndex: number, slotIndex: number) => boolean;
+  swapCharacters: () => boolean;
+  setPlayerCharacter: (playerIndex: number, charId: "valen" | "aurelia") => boolean;
 }
 
 /**
@@ -197,6 +199,25 @@ export const GameEngineProvider: React.FC<GameEngineProviderProps> = ({
     [engine, notifyEngineUpdate]
   );
 
+  const swapCharacters = useCallback((): boolean => {
+    const success = engine.swapCharacters();
+    if (success) {
+      notifyEngineUpdate();
+    }
+    return success;
+  }, [engine, notifyEngineUpdate]);
+
+  const setPlayerCharacter = useCallback(
+    (playerIndex: number, charId: "valen" | "aurelia"): boolean => {
+      const success = engine.setPlayerCharacter(playerIndex, charId);
+      if (success) {
+        notifyEngineUpdate();
+      }
+      return success;
+    },
+    [engine, notifyEngineUpdate]
+  );
+
   const value = useMemo<GameEngineContextValue>(
     () => ({
       p1,
@@ -217,6 +238,8 @@ export const GameEngineProvider: React.FC<GameEngineProviderProps> = ({
       advanceLocation,
       notifyEngineUpdate,
       useQuickPotion,
+      swapCharacters,
+      setPlayerCharacter,
     }),
     [
       p1,
@@ -237,6 +260,8 @@ export const GameEngineProvider: React.FC<GameEngineProviderProps> = ({
       advanceLocation,
       notifyEngineUpdate,
       useQuickPotion,
+      swapCharacters,
+      setPlayerCharacter,
     ]
   );
 

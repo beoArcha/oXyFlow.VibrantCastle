@@ -30,6 +30,7 @@ export interface GameSettingsState {
   volumeMusic: number;
   volumeSFX: number;
   isTwoPlayer: boolean;
+  primaryCharacter?: "valen" | "aurelia";
   display: DisplaySettings;
   hud: HudSettings;
 }
@@ -40,6 +41,7 @@ export const DEFAULT_SETTINGS: GameSettingsState = {
   volumeMusic: 0.45,
   volumeSFX: 0.65,
   isTwoPlayer: false,
+  primaryCharacter: "valen",
   display: {
     aspectRatio: "16:10",
     scalingFilter: "pixel",
@@ -82,12 +84,14 @@ export interface SettingsContextValue extends IContext {
   volumeMusic: number;
   volumeSFX: number;
   isTwoPlayer: boolean;
+  primaryCharacter: "valen" | "aurelia";
   hudSettings: HudSettings;
 
   setDisplaySettings: (display: Partial<DisplaySettings>) => void;
   setVolumeMusic: (val: number) => void;
   setVolumeSFX: (val: number) => void;
   setTwoPlayer: (val: boolean) => void;
+  setPrimaryCharacter: (charId: "valen" | "aurelia") => void;
   setHudSettings: (hud: Partial<HudSettings>) => void;
   updateSettings: (partial: Partial<GameSettingsState>) => void;
 

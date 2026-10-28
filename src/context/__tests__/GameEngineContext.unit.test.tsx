@@ -13,10 +13,12 @@ describe("GameEngineContext & useGameEngine Hook", () => {
   beforeEach(async () => {
     await cleanupDom();
     gameEngine.setPaused(false);
+    gameEngine.setPlayerCharacter(0, "valen");
   });
 
   afterEach(async () => {
     gameEngine.setPaused(false);
+    gameEngine.setPlayerCharacter(0, "valen");
     await cleanupDom();
   });
 
@@ -204,6 +206,45 @@ describe("GameEngineContext & useGameEngine Hook", () => {
 
     // Assert
     expect(result.current.isDefeat).toBe(false);
+
+    await unmount();
+  });
+
+  it("should swap player character reactively via swapCharacters", async () => {
+    // Arrange
+    const { result, unmount } = await renderCustomHook(() => useGameEngine(), {
+      wrapper,
+    });
+
+    expect(result.current.p1?.characterId).toBe("valen");
+
+    // Act
+    await act(async () => {
+      const success = result.current.swapCharacters();
+      expect(success).toBe(true);
+    });
+
+    // Assert
+    expect(result.current.p1?.characterId).toBe("aurelia");
+    expect(result.current.p1?.characterName).toBe("Aurelia");
+
+    await unmount();
+  });
+
+  it("should set player character directly via setPlayerCharacter", async () => {
+    // Arrange
+    const { result, unmount } = await renderCustomHook(() => useGameEngine(), {
+      wrapper,
+    });
+
+    // Act
+    await act(async () => {
+      const success = result.current.setPlayerCharacter(0, "aurelia");
+      expect(success).toBe(true);
+    });
+
+    // Assert
+    expect(result.current.p1?.characterId).toBe("aurelia");
 
     await unmount();
   });

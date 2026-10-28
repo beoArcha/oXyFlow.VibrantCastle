@@ -39,6 +39,7 @@ export interface IEngineSubsystemHost extends IEngineContextHost {
   engineLogger: ILogger;
   eventBus: GameEventBus;
   isPaused: boolean;
+  setDefaultPrimaryCharacter(characterId: "valen" | "aurelia"): void;
   setTwoPlayerMode(enabled: boolean, preserveStats?: boolean): void;
   resetLevel(locationId?: LocationId): void;
   fixedUpdate(mult: number): void;
@@ -70,6 +71,7 @@ export function createEngineControllers(
     narration: host.narrationSystem,
     onHardwareAccelerationChanged: (enabled) => host.getRenderer()?.setHardwareAcceleration(enabled),
     onTwoPlayerChanged: (enabled) => host.setTwoPlayerMode(enabled, true),
+    onPrimaryCharacterChanged: (charId) => host.setDefaultPrimaryCharacter(charId),
     getPlayerCount: () => host.players.length,
     notifyStateChanged: () => host.notifyReact(),
   });

@@ -155,8 +155,8 @@ Aurelia is a living conduit to the Aetherial currents pulsing through the castle
 
 Aurelia commands the primordial fabric of Aether, gravity, and temporal dilation:
 
-* **Arcane Missiles / Aether Bolt** (`arcane_missiles` / `aether_bolt`): Starter multi-directional beam of celestial force aimable straight, vertical (90°), or at 45° angles.
-* **Aether Barrier / Ice Barrier** (`aether_barrier` / `ice_barrier`): Protective celestial shroud absorbing kinetic shock and hazard spikes.
+* **Aether Bolt** (`aether_bolt`): Starter multi-directional beam of celestial force aimable straight, vertical (90°), or at 45° angles.
+* **Aether Barrier** (`aether_barrier`): Protective celestial shroud absorbing kinetic shock and hazard spikes.
 * **Chrono Frost Nova** (`frost_nova`): Radial explosion of 8 freezing ice needles halting enemy advances in all directions.
 * **Temporal Phase / Chrono Rewind** (`chrono_rewind`): Bends the temporal continuum around Aurelia, granting extended invulnerability and heightened agility.
 * **Celestial Comet** (`celestial_comet`): Master Tier 3 incantation summoning a devastating cosmic comet of raw Aether with wide area impact.
@@ -176,7 +176,7 @@ Aurelia commands the primordial fabric of Aether, gravity, and temporal dilation
 | **Locomotion** | Grounded, minimalist, crisp footwork | Acrobatic, feline, sweeping transitions |
 | **Primary Weapon** | Tempered Steel Rapier (Thrust/Pierce) | Manifested Aetherblade (Wide Cleave/Arc) |
 | **Magic Domain** | Solar Light, Geometric Glyphs, Fortitude | Celestial Aether, Cryo-Temporal Waves, Mana |
-| **Starter Spells** | `solar_flare` + `aegis_ward` | `arcane_missiles` + `ice_barrier` |
+| **Starter Spells** | `solar_flare` + `prismatic_shield` | `aether_bolt` + `aether_barrier` |
 | **Evasion Mode** | `Chrono Dash` (Precise shift) | `Phase Dash` (Chromatic slipstream) |
 | **Visual Tone** | Graphite, muted leather, golden spectacles | Royal purple, glowing cerulean, gilded jewelry |
 

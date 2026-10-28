@@ -219,8 +219,8 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
             isTwoPlayer={isTwoPlayer}
             activePlayerIndex={activePlayerIndex}
             onSelectPlayer={handleSelectPlayer}
-            p1Name={t("valen")}
-            p2Name={t("aurelia")}
+            p1Name={p1?.characterId === "aurelia" ? t("aurelia") : t("valen")}
+            p2Name={p2?.characterId === "valen" ? t("valen") : t("aurelia")}
           />
         </div>
 

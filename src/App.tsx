@@ -131,6 +131,7 @@ function GameScreen() {
 
       <GameLayout.Main>
         <HUDOverlay
+          isModalOpen={modalManager.activeModal !== "none"}
           onOpenInventory={modalManager.openInventory}
           onOpenSkillTree={modalManager.openSkillTree}
           onOpenHelp={handleOpenHelp}

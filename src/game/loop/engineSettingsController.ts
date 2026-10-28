@@ -16,6 +16,7 @@ export interface IEngineSettingsContext {
   narration: INarrationSystem;
   onHardwareAccelerationChanged(enabled: boolean): void;
   onTwoPlayerChanged(enabled: boolean): void;
+  onPrimaryCharacterChanged?(characterId: "valen" | "aurelia"): void;
   getPlayerCount(): number;
   notifyStateChanged(): void;
 }
@@ -33,6 +34,7 @@ export class EngineSettingsController {
       volumeMusic: defaultSettingsJson.volumeMusic,
       volumeSFX: defaultSettingsJson.volumeSFX,
       isTwoPlayer: defaultSettingsJson.isTwoPlayer,
+      primaryCharacter: "valen",
       display: {
         aspectRatio: defaultSettingsJson.display.aspectRatio as AspectRatioMode,
         scalingFilter: defaultSettingsJson.display.scalingFilter as ScalingFilterMode,
@@ -67,6 +69,12 @@ export class EngineSettingsController {
     this.context.notifyStateChanged();
   }
 
+  public setPrimaryCharacter(charId: "valen" | "aurelia"): void {
+    this.settings.primaryCharacter = charId;
+    this.context.onPrimaryCharacterChanged?.(charId);
+    this.context.notifyStateChanged();
+  }
+
   public applySettings(partial: Partial<GameSettings>): void {
     if (partial.volumeMusic !== undefined) {
       this.settings.volumeMusic = partial.volumeMusic;
@@ -81,6 +89,11 @@ export class EngineSettingsController {
     if (partial.language !== undefined) {
       this.settings.language = partial.language;
       this.context.narration.setLanguage(partial.language);
+    }
+
+    if (partial.primaryCharacter !== undefined) {
+      this.settings.primaryCharacter = partial.primaryCharacter;
+      this.context.onPrimaryCharacterChanged?.(partial.primaryCharacter);
     }
 
     if (partial.display) {

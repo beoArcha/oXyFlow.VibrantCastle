@@ -25,6 +25,7 @@ How AI assistants plan, execute, verify, and hand over work in **Vibrant Castle*
 - ❌ **FORBIDDEN: Automatic phase advancement**: Never advance to the next phase without explicit, written confirmation from the user (e.g. "approved", "proceed", "następna faza"). A completed review fix never constitutes permission to start the next phase.
 - ❌ **FORBIDDEN: Mutating approved plans during execution**: An approved implementation plan is a frozen contract. Do not edit its text, reorder phases, or tick/untick checkboxes during phase execution.
 - ❌ **FORBIDDEN: Bypassing the Reviewer Subphase**: Every implementation phase MUST conclude with a formal `Subphase X.Review` before reaching the Phase Gate.
+- ❌ **FORBIDDEN: Skipping Agent Manual Browser Testing in Stage 4**: Completing Stage 4 or declaring a feature verified based solely on automated unit/integration test results without executing manual browser testing via Chrome MCP / `preview_*` is strictly forbidden. Real DOM interaction, visual inspection, and browser console validation are mandatory.
 - ✅ **REQUIRED: Clean code on every subphase**: Every atomic subphase must leave the codebase in a compilable state with its targeted automated tests passing.
 - ✅ **REQUIRED: Tooling discipline**: All tooling runs on **Bun** (`bun dev`, `bun test`, `bun test:arch`, `bun lint`, `bun run build`). Node.js and npm are prohibited.
 
@@ -37,7 +38,7 @@ graph TD
     S1["1. Discovery<br/>(Evidence-based source of truth, zero code edits)"]
     S2["2. Implementation Plan<br/>(Frozen 10-section artifact, task register, user approval)"]
     S3["3. Phase Execution<br/>(Atomic subphases -> Reviewer subphase -> Phase Gate)"]
-    S4["4. Unified Verification Gate<br/>(Automated suites + runtime checks)"]
+    S4["4. Unified Verification Gate<br/>(Automated suites + Chrome MCP manual checks)"]
     S5["5. Sign-off & Commit<br/>(Conventional Commits preparation)"]
 
     S1 --> S2
@@ -86,10 +87,22 @@ graph TD
    - Fixes requested during review belong to the current phase. Apply them, re-run tests, and present the delta. Never advance automatically after a fix.
 
 ### 2.4. Stage 4: Unified Verification Gate
-- Automated and manual verifications form a single collaborative gate:
-  - Run automated test suites: `bun test:arch`, `bun test`, `bun lint`.
-  - Concurrently perform manual runtime inspections (canvas rendering, HUD interaction, console log inspection).
-  - Remediate defects in place cleanly without breaking contract boundaries.
+Automated suites and agent manual runtime inspections form a mandatory collaborative gate:
+1. **Automated Verification**:
+   - `bun run typecheck` (`tsc --noEmit`): 0 TypeScript errors.
+   - `bun test:arch`: 100% boundary, data purity, and design system contracts pass.
+   - `bun test`: All unit and integration suites pass.
+2. **Agent Manual Testing via Chrome MCP (`preview_*`)**:
+   - Launch Vite development server with `bun dev` on `http://localhost:3000`.
+   - Access the live instance using Chrome MCP / browser preview tools (`preview_status`, `preview_open`, `preview_act`, `preview_evaluate`, `preview_snapshot`).
+   - Manually exercise the modified feature flows end-to-end:
+     - Open modified modals, tabs, or panels.
+     - Trigger UI state changes (buttons, toggles, selectors).
+     - Verify visual correctness, responsiveness, and proper asset rendering.
+     - Check browser console logs via `preview_evaluate` to guarantee zero unhandled errors or React warnings.
+   - Take preview snapshots as tangible proof of manual verification.
+3. **Defect Remediation**:
+   - Remediate defects discovered during automated or manual verification in place cleanly without breaking layer boundaries.
 
 ---
 

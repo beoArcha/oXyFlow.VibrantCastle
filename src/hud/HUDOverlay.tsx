@@ -23,6 +23,7 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
   onOpenMenu,
   onOpenCreation,
   onTogglePause,
+  isModalOpen = false,
 }) => {
   const {
     p1,
@@ -36,9 +37,9 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
     narration,
     subAnim,
     isAudioInitialized,
+    initializeAudio,
     restart,
     advanceLocation,
-    initializeAudio,
     useQuickPotion,
   } = useGameSession();
 
@@ -116,7 +117,7 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
     <HUDOverlayLayout
       viewportSlot={<HUDViewportCanvas displaySettings={displaySettings} />}
       statusOverlaySlot={
-        (isPaused || isVictory || isDefeat) && (
+        !isModalOpen && (isPaused || isVictory || isDefeat) && (
           <HUDStatusOverlay
             isPaused={isPaused}
             isVictory={isVictory}

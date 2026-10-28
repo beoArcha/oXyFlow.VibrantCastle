@@ -1,9 +1,10 @@
 import React, { act } from "react";
 import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
-import { renderIntoDom, cleanupDom } from "@test-utils/domTestUtils";
+import { renderIntoDom, cleanupDom, setupDomEnvironment } from "@test-utils/domTestUtils";
 import { IntegrationTestProviders } from "@test-utils/testProviders";
 import { SkillTreePanel } from "../SkillTreePanel";
 import gameEngine from "@game/loop/engine";
+import { DEFAULT_SETTINGS } from "@context/settings/settingsTypes";
 
 describe("SkillTreePanel Composite Integration Tests", () => {
   let unmount: (() => Promise<void>) | null = null;
@@ -11,8 +12,8 @@ describe("SkillTreePanel Composite Integration Tests", () => {
   beforeEach(() => {
     unmount = null;
     gameEngine.resetLevel("courtyard", undefined, false);
-    if (typeof localStorage !== "undefined" && typeof localStorage.clear === "function") {
-      localStorage.clear();
+    if (typeof window !== "undefined" && window.localStorage) {
+      window.localStorage.clear();
     }
   });
 
@@ -122,6 +123,15 @@ describe("SkillTreePanel Composite Integration Tests", () => {
   });
 
   it("switches active character tab between Player 1 and Player 2 in co-op mode", async () => {
+    setupDomEnvironment();
+    if (typeof window !== "undefined" && window.localStorage) {
+      window.localStorage.clear();
+      window.localStorage.setItem(
+        "vibrant_castle_full_settings",
+        JSON.stringify({ ...DEFAULT_SETTINGS, isTwoPlayer: true })
+      );
+    }
+
     // Reset level in two-player mode
     gameEngine.setTwoPlayerMode(true, true);
     gameEngine.resetLevel("courtyard");

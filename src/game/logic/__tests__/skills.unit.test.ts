@@ -7,6 +7,7 @@ import {
   getSkillNodeById,
   checkSkillUnlockConditions,
   unlockSkillNode,
+  assignSpellToSlot,
   getCharacterKey
 } from "../skills";
 import { PlayerId, AnimationState, Player } from "../../types";
@@ -151,6 +152,38 @@ describe("skills.ts - Unified skills.json Loader and Skill Tree Logic", () => {
       expect(check.canUnlock).toBe(false);
       expect(check.isUnlocked).toBe(true);
       expect(check.reasonKey).toBe("skillUnlocked");
+    });
+
+    it("should reject unlock if skill belongs to a different character class", () => {
+      // Valen player attempting to unlock Aurelia's aether_bolt
+      const valen = createMockPlayer({ characterId: "valen", skillPoints: 5, unlockedSkills: [] });
+      const checkValen = checkSkillUnlockConditions(valen, "aether_bolt");
+      expect(checkValen.canUnlock).toBe(false);
+      expect(checkValen.reasonKey).toBe("wrongCharacter");
+
+      const resultValen = unlockSkillNode(valen, "aether_bolt");
+      expect(resultValen.success).toBe(false);
+      expect(resultValen.messageKey).toBe("wrongCharacter");
+
+      // Aurelia player attempting to unlock Valen's solar_flare
+      const aurelia = createMockPlayer({ characterId: "aurelia", skillPoints: 5, unlockedSkills: [] });
+      const checkAurelia = checkSkillUnlockConditions(aurelia, "solar_flare");
+      expect(checkAurelia.canUnlock).toBe(false);
+      expect(checkAurelia.reasonKey).toBe("wrongCharacter");
+
+      const resultAurelia = unlockSkillNode(aurelia, "solar_flare");
+      expect(resultAurelia.success).toBe(false);
+      expect(resultAurelia.messageKey).toBe("wrongCharacter");
+    });
+
+    it("should reject assigning spell from another character class", () => {
+      const valen = createMockPlayer({ characterId: "valen" });
+      const successValen = assignSpellToSlot(valen, "aether_bolt", "primary");
+      expect(successValen).toBe(false);
+
+      const aurelia = createMockPlayer({ characterId: "aurelia" });
+      const successAurelia = assignSpellToSlot(aurelia, "solar_flare", "primary");
+      expect(successAurelia).toBe(false);
     });
 
     it("should reject unlock if prerequisite is missing", () => {

@@ -131,6 +131,17 @@ export function checkSkillUnlockConditions(
     };
   }
 
+  const playerCharacter = player.characterId || "valen";
+  if (node.character && node.character !== playerCharacter) {
+    return {
+      canUnlock: false,
+      isUnlocked: false,
+      hasPrerequisite: false,
+      hasPoints: false,
+      reasonKey: "wrongCharacter"
+    };
+  }
+
   const isUnlocked = player.unlockedSkills.includes(nodeId);
   const reqSkillNode = node.reqSkillId ? getSkillNodeById(node.reqSkillId) : undefined;
   const hasPrerequisite = !node.reqSkillId || player.unlockedSkills.includes(node.reqSkillId);
@@ -189,6 +200,9 @@ export function assignSpellToSlot(player: Player, spellId: string, slot: "primar
   const spell = SPELL_REGISTRY[spellId];
   if (!spell || spell.triggerType !== MagicTriggerType.Action) return false;
 
+  const playerCharacter = player.characterId || "valen";
+  if (spell.character && spell.character !== playerCharacter) return false;
+
   if (slot === "primary") {
     player.primarySpellId = spellId;
   } else {
@@ -209,17 +223,17 @@ export function getDefaultSkillsForCharacter(character: "valen" | "aurelia"): {
 } {
   if (character === "aurelia") {
     return {
-      unlockedSkills: ["arcane_missiles", "ice_barrier"],
-      primarySpellId: "arcane_missiles",
-      secondarySpellId: "ice_barrier",
+      unlockedSkills: ["aether_bolt", "aether_barrier"],
+      primarySpellId: "aether_bolt",
+      secondarySpellId: "aether_barrier",
       skillPoints: 4
     };
   }
 
   return {
-    unlockedSkills: ["solar_flare", "aegis_ward"],
+    unlockedSkills: ["solar_flare", "prismatic_shield"],
     primarySpellId: "solar_flare",
-    secondarySpellId: "aegis_ward",
+    secondarySpellId: "prismatic_shield",
     skillPoints: 4
   };
 }

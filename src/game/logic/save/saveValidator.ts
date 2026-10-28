@@ -54,6 +54,8 @@ export class SaveValidator implements ISaveValidator {
 
       const normalized: SaveState = {
         timestamp: parsed.timestamp || new Date().toISOString(),
+        playerCount: parsed.playerCount === 2 ? 2 : (parsed.playerCount === 1 ? 1 : undefined),
+        p1CharacterId: parsed.p1CharacterId === "aurelia" ? "aurelia" : (parsed.p1CharacterId === "valen" ? "valen" : undefined),
         p1Health: parsed.p1Health!,
         p1Mana:
           typeof parsed.p1Mana === "number" && Number.isFinite(parsed.p1Mana)
@@ -75,6 +77,7 @@ export class SaveValidator implements ISaveValidator {
         p1PrimarySpellId: parsed.p1PrimarySpellId,
         p1SecondarySpellId: parsed.p1SecondarySpellId,
         p1Inventory: parsed.p1Inventory,
+        p2CharacterId: parsed.p2CharacterId === "aurelia" ? "aurelia" : (parsed.p2CharacterId === "valen" ? "valen" : undefined),
         p2Health:
           typeof parsed.p2Health === "number" && Number.isFinite(parsed.p2Health)
             ? parsed.p2Health

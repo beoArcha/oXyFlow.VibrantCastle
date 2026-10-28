@@ -48,6 +48,7 @@ export interface GameSettings {
   volumeMusic: number;
   volumeSFX: number;
   isTwoPlayer: boolean;
+  primaryCharacter?: "valen" | "aurelia";
   display: DisplaySettings;
 }
 
@@ -55,6 +56,8 @@ export type KeyAction = keyof InputMap;
 
 export interface SaveState {
   timestamp: string;
+  playerCount?: 1 | 2;
+  p1CharacterId?: "valen" | "aurelia";
   p1Health: number;
   p1Mana: number;
   p1Stamina: number;
@@ -64,6 +67,7 @@ export interface SaveState {
   p1PrimarySpellId?: string;
   p1SecondarySpellId?: string;
   p1Inventory?: InventoryState;
+  p2CharacterId?: "valen" | "aurelia";
   p2Health: number;
   p2Mana: number;
   p2Stamina: number;

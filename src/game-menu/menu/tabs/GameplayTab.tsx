@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useSettings } from "@context/SettingsContext";
 import { useGameEngine } from "@context/GameEngineContext";
 import { useSaveGame } from "@context/SaveGameContext";
@@ -19,6 +19,8 @@ export const GameplayTab = ({ className }: GameplayTabProps = {}): React.ReactEl
   const {
     isTwoPlayer,
     setTwoPlayer,
+    primaryCharacter,
+    setPrimaryCharacter,
     hudSettings,
     setHudSettings,
     exportSettingsToFile,
@@ -26,7 +28,22 @@ export const GameplayTab = ({ className }: GameplayTabProps = {}): React.ReactEl
     resetToDefaults: resetSettingsToDefaults,
   } = useSettings();
 
-  const { restart } = useGameEngine();
+  const { restart, setPlayerCharacter } = useGameEngine();
+
+  const handleSelectCharacter = useCallback(
+    (charId: "valen" | "aurelia") => {
+      const success = setPlayerCharacter(0, charId);
+      if (success) {
+        setPrimaryCharacter(charId);
+      }
+    },
+    [setPrimaryCharacter, setPlayerCharacter]
+  );
+
+  const handleResetDefaults = useCallback(() => {
+    resetSettingsToDefaults();
+    setPlayerCharacter(0, "valen");
+  }, [resetSettingsToDefaults, setPlayerCharacter]);
 
   const {
     saveGame,
@@ -40,7 +57,12 @@ export const GameplayTab = ({ className }: GameplayTabProps = {}): React.ReactEl
       id="tab-content-gameplay"
       className={cn("flex flex-col gap-5 animate-in fade-in duration-150", className)}
     >
-      <GameModeSection isTwoPlayer={isTwoPlayer} onSelectMode={setTwoPlayer} />
+      <GameModeSection
+        isTwoPlayer={isTwoPlayer}
+        onSelectMode={setTwoPlayer}
+        primaryCharacter={primaryCharacter}
+        onSelectCharacter={handleSelectCharacter}
+      />
 
       <GameSaveSection
         onSaveToLocalStorage={saveToLocalStorage}
@@ -67,7 +89,7 @@ export const GameplayTab = ({ className }: GameplayTabProps = {}): React.ReactEl
       <GameConfigBarSection
         onExportSettings={exportSettingsToFile}
         onImportSettings={importSettingsFromFile}
-        onResetDefaults={resetSettingsToDefaults}
+        onResetDefaults={handleResetDefaults}
         onRestartLocation={restart}
       />
     </div>

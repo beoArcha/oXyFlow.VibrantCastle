@@ -17,6 +17,8 @@ export interface IEngineContextHost {
   isVictory: boolean;
   isDefeat: boolean;
   settings: GameSettings;
+  defaultPrimaryCharacter?: "valen" | "aurelia";
+  setDefaultPrimaryCharacter?(characterId: "valen" | "aurelia"): void;
   particleSystem: ParticleSystem;
   cameraManager: CameraManager;
   audio: GameAudioEngine;
@@ -57,6 +59,7 @@ export function createLevelLifecycleContext(host: IEngineContextHost): ILevelLif
     clearProjectiles: () => {},
     getIsTwoPlayer: () => host.settings.isTwoPlayer,
     setIsTwoPlayer: (val: boolean) => { host.settings.isTwoPlayer = val; },
+    getDefaultPrimaryCharacter: () => host.defaultPrimaryCharacter || "valen",
     getViewportSize: () => ({
       width: host.getRenderer()?.viewportWidth || 1280,
       height: host.getRenderer()?.viewportHeight || 720,
@@ -81,4 +84,3 @@ export function createLevelLifecycleContext(host: IEngineContextHost): ILevelLif
     notifyReact: () => host.notifyReact(),
   };
 }
-

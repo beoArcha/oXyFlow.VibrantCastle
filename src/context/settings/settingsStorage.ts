@@ -1,6 +1,7 @@
 import { GameSettingsState, DEFAULT_SETTINGS, HudSettings, HudQuickKeysSettings } from "./settingsTypes";
 import { DisplaySettings } from "@game/types";
 import { getLogger, ILogger } from "@lib/logger";
+import defaultGameEngine from "@game/loop/engine";
 
 const settingsLogger = getLogger("context:settings");
 
@@ -23,24 +24,36 @@ export class SettingsStorage implements ISettingsStorage {
   public static readonly LEGACY_DISPLAY_STORAGE_KEY = "vibrant_castle_display_settings";
 
   constructor(
-    private readonly storage: ISettingsStorageProvider = typeof window !== "undefined" && window.localStorage
-      ? window.localStorage
-      : { getItem: () => null, setItem: () => { } },
+    private readonly storage?: ISettingsStorageProvider,
     private readonly logger: ILogger = settingsLogger
   ) { }
 
+  private get effectiveStorage(): ISettingsStorageProvider {
+    if (this.storage) {
+      return this.storage;
+    }
+    if (typeof window !== "undefined" && window.localStorage) {
+      return window.localStorage;
+    }
+    return { getItem: () => null, setItem: () => { } };
+  }
+
   public load(): GameSettingsState {
     try {
-      const raw = this.storage.getItem(SettingsStorage.SETTINGS_STORAGE_KEY);
+      const raw = this.effectiveStorage.getItem(SettingsStorage.SETTINGS_STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
         if (parsed && typeof parsed === "object") {
-          return this.mergeWithDefaults(parsed);
+          const merged = this.mergeWithDefaults(parsed);
+          if (defaultGameEngine && merged.primaryCharacter) {
+            defaultGameEngine.applySettings({ primaryCharacter: merged.primaryCharacter });
+          }
+          return merged;
         }
       }
 
       // Check legacy display storage
-      const legacyDisplay = this.storage.getItem(SettingsStorage.LEGACY_DISPLAY_STORAGE_KEY);
+      const legacyDisplay = this.effectiveStorage.getItem(SettingsStorage.LEGACY_DISPLAY_STORAGE_KEY);
       if (legacyDisplay) {
         const parsedDisplay = JSON.parse(legacyDisplay);
         if (parsedDisplay && parsedDisplay.assetQuality) {
@@ -69,13 +82,20 @@ export class SettingsStorage implements ISettingsStorage {
       );
     }
 
-    return DEFAULT_SETTINGS;
+    const engineIsTwoPlayer = defaultGameEngine?.settings?.isTwoPlayer;
+    const enginePrimaryChar = defaultGameEngine?.defaultPrimaryCharacter;
+
+    return {
+      ...DEFAULT_SETTINGS,
+      ...(engineIsTwoPlayer !== undefined ? { isTwoPlayer: engineIsTwoPlayer } : {}),
+      ...(enginePrimaryChar !== undefined ? { primaryCharacter: enginePrimaryChar } : {}),
+    };
   }
 
   public save(settings: GameSettingsState): boolean {
     try {
-      this.storage.setItem(SettingsStorage.SETTINGS_STORAGE_KEY, JSON.stringify(settings));
-      this.storage.setItem(
+      this.effectiveStorage.setItem(SettingsStorage.SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+      this.effectiveStorage.setItem(
         SettingsStorage.LEGACY_DISPLAY_STORAGE_KEY,
         JSON.stringify(settings.display)
       );
@@ -100,6 +120,9 @@ export class SettingsStorage implements ISettingsStorage {
       if (!parsed || typeof parsed !== "object") return null;
       const merged = this.mergeWithDefaults(parsed);
       this.save(merged);
+      if (defaultGameEngine && merged.primaryCharacter) {
+        defaultGameEngine.applySettings({ primaryCharacter: merged.primaryCharacter });
+      }
       return merged;
     } catch (err) {
       this.logger.error("Failed to import settings JSON:", { context: "importSettingsFromJson" }, err);
@@ -143,7 +166,7 @@ export class SettingsStorage implements ISettingsStorage {
     }
     const data = parsed as Record<string, unknown>;
     const display = (data.display && typeof data.display === "object" ? data.display : {}) as Partial<DisplaySettings>;
-    const rawHud = data.hud && typeof data.hud === "object" ? (data.hud as Record<string, unknown>) : {};
+    const rawHud = data.hud && typeof data.hud === "object" ? (data.hud as unknown as Record<string, unknown>) : {};
     const p1Quick = rawHud.p1QuickKeys && typeof rawHud.p1QuickKeys === "object" ? (rawHud.p1QuickKeys as Partial<HudQuickKeysSettings>) : {};
     const p2Quick = rawHud.p2QuickKeys && typeof rawHud.p2QuickKeys === "object" ? (rawHud.p2QuickKeys as Partial<HudQuickKeysSettings>) : {};
 
@@ -159,9 +182,13 @@ export class SettingsStorage implements ISettingsStorage {
       },
     };
 
+    const primaryCharacter: "valen" | "aurelia" =
+      data.primaryCharacter === "aurelia" ? "aurelia" : "valen";
+
     return {
       ...DEFAULT_SETTINGS,
       ...(data as Partial<GameSettingsState>),
+      primaryCharacter,
       display: { ...DEFAULT_SETTINGS.display, ...display },
       hud: {
         ...DEFAULT_SETTINGS.hud,

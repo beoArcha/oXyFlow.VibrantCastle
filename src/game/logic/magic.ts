@@ -173,8 +173,7 @@ export function attemptCastSpell(
     }
   } else if (
     skill.id === "radiant_strike" ||
-    skill.id === "emerald_barrage" ||
-    skill.id === "arcane_missiles"
+    skill.id === "emerald_barrage"
   ) {
     // 3-spread shot
     [-0.2, 0, 0.2].forEach(spread => {
@@ -195,7 +194,7 @@ export function attemptCastSpell(
       });
     });
   } else {
-    // Single targeted missile (solar_flare, solar_conflagration, astral_singularity, etc.)
+    // Single targeted missile (solar_flare, aether_bolt, solar_conflagration, astral_singularity, etc.)
     const isLarge =
       skill.id === "solar_conflagration" ||
       skill.id === "astral_singularity" ||
