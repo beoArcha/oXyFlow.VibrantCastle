@@ -3,12 +3,13 @@ import {
   attachViewportCanvas,
   resizeViewportCanvas,
   executeCanvasClickTeleport,
-} from "../GameSessionContext";
+} from "../ViewportContext";
 import gameEngine from "@game/loop/engine";
 import { debugManager } from "@game/debug/debugManager";
 
-describe("Viewport Canvas Adapter Operations in GameSessionContext", () => {
-  it("attaches canvas, starts engine, and returns cleanup that stops engine", () => {
+describe("Viewport Canvas Adapter Operations", () => {
+  it("should attach canvas and trigger engine start, then stop engine when cleanup is called", () => {
+    // Arrange
     const mockCanvas = {} as HTMLCanvasElement;
     const attachSpy = spyOn(gameEngine, "attachCanvas").mockImplementation(() => {});
     const startSpy = spyOn(gameEngine, "start").mockImplementation(() => {});
@@ -18,12 +19,17 @@ describe("Viewport Canvas Adapter Operations in GameSessionContext", () => {
     startSpy.mockClear();
     stopSpy.mockClear();
 
+    // Act
     const cleanup = attachViewportCanvas(mockCanvas);
 
+    // Assert
     expect(attachSpy).toHaveBeenCalledWith(mockCanvas);
     expect(startSpy).toHaveBeenCalledTimes(1);
 
+    // Act
     cleanup();
+
+    // Assert
     expect(stopSpy).toHaveBeenCalledTimes(1);
 
     attachSpy.mockRestore();
@@ -31,27 +37,41 @@ describe("Viewport Canvas Adapter Operations in GameSessionContext", () => {
     stopSpy.mockRestore();
   });
 
-  it("resizes viewport canvas via gameEngine.setCanvasDimensions", () => {
+  it("should resize viewport canvas via gameEngine.setCanvasDimensions when resizeViewportCanvas is called", () => {
+    // Arrange
     const resizeSpy = spyOn(gameEngine, "setCanvasDimensions").mockImplementation(() => {});
 
+    // Act
     resizeViewportCanvas(1280, 720, 2, "pixel");
+
+    // Assert
     expect(resizeSpy).toHaveBeenCalledWith(1280, 720, 2, "pixel");
 
     resizeSpy.mockRestore();
   });
 
-  it("returns false if debug clickToTeleport is disabled", () => {
+  it("should return false when clickToTeleport is disabled", () => {
+    // Arrange
     debugManager.state.clickToTeleport = false;
     const mockCanvas = {} as HTMLCanvasElement;
-    expect(executeCanvasClickTeleport(mockCanvas, 100, 100)).toBe(false);
+
+    // Act
+    const result = executeCanvasClickTeleport(mockCanvas, 100, 100);
+
+    // Assert
+    expect(result).toBe(false);
   });
 
-  it("teleports player when debug clickToTeleport is enabled", () => {
+  it("should teleport player when clickToTeleport is enabled", () => {
+    // Arrange
     debugManager.state.clickToTeleport = true;
     const teleportSpy = spyOn(gameEngine, "teleportPlayer").mockImplementation(() => {});
-    const origCamera = gameEngine.cameraManager;
+    const origCameraX = gameEngine.cameraManager.x;
+    const origCameraY = gameEngine.cameraManager.y;
+    gameEngine.cameraManager.x = 500;
+    gameEngine.cameraManager.y = 300;
+
     const scaleSpy = spyOn(gameEngine, "getRendererScaleFactor").mockReturnValue(1);
-    (gameEngine as any).cameraManager = { x: 500, y: 300 } as any;
 
     const mockCanvas = {
       width: 800,
@@ -70,11 +90,15 @@ describe("Viewport Canvas Adapter Operations in GameSessionContext", () => {
     } as unknown as HTMLCanvasElement;
 
     try {
+      // Act
       const success = executeCanvasClickTeleport(mockCanvas, 400, 300);
+
+      // Assert
       expect(success).toBe(true);
       expect(teleportSpy).toHaveBeenCalled();
     } finally {
-      (gameEngine as any).cameraManager = origCamera;
+      gameEngine.cameraManager.x = origCameraX;
+      gameEngine.cameraManager.y = origCameraY;
       teleportSpy.mockRestore();
       scaleSpy.mockRestore();
       debugManager.state.clickToTeleport = false;
