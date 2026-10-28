@@ -10,6 +10,7 @@ import {
   getCharacterKey,
 } from "@game/logic/skills";
 import { MissingContextProviderError } from "@lib/errors";
+import { resolveActivePlayer } from "./utils/playerResolver";
 
 export interface SkillUnlockEvaluation {
   canUnlock: boolean;
@@ -57,7 +58,7 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
   }, engine);
 
   const activePlayer = useMemo(() => {
-    const raw = activePlayerIndex === 1 && engine.players[1] ? engine.players[1] : engine.players[0];
+    const raw = resolveActivePlayer(engine.players, activePlayerIndex);
     if (!raw) return undefined;
     return {
       ...raw,
@@ -105,7 +106,7 @@ export const SkillsProvider: React.FC<SkillsProviderProps> = ({ children, engine
   const getTargetPlayer = useCallback(
     (index?: number): Player | undefined => {
       const idx = typeof index === "number" ? index : activePlayerIndex;
-      return engine.players[idx] || engine.players[0];
+      return resolveActivePlayer(engine.players, idx);
     },
     [engine.players, activePlayerIndex]
   );

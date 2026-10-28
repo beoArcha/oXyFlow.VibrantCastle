@@ -5,12 +5,12 @@ import { GameEngine } from "@game/loop/engine";
 import {
   InventoryState,
   EquipmentState,
-  Player,
 } from "@game/types";
 import {
   calculatePlayerDerivedStats,
 } from "@game/logic/inventory";
 import { MissingContextProviderError } from "@lib/errors";
+import { resolveActivePlayer } from "./utils/playerResolver";
 
 /**
  * Public contract for inventory domain UI state and actions.
@@ -64,7 +64,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   }, [engine]);
 
   const activePlayer = useMemo(() => {
-    const raw = activePlayerIndex === 1 && engine.players[1] ? engine.players[1] : engine.players[0];
+    const raw = resolveActivePlayer(engine.players, activePlayerIndex);
     if (!raw) return undefined;
     return {
       ...raw,

@@ -12,7 +12,7 @@ import {
   DEFAULT_SETTINGS,
   SettingsContextValue,
   HudSettings,
-} from "./settingsTypes";
+} from "./settings/settingsTypes";
 import {
   ISettingsStorage,
   defaultSettingsStorage,
@@ -86,11 +86,11 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
     [storage]
   );
 
-  const exportSettingsToFile = useCallback(() => {
+  const exportToFile = useCallback(() => {
     storage.exportToFile(settings);
   }, [storage, settings]);
 
-  const importSettingsFromFile = useCallback(
+  const importFromFile = useCallback(
     async (file: File): Promise<boolean> => {
       const merged = await storage.importFromFile(file);
       if (merged) {
@@ -154,10 +154,10 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
       loadFromLocalStorage,
       exportToJson,
       importFromJson,
-      exportSettingsToFile,
-      importSettingsFromFile,
-      exportToFile: exportSettingsToFile,
-      importFromFile: importSettingsFromFile,
+      exportToFile,
+      importFromFile,
+      exportSettingsToFile: exportToFile,
+      importSettingsFromFile: importFromFile,
     }),
     [
       settings,
@@ -172,8 +172,8 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
       loadFromLocalStorage,
       exportToJson,
       importFromJson,
-      exportSettingsToFile,
-      importSettingsFromFile,
+      exportToFile,
+      importFromFile,
     ]
   );
 

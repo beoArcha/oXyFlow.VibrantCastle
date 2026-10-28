@@ -5,11 +5,16 @@ import {
   useSettings,
   useSaveGame,
   useI18n,
+  useLocale,
   useInventory,
   useSkills,
   useGameSession,
+  useGameEngine,
+  useViewport,
+  useAudioSession,
   GameProvider,
   I18nProvider,
+  LocaleProvider,
 } from "../index";
 import {
   MissingContextProviderError,
@@ -50,13 +55,15 @@ describe("React Context Safety & ErrorBoundary", () => {
       expect(() => renderWithHook(useSettings)).toThrow(MissingContextProviderError);
       try {
         renderWithHook(useSettings);
-      } catch (err: any) {
+      } catch (err: unknown) {
         expect(err).toBeInstanceOf(MissingContextProviderError);
-        expect(err.code).toBe(ErrorCode.REACT_MISSING_CONTEXT);
-        expect(err.domain).toBe("REACT");
-        expect(err.hookName).toBe("useSettings");
-        expect(err.providerName).toBe("SettingsProvider");
-        expect(err.message).toContain('Hook "useSettings" must be used within a <SettingsProvider />');
+        if (err instanceof MissingContextProviderError) {
+          expect(err.code).toBe(ErrorCode.REACT_MISSING_CONTEXT);
+          expect(err.domain).toBe("REACT");
+          expect(err.hookName).toBe("useSettings");
+          expect(err.providerName).toBe("SettingsProvider");
+          expect(err.message).toContain('Hook "useSettings" must be used within a <SettingsProvider />');
+        }
       }
     });
 
@@ -64,12 +71,14 @@ describe("React Context Safety & ErrorBoundary", () => {
       expect(() => renderWithHook(useSaveGame)).toThrow(MissingContextProviderError);
       try {
         renderWithHook(useSaveGame);
-      } catch (err: any) {
+      } catch (err: unknown) {
         expect(err).toBeInstanceOf(MissingContextProviderError);
-        expect(err.code).toBe(ErrorCode.REACT_MISSING_CONTEXT);
-        expect(err.domain).toBe("REACT");
-        expect(err.hookName).toBe("useSaveGame");
-        expect(err.providerName).toBe("SaveGameProvider");
+        if (err instanceof MissingContextProviderError) {
+          expect(err.code).toBe(ErrorCode.REACT_MISSING_CONTEXT);
+          expect(err.domain).toBe("REACT");
+          expect(err.hookName).toBe("useSaveGame");
+          expect(err.providerName).toBe("SaveGameProvider");
+        }
       }
     });
 
@@ -77,12 +86,29 @@ describe("React Context Safety & ErrorBoundary", () => {
       expect(() => renderWithHook(useI18n)).toThrow(MissingContextProviderError);
       try {
         renderWithHook(useI18n);
-      } catch (err: any) {
+      } catch (err: unknown) {
         expect(err).toBeInstanceOf(MissingContextProviderError);
-        expect(err.code).toBe(ErrorCode.REACT_MISSING_CONTEXT);
-        expect(err.domain).toBe("REACT");
-        expect(err.hookName).toBe("useI18n");
-        expect(err.providerName).toBe("I18nProvider");
+        if (err instanceof MissingContextProviderError) {
+          expect(err.code).toBe(ErrorCode.REACT_MISSING_CONTEXT);
+          expect(err.domain).toBe("REACT");
+          expect(err.hookName).toBe("useI18n");
+          expect(err.providerName).toBe("I18nProvider");
+        }
+      }
+    });
+
+    it("throws MissingContextProviderError when useLocale is used outside LocaleProvider", () => {
+      expect(() => renderWithHook(useLocale)).toThrow(MissingContextProviderError);
+      try {
+        renderWithHook(useLocale);
+      } catch (err: unknown) {
+        expect(err).toBeInstanceOf(MissingContextProviderError);
+        if (err instanceof MissingContextProviderError) {
+          expect(err.code).toBe(ErrorCode.REACT_MISSING_CONTEXT);
+          expect(err.domain).toBe("REACT");
+          expect(err.hookName).toBe("useLocale");
+          expect(err.providerName).toBe("LocaleProvider");
+        }
       }
     });
 
@@ -90,12 +116,14 @@ describe("React Context Safety & ErrorBoundary", () => {
       expect(() => renderWithHook(useInventory)).toThrow(MissingContextProviderError);
       try {
         renderWithHook(useInventory);
-      } catch (err: any) {
+      } catch (err: unknown) {
         expect(err).toBeInstanceOf(MissingContextProviderError);
-        expect(err.code).toBe(ErrorCode.REACT_MISSING_CONTEXT);
-        expect(err.domain).toBe("REACT");
-        expect(err.hookName).toBe("useInventory");
-        expect(err.providerName).toBe("InventoryProvider");
+        if (err instanceof MissingContextProviderError) {
+          expect(err.code).toBe(ErrorCode.REACT_MISSING_CONTEXT);
+          expect(err.domain).toBe("REACT");
+          expect(err.hookName).toBe("useInventory");
+          expect(err.providerName).toBe("InventoryProvider");
+        }
       }
     });
 
@@ -103,12 +131,14 @@ describe("React Context Safety & ErrorBoundary", () => {
       expect(() => renderWithHook(useSkills)).toThrow(MissingContextProviderError);
       try {
         renderWithHook(useSkills);
-      } catch (err: any) {
+      } catch (err: unknown) {
         expect(err).toBeInstanceOf(MissingContextProviderError);
-        expect(err.code).toBe(ErrorCode.REACT_MISSING_CONTEXT);
-        expect(err.domain).toBe("REACT");
-        expect(err.hookName).toBe("useSkills");
-        expect(err.providerName).toBe("SkillsProvider");
+        if (err instanceof MissingContextProviderError) {
+          expect(err.code).toBe(ErrorCode.REACT_MISSING_CONTEXT);
+          expect(err.domain).toBe("REACT");
+          expect(err.hookName).toBe("useSkills");
+          expect(err.providerName).toBe("SkillsProvider");
+        }
       }
     });
 
@@ -116,12 +146,59 @@ describe("React Context Safety & ErrorBoundary", () => {
       expect(() => renderWithHook(useGameSession)).toThrow(MissingContextProviderError);
       try {
         renderWithHook(useGameSession);
-      } catch (err: any) {
+      } catch (err: unknown) {
         expect(err).toBeInstanceOf(MissingContextProviderError);
-        expect(err.code).toBe(ErrorCode.REACT_MISSING_CONTEXT);
-        expect(err.domain).toBe("REACT");
-        expect(err.hookName).toBe("useGameSession");
-        expect(err.providerName).toBe("GameSessionProvider");
+        if (err instanceof MissingContextProviderError) {
+          expect(err.code).toBe(ErrorCode.REACT_MISSING_CONTEXT);
+          expect(err.domain).toBe("REACT");
+          expect(err.hookName).toBe("useGameSession");
+          expect(err.providerName).toBe("GameSessionProvider");
+        }
+      }
+    });
+
+    it("throws MissingContextProviderError when useGameEngine is used outside GameEngineProvider", () => {
+      expect(() => renderWithHook(useGameEngine)).toThrow(MissingContextProviderError);
+      try {
+        renderWithHook(useGameEngine);
+      } catch (err: unknown) {
+        expect(err).toBeInstanceOf(MissingContextProviderError);
+        if (err instanceof MissingContextProviderError) {
+          expect(err.code).toBe(ErrorCode.REACT_MISSING_CONTEXT);
+          expect(err.domain).toBe("REACT");
+          expect(err.hookName).toBe("useGameEngine");
+          expect(err.providerName).toBe("GameEngineProvider");
+        }
+      }
+    });
+
+    it("throws MissingContextProviderError when useViewport is used outside ViewportProvider", () => {
+      expect(() => renderWithHook(useViewport)).toThrow(MissingContextProviderError);
+      try {
+        renderWithHook(useViewport);
+      } catch (err: unknown) {
+        expect(err).toBeInstanceOf(MissingContextProviderError);
+        if (err instanceof MissingContextProviderError) {
+          expect(err.code).toBe(ErrorCode.REACT_MISSING_CONTEXT);
+          expect(err.domain).toBe("REACT");
+          expect(err.hookName).toBe("useViewport");
+          expect(err.providerName).toBe("ViewportProvider");
+        }
+      }
+    });
+
+    it("throws MissingContextProviderError when useAudioSession is used outside AudioSessionProvider", () => {
+      expect(() => renderWithHook(useAudioSession)).toThrow(MissingContextProviderError);
+      try {
+        renderWithHook(useAudioSession);
+      } catch (err: unknown) {
+        expect(err).toBeInstanceOf(MissingContextProviderError);
+        if (err instanceof MissingContextProviderError) {
+          expect(err.code).toBe(ErrorCode.REACT_MISSING_CONTEXT);
+          expect(err.domain).toBe("REACT");
+          expect(err.hookName).toBe("useAudioSession");
+          expect(err.providerName).toBe("AudioSessionProvider");
+        }
       }
     });
 
@@ -171,7 +248,8 @@ describe("React Context Safety & ErrorBoundary", () => {
       expect(record.error?.name).toBe("EngineError");
       expect(record.error?.code).toBe(ErrorCode.ENGINE_CANVAS_CONTEXT_LOST);
       expect(record.error?.domain).toBe("ENGINE");
-      expect((record.error?.details as any)?.width).toBe(1920);
+      const details = record.error?.details as { width?: number } | undefined;
+      expect(details?.width).toBe(1920);
     });
 
     it("renders fallback UI with domain badges when GameBaseError is caught", () => {

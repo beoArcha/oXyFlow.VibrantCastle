@@ -2,7 +2,7 @@ import React from "react";
 import { Music, Volume2, VolumeX, Sparkles, Play } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent, Slider, Button, Badge, Code } from "@ui";
 import { useSettings } from "@context/SettingsContext";
-import { useGameSession } from "@context/GameSessionContext";
+import { useAudioSession } from "@context/AudioSessionContext";
 import { useI18n } from "@context/I18nContext";
 import { VolumePresetBar } from "./audio";
 import { cn } from "@lib/utils";
@@ -13,7 +13,7 @@ export interface AudioTabProps {
 
 export const AudioTab = ({ className }: AudioTabProps): React.ReactElement => {
   const { volumeMusic, setVolumeMusic, volumeSFX, setVolumeSFX } = useSettings();
-  const { playPreviewSFX } = useGameSession();
+  const { playPreviewSFX } = useAudioSession();
   const { t } = useI18n();
 
   const musicPercent = Math.round(volumeMusic * 100);
@@ -118,4 +118,3 @@ export const AudioTab = ({ className }: AudioTabProps): React.ReactElement => {
 };
 
 export default AudioTab;
-

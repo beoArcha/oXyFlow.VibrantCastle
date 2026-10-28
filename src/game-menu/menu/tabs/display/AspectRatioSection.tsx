@@ -3,7 +3,7 @@ import { Monitor, Maximize2, Minimize2, Tv, Layers } from "lucide-react";
 import { Button, Card, CardHeader, CardTitle, CardContent, SettingOptionCard } from "@ui";
 import { useSettings } from "@context/SettingsContext";
 import { useI18n } from "@context/I18nContext";
-import type { AspectRatioMode, ScalingFilterMode } from "@context/settingsTypes";
+import type { AspectRatioMode, ScalingFilterMode } from "@context";
 import { cn } from "@lib/utils";
 
 export interface AspectRatioSectionProps {
@@ -147,4 +147,3 @@ export const AspectRatioSection = ({
     </div>
   );
 };
-

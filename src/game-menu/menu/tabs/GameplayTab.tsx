@@ -1,6 +1,6 @@
 import React from "react";
 import { useSettings } from "@context/SettingsContext";
-import { useGameSession } from "@context/GameSessionContext";
+import { useGameEngine } from "@context/GameEngineContext";
 import { useSaveGame } from "@context/SaveGameContext";
 import {
   GameModeSection,
@@ -26,7 +26,7 @@ export const GameplayTab = ({ className }: GameplayTabProps = {}): React.ReactEl
     resetToDefaults: resetSettingsToDefaults,
   } = useSettings();
 
-  const { restart } = useGameSession();
+  const { restart } = useGameEngine();
 
   const {
     saveGame,

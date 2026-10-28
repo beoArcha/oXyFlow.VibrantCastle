@@ -3,7 +3,7 @@ import React, { act } from "react";
 import { renderCustomHook, cleanupDom } from "@test-utils/domTestUtils";
 import { SettingsProvider, useSettings } from "../SettingsContext";
 import { SettingsStorage } from "../settings/settingsStorage";
-import { DEFAULT_SETTINGS, GameSettingsState } from "../settingsTypes";
+import { DEFAULT_SETTINGS, GameSettingsState } from "../settings";
 import { createMockStorageProvider, MockStorageProvider } from "@test-utils";
 import gameEngine from "@game/loop/engine";
 
