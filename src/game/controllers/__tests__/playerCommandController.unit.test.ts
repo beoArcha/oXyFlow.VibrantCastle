@@ -21,6 +21,7 @@ describe("PlayerCommandController", () => {
     const p1Skills = getDefaultSkillsForCharacter("valen");
     mockPlayer1 = createMockPlayer({
       id: PlayerId.Player1,
+      characterId: "valen",
       characterName: "Valen",
       x: 100,
       y: 200,
@@ -37,6 +38,7 @@ describe("PlayerCommandController", () => {
     const p2Skills = getDefaultSkillsForCharacter("aurelia");
     mockPlayer2 = createMockPlayer({
       id: PlayerId.Player2,
+      characterId: "aurelia",
       characterName: "Aurelia",
       x: 150,
       y: 200,
@@ -187,6 +189,73 @@ describe("PlayerCommandController", () => {
     });
   });
 
+  describe("Character Selection & Swapping", () => {
+    it("swaps characters cleanly between two players", () => {
+      expect(mockPlayer1.characterId).toBe("valen");
+      expect(mockPlayer2.characterId).toBe("aurelia");
+
+      const success = controller.swapPlayerCharacters();
+      expect(success).toBe(true);
+      expect(stateChangedCount).toBe(1);
+
+      expect(mockPlayer1.characterId).toBe("aurelia");
+      expect(mockPlayer1.characterName).toBe("Aurelia");
+      expect(mockPlayer2.characterId).toBe("valen");
+      expect(mockPlayer2.characterName).toBe("Valen");
+    });
+
+    it("toggles character in single-player mode", () => {
+      players = [mockPlayer1];
+      expect(mockPlayer1.characterId).toBe("valen");
+
+      const success = controller.swapPlayerCharacters();
+      expect(success).toBe(true);
+      expect(stateChangedCount).toBe(1);
+
+      expect(mockPlayer1.characterId).toBe("aurelia");
+      expect(mockPlayer1.characterName).toBe("Aurelia");
+      expect(mockPlayer1.primarySpellId).toBe("arcane_missiles");
+    });
+
+    it("sets player character directly in single-player mode", () => {
+      players = [mockPlayer1];
+
+      const success = controller.setPlayerCharacter(0, "aurelia");
+      expect(success).toBe(true);
+      expect(stateChangedCount).toBe(1);
+      expect(mockPlayer1.characterId).toBe("aurelia");
+      expect(mockPlayer1.characterName).toBe("Aurelia");
+
+      // Calling set with same character is no-op
+      const noOp = controller.setPlayerCharacter(0, "aurelia");
+      expect(noOp).toBe(true);
+      expect(stateChangedCount).toBe(1);
+    });
+
+    it("swaps players when setPlayerCharacter is called in 2P mode to prevent duplicates", () => {
+      expect(mockPlayer1.characterId).toBe("valen");
+      expect(mockPlayer2.characterId).toBe("aurelia");
+
+      const success = controller.setPlayerCharacter(0, "aurelia");
+      expect(success).toBe(true);
+      expect(mockPlayer1.characterId).toBe("aurelia");
+      expect(mockPlayer2.characterId).toBe("valen");
+    });
+
+    it("resets skills dynamically to current character archetype", () => {
+      mockPlayer1.characterId = "aurelia";
+      mockPlayer2.characterId = "valen";
+
+      controller.resetPlayerSkillsToDefaults();
+
+      const aureliaDefaults = getDefaultSkillsForCharacter("aurelia");
+      const valenDefaults = getDefaultSkillsForCharacter("valen");
+
+      expect(mockPlayer1.primarySpellId).toBe(aureliaDefaults.primarySpellId);
+      expect(mockPlayer2.primarySpellId).toBe(valenDefaults.primarySpellId);
+    });
+  });
+
   describe("GameEngine Integration & Delegation", () => {
     it("exposes playerCommands controller and delegates engine methods", async () => {
       const { GameEngine } = await import("../../loop/engine");
@@ -203,7 +272,11 @@ describe("PlayerCommandController", () => {
       const success = engine.usePlayerPotion(0, 0);
       expect(success).toBe(true);
       expect(engine.players[0].inventory.quickPotions[0]?.count).toBe(prevCount - 1);
+
+      // Test swapCharacters delegation
+      expect(engine.players[0].characterId).toBe("valen");
+      engine.swapCharacters();
+      expect(engine.players[0].characterId).toBe("aurelia");
     });
   });
 });
-

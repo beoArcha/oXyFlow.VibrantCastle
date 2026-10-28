@@ -284,6 +284,10 @@ export class GameEngine implements IEngineSubsystemHost {
   public unlockPlayerSkill(playerIndex: number, nodeId: string): { success: boolean; messageKey?: string } { return this.c.playerCommandController.unlockPlayerSkill(playerIndex, nodeId); }
   public assignPlayerSpell(playerIndex: number, spellId: string, slot: "primary" | "secondary"): boolean { return this.c.playerCommandController.assignPlayerSpell(playerIndex, spellId, slot); }
   public resetPlayerSkillsToDefaults(): void { this.c.playerCommandController.resetPlayerSkillsToDefaults(); }
+  public swapCharacters(): boolean { return this.c.playerCommandController.swapPlayerCharacters(); }
+  public setPlayerCharacter(playerIndex: number, characterId: "valen" | "aurelia"): boolean {
+    return this.c.playerCommandController.setPlayerCharacter(playerIndex, characterId);
+  }
 }
 
 export const gameEngine = new GameEngine();

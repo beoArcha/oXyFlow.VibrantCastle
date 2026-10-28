@@ -111,18 +111,19 @@ export class LevelLifecycleManager implements ILevelLifecycleManager {
     locationId?: LocationId,
     customSpawnPoint?: { x: number; y: number },
     preservePlayerStats: boolean = false,
-    p1CharacterId: "valen" | "aurelia" = "valen"
+    p1CharacterId?: "valen" | "aurelia"
   ): void {
     if (locationId) {
       this.currentLocationId = locationId;
     }
     const targetLocId = this.currentLocationId || "courtyard";
+    const resolvedP1Char = p1CharacterId ?? this.context.getPlayers()[0]?.characterId ?? "valen";
     const data = LevelDesigner.createLocationState(
       targetLocId,
       this.context.getIsTwoPlayer(),
       customSpawnPoint,
       preservePlayerStats ? this.context.getPlayers() : undefined,
-      p1CharacterId
+      resolvedP1Char
     );
 
     this.context.setPlayers(data.players);
