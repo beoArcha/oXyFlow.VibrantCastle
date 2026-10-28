@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
+import React, { createContext, useContext, useState, useMemo, useCallback } from "react";
 import { IPlayerScopedContext, EngineBoundProviderProps } from "./IContext";
 import { useEngineSubscription } from "./hooks/useEngineSubscription";
 import { GameEngine } from "@game/loop/engine";
@@ -45,23 +45,10 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   const [activePlayerIndex, setActivePlayerIndex] = useState(0);
   const [stateVersion, setStateVersion] = useState(0);
 
+  // Synchronize stateVersion with engine game loop ticks
   useEngineSubscription(() => {
     setStateVersion((v) => v + 1);
   }, engine);
-
-  useEffect(() => {
-    if (!engine?.eventBus) return;
-    let isMounted = true;
-    const unsubscribe = engine.eventBus.on("ITEM_CONSUMED", () => {
-      if (isMounted) {
-        setStateVersion((v) => v + 1);
-      }
-    });
-    return () => {
-      isMounted = false;
-      unsubscribe();
-    };
-  }, [engine]);
 
   const activePlayer = useMemo(() => {
     const raw = resolveActivePlayer(engine.players, activePlayerIndex);
@@ -166,14 +153,14 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
 };
 
 /**
- * Hook providing access to player inventory, equipment, item usage, and derived stats.
+ * Hook providing access to player inventory, equipment, and potion actions.
  *
  * @throws {MissingContextProviderError} when used outside an InventoryProvider.
  */
 export function useInventory(): InventoryContextValue {
-  const ctx = useContext(InventoryContext);
-  if (!ctx) {
+  const context = useContext(InventoryContext);
+  if (!context) {
     throw new MissingContextProviderError("useInventory", "InventoryProvider");
   }
-  return ctx;
+  return context;
 }

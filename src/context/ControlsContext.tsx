@@ -1,8 +1,11 @@
-import React, { createContext, useContext, useMemo, useCallback } from "react";
+import React, { createContext, useContext, useMemo } from "react";
 import { PlayerId, InputMap, GamepadBindingMap } from "@game/types";
 import gameInputs from "@game/loop/input";
 import { MissingContextProviderError } from "@lib/errors";
 import { BaseProviderProps } from "./IContext";
+import { startGamepadButtonCapture } from "./controls/gamepadCaptureService";
+
+export { startGamepadButtonCapture };
 
 /**
  * Presentational view model representing a connected hardware controller.
@@ -164,39 +167,6 @@ export function rebindGamepadAction(
  */
 export function resetGamepadBindings(player: PlayerId): void {
   gameInputs.resetToDefaults(player);
-}
-
-/**
- * Initiates polling for the next pressed gamepad button on the specified controller.
- * Encapsulates hardware inspection and analog button thresholding outside of React components.
- * Returns an unpoll / cancel cleanup function.
- */
-export function startGamepadButtonCapture(
-  padIndex: number,
-  onDetected: (buttonIndex: number) => void,
-  onDisconnected?: () => void
-): () => void {
-  const interval = setInterval(() => {
-    const rawPads = gameInputs.getConnectedGamepads();
-    const pad = rawPads.find((p) => p.index === padIndex);
-
-    if (!pad) {
-      onDisconnected?.();
-      return;
-    }
-
-    for (let i = 0; i < pad.buttons.length; i++) {
-      const btn = pad.buttons[i];
-      if (!btn) continue;
-
-      if (btn.pressed || btn.value > 0.5) {
-        onDetected(i);
-        break;
-      }
-    }
-  }, 50);
-
-  return () => clearInterval(interval);
 }
 
 /** Controls context and provider */
