@@ -38,6 +38,7 @@ export interface HUDOverlayProps {
   readonly onOpenMenu: () => void;
   readonly onOpenCreation?: () => void;
   readonly onTogglePause?: () => void;
+  readonly isModalOpen?: boolean;
 }
 
 export interface HUDOverlayLayoutProps {
