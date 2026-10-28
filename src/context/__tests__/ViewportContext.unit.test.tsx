@@ -8,7 +8,7 @@ import {
   resizeViewportCanvas,
   executeCanvasClickTeleport,
 } from "../ViewportContext";
-import gameEngine from "@game/loop/engine";
+import gameEngine, { GameEngine } from "@game/loop/engine";
 import { debugManager } from "@game/debug/debugManager";
 import { MissingContextProviderError } from "@lib/errors";
 
@@ -46,6 +46,40 @@ describe("ViewportContext & useViewport Hook", () => {
     expect(typeof result.current.attachCanvas).toBe("function");
     expect(typeof result.current.resizeCanvas).toBe("function");
     expect(typeof result.current.teleportPlayerAtViewport).toBe("function");
+
+    await unmount();
+  });
+
+  it("should delegate attachCanvas, resizeCanvas to custom injected GameEngine instance", async () => {
+    // Arrange
+    const customEngine = new GameEngine();
+    const customAttachSpy = spyOn(customEngine, "attachCanvas").mockImplementation(() => {});
+    const customStartSpy = spyOn(customEngine, "start").mockImplementation(() => {});
+    const customStopSpy = spyOn(customEngine, "stop").mockImplementation(() => {});
+    const customResizeSpy = spyOn(customEngine, "setCanvasDimensions").mockImplementation(() => {});
+
+    const singletonAttachSpy = spyOn(gameEngine, "attachCanvas");
+
+    const customWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+      <ViewportProvider engine={customEngine}>{children}</ViewportProvider>
+    );
+
+    const { result, unmount } = await renderCustomHook(() => useViewport(), { wrapper: customWrapper });
+
+    const mockCanvas = {} as HTMLCanvasElement;
+
+    // Act
+    const cleanup = result.current.attachCanvas(mockCanvas);
+    result.current.resizeCanvas(1280, 720, 1, "pixel");
+
+    // Assert: customEngine was targeted, global singleton was untouched
+    expect(customAttachSpy).toHaveBeenCalledWith(mockCanvas);
+    expect(customStartSpy).toHaveBeenCalledTimes(1);
+    expect(customResizeSpy).toHaveBeenCalledWith(1280, 720, 1, "pixel");
+    expect(singletonAttachSpy).not.toHaveBeenCalled();
+
+    cleanup();
+    expect(customStopSpy).toHaveBeenCalledTimes(1);
 
     await unmount();
   });

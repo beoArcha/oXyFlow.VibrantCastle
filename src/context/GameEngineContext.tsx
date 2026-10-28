@@ -96,19 +96,25 @@ export const GameEngineProvider: React.FC<GameEngineProviderProps> = ({
   const rawP1 = engine.players.find((p) => p.id === "player1");
   const rawP2 = engine.players.find((p) => p.id === "player2");
 
-  // Derive shallow snapshot clones reactively driven by engine tick updates and player mutations
+  // Derive shallow snapshot clones reactively driven by engine tick updates and player resource mutations
   const p1 = useMemo(() => {
     if (!rawP1) return undefined;
     return { ...rawP1 };
   }, [
     rawP1,
     rawP1?.health,
+    rawP1?.maxHealth,
     rawP1?.mana,
+    rawP1?.maxMana,
     rawP1?.stamina,
+    rawP1?.maxStamina,
+    rawP1?.isDead,
+    rawP1?.characterId,
+    rawP1?.characterTier,
+    rawP1?.levelGroup,
     rawP1?.skillPoints,
     rawP1?.primarySpellId,
     rawP1?.secondarySpellId,
-    rawP1?.isDead,
     rawP1?.inventory,
     rawP1?.unlockedSkills,
     tick,
@@ -120,12 +126,18 @@ export const GameEngineProvider: React.FC<GameEngineProviderProps> = ({
   }, [
     rawP2,
     rawP2?.health,
+    rawP2?.maxHealth,
     rawP2?.mana,
+    rawP2?.maxMana,
     rawP2?.stamina,
+    rawP2?.maxStamina,
+    rawP2?.isDead,
+    rawP2?.characterId,
+    rawP2?.characterTier,
+    rawP2?.levelGroup,
     rawP2?.skillPoints,
     rawP2?.primarySpellId,
     rawP2?.secondarySpellId,
-    rawP2?.isDead,
     rawP2?.inventory,
     rawP2?.unlockedSkills,
     tick,
