@@ -10,8 +10,22 @@ interface ISpellsJson {
 }
 
 const rawSpells = spellsData as unknown as ISpellsJson;
-export const SPELL_REGISTRY: Record<string, MagicSkill> =
-  rawSpells.spells || (rawSpells as unknown as Record<string, MagicSkill>);
+const loadedSpells: Record<string, MagicSkill> = {
+  ...(rawSpells.spells || (rawSpells as unknown as Record<string, MagicSkill>)),
+};
+
+// Canonical aliases for starter loadouts
+if (loadedSpells["aether_bolt"] && !loadedSpells["arcane_missiles"]) {
+  loadedSpells["arcane_missiles"] = { ...loadedSpells["aether_bolt"], id: "arcane_missiles" };
+}
+if (loadedSpells["aether_barrier"] && !loadedSpells["ice_barrier"]) {
+  loadedSpells["ice_barrier"] = { ...loadedSpells["aether_barrier"], id: "ice_barrier" };
+}
+if (loadedSpells["prismatic_shield"] && !loadedSpells["aegis_ward"]) {
+  loadedSpells["aegis_ward"] = { ...loadedSpells["prismatic_shield"], id: "aegis_ward" };
+}
+
+export const SPELL_REGISTRY: Record<string, MagicSkill> = loadedSpells;
 
 export interface IMagicAudio {
   playSFX(type: SoundType): void;
