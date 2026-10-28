@@ -65,6 +65,15 @@ export interface GameSessionContextValue {
 }
 
 /**
+ * Checks whether React is operating within an act() test environment without type casting.
+ */
+function isReactActEnvironment(): boolean {
+  if (typeof globalThis === "undefined") return false;
+  const target = globalThis as Record<string, unknown>;
+  return Boolean(target["IS_REACT_ACT_ENVIRONMENT"]);
+}
+
+/**
  * Attaches the HTMLCanvasElement to the game engine renderer and starts the loop.
  * Returns a cleanup function that stops the engine on unmount.
  */
@@ -169,9 +178,8 @@ export const GameSessionProvider: React.FC<GameSessionProviderProps> = ({
     if (currentNarration !== prevNarrationRef.current) {
       prevNarrationRef.current = currentNarration;
       const isTestEnv =
-        typeof process !== "undefined" &&
-        process.env &&
-        (process.env.NODE_ENV === "test" || (globalThis as any).IS_REACT_ACT_ENVIRONMENT);
+        (typeof process !== "undefined" && process.env?.NODE_ENV === "test") ||
+        isReactActEnvironment();
 
       if (!isTestEnv) {
         setSubAnim(true);

@@ -20,6 +20,9 @@ import {
 } from "./settings";
 import { MissingContextProviderError } from "@lib/errors";
 import { BaseProviderProps } from "./IContext";
+import { getLogger } from "@lib/logger";
+
+const settingsContextLogger = getLogger("context:settings");
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 
@@ -53,7 +56,12 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
       const reloaded = storage.load();
       setSettings(reloaded);
       return true;
-    } catch {
+    } catch (err) {
+      settingsContextLogger.warn(
+        "Failed to reload settings from storage, maintaining active configuration:",
+        { context: "loadFromLocalStorage" },
+        err
+      );
       return false;
     }
   }, [storage]);

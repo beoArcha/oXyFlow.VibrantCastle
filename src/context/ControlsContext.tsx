@@ -71,8 +71,6 @@ export function normalizeKeyScanCodes(code: string, key: string): string[] {
   );
 }
 
-/** TODO: split into separate Keyboard port and adapter modules */
-
 /**
  * Retrieves the current keyboard bindings view model for a player.
  */
@@ -112,8 +110,6 @@ export function rebindKeyboardAction(
   gameInputs.setKeyboardBinding(player, action, keysToBind);
   return true;
 }
-
-/** TODO: split into separate Gamepad port and adapter modules */
 
 /**
  * Reads list of all currently connected hardware gamepads.

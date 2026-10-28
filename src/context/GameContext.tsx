@@ -15,7 +15,7 @@ export interface GameProviderProps extends BaseProviderProps {}
  * SettingsProvider -> ControlsProvider -> SaveGameProvider -> GameSessionProvider -> InventoryProvider -> SkillsProvider
  *
  * Each domain manages its own state and subscription to avoid unnecessary re-rendering
- * across decoupled systems (SRP & ISP).
+ * across decoupled presentation layers.
  */
 export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
   return (
