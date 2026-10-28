@@ -1,5 +1,6 @@
 import { Player, Enemy, Entity, PlayerId, AnimationState, CollisionType } from "../types";
 import { createDefaultInventory } from "../logic/inventory";
+import { getDefaultSkillsForCharacter } from "../logic/skills";
 import { LocationId, LocationDefinition } from "./types";
 import { getLocation, LOCATION_REGISTRY } from "./registry";
 
@@ -29,6 +30,7 @@ export class LevelDesigner {
     y: number
   ): Player {
     const isValen = characterId === "valen";
+    const defaults = getDefaultSkillsForCharacter(characterId);
 
     return {
       id: playerId,
@@ -73,12 +75,12 @@ export class LevelDesigner {
       isCasting: false,
       castTime: 0,
       shieldActiveTime: 0,
-      primarySpellId: isValen ? "solar_flare" : "arcane_missiles",
-      secondarySpellId: isValen ? "aegis_ward" : "ice_barrier",
-      skillPoints: 4,
+      primarySpellId: defaults.primarySpellId,
+      secondarySpellId: defaults.secondarySpellId,
+      skillPoints: defaults.skillPoints,
       score: 0,
       inventory: createDefaultInventory(),
-      unlockedSkills: isValen ? ["solar_flare", "aegis_ward"] : ["arcane_missiles", "ice_barrier"],
+      unlockedSkills: [...defaults.unlockedSkills],
       autoSkillTimer: 0,
       animationState: AnimationState.Idle,
     };

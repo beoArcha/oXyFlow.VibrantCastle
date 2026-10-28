@@ -214,7 +214,7 @@ describe("PlayerCommandController", () => {
 
       expect(mockPlayer1.characterId).toBe("aurelia");
       expect(mockPlayer1.characterName).toBe("Aurelia");
-      expect(mockPlayer1.primarySpellId).toBe("arcane_missiles");
+      expect(mockPlayer1.primarySpellId).toBe("aether_bolt");
     });
 
     it("sets player character directly in single-player mode", () => {

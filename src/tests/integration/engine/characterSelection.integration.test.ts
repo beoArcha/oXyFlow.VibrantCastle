@@ -37,7 +37,7 @@ describe("Given a fresh GameEngine instance", () => {
       expect(p1.characterId).toBe("valen");
       expect(p1.characterName).toBe("Valen");
       expect(p1.primarySpellId).toBe("solar_flare");
-      expect(p1.unlockedSkills).toEqual(["solar_flare", "aegis_ward"]);
+      expect(p1.unlockedSkills).toEqual(["solar_flare", "prismatic_shield"]);
     });
   });
 
@@ -54,8 +54,8 @@ describe("Given a fresh GameEngine instance", () => {
       expect(success).toBe(true);
       expect(p1.characterId).toBe("aurelia");
       expect(p1.characterName).toBe("Aurelia");
-      expect(p1.primarySpellId).toBe("arcane_missiles");
-      expect(p1.unlockedSkills).toEqual(["arcane_missiles", "ice_barrier"]);
+      expect(p1.primarySpellId).toBe("aether_bolt");
+      expect(p1.unlockedSkills).toEqual(["aether_bolt", "aether_barrier"]);
       expect(p1.unlockedSkills).not.toContain("solar_flare");
     });
   });
@@ -76,7 +76,7 @@ describe("Given a fresh GameEngine instance", () => {
       expect(p1.characterId).toBe("aurelia");
       expect(p2.characterId).toBe("valen");
       expect(p2.primarySpellId).toBe("solar_flare");
-      expect(p2.unlockedSkills).toEqual(["solar_flare", "aegis_ward"]);
+      expect(p2.unlockedSkills).toEqual(["solar_flare", "prismatic_shield"]);
     });
   });
 
@@ -95,7 +95,7 @@ describe("Given a fresh GameEngine instance", () => {
       // Then
       expect(swapped).toBe(true);
       expect(engine.players[0].characterId).toBe("aurelia");
-      expect(engine.players[0].primarySpellId).toBe("arcane_missiles");
+      expect(engine.players[0].primarySpellId).toBe("aether_bolt");
       expect(engine.players[1].characterId).toBe("valen");
       expect(engine.players[1].primarySpellId).toBe("solar_flare");
     });
@@ -122,8 +122,8 @@ describe("Given a fresh GameEngine instance", () => {
       const restoredP1 = newEngine.players[0];
       expect(restoredP1.characterId).toBe("aurelia");
       expect(restoredP1.characterName).toBe("Aurelia");
-      expect(restoredP1.primarySpellId).toBe("arcane_missiles");
-      expect(restoredP1.unlockedSkills).toEqual(["arcane_missiles", "ice_barrier"]);
+      expect(restoredP1.primarySpellId).toBe("aether_bolt");
+      expect(restoredP1.unlockedSkills).toEqual(["aether_bolt", "aether_barrier"]);
       expect(restoredP1.health).toBe(75);
 
       newEngine.stop();
