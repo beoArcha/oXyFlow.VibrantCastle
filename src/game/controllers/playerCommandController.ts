@@ -228,9 +228,14 @@ export class PlayerCommandController implements IPlayerCommandController {
 
     const defaults = getDefaultSkillsForCharacter(characterId);
     player.unlockedSkills = [...defaults.unlockedSkills];
-    player.skillPoints = defaults.skillPoints;
+    player.skillPoints = Math.max(player.skillPoints, defaults.skillPoints);
     player.primarySpellId = defaults.primarySpellId;
     player.secondarySpellId = defaults.secondarySpellId;
+
+    const stats = calculatePlayerDerivedStats(player);
+    player.maxHealth = stats.maxHp;
+    player.maxMana = stats.maxMana;
+    player.maxStamina = stats.maxStamina;
 
     this.context.notifyStateChanged();
     return true;

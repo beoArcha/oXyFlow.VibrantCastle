@@ -62,6 +62,9 @@ export class GameEngine implements IEngineSubsystemHost {
   public readonly particleSystem: ParticleSystem = new ParticleSystem();
   public readonly cameraManager: CameraManager = new CameraManager();
 
+  // Primary player archetype preference for new runs & level resets
+  public defaultPrimaryCharacter: "valen" | "aurelia" = "valen";
+
   // React listener callbacks & metrics
   private readonly stateListeners: Set<() => void> = new Set();
   private uiSyncTimer: number = 0;
@@ -284,9 +287,21 @@ export class GameEngine implements IEngineSubsystemHost {
   public unlockPlayerSkill(playerIndex: number, nodeId: string): { success: boolean; messageKey?: string } { return this.c.playerCommandController.unlockPlayerSkill(playerIndex, nodeId); }
   public assignPlayerSpell(playerIndex: number, spellId: string, slot: "primary" | "secondary"): boolean { return this.c.playerCommandController.assignPlayerSpell(playerIndex, spellId, slot); }
   public resetPlayerSkillsToDefaults(): void { this.c.playerCommandController.resetPlayerSkillsToDefaults(); }
-  public swapCharacters(): boolean { return this.c.playerCommandController.swapPlayerCharacters(); }
+  public getDefaultPrimaryCharacter(): "valen" | "aurelia" { return this.defaultPrimaryCharacter; }
+  public setDefaultPrimaryCharacter(characterId: "valen" | "aurelia"): void { this.defaultPrimaryCharacter = characterId; }
+  public swapCharacters(): boolean {
+    const success = this.c.playerCommandController.swapPlayerCharacters();
+    if (success && this.players[0]) {
+      this.defaultPrimaryCharacter = (this.players[0].characterId as "valen" | "aurelia") || "valen";
+    }
+    return success;
+  }
   public setPlayerCharacter(playerIndex: number, characterId: "valen" | "aurelia"): boolean {
-    return this.c.playerCommandController.setPlayerCharacter(playerIndex, characterId);
+    const success = this.c.playerCommandController.setPlayerCharacter(playerIndex, characterId);
+    if (success && playerIndex === 0) {
+      this.defaultPrimaryCharacter = characterId;
+    }
+    return success;
   }
 }
 

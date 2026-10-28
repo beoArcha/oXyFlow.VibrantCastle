@@ -25,6 +25,7 @@ export interface ILevelLifecycleContext {
   clearProjectiles(): void;
   getIsTwoPlayer(): boolean;
   setIsTwoPlayer(enabled: boolean): void;
+  getDefaultPrimaryCharacter?(): "valen" | "aurelia";
   getViewportSize(): { width: number; height: number };
   snapCamera(players: Player[], levelWidth: number, levelHeight: number): void;
   triggerNarration(key: string): void;
@@ -117,7 +118,13 @@ export class LevelLifecycleManager implements ILevelLifecycleManager {
       this.currentLocationId = locationId;
     }
     const targetLocId = this.currentLocationId || "courtyard";
-    const resolvedP1Char = p1CharacterId ?? this.context.getPlayers()[0]?.characterId ?? "valen";
+    const resolvedP1Char =
+      p1CharacterId ??
+      (preservePlayerStats ? this.context.getPlayers()[0]?.characterId : undefined) ??
+      this.context.getDefaultPrimaryCharacter?.() ??
+      this.context.getPlayers()[0]?.characterId ??
+      "valen";
+
     const data = LevelDesigner.createLocationState(
       targetLocId,
       this.context.getIsTwoPlayer(),

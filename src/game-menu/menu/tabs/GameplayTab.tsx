@@ -32,11 +32,18 @@ export const GameplayTab = ({ className }: GameplayTabProps = {}): React.ReactEl
 
   const handleSelectCharacter = useCallback(
     (charId: "valen" | "aurelia") => {
-      setPrimaryCharacter(charId);
-      setPlayerCharacter(0, charId);
+      const success = setPlayerCharacter(0, charId);
+      if (success) {
+        setPrimaryCharacter(charId);
+      }
     },
     [setPrimaryCharacter, setPlayerCharacter]
   );
+
+  const handleResetDefaults = useCallback(() => {
+    resetSettingsToDefaults();
+    setPlayerCharacter(0, "valen");
+  }, [resetSettingsToDefaults, setPlayerCharacter]);
 
   const {
     saveGame,
@@ -82,7 +89,7 @@ export const GameplayTab = ({ className }: GameplayTabProps = {}): React.ReactEl
       <GameConfigBarSection
         onExportSettings={exportSettingsToFile}
         onImportSettings={importSettingsFromFile}
-        onResetDefaults={resetSettingsToDefaults}
+        onResetDefaults={handleResetDefaults}
         onRestartLocation={restart}
       />
     </div>
