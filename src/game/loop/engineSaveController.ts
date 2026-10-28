@@ -40,6 +40,13 @@ export class EngineSaveController {
     if (state.levelId && state.levelId in LOCATION_REGISTRY) {
       this.context.setCurrentLocationId(state.levelId as LocationId);
     }
+
+    const isTwoPlayer =
+      state.playerCount !== undefined
+        ? state.playerCount === 2
+        : Boolean(state.p2CharacterId || (state.p2Health !== undefined && state.p2Health > 0));
+
+    this.context.setIsTwoPlayer(isTwoPlayer);
     this.context.resetLevel(this.context.getCurrentLocationId());
 
     const success = this.save.applySaveState(
@@ -50,8 +57,6 @@ export class EngineSaveController {
     );
 
     if (success) {
-      const hasP2InSave = state.p2Health > 0;
-      this.context.setIsTwoPlayer(hasP2InSave);
       this.context.setDefeat(false);
       this.context.setVictory(false);
       this.context.notifyStateChanged();

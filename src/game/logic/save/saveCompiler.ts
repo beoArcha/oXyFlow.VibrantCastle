@@ -69,6 +69,7 @@ export class SaveCompiler implements ISaveCompiler {
 
     const state: SaveState = {
       timestamp: new Date().toISOString(),
+      playerCount: p2 ? 2 : 1,
       p1CharacterId,
       p1Health: p1.health,
       p1Mana: p1.mana,
@@ -123,6 +124,7 @@ export class SaveCompiler implements ISaveCompiler {
     const p1 = Array.isArray(players) ? players.find((p) => p && p.id === "player1") : undefined;
     return {
       timestamp: new Date().toISOString(),
+      playerCount: 1,
       p1CharacterId: "valen",
       p1Health: p1?.health ?? 100,
       p1Mana: p1?.mana ?? 100,

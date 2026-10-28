@@ -55,6 +55,7 @@ export type KeyAction = keyof InputMap;
 
 export interface SaveState {
   timestamp: string;
+  playerCount?: 1 | 2;
   p1CharacterId?: "valen" | "aurelia";
   p1Health: number;
   p1Mana: number;

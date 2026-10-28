@@ -55,12 +55,31 @@ describe("Save Subsystem (Decomposed Architecture)", () => {
         expect(res.value.activatedLevers).toEqual([]);
       }
     });
+
+    it("normalizes and preserves playerCount and character identities", () => {
+      const valid = JSON.stringify({
+        levelId: "catacombs",
+        p1Health: 80,
+        checkpointX: 150,
+        checkpointY: 300,
+        playerCount: 2,
+        p1CharacterId: "aurelia",
+        p2CharacterId: "valen",
+      });
+      const res = validator.parseSaveJson(valid);
+      expect(res.ok).toBe(true);
+      if (res.ok) {
+        expect(res.value.playerCount).toBe(2);
+        expect(res.value.p1CharacterId).toBe("aurelia");
+        expect(res.value.p2CharacterId).toBe("valen");
+      }
+    });
   });
 
   describe("SaveCompiler (SRP: Pure compilation of game entities)", () => {
     const compiler = new SaveCompiler();
 
-    it("purely compiles Player and entity state into SaveState DTO", () => {
+    it("purely compiles Player and entity state into SaveState DTO with playerCount: 2", () => {
       const p1 = createMockPlayer({ health: 75, score: 250, characterId: "aurelia", characterName: "Aurelia" });
       const p2 = createMockPlayer({ id: PlayerId.Player2, health: 50, score: 100, characterId: "valen", characterName: "Valen" });
       const enemies: Enemy[] = [
@@ -76,12 +95,23 @@ describe("Save Subsystem (Decomposed Architecture)", () => {
       expect(res.ok).toBe(true);
       if (res.ok) {
         expect(res.value.levelId).toBe("chasm");
+        expect(res.value.playerCount).toBe(2);
         expect(res.value.p1Health).toBe(75);
         expect(res.value.p1Score).toBe(250);
         expect(res.value.p1CharacterId).toBe("aurelia");
         expect(res.value.p2CharacterId).toBe("valen");
         expect(res.value.defeatedEnemies).toEqual(["bat1"]);
         expect(res.value.activatedLevers).toEqual(["lever_1"]);
+      }
+    });
+
+    it("sets playerCount: 1 when only player 1 is active", () => {
+      const p1 = createMockPlayer({ health: 100, characterId: "valen" });
+      const res = compiler.createSaveState([p1], [], [], "courtyard");
+      expect(res.ok).toBe(true);
+      if (res.ok) {
+        expect(res.value.playerCount).toBe(1);
+        expect(res.value.p2CharacterId).toBeUndefined();
       }
     });
 
@@ -108,6 +138,7 @@ describe("Save Subsystem (Decomposed Architecture)", () => {
 
       const state: SaveState = {
         timestamp: new Date().toISOString(),
+        playerCount: 1,
         p1Health: 90,
         p1Mana: 80,
         p1Stamina: 85,
@@ -137,6 +168,90 @@ describe("Save Subsystem (Decomposed Architecture)", () => {
       expect(entities[0].isActivated).toBe(true);
       expect(enemies[0].isDead).toBe(true);
     });
+
+    it("restores dead P2 (health: 0) with full character identity, skills, and isDead flag when playerCount is 2", () => {
+      const p1 = createMockPlayer({ health: 100, characterId: "valen" });
+      const p2 = createMockPlayer({
+        id: PlayerId.Player2,
+        health: 50,
+        characterId: "aurelia",
+        unlockedSkills: ["aether_bolt"],
+      });
+
+      const state: SaveState = {
+        timestamp: new Date().toISOString(),
+        playerCount: 2,
+        p1Health: 80,
+        p1Mana: 90,
+        p1Stamina: 100,
+        p1Score: 500,
+        p1SkillPoints: 1,
+        p1UnlockedSkills: ["solar_flare"],
+        p1CharacterId: "valen",
+        p2Health: 0, // Dead P2
+        p2Mana: 0,
+        p2Stamina: 0,
+        p2Score: 200,
+        p2SkillPoints: 3,
+        p2UnlockedSkills: ["aether_bolt", "aether_barrier"],
+        p2PrimarySpellId: "aether_bolt",
+        p2SecondarySpellId: "aether_barrier",
+        p2CharacterId: "aurelia",
+        levelId: "courtyard",
+        activatedLevers: [],
+        defeatedEnemies: [],
+        checkpointX: 100,
+        checkpointY: 200,
+      };
+
+      const res = applicator.applySaveState(state, [p1, p2]);
+      expect(res.ok).toBe(true);
+      expect(p2.health).toBe(0);
+      expect(p2.isDead).toBe(true);
+      expect(p2.characterId).toBe("aurelia");
+      expect(p2.characterName).toBe("Aurelia");
+      expect(p2.skillPoints).toBe(3);
+      expect(p2.unlockedSkills).toEqual(["aether_bolt", "aether_barrier"]);
+      expect(p2.primarySpellId).toBe("aether_bolt");
+      expect(p2.secondarySpellId).toBe("aether_barrier");
+    });
+
+    it("does not restore or mutate P2 when playerCount is 1 even if 2 player objects are present", () => {
+      const p1 = createMockPlayer({ health: 100, characterId: "valen" });
+      const p2 = createMockPlayer({
+        id: PlayerId.Player2,
+        health: 50,
+        characterId: "aurelia",
+        skillPoints: 99,
+      });
+
+      const state: SaveState = {
+        timestamp: new Date().toISOString(),
+        playerCount: 1,
+        p1Health: 80,
+        p1Mana: 90,
+        p1Stamina: 100,
+        p1Score: 500,
+        p1SkillPoints: 1,
+        p1UnlockedSkills: ["solar_flare"],
+        p1CharacterId: "valen",
+        p2Health: 0,
+        p2Mana: 0,
+        p2Stamina: 0,
+        p2Score: 0,
+        levelId: "courtyard",
+        activatedLevers: [],
+        defeatedEnemies: [],
+        checkpointX: 100,
+        checkpointY: 200,
+      };
+
+      const res = applicator.applySaveState(state, [p1, p2]);
+      expect(res.ok).toBe(true);
+      // P2 should not have been mutated to state values because playerCount === 1
+      expect(p2.health).toBe(50);
+      expect(p2.skillPoints).toBe(99);
+    });
   });
 
   describe("SaveStorage (SRP & DIP: Storage persistence)", () => {
@@ -151,6 +266,7 @@ describe("Save Subsystem (Decomposed Architecture)", () => {
       const storage = new SaveStorage("slot_1", () => mockStorage);
       const testState: SaveState = {
         timestamp: new Date().toISOString(),
+        playerCount: 1,
         p1Health: 100,
         p1Mana: 100,
         p1Stamina: 100,

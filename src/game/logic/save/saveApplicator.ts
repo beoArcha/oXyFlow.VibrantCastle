@@ -81,8 +81,13 @@ export class SaveApplicator implements ISaveApplicator {
       p1.vx = 0;
       p1.vy = 0;
 
+      const isTwoPlayerSave =
+        state.playerCount !== undefined
+          ? state.playerCount === 2
+          : Boolean(state.p2CharacterId || (state.p2Health !== undefined && state.p2Health > 0));
+
       const p2 = players.find((p) => p && p.id === "player2");
-      if (p2 && typeof state.p2Health === "number" && state.p2Health > 0) {
+      if (p2 && isTwoPlayerSave && typeof state.p2Health === "number") {
         if (state.p2CharacterId) {
           p2.characterId = state.p2CharacterId;
           p2.characterName = state.p2CharacterId === "valen" ? "Valen" : "Aurelia";
