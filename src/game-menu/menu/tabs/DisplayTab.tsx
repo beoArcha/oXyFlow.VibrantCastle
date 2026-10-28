@@ -4,7 +4,7 @@ import { Button, Paragraph, Text } from "@ui";
 import { useSettings } from "@context/SettingsContext";
 import { useI18n } from "@context/I18nContext";
 import { useSafeTimeout } from "@context/hooks/useSafeTimeout";
-import { DEFAULT_SETTINGS } from "@context/settingsTypes";
+import { DEFAULT_SETTINGS } from "@context";
 import { DisplaySettingsSection } from "./DisplaySettingsSection";
 import { CharacterStudioSection } from "./CharacterStudioSection";
 import { cn } from "@lib/utils";

@@ -4,7 +4,7 @@ import {
   attachViewportCanvas,
   resizeViewportCanvas,
   executeCanvasClickTeleport,
-} from "@context/GameSessionContext";
+} from "@context/ViewportContext";
 import type { HUDViewportCanvasProps } from "./types";
 
 export type { HUDViewportCanvasProps };
@@ -58,7 +58,6 @@ export const HUDViewportCanvas: React.FC<HUDViewportCanvasProps> = ({
         tabIndex={0}
         onClick={handleCanvasClick}
         style={canvasStyle}
-        className="block focus:outline-none cursor-crosshair transition-all duration-200"
       />
       {children}
     </div>

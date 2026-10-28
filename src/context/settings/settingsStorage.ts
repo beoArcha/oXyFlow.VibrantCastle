@@ -127,7 +127,12 @@ export class SettingsStorage implements ISettingsStorage {
     try {
       const text = await file.text();
       return this.importFromJson(text);
-    } catch {
+    } catch (err) {
+      this.logger.error(
+        "Failed to read settings file content:",
+        { fileName: file.name, fileSize: file.size, fileType: file.type },
+        err
+      );
       return null;
     }
   }

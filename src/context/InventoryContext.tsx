@@ -1,16 +1,16 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
+import React, { createContext, useContext, useState, useMemo, useCallback } from "react";
 import { IPlayerScopedContext, EngineBoundProviderProps } from "./IContext";
 import { useEngineSubscription } from "./hooks/useEngineSubscription";
 import { GameEngine } from "@game/loop/engine";
 import {
   InventoryState,
   EquipmentState,
-  Player,
 } from "@game/types";
 import {
   calculatePlayerDerivedStats,
 } from "@game/logic/inventory";
 import { MissingContextProviderError } from "@lib/errors";
+import { resolveActivePlayer, isValidPlayerIndex } from "./utils/playerResolver";
 
 /**
  * Public contract for inventory domain UI state and actions.
@@ -45,26 +45,13 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   const [activePlayerIndex, setActivePlayerIndex] = useState(0);
   const [stateVersion, setStateVersion] = useState(0);
 
+  // Synchronize stateVersion with engine game loop ticks
   useEngineSubscription(() => {
     setStateVersion((v) => v + 1);
   }, engine);
 
-  useEffect(() => {
-    if (!engine?.eventBus) return;
-    let isMounted = true;
-    const unsubscribe = engine.eventBus.on("ITEM_CONSUMED", () => {
-      if (isMounted) {
-        setStateVersion((v) => v + 1);
-      }
-    });
-    return () => {
-      isMounted = false;
-      unsubscribe();
-    };
-  }, [engine]);
-
   const activePlayer = useMemo(() => {
-    const raw = activePlayerIndex === 1 && engine.players[1] ? engine.players[1] : engine.players[0];
+    const raw = resolveActivePlayer(engine.players, activePlayerIndex, { allowFallback: true });
     if (!raw) return undefined;
     return {
       ...raw,
@@ -101,6 +88,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   const equipItem = useCallback(
     (backpackIndex: number, playerIndex?: number): boolean => {
       const pIdx = playerIndex !== undefined ? playerIndex : activePlayerIndex;
+      if (!isValidPlayerIndex(engine.players, pIdx)) return false;
       return engine.equipPlayerItem(pIdx, backpackIndex);
     },
     [engine, activePlayerIndex]
@@ -109,6 +97,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   const unequipItem = useCallback(
     (slot: keyof EquipmentState, playerIndex?: number): boolean => {
       const pIdx = playerIndex !== undefined ? playerIndex : activePlayerIndex;
+      if (!isValidPlayerIndex(engine.players, pIdx)) return false;
       return engine.unequipPlayerItem(pIdx, slot);
     },
     [engine, activePlayerIndex]
@@ -117,6 +106,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   const usePotion = useCallback(
     (slotIndex: number, playerIndex?: number): boolean => {
       const pIdx = playerIndex !== undefined ? playerIndex : activePlayerIndex;
+      if (!isValidPlayerIndex(engine.players, pIdx)) return false;
       return engine.usePlayerPotion(pIdx, slotIndex);
     },
     [engine, activePlayerIndex]
@@ -125,6 +115,7 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
   const discardItem = useCallback(
     (backpackIndex: number, playerIndex?: number): boolean => {
       const pIdx = playerIndex !== undefined ? playerIndex : activePlayerIndex;
+      if (!isValidPlayerIndex(engine.players, pIdx)) return false;
       return engine.discardPlayerItem(pIdx, backpackIndex);
     },
     [engine, activePlayerIndex]
@@ -166,14 +157,14 @@ export const InventoryProvider: React.FC<InventoryProviderProps> = ({ children, 
 };
 
 /**
- * Hook providing access to player inventory, equipment, item usage, and derived stats.
+ * Hook providing access to player inventory, equipment, and potion actions.
  *
  * @throws {MissingContextProviderError} when used outside an InventoryProvider.
  */
 export function useInventory(): InventoryContextValue {
-  const ctx = useContext(InventoryContext);
-  if (!ctx) {
+  const context = useContext(InventoryContext);
+  if (!context) {
     throw new MissingContextProviderError("useInventory", "InventoryProvider");
   }
-  return ctx;
+  return context;
 }

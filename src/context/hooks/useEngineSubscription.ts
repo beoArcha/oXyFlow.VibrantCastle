@@ -9,7 +9,7 @@ export interface EngineSubscribable {
  * Reusable composition hook to subscribe to game engine lifecycle and state notifications.
  *
  * Guarantees proper unbinding on unmount, handles engine instance updates,
- * and maintains stable callback reference to prevent unnecessary unbind/rebind cycles (DRY & SRP).
+ * and maintains a stable callback reference across renders to prevent unnecessary re-subscription cycles.
  */
 export function useEngineSubscription(
   onUpdate: () => void,

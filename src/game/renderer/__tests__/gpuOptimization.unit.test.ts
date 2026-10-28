@@ -1,6 +1,6 @@
 import { describe, it, expect } from "bun:test";
 import defaultSettings from "@data/defaults/defaultSettings.json";
-import { DEFAULT_SETTINGS } from "@context/settingsTypes";
+import { DEFAULT_SETTINGS } from "@context";
 import { ProceduralBackdropCache } from "../proceduralBackdropCache";
 import { GameRenderer } from "../renderer";
 import { createMockCanvas } from "@test-utils";

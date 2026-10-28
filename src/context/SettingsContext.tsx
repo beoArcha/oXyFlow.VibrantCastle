@@ -12,7 +12,7 @@ import {
   DEFAULT_SETTINGS,
   SettingsContextValue,
   HudSettings,
-} from "./settingsTypes";
+} from "./settings/settingsTypes";
 import {
   ISettingsStorage,
   defaultSettingsStorage,
@@ -20,6 +20,9 @@ import {
 } from "./settings";
 import { MissingContextProviderError } from "@lib/errors";
 import { BaseProviderProps } from "./IContext";
+import { getLogger } from "@lib/logger";
+
+const settingsContextLogger = getLogger("context:settings");
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 
@@ -53,7 +56,12 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
       const reloaded = storage.load();
       setSettings(reloaded);
       return true;
-    } catch {
+    } catch (err) {
+      settingsContextLogger.warn(
+        "Failed to reload settings from storage, maintaining active configuration:",
+        { context: "loadFromLocalStorage" },
+        err
+      );
       return false;
     }
   }, [storage]);
@@ -78,11 +86,11 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
     [storage]
   );
 
-  const exportSettingsToFile = useCallback(() => {
+  const exportToFile = useCallback(() => {
     storage.exportToFile(settings);
   }, [storage, settings]);
 
-  const importSettingsFromFile = useCallback(
+  const importFromFile = useCallback(
     async (file: File): Promise<boolean> => {
       const merged = await storage.importFromFile(file);
       if (merged) {
@@ -146,10 +154,10 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
       loadFromLocalStorage,
       exportToJson,
       importFromJson,
-      exportSettingsToFile,
-      importSettingsFromFile,
-      exportToFile: exportSettingsToFile,
-      importFromFile: importSettingsFromFile,
+      exportToFile,
+      importFromFile,
+      exportSettingsToFile: exportToFile,
+      importSettingsFromFile: importFromFile,
     }),
     [
       settings,
@@ -164,8 +172,8 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
       loadFromLocalStorage,
       exportToJson,
       importFromJson,
-      exportSettingsToFile,
-      importSettingsFromFile,
+      exportToFile,
+      importFromFile,
     ]
   );
 

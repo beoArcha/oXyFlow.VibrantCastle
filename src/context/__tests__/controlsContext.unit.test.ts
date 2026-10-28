@@ -24,27 +24,33 @@ describe("ControlsContext - Engine to UI Input Bridge", () => {
   });
 
   describe("Keyboard Operations", () => {
-    it("retrieves keyboard bindings view model for player 1 and player 2", () => {
+    it("should retrieve keyboard bindings view model when players are requested", () => {
+      // Arrange & Act
       const p1Bindings = getKeyboardBindingsVM(PlayerId.Player1);
       const p2Bindings = getKeyboardBindingsVM(PlayerId.Player2);
 
+      // Assert
       expect(p1Bindings).toBeDefined();
       expect(p1Bindings.jump).toBeDefined();
       expect(Array.isArray(p1Bindings.jump)).toBe(true);
-
       expect(p2Bindings).toBeDefined();
       expect(p2Bindings.jump).toBeDefined();
     });
 
-    it("resets keyboard bindings to default configuration", () => {
+    it("should reset keyboard bindings to default configuration when resetKeyboardBindings is called", () => {
+      // Arrange
       gameInputs.setKeyboardBinding(PlayerId.Player1, "jump", ["KeyZ"]);
       expect(getKeyboardBindingsVM(PlayerId.Player1).jump).toEqual(["KeyZ"]);
 
+      // Act
       resetKeyboardBindings(PlayerId.Player1);
+
+      // Assert
       expect(getKeyboardBindingsVM(PlayerId.Player1).jump).not.toEqual(["KeyZ"]);
     });
 
-    it("identifies reserved system and browser keys", () => {
+    it("should identify reserved system and browser keys accurately", () => {
+      // Arrange & Act & Assert
       expect(isReservedSystemKey("Tab", "Tab")).toBe(true);
       expect(isReservedSystemKey("F1", "F1")).toBe(true);
       expect(isReservedSystemKey("MetaLeft", "Meta")).toBe(true);
@@ -52,27 +58,31 @@ describe("ControlsContext - Engine to UI Input Bridge", () => {
       expect(isReservedSystemKey("Space", " ")).toBe(false);
     });
 
-    it("identifies rebind cancel keys (Escape)", () => {
+    it("should identify rebind cancel keys when Escape is pressed", () => {
+      // Arrange & Act & Assert
       expect(isRebindCancelKey("Escape", "Escape")).toBe(true);
       expect(isRebindCancelKey("KeyW", "w")).toBe(false);
     });
 
-    it("normalizes scan codes and semantic characters without duplicates", () => {
+    it("should normalize scan codes and semantic characters without duplicates", () => {
+      // Arrange & Act
       const normalized = normalizeKeyScanCodes("KeyW", "w");
+
+      // Assert
       expect(normalized).toContain("KeyW");
       expect(normalized).toContain("w");
-      // KeyW, w, w (lowercased) -> deduplicated to 2 entries
       expect(normalized.length).toBe(2);
     });
 
-    it("rebinds keyboard action when key is valid and rejects reserved/escape keys", () => {
+    it("should reject rebind when key is reserved or cancel, and accept when valid", () => {
+      // Arrange & Act
       const escapeResult = rebindKeyboardAction(PlayerId.Player1, "jump", "Escape", "Escape");
-      expect(escapeResult).toBe(false);
-
       const reservedResult = rebindKeyboardAction(PlayerId.Player1, "jump", "F5", "F5");
-      expect(reservedResult).toBe(false);
-
       const validResult = rebindKeyboardAction(PlayerId.Player1, "jump", "KeyK", "k");
+
+      // Assert
+      expect(escapeResult).toBe(false);
+      expect(reservedResult).toBe(false);
       expect(validResult).toBe(true);
 
       const updated = getKeyboardBindingsVM(PlayerId.Player1);
@@ -80,65 +90,96 @@ describe("ControlsContext - Engine to UI Input Bridge", () => {
       expect(updated.jump).toContain("k");
     });
 
-    it("subscribes and unsubscribes cleanly to keyboard binding changes", () => {
+    it("should subscribe and unsubscribe cleanly to keyboard binding changes", () => {
+      // Arrange
       let callCount = 0;
       const unsubscribe = subscribeToKeyboardBindings(() => {
         callCount++;
       });
 
+      // Act
       gameInputs.setKeyboardBinding(PlayerId.Player1, "jump", ["Space"]);
+
+      // Assert
       expect(callCount).toBe(1);
 
+      // Act
       unsubscribe();
       gameInputs.setKeyboardBinding(PlayerId.Player1, "jump", ["KeyJ"]);
+
+      // Assert
       expect(callCount).toBe(1);
     });
   });
 
   describe("Gamepad Operations", () => {
-    it("reads connected gamepads view model", () => {
+    it("should read connected gamepads view model as an array", () => {
+      // Arrange & Act
       const pads = getConnectedGamepadsVM();
+
+      // Assert
       expect(Array.isArray(pads)).toBe(true);
     });
 
-    it("reads gamepad bindings view model for player 1", () => {
+    it("should read gamepad bindings view model for player 1", () => {
+      // Arrange & Act
       const bindings = getGamepadBindingsVM(PlayerId.Player1);
+
+      // Assert
       expect(bindings).toBeDefined();
       expect(typeof bindings.jump).toBe("number");
       expect(typeof bindings.action1).toBe("number");
     });
 
-    it("rebinds gamepad action and resets to defaults", () => {
+    it("should rebind gamepad action and reset to defaults", () => {
+      // Arrange & Act
       rebindGamepadAction(PlayerId.Player1, "jump", 7);
+
+      // Assert
       expect(getGamepadBindingsVM(PlayerId.Player1).jump).toBe(7);
 
+      // Act
       resetGamepadBindings(PlayerId.Player1);
+
+      // Assert
       expect(getGamepadBindingsVM(PlayerId.Player1).jump).not.toBe(7);
     });
 
-    it("subscribes to gamepad connection and binding events", () => {
+    it("should subscribe to gamepad connection and binding events", () => {
+      // Arrange
       let connCalls = 0;
       const unsubConn = subscribeToGamepadConnection(() => {
         connCalls++;
       });
+
+      // Assert
       expect(typeof unsubConn).toBe("function");
       unsubConn();
 
+      // Arrange
       let bindCalls = 0;
       const unsubBind = subscribeToGamepadBindings(() => {
         bindCalls++;
       });
+
+      // Act
       rebindGamepadAction(PlayerId.Player1, "action1", 3);
+
+      // Assert
       expect(bindCalls).toBe(1);
       unsubBind();
     });
 
-    it("starts gamepad button capture and returns a cleanup cancel function", () => {
+    it("should start gamepad button capture and return a cleanup cancel function", () => {
+      // Arrange
       let detectedButton = -1;
+
+      // Act
       const stopCapture = startGamepadButtonCapture(0, (btn) => {
         detectedButton = btn;
       });
 
+      // Assert
       expect(typeof stopCapture).toBe("function");
       stopCapture();
       expect(detectedButton).toBe(-1);

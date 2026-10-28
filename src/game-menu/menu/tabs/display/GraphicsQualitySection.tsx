@@ -14,7 +14,7 @@ import {
 } from "@ui";
 import { useSettings } from "@context/SettingsContext";
 import { useI18n } from "@context/I18nContext";
-import type { TargetFps, AssetQuality } from "@context/settingsTypes";
+import type { TargetFps, AssetQuality } from "@context";
 import { cn } from "@lib/utils";
 
 export interface GraphicsQualitySectionProps {
@@ -184,4 +184,3 @@ export const GraphicsQualitySection = ({
     </div>
   );
 };
-
