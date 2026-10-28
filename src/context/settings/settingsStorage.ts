@@ -159,9 +159,13 @@ export class SettingsStorage implements ISettingsStorage {
       },
     };
 
+    const primaryCharacter: "valen" | "aurelia" =
+      data.primaryCharacter === "aurelia" ? "aurelia" : "valen";
+
     return {
       ...DEFAULT_SETTINGS,
       ...(data as Partial<GameSettingsState>),
+      primaryCharacter,
       display: { ...DEFAULT_SETTINGS.display, ...display },
       hud: {
         ...DEFAULT_SETTINGS.hud,
