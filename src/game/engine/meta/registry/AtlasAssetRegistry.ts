@@ -23,7 +23,7 @@ let viteMetaModules: Record<string, unknown> = {};
 
 if (typeof import.meta !== "undefined" && typeof (import.meta as { glob?: unknown }).glob === "function") {
   try {
-    viteImageModules = import.meta.glob("../../../../assets/**/*.{png,jpg,jpeg,webp}", {
+    viteImageModules = import.meta.glob("../../../../assets/**/*.{png,jpg,jpeg,webp,svg}", {
       eager: true,
       import: "default",
     });
