@@ -56,6 +56,22 @@ export const bestiaryTranslations: Record<LanguageCode, BestiaryI18n> = {
     bestiaryBastionSentinelBossTactics: "Naprzemienne fazy ciosów młotem i wiązek aetheru. Wyczekuj okien po szarży.",
     bestiaryBastionSentinelBossLore: "Nikt nie przeszedł przez Żelazną Bramę bez zgody tego bezdusznego tytana.",
 
+    bestiaryGearMiteDesc: "Drobny mosiężny żuk z trybów, śmigający po podłogach dziedzińca i wieży zegarowej.",
+    bestiaryGearMiteTactics: "Jest szybki, lecz kruchy. Jedno cięcie wystarczy, byle nie dać mu się wymknąć.",
+    bestiaryGearMiteLore: "Wyskoczył ze szczeliny jednego z mechanizmów i od tamtej pory nikt nie wie, kto go nakręca.",
+
+    bestiaryThornCreeperDesc: "Zakorzeniona bulwa z bursztynowych cierni z Przepaści Cierni. Nigdy się nie rusza.",
+    bestiaryThornCreeperTactics: "Nie ściga gracza, więc atakuj z dystansu lub omiń jego zasięg skokiem.",
+    bestiaryThornCreeperLore: "Rośnie tam, gdzie spadła pierwsza kropla skażonego aetheru, i nie zapomina żadnego intruza.",
+
+    bestiaryLanternWardenDesc: "Pływająca mosiężna latarnia z żarzącym się, bursztynowym okiem. Dryfuje powoli korytarzami.",
+    bestiaryLanternWardenTactics: "Jego ruch jest powolny i przewidywalny. Zestrzel go z dystansu, zanim zbliży się do platform.",
+    bestiaryLanternWardenLore: "Ktoś kiedyś zapalił go, by oświetlał drogę. Nikt już nie pamięta, kogo miał prowadzić.",
+
+    bestiaryChronoHoundDesc: "Smukły zegarowy ogar pędzący wzdłuż trasy patrolu w bastionie i sanktuarium.",
+    bestiaryChronoHoundTactics: "Ma krótki zasięg reakcji, ale ogromną prędkość. Wyczekaj zwrotu na krawędzi patrolu i uderz.",
+    bestiaryChronoHoundLore: "Jego sprężyna nakręca się szybciej, niż bije serce. Mówią, że poluje na sam czas.",
+
     // Souls
     soulTrainingDummyName: "Dusza Manekina",
     soulTrainingDummyDesc: "Pasywnie zwiększa odporność na odrzut (poise) o 10%.",
@@ -86,7 +102,15 @@ export const bestiaryTranslations: Record<LanguageCode, BestiaryI18n> = {
     soulBastionGargoyleName: "Dusza Gargulca Bastionu",
     soulBastionGargoyleDesc: "Uderzenie ze skrzydeł tworzące barierę kamienną.",
     soulBastionSentinelBossName: "Dusza Komendanta Bastionu",
-    soulBastionSentinelBossDesc: "Przyzywa wirujące młoty obronne orbitujące wokół gracza."
+    soulBastionSentinelBossDesc: "Przyzywa wirujące młoty obronne orbitujące wokół gracza.",
+    soulGearMiteName: "Dusza Trybika",
+    soulGearMiteDesc: "Wyzwala szybkie kłapnięcie małych szczypiec.",
+    soulThornCreeperName: "Dusza Cierniowego Pędnika",
+    soulThornCreeperDesc: "Zasila ostrze salwą bursztynowych cierni.",
+    soulLanternWardenName: "Dusza Latarniowego Stróża",
+    soulLanternWardenDesc: "Przyzywa promień rozświetlający mrok przed graczem.",
+    soulChronoHoundName: "Dusza Chrono-Ogara",
+    soulChronoHoundDesc: "Pozwala na błyskawiczne cięcie w pędzie."
   },
   en: {
     bestiaryTrainingDummyDesc: "A practice straw dummy used by palace guards to hone their martial prowess.",
@@ -141,6 +165,22 @@ export const bestiaryTranslations: Record<LanguageCode, BestiaryI18n> = {
     bestiaryBastionSentinelBossTactics: "Alternates between hammer shockwaves and sweeping beams. Exploit recovery after charges.",
     bestiaryBastionSentinelBossLore: "None have crossed the Iron Gate without the solemn accord of this silent titan.",
 
+    bestiaryGearMiteDesc: "A tiny brass cog-beetle that skitters along the floors of the courtyard and clocktower.",
+    bestiaryGearMiteTactics: "Fast but fragile. A single slash is enough, as long as it does not slip away.",
+    bestiaryGearMiteLore: "It crawled out of a gap in some great mechanism, and no one knows who winds it.",
+
+    bestiaryThornCreeperDesc: "A rooted bulb of amber thorns from the Chasm of Thorns. It never moves.",
+    bestiaryThornCreeperTactics: "It does not chase you, so strike from range or leap past its reach.",
+    bestiaryThornCreeperLore: "It grows where the first drop of tainted aether fell, and forgets no trespasser.",
+
+    bestiaryLanternWardenDesc: "A floating brass lantern with a glowing amber eye, drifting slowly along corridors.",
+    bestiaryLanternWardenTactics: "Its drift is slow and predictable. Shoot it from range before it nears the platforms.",
+    bestiaryLanternWardenLore: "Someone once lit it to illuminate the way. No one remembers whom it was meant to guide.",
+
+    bestiaryChronoHoundDesc: "A lean clockwork hound that sprints along its patrol in the bastion and sanctuary.",
+    bestiaryChronoHoundTactics: "Short reaction range but blistering speed. Wait for it to turn at the patrol edge and strike.",
+    bestiaryChronoHoundLore: "Its mainspring winds faster than a heart beats. They say it hunts time itself.",
+
     // Souls
     soulTrainingDummyName: "Dummy Soul",
     soulTrainingDummyDesc: "Passively increases poise and knockback resistance by 10%.",
@@ -171,6 +211,14 @@ export const bestiaryTranslations: Record<LanguageCode, BestiaryI18n> = {
     soulBastionGargoyleName: "Bastion Gargoyle Soul",
     soulBastionGargoyleDesc: "Creates a defensive stone wing shield upon rolling.",
     soulBastionSentinelBossName: "Bastion Sentinel Soul",
-    soulBastionSentinelBossDesc: "Summons orbiting defensive hammers rotating around the player."
+    soulBastionSentinelBossDesc: "Summons orbiting defensive hammers rotating around the player.",
+    soulGearMiteName: "Gear Mite Soul",
+    soulGearMiteDesc: "Unleashes a quick snap of tiny brass mandibles.",
+    soulThornCreeperName: "Thorn Creeper Soul",
+    soulThornCreeperDesc: "Empowers the blade with a volley of amber thorns.",
+    soulLanternWardenName: "Lantern Warden Soul",
+    soulLanternWardenDesc: "Summons a beam that cuts through the dark ahead.",
+    soulChronoHoundName: "Chrono Hound Soul",
+    soulChronoHoundDesc: "Allows a lightning slash mid-sprint."
   }
 };

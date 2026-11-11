@@ -1090,6 +1090,10 @@ export interface LocationsI18n {
   monsterAetherWisp: string;
   monsterAetherArchon: string;
   monsterShadowKnight: string;
+  monsterGearMite: string;
+  monsterThornCreeper: string;
+  monsterLanternWarden: string;
+  monsterChronoHound: string;
 }
 
 export interface NarrationsI18n {
@@ -1207,6 +1211,22 @@ export interface BestiaryI18n {
   bestiaryBastionSentinelBossTactics: string;
   bestiaryBastionSentinelBossLore: string;
 
+  bestiaryGearMiteDesc: string;
+  bestiaryGearMiteTactics: string;
+  bestiaryGearMiteLore: string;
+
+  bestiaryThornCreeperDesc: string;
+  bestiaryThornCreeperTactics: string;
+  bestiaryThornCreeperLore: string;
+
+  bestiaryLanternWardenDesc: string;
+  bestiaryLanternWardenTactics: string;
+  bestiaryLanternWardenLore: string;
+
+  bestiaryChronoHoundDesc: string;
+  bestiaryChronoHoundTactics: string;
+  bestiaryChronoHoundLore: string;
+
   // Soul Drops & Tactical Souls
   soulTrainingDummyName: string;
   soulTrainingDummyDesc: string;
@@ -1238,6 +1258,14 @@ export interface BestiaryI18n {
   soulBastionGargoyleDesc: string;
   soulBastionSentinelBossName: string;
   soulBastionSentinelBossDesc: string;
+  soulGearMiteName: string;
+  soulGearMiteDesc: string;
+  soulThornCreeperName: string;
+  soulThornCreeperDesc: string;
+  soulLanternWardenName: string;
+  soulLanternWardenDesc: string;
+  soulChronoHoundName: string;
+  soulChronoHoundDesc: string;
 }
 
 /**

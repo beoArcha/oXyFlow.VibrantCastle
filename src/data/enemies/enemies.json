@@ -169,6 +169,12 @@
           "lore": 15
         }
       },
+      "atlas": {
+        "presetId": "court_sentinel",
+        "defaultAnimation": "idle",
+        "hitAnimation": "hit",
+        "deathAnimation": "death"
+      },
       "proceduralFallback": {
         "bodyColor": "#78350f",
         "accentColor": "#d97706",
@@ -223,6 +229,12 @@
           "lore": 15
         }
       },
+      "atlas": {
+        "presetId": "chasm_gargoyle",
+        "defaultAnimation": "fly",
+        "hitAnimation": "hit",
+        "deathAnimation": "death"
+      },
       "proceduralFallback": {
         "bodyColor": "#4c1d95",
         "accentColor": "#7c3aed",
@@ -275,6 +287,12 @@
           "tactics": 5,
           "lore": 15
         }
+      },
+      "atlas": {
+        "presetId": "clockwork_automaton",
+        "defaultAnimation": "idle",
+        "hitAnimation": "hit",
+        "deathAnimation": "death"
       },
       "proceduralFallback": {
         "bodyColor": "#92400e",
@@ -330,6 +348,12 @@
           "lore": 15
         }
       },
+      "atlas": {
+        "presetId": "aether_sentinel",
+        "defaultAnimation": "idle",
+        "hitAnimation": "hit",
+        "deathAnimation": "death"
+      },
       "proceduralFallback": {
         "bodyColor": "#1e3a8a",
         "accentColor": "#06b6d4",
@@ -384,6 +408,12 @@
           "lore": 15
         }
       },
+      "atlas": {
+        "presetId": "aether_archon",
+        "defaultAnimation": "fly",
+        "hitAnimation": "hit",
+        "deathAnimation": "death"
+      },
       "proceduralFallback": {
         "bodyColor": "#312e81",
         "accentColor": "#818cf8",
@@ -436,6 +466,12 @@
           "tactics": 5,
           "lore": 15
         }
+      },
+      "atlas": {
+        "presetId": "shadow_knight",
+        "defaultAnimation": "idle",
+        "hitAnimation": "hit",
+        "deathAnimation": "death"
       },
       "proceduralFallback": {
         "bodyColor": "#0f172a",
@@ -491,6 +527,12 @@
           "lore": 15
         }
       },
+      "atlas": {
+        "presetId": "aether_wisp",
+        "defaultAnimation": "fly",
+        "hitAnimation": "hit",
+        "deathAnimation": "death"
+      },
       "proceduralFallback": {
         "bodyColor": "#0369a1",
         "accentColor": "#06b6d4",
@@ -505,8 +547,8 @@
       "isDummy": false,
       "isAerial": false,
       "dimensions": {
-        "width": 45,
-        "height": 50
+        "width": 56,
+        "height": 30
       },
       "stats": {
         "health": 80,
@@ -544,6 +586,12 @@
           "tactics": 5,
           "lore": 15
         }
+      },
+      "atlas": {
+        "presetId": "chasm_crawler",
+        "defaultAnimation": "idle",
+        "hitAnimation": "hit",
+        "deathAnimation": "death"
       },
       "proceduralFallback": {
         "bodyColor": "#431407",
@@ -778,6 +826,12 @@
           "lore": 15
         }
       },
+      "atlas": {
+        "presetId": "chasm_gargoyle",
+        "defaultAnimation": "fly",
+        "hitAnimation": "hit",
+        "deathAnimation": "death"
+      },
       "proceduralFallback": {
         "bodyColor": "#57534e",
         "accentColor": "#ea580c",
@@ -832,10 +886,256 @@
           "lore": 10
         }
       },
+      "atlas": {
+        "presetId": "court_sentinel",
+        "defaultAnimation": "idle",
+        "hitAnimation": "hit",
+        "deathAnimation": "death"
+      },
       "proceduralFallback": {
         "bodyColor": "#431407",
         "accentColor": "#ea580c",
         "eyesColor": "#ef4444"
+      }
+    },
+    "gear_mite": {
+      "id": "gear_mite",
+      "nameKey": "monsterGearMite",
+      "defaultName": "Gear Mite",
+      "category": "ground_patrol",
+      "isDummy": false,
+      "isAerial": false,
+      "dimensions": {
+        "width": 26,
+        "height": 18
+      },
+      "stats": {
+        "health": 20,
+        "maxHealth": 20,
+        "speed": 1.6,
+        "attackPower": 6,
+        "scoreReward": 80
+      },
+      "abilities": ["chasm_crawler_bite"],
+      "soulDrop": {
+        "soulId": "soul_gear_mite",
+        "type": "bullet",
+        "dropRate": 0.2,
+        "grantedSkillId": "chasm_crawler_bite",
+        "manaCost": 6,
+        "icon": "Cog",
+        "i18n": {
+          "nameKey": "soulGearMiteName",
+          "descriptionKey": "soulGearMiteDesc"
+        }
+      },
+      "elementalResistances": {
+        "physical": 0.1,
+        "fire": -0.2,
+        "frost": 0,
+        "astral": 0,
+        "shadow": 0.1
+      },
+      "bestiary": {
+        "bestiaryKey": "bestiaryGearMiteDesc",
+        "tacticsKey": "bestiaryGearMiteTactics",
+        "loreQuoteKey": "bestiaryGearMiteLore",
+        "killThresholds": {
+          "basic": 1,
+          "tactics": 5,
+          "lore": 15
+        }
+      },
+      "atlas": {
+        "presetId": "gear_mite",
+        "defaultAnimation": "idle",
+        "hitAnimation": "hit",
+        "deathAnimation": "death"
+      },
+      "proceduralFallback": {
+        "bodyColor": "#92400e",
+        "accentColor": "#d97706",
+        "eyesColor": "#fde68a"
+      }
+    },
+    "thorn_creeper": {
+      "id": "thorn_creeper",
+      "nameKey": "monsterThornCreeper",
+      "defaultName": "Thorn Creeper",
+      "category": "ground_patrol",
+      "isDummy": false,
+      "isAerial": false,
+      "dimensions": {
+        "width": 34,
+        "height": 44
+      },
+      "stats": {
+        "health": 50,
+        "maxHealth": 50,
+        "speed": 0,
+        "attackPower": 12,
+        "scoreReward": 150
+      },
+      "abilities": ["emerald_barrage"],
+      "soulDrop": {
+        "soulId": "soul_thorn_creeper",
+        "type": "enchant",
+        "dropRate": 0.15,
+        "grantedSkillId": "emerald_barrage",
+        "manaCost": 10,
+        "icon": "Sprout",
+        "i18n": {
+          "nameKey": "soulThornCreeperName",
+          "descriptionKey": "soulThornCreeperDesc"
+        }
+      },
+      "elementalResistances": {
+        "physical": 0.2,
+        "fire": -0.5,
+        "frost": 0.1,
+        "astral": 0,
+        "shadow": 0.2
+      },
+      "bestiary": {
+        "bestiaryKey": "bestiaryThornCreeperDesc",
+        "tacticsKey": "bestiaryThornCreeperTactics",
+        "loreQuoteKey": "bestiaryThornCreeperLore",
+        "killThresholds": {
+          "basic": 1,
+          "tactics": 5,
+          "lore": 15
+        }
+      },
+      "atlas": {
+        "presetId": "thorn_creeper",
+        "defaultAnimation": "idle",
+        "hitAnimation": "hit",
+        "deathAnimation": "death"
+      },
+      "proceduralFallback": {
+        "bodyColor": "#713f12",
+        "accentColor": "#f59e0b",
+        "eyesColor": "#fcd34d"
+      }
+    },
+    "lantern_warden": {
+      "id": "lantern_warden",
+      "nameKey": "monsterLanternWarden",
+      "defaultName": "Lantern Warden",
+      "category": "aerial",
+      "isDummy": false,
+      "isAerial": true,
+      "dimensions": {
+        "width": 30,
+        "height": 40
+      },
+      "stats": {
+        "health": 35,
+        "maxHealth": 35,
+        "speed": 0.6,
+        "attackPower": 10,
+        "scoreReward": 180
+      },
+      "abilities": ["sentinel_aether_beam"],
+      "soulDrop": {
+        "soulId": "soul_lantern_warden",
+        "type": "guardian",
+        "dropRate": 0.14,
+        "grantedSkillId": "sentinel_aether_beam",
+        "manaCost": 12,
+        "icon": "Flame",
+        "i18n": {
+          "nameKey": "soulLanternWardenName",
+          "descriptionKey": "soulLanternWardenDesc"
+        }
+      },
+      "elementalResistances": {
+        "physical": 0,
+        "fire": 0.5,
+        "frost": -0.2,
+        "astral": 0.1,
+        "shadow": -0.3
+      },
+      "bestiary": {
+        "bestiaryKey": "bestiaryLanternWardenDesc",
+        "tacticsKey": "bestiaryLanternWardenTactics",
+        "loreQuoteKey": "bestiaryLanternWardenLore",
+        "killThresholds": {
+          "basic": 1,
+          "tactics": 5,
+          "lore": 15
+        }
+      },
+      "atlas": {
+        "presetId": "lantern_warden",
+        "defaultAnimation": "fly",
+        "hitAnimation": "hit",
+        "deathAnimation": "death"
+      },
+      "proceduralFallback": {
+        "bodyColor": "#a16207",
+        "accentColor": "#fbbf24",
+        "eyesColor": "#fb923c"
+      }
+    },
+    "chrono_hound": {
+      "id": "chrono_hound",
+      "nameKey": "monsterChronoHound",
+      "defaultName": "Chrono Hound",
+      "category": "ground_patrol",
+      "isDummy": false,
+      "isAerial": false,
+      "dimensions": {
+        "width": 48,
+        "height": 34
+      },
+      "stats": {
+        "health": 60,
+        "maxHealth": 60,
+        "speed": 1.8,
+        "attackPower": 14,
+        "scoreReward": 260
+      },
+      "abilities": ["shadow_knight_slash"],
+      "soulDrop": {
+        "soulId": "soul_chrono_hound",
+        "type": "bullet",
+        "dropRate": 0.12,
+        "grantedSkillId": "shadow_knight_slash",
+        "manaCost": 12,
+        "icon": "Dog",
+        "i18n": {
+          "nameKey": "soulChronoHoundName",
+          "descriptionKey": "soulChronoHoundDesc"
+        }
+      },
+      "elementalResistances": {
+        "physical": 0.1,
+        "fire": 0,
+        "frost": -0.2,
+        "astral": 0.2,
+        "shadow": 0.2
+      },
+      "bestiary": {
+        "bestiaryKey": "bestiaryChronoHoundDesc",
+        "tacticsKey": "bestiaryChronoHoundTactics",
+        "loreQuoteKey": "bestiaryChronoHoundLore",
+        "killThresholds": {
+          "basic": 1,
+          "tactics": 5,
+          "lore": 15
+        }
+      },
+      "atlas": {
+        "presetId": "chrono_hound",
+        "defaultAnimation": "idle",
+        "hitAnimation": "hit",
+        "deathAnimation": "death"
+      },
+      "proceduralFallback": {
+        "bodyColor": "#78350f",
+        "accentColor": "#b45309",
+        "eyesColor": "#fb923c"
       }
     }
   }

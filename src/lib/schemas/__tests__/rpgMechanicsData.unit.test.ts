@@ -113,14 +113,14 @@ describe("RPG Mechanics Integration", () => {
   });
 
   describe("Enemy Soul Drops & Tactical Souls", () => {
-    it("verifies all 15 enemies define valid soul drops with appropriate soul categories", () => {
+    it("verifies all 19 enemies define valid soul drops with appropriate soul categories", () => {
       const decodedRes = enemyCodec.decodeDictionary(enemiesData);
       expect(decodedRes.isOk()).toBe(true);
       if (!decodedRes.isOk()) return;
 
       const enemies = decodedRes.value;
       const enemyCount = Object.keys(enemies).length;
-      expect(enemyCount).toBe(15);
+      expect(enemyCount).toBe(19);
 
       const validSoulTypes = new Set(["bullet", "guardian", "enchant"]);
 
@@ -160,7 +160,7 @@ describe("RPG Mechanics Integration", () => {
   });
 
   describe("Progressive Bestiary & Elemental Resistances", () => {
-    it("verifies all 15 enemies define elemental resistances and bestiary configurations", () => {
+    it("verifies all 19 enemies define elemental resistances and bestiary configurations", () => {
       const decodedRes = enemyCodec.decodeDictionary(enemiesData);
       expect(decodedRes.isOk()).toBe(true);
       if (!decodedRes.isOk()) return;
