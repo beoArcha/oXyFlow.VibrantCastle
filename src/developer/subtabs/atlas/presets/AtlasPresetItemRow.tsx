@@ -22,18 +22,18 @@ export const AtlasPresetItemRow: React.FC<AtlasPresetItemRowProps> = ({
       variant="ghost"
       fullWidth
       onClick={onSelect}
-      className={`flex items-center justify-between p-2 h-auto min-h-0 rounded-xl border text-left transition-all group cursor-pointer ${isSelected
+      className={`flex shrink-0 items-center justify-start p-2 h-auto min-h-0 rounded-xl border text-left [&>span]:flex [&>span]:w-full [&>span]:min-w-0 [&>span]:items-center [&>span]:justify-between [&>span]:gap-2 transition-all group cursor-pointer ${isSelected
           ? "bg-gradient-to-r from-amber-950/60 to-amber-900/40 border-amber-500/80 shadow-sm text-stone-200"
           : "bg-black/40 border-stone-800/80 hover:bg-[#1a0c06] hover:border-amber-700/60 text-stone-200"
         }`}
     >
-      <div className="flex items-center gap-2.5 min-w-0">
+      <div className="flex flex-1 items-center gap-2.5 min-w-0">
         <div className="w-7 h-7 rounded-lg bg-[#140804] border border-stone-800 flex items-center justify-center flex-shrink-0">
           {meta.icon}
         </div>
 
-        <div className="flex flex-col min-w-0">
-          <div className="flex items-center gap-1.5">
+        <div className="flex flex-col min-w-0 flex-1">
+          <div className="flex items-center gap-1.5 min-w-0">
             <Text
               as="span"
               size="xs"
@@ -48,8 +48,8 @@ export const AtlasPresetItemRow: React.FC<AtlasPresetItemRowProps> = ({
             )}
           </div>
 
-          <div className="flex items-center gap-1.5 mt-0.5">
-            <Text as="span" family="mono" size="3xs" className="text-stone-500">{asset.id}</Text>
+          <div className="flex items-center gap-1.5 mt-0.5 min-w-0">
+            <Text as="span" family="mono" size="3xs" className="text-stone-500 shrink-0">{asset.id}</Text>
             {asset.tags && asset.tags.length > 0 && (
               <span className="text-[9px] text-stone-400 truncate max-w-[140px]">
                 • {asset.tags.slice(0, 3).join(", ")}
@@ -59,8 +59,8 @@ export const AtlasPresetItemRow: React.FC<AtlasPresetItemRowProps> = ({
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
-        <Badge variant={meta.variant} className="text-[9px] px-1.5 py-0 uppercase">
+      <div className="flex items-center gap-1.5 shrink-0">
+        <Badge variant={meta.variant} className="text-[9px] px-1.5 py-0 uppercase shrink-0 whitespace-nowrap">
           {asset.category}
         </Badge>
         {isSelected && <Check size={14} className="text-amber-400" />}

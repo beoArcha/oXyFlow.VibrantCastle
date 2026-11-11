@@ -21,7 +21,10 @@
         "test:e2e": "bun test src/tests/e2e",
         "test:scripts": "bun test scripts",
         "test:watch": "bun test --watch",
-        "coverage:gate": "bun ./scripts/coverage-gate.ts"
+        "coverage:gate": "bun ./scripts/coverage-gate.ts",
+        "graph:build": "graphify --code-only",
+        "graph:viz": "graphify export html",
+        "graph:callflow": "graphify export callflow-html"
     },
     "dependencies": {
         "@base-ui/react": "^1.9.0",

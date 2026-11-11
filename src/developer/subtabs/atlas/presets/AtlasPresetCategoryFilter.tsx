@@ -29,14 +29,13 @@ export const AtlasPresetCategoryFilter: React.FC<AtlasPresetCategoryFilterProps>
   ];
 
   return (
-    <div className="overflow-x-auto custom-scrollbar py-0.5">
-      <SegmentedControl<AssetFilterType>
-        options={options}
-        value={activeFilter}
-        onChange={onFilterChange}
-        size="sm"
-      />
-    </div>
+    <SegmentedControl<AssetFilterType>
+      options={options}
+      value={activeFilter}
+      onChange={onFilterChange}
+      size="sm"
+      className="flex flex-wrap w-full gap-0.5 shrink-0 [&>button]:whitespace-nowrap"
+    />
   );
 };
 

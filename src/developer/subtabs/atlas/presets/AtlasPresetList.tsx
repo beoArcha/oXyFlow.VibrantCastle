@@ -30,7 +30,7 @@ export const AtlasPresetList: React.FC<AtlasPresetListProps> = ({
   }
 
   return (
-    <div className="flex flex-col gap-1 max-h-[280px] overflow-y-auto custom-scrollbar pr-0.5">
+    <div className="flex flex-col gap-1 max-h-[min(320px,50vh)] min-h-0 overflow-y-auto custom-scrollbar pr-0.5">
       {assets.map((asset) => (
         <AtlasPresetItemRow
           key={asset.id}

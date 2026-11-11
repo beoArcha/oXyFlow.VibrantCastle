@@ -21,11 +21,11 @@ export const AtlasPresetTriggerButton: React.FC<AtlasPresetTriggerButtonProps> =
     <Button
       variant="secondary"
       onClick={onClick}
-      className="flex items-center gap-2.5 px-3 py-1.5 bg-[#120603] hover:bg-[#1a0904] text-stone-200 border border-amber-800/60 hover:border-amber-500 rounded-xl transition-all shadow-md shadow-black/40 group cursor-pointer h-auto min-h-0"
+      className="flex shrink-0 flex-nowrap whitespace-nowrap items-center gap-2.5 [&>span]:flex [&>span]:items-center [&>span]:gap-2.5 px-3 py-1.5 bg-[#120603] hover:bg-[#1a0904] text-stone-200 border border-amber-800/60 hover:border-amber-500 rounded-xl transition-all shadow-md shadow-black/40 group cursor-pointer h-auto min-h-0"
       aria-expanded={isOpen}
       aria-haspopup="listbox"
     >
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5 min-w-0">
         {activeMeta?.icon}
         <Text as="span" size="xs" weight="bold" className="text-amber-200 group-hover:text-amber-100 max-w-[160px] sm:max-w-[200px] truncate">
           {activeAsset?.name || "Select Atlas"}
@@ -33,7 +33,7 @@ export const AtlasPresetTriggerButton: React.FC<AtlasPresetTriggerButtonProps> =
       </div>
 
       {activeAsset && activeMeta && (
-        <Badge variant={activeMeta.variant} className="text-[10px] px-1.5 py-0 uppercase">
+        <Badge variant={activeMeta.variant} className="text-[10px] px-1.5 py-0 uppercase shrink-0">
           {activeAsset.category}
         </Badge>
       )}
