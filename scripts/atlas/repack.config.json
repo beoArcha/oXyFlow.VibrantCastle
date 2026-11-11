@@ -35,5 +35,27 @@
         { "animation": "info", "detectedRow": 4, "frames": 9 }
       ]
     }
+  },
+  "heroes": {
+    "aurelia": {
+      "directory": "characters/aurelia",
+      "sourceStem": "aurelia_level_1",
+      "metaFile": "aurelia_meta.json",
+      "packedMetaFile": "aurelia_packed_meta.json",
+      "alphaThreshold": 25,
+      "marginX": 12,
+      "gapX": 24,
+      "minGapY": 10,
+      "rows": [
+        { "animation": "idle", "detectedRow": 0, "frames": 6 },
+        { "animation": "run", "detectedRow": 1, "frames": 10, "fps": 10, "drop": [[1245, 314]] },
+        { "animation": "jump", "detectedRow": 2, "frames": 3 },
+        { "animation": "fall", "detectedRow": 3, "frames": 3 },
+        { "animation": "attack", "detectedRow": 4, "frames": 7, "fps": 8 },
+        { "animation": "dash", "detectedRow": 5, "frames": 5, "fps": 12, "drop": [[284, 840], [304, 891], [675, 891], [916, 893]] },
+        { "animation": "cast", "detectedRow": 6, "frames": 7, "fps": 8, "drop": [[1171, 945]] },
+        { "animation": "crouch", "detectedRow": 7, "frames": 2 }
+      ]
+    }
   }
 }

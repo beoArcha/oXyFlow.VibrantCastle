@@ -6,15 +6,27 @@
   "openingNarrationKey": "narrationMagicUsed",
   "sceneType": "action_platformer",
   "dimensions": {
-    "width": 3000,
-    "height": 800
+    "width": 6400,
+    "height": 1600
   },
   "spawnPoints": {
-    "default": { "x": 150, "y": 560 },
-    "p2Offset": { "x": 45, "y": 0 },
+    "default": {
+      "x": 170,
+      "y": 1152
+    },
+    "p2Offset": {
+      "x": 45,
+      "y": 0
+    },
     "entries": {
-      "from_tower": { "x": 150, "y": 560 },
-      "from_bastion": { "x": 2650, "y": 165 }
+      "from_tower": {
+        "x": 170,
+        "y": 1152
+      },
+      "from_bastion": {
+        "x": 6175,
+        "y": 402
+      }
     }
   },
   "theme": {
@@ -25,8 +37,8 @@
     "musicIntensity": 0.6
   },
   "parallaxBackground": {
-    "boxWidth": 4200,
-    "boxHeight": 1100,
+    "boxWidth": 6800,
+    "boxHeight": 1850,
     "layers": [
       {
         "id": "bg_aether_far",
@@ -36,9 +48,9 @@
         "type": "image",
         "imageUrl": "aether_sanctuary_far_high",
         "depth": 0.1,
-        "scrollSpeedX": 0.0,
-        "scrollSpeedY": 0.0,
-        "opacity": 1.0
+        "scrollSpeedX": 0,
+        "scrollSpeedY": 0,
+        "opacity": 1
       },
       {
         "id": "bg_aether_mid_far",
@@ -48,8 +60,8 @@
         "imageUrl": "aether_sanctuary_mid_far_high",
         "depth": 0.25,
         "scrollSpeedX": 0.24,
-        "scrollSpeedY": 0.10,
-        "opacity": 1.0
+        "scrollSpeedY": 0.1,
+        "opacity": 1
       },
       {
         "id": "bg_aether_mid",
@@ -60,7 +72,7 @@
         "depth": 0.45,
         "scrollSpeedX": 0.42,
         "scrollSpeedY": 0.18,
-        "opacity": 1.0
+        "opacity": 1
       },
       {
         "id": "bg_aether_mid_close",
@@ -70,8 +82,9 @@
         "imageUrl": "aether_sanctuary_mid_close_high",
         "depth": 0.65,
         "scrollSpeedX": 0.65,
-        "scrollSpeedY": 0.30,
-        "opacity": 1.0
+        "scrollSpeedY": 0.3,
+        "opacity": 1,
+        "mirrorTile": true
       },
       {
         "id": "bg_aether_close",
@@ -82,7 +95,8 @@
         "depth": 0.85,
         "scrollSpeedX": 0.85,
         "scrollSpeedY": 0.45,
-        "opacity": 1.0
+        "opacity": 1,
+        "mirrorTile": true
       }
     ]
   },
@@ -127,7 +141,10 @@
         "labelKey": "portalToClocktower",
         "defaultLabel": "To Clocktower",
         "targetLocationId": "clocktower",
-        "targetSpawnPoint": { "x": 2800, "y": 205 },
+        "targetSpawnPoint": {
+          "x": 3250,
+          "y": 66
+        },
         "activation": "touch",
         "particleEffect": "spark",
         "colors": {
@@ -141,7 +158,10 @@
         "labelKey": "portalToGrandBastion",
         "defaultLabel": "To Grand Bastion",
         "targetLocationId": "grand_bastion",
-        "targetSpawnPoint": { "x": 150, "y": 560 },
+        "targetSpawnPoint": {
+          "x": 150,
+          "y": 1300
+        },
         "activation": "touch",
         "particleEffect": "magic",
         "colors": {
@@ -155,87 +175,455 @@
   "layout": {
     "solids": [
       {
-        "id": "aether_isle_1",
+        "id": "aether_terrace",
         "prefabId": "sanctuary_masonry",
         "x": 0,
-        "y": 640,
-        "width": 600,
-        "height": 160
+        "y": 1200,
+        "width": 700,
+        "height": 220
+      },
+      {
+        "id": "aether_step_1",
+        "prefabId": "sanctuary_masonry",
+        "x": 860,
+        "y": 1140,
+        "width": 200,
+        "height": 26
+      },
+      {
+        "id": "aether_step_2",
+        "prefabId": "sanctuary_masonry",
+        "x": 1220,
+        "y": 1070,
+        "width": 200,
+        "height": 26
+      },
+      {
+        "id": "aether_step_3",
+        "prefabId": "sanctuary_masonry",
+        "x": 1580,
+        "y": 1000,
+        "width": 200,
+        "height": 26
+      },
+      {
+        "id": "aether_step_4",
+        "prefabId": "sanctuary_masonry",
+        "x": 1940,
+        "y": 930,
+        "width": 260,
+        "height": 30
+      },
+      {
+        "id": "aether_shard_1",
+        "prefabId": "crystal_plat",
+        "x": 1100,
+        "y": 1190,
+        "width": 90,
+        "height": 22
+      },
+      {
+        "id": "aether_shard_2",
+        "prefabId": "crystal_plat",
+        "x": 1460,
+        "y": 1130,
+        "width": 90,
+        "height": 22
+      },
+      {
+        "id": "aether_shard_3",
+        "prefabId": "crystal_plat",
+        "x": 1820,
+        "y": 1060,
+        "width": 90,
+        "height": 22
+      },
+      {
+        "id": "aether_bridge_low_1",
+        "prefabId": "sanctuary_masonry",
+        "x": 2360,
+        "y": 930,
+        "width": 660,
+        "height": 30
       },
       {
         "id": "aether_crystal_plat_1",
         "prefabId": "crystal_plat",
-        "x": 680,
-        "y": 520,
-        "width": 130,
+        "x": 3020,
+        "y": 900,
+        "width": 100,
         "height": 25,
         "vx": 1.5,
         "vy": 0,
-        "minX": 650,
-        "maxX": 950
+        "minX": 3010,
+        "maxX": 3190
       },
       {
-        "id": "aether_isle_2",
+        "id": "aether_bridge_low_2",
         "prefabId": "sanctuary_masonry",
-        "x": 1050,
-        "y": 460,
-        "width": 700,
-        "height": 40
+        "x": 3180,
+        "y": 930,
+        "width": 520,
+        "height": 30
+      },
+      {
+        "id": "aether_tower_ledge_1",
+        "prefabId": "sanctuary_masonry",
+        "x": 2360,
+        "y": 834,
+        "width": 180,
+        "height": 26
+      },
+      {
+        "id": "aether_tower_ledge_2",
+        "prefabId": "sanctuary_masonry",
+        "x": 2700,
+        "y": 738,
+        "width": 180,
+        "height": 26
+      },
+      {
+        "id": "aether_bridge_high",
+        "prefabId": "sanctuary_masonry",
+        "x": 3040,
+        "y": 738,
+        "width": 640,
+        "height": 30
+      },
+      {
+        "id": "aether_rest_court",
+        "prefabId": "sanctuary_masonry",
+        "x": 3860,
+        "y": 834,
+        "width": 540,
+        "height": 30
+      },
+      {
+        "id": "aether_stair_1",
+        "prefabId": "sanctuary_masonry",
+        "x": 4000,
+        "y": 738,
+        "width": 160,
+        "height": 26
+      },
+      {
+        "id": "aether_stair_2",
+        "prefabId": "sanctuary_masonry",
+        "x": 4300,
+        "y": 642,
+        "width": 160,
+        "height": 26
       },
       {
         "id": "aether_lift_up",
         "prefabId": "crystal_plat",
-        "x": 1820,
-        "y": 420,
+        "x": 4490,
+        "y": 834,
         "width": 120,
         "height": 25,
         "vx": 0,
         "vy": 1.2,
-        "minY": 240,
-        "maxY": 460
+        "minY": 546,
+        "maxY": 834
+      },
+      {
+        "id": "aether_cloister_floor",
+        "prefabId": "sanctuary_masonry",
+        "x": 4620,
+        "y": 546,
+        "width": 740,
+        "height": 40
+      },
+      {
+        "id": "aether_cloister_roof",
+        "prefabId": "sanctuary_masonry",
+        "x": 4780,
+        "y": 450,
+        "width": 300,
+        "height": 26
+      },
+      {
+        "id": "aether_shard_6",
+        "prefabId": "crystal_plat",
+        "x": 5400,
+        "y": 498,
+        "width": 80,
+        "height": 22
       },
       {
         "id": "aether_altar_isle",
         "prefabId": "sanctuary_masonry",
-        "x": 2000,
-        "y": 260,
-        "width": 1000,
-        "height": 540
+        "x": 5520,
+        "y": 450,
+        "width": 880,
+        "height": 300
       },
       {
         "id": "aether_altar_gate",
         "prefabId": "sanctuary_gate",
-        "x": 2550,
-        "y": 80,
-        "width": 35,
-        "height": 180
+        "x": 6120,
+        "y": 250,
+        "width": 38,
+        "height": 200
+      },
+      {
+        "id": "aether_secret_1",
+        "prefabId": "sanctuary_masonry",
+        "x": 3300,
+        "y": 642,
+        "width": 140,
+        "height": 22
+      },
+      {
+        "id": "aether_secret_2",
+        "prefabId": "sanctuary_masonry",
+        "x": 3480,
+        "y": 546,
+        "width": 140,
+        "height": 22
+      },
+      {
+        "id": "aether_secret_3",
+        "prefabId": "sanctuary_masonry",
+        "x": 3760,
+        "y": 450,
+        "width": 140,
+        "height": 22
+      },
+      {
+        "id": "aether_reliquary_isle",
+        "prefabId": "sanctuary_masonry",
+        "x": 4020,
+        "y": 354,
+        "width": 340,
+        "height": 30
+      },
+      {
+        "id": "aether_dash_isle",
+        "prefabId": "sanctuary_masonry",
+        "x": 4620,
+        "y": 258,
+        "width": 140,
+        "height": 26
+      },
+      {
+        "id": "aether_upper_step_1",
+        "prefabId": "crystal_plat",
+        "x": 1260,
+        "y": 974,
+        "width": 80,
+        "height": 22
+      },
+      {
+        "id": "aether_upper_step_2",
+        "prefabId": "crystal_plat",
+        "x": 1480,
+        "y": 904,
+        "width": 80,
+        "height": 22
+      },
+      {
+        "id": "aether_upper_step_3",
+        "prefabId": "crystal_plat",
+        "x": 1680,
+        "y": 904,
+        "width": 80,
+        "height": 22
+      },
+      {
+        "id": "aether_upper_step_4",
+        "prefabId": "crystal_plat",
+        "x": 2000,
+        "y": 834,
+        "width": 80,
+        "height": 22
+      },
+      {
+        "id": "aether_shard_7",
+        "prefabId": "crystal_plat",
+        "x": 2250,
+        "y": 945,
+        "width": 60,
+        "height": 22
+      },
+      {
+        "id": "aether_shard_8",
+        "prefabId": "crystal_plat",
+        "x": 3745,
+        "y": 880,
+        "width": 70,
+        "height": 22
+      },
+      {
+        "id": "aether_shard_9",
+        "prefabId": "crystal_plat",
+        "x": 2920,
+        "y": 738,
+        "width": 80,
+        "height": 22
+      },
+      {
+        "id": "aether_shard_10",
+        "prefabId": "crystal_plat",
+        "x": 3720,
+        "y": 790,
+        "width": 70,
+        "height": 22
+      },
+      {
+        "id": "aether_parapet_1",
+        "prefabId": "sanctuary_masonry",
+        "x": 380,
+        "y": 1152,
+        "width": 60,
+        "height": 48
+      },
+      {
+        "id": "aether_parapet_8",
+        "prefabId": "sanctuary_masonry",
+        "x": 300,
+        "y": 1152,
+        "width": 60,
+        "height": 48
+      },
+      {
+        "id": "aether_parapet_2",
+        "prefabId": "sanctuary_masonry",
+        "x": 560,
+        "y": 1152,
+        "width": 60,
+        "height": 48
+      },
+      {
+        "id": "aether_parapet_3",
+        "prefabId": "sanctuary_masonry",
+        "x": 4660,
+        "y": 498,
+        "width": 60,
+        "height": 48
+      },
+      {
+        "id": "aether_parapet_4",
+        "prefabId": "sanctuary_masonry",
+        "x": 5580,
+        "y": 402,
+        "width": 60,
+        "height": 48
+      },
+      {
+        "id": "aether_parapet_5",
+        "prefabId": "sanctuary_masonry",
+        "x": 5720,
+        "y": 402,
+        "width": 60,
+        "height": 48
+      },
+      {
+        "id": "aether_parapet_6",
+        "prefabId": "sanctuary_masonry",
+        "x": 5860,
+        "y": 402,
+        "width": 60,
+        "height": 48
+      },
+      {
+        "id": "aether_parapet_7",
+        "prefabId": "sanctuary_masonry",
+        "x": 6000,
+        "y": 402,
+        "width": 60,
+        "height": 48
       }
     ],
     "hazards": [
       {
-        "id": "aether_hazard_void",
+        "id": "aether_void_1",
         "prefabId": "void_hazard",
-        "x": 600,
-        "y": 740,
-        "width": 1800,
-        "height": 60
+        "x": 0,
+        "y": 1500,
+        "width": 800,
+        "height": 100
+      },
+      {
+        "id": "aether_void_2",
+        "prefabId": "void_hazard",
+        "x": 800,
+        "y": 1500,
+        "width": 800,
+        "height": 100
+      },
+      {
+        "id": "aether_void_3",
+        "prefabId": "void_hazard",
+        "x": 1600,
+        "y": 1500,
+        "width": 800,
+        "height": 100
+      },
+      {
+        "id": "aether_void_4",
+        "prefabId": "void_hazard",
+        "x": 2400,
+        "y": 1500,
+        "width": 800,
+        "height": 100
+      },
+      {
+        "id": "aether_void_5",
+        "prefabId": "void_hazard",
+        "x": 3200,
+        "y": 1500,
+        "width": 800,
+        "height": 100
+      },
+      {
+        "id": "aether_void_6",
+        "prefabId": "void_hazard",
+        "x": 4000,
+        "y": 1500,
+        "width": 800,
+        "height": 100
+      },
+      {
+        "id": "aether_void_7",
+        "prefabId": "void_hazard",
+        "x": 4800,
+        "y": 1500,
+        "width": 800,
+        "height": 100
+      },
+      {
+        "id": "aether_void_8",
+        "prefabId": "void_hazard",
+        "x": 5600,
+        "y": 1500,
+        "width": 800,
+        "height": 100
       }
     ],
     "triggers": [
       {
         "id": "trigger_aether_intro",
         "x": 200,
-        "y": 440,
+        "y": 1000,
         "width": 80,
         "height": 200,
         "triggerId": "trainingMagicPrompt"
+      },
+      {
+        "id": "trigger_aether_reliquary",
+        "x": 4120,
+        "y": 274,
+        "width": 80,
+        "height": 80,
+        "triggerId": "narrationMagicUsed"
       }
     ],
     "levers": [
       {
         "id": "aether_altar_lever",
-        "x": 2300,
-        "y": 215,
+        "x": 4960,
+        "y": 405,
         "width": 25,
         "height": 45,
         "triggerId": "lever_aether",
@@ -248,46 +636,136 @@
       {
         "id": "aether_portal_back",
         "portalKey": "portal_return_tower",
-        "x": 40,
-        "y": 545,
+        "x": 60,
+        "y": 1105,
         "width": 60,
         "height": 95
       },
       {
         "id": "aether_goal_portal",
         "portalKey": "portal_to_bastion",
-        "x": 2800,
-        "y": 165,
+        "x": 6300,
+        "y": 355,
         "width": 75,
         "height": 95
       }
     ],
     "enemies": [
       {
-        "id": "aether_sentinel_1",
+        "id": "aether_sentinel_isle_1",
         "monsterKey": "aether_sentinel",
-        "x": 1250,
-        "y": 400,
-        "patrolMinX": 1100,
-        "patrolMaxX": 1450,
+        "x": 1960,
+        "y": 865,
+        "patrolMinX": 1960,
+        "patrolMaxX": 2150,
+        "facingLeft": false
+      },
+      {
+        "id": "aether_sentinel_isle_2",
+        "monsterKey": "aether_sentinel",
+        "x": 1600,
+        "y": 935,
+        "patrolMinX": 1590,
+        "patrolMaxX": 1735,
         "facingLeft": true
       },
       {
-        "id": "aether_wisp_aerial",
+        "id": "aether_sentinel_tower",
+        "monsterKey": "aether_sentinel",
+        "x": 3900,
+        "y": 769,
+        "patrolMinX": 3880,
+        "patrolMaxX": 4350,
+        "facingLeft": true
+      },
+      {
+        "id": "aether_sentinel_cloister",
+        "monsterKey": "aether_sentinel",
+        "x": 5140,
+        "y": 481,
+        "patrolMinX": 5120,
+        "patrolMaxX": 5300,
+        "facingLeft": false
+      },
+      {
+        "id": "aether_wisp_steps",
         "monsterKey": "aether_wisp",
-        "x": 1550,
-        "y": 300,
-        "patrolMinX": 1480,
-        "patrolMaxX": 1720,
+        "x": 1300,
+        "y": 760,
+        "patrolMinX": 1250,
+        "patrolMaxX": 1650,
+        "facingLeft": false
+      },
+      {
+        "id": "aether_wisp_bridge",
+        "monsterKey": "aether_wisp",
+        "x": 2400,
+        "y": 560,
+        "patrolMinX": 2380,
+        "patrolMaxX": 2880,
+        "facingLeft": true
+      },
+      {
+        "id": "aether_wisp_cloister",
+        "monsterKey": "aether_wisp",
+        "x": 4830,
+        "y": 290,
+        "patrolMinX": 4820,
+        "patrolMaxX": 5300,
+        "facingLeft": false
+      },
+      {
+        "id": "aether_hound_low_1",
+        "monsterKey": "chrono_hound",
+        "x": 2400,
+        "y": 896,
+        "patrolMinX": 2380,
+        "patrolMaxX": 2970,
+        "facingLeft": false
+      },
+      {
+        "id": "aether_hound_high",
+        "monsterKey": "chrono_hound",
+        "x": 3100,
+        "y": 704,
+        "patrolMinX": 3060,
+        "patrolMaxX": 3630,
+        "facingLeft": true
+      },
+      {
+        "id": "aether_hound_low_2",
+        "monsterKey": "chrono_hound",
+        "x": 3200,
+        "y": 896,
+        "patrolMinX": 3200,
+        "patrolMaxX": 3650,
+        "facingLeft": false
+      },
+      {
+        "id": "aether_warden_terrace",
+        "monsterKey": "lantern_warden",
+        "x": 300,
+        "y": 1000,
+        "patrolMinX": 250,
+        "patrolMaxX": 600,
+        "facingLeft": false
+      },
+      {
+        "id": "aether_warden_reliquary",
+        "monsterKey": "lantern_warden",
+        "x": 4060,
+        "y": 190,
+        "patrolMinX": 4040,
+        "patrolMaxX": 4320,
         "facingLeft": false
       },
       {
         "id": "aether_archon_boss",
         "monsterKey": "aether_archon",
-        "x": 2450,
-        "y": 195,
-        "patrolMinX": 2350,
-        "patrolMaxX": 2540,
+        "x": 5900,
+        "y": 250,
+        "patrolMinX": 5580,
+        "patrolMaxX": 6060,
         "facingLeft": true
       }
     ]

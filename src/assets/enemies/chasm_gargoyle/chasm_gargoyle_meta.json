@@ -1,0 +1,118 @@
+{
+  "characterId": "chasm_gargoyle",
+  "entityType": "creature",
+  "version": "1.0",
+  "description": "An aggressive flying predator of dark weathered iron with bat-like wings and glowing crimson crystals.",
+  "atlas": {
+    "columns": 4,
+    "rows": 3,
+    "cellWidth": 96,
+    "cellHeight": 96,
+    "spacing": 0,
+    "background": "transparent",
+    "safeMargin": 1
+  },
+  "naturalFacing": "right",
+  "variants": {
+    "low": {
+      "cellWidth": 48,
+      "cellHeight": 48,
+      "scale": 0.5,
+      "file": "chasm_gargoyle_nes.svg"
+    },
+    "mid": {
+      "cellWidth": 96,
+      "cellHeight": 96,
+      "scale": 1,
+      "file": "chasm_gargoyle_snes.svg"
+    }
+  },
+  "animations": {
+    "idle": {
+      "row": 0,
+      "frames": 2,
+      "fps": 4,
+      "loop": true,
+      "wide": false,
+      "slotSpan": [
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1
+      ]
+    },
+    "move": {
+      "row": 1,
+      "frames": 4,
+      "fps": 10,
+      "loop": true,
+      "wide": false,
+      "slotSpan": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "hit": {
+      "row": 2,
+      "frames": 2,
+      "fps": 10,
+      "loop": false,
+      "wide": false,
+      "slotSpan": [
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1
+      ]
+    }
+  },
+  "states": {
+    "idle": {
+      "animation": "idle"
+    },
+    "move": {
+      "animation": "move"
+    },
+    "walk": {
+      "animation": "move"
+    },
+    "hit": {
+      "animation": "hit"
+    },
+    "fly": {
+      "animation": "move"
+    }
+  },
+  "layout": {
+    "ordering": [
+      "idle",
+      "move",
+      "hit"
+    ],
+    "origin": {
+      "type": "center",
+      "normalized": {
+        "x": 0.4949,
+        "y": 0.4897
+      }
+    },
+    "bodyBox": {
+      "x": 0.0938,
+      "y": 0.0938,
+      "w": 0.8021,
+      "h": 0.7917
+    }
+  }
+}

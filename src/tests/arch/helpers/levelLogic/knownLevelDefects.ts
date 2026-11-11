@@ -9,14 +9,7 @@ export interface KnownDefect {
  * Check progress with `bun scripts/validate-level.ts <locationId>`.
  */
 export const KNOWN_LEVEL_DEFECTS: Readonly<Record<string, readonly KnownDefect[]>> = {
-  aether_sanctuary: [
-    { code: "UNREACHABLE_PLATFORM", subject: "aether_crystal_plat_1" },
-    { code: "UNREACHABLE_PLATFORM", subject: "aether_isle_2" },
-    { code: "UNREACHABLE_PLATFORM", subject: "aether_lift_up" },
-    { code: "UNREACHABLE_PLATFORM", subject: "aether_altar_isle" },
-    { code: "LEVER_UNREACHABLE", subject: "aether_altar_lever" },
-    { code: "PORTAL_UNREACHABLE", subject: "aether_goal_portal" },
-  ],
+  aether_sanctuary: [],
   clocktower: [],
   courtyard: [],
   grand_bastion: [],

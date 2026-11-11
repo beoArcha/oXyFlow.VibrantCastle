@@ -7,15 +7,27 @@
   "sceneType": "action_platformer",
   "linkedSceneId": "scene_clocktower_meeting",
   "dimensions": {
-    "width": 3200,
-    "height": 1050
+    "width": 3600,
+    "height": 3000
   },
   "spawnPoints": {
-    "default": { "x": 150, "y": 880 },
-    "p2Offset": { "x": 45, "y": 0 },
+    "default": {
+      "x": 150,
+      "y": 2850
+    },
+    "p2Offset": {
+      "x": 45,
+      "y": 0
+    },
     "entries": {
-      "from_chasm": { "x": 150, "y": 880 },
-      "from_sanctuary": { "x": 2800, "y": 205 }
+      "from_chasm": {
+        "x": 150,
+        "y": 2850
+      },
+      "from_sanctuary": {
+        "x": 3250,
+        "y": 66
+      }
     }
   },
   "theme": {
@@ -26,8 +38,8 @@
     "musicIntensity": 0.5
   },
   "parallaxBackground": {
-    "boxWidth": 4400,
-    "boxHeight": 1400,
+    "boxWidth": 4000,
+    "boxHeight": 3250,
     "layers": [
       {
         "id": "bg_clocktower_far",
@@ -37,9 +49,9 @@
         "type": "image",
         "imageUrl": "clocktower_far_high",
         "depth": 0.1,
-        "scrollSpeedX": 0.0,
-        "scrollSpeedY": 0.0,
-        "opacity": 1.0
+        "scrollSpeedX": 0,
+        "scrollSpeedY": 0,
+        "opacity": 1
       },
       {
         "id": "bg_clocktower_mid_far",
@@ -49,8 +61,9 @@
         "imageUrl": "clocktower_mid_far_high",
         "depth": 0.25,
         "scrollSpeedX": 0.24,
-        "scrollSpeedY": 0.10,
-        "opacity": 1.0
+        "scrollSpeedY": 0.1,
+        "opacity": 1,
+        "mirrorTile": true
       },
       {
         "id": "bg_clocktower_mid",
@@ -61,7 +74,8 @@
         "depth": 0.45,
         "scrollSpeedX": 0.42,
         "scrollSpeedY": 0.18,
-        "opacity": 1.0
+        "opacity": 1,
+        "mirrorTile": true
       },
       {
         "id": "bg_clocktower_mid_close",
@@ -71,8 +85,9 @@
         "imageUrl": "clocktower_mid_close_high",
         "depth": 0.65,
         "scrollSpeedX": 0.65,
-        "scrollSpeedY": 0.30,
-        "opacity": 1.0
+        "scrollSpeedY": 0.3,
+        "opacity": 1,
+        "mirrorTile": true
       },
       {
         "id": "bg_clocktower_close",
@@ -83,7 +98,8 @@
         "depth": 0.85,
         "scrollSpeedX": 0.85,
         "scrollSpeedY": 0.45,
-        "opacity": 1.0
+        "opacity": 1,
+        "mirrorTile": true
       }
     ]
   },
@@ -136,7 +152,10 @@
         "labelKey": "portalToThornChasm",
         "defaultLabel": "To Thorn Chasm",
         "targetLocationId": "thorn_chasm",
-        "targetSpawnPoint": { "x": 2500, "y": 405 },
+        "targetSpawnPoint": {
+          "x": 5810,
+          "y": 340
+        },
         "activation": "touch",
         "particleEffect": "dust",
         "colors": {
@@ -150,7 +169,10 @@
         "labelKey": "portalToAetherSanctuary",
         "defaultLabel": "To Aether Sanctuary",
         "targetLocationId": "aether_sanctuary",
-        "targetSpawnPoint": { "x": 150, "y": 560 },
+        "targetSpawnPoint": {
+          "x": 170,
+          "y": 1152
+        },
         "activation": "touch",
         "particleEffect": "magic",
         "colors": {
@@ -164,91 +186,519 @@
   "layout": {
     "solids": [
       {
-        "id": "tower_base_floor",
+        "id": "tower_floor_1",
         "prefabId": "tower_masonry",
         "x": 0,
-        "y": 960,
-        "width": 850,
-        "height": 90
+        "y": 2900,
+        "width": 3600,
+        "height": 100
       },
       {
-        "id": "tower_lift_1",
-        "prefabId": "vertical_lift",
-        "x": 750,
-        "y": 860,
-        "width": 110,
-        "height": 22,
-        "vx": 0,
-        "vy": 1.2,
-        "minY": 620,
-        "maxY": 880
-      },
-      {
-        "id": "tower_mezzanine",
+        "id": "tower_floor_2",
         "prefabId": "tower_masonry",
-        "x": 920,
-        "y": 620,
-        "width": 600,
-        "height": 30
+        "x": 0,
+        "y": 2324,
+        "width": 2500,
+        "height": 50
       },
       {
-        "id": "tower_target_ledge_high",
+        "id": "tower_floor_3",
+        "prefabId": "tower_masonry",
+        "x": 1100,
+        "y": 1748,
+        "width": 2500,
+        "height": 50
+      },
+      {
+        "id": "tower_floor_4",
+        "prefabId": "tower_masonry",
+        "x": 0,
+        "y": 1172,
+        "width": 2300,
+        "height": 50
+      },
+      {
+        "id": "tower_floor_5",
+        "prefabId": "tower_masonry",
+        "x": 1100,
+        "y": 596,
+        "width": 2500,
+        "height": 50
+      },
+      {
+        "id": "tower_stair_foundry_1",
         "prefabId": "target_ledge",
-        "x": 1250,
-        "y": 380,
-        "width": 140,
+        "x": 3440,
+        "y": 2804,
+        "width": 120,
         "height": 22
       },
       {
-        "id": "tower_target_ledge_diagonal",
+        "id": "tower_stair_foundry_2",
         "prefabId": "target_ledge",
-        "x": 1550,
-        "y": 480,
-        "width": 140,
+        "x": 3230,
+        "y": 2708,
+        "width": 120,
         "height": 22
       },
       {
-        "id": "tower_lift_2",
-        "prefabId": "vertical_lift",
-        "x": 1750,
-        "y": 540,
-        "width": 110,
-        "height": 22,
-        "vx": 0,
-        "vy": 1.5,
-        "minY": 300,
-        "maxY": 560
+        "id": "tower_stair_foundry_3",
+        "prefabId": "target_ledge",
+        "x": 3020,
+        "y": 2612,
+        "width": 120,
+        "height": 22
       },
       {
-        "id": "tower_belfry_floor",
-        "prefabId": "tower_masonry",
-        "x": 1900,
-        "y": 300,
-        "width": 800,
-        "height": 35
+        "id": "tower_stair_foundry_4",
+        "prefabId": "target_ledge",
+        "x": 2810,
+        "y": 2516,
+        "width": 120,
+        "height": 22
       },
       {
-        "id": "tower_gate_wall",
-        "prefabId": "spire_gate",
+        "id": "tower_stair_foundry_5",
+        "prefabId": "target_ledge",
+        "x": 2600,
+        "y": 2420,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "tower_stair_gallery_1",
+        "prefabId": "target_ledge",
+        "x": 40,
+        "y": 2228,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "tower_stair_gallery_2",
+        "prefabId": "target_ledge",
+        "x": 250,
+        "y": 2132,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "tower_stair_gallery_3",
+        "prefabId": "target_ledge",
+        "x": 460,
+        "y": 2036,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "tower_stair_gallery_4",
+        "prefabId": "target_ledge",
+        "x": 670,
+        "y": 1940,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "tower_stair_gallery_5",
+        "prefabId": "target_ledge",
+        "x": 880,
+        "y": 1844,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "tower_stair_shaft_1",
+        "prefabId": "target_ledge",
+        "x": 3240,
+        "y": 1652,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "tower_stair_shaft_2",
+        "prefabId": "target_ledge",
+        "x": 3030,
+        "y": 1556,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "tower_stair_shaft_3",
+        "prefabId": "target_ledge",
+        "x": 2820,
+        "y": 1460,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "tower_stair_shaft_4",
+        "prefabId": "target_ledge",
+        "x": 2610,
+        "y": 1364,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "tower_stair_shaft_5",
+        "prefabId": "target_ledge",
         "x": 2400,
-        "y": 100,
-        "width": 35,
-        "height": 200
+        "y": 1268,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "tower_stair_escapement_1",
+        "prefabId": "target_ledge",
+        "x": 40,
+        "y": 1076,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "tower_stair_escapement_2",
+        "prefabId": "target_ledge",
+        "x": 250,
+        "y": 980,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "tower_stair_escapement_3",
+        "prefabId": "target_ledge",
+        "x": 460,
+        "y": 884,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "tower_stair_escapement_4",
+        "prefabId": "target_ledge",
+        "x": 670,
+        "y": 788,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "tower_stair_escapement_5",
+        "prefabId": "target_ledge",
+        "x": 880,
+        "y": 692,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "tower_stair_belfry_1",
+        "prefabId": "target_ledge",
+        "x": 2300,
+        "y": 500,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "tower_stair_belfry_2",
+        "prefabId": "target_ledge",
+        "x": 2510,
+        "y": 404,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "tower_stair_belfry_3",
+        "prefabId": "target_ledge",
+        "x": 2720,
+        "y": 308,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "tower_stair_belfry_4",
+        "prefabId": "target_ledge",
+        "x": 2930,
+        "y": 212,
+        "width": 120,
+        "height": 22
       },
       {
         "id": "tower_exit_platform",
         "prefabId": "tower_masonry",
-        "x": 2750,
-        "y": 300,
-        "width": 450,
-        "height": 750
+        "x": 3140,
+        "y": 116,
+        "width": 460,
+        "height": 40
+      },
+      {
+        "id": "tower_spire_gate",
+        "prefabId": "spire_gate",
+        "x": 190,
+        "y": 872,
+        "width": 36,
+        "height": 300
+      },
+      {
+        "id": "tower_pendulum_lift",
+        "prefabId": "vertical_lift",
+        "x": 3400,
+        "y": 1700,
+        "width": 110,
+        "height": 22,
+        "vx": 0,
+        "vy": 1.2,
+        "minY": 1380,
+        "maxY": 1720
+      },
+      {
+        "id": "tower_pendulum_perch",
+        "prefabId": "target_ledge",
+        "x": 3520,
+        "y": 1364,
+        "width": 80,
+        "height": 22
+      },
+      {
+        "id": "tower_secret_chain_1",
+        "prefabId": "target_ledge",
+        "x": 940,
+        "y": 500,
+        "width": 100,
+        "height": 22
+      },
+      {
+        "id": "tower_secret_chain_2",
+        "prefabId": "target_ledge",
+        "x": 760,
+        "y": 404,
+        "width": 100,
+        "height": 22
+      },
+      {
+        "id": "tower_secret_chain_3",
+        "prefabId": "target_ledge",
+        "x": 580,
+        "y": 404,
+        "width": 100,
+        "height": 22
+      },
+      {
+        "id": "tower_secret_chain_4",
+        "prefabId": "target_ledge",
+        "x": 400,
+        "y": 308,
+        "width": 100,
+        "height": 22
+      },
+      {
+        "id": "tower_clockface_alcove",
+        "prefabId": "tower_masonry",
+        "x": 100,
+        "y": 212,
+        "width": 260,
+        "height": 30
+      },
+      {
+        "id": "tower_plinth_f1_a",
+        "prefabId": "tower_masonry",
+        "x": 640,
+        "y": 2844,
+        "width": 110,
+        "height": 56
+      },
+      {
+        "id": "tower_plinth_f1_b",
+        "prefabId": "tower_masonry",
+        "x": 1500,
+        "y": 2844,
+        "width": 150,
+        "height": 56
+      },
+      {
+        "id": "tower_plinth_f1_c",
+        "prefabId": "tower_masonry",
+        "x": 2150,
+        "y": 2844,
+        "width": 110,
+        "height": 56
+      },
+      {
+        "id": "tower_ledge_f1_a",
+        "prefabId": "target_ledge",
+        "x": 1000,
+        "y": 2804,
+        "width": 200,
+        "height": 22
+      },
+      {
+        "id": "tower_ledge_f1_b",
+        "prefabId": "target_ledge",
+        "x": 1800,
+        "y": 2804,
+        "width": 200,
+        "height": 22
+      },
+      {
+        "id": "tower_plinth_f2_a",
+        "prefabId": "tower_masonry",
+        "x": 400,
+        "y": 2268,
+        "width": 110,
+        "height": 56
+      },
+      {
+        "id": "tower_plinth_f2_b",
+        "prefabId": "tower_masonry",
+        "x": 1900,
+        "y": 2268,
+        "width": 120,
+        "height": 56
+      },
+      {
+        "id": "tower_plinth_f2_c",
+        "prefabId": "tower_masonry",
+        "x": 2250,
+        "y": 2268,
+        "width": 110,
+        "height": 56
+      },
+      {
+        "id": "tower_gear_f2_a",
+        "prefabId": "target_ledge",
+        "x": 1250,
+        "y": 2228,
+        "width": 180,
+        "height": 22
+      },
+      {
+        "id": "tower_gear_f2_b",
+        "prefabId": "target_ledge",
+        "x": 1540,
+        "y": 2132,
+        "width": 180,
+        "height": 22
+      },
+      {
+        "id": "tower_gear_f2_c",
+        "prefabId": "target_ledge",
+        "x": 1830,
+        "y": 2228,
+        "width": 140,
+        "height": 22
+      },
+      {
+        "id": "tower_plinth_f3_a",
+        "prefabId": "tower_masonry",
+        "x": 1500,
+        "y": 1692,
+        "width": 110,
+        "height": 56
+      },
+      {
+        "id": "tower_plinth_f3_b",
+        "prefabId": "tower_masonry",
+        "x": 2000,
+        "y": 1692,
+        "width": 110,
+        "height": 56
+      },
+      {
+        "id": "tower_plinth_f3_c",
+        "prefabId": "tower_masonry",
+        "x": 2800,
+        "y": 1692,
+        "width": 110,
+        "height": 56
+      },
+      {
+        "id": "tower_gear_f3_a",
+        "prefabId": "target_ledge",
+        "x": 1700,
+        "y": 1652,
+        "width": 180,
+        "height": 22
+      },
+      {
+        "id": "tower_gear_f3_b",
+        "prefabId": "target_ledge",
+        "x": 2250,
+        "y": 1652,
+        "width": 180,
+        "height": 22
+      },
+      {
+        "id": "tower_plinth_f4_a",
+        "prefabId": "tower_masonry",
+        "x": 1500,
+        "y": 1116,
+        "width": 110,
+        "height": 56
+      },
+      {
+        "id": "tower_plinth_f4_b",
+        "prefabId": "tower_masonry",
+        "x": 1950,
+        "y": 1116,
+        "width": 110,
+        "height": 56
+      },
+      {
+        "id": "tower_plinth_f4_c",
+        "prefabId": "tower_masonry",
+        "x": 500,
+        "y": 1116,
+        "width": 110,
+        "height": 56
+      },
+      {
+        "id": "tower_gear_f4_a",
+        "prefabId": "target_ledge",
+        "x": 1300,
+        "y": 1076,
+        "width": 180,
+        "height": 22
+      },
+      {
+        "id": "tower_gear_f4_b",
+        "prefabId": "target_ledge",
+        "x": 1700,
+        "y": 1076,
+        "width": 160,
+        "height": 22
+      },
+      {
+        "id": "tower_plinth_f5_a",
+        "prefabId": "tower_masonry",
+        "x": 1500,
+        "y": 540,
+        "width": 110,
+        "height": 56
+      },
+      {
+        "id": "tower_plinth_f5_b",
+        "prefabId": "tower_masonry",
+        "x": 1900,
+        "y": 540,
+        "width": 110,
+        "height": 56
+      },
+      {
+        "id": "tower_gear_f5_a",
+        "prefabId": "target_ledge",
+        "x": 1650,
+        "y": 500,
+        "width": 180,
+        "height": 22
+      },
+      {
+        "id": "tower_gear_f5_b",
+        "prefabId": "target_ledge",
+        "x": 2050,
+        "y": 500,
+        "width": 140,
+        "height": 22
       }
     ],
     "triggers": [
       {
         "id": "trigger_tower_intro",
         "x": 200,
-        "y": 780,
+        "y": 2720,
         "width": 80,
         "height": 180,
         "triggerId": "trainingRangePrompt"
@@ -257,12 +707,12 @@
     "levers": [
       {
         "id": "tower_gear_lever",
-        "x": 2150,
-        "y": 255,
+        "x": 620,
+        "y": 1127,
         "width": 25,
         "height": 45,
         "triggerId": "lever_tower",
-        "targetGateId": "tower_gate_wall",
+        "targetGateId": "tower_spire_gate",
         "labelKey": "labelClockworkGear",
         "defaultLabel": "Clockwork Gear"
       }
@@ -272,48 +722,169 @@
         "id": "tower_portal_back",
         "portalKey": "portal_to_chasm",
         "x": 40,
-        "y": 865,
+        "y": 2805,
         "width": 60,
         "height": 95
       },
       {
         "id": "tower_goal_portal",
         "portalKey": "portal_to_sanctuary",
-        "x": 2950,
-        "y": 205,
+        "x": 3400,
+        "y": 21,
         "width": 65,
         "height": 95
       }
     ],
     "enemies": [
       {
-        "id": "tower_dummy_ground",
-        "monsterKey": "training_target",
-        "x": 520,
-        "y": 900,
+        "id": "tower_dummy_entry",
+        "monsterKey": "training_dummy",
+        "x": 420,
+        "y": 2840,
         "facingLeft": true
       },
       {
-        "id": "tower_dummy_high_vertical",
-        "monsterKey": "training_target",
-        "x": 1290,
-        "y": 320,
+        "id": "tower_mite_f1_a",
+        "monsterKey": "gear_mite",
+        "x": 1250,
+        "y": 2882,
+        "patrolMinX": 1100,
+        "patrolMaxX": 1450,
         "facingLeft": true
       },
       {
-        "id": "tower_dummy_diagonal",
-        "monsterKey": "training_target",
-        "x": 1590,
-        "y": 420,
+        "id": "tower_mite_f1_b",
+        "monsterKey": "gear_mite",
+        "x": 1850,
+        "y": 2882,
+        "patrolMinX": 1830,
+        "patrolMaxX": 2000,
         "facingLeft": true
       },
       {
-        "id": "tower_automaton_boss",
+        "id": "tower_mite_ledge_f1",
+        "monsterKey": "gear_mite",
+        "x": 1850,
+        "y": 2786,
+        "patrolMinX": 1810,
+        "patrolMaxX": 1970,
+        "facingLeft": true
+      },
+      {
+        "id": "tower_automaton_f2",
         "monsterKey": "clockwork_automaton",
-        "x": 2280,
-        "y": 235,
-        "patrolMinX": 2000,
-        "patrolMaxX": 2380,
+        "x": 1100,
+        "y": 2259,
+        "patrolMinX": 700,
+        "patrolMaxX": 1180,
+        "facingLeft": true
+      },
+      {
+        "id": "tower_warden_f2",
+        "monsterKey": "lantern_warden",
+        "x": 1500,
+        "y": 2050,
+        "patrolMinX": 1200,
+        "patrolMaxX": 2300,
+        "facingLeft": true
+      },
+      {
+        "id": "tower_mite_gear_f2",
+        "monsterKey": "gear_mite",
+        "x": 1300,
+        "y": 2210,
+        "patrolMinX": 1260,
+        "patrolMaxX": 1400,
+        "facingLeft": true
+      },
+      {
+        "id": "tower_scout_foundry_shaft",
+        "monsterKey": "gargoyle_scout",
+        "x": 3000,
+        "y": 2200,
+        "patrolMinX": 2650,
+        "patrolMaxX": 3450,
+        "facingLeft": true
+      },
+      {
+        "id": "tower_warden_f3",
+        "monsterKey": "lantern_warden",
+        "x": 1700,
+        "y": 1560,
+        "patrolMinX": 1250,
+        "patrolMaxX": 2300,
+        "facingLeft": true
+      },
+      {
+        "id": "tower_automaton_f3",
+        "monsterKey": "clockwork_automaton",
+        "x": 2400,
+        "y": 1683,
+        "patrolMinX": 2150,
+        "patrolMaxX": 2750,
+        "facingLeft": true
+      },
+      {
+        "id": "tower_mite_gear_f3",
+        "monsterKey": "gear_mite",
+        "x": 1720,
+        "y": 1634,
+        "patrolMinX": 1700,
+        "patrolMaxX": 1850,
+        "facingLeft": true
+      },
+      {
+        "id": "tower_scout_pendulum_shaft",
+        "monsterKey": "gargoyle_scout",
+        "x": 3000,
+        "y": 1000,
+        "patrolMinX": 2550,
+        "patrolMaxX": 3450,
+        "facingLeft": true
+      },
+      {
+        "id": "tower_automaton_f4",
+        "monsterKey": "clockwork_automaton",
+        "x": 1000,
+        "y": 1107,
+        "patrolMinX": 800,
+        "patrolMaxX": 1400,
+        "facingLeft": true
+      },
+      {
+        "id": "tower_warden_f4",
+        "monsterKey": "lantern_warden",
+        "x": 1500,
+        "y": 980,
+        "patrolMinX": 1250,
+        "patrolMaxX": 2200,
+        "facingLeft": true
+      },
+      {
+        "id": "tower_mite_perch",
+        "monsterKey": "gear_mite",
+        "x": 3530,
+        "y": 1346,
+        "patrolMinX": 3525,
+        "patrolMaxX": 3570,
+        "facingLeft": true
+      },
+      {
+        "id": "tower_automaton_f5",
+        "monsterKey": "clockwork_automaton",
+        "x": 1250,
+        "y": 531,
+        "patrolMinX": 1200,
+        "patrolMaxX": 1400,
+        "facingLeft": true
+      },
+      {
+        "id": "tower_mite_gear_f5",
+        "monsterKey": "gear_mite",
+        "x": 1670,
+        "y": 482,
+        "patrolMinX": 1655,
+        "patrolMaxX": 1800,
         "facingLeft": true
       }
     ]

@@ -28,3 +28,12 @@ export function getScanCanvasContext(w: number, h: number): CanvasRenderingConte
   }
   return scanCtx;
 }
+
+/**
+ * Drops the cached scan canvas so the next scan binds to the current `document`; tooling that
+ * drives the extractors with a headless canvas needs a clean slate before and after.
+ */
+export function resetScanCanvasContext(): void {
+  scanCanvas = null;
+  scanCtx = null;
+}

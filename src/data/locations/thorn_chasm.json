@@ -6,15 +6,27 @@
   "openingNarrationKey": "narrationMovement",
   "sceneType": "action_platformer",
   "dimensions": {
-    "width": 2800,
-    "height": 700
+    "width": 6000,
+    "height": 1500
   },
   "spawnPoints": {
-    "default": { "x": 180, "y": 480 },
-    "p2Offset": { "x": 40, "y": 0 },
+    "default": {
+      "x": 130,
+      "y": 312
+    },
+    "p2Offset": {
+      "x": 40,
+      "y": 0
+    },
     "entries": {
-      "from_courtyard": { "x": 180, "y": 480 },
-      "from_tower": { "x": 2500, "y": 405 }
+      "from_courtyard": {
+        "x": 130,
+        "y": 312
+      },
+      "from_tower": {
+        "x": 5810,
+        "y": 340
+      }
     }
   },
   "theme": {
@@ -25,8 +37,8 @@
     "musicIntensity": 0.3
   },
   "parallaxBackground": {
-    "boxWidth": 3800,
-    "boxHeight": 950,
+    "boxWidth": 6400,
+    "boxHeight": 1750,
     "layers": [
       {
         "id": "bg_chasm_far",
@@ -36,9 +48,9 @@
         "type": "image",
         "imageUrl": "thorn_chasm_far_high",
         "depth": 0.1,
-        "scrollSpeedX": 0.0,
-        "scrollSpeedY": 0.0,
-        "opacity": 1.0
+        "scrollSpeedX": 0,
+        "scrollSpeedY": 0,
+        "opacity": 1
       },
       {
         "id": "bg_chasm_mid_far",
@@ -48,8 +60,9 @@
         "imageUrl": "thorn_chasm_mid_far_high",
         "depth": 0.25,
         "scrollSpeedX": 0.24,
-        "scrollSpeedY": 0.10,
-        "opacity": 1.0
+        "scrollSpeedY": 0.1,
+        "opacity": 1,
+        "mirrorTile": true
       },
       {
         "id": "bg_chasm_mid",
@@ -60,7 +73,8 @@
         "depth": 0.45,
         "scrollSpeedX": 0.42,
         "scrollSpeedY": 0.18,
-        "opacity": 1.0
+        "opacity": 1,
+        "mirrorTile": true
       },
       {
         "id": "bg_chasm_mid_close",
@@ -70,8 +84,9 @@
         "imageUrl": "thorn_chasm_close_mid_high",
         "depth": 0.65,
         "scrollSpeedX": 0.65,
-        "scrollSpeedY": 0.30,
-        "opacity": 1.0
+        "scrollSpeedY": 0.3,
+        "opacity": 1,
+        "mirrorTile": true
       },
       {
         "id": "bg_chasm_close",
@@ -82,7 +97,8 @@
         "depth": 0.85,
         "scrollSpeedX": 0.85,
         "scrollSpeedY": 0.45,
-        "opacity": 1.0
+        "opacity": 1,
+        "mirrorTile": true
       }
     ]
   },
@@ -127,6 +143,29 @@
         "borderColor": "#fef08a",
         "labelKey": "labelMovingPlatform",
         "defaultLabel": "Moving Platform"
+      },
+      "chasm_ledge": {
+        "prefabId": "chasm_ledge",
+        "type": "oneway",
+        "color": "#c07b46",
+        "borderColor": "#fde047",
+        "labelKey": "labelScaffold",
+        "defaultLabel": "Wooden Scaffolding"
+      },
+      "chasm_barrier": {
+        "prefabId": "chasm_barrier",
+        "type": "solid",
+        "color": "#6e473b",
+        "borderColor": "#9a3412",
+        "labelKey": "labelCastleGate",
+        "defaultLabel": "Courtyard Gate"
+      },
+      "chasm_lever": {
+        "prefabId": "chasm_lever",
+        "type": "lever",
+        "color": "#d97706",
+        "labelKey": "labelGateLever",
+        "defaultLabel": "Gate Lever"
       }
     },
     "portals": {
@@ -135,7 +174,10 @@
         "labelKey": "portalToCourtyard",
         "defaultLabel": "To Courtyard",
         "targetLocationId": "courtyard",
-        "targetSpawnPoint": { "x": 6950, "y": 1120 },
+        "targetSpawnPoint": {
+          "x": 6950,
+          "y": 1120
+        },
         "activation": "touch",
         "particleEffect": "magic",
         "colors": {
@@ -149,7 +191,10 @@
         "labelKey": "portalToClocktower",
         "defaultLabel": "To Clocktower",
         "targetLocationId": "clocktower",
-        "targetSpawnPoint": { "x": 150, "y": 880 },
+        "targetSpawnPoint": {
+          "x": 150,
+          "y": 2850
+        },
         "activation": "touch",
         "particleEffect": "spark",
         "colors": {
@@ -163,108 +208,433 @@
   "layout": {
     "solids": [
       {
-        "id": "chasm_start_floor",
+        "id": "chasm_entry_floor",
         "prefabId": "chasm_rock",
         "x": 0,
-        "y": 550,
-        "width": 450,
-        "height": 150
+        "y": 360,
+        "width": 560,
+        "height": 120
+      },
+      {
+        "id": "chasm_descent_1",
+        "prefabId": "chasm_rock",
+        "x": 680,
+        "y": 460,
+        "width": 200,
+        "height": 40
+      },
+      {
+        "id": "chasm_descent_2",
+        "prefabId": "chasm_ledge",
+        "x": 960,
+        "y": 560,
+        "width": 160,
+        "height": 18
+      },
+      {
+        "id": "chasm_descent_3",
+        "prefabId": "chasm_rock",
+        "x": 1200,
+        "y": 660,
+        "width": 240,
+        "height": 40
+      },
+      {
+        "id": "chasm_descent_4",
+        "prefabId": "chasm_ledge",
+        "x": 1520,
+        "y": 760,
+        "width": 160,
+        "height": 18
+      },
+      {
+        "id": "chasm_descent_5",
+        "prefabId": "chasm_rock",
+        "x": 1760,
+        "y": 860,
+        "width": 260,
+        "height": 40
+      },
+      {
+        "id": "chasm_descent_6",
+        "prefabId": "chasm_ledge",
+        "x": 2100,
+        "y": 960,
+        "width": 160,
+        "height": 18
+      },
+      {
+        "id": "chasm_upper_1",
+        "prefabId": "chasm_ledge",
+        "x": 940,
+        "y": 464,
+        "width": 120,
+        "height": 18
+      },
+      {
+        "id": "chasm_upper_2",
+        "prefabId": "chasm_ledge",
+        "x": 1500,
+        "y": 664,
+        "width": 120,
+        "height": 18
+      },
+      {
+        "id": "chasm_upper_3",
+        "prefabId": "chasm_ledge",
+        "x": 1780,
+        "y": 764,
+        "width": 120,
+        "height": 18
+      },
+      {
+        "id": "chasm_upper_4",
+        "prefabId": "chasm_ledge",
+        "x": 2100,
+        "y": 864,
+        "width": 120,
+        "height": 18
+      },
+      {
+        "id": "chasm_low_1",
+        "prefabId": "chasm_rock",
+        "x": 1180,
+        "y": 900,
+        "width": 220,
+        "height": 40
+      },
+      {
+        "id": "chasm_low_2",
+        "prefabId": "chasm_rock",
+        "x": 1480,
+        "y": 980,
+        "width": 200,
+        "height": 40
+      },
+      {
+        "id": "chasm_low_3",
+        "prefabId": "chasm_rock",
+        "x": 1800,
+        "y": 1060,
+        "width": 420,
+        "height": 60
+      },
+      {
+        "id": "chasm_low_arch_2",
+        "prefabId": "low_archway",
+        "x": 1840,
+        "y": 980,
+        "width": 240,
+        "height": 40
+      },
+      {
+        "id": "chasm_isle_a",
+        "prefabId": "chasm_rock",
+        "x": 2340,
+        "y": 1060,
+        "width": 360,
+        "height": 240
+      },
+      {
+        "id": "chasm_bridge_1",
+        "prefabId": "chasm_ledge",
+        "x": 2420,
+        "y": 964,
+        "width": 140,
+        "height": 18
+      },
+      {
+        "id": "chasm_bridge_2",
+        "prefabId": "chasm_ledge",
+        "x": 2660,
+        "y": 964,
+        "width": 140,
+        "height": 18
+      },
+      {
+        "id": "chasm_bridge_3",
+        "prefabId": "chasm_ledge",
+        "x": 2900,
+        "y": 964,
+        "width": 140,
+        "height": 18
+      },
+      {
+        "id": "chasm_bridge_4",
+        "prefabId": "chasm_ledge",
+        "x": 3140,
+        "y": 964,
+        "width": 100,
+        "height": 18
       },
       {
         "id": "chasm_stone_1",
         "prefabId": "stepping_stone",
-        "x": 550,
-        "y": 440,
+        "x": 2800,
+        "y": 1060,
         "width": 100,
         "height": 25
       },
       {
         "id": "chasm_stone_2",
         "prefabId": "stepping_stone",
-        "x": 740,
-        "y": 380,
+        "x": 3000,
+        "y": 1060,
         "width": 100,
         "height": 25
       },
       {
-        "id": "chasm_stone_3",
-        "prefabId": "stepping_stone",
-        "x": 930,
-        "y": 340,
-        "width": 100,
-        "height": 25
-      },
-      {
-        "id": "chasm_stone_4",
-        "prefabId": "stepping_stone",
-        "x": 1120,
-        "y": 400,
-        "width": 100,
-        "height": 25
-      },
-      {
-        "id": "chasm_mid_floor",
+        "id": "chasm_isle_b",
         "prefabId": "chasm_rock",
-        "x": 1350,
-        "y": 520,
-        "width": 650,
-        "height": 180
+        "x": 3200,
+        "y": 1060,
+        "width": 420,
+        "height": 240
       },
       {
-        "id": "chasm_low_ceiling",
+        "id": "chasm_low_arch_1",
         "prefabId": "low_archway",
-        "x": 1500,
-        "y": 390,
+        "x": 3280,
+        "y": 980,
         "width": 300,
-        "height": 60
+        "height": 40
+      },
+      {
+        "id": "chasm_isle_c",
+        "prefabId": "chasm_rock",
+        "x": 3720,
+        "y": 1060,
+        "width": 600,
+        "height": 240
+      },
+      {
+        "id": "chasm_lever_step",
+        "prefabId": "stepping_stone",
+        "x": 3740,
+        "y": 964,
+        "width": 120,
+        "height": 25
+      },
+      {
+        "id": "chasm_lever_ledge",
+        "prefabId": "stepping_stone",
+        "x": 3880,
+        "y": 868,
+        "width": 120,
+        "height": 25
+      },
+      {
+        "id": "chasm_portcullis",
+        "prefabId": "chasm_barrier",
+        "x": 4040,
+        "y": 700,
+        "width": 36,
+        "height": 360
+      },
+      {
+        "id": "chasm_climb_1",
+        "prefabId": "stepping_stone",
+        "x": 4400,
+        "y": 964,
+        "width": 140,
+        "height": 25
+      },
+      {
+        "id": "chasm_climb_2",
+        "prefabId": "stepping_stone",
+        "x": 4620,
+        "y": 868,
+        "width": 140,
+        "height": 25
+      },
+      {
+        "id": "chasm_climb_3",
+        "prefabId": "stepping_stone",
+        "x": 4840,
+        "y": 772,
+        "width": 140,
+        "height": 25
       },
       {
         "id": "chasm_moving_platform",
         "prefabId": "moving_rock",
-        "x": 2050,
-        "y": 420,
+        "x": 5060,
+        "y": 676,
         "width": 120,
         "height": 22,
-        "vx": 1.4,
+        "vx": 1.2,
         "vy": 0,
-        "minX": 2020,
-        "maxX": 2350
+        "minX": 5060,
+        "maxX": 5200
+      },
+      {
+        "id": "chasm_climb_4",
+        "prefabId": "stepping_stone",
+        "x": 5380,
+        "y": 580,
+        "width": 140,
+        "height": 25
+      },
+      {
+        "id": "chasm_climb_5",
+        "prefabId": "stepping_stone",
+        "x": 5600,
+        "y": 484,
+        "width": 140,
+        "height": 25
       },
       {
         "id": "chasm_exit_floor",
         "prefabId": "chasm_rock",
-        "x": 2450,
-        "y": 500,
-        "width": 350,
-        "height": 200
+        "x": 5800,
+        "y": 388,
+        "width": 200,
+        "height": 112
+      },
+      {
+        "id": "chasm_secret_step_1",
+        "prefabId": "stepping_stone",
+        "x": 5600,
+        "y": 292,
+        "width": 100,
+        "height": 22
+      },
+      {
+        "id": "chasm_secret_step_2",
+        "prefabId": "stepping_stone",
+        "x": 5440,
+        "y": 196,
+        "width": 100,
+        "height": 22
+      },
+      {
+        "id": "chasm_secret_alcove",
+        "prefabId": "chasm_rock",
+        "x": 4900,
+        "y": 196,
+        "width": 440,
+        "height": 30
+      },
+      {
+        "id": "chasm_dash_1",
+        "prefabId": "stepping_stone",
+        "x": 2480,
+        "y": 780,
+        "width": 100,
+        "height": 22
+      },
+      {
+        "id": "chasm_dash_2",
+        "prefabId": "stepping_stone",
+        "x": 2740,
+        "y": 780,
+        "width": 100,
+        "height": 22
+      },
+      {
+        "id": "chasm_dash_3",
+        "prefabId": "stepping_stone",
+        "x": 3000,
+        "y": 780,
+        "width": 100,
+        "height": 22
       }
     ],
     "hazards": [
       {
         "id": "chasm_thorn_bed_1",
         "prefabId": "amber_thorns",
-        "x": 450,
-        "y": 620,
-        "width": 900,
-        "height": 80
+        "x": 560,
+        "y": 1250,
+        "width": 440,
+        "height": 150
       },
       {
         "id": "chasm_thorn_bed_2",
         "prefabId": "amber_thorns",
-        "x": 2000,
-        "y": 620,
-        "width": 450,
-        "height": 80
+        "x": 1000,
+        "y": 1250,
+        "width": 440,
+        "height": 150
+      },
+      {
+        "id": "chasm_thorn_bed_3",
+        "prefabId": "amber_thorns",
+        "x": 1440,
+        "y": 1250,
+        "width": 440,
+        "height": 150
+      },
+      {
+        "id": "chasm_thorn_bed_4",
+        "prefabId": "amber_thorns",
+        "x": 1880,
+        "y": 1250,
+        "width": 460,
+        "height": 150
+      },
+      {
+        "id": "chasm_thorn_pit_1",
+        "prefabId": "amber_thorns",
+        "x": 2700,
+        "y": 1190,
+        "width": 500,
+        "height": 110
+      },
+      {
+        "id": "chasm_thorn_pit_2",
+        "prefabId": "amber_thorns",
+        "x": 3620,
+        "y": 1190,
+        "width": 100,
+        "height": 110
+      },
+      {
+        "id": "chasm_thorn_shaft_1",
+        "prefabId": "amber_thorns",
+        "x": 4320,
+        "y": 1250,
+        "width": 580,
+        "height": 150
+      },
+      {
+        "id": "chasm_thorn_shaft_2",
+        "prefabId": "amber_thorns",
+        "x": 4900,
+        "y": 1250,
+        "width": 500,
+        "height": 150
+      },
+      {
+        "id": "chasm_thorn_shaft_3",
+        "prefabId": "amber_thorns",
+        "x": 5400,
+        "y": 1250,
+        "width": 400,
+        "height": 150
       }
     ],
     "triggers": [
       {
         "id": "trigger_chasm_intro",
-        "x": 150,
-        "y": 350,
+        "x": 130,
+        "y": 200,
         "width": 80,
-        "height": 200,
+        "height": 160,
         "triggerId": "narrationMovement"
+      }
+    ],
+    "levers": [
+      {
+        "id": "chasm_portcullis_lever",
+        "x": 3920,
+        "y": 823,
+        "width": 25,
+        "height": 45,
+        "triggerId": "lever_chasm",
+        "targetGateId": "chasm_portcullis",
+        "labelKey": "labelGateLever",
+        "defaultLabel": "Gate Lever"
       }
     ],
     "portals": [
@@ -272,45 +642,171 @@
         "id": "chasm_portal_back",
         "portalKey": "portal_return_courtyard",
         "x": 40,
-        "y": 455,
+        "y": 265,
         "width": 60,
         "height": 95
       },
       {
         "id": "chasm_goal_portal",
         "portalKey": "portal_to_clocktower",
-        "x": 2600,
-        "y": 405,
+        "x": 5905,
+        "y": 293,
         "width": 65,
         "height": 95
       }
     ],
     "enemies": [
       {
+        "id": "chasm_creeper_ledge",
+        "monsterKey": "thorn_creeper",
+        "x": 830,
+        "y": 416,
+        "patrolMinX": 830,
+        "patrolMaxX": 830,
+        "facingLeft": true
+      },
+      {
         "id": "chasm_gargoyle_1",
         "monsterKey": "chasm_gargoyle",
-        "x": 750,
-        "y": 260,
-        "patrolMinX": 680,
-        "patrolMaxX": 880,
+        "x": 1180,
+        "y": 440,
+        "patrolMinX": 1100,
+        "patrolMaxX": 1300,
+        "facingLeft": true
+      },
+      {
+        "id": "chasm_crawler_1",
+        "monsterKey": "chasm_crawler",
+        "x": 1220,
+        "y": 630,
+        "patrolMinX": 1210,
+        "patrolMaxX": 1360,
         "facingLeft": true
       },
       {
         "id": "chasm_gargoyle_2",
         "monsterKey": "chasm_gargoyle",
-        "x": 1150,
-        "y": 240,
-        "patrolMinX": 1080,
-        "patrolMaxX": 1280,
+        "x": 1650,
+        "y": 560,
+        "patrolMinX": 1560,
+        "patrolMaxX": 1760,
         "facingLeft": false
       },
       {
-        "id": "chasm_crawler",
+        "id": "chasm_crawler_2",
         "monsterKey": "chasm_crawler",
-        "x": 1700,
-        "y": 490,
-        "patrolMinX": 1600,
-        "patrolMaxX": 1900,
+        "x": 1780,
+        "y": 830,
+        "patrolMinX": 1775,
+        "patrolMaxX": 1930,
+        "facingLeft": true
+      },
+      {
+        "id": "chasm_crawler_low_1",
+        "monsterKey": "chasm_crawler",
+        "x": 1200,
+        "y": 870,
+        "patrolMinX": 1190,
+        "patrolMaxX": 1330,
+        "facingLeft": true
+      },
+      {
+        "id": "chasm_crawler_low_2",
+        "monsterKey": "chasm_crawler",
+        "x": 1860,
+        "y": 1030,
+        "patrolMinX": 1850,
+        "patrolMaxX": 2010,
+        "facingLeft": false
+      },
+      {
+        "id": "chasm_crawler_3",
+        "monsterKey": "chasm_crawler",
+        "x": 2380,
+        "y": 1030,
+        "patrolMinX": 2370,
+        "patrolMaxX": 2600,
+        "facingLeft": true
+      },
+      {
+        "id": "chasm_gargoyle_3",
+        "monsterKey": "chasm_gargoyle",
+        "x": 2850,
+        "y": 840,
+        "patrolMinX": 2800,
+        "patrolMaxX": 3000,
+        "facingLeft": false
+      },
+      {
+        "id": "chasm_crawler_arch",
+        "monsterKey": "chasm_crawler",
+        "x": 3300,
+        "y": 1030,
+        "patrolMinX": 3290,
+        "patrolMaxX": 3500,
+        "facingLeft": false
+      },
+      {
+        "id": "chasm_mite_1",
+        "monsterKey": "gear_mite",
+        "x": 3760,
+        "y": 1042,
+        "patrolMinX": 3740,
+        "patrolMaxX": 3960,
+        "facingLeft": true
+      },
+      {
+        "id": "chasm_creeper_lever",
+        "monsterKey": "thorn_creeper",
+        "x": 3960,
+        "y": 824,
+        "patrolMinX": 3960,
+        "patrolMaxX": 3960,
+        "facingLeft": true
+      },
+      {
+        "id": "chasm_crawler_4",
+        "monsterKey": "chasm_crawler",
+        "x": 4110,
+        "y": 1030,
+        "patrolMinX": 4100,
+        "patrolMaxX": 4240,
+        "facingLeft": true
+      },
+      {
+        "id": "chasm_gargoyle_4",
+        "monsterKey": "chasm_gargoyle",
+        "x": 4600,
+        "y": 700,
+        "patrolMinX": 4560,
+        "patrolMaxX": 4780,
+        "facingLeft": true
+      },
+      {
+        "id": "chasm_gargoyle_5",
+        "monsterKey": "chasm_gargoyle",
+        "x": 5150,
+        "y": 520,
+        "patrolMinX": 5100,
+        "patrolMaxX": 5300,
+        "facingLeft": false
+      },
+      {
+        "id": "chasm_creeper_alcove",
+        "monsterKey": "thorn_creeper",
+        "x": 5100,
+        "y": 152,
+        "patrolMinX": 5100,
+        "patrolMaxX": 5100,
+        "facingLeft": true
+      },
+      {
+        "id": "chasm_mite_2",
+        "monsterKey": "gear_mite",
+        "x": 5840,
+        "y": 370,
+        "patrolMinX": 5820,
+        "patrolMaxX": 5960,
         "facingLeft": true
       }
     ]

@@ -60,6 +60,7 @@
         "id": "bg_mid_far",
         "name": "Courtyard Mid-Far Castle Architecture (High)",
         "tier": "mid_far",
+        "mirrorTile": true,
         "type": "image",
         "imageUrl": "courtyard_mid-far_high",
         "depth": 0.25,
@@ -82,6 +83,7 @@
         "id": "bg_mid_close",
         "name": "Courtyard Mid-Close Stonework & Arches (High)",
         "tier": "mid_close",
+        "mirrorTile": true,
         "type": "image",
         "imageUrl": "courtyard_mid-close_high",
         "depth": 0.65,
@@ -93,6 +95,7 @@
         "id": "bg_close",
         "name": "Courtyard Close Fore-elements & Flora (High)",
         "tier": "close",
+        "mirrorTile": true,
         "type": "image",
         "imageUrl": "courtyard_close_high",
         "depth": 0.85,
@@ -167,8 +170,8 @@
         "defaultLabel": "To Thorn Chasm",
         "targetLocationId": "thorn_chasm",
         "targetSpawnPoint": {
-          "x": 180,
-          "y": 480
+          "x": 130,
+          "y": 312
         },
         "activation": "touch",
         "particleEffect": "magic",
@@ -182,62 +185,756 @@
   },
   "layout": {
     "solids": [
-      {"id":"court_floor_yard","prefabId":"stone_floor","x":0,"y":1170,"width":1400,"height":180},
-      {"id":"court_step_1","prefabId":"stone_step","x":560,"y":1100,"width":120,"height":25},
-      {"id":"court_step_2","prefabId":"stone_step","x":740,"y":1030,"width":120,"height":25},
-      {"id":"court_step_3","prefabId":"stone_step","x":920,"y":1100,"width":120,"height":25},
-      {"id":"court_floor_terrace","prefabId":"stone_floor","x":1400,"y":1170,"width":1400,"height":180},
-      {"id":"court_balcony_1","prefabId":"marble_balcony","x":1420,"y":1074,"width":150,"height":18},
-      {"id":"court_balcony_2","prefabId":"marble_balcony","x":1640,"y":978,"width":150,"height":18},
-      {"id":"court_walkway","prefabId":"stone_arch","x":1860,"y":882,"width":520,"height":24},
-      {"id":"court_secret_step","prefabId":"marble_balcony","x":1900,"y":786,"width":100,"height":18},
-      {"id":"court_secret_ledge_1","prefabId":"stone_arch","x":2040,"y":690,"width":140,"height":22},
-      {"id":"court_scaffold_drop_1","prefabId":"scaffold_oneway","x":2440,"y":1026,"width":140,"height":18},
-      {"id":"court_scaffold_drop_2","prefabId":"scaffold_oneway","x":2620,"y":1098,"width":120,"height":18},
-      {"id":"court_floor_basin","prefabId":"stone_floor","x":2800,"y":1270,"width":1500,"height":80},
-      {"id":"court_basin_pillar_1","prefabId":"stone_step","x":2900,"y":1200,"width":90,"height":70},
-      {"id":"court_basin_pillar_2","prefabId":"stone_step","x":3120,"y":1130,"width":90,"height":140},
-      {"id":"court_basin_plinth_1","prefabId":"stone_step","x":3300,"y":1190,"width":280,"height":80},
-      {"id":"court_basin_pillar_3","prefabId":"stone_step","x":3670,"y":1110,"width":100,"height":160},
-      {"id":"court_basin_plinth_2","prefabId":"stone_step","x":3860,"y":1190,"width":280,"height":80},
-      {"id":"court_basin_stair","prefabId":"stone_step","x":4160,"y":1220,"width":140,"height":50},
-      {"id":"court_floor_road","prefabId":"stone_floor","x":4300,"y":1170,"width":2900,"height":180},
-      {"id":"court_parapet_step_1","prefabId":"marble_balcony","x":4500,"y":1074,"width":140,"height":18},
-      {"id":"court_parapet_step_2","prefabId":"marble_balcony","x":4700,"y":978,"width":140,"height":18},
-      {"id":"court_gate_parapet","prefabId":"marble_balcony","x":4900,"y":882,"width":280,"height":20},
-      {"id":"court_gate_main","prefabId":"castle_gate","x":5300,"y":700,"width":38,"height":470},
-      {"id":"court_vault_step_1","prefabId":"marble_balcony","x":5420,"y":1074,"width":130,"height":18},
-      {"id":"court_vault_step_2","prefabId":"marble_balcony","x":5600,"y":978,"width":130,"height":18},
-      {"id":"court_vault_step_3","prefabId":"marble_balcony","x":5780,"y":882,"width":130,"height":18},
-      {"id":"court_vault_step_4","prefabId":"marble_balcony","x":5960,"y":786,"width":130,"height":18},
-      {"id":"court_vault_step_5","prefabId":"marble_balcony","x":6140,"y":690,"width":130,"height":18},
-      {"id":"court_secret_vault_terrace","prefabId":"stone_arch","x":6320,"y":594,"width":300,"height":24},
-      {"id":"court_road_block","prefabId":"stone_step","x":6720,"y":1090,"width":140,"height":80}
+      {
+        "id": "court_floor_yard",
+        "prefabId": "stone_floor",
+        "x": 0,
+        "y": 1170,
+        "width": 1400,
+        "height": 180
+      },
+      {
+        "id": "court_step_1",
+        "prefabId": "stone_step",
+        "x": 560,
+        "y": 1100,
+        "width": 120,
+        "height": 25
+      },
+      {
+        "id": "court_step_2",
+        "prefabId": "stone_step",
+        "x": 740,
+        "y": 1030,
+        "width": 120,
+        "height": 25
+      },
+      {
+        "id": "court_step_3",
+        "prefabId": "stone_step",
+        "x": 920,
+        "y": 1100,
+        "width": 120,
+        "height": 25
+      },
+      {
+        "id": "court_floor_terrace",
+        "prefabId": "stone_floor",
+        "x": 1400,
+        "y": 1170,
+        "width": 1400,
+        "height": 180
+      },
+      {
+        "id": "court_balcony_1",
+        "prefabId": "marble_balcony",
+        "x": 1420,
+        "y": 1074,
+        "width": 150,
+        "height": 18
+      },
+      {
+        "id": "court_balcony_2",
+        "prefabId": "marble_balcony",
+        "x": 1640,
+        "y": 978,
+        "width": 150,
+        "height": 18
+      },
+      {
+        "id": "court_walkway",
+        "prefabId": "stone_arch",
+        "x": 1860,
+        "y": 882,
+        "width": 520,
+        "height": 24
+      },
+      {
+        "id": "court_secret_step",
+        "prefabId": "marble_balcony",
+        "x": 1900,
+        "y": 786,
+        "width": 100,
+        "height": 18
+      },
+      {
+        "id": "court_secret_ledge_1",
+        "prefabId": "stone_arch",
+        "x": 2040,
+        "y": 690,
+        "width": 140,
+        "height": 22
+      },
+      {
+        "id": "court_scaffold_drop_1",
+        "prefabId": "scaffold_oneway",
+        "x": 2440,
+        "y": 1026,
+        "width": 140,
+        "height": 18
+      },
+      {
+        "id": "court_scaffold_drop_2",
+        "prefabId": "scaffold_oneway",
+        "x": 2620,
+        "y": 1098,
+        "width": 120,
+        "height": 18
+      },
+      {
+        "id": "court_terrace_rest_1",
+        "prefabId": "marble_balcony",
+        "x": 1840,
+        "y": 1074,
+        "width": 120,
+        "height": 18
+      },
+      {
+        "id": "court_terrace_rest_2",
+        "prefabId": "marble_balcony",
+        "x": 2020,
+        "y": 1074,
+        "width": 120,
+        "height": 18
+      },
+      {
+        "id": "court_terrace_rest_3",
+        "prefabId": "marble_balcony",
+        "x": 2200,
+        "y": 1074,
+        "width": 120,
+        "height": 18
+      },
+      {
+        "id": "court_terrace_pillar_1",
+        "prefabId": "stone_step",
+        "x": 2360,
+        "y": 1120,
+        "width": 60,
+        "height": 50
+      },
+      {
+        "id": "court_secret_loft_step_1",
+        "prefabId": "marble_balcony",
+        "x": 1450,
+        "y": 882,
+        "width": 150,
+        "height": 18
+      },
+      {
+        "id": "court_secret_loft_step_2",
+        "prefabId": "marble_balcony",
+        "x": 1640,
+        "y": 786,
+        "width": 140,
+        "height": 18
+      },
+      {
+        "id": "court_secret_loft_ledge",
+        "prefabId": "stone_arch",
+        "x": 1420,
+        "y": 690,
+        "width": 200,
+        "height": 22
+      },
+      {
+        "id": "court_terrace_sky_1",
+        "prefabId": "marble_balcony",
+        "x": 2420,
+        "y": 786,
+        "width": 140,
+        "height": 18
+      },
+      {
+        "id": "court_terrace_sky_2",
+        "prefabId": "marble_balcony",
+        "x": 2600,
+        "y": 882,
+        "width": 140,
+        "height": 18
+      },
+      {
+        "id": "court_floor_basin",
+        "prefabId": "stone_floor",
+        "x": 2800,
+        "y": 1270,
+        "width": 1500,
+        "height": 80
+      },
+      {
+        "id": "court_basin_pillar_1",
+        "prefabId": "stone_step",
+        "x": 2900,
+        "y": 1200,
+        "width": 90,
+        "height": 70
+      },
+      {
+        "id": "court_basin_pillar_2",
+        "prefabId": "stone_step",
+        "x": 3120,
+        "y": 1130,
+        "width": 90,
+        "height": 140
+      },
+      {
+        "id": "court_basin_plinth_1",
+        "prefabId": "stone_step",
+        "x": 3300,
+        "y": 1190,
+        "width": 280,
+        "height": 80
+      },
+      {
+        "id": "court_basin_pillar_3",
+        "prefabId": "stone_step",
+        "x": 3670,
+        "y": 1110,
+        "width": 100,
+        "height": 160
+      },
+      {
+        "id": "court_basin_plinth_2",
+        "prefabId": "stone_step",
+        "x": 3860,
+        "y": 1190,
+        "width": 280,
+        "height": 80
+      },
+      {
+        "id": "court_basin_stair",
+        "prefabId": "stone_step",
+        "x": 4160,
+        "y": 1220,
+        "width": 140,
+        "height": 50
+      },
+      {
+        "id": "court_basin_gantry_1",
+        "prefabId": "scaffold_oneway",
+        "x": 3060,
+        "y": 1034,
+        "width": 130,
+        "height": 18
+      },
+      {
+        "id": "court_basin_gantry_2",
+        "prefabId": "scaffold_oneway",
+        "x": 3230,
+        "y": 1034,
+        "width": 110,
+        "height": 18
+      },
+      {
+        "id": "court_basin_gantry_3",
+        "prefabId": "scaffold_oneway",
+        "x": 3040,
+        "y": 938,
+        "width": 130,
+        "height": 18
+      },
+      {
+        "id": "court_secret_basin_step",
+        "prefabId": "marble_balcony",
+        "x": 2880,
+        "y": 842,
+        "width": 120,
+        "height": 18
+      },
+      {
+        "id": "court_secret_basin_ledge",
+        "prefabId": "marble_balcony",
+        "x": 2700,
+        "y": 746,
+        "width": 160,
+        "height": 18
+      },
+      {
+        "id": "court_basin_pillar_4",
+        "prefabId": "stone_step",
+        "x": 3595,
+        "y": 1230,
+        "width": 60,
+        "height": 40
+      },
+      {
+        "id": "court_basin_gantry_4",
+        "prefabId": "scaffold_oneway",
+        "x": 3780,
+        "y": 1014,
+        "width": 130,
+        "height": 18
+      },
+      {
+        "id": "court_basin_gantry_5",
+        "prefabId": "scaffold_oneway",
+        "x": 4060,
+        "y": 1014,
+        "width": 130,
+        "height": 18
+      },
+      {
+        "id": "court_basin_gantry_6",
+        "prefabId": "scaffold_oneway",
+        "x": 3930,
+        "y": 918,
+        "width": 110,
+        "height": 18
+      },
+      {
+        "id": "court_floor_road",
+        "prefabId": "stone_floor",
+        "x": 4300,
+        "y": 1170,
+        "width": 2900,
+        "height": 180
+      },
+      {
+        "id": "court_parapet_step_1",
+        "prefabId": "marble_balcony",
+        "x": 4500,
+        "y": 1074,
+        "width": 140,
+        "height": 18
+      },
+      {
+        "id": "court_parapet_step_2",
+        "prefabId": "marble_balcony",
+        "x": 4700,
+        "y": 978,
+        "width": 140,
+        "height": 18
+      },
+      {
+        "id": "court_gate_parapet",
+        "prefabId": "marble_balcony",
+        "x": 4900,
+        "y": 882,
+        "width": 280,
+        "height": 20
+      },
+      {
+        "id": "court_parapet_rest_1",
+        "prefabId": "marble_balcony",
+        "x": 4330,
+        "y": 1074,
+        "width": 100,
+        "height": 18
+      },
+      {
+        "id": "court_parapet_loft_1",
+        "prefabId": "scaffold_oneway",
+        "x": 4500,
+        "y": 978,
+        "width": 140,
+        "height": 18
+      },
+      {
+        "id": "court_parapet_loft_2",
+        "prefabId": "marble_balcony",
+        "x": 4380,
+        "y": 882,
+        "width": 140,
+        "height": 18
+      },
+      {
+        "id": "court_parapet_loft_3",
+        "prefabId": "marble_balcony",
+        "x": 4560,
+        "y": 786,
+        "width": 140,
+        "height": 18
+      },
+      {
+        "id": "court_parapet_loft_4",
+        "prefabId": "marble_balcony",
+        "x": 4740,
+        "y": 786,
+        "width": 130,
+        "height": 18
+      },
+      {
+        "id": "court_parapet_rest_2",
+        "prefabId": "marble_balcony",
+        "x": 5170,
+        "y": 1074,
+        "width": 110,
+        "height": 18
+      },
+      {
+        "id": "court_gate_main",
+        "prefabId": "castle_gate",
+        "x": 5300,
+        "y": 700,
+        "width": 38,
+        "height": 470
+      },
+      {
+        "id": "court_vault_step_1",
+        "prefabId": "marble_balcony",
+        "x": 5420,
+        "y": 1074,
+        "width": 130,
+        "height": 18
+      },
+      {
+        "id": "court_vault_step_2",
+        "prefabId": "marble_balcony",
+        "x": 5600,
+        "y": 978,
+        "width": 130,
+        "height": 18
+      },
+      {
+        "id": "court_vault_step_3",
+        "prefabId": "marble_balcony",
+        "x": 5780,
+        "y": 882,
+        "width": 130,
+        "height": 18
+      },
+      {
+        "id": "court_vault_step_4",
+        "prefabId": "marble_balcony",
+        "x": 5960,
+        "y": 786,
+        "width": 130,
+        "height": 18
+      },
+      {
+        "id": "court_vault_step_5",
+        "prefabId": "marble_balcony",
+        "x": 6140,
+        "y": 690,
+        "width": 130,
+        "height": 18
+      },
+      {
+        "id": "court_vault_perch_1",
+        "prefabId": "marble_balcony",
+        "x": 5740,
+        "y": 1074,
+        "width": 120,
+        "height": 18
+      },
+      {
+        "id": "court_vault_loft_1",
+        "prefabId": "scaffold_oneway",
+        "x": 5440,
+        "y": 978,
+        "width": 110,
+        "height": 18
+      },
+      {
+        "id": "court_vault_loft_2",
+        "prefabId": "scaffold_oneway",
+        "x": 5620,
+        "y": 882,
+        "width": 110,
+        "height": 18
+      },
+      {
+        "id": "court_road_ledge_1",
+        "prefabId": "marble_balcony",
+        "x": 5960,
+        "y": 1074,
+        "width": 120,
+        "height": 18
+      },
+      {
+        "id": "court_road_ledge_2",
+        "prefabId": "marble_balcony",
+        "x": 6140,
+        "y": 1074,
+        "width": 120,
+        "height": 18
+      },
+      {
+        "id": "court_road_ledge_3",
+        "prefabId": "marble_balcony",
+        "x": 6320,
+        "y": 1074,
+        "width": 120,
+        "height": 18
+      },
+      {
+        "id": "court_road_ledge_4",
+        "prefabId": "marble_balcony",
+        "x": 6500,
+        "y": 1074,
+        "width": 120,
+        "height": 18
+      },
+      {
+        "id": "court_road_loft_1",
+        "prefabId": "marble_balcony",
+        "x": 6340,
+        "y": 978,
+        "width": 130,
+        "height": 18
+      },
+      {
+        "id": "court_road_loft_2",
+        "prefabId": "marble_balcony",
+        "x": 6510,
+        "y": 882,
+        "width": 130,
+        "height": 18
+      },
+      {
+        "id": "court_road_loft_3",
+        "prefabId": "marble_balcony",
+        "x": 6700,
+        "y": 978,
+        "width": 130,
+        "height": 18
+      },
+      {
+        "id": "court_secret_road_ledge",
+        "prefabId": "stone_arch",
+        "x": 7060,
+        "y": 882,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "court_secret_vault_terrace",
+        "prefabId": "stone_arch",
+        "x": 6320,
+        "y": 594,
+        "width": 300,
+        "height": 24
+      },
+      {
+        "id": "court_road_block",
+        "prefabId": "stone_step",
+        "x": 6720,
+        "y": 1090,
+        "width": 140,
+        "height": 80
+      }
     ],
     "triggers": [
-      {"id":"trigger_welcome","x":160,"y":970,"width":80,"height":200,"triggerId":"narrationOpening"},
-      {"id":"trigger_jump","x":540,"y":980,"width":70,"height":190,"triggerId":"narrationJump"},
-      {"id":"trigger_combat","x":1360,"y":980,"width":70,"height":190,"triggerId":"trainingCombatPrompt"},
-      {"id":"trigger_movement","x":2830,"y":1070,"width":80,"height":200,"triggerId":"narrationMovement"},
-      {"id":"trigger_lever_info","x":4420,"y":970,"width":80,"height":200,"triggerId":"trainingLeverPrompt"},
-      {"id":"trigger_secret_vault","x":6440,"y":514,"width":80,"height":80,"triggerId":"trainingCombatSuccess"},
-      {"id":"trigger_goal_info","x":6900,"y":970,"width":80,"height":200,"triggerId":"trainingGoalPrompt"}
+      {
+        "id": "trigger_welcome",
+        "x": 160,
+        "y": 970,
+        "width": 80,
+        "height": 200,
+        "triggerId": "narrationOpening"
+      },
+      {
+        "id": "trigger_jump",
+        "x": 540,
+        "y": 980,
+        "width": 70,
+        "height": 190,
+        "triggerId": "narrationJump"
+      },
+      {
+        "id": "trigger_combat",
+        "x": 1360,
+        "y": 980,
+        "width": 70,
+        "height": 190,
+        "triggerId": "trainingCombatPrompt"
+      },
+      {
+        "id": "trigger_movement",
+        "x": 2830,
+        "y": 1070,
+        "width": 80,
+        "height": 200,
+        "triggerId": "narrationMovement"
+      },
+      {
+        "id": "trigger_lever_info",
+        "x": 4420,
+        "y": 970,
+        "width": 80,
+        "height": 200,
+        "triggerId": "trainingLeverPrompt"
+      },
+      {
+        "id": "trigger_secret_vault",
+        "x": 6440,
+        "y": 514,
+        "width": 80,
+        "height": 80,
+        "triggerId": "trainingCombatSuccess"
+      },
+      {
+        "id": "trigger_goal_info",
+        "x": 6900,
+        "y": 970,
+        "width": 80,
+        "height": 200,
+        "triggerId": "trainingGoalPrompt"
+      }
     ],
     "levers": [
-      {"id":"court_gate_lever","x":5000,"y":837,"width":25,"height":45,"triggerId":"lever_courtyard","targetGateId":"court_gate_main","labelKey":"labelGateLever","defaultLabel":"Gate Lever"}
+      {
+        "id": "court_gate_lever",
+        "x": 5000,
+        "y": 837,
+        "width": 25,
+        "height": 45,
+        "triggerId": "lever_courtyard",
+        "targetGateId": "court_gate_main",
+        "labelKey": "labelGateLever",
+        "defaultLabel": "Gate Lever"
+      }
     ],
     "portals": [
-      {"id":"court_goal_chasm","portalKey":"portal_thorn_chasm","x":7060,"y":1075,"width":65,"height":95}
+      {
+        "id": "court_goal_chasm",
+        "portalKey": "portal_thorn_chasm",
+        "x": 7060,
+        "y": 1075,
+        "width": 65,
+        "height": 95
+      }
     ],
     "enemies": [
-      {"id":"court_dummy_1","monsterKey":"training_dummy","x":380,"y":1110,"facingLeft":true},
-      {"id":"court_dummy_2","monsterKey":"training_dummy","x":1060,"y":1110,"facingLeft":true},
-      {"id":"court_sentinel_1","monsterKey":"court_sentinel","x":1700,"y":1108,"patrolMinX":1450,"patrolMaxX":2300,"facingLeft":true},
-      {"id":"court_gargoyle_arcade","monsterKey":"gargoyle_scout","x":2000,"y":540,"patrolMinX":1900,"patrolMaxX":2350,"twoPlayerOnly":false},
-      {"id":"court_sentinel_2","monsterKey":"court_sentinel","x":3350,"y":1128,"patrolMinX":3305,"patrolMaxX":3535,"facingLeft":true},
-      {"id":"court_sentinel_3","monsterKey":"court_sentinel","x":3900,"y":1128,"patrolMinX":3865,"patrolMaxX":4095,"facingLeft":false},
-      {"id":"court_sentinel_gate","monsterKey":"court_sentinel","x":5500,"y":1108,"patrolMinX":5380,"patrolMaxX":5700,"facingLeft":true},
-      {"id":"court_gargoyle_vault","monsterKey":"gargoyle_scout","x":6400,"y":450,"patrolMinX":6150,"patrolMaxX":6700,"twoPlayerOnly":false}
+      {
+        "id": "court_dummy_1",
+        "monsterKey": "training_dummy",
+        "x": 380,
+        "y": 1110,
+        "facingLeft": true
+      },
+      {
+        "id": "court_dummy_2",
+        "monsterKey": "training_dummy",
+        "x": 1060,
+        "y": 1110,
+        "facingLeft": true
+      },
+      {
+        "id": "court_sentinel_1",
+        "monsterKey": "court_sentinel",
+        "x": 1700,
+        "y": 1108,
+        "patrolMinX": 1450,
+        "patrolMaxX": 2300,
+        "facingLeft": true
+      },
+      {
+        "id": "court_mite_terrace",
+        "monsterKey": "gear_mite",
+        "x": 1520,
+        "y": 1152,
+        "patrolMinX": 1460,
+        "patrolMaxX": 1674,
+        "facingLeft": false
+      },
+      {
+        "id": "court_sentinel_walkway",
+        "monsterKey": "court_sentinel",
+        "x": 2100,
+        "y": 820,
+        "patrolMinX": 2040,
+        "patrolMaxX": 2330,
+        "facingLeft": true
+      },
+      {
+        "id": "court_gargoyle_arcade",
+        "monsterKey": "gargoyle_scout",
+        "x": 2000,
+        "y": 540,
+        "patrolMinX": 1900,
+        "patrolMaxX": 2350,
+        "twoPlayerOnly": false
+      },
+      {
+        "id": "court_sentinel_2",
+        "monsterKey": "court_sentinel",
+        "x": 3350,
+        "y": 1128,
+        "patrolMinX": 3305,
+        "patrolMaxX": 3535,
+        "facingLeft": true
+      },
+      {
+        "id": "court_sentinel_3",
+        "monsterKey": "court_sentinel",
+        "x": 3900,
+        "y": 1128,
+        "patrolMinX": 3865,
+        "patrolMaxX": 4095,
+        "facingLeft": false
+      },
+      {
+        "id": "court_warden_basin",
+        "monsterKey": "lantern_warden",
+        "x": 3500,
+        "y": 1000,
+        "patrolMinX": 3400,
+        "patrolMaxX": 3630,
+        "facingLeft": true
+      },
+      {
+        "id": "court_sentinel_gantry",
+        "monsterKey": "court_sentinel",
+        "x": 4090,
+        "y": 952,
+        "patrolMinX": 4065,
+        "patrolMaxX": 4148,
+        "facingLeft": false
+      },
+      {
+        "id": "court_sentinel_gate",
+        "monsterKey": "court_sentinel",
+        "x": 5500,
+        "y": 1108,
+        "patrolMinX": 5380,
+        "patrolMaxX": 5700,
+        "facingLeft": true
+      },
+      {
+        "id": "court_mite_gate",
+        "monsterKey": "gear_mite",
+        "x": 5050,
+        "y": 1152,
+        "patrolMinX": 4950,
+        "patrolMaxX": 5174,
+        "facingLeft": true
+      },
+      {
+        "id": "court_gargoyle_gate",
+        "monsterKey": "gargoyle_scout",
+        "x": 4600,
+        "y": 600,
+        "patrolMinX": 4400,
+        "patrolMaxX": 4830
+      },
+      {
+        "id": "court_mite_road",
+        "monsterKey": "gear_mite",
+        "x": 5900,
+        "y": 1152,
+        "patrolMinX": 5830,
+        "patrolMaxX": 6124,
+        "facingLeft": false
+      },
+      {
+        "id": "court_sentinel_roadloft",
+        "monsterKey": "court_sentinel",
+        "x": 6540,
+        "y": 820,
+        "patrolMinX": 6515,
+        "patrolMaxX": 6598,
+        "facingLeft": true
+      },
+      {
+        "id": "court_gargoyle_vault",
+        "monsterKey": "gargoyle_scout",
+        "x": 6400,
+        "y": 450,
+        "patrolMinX": 6150,
+        "patrolMaxX": 6700,
+        "twoPlayerOnly": false
+      }
     ]
   }
 }

@@ -21,15 +21,17 @@ import valenMetaJson from "@assets/characters/valen/valen_meta.json";
 
 import aureliaMainPng from "@assets/characters/aurelia/aurelia_main.png";
 import aureliaPortraitsPng from "@assets/characters/aurelia/aurelia_portraits.png";
-import aureliaLowPng from "@assets/characters/aurelia/aurelia_level_1_low.png";
-import aureliaMidPng from "@assets/characters/aurelia/aurelia_level_1_mid.png";
-import aureliaHighPng from "@assets/characters/aurelia/aurelia_level_1_high.png";
-import aureliaMetaJson from "@assets/characters/aurelia/aurelia_meta.json";
+import aureliaLowPng from "@assets/characters/aurelia/aurelia_level_1_low_packed.png";
+import aureliaMidPng from "@assets/characters/aurelia/aurelia_level_1_mid_packed.png";
+import aureliaHighPng from "@assets/characters/aurelia/aurelia_level_1_high_packed.png";
+import aureliaMetaJson from "@assets/characters/aurelia/aurelia_packed_meta.json";
 
 interface ICharacterVariantLike {
   scale?: number;
   cellWidth?: number;
   cellHeight?: number;
+  sheetWidth?: number;
+  sheetHeight?: number;
 }
 
 /**
@@ -52,12 +54,14 @@ function getAtlasDimensions(
     } else {
       return { cellWidth: 1024 / 12, cellHeight: 683 / 8, sheetWidth: 1024, sheetHeight: 683, scale: 1.0 };
     }
-  } else if (characterId === "aurelia") {
-    if (quality === "low") {
-      return { cellWidth: 687 / 12, cellHeight: 573 / 8, sheetWidth: 687, sheetHeight: 573, scale: 0.67 };
-    } else {
-      return { cellWidth: 1374 / 12, cellHeight: 1145 / 8, sheetWidth: 1374, sheetHeight: 1145, scale: quality === "high" ? 1.5 : 1.0 };
-    }
+  } else if (characterId === "aurelia" && variant?.sheetWidth && variant.sheetHeight) {
+    return {
+      cellWidth: variant.sheetWidth / 12,
+      cellHeight: variant.sheetHeight / 8,
+      sheetWidth: variant.sheetWidth,
+      sheetHeight: variant.sheetHeight,
+      scale,
+    };
   }
 
   const defaultCellSize = quality === "low" ? 64 : quality === "high" ? 128 : 96;
