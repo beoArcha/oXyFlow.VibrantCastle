@@ -1,6 +1,6 @@
 # Locations & Castle Sectors (World Atlas)
 
-The world of *Vibrant Castle* is set within an ancient, suspended citadel suspended in an eternal, golden autumn. Constructed in the late 19th century by a guild of aristocratic duelists, scholars, and clockwork architects, the citadel harnesses primordial Aether — the crystalline substance that binds matter and the flow of time.
+The world of *Vibrant Castle* is set within an ancient citadel suspended in an eternal, golden autumn. Constructed in the late 19th century by a guild of aristocratic duelists, scholars, and clockwork architects, the citadel harnesses primordial Aether — the crystalline substance that binds matter and the flow of time.
 
 The fortress is organized into **five distinct, interconnected locations** registered in the world engine (`LOCATION_REGISTRY`). Each sector features multi-layered parallax backgrounds, dynamic ambient particle systems, unique platforming mechanics, and Castlevania-style transition portals.
 
@@ -74,7 +74,7 @@ Portal edges, taken from `dictionaries.portals[*].targetLocationId` in each loca
   * **Low Archway (`labelLowArchway`)**: A suffocatingly low stone clearance over jagged ground that requires crouch-sliding under speed to clear.
 * **Portals**:
   * *West Portal*: Return passage to the *Courtyard of Awakening*.
-  * *East Ascent*: Portal climbing into the high gears of the *Clockwork Tower*.
+  * *East Ascent*: Portal to the base of the *Clockwork Tower* (Foundry floor spawn), not to its high gears.
 * **Inhabiting Forces**: Thorn Creeper, Chasm Gargoyle (diving aerial predators), Chasm Crawler (low-slung subterranean beasts clinging beneath slabs), Gear Mite.
 
 ---
@@ -99,7 +99,7 @@ Portal edges, taken from `dictionaries.portals[*].targetLocationId` in each loca
 * **Interactive Elements & Hazards**:
   * **Vertical Clockwork Lift (`labelVerticalLift`)**: A motorized brass freight platform constantly operating along heavy iron chains between the lower gear floor and high battlements.
   * **Angled Firing Range (`narrationShootingRange`)**: A multi-tiered tactical range featuring targets situated aloft and below. Teaches players to hold direction inputs while shooting to loose spells at 45° elevations or stand still for 90° vertical shots.
-  * **Spire Gate & Gear Escapement**: A reinforced clockwork gate opened only by aligning mechanical escapements via projectile hits.
+  * **Spire Gate & Gear Escapement**: A reinforced clockwork gate (`tower_spire_gate`) opened by the Clockwork Gear lever (`tower_gear_lever`), struck with a blade or projectile.
 * **Portals**:
   * *Base Portal*: Descends back to the *Chasm of Thorns and Shadows*.
   * *Spire Apex Portal*: Bridges across the upper clouds into the *Aether Sky Sanctuary*.
@@ -128,10 +128,10 @@ Portal edges, taken from `dictionaries.portals[*].targetLocationId` in each loca
   * **Aether Void Chasm (`labelAetherVoid`)**: Endless starry abysses between floating islands. Falling into the void triggers immediate aetheric recall.
   * **Celestial Energy Barrier (`labelCelestialBarrier`)**: A humming field of woven arcane light that dissolves only when the sanctuary’s guardian constructs are quelled.
   * **Moving Glider Islets**: Hovering platforms gliding horizontally on glowing ley lines.
-  * **Mastery Portal (`portalMastery`)**: A massive ring of carved runestones encircling a swirling vortex of cerulean and gold flame, sealing the completion of Act I.
+  * **Sanctuary Gateway (`labelSanctuaryGateway`)**: A massive ring of carved runestones encircling a swirling vortex of cerulean and gold flame, opened by the altar lever (`aether_altar_lever`) and leading on to the Grand Bastion.
 * **Portals**:
   * *Descent Portal*: Returns to the *Clockwork Tower*.
-  * *Gateway of Mastery*: Unlocks transit to the *Grand Bastion Training Grounds*.
+  * *Gateway of Mastery*: Transit to the *Grand Bastion Training Grounds*.
 * **Inhabiting Forces**: Aether Sentinel, Aether Wisp, Chrono Hound, Lantern Warden, and the formidable elite Aether Archon.
 
 ---
@@ -155,9 +155,9 @@ Portal edges, taken from `dictionaries.portals[*].targetLocationId` in each loca
   * **Ward & Arena**: Ward steps, perch and blocks, the ward gate, and four arena plates.
 * **Interactive Elements & Hazards**:
   * **Main Sluice Lever (`labelMainSluiceLever`)**: A giant golden lever coupled to a massive pneumatic release mechanism.
-  * **Grand Portcullis (`labelGrandPortcullis`)**: A monumental three-tiered iron portcullis barring passage to the victory dais until the Main Sluice Lever is struck.
+  * **Grand Portcullis (`labelGrandPortcullis`)**: A monumental three-tiered iron portcullis barring passage to the victory dais until the Main Sluice Levers are struck. The two levers (`grand_lever_keep`, `grand_lever_ward`) open the keep gate (`grand_gate_keep`) and the ward gate (`grand_gate_ward`).
   * **Apex Gateway**: The ultimate portal pedestal celebrating stage victory, displaying total score, skill point accrual, and completion time.
 * **Portals**:
   * *Sanctuary Return*: Reconnects with the *Aether Sky Sanctuary*.
-  * *Origin Portal*: Cycles back to the *Courtyard of Awakening* for continuous mastery runs.
+  * *Mastery Portal* (`portal_mastery_loop`): Loops back to the *Courtyard of Awakening* for continuous mastery runs.
 * **Inhabiting Forces**: Straw Training Dummy (`grand_dummy`, `training_target`), Courtyard Sentinel (`court_sentinel`; boss variant `bastion_sentinel_boss`), Clockwork Automaton, Chasm Gargoyle (`chasm_gargoyle`; variant `bastion_gargoyle`), Chrono Hound, Gear Mite, Lantern Warden.

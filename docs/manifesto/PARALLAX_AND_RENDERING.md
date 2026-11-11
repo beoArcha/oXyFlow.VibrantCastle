@@ -2,11 +2,11 @@
 
 ## 1. Visual Direction & Aesthetic Philosophy
 
-*Vibrant Castle* achieves its visual identity through a hybrid aesthetic marrying three iconic styles:
+*Vibrant Castle* follows the design pillars in `MASTERMAP.md` §1.1. For visuals that means:
 
-- **Bastion / Hades**: Warm golden-autumn color palettes, rich ambient lighting, and high-contrast atmospheric tone.
-- **Owlboy**: Clean pixel art geometry, unmistakable silhouettes, and strict depth separation.
-- **Castlevania**: Gothic architectural motifs, interconnected vertical spires, and readable combat foregrounds.
+- **Aria of Sorrow style**: maps, heroes and enemies in the style and feeling of *Castlevania: Aria of Sorrow* (16-bit pixel art, gothic architecture, readable combat foregrounds).
+- **Autumn palette and mood**: warm amber, rust and dark timber, drifting leaves, golden ambient light. Location `theme` blocks carry the gradient and fog colours; `aether_sanctuary` is currently the one cold (blue) sector (see `MASTERMAP.md` §1.2).
+- Unmistakable silhouettes and strict depth separation remain the readability rules below.
 
 ### Visual Invariants
 
@@ -22,11 +22,11 @@ Depth in the Citadel of Aether is composed strictly across five discrete paralla
 
 ```mermaid
 graph BT
-    CLOSE["5. CLOSE: Foreground silhouettes, drifting autumn leaves, lens vignette (Scroll: 1.40 - 1.60) [True Alpha]"]
-    MID_CLOSE["4. MID_CLOSE: Near columns, hanging chains, overgrown ivy (Scroll: 1.15 - 1.30) [True Alpha]"]
-    MID["3. MID: Walkable platforms, collision geometry, duelists, beasts (Scroll: 1.00 - Anchor) [True Alpha]"]
-    MID_FAR["2. MID_FAR: Distant Citadel spires, floating clockwork gears (Scroll: 0.20 - 0.35) [True Alpha]"]
-    FAR["1. FAR: Deep celestial skybox, astral clockface, eternal autumn rift (Scroll: 0.05 - 0.15) [100% OPAQUE]"]
+    CLOSE["5. CLOSE: Foreground flora and banners (scrollSpeedX 0.85) [True Alpha]"]
+    MID_CLOSE["4. MID_CLOSE: Near stonework and arches (scrollSpeedX 0.65) [True Alpha]"]
+    MID["3. MID: Rampart and spire backdrop (scrollSpeedX 0.42) [True Alpha]"]
+    MID_FAR["2. MID_FAR: Distant castle architecture (scrollSpeedX 0.24) [True Alpha]"]
+    FAR["1. FAR: Static skybox and horizon (scroll 0) [100% OPAQUE]"]
 
     FAR --> MID_FAR
     MID_FAR --> MID
@@ -36,13 +36,15 @@ graph BT
 
 ### 2.1. Tier Specifications
 
-| Tier | Layer Key | Alpha Contract | Scroll Speed Ratio | Visual & Spatial Purpose |
+All five shipped locations use the same speeds (`scrollSpeedX` / `scrollSpeedY` per layer in the location JSON). Parallax layers are backgrounds only: terrain, entities, enemies, projectiles and players are drawn afterwards in world space (see §4), and no layer scrolls faster than the camera.
+
+| Tier | Layer Key | Alpha Contract | `scrollSpeedX` / `scrollSpeedY` | Visual & Spatial Purpose |
 | :--- | :--- | :--- | :--- | :--- |
-| **`FAR`** | `layer_far` | **100% Opaque (`opaque: true`)** | 0.05 – 0.15 | **The Infinite Horizon**. Deep skybox, astral clockface, and perpetual sunset. Covers the entire viewport without gaps. |
-| **`MID_FAR`** | `layer_mid_far` | True Transparency | 0.20 – 0.35 | **Distant Architecture**. Silhouette spires of the Citadel, suspended aqueducts, and massive clock gears slowly turning in the distance. |
-| **`MID`** | `layer_mid` | True Transparency | 1.00 (Anchor) | **The Gameplay Plane**. Walkable terrain, collision tiles, duelist champions, monsters, spell projectiles, and interactive map levers/chests. |
-| **`MID_CLOSE`** | `layer_mid_close` | True Transparency | 1.15 – 1.30 | **Near Environmental Framing**. Foreground gothic arches, stone columns, and hanging iron chandeliers that scroll slightly faster than the player. |
-| **`CLOSE`** | `layer_close` | True Transparency | 1.40 – 1.60 | **Foreground Atmospheric Veil**. Rapidly scrolling foreground elements: silhouettes of ancient banners, drifting golden leaves, and localized fog. |
+| **`FAR`** | `far` | **100% Opaque (`opaque: true`)** | 0 / 0 (static, cover-fit) | **The Infinite Horizon**. Skybox and horizon. Covers the entire viewport without gaps. |
+| **`MID_FAR`** | `mid_far` | True Transparency | 0.24 / 0.10 | **Distant Architecture**. Castle silhouettes. |
+| **`MID`** | `mid` | True Transparency | 0.42 / 0.18 | **Mid Backdrop**. Ramparts and spires behind the gameplay plane. |
+| **`MID_CLOSE`** | `mid_close` | True Transparency | 0.65 / 0.30 | **Near Environmental Framing**. Stonework and arches. |
+| **`CLOSE`** | `close` | True Transparency | 0.85 / 0.45 | **Foreground Veil**. Flora and foreground elements. |
 
 ---
 
@@ -64,36 +66,43 @@ The rendering engine processes layers strictly from back to front in a single pa
 
 ```mermaid
 graph TD
-    Clear["1. Clear Canvas: ctx.clearRect(0, 0, viewport.width, viewport.height)"]
-    Camera["2. Calculate Camera: position + subpixel interpolation"]
-    RenderFar["3. Render FAR: opaque backdrop at speedX/speedY"]
-    RenderMidFar["4. Render MID_FAR: distant spires with alpha"]
-    RenderMid["5. Render MID: platforms + entities (sorted by Y-index)"]
-    RenderMidClose["6. Render MID_CLOSE: near architectural arches"]
-    RenderClose["7. Render CLOSE: foreground particles and vignette"]
-    DebugPass["8. Optional Debug Pass: AABB hitboxes and wireframes (Atlas Studio only)"]
+    Clear["1. Clear / fill canvas, scale, apply screen shake"]
+    Parallax["2. Parallax layers FAR to CLOSE (screen space)"]
+    Translate["3. Translate by camera, set view-culling rectangle"]
+    Ambient["4. Ambient particles (dust, leaves)"]
+    Structures["5. Level structures (culled)"]
+    Enemies["6. Enemies (culled)"]
+    Projectiles["7. Projectiles"]
+    Players["8. Players"]
+    Sparks["9. Combat sparks"]
+    Debug["10. Optional hitbox overlay, FPS badge, profiler (debug)"]
 
-    Clear --> Camera
-    Camera --> RenderFar
-    RenderFar --> RenderMidFar
-    RenderMidFar --> RenderMid
-    RenderMid --> RenderMidClose
-    RenderMidClose --> RenderClose
-    RenderClose --> DebugPass
+    Clear --> Parallax
+    Parallax --> Translate
+    Translate --> Ambient
+    Ambient --> Structures
+    Structures --> Enemies
+    Enemies --> Projectiles
+    Projectiles --> Players
+    Players --> Sparks
+    Sparks --> Debug
 ```
 
-### 4.1. Parallax Scroll Calculation
+### 4.1. Parallax Geometry
 
-The screen position of any parallax layer element is calculated deterministically:
-$$\text{drawX} = \text{Math.round}((\text{cameraX} \times \text{speedX}) + \text{layerOffsetX})$$
-$$\text{drawY} = \text{Math.round}((\text{cameraY} \times \text{speedY}) + \text{layerOffsetY})$$
+Source: `src/game/renderer/background/parallaxGeometry.ts`, `parallaxTiling.ts`, `parallax/parallaxImageRenderer.ts`.
 
-- Coordinates passed to `ctx.drawImage()` are rounded to nearest whole pixels to prevent bilinear texture filtering blurriness on pixel art baselines.
-- Camera tracking itself maintains high-precision floating point coordinates to preserve sub-pixel interpolation smoothness.
+- **Horizontal**: `scrollX = progressX * extraWidth * scrollSpeedX` (camera progress through the level times the surplus width of the background box), plus optional `autoDriftX * tickCount`. The image is tiled horizontally across the viewport.
+- **Draw height** (`resolveLayerDrawHeight`): `min(boxHeight * 0.85, imageHeight * MAX_LAYER_UPSCALE)`, never below the viewport height. `MAX_LAYER_UPSCALE = 1.65` caps how soft a pixel-art layer may become on tall boxes (clocktower box is 3250 px tall).
+- **Vertical** (`resolveLayerScreenY`): camera progress is clamped so neither the top nor the bottom edge of the image can enter the viewport; drift ping-pongs inside the remaining room.
+- **Tile edges** are rounded as shared boundaries so neighbouring tiles abut without a 1 px gap or overlap.
+- **`mirrorTile`** (optional boolean per layer in the location JSON): every odd world tile is drawn flipped so its edge matches its neighbour, for images that are not seamless. `bun scripts/check-parallax-seams.ts` reports seam quality per `src/assets/bg` PNG; layers that warn need `"mirrorTile": true`. Most non-FAR layers of the shipped maps set it; the remaining ones (for example courtyard `bg_mid`, the sanctuary `mid_far` and `mid`) are seamless or unflagged.
+- **FAR backdrop** (`resolveFarBackdropRect`): cover-fit, centred, edges floored and ceiled outward so rounding never leaves a gap at the viewport border.
+- Coordinates passed to `ctx.drawImage()` are rounded to whole pixels to avoid blur on pixel-art baselines.
 
-### 4.2. Entity Depth Sorting (Y-Sorting)
+### 4.2. Draw Order and View Culling
 
-Within the `MID` gameplay tier, dynamic entities (champions, monsters, particles) are rendered sorted by their bottom baseline Y-coordinate (`y + height`), ensuring that characters standing lower on the screen naturally overlap characters behind them.
+Entities are not Y-sorted; they are drawn per category in the order shown above (structures, enemies, projectiles, players). `ViewCuller` (`src/game/renderer/viewCulling.ts`) holds the camera's world rectangle expanded by `VIEW_CULL_MARGIN` (200 px) so that sprites overhanging their hitbox are never clipped early; structures, enemies and hitbox overlays outside it are skipped. It is render-only, preallocated and allocation-free, and tracks drawn/total counts for the profiler.
 
 ---
 
@@ -108,3 +117,33 @@ Within the `MID` gameplay tier, dynamic entities (champions, monsters, particles
    - Background textures must never include baked-in typography, signage, or interface markers. All textual elements must be rendered dynamically via `@i18n` overlays.
 4. **Asset Schema Validation**:
    - Every parallax layer declared in a location blueprint must be backed by a non-empty PNG file verified by `src/tests/arch/locationBlueprints.test.ts`.
+
+---
+
+## 6. Atlas Quality Tiers & Sprite Anchoring
+
+Source: `src/game/engine/atlas/`, `src/game/renderer/atlasSpriteRenderer.ts`.
+
+### 6.1. Tiers
+
+The display setting `assetQuality` (`low` | `mid` | `high`, default `high`) selects the tier an atlas draws:
+
+| Tier | Enemy and structure sheets | Character UI text |
+| :--- | :--- | :--- |
+| `low` | "NES class" SVG (12-bit colour, 48 px cells) | "16-Bit Retro Classic" |
+| `mid` | "SNES class" SVG (RGB565, 96 px cells) | "16-Bit Modern Mobile" |
+| `high` | Packed PNG sheet (`<id>_packed_high.png`) | "16-Bit Modern PC" |
+
+- **Fallback chain** (`atlasVariantResolver.ts`): requested `low` tries low, mid, high; requested `mid` tries mid, high, low; requested `high` tries high, mid, low. If an enemy has no usable tier at all it is drawn procedurally from `proceduralFallback` in `enemies.json`.
+- **Lazy tier switch** (`AtlasTextureManager`): only the desired tier is fetched; the previously active tier keeps drawing until the new one is ready, then it is released.
+- **SVG rasterised once** (`svgRaster.ts`): SVG sheets are drawn into an offscreen canvas at an integer scale so a cell is at least 192 px wide (48 to x4, 96 to x2, 72 to x3, 144 to x2); `render()` only blits from that bitmap.
+- **Auto-discovery** (`atlasFileDiscovery.ts`): every `src/assets/enemies/<id>/` and `src/assets/structures/<id>/` folder is collected (Vite `import.meta.glob`, filesystem fallback under Bun). Only `*_packed_high.png` and `*.svg` images are bundled; original AI sheets (`*_high.png`) are repack inputs and never shipped. Of the structure folders only `aether_gate` is registered as an atlas.
+- Hero sheets (`src/assets/characters/`) are chosen by the same setting through the sprite animator and, for Aurelia, have repacked variants.
+
+### 6.2. Scale and Anchor from `bodyBox`
+
+When a sheet's meta carries `layout.bodyBox` (normalized bounding box of the body inside one cell), `AtlasSpriteRenderer` scales the sprite so the body matches the entity's hitbox and anchors it by the body. Sheets without `bodyBox` use the legacy visible-ratio heuristic. The sprite compiler writes `bodyBox` for SVG tiers; the repack tool writes it for packed PNGs.
+
+### 6.3. Current Coverage
+
+All 11 NES/SNES SVG sheets exist (court_sentinel, chasm_crawler, chasm_gargoyle, gear_mite, aether_wisp, lantern_warden, clockwork_automaton, thorn_creeper, aether_archon, aether_sentinel, chrono_hound). Only `training_dummy` and `clockwork_owl_gargoyle` have painted `high` sheets. `shadow_knight` has no art yet. Templates that share a sheet do so through `atlas.presetId`.

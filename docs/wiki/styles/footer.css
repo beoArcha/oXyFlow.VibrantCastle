@@ -115,3 +115,46 @@
     padding: 0.7rem 1.5rem;
   }
 }
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 1rem;
+  }
+  .viewport-stage {
+    aspect-ratio: 4 / 3;
+  }
+  .viewport-splash {
+    padding: 1rem;
+    overflow-y: auto;
+    justify-content: flex-start;
+  }
+  .splash-crest {
+    font-size: 2.25rem;
+    margin-bottom: 0.4rem;
+  }
+  .splash-subtitle {
+    font-size: 0.88rem;
+    margin-bottom: 0.9rem;
+  }
+  .splash-meta {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1rem;
+    margin-bottom: 1rem;
+  }
+  .viewport-controls {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .viewport-footer-hints {
+    flex-wrap: wrap;
+  }
+  .docs-viewer-card {
+    padding: 1.25rem;
+  }
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}

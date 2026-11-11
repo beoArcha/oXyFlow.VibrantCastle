@@ -8,16 +8,31 @@ The castle is suspended in an eternal, golden autumn. Once the illustrious seat 
 
 ---
 
+## Tone and Direction
+
+* **Autumn of the Citadel**: The castle is caught in one unending golden autumn. Ochre and amber light warm the courtyards, crimson haze hangs over the chasm, bronze and sepia fill the tower, cerulean starlight floats over the sanctuary, and royal gold closes the Bastion.
+* **Decay and Warmth**: Stone crumbles, leaves fall and gears rust, yet the lamps are still lit. Every sector should feel old and tired but still cared for.
+* **Mood**: The melancholy and gothic atmosphere of *Castlevania: Aria of Sorrow*, with simplified, readable combat.
+* **Movement**: Platforming should feel like a Mario game: springy, forgiving jumps, clear landings and quick turns.
+* **Reactive Narrator**: The Bastion Narrator answers what the duelists do in short lines, and never explains the layout.
+* **Loop, Not Line**: The route runs forward through five sectors, but portals run both ways between the first four and the Mastery Portal returns players to the Courtyard, so each sector is revisited with new skills and new eyes.
+
+---
+
 ## Act I: The Awakening of the Bastion (The 5-Sector Citadel Circuit)
 
 ### Campaign Progression & Sector Network
 
 ```text
 
-[Courtyard of Awakening] ===> [Chasm of Thorns] ===> [Clockwork Tower] ===> [Aether Sky Sanctuary]
-         |                                                                           |
-         +====================> [ Grand Bastion Circuit ] <=========================+
+[Courtyard of Awakening] <===> [Chasm of Thorns] <===> [Clockwork Tower] <===> [Aether Sky Sanctuary] <===> [Grand Bastion Training Grounds]
+         ^                                                                                                          |
+         +------------------------------------- Mastery Portal loop (one-way, back to the Courtyard) ------------------------------+
 ```
+
+---
+
+The route runs forward through the five sectors. Portals run both ways between the first four, so players can return to earlier sectors, and the one-way Mastery Portal in the Grand Bastion closes the loop back to the Courtyard.
 
 ---
 
@@ -28,6 +43,7 @@ The castle is suspended in an eternal, golden autumn. Once the illustrious seat 
   > *"The youth awoke upon the vast castle grounds. The crisp air carried scents of dry autumn leaves and fresh aether..."*
 * **Player Objective**: Re-attune to fundamental footwork, rapid sprints, directional slides, and initial rapier thrusts against Master Oakhaven's training automata.
 * **Cooperative Dynamic**: In two-player mode, Aurelia awakens beside Valen; the Narrator observes the resurgence of their historic covenant of steel and celestial craft.
+* **Route Zones**: Awakening Yard, Arcade Terraces, Fountain Basin, Gatehouse (the golden gate lever on the parapet), then Chasm Road to the east gate.
 
 ---
 
@@ -40,6 +56,7 @@ The castle is suspended in an eternal, golden autumn. Once the illustrious seat 
 * **Narrative Reaction**:
   > *"One false step and it was over. But this kid knew how to bend gravity to his will."*
 * **Kinetic Mastery**: Introduction of `Chrono Dash` and `Phase Dash`, allowing players to glide across broad gaps and slip through hazardous hitboxes.
+* **Route Zones**: Entry Floor & Descent, Upper & Low Ledges, Isles & Bridges, Lever & Portcullis (the lever opens the portcullis), then Climb, Moving Platform & Exit to the Clockwork Tower portal. Thorn Creepers, Chasm Gargoyles, Chasm Crawlers and a Gear Mite patrol the gorge.
 
 ---
 
@@ -49,8 +66,9 @@ The castle is suspended in an eternal, golden autumn. Once the illustrious seat 
 * **Combat & Trickshot Challenge**:
   * Mobilizing the motorized vertical lift to ascend between grinding gear chambers.
   * Angled Target Practice: Targets positioned aloft and sunken below necessitate mastering 45° elevation shots while running or true 90° vertical shots while stationary.
+* **Route Zones**: Foundry floor, Gear gallery, Pendulum shaft, Escapement hall (the spire gate), then the Belfry and the apex portal to the Sanctuary.
 * **Mechanical Obstacle**:
-  * Striking the golden escapement lever with blade or projectile releases pneumatic locks, lifting the spire gate.
+  * Striking the golden escapement lever with blade or projectile releases pneumatic locks, lifting the spire gate. The Clockwork Gear lever (`tower_gear_lever`) opens the spire gate (`tower_spire_gate`).
 * **Narrator Commentary**:
   > *"Deep within the clocktower, massive iron cogs groaned, lifting the portcullis toward the clouds."*
 
@@ -59,22 +77,24 @@ The castle is suspended in an eternal, golden autumn. Once the illustrious seat 
 ### Phase 4: Celestial Threshold – Aether Sky Sanctuary & Aqueduct (`aether_sanctuary`)
 
 * **Setting & Tone**: Floating marble islands suspended above the cloud canopy by giant Aether crystals. A ruined aqueduct cascades liquid light into the starry abyss.
+* **Route Zones**: Arrival Terrace, Shard Field, Cloister & Altar, Upper Steps & Parapet, Secrets & Dash Isle. The Aether void lies between the islets.
 * **Climactic Encounter**:
   * Confronting the **Aether Archon** amidst swirling stardust and starlight cascades.
   * Navigating floating glider platforms while neutralizing aerial wisps.
 * **Zwieńczenie Poziomu (Sector Culmination)**:
-  * Stepping through the celestial threshold unseals the **Mastery Portal**.
+  * The altar lever in the Cloister & Altar opens the **Sanctuary Gateway**, which leads on to the Grand Bastion.
   * **Narrative Milestone**:
     > *"And so they stepped into a new dawn, fully armed and attuned to ancient Aether. The first trial was conquered, yet the deeper heart of the castle still slept..."*
 
 ---
 
-### Phase 5: The Grand Circuit – Grand Bastion Proving Grounds (`grand_bastion`)
+### Phase 5: The Grand Circuit – Grand Bastion Training Grounds (`grand_bastion`)
 
-* **Setting & Tone**: The master unified circuit spanning 5200 pixels, seamlessly weaving courtyards, thorn chasms, clockwork lifts, and high battlements into one continuous gauntlet.
+* **Setting & Tone**: The master unified circuit spanning 8000 pixels, seamlessly weaving courtyards, thorn chasms, clockwork lifts, and high battlements into one continuous gauntlet.
+* **Route Zones**: Barbican, Rampart, Case & Cross Ledges, Keep & Treasury, Ward & Arena. The Mastery Portal then returns players to the Courtyard of Awakening.
 * **Mastery Trial**:
-  * Defeating elite Shadow Knights who mirror player feints and backsteps.
-  * Striking the **Main Sluice Lever** atop the highest bastion to release the **Grand Portcullis**.
+  * Facing the **Bastion Sentinel**, the boss variant of the Courtyard Sentinel, in the Ward & Arena.
+  * Striking the two **Main Sluice Levers** to open the keep and ward gates; the **Grand Portcullis** bars the victory dais.
   * Celebrating ultimate stage mastery with high score calculations and skill tree progression.
 
 ---

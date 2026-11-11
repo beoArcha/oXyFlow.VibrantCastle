@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
   <title>Vibrant Castle — Gotycka Wiki & Portal Dystrybucji</title>
   <meta name="description" content="Autonomiczna gotycka wiki oraz portal dystrybucji platformówki 2D Vibrant Castle. Dokumentacja mechanik, sterowanie, bohaterowie oraz grywalna wersja w przeglądarce.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏰</text></svg>">
@@ -10,18 +11,20 @@
 </head>
 <body>
 
+  <a href="#main-content" class="skip-link" data-i18n="wikiSkipToContent">Przejdź do treści</a>
+
   <!-- Site Header & Sticky Gothic Navigation -->
   <header class="site-header">
     <div class="container header-container">
       <a href="#hero" class="site-brand" id="brand-link">
-        <div class="brand-crest">🏰</div>
+        <div class="brand-crest" aria-hidden="true">🏰</div>
         <div class="brand-text-wrap">
           <span class="brand-title">VIBRANT CASTLE</span>
           <span class="brand-subtitle">Chronicles of Aether</span>
         </div>
       </a>
 
-      <nav class="nav-links" aria-label="Nawigacja Portalu">
+      <nav class="nav-links" aria-label="Nawigacja Portalu" data-i18n-attr="aria-label:wikiNavAria">
         <a href="#game-viewport" class="nav-link" data-i18n="wikiNavGame">Graj</a>
         <a href="#controls-reference" class="nav-link" data-i18n="wikiNavControls">Sterowanie</a>
         <a href="#knowledge-vault" class="nav-link" data-i18n="wikiNavDocs">Księgi Wiedzy</a>
@@ -29,14 +32,15 @@
 
       <div class="header-actions">
         <!-- Multi-language Switcher -->
-        <div class="lang-switcher" role="group" aria-label="Wybór Języka">
-          <button type="button" class="lang-btn active" data-lang-btn="pl" aria-pressed="true">PL</button>
-          <button type="button" class="lang-btn" data-lang-btn="en" aria-pressed="false">EN</button>
+        <div class="lang-switcher" role="group" aria-label="Wybór Języka" data-i18n-attr="aria-label:wikiLangAria">
+          <button type="button" class="lang-btn active" data-lang-btn="pl" lang="pl" aria-pressed="true" aria-label="Polski">PL</button>
+          <button type="button" class="lang-btn" data-lang-btn="en" lang="en" aria-pressed="false" aria-label="English">EN</button>
         </div>
 
         <!-- Repository Link -->
         <a href="https://github.com/beoArcha/oXyFlow.VibrantCastle" target="_blank" rel="noopener noreferrer" class="btn-github">
           <span>GitHub</span>
+          <span class="sr-only" data-i18n="wikiNewTab">(otwiera się w nowej karcie)</span>
           <span aria-hidden="true">↗</span>
         </a>
       </div>
@@ -44,12 +48,12 @@
   </header>
 
   <!-- Main Content Area -->
-  <main class="main-content">
+  <main class="main-content" id="main-content" tabindex="-1">
 
     <!-- Hero Section -->
     <section id="hero" class="hero-section container">
       <div class="hero-pill">
-        <span class="pill-dot"></span>
+        <span class="pill-dot" aria-hidden="true"></span>
         <span data-i18n="wikiHeroBadgeEngine">Canvas 2D 60 Hz</span> •
         <span data-i18n="wikiHeroBadgeNoPlugins">Zero Wtyczek</span>
       </div>
@@ -67,23 +71,24 @@
     </section>
 
     <!-- Interactive Game Viewport (16:9, 1280 × 720) -->
-    <section id="game-viewport" class="viewport-section container">
+    <section id="game-viewport" class="viewport-section container" aria-labelledby="viewport-heading">
+      <h2 id="viewport-heading" class="sr-only" data-i18n="wikiNavGame">Graj</h2>
       <div class="viewport-card" id="viewport-container">
         
         <!-- Viewport Header -->
         <div class="viewport-header">
           <div class="viewport-title">
-            <span class="viewport-title-icon">⚔</span>
+            <span class="viewport-title-icon" aria-hidden="true">⚔</span>
             <span data-i18n="wikiNavGame">Graj</span>
             <span class="viewport-badge">1280 × 720 (16:9)</span>
           </div>
 
           <div class="viewport-controls">
-            <span id="game-status-badge" class="viewport-badge" data-i18n="wikiClickToFocus">
+            <span id="game-status-badge" class="viewport-badge" role="status" data-i18n="wikiClickToFocus">
               Kliknij na obszar gry, aby aktywować sterowanie klawiaturą
             </span>
-            <button type="button" id="btn-fullscreen" class="btn-icon" title="Pełny Ekran" aria-label="Pełny Ekran">
-              ⛶
+            <button type="button" id="btn-fullscreen" class="btn-icon" title="Pełny Ekran" aria-label="Pełny Ekran" data-i18n-attr="title:wikiFullscreen,aria-label:wikiFullscreen">
+              <span aria-hidden="true" id="fullscreen-glyph">⛶</span>
             </button>
           </div>
         </div>
@@ -93,8 +98,8 @@
           
           <!-- Pre-Game Splash Screen Overlay -->
           <div class="viewport-splash" id="viewport-splash">
-            <div class="splash-crest">🏰</div>
-            <h2 class="splash-title">VIBRANT CASTLE</h2>
+            <div class="splash-crest" aria-hidden="true">🏰</div>
+            <p class="splash-title">VIBRANT CASTLE</p>
             <p class="splash-subtitle" data-i18n="wikiHeroSubtitle">
               Gotycka platformówka 2D w wiecznej złotej jesieni.
             </p>
@@ -115,14 +120,20 @@
           </div>
 
           <!-- Embedded Game Frame -->
-          <iframe 
-            id="game-frame" 
-            class="game-iframe" 
-            src="about:blank" 
-            tabindex="0" 
-            title="Vibrant Castle Game Engine" 
+          <iframe
+            id="game-frame"
+            class="game-iframe"
+            src="about:blank"
+            tabindex="0"
+            title="Vibrant Castle — gra"
+            data-i18n-attr="title:wikiGameFrameTitle"
             allow="fullscreen">
           </iframe>
+
+          <!-- Text fallback shown when the game cannot be loaded -->
+          <div id="game-fallback" class="viewport-splash viewport-fallback hidden" role="alert">
+            <p data-i18n="wikiGameFailed">Nie udało się wczytać gry. Odśwież stronę lub zajrzyj do Ksiąg Wiedzy poniżej.</p>
+          </div>
         </div>
 
         <!-- Viewport Footer -->
@@ -135,30 +146,32 @@
               <kbd class="kbd-key">P</kbd> <span data-i18n="wikiPauseGame">Pauza</span>
             </span>
             <span class="hint-pill">
+              <kbd class="kbd-key">Tab</kbd> <span data-i18n="wikiLeaveGame">Opuść grę</span>
+            </span>
+            <span class="hint-pill">
               <kbd class="kbd-key">F11</kbd> <span data-i18n="wikiFullscreen">Pełny Ekran</span>
             </span>
           </div>
         </div>
 
       </div>
+      <p class="viewport-a11y-note"><a href="#controls-reference" data-i18n="wikiSkipGame">Pomiń grę i przejdź do sterowania</a></p>
     </section>
 
     <!-- Quick Controls Reference Section -->
-    <section id="controls-reference" class="controls-section container">
+    <section id="controls-reference" class="controls-section container" aria-labelledby="controls-heading">
       <div class="section-header">
-        <h2 class="section-title" data-i18n="wikiQuickControlsTitle">Podręczny Przewodnik Klawiszologii</h2>
+        <h2 class="section-title" id="controls-heading" data-i18n="wikiQuickControlsTitle">Podręczny Przewodnik Klawiszologii</h2>
         <p class="section-subtitle" data-i18n="wikiQuickControlsDesc">
           Wszystkie akcje kinetyczne szermierzy są dostępne z poziomu klawiatury bez konieczności podłączania kontrolera.
         </p>
       </div>
 
       <div class="controls-grid">
-        
-        <!-- Valen (Player 1) Card -->
         <article class="control-card">
           <div class="card-header-duelist">
             <div class="duelist-meta">
-              <div class="duelist-crest valen">🗡</div>
+              <div class="duelist-crest valen" aria-hidden="true">🗡</div>
               <div>
                 <h3 class="duelist-name" data-i18n="p1Name">Gracz 1: Valen (Chrono Duelist)</h3>
                 <span class="duelist-role" data-i18n="roleValen">Szermierz Czasu (Rapier)</span>
@@ -166,61 +179,41 @@
             </div>
             <span class="duelist-tag">P1 SOLO / CO-OP</span>
           </div>
-
           <div class="control-rows">
             <div class="control-row">
               <span class="control-action" data-i18n="actionMove">Ruch w lewo / w prawo</span>
-              <div class="control-keys">
-                <kbd class="kbd-key">A</kbd>
-                <kbd class="kbd-key">D</kbd>
-              </div>
+              <div class="control-keys"><kbd class="kbd-key">A</kbd><kbd class="kbd-key">D</kbd></div>
             </div>
             <div class="control-row">
-              <span class="control-action" data-i18n="actionJump">Skok sprężysty</span>
-              <div class="control-keys">
-                <kbd class="kbd-key wide">Spacja</kbd>
-              </div>
+              <span class="control-action" data-i18n="actionJump">Skok</span>
+              <div class="control-keys"><kbd class="kbd-key wide">Spacja</kbd></div>
             </div>
             <div class="control-row">
-              <span class="control-action" data-i18n="actionSlide">Wślizg / Unik niski</span>
-              <div class="control-keys">
-                <kbd class="kbd-key">S</kbd>
-                <span>+</span>
-                <kbd class="kbd-key wide">Spacja</kbd>
-              </div>
-            </div>
-            <div class="control-row">
-              <span class="control-action" data-i18n="actionDash">Chrono Dash</span>
-              <div class="control-keys">
-                <kbd class="kbd-key wide">Shift</kbd>
-              </div>
+              <span class="control-action" data-i18n="actionDash">Wślizg / unik (zużywa stamina)</span>
+              <div class="control-keys"><kbd class="kbd-key">L</kbd></div>
             </div>
             <div class="control-row">
               <span class="control-action" data-i18n="actionAttack">Atak bronią białą</span>
-              <div class="control-keys">
-                <kbd class="kbd-key">J</kbd>
-              </div>
+              <div class="control-keys"><kbd class="kbd-key">J</kbd></div>
             </div>
             <div class="control-row">
-              <span class="control-action" data-i18n="actionSpecial">Czar aetherowy</span>
-              <div class="control-keys">
-                <kbd class="kbd-key">K</kbd>
-              </div>
+              <span class="control-action" data-i18n="actionMagic1">Czar 1</span>
+              <div class="control-keys"><kbd class="kbd-key">U</kbd></div>
             </div>
             <div class="control-row">
-              <span class="control-action" data-i18n="actionPotion">Użycie mikstury</span>
-              <div class="control-keys">
-                <kbd class="kbd-key">Q</kbd>
-              </div>
+              <span class="control-action" data-i18n="actionMagic2">Czar 2</span>
+              <div class="control-keys"><kbd class="kbd-key">O</kbd></div>
+            </div>
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionPotion">Mikstury 1 / 2 / 3</span>
+              <div class="control-keys"><kbd class="kbd-key">1</kbd><kbd class="kbd-key">2</kbd><kbd class="kbd-key">3</kbd></div>
             </div>
           </div>
         </article>
-
-        <!-- Aurelia (Player 2) Card -->
         <article class="control-card">
           <div class="card-header-duelist">
             <div class="duelist-meta">
-              <div class="duelist-crest aurelia">✨</div>
+              <div class="duelist-crest aurelia" aria-hidden="true">✨</div>
               <div>
                 <h3 class="duelist-name" data-i18n="p2Name">Gracz 2: Aurelia (Aetherblade Warden)</h3>
                 <span class="duelist-role" data-i18n="roleAurelia">Strażniczka Aetheru (Światło)</span>
@@ -228,49 +221,86 @@
             </div>
             <span class="duelist-tag">P2 CO-OP</span>
           </div>
-
           <div class="control-rows">
             <div class="control-row">
               <span class="control-action" data-i18n="actionMove">Ruch w lewo / w prawo</span>
-              <div class="control-keys">
-                <kbd class="kbd-key">←</kbd>
-                <kbd class="kbd-key">→</kbd>
-              </div>
+              <div class="control-keys"><kbd class="kbd-key">←</kbd><kbd class="kbd-key">→</kbd></div>
             </div>
             <div class="control-row">
-              <span class="control-action" data-i18n="actionJump">Skok sprężysty</span>
-              <div class="control-keys">
-                <kbd class="kbd-key">↑</kbd>
-              </div>
+              <span class="control-action" data-i18n="actionJump">Skok</span>
+              <div class="control-keys"><kbd class="kbd-key wide">Num 0</kbd><kbd class="kbd-key">/</kbd></div>
             </div>
             <div class="control-row">
-              <span class="control-action" data-i18n="actionDash">Phase Dash</span>
-              <div class="control-keys">
-                <kbd class="kbd-key wide">Num 0</kbd>
-              </div>
+              <span class="control-action" data-i18n="actionDash">Wślizg / unik (zużywa stamina)</span>
+              <div class="control-keys"><kbd class="kbd-key">M</kbd><kbd class="kbd-key wide">Num 2</kbd></div>
             </div>
             <div class="control-row">
               <span class="control-action" data-i18n="actionAttack">Atak bronią białą</span>
-              <div class="control-keys">
-                <kbd class="kbd-key">Num 1</kbd>
-              </div>
+              <div class="control-keys"><kbd class="kbd-key">N</kbd><kbd class="kbd-key wide">Num 1</kbd></div>
             </div>
             <div class="control-row">
-              <span class="control-action" data-i18n="actionSpecial">Czar aetherowy</span>
-              <div class="control-keys">
-                <kbd class="kbd-key">Num 2</kbd>
-              </div>
+              <span class="control-action" data-i18n="actionMagic1">Czar 1</span>
+              <div class="control-keys"><kbd class="kbd-key">[</kbd><kbd class="kbd-key wide">Num 4</kbd></div>
+            </div>
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionMagic2">Czar 2</span>
+              <div class="control-keys"><kbd class="kbd-key">]</kbd><kbd class="kbd-key wide">Num 5</kbd></div>
+            </div>
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionPotion">Mikstury 1 / 2 / 3</span>
+              <div class="control-keys"><kbd class="kbd-key">8</kbd><kbd class="kbd-key">9</kbd><kbd class="kbd-key">0</kbd></div>
             </div>
           </div>
         </article>
-
+        <article class="control-card">
+          <div class="card-header-duelist">
+            <div class="duelist-meta">
+              <div class="duelist-crest valen" aria-hidden="true">🎮</div>
+              <div>
+                <h3 class="duelist-name" data-i18n="padName">Kontroler (gamepad)</h3>
+                <span class="duelist-role" data-i18n="padRole">Gracz 1 = pierwszy pad, gracz 2 = drugi</span>
+              </div>
+            </div>
+            <span class="duelist-tag">GAMEPAD</span>
+          </div>
+          <div class="control-rows">
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionMove">Ruch w lewo / w prawo</span>
+              <div class="control-keys"><span data-i18n="padMove">Lewa gałka lub krzyżak</span></div>
+            </div>
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionJump">Skok</span>
+              <div class="control-keys"><kbd class="kbd-key">A (0)</kbd></div>
+            </div>
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionAttack">Atak bronią białą</span>
+              <div class="control-keys"><kbd class="kbd-key">X (2)</kbd></div>
+            </div>
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionDash">Wślizg / unik (zużywa stamina)</span>
+              <div class="control-keys"><kbd class="kbd-key">B (1)</kbd></div>
+            </div>
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionMagic1">Czar 1</span>
+              <div class="control-keys"><kbd class="kbd-key">Y (3)</kbd></div>
+            </div>
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionMagic2">Czar 2</span>
+              <div class="control-keys"><kbd class="kbd-key">RB (5)</kbd></div>
+            </div>
+            <div class="control-row">
+              <span class="control-action" data-i18n="actionPotion">Mikstury 1 / 2 / 3</span>
+              <div class="control-keys"><kbd class="kbd-key">LB (4)</kbd><kbd class="kbd-key">LT (6)</kbd><kbd class="kbd-key">RT (7)</kbd></div>
+            </div>
+          </div>
+        </article>
       </div>
     </section>
 
     <!-- Knowledge Vault / Documentation Viewer Section -->
-    <section id="knowledge-vault" class="docs-section container">
+    <section id="knowledge-vault" class="docs-section container" aria-labelledby="vault-heading">
       <div class="section-header">
-        <h2 class="section-title" data-i18n="wikiDocumentationTitle">Księgi Wiedzy i Dokumentacja</h2>
+        <h2 class="section-title" id="vault-heading" data-i18n="wikiDocumentationTitle">Księgi Wiedzy i Dokumentacja</h2>
         <p class="section-subtitle" data-i18n="wikiDocumentationDesc">
           Kompendium wiedzy o mechanikach, bohaterach, uniwersum oraz architekturze silnika Vibrant Castle.
         </p>
@@ -279,39 +309,63 @@
       <div class="docs-layout">
         
         <!-- Sidebar Navigation Tabs -->
-        <aside class="docs-sidebar" aria-label="Wybór Kroniki">
-          <h3 class="sidebar-title" data-i18n="wikiNavDocs">Księgi Wiedzy</h3>
-          <ul class="sidebar-nav-list" role="tablist">
-            <li class="sidebar-nav-item" role="presentation">
-              <button type="button" class="sidebar-nav-btn active" data-doc-tab="intro" role="tab" aria-selected="true">
-                <span class="btn-icon">📜</span>
+        <nav class="docs-sidebar" aria-labelledby="sidebar-heading">
+          <h3 class="sidebar-title" id="sidebar-heading" data-i18n="wikiNavDocs">Księgi Wiedzy</h3>
+          <ul class="sidebar-nav-list">
+            <li class="sidebar-nav-item">
+              <button type="button" class="sidebar-nav-btn active" data-doc-tab="intro" aria-current="true">
+                <span class="btn-icon" aria-hidden="true">📜</span>
                 <span data-i18n="wikiTabIntro">Wprowadzenie</span>
               </button>
             </li>
-            <li class="sidebar-nav-item" role="presentation">
-              <button type="button" class="sidebar-nav-btn" data-doc-tab="controls" role="tab" aria-selected="false">
-                <span class="btn-icon">🎮</span>
+            <li class="sidebar-nav-item">
+              <button type="button" class="sidebar-nav-btn" data-doc-tab="controls">
+                <span class="btn-icon" aria-hidden="true">🎮</span>
                 <span data-i18n="wikiTabControls">Sterowanie</span>
               </button>
             </li>
-            <li class="sidebar-nav-item" role="presentation">
-              <button type="button" class="sidebar-nav-btn" data-doc-tab="characters" role="tab" aria-selected="false">
-                <span class="btn-icon">🛡</span>
+            <li class="sidebar-nav-item">
+              <button type="button" class="sidebar-nav-btn" data-doc-tab="characters">
+                <span class="btn-icon" aria-hidden="true">🛡</span>
                 <span data-i18n="wikiTabCharacters">Bohaterowie</span>
               </button>
             </li>
-            <li class="sidebar-nav-item" role="presentation">
-              <button type="button" class="sidebar-nav-btn" data-doc-tab="architecture" role="tab" aria-selected="false">
-                <span class="btn-icon">⚙</span>
+            <li class="sidebar-nav-item">
+              <button type="button" class="sidebar-nav-btn" data-doc-tab="world">
+                <span class="btn-icon" aria-hidden="true">🏰</span>
+                <span data-i18n="wikiTabWorld">Świat i mapy</span>
+              </button>
+            </li>
+            <li class="sidebar-nav-item">
+              <button type="button" class="sidebar-nav-btn" data-doc-tab="bestiary">
+                <span class="btn-icon" aria-hidden="true">🐺</span>
+                <span data-i18n="wikiTabBestiary">Bestiariusz</span>
+              </button>
+            </li>
+            <li class="sidebar-nav-item">
+              <button type="button" class="sidebar-nav-btn" data-doc-tab="graphics">
+                <span class="btn-icon" aria-hidden="true">🖼</span>
+                <span data-i18n="wikiTabGraphics">Jakość grafiki</span>
+              </button>
+            </li>
+            <li class="sidebar-nav-item">
+              <button type="button" class="sidebar-nav-btn" data-doc-tab="news">
+                <span class="btn-icon" aria-hidden="true">📰</span>
+                <span data-i18n="wikiTabNews">Nowości</span>
+              </button>
+            </li>
+            <li class="sidebar-nav-item">
+              <button type="button" class="sidebar-nav-btn" data-doc-tab="architecture">
+                <span class="btn-icon" aria-hidden="true">⚙</span>
                 <span data-i18n="wikiTabArchitecture">Architektura</span>
               </button>
             </li>
           </ul>
-        </aside>
+        </nav>
 
         <!-- Markdown Document Viewer -->
         <div class="docs-viewer-card">
-          <article id="markdown-viewer" class="markdown-body" role="tabpanel" tabindex="0">
+          <article id="markdown-viewer" class="markdown-body" tabindex="0" aria-live="polite" aria-label="Księgi Wiedzy" data-i18n-attr="aria-label:wikiNavDocs">
             <!-- Dynamic Markdown Content Loaded via wiki-app.js -->
           </article>
         </div>
@@ -328,7 +382,7 @@
         
         <div class="footer-brand">
           <div class="site-brand">
-            <div class="brand-crest">🏰</div>
+            <div class="brand-crest" aria-hidden="true">🏰</div>
             <span class="brand-title">VIBRANT CASTLE</span>
           </div>
           <p class="footer-description" data-i18n="wikiHeroSubtitle">
@@ -337,7 +391,7 @@
         </div>
 
         <div>
-          <h4 class="footer-col-title" data-i18n="wikiNavDocs">Księgi Wiedzy</h4>
+          <h2 class="footer-col-title" data-i18n="wikiNavDocs">Księgi Wiedzy</h2>
           <ul class="footer-links">
             <li>
               <a href="https://github.com/beoArcha/oXyFlow.VibrantCastle/tree/main/docs/manifesto" target="_blank" rel="noopener noreferrer" class="footer-link" data-i18n="wikiFooterManifestoLink">
@@ -353,15 +407,15 @@
         </div>
 
         <div>
-          <h4 class="footer-col-title">Repozytorium</h4>
+          <h2 class="footer-col-title" data-i18n="wikiFooterRepo">Repozytorium</h2>
           <ul class="footer-links">
             <li>
-              <a href="https://github.com/beoArcha/oXyFlow.VibrantCastle" target="_blank" rel="noopener noreferrer" class="footer-link">
+              <a href="https://github.com/beoArcha/oXyFlow.VibrantCastle" target="_blank" rel="noopener noreferrer" class="footer-link" data-i18n="wikiFooterSource">
                 Kod Źródłowy GitHub
               </a>
             </li>
             <li>
-              <a href="https://github.com/beoArcha/oXyFlow.VibrantCastle/issues" target="_blank" rel="noopener noreferrer" class="footer-link">
+              <a href="https://github.com/beoArcha/oXyFlow.VibrantCastle/issues" target="_blank" rel="noopener noreferrer" class="footer-link" data-i18n="wikiFooterIssues">
                 Zgłoś Problem / Issue
               </a>
             </li>
@@ -380,6 +434,7 @@
   </footer>
 
   <!-- Application Coordinator Script -->
+  <noscript><p class="viewport-a11y-note">Ta strona wymaga JavaScript, aby uruchomić grę i wczytać księgi wiedzy. This page needs JavaScript to run the game and load the articles.</p></noscript>
   <script type="module" src="./scripts/wiki-app.js"></script>
 </body>
 </html>

@@ -1,34 +1,40 @@
 # Cytadela Aether — Kronika Przebudzenia
 
-Witaj w **Vibrant Castle**, dwuwymiarowej platformowej grze akcji osadzonej w melancholijnym świecie gotyckiego fantasy, spowitym w blasku wiecznej, złotej jesieni.
+Witaj w **Vibrant Castle**, dwuwymiarowej platformówce akcji w melancholijnym, gotyckim świecie skąpanym w blasku wiecznej, złotej jesieni. Gra działa prosto w przeglądarce, z klawiatury lub z pada.
 
 ---
 
-## 1. Świat Gry i Tło Fabularne
+## 1. Kierunek projektu
 
-W sercu starożytnego królestwa wznosi się **Cytadela Aether** — niegdyś majestatyczna siedziba cechu astronomów, mistrzów horologii oraz uczonych szermierzy. W wyniku katastrofalnego pęknięcia rdzenia chronometrycznego cała twierdza została zawieszona w **stazie czasowej**. Wskazówki monumentalnych zegarów wieżowych zamarły, mechanizmy zębate zastygły pośród chmur, a złote liście kasztanowców zawisły w bezruchu na zamkowych dziedzińcach.
+Tu zmierza projekt. Część rzeczy jest już grywalna, część dopiero planowana.
 
-Po stuleciach uśpienia budzą się **Przebudzeni Szermierze**:
-
-- **Valen**, *Chrono Duelist* — analityczny uczony i ocalały z Bastionu, posługujący się precyzyjnym rapierem ze stali bastionowej oraz magią solarnych glifów.
-- **Aurelia**, *Aetherblade Warden* — eteryczna strażniczka zakonu, władająca manifestowanym ostrzem czystego Aetheru i celestialną energią.
-
-Ich misją jest przemierzenie połączonych sektorów Cytadeli, ponowne uruchomienie chronometrycznych dźwigni, pokonanie spaczonych strażników zegarowych i przywrócenie naturalnego biegu czasu pod okiem wszechwiedzącego **Narratora**.
-
----
-
-## 2. Filozofia Wizualna i Rozgrywka
-
-*Vibrant Castle* łączy trzy wyraziste tradycje estetyczne:
-
-- **Ciepłe oświetlenie Bastion & Hades**: Paleta głębokich brązów, ciemnego kamienia i nasyconego bursztynu z dynamicznym komentarzem głosowym.
-- **Precyzja pixel artu Owlboy**: Czysta geometria, czytelne sylwetki postaci i wielowarstwowa głębia paralaksy (5 warstw odległości).
-- **Kinetyczna walka Castlevania**: Błyskawiczne pchnięcia rapierem, szerokie cięcia aetherowe, wślizgi pod przeszkodami i dynamiczne uniki fazowe (`Chrono Dash`).
+- **Metroidvania** z ruchem na wzór *Mario*: responsywnym, precyzyjnym i czytelnym.
+- **Styl i klimat *Castlevania: Aria of Sorrow***: wygląd map, bohaterów i przeciwników oraz mroczna, elegancka atmosfera zamku.
+- **Jesienna paleta**: bursztynowe światło, ciemny kamień, ciepłe liście i mgła.
+- **Reaktywna narracja w stylu Bastion**: wszechwiedzący Narrator komentuje to, co robisz.
+- **Uproszczona rozgrywka à la Castlevania**, wygodna na klawiaturze i na padzie. Pad używa tylko 2 spustów, 4 przycisków akcji, a bumpery służą jako selektory akcji.
+- **Dwoje szermierzy**: Valen i Aurelia, solo lub we współpracy na jednej klawiaturze.
+- **Menu na dwóch poziomach**: jeden dla gry, drugi dla narzędzi deweloperskich.
 
 ---
 
-## 3. Kluczowe Cechy
+## 2. Świat i tło fabularne
 
-- **Kooperacja i Tryb Solo**: Możliwość przejścia kampanii w pojedynkę lub we dwójkę na wspólnej klawiaturze w zbalansowanym trybie kooperacyjnym.
-- **Zróżnicowane Sektory Cytadeli**: Od skąpany w słońcu Dziedzińca Przebudzenia (*Courtyard of Awakening*), przez Ciernistą Rozpadlinę (*Chasm of Thorns*), aż po monumentalną Wieżę Zegarową (*Clockwork Tower*).
-- **Deterministyczny Silnik Canvas 2D**: Precyzyjna fizyka 60 Hz i pasywny interfejs React 19 gwarantujące idealną responsywność bez opóźnień.
+W sercu starożytnej krainy stoi **Cytadela Aether**, niegdyś siedziba astronomów, mistrzów zegarmistrzowskich i uczonych szermierki. Po katastrofalnym pęknięciu rdzenia chronometrycznego cała forteca zamarła w **stazie czasowej**. Wskazówki zegarów stanęły w pół obrotu, mosiężne tryby zastygły wśród chmur, a złote liście wisiały bez ruchu nad kruszejącymi dziedzińcami.
+
+Po wiekach budzi się dwoje **Przebudzonych Szermierzy**:
+
+- **Valen**, *Chrono Duelist*: analityczny uczony i ocalały z Bastionu, z precyzyjnym rapierem i magią solarnych glifów.
+- **Aurelia**, *Aetherblade Warden*: zwinna strażniczka z ostrzem czystego Aetheru.
+
+Razem przemierzają Cytadelę, uruchamiają uśpione dźwignie, pokonują skażonych strażników z mechanizmów i przywracają bieg czasu.
+
+---
+
+## 3. W co zagrasz już dziś
+
+- **Pięć dużych lokacji** połączonych portalami, od słonecznego Dziedzińca po Wielki Bastion. Zobacz *Świat i mapy*.
+- **19 szablonów przeciwników** rozmieszczonych na mapach. Zobacz *Bestiariusz*. Przeciwnicy patrolują i można ich pokonać; na razie nie ranią gracza.
+- **Każdą mapę da się ukończyć bez dasha.** Dash otwiera sekrety.
+- **Trzy poziomy jakości grafiki**, które zmieniają też wygląd przeciwników. Zobacz *Jakość grafiki*.
+- **Deterministyczny silnik Canvas 2D**: symulacja ze stałym krokiem i bierna nakładka React 19.

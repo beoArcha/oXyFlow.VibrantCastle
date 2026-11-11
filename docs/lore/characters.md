@@ -14,7 +14,7 @@ In *Vibrant Castle*, players command two distinct duelists forged in the melanch
 
 ### Identity & Background
 
-Valen is not a theatrical warrior seeking glory — he is a scholar and survivor shaped by ancient ruins and temporal anomalies. Having awakened upon the sunlit ramparts of the Grand Bastion, Valen approaches the castle not with reckless zeal, but with surgical calculation.
+Valen is not a theatrical warrior seeking glory — he is a scholar and survivor shaped by ancient ruins and temporal anomalies. Having awakened in the Courtyard of Awakening, Valen approaches the castle not with reckless zeal, but with surgical calculation.
 
 Every movement has purpose. Every action is the product of deliberate calculation rather than instinct. It is not raw muscle that defines Valen, but absolute spatial mastery and emotional composure.
 

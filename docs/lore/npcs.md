@@ -13,7 +13,7 @@ The world of *Vibrant Castle* is brought to life through legendary mentors, myst
 * **Personality & Philosophy**:
   * Calibrated, observant, quietly nostalgic. He regards the duelists with quiet admiration rather than hollow cheers.
   * Treats the castle not merely as a tomb of stones, but as a living clockwork organism waiting to be wound once more.
-* **Signature In-Game Commentary (from `narrations.ts`)**:
+* **Signature In-Game Commentary (from `src/i18n/modules/narrations.ts`)**:
   * *On Awakening*:
     > *"The youth awoke upon the vast castle grounds. The crisp air carried scents of dry autumn leaves and fresh aether."*
   * *On Movement & Footwork*:
@@ -39,7 +39,7 @@ The world of *Vibrant Castle* is brought to life through legendary mentors, myst
   * Perches gracefully on pivotal ledge corners, high parapets, and moving crane arms, signaling safe landing spots across perilous chasms.
   * Takes flight with an urgent warning caw whenever flying gargoyles or descending clockwork owls initiate their dive runs.
   * Directs player attention toward hidden wall levers, secret treasure caches, and obscured archway shortcuts.
-* **Key In-Game Dialogue (from `dialogues.ts`)**:
+* **Key In-Game Dialogue (from `src/i18n/modules/dialogues.ts`)**:
   > **Corvus (Raven)**: *"Kraa! The summit clock is ticking in reverse. Beware the rogue clockwork automatons!"*
 
 ---
@@ -54,7 +54,7 @@ The world of *Vibrant Castle* is brought to life through legendary mentors, myst
   * Resides within the meta-game interface known as the **Save Crypt** (`save.ts`).
   * Oversees the secure serialization, export, and import of world states (`.json` chronicles), ensuring data integrity.
   * Purrs in harmonic frequency with Aether crystals, signaling when players possess sufficient mana or items to survive upcoming hazard gauntlets.
-* **Key In-Game Dialogue (from `dialogues.ts`)**:
+* **Key In-Game Dialogue (from `src/i18n/modules/dialogues.ts`)**:
   > **Amber (Cat)**: *"Meow... The subterranean aether is surging. Use your prismatic shield to traverse the thorn bed safely."*
 
 ---
@@ -69,7 +69,7 @@ The world of *Vibrant Castle* is brought to life through legendary mentors, myst
   * Welcomes champions at the threshold of the *Aether Sky Sanctuary*.
   * Deciphers forgotten astronomical charts, unlocking higher tiers in the Grimoire of Magic.
   * Explains the historical rupture that destabilized the castle's temporal core and teaches players how to harmonize solar and celestial magic.
-* **Key In-Game Dialogue (from `dialogues.ts`)**:
+* **Key In-Game Dialogue (from `src/i18n/modules/dialogues.ts`)**:
   > **Bastion Sage**: *"Greetings, Guardians. The Sunlit Bastion requires both your blades and serene minds."*
 
 ---

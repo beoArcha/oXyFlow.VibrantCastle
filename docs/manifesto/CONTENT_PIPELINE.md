@@ -33,13 +33,14 @@ Static content is structured into specialized, domain-focused subdirectories:
 
 | Subdirectory | Canonical Files | Data Domain & Operational Purpose |
 | :--- | :--- | :--- |
-| **`locations/`** | `courtyard.json`;`clocktower.json`;`grand_bastion.json`;`thorn_chasm.json`;`aether_sanctuary.json` | **Level Blueprints**: World dimensions, camera bounding boxes, spawn points, parallax layers, collision geometry, and entity placements. |
-| **`enemies/`** | `enemies.json` | **Monster Bestiary**: Canonical template registry for all enemy types: dimensions, base health, speed, attack power, elemental resistances, soul drops, and lore entries. |
+| **`locations/`** | `courtyard.json`;`thorn_chasm.json`;`clocktower.json`;`aether_sanctuary.json`;`grand_bastion.json` | **Level Blueprints**: World dimensions, spawn points and named entries, theme, parallax layers, prefab dictionaries and the compact `layout` (solids, triggers, levers, portals, enemies). |
+| **`enemies/`** | `enemies.json` | **Monster Bestiary**: Canonical template registry for 19 enemy types: dimensions, stats, elemental resistances, soul drops, atlas binding, procedural fallback and lore entries. |
 | **`items/`** | `items.json` | **Item & Equipment Registry**: Weapons, shields, armor, rings, amulets, and consumable potions with combat modifiers and status effects. |
 | **`skills/`** | `skills.json`;`spells.json` | **Skill Constellations**: Skill trees for Valen and Aurelia detailing tiers, mana/stamina costs, cooldown frames, projectiles, and prerequisite node connections. |
 | **`structures/`** | `structures.json` | **Interactive Map Objects**: Levers, pressure plates, locked portcullises, chests, save shrines, and aether lanterns. |
 | **`narrative/`** | `dialogues_vn.json`;`narrator_reactive.json`;`scenario_act1.json`;`triggers.json` | **Narrative Manifests**: Visual novel character dialogue sequences, reactive narrator cues, and world trigger definitions. |
-| **`defaults/`** | `defaultControls.json`;`defaultSettings.json` | **System Defaults**: Baseline keybindings, gamepad mappings, audio volume levels, and display settings. |
+| **`progression/`** | `skill_trees.json` | **Skill tree layout** for the two champions. |
+| **`defaults/`** | `defaultControls.json`;`defaultPlayerStats.json`;`defaultSettings.json` | **System Defaults**: Baseline keybindings, gamepad button indices, base player stats, audio volume levels, and display settings. |
 
 ---
 
@@ -55,14 +56,11 @@ Every level blueprint in `src/data/locations/` conforms to the canonical locatio
   "descriptionKey": "locationCourtyardDesc",
   "openingNarrationKey": "narrationOpening",
   "sceneType": "action_platformer",
-  "dimensions": { "width": 3600, "height": 900 },
+  "dimensions": { "width": 7200, "height": 1350 },
   "spawnPoints": {
-    "default": { "x": 140, "y": 640 },
+    "default": { "x": 140, "y": 1120 },
     "p2Offset": { "x": 45, "y": 0 },
-    "entries": {
-      "from_chasm": { "x": 3280, "y": 640 },
-      "from_tower": { "x": 2600, "y": 380 }
-    }
+    "entries": { "from_chasm": { "x": 6950, "y": 1120 }, "from_tower": { "x": 2100, "y": 834 } }
   },
   "theme": {
     "bgGradientTop": "#2d140a",
@@ -72,19 +70,36 @@ Every level blueprint in `src/data/locations/` conforms to the canonical locatio
     "musicIntensity": 0.1
   },
   "parallaxBackground": {
-    "boxWidth": 4400,
-    "boxHeight": 1150,
-    "layers": [ /* 5 parallax tiers: FAR (opaque: true) to CLOSE */ ]
+    "boxWidth": 7600,
+    "boxHeight": 1600,
+    "layers": [ /* 5 tiers: FAR ("opaque": true) to CLOSE; optional "mirrorTile": true */ ]
   },
-  "collisionMap": [ /* Solid, OneWay, Hazard, Lever, Goal */ ],
-  "entities": [ /* Enemies, breakable urns, levers */ ],
-  "triggers": [ /* Narration volumes, environmental cutscenes */ ]
+  "dictionaries": { "entities": { /* prefabs: type, colours, labels */ }, "portals": { /* targetLocationId, targetSpawnPoint */ } },
+  "layout": {
+    "solids": [ /* prefab placements, including gates */ ],
+    "triggers": [ /* narration volumes */ ],
+    "levers": [ { "id": "court_gate_lever", "triggerId": "lever_courtyard", "targetGateId": "court_gate_main" } ],
+    "portals": [ /* placements referencing dictionary portals */ ],
+    "enemies": [ { "id": "court_dummy_1", "monsterKey": "training_dummy", "x": 380, "y": 1110 } ]
+  }
 }
 ```
 
+### 3.0. Shipped Maps
+
+| Map | Size (px) | Solids | Levers | Enemies | Portals to |
+| :--- | :--- | ---: | ---: | ---: | :--- |
+| `courtyard` | 7200 x 1350 | 66 | 1 | 16 | thorn_chasm |
+| `thorn_chasm` | 6000 x 1500 | 41 | 1 | 17 | courtyard, clocktower |
+| `clocktower` | 3600 x 3000 | 63 | 1 | 17 | thorn_chasm, aether_sanctuary |
+| `aether_sanctuary` | 6400 x 1600 | 44 | 1 | 13 | clocktower, grand_bastion |
+| `grand_bastion` | 8000 x 1500 | 56 | 2 | 22 | aether_sanctuary, courtyard (`from_bastion`) |
+
+Counts are taken from `src/data/locations/*.json`. The courtyard has no portal of its own towards the tower or bastion; those entries only receive players.
+
 ### 3.1. Portal World Graph Integrity
 
-To maintain world coherence, all doors and portals form a closed directed graph:
+To maintain world coherence, every portal targets an existing location and entry:
 
 * If location `courtyard` defines a portal with target `"clocktower"` and entry `"from_courtyard"`, file `clocktower.json` MUST exist and declare `spawnPoints.entries.from_courtyard`.
 * Any orphaned portal or dangling entry key fails automated architecture tests (`src/tests/arch/locationBlueprints.test.ts`).
@@ -97,11 +112,12 @@ Enemies are authored centrally in `src/data/enemies/enemies.json`. The engine in
 
 ### 4.1. Bestiary Entry Schema
 
-* **Identity**: `id`, `nameKey`, `defaultName`, `category` (`undead`, `construct`, `beast`, `boss`, `dummy`).
+* **Identity**: `id`, `nameKey`, `defaultName`, `category` (free string; used values: `dummy`, `ground_patrol`, `aerial`, `automaton`, `construct`, `elite`).
 * **Dimensions & Physics**: `dimensions.width`, `dimensions.height`, `isAerial` (ignores ground friction/gravity).
-* **Combat Stats**: `health`, `maxHealth`, `speed`, `attackPower`, `scoreReward`.
+* **Combat Stats**: `stats.health`, `maxHealth`, `speed`, `attackPower`, `scoreReward` (optional `defense`, `xpReward`). Today enemies patrol and deal no damage, so `attackPower` and `abilities` are data only (planned).
 * **Elemental Resistances**: Normalized values from `-1.0` (vulnerable, +100% damage) to `1.0` (immune) across `physical`, `fire`, `frost`, `astral`, and `shadow`.
-* **Soul Drop System**: `soulId`, `dropRate`, `grantedSkillId`, and localized description keys for champion mastery unlocks.
+* **Soul Drop System**: `soulId`, `type` (`bullet`, `guardian`, `enchant`), `dropRate`, `grantedSkillId`, and localized description keys (data only; not granted at runtime yet).
+* **Atlas Binding**: `atlas.presetId` names the sheet folder, so several templates can share one sheet (`gargoyle_scout` uses `clockwork_owl_gargoyle`, `bastion_gargoyle` uses `chasm_gargoyle`); `defaultAnimation`, `hitAnimation`, `attackAnimation`, `deathAnimation` name sheet rows. `proceduralFallback` colours are used when no sheet loads.
 * **Lore & Tactics**: Progressive unlocks based on kill thresholds (`killThresholds: { basic: 1, tactics: 3, lore: 5 }`).
 
 ---
@@ -127,6 +143,21 @@ The enemy SVG sheet contract (grid, colour depth, meta format, fallback chain) i
 
 ---
 
+### 5.3. Sprite and Atlas Tooling (Bun)
+
+| Tool | Purpose |
+| :--- | :--- |
+| `bun scripts/sprites/compile.ts <id>` (`--all`, `--check`, `--preview <dir>`) | **Pixel sprite compiler**. Draw scripts in `scripts/sprites/enemies/<id>.ts` (PixelCanvas API, see `scripts/sprites/README.md`) compile to `<id>_nes.svg`, `<id>_snes.svg` and `<id>_meta.json` in `src/assets/enemies/<id>/`. Validation rejects empty frames, content touching the cell edge, floating feet, NES/SNES frames that are pixel-identical, and a body aspect far from the hitbox. `--check` fails when committed files differ from their scripts (also covered by `bun test:scripts`). |
+| `bun scripts/repack-atlas.ts <id>` (`--all`, `--dry-run`, `--overlay <dir>`) | **Atlas repack**. Cuts an original AI sheet (`<id>_high.png`) into islands and re-lays it on a clean grid (`<id>_packed_high.png` plus `<id>_packed_meta.json` with `bodyBox`); configuration in `scripts/atlas/repack.config.json`; hero sheets are repacked the same way. Frame geometry is verified by the tests in `scripts/__tests__/`. |
+| `bun scripts/check-parallax-seams.ts` | Reports horizontal seam quality of every PNG under `src/assets/bg`; layers that warn need `mirrorTile`. |
+| `bun scripts/validate-level.ts <id>` (`--json`) | **Level validator**, see §5.4. |
+
+**Auto-discovery**: a compiled or packed enemy needs no code registration. The game collects `src/assets/enemies/<id>/` automatically; the template in `enemies.json` selects it through `atlas.presetId`. The SVG exception, grid and fallback contract is in `.agents/rules/content_and_assets.md` §6.
+
+### 5.4. Level-Logic Validator
+
+A map can satisfy its JSON schema and still be unplayable. `src/tests/arch/levelLogic.test.ts` (helpers in `src/tests/arch/helpers/levelLogic/`) simulates every location against the player's movement envelope. Constants are mirrored from `playerKinematics.ts` in `constants.ts`: comfortable rise 96 px, maximum rise 109 px, comfortable flat gap 170 px, maximum flat gap 216 px, dash distance 136 px, spawn drop at most 64 px. Rule groups: reachability, levers and gates, portals and entries, spawns, enemies (patrol feet on a platform, aerial clearance), layout. ERRORs fail the test; known defects would be listed in `knownLevelDefects.ts` (empty for all five maps today). The same checks run from the CLI above. The design grammar (zone sequence, 96 px steps, one lever and gate per zone) is in `.agents/rules/content_and_assets.md` §7.
+
 ## 6. Developer Workbench Integration (`src/developer/`)
 
 The content pipeline is supported by the in-engine Developer Workbench:
@@ -141,9 +172,9 @@ graph TD
 
     AtlasTab -->|Visual Slice & Align| Sprites["Spritesheets & Collision Bounding Boxes"]
     DataTab -->|Live Schema Inspection| Blueprints["src/data/ JSON Blueprints"]
-    LogsTab -->|Memory Trace| RingBuffer["RingBufferLogger (500 events)"]
+    LogsTab -->|Memory Trace| RingBuffer["RingBufferTransport (default 300 events)"]
 ```
 
 * **Atlas Studio**: Visualizes sprite grids, configures slicing presets, inspects hitboxes/hurtboxes, and previews animation sequences in real time.
-* **Data Studio**: Live inspection and dynamic editing of location blueprints, item tables, and enemy parameters during active gameplay sessions.
+* **Data Studio** (`src/developer/subtabs/datastudio/`): Inspection and validation of data blueprints, a bestiary gallery and inspector, a visual novel preview and an AI generator card. Live editing during play is not verified.
 * **RingBuffer Log Viewer**: Diagnostic inspection of recent game engine tick events, domain state transitions, and audio triggers without polluting the browser console.
