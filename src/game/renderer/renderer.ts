@@ -18,6 +18,7 @@ import { debugManager } from "@game/debug/debugManager";
 import { ProceduralBackdropCache, defaultProceduralBackdropCache } from "./proceduralBackdropCache";
 import { IDebugProfilerOverlay, defaultDebugProfilerOverlay } from "./debugProfilerOverlay";
 import { acquireCanvas2DContext } from "./canvasContextAcquisition";
+import { ViewCuller } from "./viewCulling";
 import { renderFpsBadge } from "./fpsOverlayRenderer";
 
 const SCENERY_TREE_OFFSETS = [350, 1100, 1600, 2450, 3050, 3500] as const;
@@ -67,6 +68,7 @@ export class GameRenderer {
   private readonly hitboxRenderer: IHitboxRenderer;
   private readonly debugProfilerOverlay: IDebugProfilerOverlay;
   private readonly backdropCache: ProceduralBackdropCache;
+  private readonly viewCuller: ViewCuller = new ViewCuller();
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -200,6 +202,14 @@ export class GameRenderer {
     this.ctx.restore();
 
     this.ctx.translate(-camera.x, -camera.y);
+    this.viewCuller.setView(
+      camera.x,
+      camera.y,
+      this.viewportWidth,
+      this.viewportHeight,
+      camera.shakeOffsetX,
+      camera.shakeOffsetY
+    );
 
     // 2. AMBIENT PARTICLES
     this.fxRenderer.renderParticles(this.ctx, particles, "dust");
@@ -213,10 +223,10 @@ export class GameRenderer {
     }
 
     // 4. LEVEL ENTITIES & STRUCTURES
-    this.structureRenderer.render(this.ctx, entities, this.language, this.tickCount);
+    this.structureRenderer.render(this.ctx, entities, this.language, this.tickCount, this.viewCuller);
 
     // 5. ENEMIES & TARGET DUMMIES
-    this.actorRenderer.renderEnemies(this.ctx, enemies, this.tickCount);
+    this.actorRenderer.renderEnemies(this.ctx, enemies, this.tickCount, this.viewCuller);
 
     // 6. MAGIC PROJECTILES
     this.fxRenderer.renderProjectiles(this.ctx, projectiles);
@@ -229,7 +239,7 @@ export class GameRenderer {
 
     // 9. DEBUG HITBOX OVERLAY
     if (debugManager.state.showHitboxes) {
-      this.hitboxRenderer.renderHitboxes(this.ctx, players, enemies, entities, projectiles);
+      this.hitboxRenderer.renderHitboxes(this.ctx, players, enemies, entities, projectiles, this.viewCuller);
     }
 
     this.ctx.restore();
@@ -261,7 +271,8 @@ export class GameRenderer {
         location?.id || "unknown",
         levelWidth,
         levelHeight,
-        this.isHardwareAccelerated
+        this.isHardwareAccelerated,
+        this.viewCuller
       );
     }
   }

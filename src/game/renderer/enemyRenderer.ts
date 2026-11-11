@@ -1,9 +1,10 @@
 import { Enemy } from "@game/types";
+import { ViewCuller } from "./viewCulling";
 import { IAtlasSpriteRenderer, defaultAtlasSpriteRenderer } from "./atlasSpriteRenderer";
 import { pickEnemyAtlasId, resolveEnemyAnimation } from "./enemyAtlasSelection";
 
 export interface IEnemyRenderer {
-  render(ctx: CanvasRenderingContext2D, enemies: Enemy[], tickCount: number): void;
+  render(ctx: CanvasRenderingContext2D, enemies: Enemy[], tickCount: number, view?: ViewCuller): void;
 }
 
 /**
@@ -19,10 +20,18 @@ export class EnemyRenderer implements IEnemyRenderer {
     this.atlasRenderer = atlasRenderer;
   }
 
-  public render(ctx: CanvasRenderingContext2D, enemies: Enemy[], tickCount: number): void {
+  public render(
+    ctx: CanvasRenderingContext2D,
+    enemies: Enemy[],
+    tickCount: number,
+    view?: ViewCuller
+  ): void {
+    let drawn = 0;
     for (let i = 0; i < enemies.length; i++) {
       const enemy = enemies[i];
       if (enemy.isDead) continue;
+      if (view && !view.intersects(enemy.x, enemy.y, enemy.width, enemy.height)) continue;
+      drawn++;
 
       // 1. Determine Atlas ID
       const atlasId = pickEnemyAtlasId(this.atlasRenderer, enemy);
@@ -54,6 +63,10 @@ export class EnemyRenderer implements IEnemyRenderer {
       if (enemy.health < enemy.maxHealth && enemy.health > 0) {
         this.renderHealthBar(ctx, enemy);
       }
+    }
+    if (view) {
+      view.enemiesTotal = enemies.length;
+      view.enemiesDrawn = drawn;
     }
   }
 

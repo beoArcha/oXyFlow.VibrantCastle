@@ -237,11 +237,11 @@ export class LevelLifecycleManager implements ILevelLifecycleManager {
   }
 
   private resolveTargetGateId(triggerId: string): string | undefined {
-    const levers = this.currentLocation?.jsonBlueprint?.layout?.levers;
-    if (!levers) return undefined;
-    for (let i = 0; i < levers.length; i++) {
-      if (levers[i].triggerId === triggerId && levers[i].targetGateId) {
-        return levers[i].targetGateId;
+    const entities = this.context.getEntities();
+    for (let i = 0; i < entities.length; i++) {
+      const e = entities[i];
+      if (e.type === CollisionType.Lever && e.triggerId === triggerId && e.targetGateId) {
+        return e.targetGateId;
       }
     }
     return undefined;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test";
-import { buildLocationEnemies } from "../parser/locationEntityFactory";
+import { buildLocationEnemies, buildLocationEntities } from "../parser/locationEntityFactory";
 import type { LocationJsonSchema } from "../schema/locationSchema";
 import type { DomainEnemyTemplate } from "@lib/codecs";
 
@@ -41,5 +41,25 @@ describe("buildLocationEnemies atlas binding", () => {
     const [enemy] = buildWith(createTemplate());
 
     expect(enemy.atlasId).toBeUndefined();
+  });
+});
+
+describe("buildLocationEntities lever targeting", () => {
+  it("copies the lever targetGateId onto its runtime entity", () => {
+    const layout = {
+      solids: [],
+      levers: [
+        { id: "lever_a", triggerId: "trig_a", targetGateId: "gate_a", x: 1, y: 2 },
+        { id: "lever_b", triggerId: "trig_b", x: 3, y: 4 },
+      ],
+    } as unknown as LocationJsonSchema["layout"];
+    const dictionaries = { entities: {}, portals: {} } as unknown as LocationJsonSchema["dictionaries"];
+
+    const entities = buildLocationEntities(layout, dictionaries);
+    const a = entities.find((e) => e.id === "lever_a");
+    const b = entities.find((e) => e.id === "lever_b");
+
+    expect(a?.targetGateId).toBe("gate_a");
+    expect(b?.targetGateId).toBeUndefined();
   });
 });

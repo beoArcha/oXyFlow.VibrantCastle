@@ -1,5 +1,6 @@
 import { Entity, CollisionType } from "@game/types";
 import { LanguageCode, t } from "@i18n";
+import { ViewCuller } from "./viewCulling";
 import { IAtlasSpriteRenderer, defaultAtlasSpriteRenderer } from "./atlasSpriteRenderer";
 
 export interface IStructureRenderer {
@@ -7,7 +8,8 @@ export interface IStructureRenderer {
     ctx: CanvasRenderingContext2D,
     entities: Entity[],
     language: LanguageCode,
-    tickCount: number
+    tickCount: number,
+    view?: ViewCuller
   ): void;
 }
 
@@ -33,11 +35,15 @@ export class StructureRenderer implements IStructureRenderer {
     ctx: CanvasRenderingContext2D,
     entities: Entity[],
     language: LanguageCode,
-    tickCount: number
+    tickCount: number,
+    view?: ViewCuller
   ): void {
+    let drawn = 0;
     for (let i = 0; i < entities.length; i++) {
       const entity = entities[i];
       if (entity.y === -1000) continue;
+      if (view && !view.intersects(entity.x, entity.y, entity.width, entity.height)) continue;
+      drawn++;
 
       switch (entity.type) {
         case CollisionType.Goal:
@@ -60,6 +66,10 @@ export class StructureRenderer implements IStructureRenderer {
           this.renderHazardSpikes(ctx, entity);
           break;
       }
+    }
+    if (view) {
+      view.entitiesTotal = entities.length;
+      view.entitiesDrawn = drawn;
     }
   }
 

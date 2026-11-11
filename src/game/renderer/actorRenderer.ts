@@ -1,5 +1,6 @@
 import { Player, Enemy, AssetQuality } from "@game/types";
 import { SpriteAnimator } from "@game/engine/spriteAnimator";
+import { ViewCuller } from "./viewCulling";
 import { IEnemyRenderer, defaultEnemyRenderer } from "./enemyRenderer";
 
 export interface IActorRenderer {
@@ -10,7 +11,12 @@ export interface IActorRenderer {
     tickCount: number
   ): void;
 
-  renderEnemies(ctx: CanvasRenderingContext2D, enemies: Enemy[], tickCount?: number): void;
+  renderEnemies(
+    ctx: CanvasRenderingContext2D,
+    enemies: Enemy[],
+    tickCount?: number,
+    view?: ViewCuller
+  ): void;
 }
 
 /**
@@ -83,9 +89,10 @@ export class ActorRenderer implements IActorRenderer {
   public renderEnemies(
     ctx: CanvasRenderingContext2D,
     enemies: Enemy[],
-    tickCount: number = 0
+    tickCount: number = 0,
+    view?: ViewCuller
   ): void {
-    this.enemyRenderer.render(ctx, enemies, tickCount);
+    this.enemyRenderer.render(ctx, enemies, tickCount, view);
   }
 }
 

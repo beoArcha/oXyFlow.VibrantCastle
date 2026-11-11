@@ -1,4 +1,5 @@
 import { Player, Enemy, Entity, Projectile, CollisionType } from "@game/types";
+import { ViewCuller } from "./viewCulling";
 import {
   IDebugProfilerOverlay,
   defaultDebugProfilerOverlay,
@@ -10,7 +11,8 @@ export interface IHitboxRenderer {
     players: Player[],
     enemies: Enemy[],
     entities: Entity[],
-    projectiles: Projectile[]
+    projectiles: Projectile[],
+    view?: ViewCuller
   ): void;
 
   renderProfiler(
@@ -27,7 +29,8 @@ export interface IHitboxRenderer {
     locationId: string,
     levelWidth: number,
     levelHeight: number,
-    isHardwareAccelerated?: boolean
+    isHardwareAccelerated?: boolean,
+    view?: ViewCuller
   ): void;
 }
 
@@ -74,7 +77,8 @@ export class HitboxRenderer implements IHitboxRenderer {
     players: Player[],
     enemies: Enemy[],
     entities: Entity[],
-    projectiles: Projectile[]
+    projectiles: Projectile[],
+    view?: ViewCuller
   ): void {
     ctx.save();
     ctx.lineWidth = 1.5;
@@ -83,6 +87,7 @@ export class HitboxRenderer implements IHitboxRenderer {
     for (let i = 0; i < entities.length; i++) {
       const entity = entities[i];
       if (entity.y === -1000) continue;
+      if (view && !view.intersects(entity.x, entity.y, entity.width, entity.height)) continue;
 
       let strokeColor = "#38bdf8";
       let fillColor = "rgba(56, 189, 248, 0.15)";
@@ -121,6 +126,7 @@ export class HitboxRenderer implements IHitboxRenderer {
     for (let i = 0; i < enemies.length; i++) {
       const enemy = enemies[i];
       if (enemy.isDead) continue;
+      if (view && !view.intersects(enemy.x, enemy.y, enemy.width, enemy.height)) continue;
 
       ctx.fillStyle = "rgba(244, 63, 94, 0.2)";
       ctx.strokeStyle = "#f43f5e";
@@ -221,7 +227,8 @@ export class HitboxRenderer implements IHitboxRenderer {
     locationId: string,
     levelWidth: number,
     levelHeight: number,
-    isHardwareAccelerated: boolean = true
+    isHardwareAccelerated: boolean = true,
+    view?: ViewCuller
   ): void {
     this.profilerOverlay.render(
       ctx,
@@ -237,7 +244,8 @@ export class HitboxRenderer implements IHitboxRenderer {
       locationId,
       levelWidth,
       levelHeight,
-      isHardwareAccelerated
+      isHardwareAccelerated,
+      view
     );
   }
 }
