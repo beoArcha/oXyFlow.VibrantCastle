@@ -84,7 +84,7 @@ jobs:
           fi
 
           PENDING_CHECKS=$(echo "$CI_CHECKS" | jq '[.[] | select(.status != "completed")] | length')
-          FAILED_CHECKS=$(echo "$CI_CHECKS" | jq '[.[] | select(.conclusion != "success" and .name != "Stage 4: Candidate Metadata")] | length')
+          FAILED_CHECKS=$(echo "$CI_CHECKS" | jq '[.[] | select(.conclusion != "success" and .name != "Stage 5: Candidate Metadata")] | length')
 
           if [ "$PENDING_CHECKS" -gt 0 ]; then
             echo "::error::There are ${PENDING_CHECKS} pending CI stages on commit ${TARGET_SHA}. Wait for Main CI Pipeline to finish."

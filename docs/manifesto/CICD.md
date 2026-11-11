@@ -86,7 +86,7 @@ graph TD
 
 ### 3.1. `main.yml` — Main CI Pipeline
 
-- **Trigger**: Every `push` to `main` and `pull_request` targeting `main`.
+- **Trigger**: Every `push` to `main` and `pull_request` targeting `main`. It can also be started manually (`workflow_dispatch`), e.g. to re-run CI for a commit before promotion.
 - **Stage 1 (Static Analysis)**:
   - `typecheck`: `bun run typecheck` (`tsc --noEmit`).
   - `lint`: `bun run lint` (`tsc --noEmit`).
