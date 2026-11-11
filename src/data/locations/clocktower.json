@@ -33,6 +33,7 @@
         "id": "bg_clocktower_far",
         "name": "Clockwork Tower Far Spires & Sky (High)",
         "tier": "far",
+        "opaque": true,
         "type": "image",
         "imageUrl": "clocktower_far_high",
         "depth": 0.1,

@@ -20,6 +20,7 @@ export interface ParallaxLayerSchema {
   id: string;
   name: string;
   tier?: BackgroundLayerTier;
+  opaque?: boolean;
   type:
   | "image"
   | "sky_gradient"

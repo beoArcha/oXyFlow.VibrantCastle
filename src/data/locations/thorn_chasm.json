@@ -32,6 +32,7 @@
         "id": "bg_chasm_far",
         "name": "Thorn Chasm Far Horizon & Void (High)",
         "tier": "far",
+        "opaque": true,
         "type": "image",
         "imageUrl": "thorn_chasm_far_high",
         "depth": 0.1,

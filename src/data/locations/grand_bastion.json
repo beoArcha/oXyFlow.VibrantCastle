@@ -25,13 +25,14 @@
     "musicIntensity": 0.4
   },
   "parallaxBackground": {
-    "boxWidth": 3800,
+    "boxWidth": 4200,
     "boxHeight": 950,
     "layers": [
       {
         "id": "bg_bastion_far",
         "name": "Grand Bastion Far Horizon & Sky (High)",
         "tier": "far",
+        "opaque": true,
         "type": "image",
         "imageUrl": "grand_bastion_far_high",
         "depth": 0.1,
