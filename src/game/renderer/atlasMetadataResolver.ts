@@ -16,7 +16,8 @@ export interface IAtlasMetaLike {
   atlas?: { columns?: number; rows?: number };
   layout?: {
     anchor?: { x: number; y: number };
-    origin?: { normalized?: { x: number; y: number } };
+    origin?: { type?: string; normalized?: { x: number; y: number } };
+    bodyBox?: { x: number; y: number; w: number; h: number };
     naturalFacing?: "left" | "right";
     defaultFacing?: "left" | "right";
     [key: string]: unknown;
@@ -167,4 +168,80 @@ export function resolveFacingDirection(meta: IAtlasMetaLike): "left" | "right" {
   if (meta.layout?.naturalFacing === "left" || meta.layout?.defaultFacing === "left") return "left";
   if (meta.layout?.naturalFacing === "right" || meta.layout?.defaultFacing === "right") return "right";
   return "right";
+}
+
+/** Body bounding box of one cell in normalized coordinates, ready for scale and anchor maths. */
+export interface BodyMetrics {
+  /** Body height as a fraction of the cell height. */
+  height: number;
+  /** Horizontal body centre inside the first cell. */
+  centerX: number;
+  /** Body bottom inside the cell (feet-origin sheets). */
+  footY: number;
+  /** Vertical body centre inside the cell (centre-origin sheets). */
+  centerY: number;
+}
+
+/** Per-meta values computed once so render() does no lookups or allocations. */
+export interface AtlasRenderInfo {
+  cols: number;
+  rows: number;
+  anchorX: number;
+  anchorY: number;
+  groundAnchored: boolean;
+  facing: "left" | "right";
+  /** Present when the meta carries `layout.bodyBox`. */
+  body: BodyMetrics | null;
+}
+
+const renderInfoCache = new WeakMap<object, AtlasRenderInfo>();
+
+function resolveBodyMetrics(meta: IAtlasMetaLike): BodyMetrics | null {
+  const box = meta.layout?.bodyBox;
+  if (!box || !(box.w > 0) || !(box.h > 0)) return null;
+  return {
+    height: box.h,
+    centerX: box.x + box.w / 2,
+    footY: box.y + box.h,
+    centerY: box.y + box.h / 2,
+  };
+}
+
+export function getAtlasRenderInfo(meta: IAtlasMetaLike): AtlasRenderInfo {
+  const cached = renderInfoCache.get(meta);
+  if (cached) return cached;
+  const anchor = resolveAnchor(meta);
+  const info: AtlasRenderInfo = {
+    cols: meta.atlas?.columns || 6,
+    rows: meta.atlas?.rows || 4,
+    anchorX: anchor.x,
+    anchorY: anchor.y,
+    groundAnchored: meta.layout?.origin?.type === "feet" || anchor.y >= 0.8,
+    facing: resolveFacingDirection(meta),
+    body: resolveBodyMetrics(meta),
+  };
+  renderInfoCache.set(meta, info);
+  return info;
+}
+
+/** First sheet column of a frame. */
+export function resolveFrameColumn(track: IAtlasAnimationTrack | null, frame: number): number {
+  if (track?.frameIndices && track.frameIndices[frame] !== undefined) return track.frameIndices[frame];
+  const spans = track?.slotSpan && track.slotSpan.length > 0 ? track.slotSpan : track?.cells;
+  if (spans && spans.length > 0) {
+    let col = 0;
+    for (let i = 0; i < frame; i++) col += spans[i];
+    return col;
+  }
+  if (track?.startCol !== undefined) return track.startCol + frame * (track.widthCells || 1);
+  return frame;
+}
+
+/** Number of sheet columns a frame covers. */
+export function resolveFrameSpan(track: IAtlasAnimationTrack | null, frame: number): number {
+  if (track?.frameIndices && track.frameIndices[frame] !== undefined) return 1;
+  const spans = track?.slotSpan && track.slotSpan.length > 0 ? track.slotSpan : track?.cells;
+  if (spans && spans.length > 0) return spans[frame];
+  if (track?.startCol !== undefined) return track.widthCells || 1;
+  return 1;
 }

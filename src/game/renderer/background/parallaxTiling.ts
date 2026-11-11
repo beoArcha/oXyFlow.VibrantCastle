@@ -2,6 +2,7 @@ import {
   BackgroundLayerTier,
   ParallaxLayerSchema,
 } from "@game/locations/schema/locationSchema";
+import { MirrorableLayer, resolveLayerDrawHeight, resolveLayerScreenY } from "./parallaxGeometry";
 import { debugManager } from "@game/debug/debugManager";
 
 export const TIER_ORDER: readonly BackgroundLayerTier[] = [
@@ -50,11 +51,49 @@ export function resolveBackgroundTier(layer: ParallaxLayerSchema): BackgroundLay
 }
 
 /**
+ * Draws `img` repeated horizontally across the viewport. Tile edges are rounded as
+ * shared boundaries, so neighbours abut exactly (no 1 px gap or overlap). With `mirror`,
+ * every odd world tile is flipped so its edge matches the neighbour's edge even when the
+ * image itself does not tile.
+ */
+export function drawHorizontalTiles(
+  ctx: CanvasRenderingContext2D,
+  img: CanvasImageSource,
+  screenX: number,
+  screenY: number,
+  drawW: number,
+  drawH: number,
+  viewportWidth: number,
+  mirror: boolean
+): void {
+  let startX = screenX % drawW;
+  if (startX > 0) startX -= drawW;
+  const firstTile = Math.round((startX - screenX) / drawW);
+  const top = Math.round(screenY);
+  const height = Math.round(screenY + drawH) - top;
+
+  let left = Math.round(startX);
+  for (let n = 0; startX + n * drawW < viewportWidth; n++) {
+    const right = Math.round(startX + (n + 1) * drawW);
+    if (mirror && ((firstTile + n) & 1) === 1) {
+      ctx.save();
+      ctx.translate(right, 0);
+      ctx.scale(-1, 1);
+      ctx.drawImage(img, 0, top, right - left, height);
+      ctx.restore();
+    } else {
+      ctx.drawImage(img, left, top, right - left, height);
+    }
+    left = right;
+  }
+}
+
+/**
  * Renders a dynamic parallax background layer with seamless horizontal tiling and vertical parallax clamping.
  */
 export function renderTiledDynamicLayer(
   ctx: CanvasRenderingContext2D,
-  layer: ParallaxLayerSchema,
+  layer: MirrorableLayer,
   tier: BackgroundLayerTier,
   img: HTMLImageElement,
   boxHeight: number,
@@ -70,13 +109,8 @@ export function renderTiledDynamicLayer(
     ctx.globalAlpha = layer.opacity;
   }
 
-  const imgW = img.naturalWidth;
-  const imgH = img.naturalHeight;
-
-  const effectiveHeight = Math.max(viewportHeight, boxHeight * 0.85);
-  const scale = effectiveHeight / imgH;
-  const drawW = imgW * scale;
-  const drawH = effectiveHeight;
+  const drawH = resolveLayerDrawHeight(img.naturalHeight, boxHeight, viewportHeight);
+  const drawW = img.naturalWidth * (drawH / img.naturalHeight);
 
   const speed = DEFAULT_TIER_SPEEDS[tier] || { x: 0.5, y: 0.2 };
   const scrollSpeedX = layer.scrollSpeedX !== undefined ? layer.scrollSpeedX : speed.x;
@@ -85,18 +119,10 @@ export function renderTiledDynamicLayer(
   const driftX = layer.autoDriftX ? tickCount * layer.autoDriftX : 0;
   const driftY = layer.autoDriftY ? tickCount * layer.autoDriftY : 0;
 
-  const scrollX = progressX * extraWidth * scrollSpeedX;
-  const screenX = -scrollX - driftX;
+  const screenX = -(progressX * extraWidth * scrollSpeedX) - driftX;
+  const screenY = resolveLayerScreenY(drawH, viewportHeight, progressY, scrollSpeedY, driftY);
 
-  const maxShiftY = Math.max(0, drawH - viewportHeight);
-  const screenY = -progressY * maxShiftY * scrollSpeedY - driftY;
-
-  let startX = screenX % drawW;
-  if (startX > 0) startX -= drawW;
-
-  for (let x = startX; x < viewportWidth + drawW; x += drawW) {
-    ctx.drawImage(img, Math.round(x), Math.round(screenY), Math.round(drawW), Math.round(drawH));
-  }
+  drawHorizontalTiles(ctx, img, screenX, screenY, drawW, drawH, viewportWidth, layer.mirrorTile === true);
 
   if (debugManager.state.showHitboxes) {
     renderTierWireframe(ctx, tier, layer.id, viewportWidth, viewportHeight);
@@ -104,6 +130,7 @@ export function renderTiledDynamicLayer(
 
   ctx.restore();
 }
+
 
 function renderTierWireframe(
   ctx: CanvasRenderingContext2D,

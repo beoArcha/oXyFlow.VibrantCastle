@@ -18,20 +18,7 @@ export const KNOWN_LEVEL_DEFECTS: Readonly<Record<string, readonly KnownDefect[]
     { code: "PORTAL_UNREACHABLE", subject: "aether_goal_portal" },
   ],
   clocktower: [],
-  courtyard: [
-    { code: "SPAWN_INVALID", subject: "spawn:from_tower" },
-    { code: "SPAWN_INVALID", subject: "spawn:from_tower+p2" },
-    { code: "UNREACHABLE_PLATFORM", subject: "court_secret_ledge_1" },
-    { code: "UNREACHABLE_PLATFORM", subject: "court_high_roost" },
-    { code: "UNREACHABLE_PLATFORM", subject: "court_gate_parapet" },
-    { code: "UNREACHABLE_PLATFORM", subject: "court_secret_arch_1" },
-    { code: "UNREACHABLE_PLATFORM", subject: "court_secret_vault_terrace" },
-    { code: "UNREACHABLE_PLATFORM", subject: "court_end_arch" },
-    { code: "TRIGGER_UNREACHABLE", subject: "trigger_secret_vault" },
-  ],
+  courtyard: [],
   grand_bastion: [],
-  thorn_chasm: [
-    // Sentinel feet sit 5px above the floor, one pixel past the 4px air tolerance.
-    { code: "ENEMY_FLOATING", subject: "chasm_crawler" },
-  ],
+  thorn_chasm: [],
 };

@@ -1,48 +1,36 @@
 import { AssetQuality } from "../types";
-import {
-  AnimationName,
-  CharacterAssetManifest,
-  CharacterProgressionTier,
-  SpriteAtlasMap,
-  SpriteFrame,
-  AtlasMetaDoc,
-} from "./spriteTypes";
+import { AnimationName, CharacterAssetManifest, CharacterProgressionTier, SpriteAtlasMap, SpriteFrame } from "./spriteTypes";
 import { VALEN_MANIFEST, AURELIA_MANIFEST } from "./characterManifests";
-import { SpriteExtractorFactory } from "./extractors";
-import {
-  defaultMetaParser,
-  IUniversalMetaDocument,
-  ICreatureMetaDocument,
-  IStructureMetaDocument,
-} from "./meta";
+import { extractCharacterTextures } from "./characterTextureExtraction";
 import { assetsLogger } from "../logger/gameLogger";
 import { AssetError, ErrorCode } from "@lib/errors";
-import {
-  ResolvedPortrait,
-  resolveCharacterPortrait,
-  resolveAnimationFrame,
-} from "./portraitResolver";
+import { ResolvedPortrait, resolveCharacterPortrait, resolveAnimationFrame } from "./portraitResolver";
 
 export type { ResolvedPortrait };
 
-// Preloaded atlas assets for enemies and structures
-import dummyHighPng from "@assets/enemies/training_dummy/training_dummy_high.png";
-import dummyMetaJson from "@assets/enemies/training_dummy/training_dummy_meta.json";
-import owlHighPng from "@assets/enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_high.png";
-import owlMetaJson from "@assets/enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_meta.json";
-import gateHighPng from "@assets/structures/aether_gate/aether_gate_high.png";
-import gateMetaJson from "@assets/structures/aether_gate/aether_gate_meta.json";
+import {
+  AtlasTexture,
+  AtlasTextureManager,
+  RegisteredAtlasItem,
+  ResolvedAtlasSource,
+  REGISTERED_STRUCTURE_IDS,
+  buildAtlasCatalog,
+  discoverAtlasFiles,
+  loadSvgTexture,
+} from "./atlas";
 
-export interface RegisteredAtlasItem {
-  id: string;
-  category: "enemy" | "structure";
-  imageSrc: string;
-  meta: IUniversalMetaDocument | ICreatureMetaDocument | IStructureMetaDocument | AtlasMetaDoc;
-}
+export type { RegisteredAtlasItem };
 
 class AssetLoaderEngine {
   private characterRegistry: Map<string, CharacterAssetManifest> = new Map();
-  private atlasRegistry: Map<string, RegisteredAtlasItem> = new Map();
+  private atlases = new AtlasTextureManager({
+    getImage: (url) => this.getTexture(url),
+    loadImage: (url) => this.loadTexture(url),
+    loadSvg: loadSvgTexture,
+    canLoad: () => typeof window !== "undefined",
+    getQuality: () => this.currentQuality,
+    onChange: () => this.notifyListeners(),
+  });
   private textureCache: Map<string, HTMLImageElement> = new Map();
   private loadPromises: Map<string, Promise<HTMLImageElement>> = new Map();
   /** URLs evicted while their load was still in flight: result is released instead of cached. */
@@ -54,34 +42,32 @@ class AssetLoaderEngine {
     this.registerCharacter(VALEN_MANIFEST);
     this.registerCharacter(AURELIA_MANIFEST);
 
-    this.registerAtlas({ id: "training_dummy", category: "enemy", imageSrc: dummyHighPng, meta: defaultMetaParser.parseCreature(dummyMetaJson) });
-    this.registerAtlas({ id: "clockwork_owl_gargoyle", category: "enemy", imageSrc: owlHighPng, meta: defaultMetaParser.parseCreature(owlMetaJson) });
-    this.registerAtlas({ id: "aether_gate", category: "structure", imageSrc: gateHighPng, meta: defaultMetaParser.parseStructure(gateMetaJson) });
+    const catalog = buildAtlasCatalog(discoverAtlasFiles(), { structureAllowList: REGISTERED_STRUCTURE_IDS });
+    catalog.forEach((entry) => this.atlases.register(entry));
   }
 
+  /** Registers a single-image atlas as its `high` variant unless explicit variants are given. */
   public registerAtlas(item: RegisteredAtlasItem) {
-    this.atlasRegistry.set(item.id, item);
-    if (typeof window !== "undefined") {
-      this.loadTexture(item.imageSrc).catch(() => {});
-    }
+    const format = item.imageSrc.endsWith(".svg") ? "svg" : "png";
+    const variants = item.variants ?? { high: { src: item.imageSrc, format, meta: item.meta } };
+    this.atlases.register({ id: item.id, category: item.category, variants });
   }
 
   public getAtlas(id: string): RegisteredAtlasItem | undefined {
-    return this.atlasRegistry.get(id);
+    return this.atlases.getView(id);
   }
 
-  public getAtlasTexture(id: string): HTMLImageElement | null {
-    const item = this.atlasRegistry.get(id);
-    if (!item) return null;
-    const tex = this.getTexture(item.imageSrc);
-    if (!tex && !this.loadPromises.has(item.imageSrc)) {
-      this.loadTexture(item.imageSrc).catch(() => {});
-    }
-    return tex;
+  /** Texture and matching meta of the variant currently drawn; the previous one stays until a new tier is ready. */
+  public getAtlasSource(id: string): ResolvedAtlasSource | null {
+    return this.atlases.getSource(id);
+  }
+
+  public getAtlasTexture(id: string): AtlasTexture | null {
+    return this.atlases.getSource(id)?.texture ?? null;
   }
 
   public getAllAtlases(): RegisteredAtlasItem[] {
-    return Array.from(this.atlasRegistry.values());
+    return this.atlases.getAllViews();
   }
 
   public registerCharacter(manifest: CharacterAssetManifest) {
@@ -95,6 +81,7 @@ class AssetLoaderEngine {
   public setQuality(quality: AssetQuality) {
     if (this.currentQuality !== quality) {
       this.currentQuality = quality;
+      this.atlases.setQuality(quality);
       this.preloadCharacter("valen", quality).catch((err) =>
         assetsLogger.warn("Failed to preload valen on quality change", { quality }, err)
       );
@@ -139,35 +126,6 @@ class AssetLoaderEngine {
   }
 
   /**
-   * Post-processes loaded textures using registered SpriteExtractors to generate pixel-perfect frames.
-   */
-  private postProcessTextureExtraction(imageUrl: string, img: HTMLImageElement): void {
-    for (const manifest of this.characterRegistry.values()) {
-      if (manifest.portraitsGridUrl === imageUrl && manifest.meta) {
-        const portraitExtractor = SpriteExtractorFactory.getExtractor("portrait");
-        const extracted = portraitExtractor.extract(manifest.meta, "high", img);
-        manifest.portraits = extracted.moods;
-        manifest.portraitsGridCellWidth = extracted.cellWidth;
-        manifest.portraitsGridCellHeight = extracted.cellHeight;
-      }
-
-      const qualities: AssetQuality[] = ["low", "mid", "high"];
-      const tiers: CharacterProgressionTier[] = [1, 2, 3];
-
-      for (const q of qualities) {
-        for (const t of tiers) {
-          const sMap = this.getActiveSpriteMap(manifest.id, q, t);
-          if (sMap && sMap.meta.imageUrl === imageUrl && manifest.meta) {
-            const humanoidExtractor = SpriteExtractorFactory.getExtractor("humanoid");
-            const updatedTracks = humanoidExtractor.extract(manifest.meta, q, img);
-            sMap.animations = updatedTracks as unknown as typeof sMap.animations;
-          }
-        }
-      }
-    }
-  }
-
-  /**
    * Asynchronously loads an image texture and caches it.
    */
   public async loadTexture(imageUrl: string): Promise<HTMLImageElement> {
@@ -193,7 +151,12 @@ class AssetLoaderEngine {
           return;
         }
         this.textureCache.set(imageUrl, img);
-        this.postProcessTextureExtraction(imageUrl, img);
+        extractCharacterTextures(
+          this.characterRegistry.values(),
+          (id, quality, tier) => this.getActiveSpriteMap(id, quality, tier),
+          imageUrl,
+          img
+        );
         this.notifyListeners();
         resolve(img);
       };
@@ -254,9 +217,7 @@ class AssetLoaderEngine {
    * Evicts a texture (never atlas textures). A later request reloads it normally.
    */
   public evictTexture(imageUrl: string): boolean {
-    for (const item of this.atlasRegistry.values()) {
-      if (item.imageSrc === imageUrl) return false;
-    }
+    if (this.atlases.ownsUrl(imageUrl)) return false;
     const img = this.textureCache.get(imageUrl);
     if (img) {
       this.textureCache.delete(imageUrl);

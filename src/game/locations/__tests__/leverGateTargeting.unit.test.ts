@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, spyOn } from "bun:test";
 import { LevelLifecycleManager, ILevelLifecycleContext } from "../levelLifecycleManager";
-import type { LocationDefinition } from "../types";
 import { CollisionType, SoundType } from "../../types";
 import type { Entity } from "../../types";
 import { engineLogger } from "../../logger/gameLogger";
@@ -14,15 +13,17 @@ const solid = (id: string, y = 400): Entity => ({
   height: 200,
 });
 
-const locationWithLevers = (
+const leverEntities = (
   levers: Array<{ id: string; triggerId: string; targetGateId?: string }>
-): LocationDefinition =>
-  ({
-    id: "synthetic",
-    jsonBlueprint: {
-      layout: { levers: levers.map((l) => ({ ...l, x: 0, y: 0 })) },
-    },
-  }) as unknown as LocationDefinition;
+): Entity[] =>
+  levers.map((l) => ({
+    ...l,
+    type: CollisionType.Lever,
+    x: 0,
+    y: 0,
+    width: 25,
+    height: 45,
+  }));
 
 describe("LevelLifecycleManager lever -> gate targeting", () => {
   let entities: Entity[];
@@ -44,13 +45,13 @@ describe("LevelLifecycleManager lever -> gate targeting", () => {
   });
 
   it("opens only the gate named by targetGateId", () => {
-    manager.currentLocation = locationWithLevers([
+    const levers = leverEntities([
       { id: "lever_a", triggerId: "trig_a", targetGateId: "gate_a" },
       { id: "lever_b", triggerId: "trig_b", targetGateId: "gate_b" },
     ]);
     const gateA = solid("gate_a");
     const gateB = solid("gate_b");
-    entities = [gateA, gateB];
+    entities = [...levers, gateA, gateB];
 
     manager.handleLeverUnlocks("trig_a");
 
@@ -62,13 +63,13 @@ describe("LevelLifecycleManager lever -> gate targeting", () => {
   });
 
   it("opens the second gate when the second lever is pulled", () => {
-    manager.currentLocation = locationWithLevers([
+    const levers = leverEntities([
       { id: "lever_a", triggerId: "trig_a", targetGateId: "gate_a" },
       { id: "lever_b", triggerId: "trig_b", targetGateId: "gate_b" },
     ]);
     const gateA = solid("gate_a");
     const gateB = solid("gate_b");
-    entities = [gateA, gateB];
+    entities = [...levers, gateA, gateB];
 
     manager.handleLeverUnlocks("trig_b");
 
@@ -77,11 +78,11 @@ describe("LevelLifecycleManager lever -> gate targeting", () => {
   });
 
   it("keeps legacy behaviour and warns for a lever without targetGateId", () => {
-    manager.currentLocation = locationWithLevers([{ id: "lever_a", triggerId: "trig_a" }]);
+    const levers = leverEntities([{ id: "lever_a", triggerId: "trig_a" }]);
     const gate = solid("old_gate");
     const wall = solid("stone_wall");
     const floor = solid("floor");
-    entities = [gate, wall, floor];
+    entities = [...levers, gate, wall, floor];
     const warn = spyOn(engineLogger, "warn").mockImplementation(() => {});
 
     manager.handleLeverUnlocks("trig_a");
@@ -94,11 +95,11 @@ describe("LevelLifecycleManager lever -> gate targeting", () => {
   });
 
   it("falls back and warns when the target gate id does not exist", () => {
-    manager.currentLocation = locationWithLevers([
+    const levers = leverEntities([
       { id: "lever_a", triggerId: "trig_a", targetGateId: "missing_gate" },
     ]);
     const gate = solid("some_gate");
-    entities = [gate];
+    entities = [...levers, gate];
     const warn = spyOn(engineLogger, "warn").mockImplementation(() => {});
 
     manager.handleLeverUnlocks("trig_a");

@@ -6,6 +6,7 @@ import { ActorRenderer } from "../actorRenderer";
 import { FxRenderer } from "../fxRenderer";
 import { StructureRenderer } from "../structureRenderer";
 import { HitboxRenderer } from "../hitboxRenderer";
+import { ViewCuller } from "../viewCulling";
 import { Player, Enemy, Entity, Projectile, Particle, PlayerId, CollisionType } from "@game/types";
 import { getLocation } from "@game/locations";
 import { createMockContext2D as createMockContext } from "@test-utils";
@@ -267,5 +268,21 @@ describe("Renderer Optimization & Zero GC Pressure", () => {
       structureRenderer.clearCaches();
     });
   });
-});
 
+  describe("View Culling Loop", () => {
+    it("keeps save balance and reuses one culler across culled frames", () => {
+      const ctx = createMockContext();
+      const structureRenderer = new StructureRenderer();
+      const culler = new ViewCuller();
+      const entities = [mockEntity, { ...mockEntity, id: "far", x: 90000 } as Entity];
+
+      for (let tick = 1; tick <= 30; tick++) {
+        culler.setView(tick * 2, 0, 1000, 625);
+        structureRenderer.render(ctx, entities, "en", tick, culler);
+        expect(culler.entitiesDrawn).toBe(1);
+        expect(culler.entitiesTotal).toBe(2);
+      }
+      expect(ctx.getSaveBalance()).toBe(0);
+    });
+  });
+});

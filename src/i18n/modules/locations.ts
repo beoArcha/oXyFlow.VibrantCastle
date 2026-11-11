@@ -51,6 +51,10 @@ export const locationsTranslations: Record<LanguageCode, LocationsI18n> = {
     monsterAetherWisp: "Iskra Aetheru",
     monsterAetherArchon: "Archont Aetheru",
     monsterShadowKnight: "Cień Rycerza",
+    monsterGearMite: "Trybik",
+    monsterThornCreeper: "Cierniowy Pędnik",
+    monsterLanternWarden: "Latarniowy Stróż",
+    monsterChronoHound: "Chrono-Ogar",
   },
   en: {
     locationCourtyardName: "Courtyard of Awakening",
@@ -102,5 +106,9 @@ export const locationsTranslations: Record<LanguageCode, LocationsI18n> = {
     monsterAetherWisp: "Aether Wisp",
     monsterAetherArchon: "Aether Archon",
     monsterShadowKnight: "Shadow Knight",
+    monsterGearMite: "Gear Mite",
+    monsterThornCreeper: "Thorn Creeper",
+    monsterLanternWarden: "Lantern Warden",
+    monsterChronoHound: "Chrono Hound",
   },
 };

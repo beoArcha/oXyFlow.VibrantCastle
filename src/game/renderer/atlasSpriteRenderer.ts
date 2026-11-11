@@ -2,15 +2,18 @@ import { AssetQuality } from "@game/types";
 import { assetLoader } from "@game/engine/assetLoader";
 import { rendererLogger } from "@game/logger/gameLogger";
 import { BackgroundProcessor } from "@game/engine/meta/slicing/BackgroundProcessor";
+import type { AtlasTexture } from "@game/engine/atlas";
 import {
   IAtlasMetaLike,
+  AtlasRenderInfo,
+  getAtlasRenderInfo,
   resolveAnimationKeyFromStates,
   resolveAnimationTrack,
   resolveEffectiveFrameCount,
+  resolveFrameColumn,
+  resolveFrameSpan,
   hasAnimationTrack,
-  resolveAnchor,
   resolveVariantScale,
-  resolveFacingDirection,
 } from "./atlasMetadataResolver";
 
 export interface RenderAtlasFrameOptions {
@@ -36,13 +39,18 @@ export interface IAtlasSpriteRenderer {
 }
 
 /**
- * Universal AtlasSpriteRenderer (Single Responsibility Principle).
- * Renders sliced frames from registered AtlasMetaDoc or IUniversalMetaDocument sprite atlases with
- * normalized origin anchoring, sub-cell span calculations, optional directional mirroring,
- * and zero-allocation cached runtime chroma-keying.
+ * Renders sliced frames from registered atlas variants (PNG or pre-rasterised SVG sheets) with
+ * normalized origin anchoring, multi-cell frames, directional mirroring and cached chroma-keying.
+ * Sheets whose meta carries `layout.bodyBox` are scaled and anchored by their body; other sheets
+ * keep the legacy visible-ratio heuristic.
  */
 export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
-  private readonly chromaCache: Map<string, CanvasImageSource> = new Map();
+  private chromaCache: WeakMap<AtlasTexture, CanvasImageSource> = new WeakMap();
+  private drawX = 0;
+  private drawY = 0;
+  private drawW = 0;
+  private drawH = 0;
+  private pivotX = 0;
 
   public hasAtlas(atlasId: string): boolean {
     return !!assetLoader.getAtlas(atlasId);
@@ -55,30 +63,30 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
   }
 
   public clearChromaCache(): void {
-    this.chromaCache.clear();
+    this.chromaCache = new WeakMap();
   }
 
-  private getEffectiveTexture(atlasId: string, texture: HTMLImageElement, meta: IAtlasMetaLike): CanvasImageSource {
+  private getEffectiveSource(texture: AtlasTexture, meta: IAtlasMetaLike): CanvasImageSource {
     const bgConfig = meta.backgroundConfig;
     if (!bgConfig || !bgConfig.removeAtRuntime || !bgConfig.colorHex) {
-      return texture;
+      return texture.source;
     }
 
-    const cached = this.chromaCache.get(atlasId);
+    const cached = this.chromaCache.get(texture);
     if (cached) return cached;
 
     if (typeof document === "undefined") {
-      return texture;
+      return texture.source;
     }
 
     try {
       const canvas = document.createElement("canvas");
-      canvas.width = texture.naturalWidth;
-      canvas.height = texture.naturalHeight;
+      canvas.width = texture.width;
+      canvas.height = texture.height;
       const ctx = canvas.getContext("2d");
-      if (!ctx) return texture;
+      if (!ctx) return texture.source;
 
-      ctx.drawImage(texture, 0, 0);
+      ctx.drawImage(texture.source, 0, 0);
       const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       const keyed = BackgroundProcessor.applyChromaKey(
         imgData,
@@ -88,29 +96,75 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
       );
       ctx.putImageData(keyed as unknown as ImageData, 0, 0);
 
-      this.chromaCache.set(atlasId, canvas);
+      this.chromaCache.set(texture, canvas);
       return canvas;
     } catch (err: unknown) {
-      rendererLogger.warn(`Failed to process chroma key for atlas '${atlasId}':`, undefined, err);
-      return texture;
+      rendererLogger.warn("Failed to process chroma key for atlas texture", undefined, err);
+      return texture.source;
     }
   }
 
+  /**
+   * Fills the draw rectangle and mirror pivot for one frame spanning `span` cells.
+   * Body-box sheets: the body inside the first cell is scaled to the hitbox height and placed
+   * on the hitbox (feet or centre); extra cells extend to the right of the first one.
+   */
+  private placeFrame(
+    info: AtlasRenderInfo,
+    options: RenderAtlasFrameOptions,
+    quality: AssetQuality,
+    meta: IAtlasMetaLike,
+    cellW: number,
+    cellH: number,
+    span: number
+  ): void {
+    const extraMultiplier = options.scaleMultiplier ?? 1.0;
+    const body = info.body;
+    const sw = span * cellW;
+    const anchorX = Math.round(options.x + options.width / 2);
+    this.pivotX = anchorX;
+
+    if (body && options.height > 0) {
+      const scale = (options.height / (body.height * cellH)) * extraMultiplier;
+      const anchorY = Math.round(info.groundAnchored ? options.y + options.height : options.y + options.height / 2);
+      const bodyY = info.groundAnchored ? body.footY : body.centerY;
+      this.drawW = Math.round(sw * scale);
+      this.drawH = Math.round(cellH * scale);
+      this.drawX = Math.round(anchorX - body.centerX * cellW * scale);
+      this.drawY = Math.round(anchorY - bodyY * cellH * scale);
+      return;
+    }
+
+    let scale: number;
+    if (options.height > 0) {
+      const visibleRatio = info.anchorY >= 0.8 ? 0.94 : 0.88;
+      scale = (options.height / (cellH * visibleRatio)) * extraMultiplier;
+    } else {
+      scale = resolveVariantScale(meta, quality) * extraMultiplier;
+    }
+    this.drawW = Math.round(sw * scale);
+    this.drawH = Math.round(cellH * scale);
+    const anchorY = Math.round(
+      info.anchorY >= 0.8 ? options.y + options.height : options.y + options.height / 2
+    );
+    this.drawX = Math.round(anchorX - info.anchorX * this.drawW);
+    this.drawY = Math.round(anchorY - info.anchorY * this.drawH);
+  }
+
   public render(ctx: CanvasRenderingContext2D, options: RenderAtlasFrameOptions): boolean {
-    const atlasItem = assetLoader.getAtlas(options.atlasId);
-    if (!atlasItem) return false;
+    const resolved = assetLoader.getAtlasSource(options.atlasId);
+    if (!resolved) return false;
 
-    const texture = assetLoader.getAtlasTexture(options.atlasId);
-    if (!texture || !texture.complete || texture.naturalWidth === 0) return false;
+    const texture = resolved.texture;
+    if (texture.width <= 0 || texture.height <= 0) return false;
 
-    const meta = atlasItem.meta as unknown as IAtlasMetaLike;
-    const effectiveTexture = this.getEffectiveTexture(options.atlasId, texture, meta);
+    const meta = resolved.meta as unknown as IAtlasMetaLike;
+    const info = getAtlasRenderInfo(meta);
+    const source = this.getEffectiveSource(texture, meta);
     const quality = options.quality || assetLoader.getQuality();
 
-    const cols = meta.atlas?.columns || 6;
-    const rows = meta.atlas?.rows || 4;
-    const cellW = texture.naturalWidth / cols;
-    const cellH = texture.naturalHeight / rows;
+    const cellW = texture.width / info.cols;
+    const cellH = texture.height / info.rows;
 
     const animKey = resolveAnimationKeyFromStates(meta, options.animationName);
     const animTrack = resolveAnimationTrack(meta, animKey);
@@ -130,80 +184,33 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
       currentFrame = trackLoop ? step % trackFrames : Math.min(step, trackFrames - 1);
     }
 
-    let col = 0;
-    let span = 1;
-
-    if (animTrack?.frameIndices && animTrack.frameIndices[currentFrame] !== undefined) {
-      col = animTrack.frameIndices[currentFrame];
-    } else if (animTrack?.slotSpan && animTrack.slotSpan.length > 0) {
-      col = 0;
-      for (let i = 0; i < currentFrame; i++) {
-        col += animTrack.slotSpan[i];
-      }
-      span = animTrack.slotSpan[currentFrame];
-    } else if (animTrack?.cells && animTrack.cells.length > 0) {
-      col = 0;
-      for (let i = 0; i < currentFrame; i++) {
-        col += animTrack.cells[i];
-      }
-      span = animTrack.cells[currentFrame];
-    } else if (animTrack?.startCol !== undefined) {
-      col = animTrack.startCol + currentFrame * (animTrack.widthCells || 1);
-      span = animTrack.widthCells || 1;
-    } else {
-      col = currentFrame;
-    }
-
-    const row = animTrack?.row ?? 0;
-    const sx = col * cellW;
-    const sy = row * cellH;
+    const span = resolveFrameSpan(animTrack, currentFrame);
+    const sx = resolveFrameColumn(animTrack, currentFrame) * cellW;
+    const sy = (animTrack?.row ?? 0) * cellH;
     const sw = span * cellW;
-    const sh = cellH;
 
-    const anchor = resolveAnchor(meta);
-    const extraMultiplier = options.scaleMultiplier ?? 1.0;
-    let scale: number;
-
-    if (options.height > 0) {
-      const visibleRatio = anchor.y >= 0.8 ? 0.94 : 0.88;
-      const baseScale = options.height / (cellH * visibleRatio);
-      scale = baseScale * extraMultiplier;
-    } else {
-      const variantScale = resolveVariantScale(meta, quality);
-      scale = variantScale * extraMultiplier;
-    }
-
-    const dw = Math.round(sw * scale);
-    const dh = Math.round(sh * scale);
-
-    const targetAnchorX = Math.round(options.x + options.width / 2);
-    const isGroundAnchored = anchor.y >= 0.8;
-    const targetAnchorY = Math.round(
-      isGroundAnchored ? options.y + options.height : options.y + options.height / 2
-    );
-
-    const drawX = Math.round(targetAnchorX - anchor.x * dw);
-    const drawY = Math.round(targetAnchorY - anchor.y * dh);
+    this.placeFrame(info, options, quality, meta, cellW, cellH, span);
+    const { drawX, drawY, drawW: dw, drawH: dh, pivotX } = this;
 
     ctx.save();
 
     if (options.alpha !== undefined && options.alpha < 1) {
       ctx.globalAlpha = options.alpha;
     }
-
-    const naturalFacing = resolveFacingDirection(meta);
-    const needsFlip =
-      naturalFacing === "left"
-        ? options.facingLeft === false
-        : !!options.facingLeft;
-
-    if (needsFlip) {
-      ctx.translate(targetAnchorX, 0);
-      ctx.scale(-1, 1);
-      ctx.translate(-targetAnchorX, 0);
+    if (texture.crisp) {
+      ctx.imageSmoothingEnabled = false;
     }
 
-    ctx.drawImage(effectiveTexture, sx, sy, sw, sh, drawX, drawY, dw, dh);
+    const needsFlip =
+      info.facing === "left" ? options.facingLeft === false : !!options.facingLeft;
+
+    if (needsFlip) {
+      ctx.translate(pivotX, 0);
+      ctx.scale(-1, 1);
+      ctx.translate(-pivotX, 0);
+    }
+
+    ctx.drawImage(source, sx, sy, sw, cellH, drawX, drawY, dw, dh);
 
     if (options.tintColor) {
       ctx.save();

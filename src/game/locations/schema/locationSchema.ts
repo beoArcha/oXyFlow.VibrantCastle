@@ -21,6 +21,7 @@ export interface ParallaxLayerSchema {
   name: string;
   tier?: BackgroundLayerTier;
   opaque?: boolean;
+  mirrorTile?: boolean; // Mirror alternate horizontal tiles (layers whose left and right edges do not match)
   type:
   | "image"
   | "sky_gradient"

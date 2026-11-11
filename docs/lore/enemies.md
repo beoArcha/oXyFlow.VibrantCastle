@@ -11,7 +11,7 @@ All enemies are governed by modular hitboxes, damage flash feedback, distinct pa
 ### 1. Straw Training Dummy (`monsterTrainingDummy`)
 
 * **Category**: Proving Target / Passive Automaton
-* **Base HP**: 50
+* **Base HP**: 60
 * **Score Reward**: 150 pts
 * **Associated Locations**: Courtyard of Awakening, Grand Bastion, Clockwork Tower
 * **Appearance**:
@@ -28,7 +28,7 @@ All enemies are governed by modular hitboxes, damage flash feedback, distinct pa
 ### 2. Courtyard Sentinel (`monsterCourtSentinel`)
 
 * **Category**: Ground Patrol Automaton
-* **Base HP**: 70
+* **Base HP**: 80
 * **Score Reward**: 250 pts
 * **Associated Locations**: Courtyard of Awakening, Grand Bastion
 * **Appearance**:
@@ -78,8 +78,8 @@ All enemies are governed by modular hitboxes, damage flash feedback, distinct pa
 ### 5. Chasm Crawler (`monsterChasmCrawler`)
 
 * **Category**: Subterranean Ambush Beast / Low-Slung Construct
-* **Base HP**: 55
-* **Score Reward**: 220 pts
+* **Base HP**: 80
+* **Score Reward**: 500 pts
 * **Associated Locations**: Chasm of Thorns and Shadows
 * **Appearance**:
   * Multi-legged scorpion-like carapace forged from jagged shale and crystalline amber thorns.
@@ -94,8 +94,8 @@ All enemies are governed by modular hitboxes, damage flash feedback, distinct pa
 ### 6. Clockwork Automaton (`monsterClockworkAutomaton`)
 
 * **Category**: Heavy Mechanical Soldier
-* **Base HP**: 110
-* **Score Reward**: 450 pts
+* **Base HP**: 120
+* **Score Reward**: 350 pts
 * **Associated Locations**: Clockwork Tower, Grand Bastion
 * **Appearance**:
   * Imposing 8-foot tall brass behemoth with multiple interlocking internal gear trains and external steam pipes.
@@ -110,7 +110,7 @@ All enemies are governed by modular hitboxes, damage flash feedback, distinct pa
 ### 7. Aether Sentinel (`monsterAetherSentinel`)
 
 * **Category**: Crystalline Sky Guardian
-* **Base HP**: 95
+* **Base HP**: 110
 * **Score Reward**: 400 pts
 * **Associated Locations**: Aether Sky Sanctuary
 * **Appearance**:
@@ -126,8 +126,8 @@ All enemies are governed by modular hitboxes, damage flash feedback, distinct pa
 ### 8. Aether Wisp (`monsterAetherWisp`)
 
 * **Category**: Arcane Anomaly / Volatile Elemental
-* **Base HP**: 35
-* **Score Reward**: 180 pts
+* **Base HP**: 60
+* **Score Reward**: 500 pts
 * **Associated Locations**: Aether Sky Sanctuary, Grand Bastion
 * **Appearance**:
   * A pulsating orb of pure condensed starlight, surrounded by orbiting crystal shards and trailing spectral comet tails.
@@ -141,8 +141,8 @@ All enemies are governed by modular hitboxes, damage flash feedback, distinct pa
 ### 9. Aether Archon (`monsterAetherArchon`)
 
 * **Category**: Elite Sanctuary Commander / Miniboss Construct
-* **Base HP**: 300
-* **Score Reward**: 1,000 pts
+* **Base HP**: 220
+* **Score Reward**: 750 pts
 * **Associated Locations**: Apex of Aether Sky Sanctuary
 * **Appearance**:
   * Towering celestial warrior enveloped in a double-ringed gyroscope of carved runestones and blinding cerulean radiance.
@@ -158,8 +158,8 @@ All enemies are governed by modular hitboxes, damage flash feedback, distinct pa
 ### 10. Shadow Knight (`monsterShadowKnight`)
 
 * **Category**: Phantom Duelist / Bastion Specter
-* **Base HP**: 140
-* **Score Reward**: 600 pts
+* **Base HP**: 260
+* **Score Reward**: 1,000 pts
 * **Associated Locations**: Grand Bastion Proving Grounds
 * **Appearance**:
   * Ethereal apparition of an ancient Bastion swordmaster, clad in tattered crimson velvet and smoking dark-matter armor.
@@ -171,17 +171,85 @@ All enemies are governed by modular hitboxes, damage flash feedback, distinct pa
 
 ---
 
+### 11. Gear Mite (`monsterGearMite`)
+
+* **Category**: Tiny Clockwork Skitterer / Ground Patrol
+* **Base HP**: 20
+* **Score Reward**: 80 pts
+* **Associated Locations**: Courtyard of Awakening, Clockwork Tower
+* **Appearance**:
+  * Brass cog-beetle no larger than a loaf of bread, its carapace built from interlocking toothed discs.
+  * A tiny escapement ticks audibly beneath its shell.
+* **Combat Role & Behavior**:
+  * Currently patrols floors at high speed and reverses at patrol bounds. Damage and attacks are planned and not yet implemented.
+  * Its snapping mandibles are intended to deal light contact damage once combat is enabled.
+  * **Tactics**: A single quick slash or low spell destroys it; time your strike as it turns at the end of its route.
+
+---
+
+### 12. Thorn Creeper (`monsterThornCreeper`)
+
+* **Category**: Rooted Hazard / Stationary Flora
+* **Base HP**: 50
+* **Score Reward**: 150 pts
+* **Associated Locations**: Chasm of Thorns and Shadows
+* **Appearance**:
+  * Swollen bulb of amber thorns anchored to the chasm floor by woven roots.
+  * Faint resin glows between the barbs.
+* **Combat Role & Behavior**:
+  * Stationary; never patrols. Damage and attacks are planned (thorn volleys) and not yet implemented.
+  * Acts as a fixed obstacle that restricts footing along ledges.
+  * **Tactics**: Attack from range or leap past its reach; fire-aligned spells are especially effective.
+
+---
+
+### 13. Lantern Warden (`monsterLanternWarden`)
+
+* **Category**: Slow Aerial Sentry / Floating Automaton
+* **Base HP**: 35
+* **Score Reward**: 180 pts
+* **Associated Locations**: Clockwork Tower, Grand Bastion
+* **Appearance**:
+  * Floating brass lantern with a glowing amber ember for an eye, suspended without visible support.
+  * Soot-black cage bars and trailing chain links sway beneath it.
+* **Combat Role & Behavior**:
+  * Currently drifts slowly along corridor patrol routes. Damage and attacks are planned (a lantern beam) and not yet implemented.
+  * Cruises at a gentle pace and ignores platform boundaries.
+  * **Tactics**: Snipe it from range with vertical or angled shots before it reaches your platform.
+
+---
+
+### 14. Chrono Hound (`monsterChronoHound`)
+
+* **Category**: Fast Ground Patrol / Clockwork Beast
+* **Base HP**: 60
+* **Score Reward**: 260 pts
+* **Associated Locations**: Grand Bastion, Aether Sky Sanctuary
+* **Appearance**:
+  * Lean hound of burnished brass ribs and exposed mainspring muscle.
+  * Ember-orange eyes trail faint afterimages as it runs.
+* **Combat Role & Behavior**:
+  * Currently sprints along its patrol and reverses at the bounds. Damage and attacks are planned (a lunging slash) and not yet implemented.
+  * Fastest patroller in the castle.
+  * **Tactics**: Wait for it to turn at the patrol edge, then strike or dash behind it; a ranged opener is safer.
+
+---
+
 ## Bestiary Summary Table
 
 | Monster / Construct | Role / Tier | Base HP | Reward | Key Vulnerability / Strategy |
 | :--- | :--- | :---: | :---: | :--- |
-| **Straw Training Dummy** | Static Target | 50 | 150 pts | Any weapon or spell combo |
+| **Straw Training Dummy** | Static Target | 60 | 150 pts | Any weapon or spell combo |
 | **Gargoyle Scout** | Aerial Light | 45 | 200 pts | 90° vertical / 45° angled shots |
-| **Chasm Crawler** | Low Ambush | 55 | 220 pts | Crouch attacks & ground radial spells |
+| **Chasm Crawler** | Low Ambush | 80 | 500 pts | Crouch attacks & ground radial spells |
 | **Chasm Gargoyle** | Aerial Dive | 65 | 300 pts | Crouch-slide evasion & counter-thrust |
-| **Courtyard Sentinel** | Ground Patrol | 70 | 250 pts | Flanking behind back vent |
-| **Aether Wisp** | Flying Anomaly | 35 | 180 pts | Long-range projectile sniping |
-| **Clockwork Automaton** | Heavy Brawler | 110 | 450 pts | Phase evasion & kiting |
-| **Aether Sentinel** | Shielded Floater | 95 | 400 pts | Celestial magic shieldbreak |
-| **Shadow Knight** | Mirror Duelist | 140 | 600 pts | Baiting parries & timed dashes |
-| **Aether Archon** | Elite Miniboss | 300 | 1,000 pts | Pattern recognition across starfall phases |
+| **Courtyard Sentinel** | Ground Patrol | 80 | 250 pts | Flanking behind back vent |
+| **Aether Wisp** | Flying Anomaly | 60 | 500 pts | Long-range projectile sniping |
+| **Clockwork Automaton** | Heavy Brawler | 120 | 350 pts | Phase evasion & kiting |
+| **Aether Sentinel** | Shielded Floater | 110 | 400 pts | Celestial magic shieldbreak |
+| **Shadow Knight** | Mirror Duelist | 260 | 1,000 pts | Baiting parries & timed dashes |
+| **Aether Archon** | Elite Miniboss | 220 | 750 pts | Pattern recognition across starfall phases |
+| **Gear Mite** | Ground Skitterer | 20 | 80 pts | Single slash at patrol turn |
+| **Thorn Creeper** | Rooted Hazard | 50 | 150 pts | Ranged or fire spells |
+| **Lantern Warden** | Slow Aerial Sentry | 35 | 180 pts | Ranged sniping |
+| **Chrono Hound** | Fast Ground Patrol | 60 | 260 pts | Strike at patrol turn, dash behind |

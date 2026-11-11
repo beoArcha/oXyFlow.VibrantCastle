@@ -1,4 +1,5 @@
 import { Player, Enemy, Entity, Projectile } from "@game/types";
+import { ViewCuller } from "./viewCulling";
 import { debugManager } from "@game/debug/debugManager";
 
 export interface IDebugProfilerOverlay {
@@ -16,7 +17,8 @@ export interface IDebugProfilerOverlay {
     locationId: string,
     levelWidth: number,
     levelHeight: number,
-    isHardwareAccelerated?: boolean
+    isHardwareAccelerated?: boolean,
+    view?: ViewCuller
   ): void;
 }
 
@@ -41,7 +43,8 @@ export class DebugProfilerOverlay implements IDebugProfilerOverlay {
     locationId: string,
     levelWidth: number,
     levelHeight: number,
-    isHardwareAccelerated: boolean = true
+    isHardwareAccelerated: boolean = true,
+    view?: ViewCuller
   ): void {
     ctx.save();
     const p1 = players[0];
@@ -52,7 +55,7 @@ export class DebugProfilerOverlay implements IDebugProfilerOverlay {
     const frameTimeMs = measuredFps > 0 ? (1000 / measuredFps).toFixed(1) : "0.0";
 
     const boxW = 260;
-    const boxH = 170;
+    const boxH = view ? 184 : 170;
     const x = 12;
     const y = 12;
 
@@ -104,6 +107,15 @@ export class DebugProfilerOverlay implements IDebugProfilerOverlay {
       y + 134
     );
 
+    const cheatsY = view ? y + 162 : y + 148;
+    if (view) {
+      ctx.fillText(
+        `Rysowane: Encje=${view.entitiesDrawn}/${view.entitiesTotal} Wrogowie=${view.enemiesDrawn}/${view.enemiesTotal}`,
+        x + 10,
+        y + 148
+      );
+    }
+
     // Active Cheats Status bar
     const st = debugManager.state;
     this.profilerFlags.length = 0;
@@ -116,7 +128,7 @@ export class DebugProfilerOverlay implements IDebugProfilerOverlay {
 
     if (this.profilerFlags.length > 0) {
       ctx.fillStyle = "#ef4444";
-      ctx.fillText(`Aktywne: ${this.profilerFlags.join(" | ")}`, x + 10, y + 148);
+      ctx.fillText(`Aktywne: ${this.profilerFlags.join(" | ")}`, x + 10, cheatsY);
     }
 
     ctx.restore();

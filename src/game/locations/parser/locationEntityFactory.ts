@@ -95,6 +95,7 @@ export function buildLocationEntities(
         width: lev.width || 25,
         height: lev.height || 45,
         triggerId: lev.triggerId,
+        targetGateId: lev.targetGateId,
         labelKey: lev.labelKey,
         label: lev.defaultLabel || lev.label || "Lever",
         isActivated: false,

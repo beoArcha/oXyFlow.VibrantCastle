@@ -134,6 +134,8 @@ export interface Entity {
   label?: string;
   labelKey?: string;
   triggerId?: string;
+  /** Lever only: id of the Solid gate this lever opens. */
+  targetGateId?: string;
   structureId?: string;
   animationState?: string;
   animationTicks?: number;

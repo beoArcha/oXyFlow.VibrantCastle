@@ -1,4 +1,12 @@
 import { ParallaxLayerSchema } from "@game/locations/schema/locationSchema";
+import {
+  MirrorableLayer,
+  createLayerRect,
+  resolveFarBackdropRect,
+  resolveLayerDrawHeight,
+  resolveLayerScreenY,
+} from "../background/parallaxGeometry";
+import { drawHorizontalTiles } from "../background/parallaxTiling";
 
 export interface IParallaxImageRenderer {
   preload(layers?: readonly ParallaxLayerSchema[]): void;
@@ -20,6 +28,7 @@ export interface IParallaxImageRenderer {
  * Handles texture caching, vertical fitting, and seamless wrapping without GC allocations.
  */
 export class ParallaxImageRenderer implements IParallaxImageRenderer {
+  private readonly farRect = createLayerRect();
   private readonly imageCache: Map<string, HTMLImageElement> = new Map();
 
   public preload(layers?: readonly ParallaxLayerSchema[]): void {
@@ -56,48 +65,29 @@ export class ParallaxImageRenderer implements IParallaxImageRenderer {
 
     if (!img || !img.complete || img.naturalWidth === 0) return;
 
-    const imgW = img.naturalWidth;
-    const imgH = img.naturalHeight;
-
     const isFarStatic = layer.tier === "far" || (layer.id.includes("_far") && !layer.id.includes("mid"));
 
     if (isFarStatic) {
-      // Far static backdrop: cleanly scales and stays fixed to the viewport
-      const scale = Math.max(viewportWidth / imgW, viewportHeight / imgH);
-      const drawW = imgW * scale;
-      const drawH = imgH * scale;
-      const drawX = (viewportWidth - drawW) / 2;
+      resolveFarBackdropRect(this.farRect, img.naturalWidth, img.naturalHeight, viewportWidth, viewportHeight);
       ctx.save();
       if (layer.opacity !== undefined && layer.opacity < 1) {
         ctx.globalAlpha = layer.opacity;
       }
-      ctx.drawImage(img, Math.round(drawX), 0, Math.round(drawW), Math.round(drawH));
+      ctx.drawImage(img, this.farRect.x, this.farRect.y, this.farRect.width, this.farRect.height);
       ctx.restore();
       return;
     }
 
-    // Scale to fill vertical field + parallax allowance
-    const effectiveHeight = Math.max(viewportHeight, boxHeight * 0.85);
-    const scale = effectiveHeight / imgH;
-    const drawW = imgW * scale;
-    const drawH = effectiveHeight;
-
+    const drawH = resolveLayerDrawHeight(img.naturalHeight, boxHeight, viewportHeight);
+    const drawW = img.naturalWidth * (drawH / img.naturalHeight);
     const screenX = -scrollX - driftX;
-    const maxShiftY = Math.max(0, drawH - viewportHeight);
-    const screenY = -progressY * maxShiftY * layer.scrollSpeedY - driftY;
+    const screenY = resolveLayerScreenY(drawH, viewportHeight, progressY, layer.scrollSpeedY, driftY);
 
     ctx.save();
     if (layer.opacity !== undefined && layer.opacity < 1) {
       ctx.globalAlpha = layer.opacity;
     }
-
-    // Seamless horizontal repeating across viewport
-    let startX = screenX % drawW;
-    if (startX > 0) startX -= drawW;
-
-    for (let x = startX; x < viewportWidth + drawW; x += drawW) {
-      ctx.drawImage(img, Math.round(x), Math.round(screenY), Math.round(drawW), Math.round(drawH));
-    }
+    drawHorizontalTiles(ctx, img, screenX, screenY, drawW, drawH, viewportWidth, (layer as MirrorableLayer).mirrorTile === true);
     ctx.restore();
   }
 }
