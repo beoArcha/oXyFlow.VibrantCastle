@@ -135,7 +135,7 @@ src/assets/locations/courtyard/far.png <-- Physical graphic texture
 - `bun test src/tests/arch/dataIntegrity.test.ts` — Enforces spell, item, and dialogue graph schema integrity.
 - `bun test src/tests/arch/locationBlueprints.test.ts` — Verifies room dimensions, portal graphs, and FAR layer opacity.
 - `bun test src/tests/arch/assetIntegrity.test.ts` — Proves all referenced textures exist on disk and parse via `MetaParser`.
-- `bun test:scripts` — Enforces the SVG enemy sheet contract (§6): compiler contract and generated files in sync with their draw scripts.
+- `bun test:scripts` — Enforces the SVG enemy sheet contract (§6): compiler contract and generated files in sync with their draw scripts. It also checks frame geometry of every packed sheet.
 - `bun test src/tests/arch/levelLogic.test.ts` — Enforces the level design grammar (§7). Check a single map with `bun scripts/validate-level.ts <locationId>`.
 
 ---
@@ -149,6 +149,7 @@ src/assets/locations/courtyard/far.png <-- Physical graphic texture
 - SVG root carries `width`, `height`, `viewBox` and `shape-rendering="crispEdges"`; the body is one `<path>` per colour. No gradients, filters, opacity, text, images, scripts or styles.
 - Every frame stays inside its own cell with at least 1 px of empty margin on the left, right and top. Ground and static enemies stand on the bottom pixel row of the cell. Natural facing is right.
 - The meta JSON uses the same format as PNG atlas metas plus `layout.bodyBox` (normalized bounding box of the body inside one cell), which the renderer uses for scale and anchoring.
+- The `high` tier PNG of an enemy or structure must be a grid-clean sheet named `<id>_packed_high.png` with `<id>_packed_meta.json`, produced by `bun scripts/repack-atlas.ts <id>` from the original AI sheet (`<id>_high.png`, kept on disk as the repack input and never bundled); hero sheets are repacked the same way as `<hero>_level_1_<tier>_packed.png`.
 - Enforced by `bun test:scripts` (compiler contract + generated files in sync with their draw scripts).
 
 ---
