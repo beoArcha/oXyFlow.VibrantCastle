@@ -250,6 +250,32 @@ describe("Location Blueprint Schema Contracts", () => {
       }
     });
 
+    it("ensures every location has exactly one far layer and that it is opaque", () => {
+      for (const { filename, json } of loadedBlueprints) {
+        const farLayers = json.parallaxBackground.layers.filter((layer) => layer.tier === "far");
+        expect({ file: filename, count: farLayers.length }).toEqual({ file: filename, count: 1 });
+        expect({ file: filename, opaque: farLayers[0].opaque }).toEqual({ file: filename, opaque: true });
+      }
+    });
+
+    it("ensures no non-far parallax layer is declared opaque", () => {
+      const opaqueNonFarLayers: { file: string; layerId: string }[] = [];
+      for (const { filename, json } of loadedBlueprints) {
+        for (const layer of json.parallaxBackground.layers) {
+          if (layer.tier !== "far" && layer.opaque === true) {
+            opaqueNonFarLayers.push({ file: filename, layerId: layer.id });
+          }
+        }
+      }
+      expect(opaqueNonFarLayers).toEqual([]);
+    });
+
+    it("ensures parallax boxWidth covers the level width plus a 400px margin", () => {
+      for (const { filename, json } of loadedBlueprints) {
+        expect(json.parallaxBackground.boxWidth).toBeGreaterThanOrEqual(json.dimensions.width + 400);
+      }
+    });
+
     it("ensures every image parallax layer points to a non-empty physical PNG asset on disk", () => {
       const missingAssets: { file: string; layerId: string; expectedPath: string }[] = [];
 

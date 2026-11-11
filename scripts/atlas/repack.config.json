@@ -1,0 +1,39 @@
+{
+  "sheets": {
+    "training_dummy": {
+      "directory": "enemies/training_dummy",
+      "margin": 10,
+      "defaultAnimation": "idle",
+      "rows": [
+        { "animation": "idle", "detectedRow": 0, "frames": 6 },
+        { "animation": "hit", "detectedRow": 1, "frames": 5 },
+        { "animation": "destroy", "detectedRow": 2, "frames": 6 },
+        { "animation": "bestiary", "detectedRow": 3, "frames": 8 }
+      ]
+    },
+    "clockwork_owl_gargoyle": {
+      "directory": "enemies/clockwork_owl_gargoyle",
+      "margin": 10,
+      "defaultAnimation": "fly",
+      "rows": [
+        { "animation": "fly", "detectedRow": 0, "frames": 7 },
+        { "animation": "attack", "detectedRow": 1, "frames": 7 },
+        { "animation": "hit", "detectedRow": 2, "frames": 4 },
+        { "animation": "death", "detectedRow": 3, "frames": 6, "cutsX": [255, 525, 752, 957, 1075], "centre": "group" },
+        { "animation": "bestiary", "detectedRow": 4, "frames": 7 }
+      ]
+    },
+    "aether_gate": {
+      "directory": "structures/aether_gate",
+      "margin": 10,
+      "defaultAnimation": "idle",
+      "rows": [
+        { "animation": "idle", "detectedRow": 0, "frames": 7 },
+        { "animation": "light_up", "detectedRow": 1, "frames": 8 },
+        { "animation": "action", "detectedRow": 2, "frames": 5 },
+        { "animation": "close_up", "detectedRow": 3, "frames": 6 },
+        { "animation": "info", "detectedRow": 4, "frames": 9 }
+      ]
+    }
+  }
+}

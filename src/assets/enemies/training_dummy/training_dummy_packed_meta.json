@@ -1,0 +1,94 @@
+{
+  "characterId": "training_dummy",
+  "entityType": "object",
+  "version": "4.0",
+  "description": "Straw training dummy with wooden cross base, leather bindings and iron helmet. Used as a passive training target. Includes gameplay animations and bestiary presentation row.",
+  "atlas": {
+    "columns": 8,
+    "rows": 4,
+    "cellWidth": 308,
+    "cellHeight": 284,
+    "spacing": 0,
+    "background": "transparent",
+    "safeMargin": 10,
+    "noOverflow": true,
+    "noOverlap": true
+  },
+  "naturalFacing": "left",
+  "variants": {
+    "low": {
+      "cellWidth": 154,
+      "cellHeight": 142,
+      "scale": 0.5
+    },
+    "mid": {
+      "cellWidth": 231,
+      "cellHeight": 213,
+      "scale": 0.75
+    },
+    "high": {
+      "cellWidth": 308,
+      "cellHeight": 284,
+      "scale": 1
+    }
+  },
+  "animations": {
+    "idle": {
+      "row": 0,
+      "frames": 6,
+      "fps": 6,
+      "loop": true,
+      "wide": false,
+      "slotSpan": [1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1]
+    },
+    "hit": {
+      "row": 1,
+      "frames": 5,
+      "fps": 10,
+      "loop": false,
+      "wide": false,
+      "slotSpan": [1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1]
+    },
+    "destroy": {
+      "row": 2,
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "wide": false,
+      "slotSpan": [1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1]
+    },
+    "bestiary": {
+      "row": 3,
+      "frames": 8,
+      "fps": 1,
+      "loop": false,
+      "wide": false,
+      "slotSpan": [1, 1, 1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1, 1, 1]
+    }
+  },
+  "layout": {
+    "ordering": [
+      "idle",
+      "hit",
+      "destroy",
+      "bestiary"
+    ],
+    "origin": {
+      "type": "feet",
+      "normalized": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "bodyBox": {
+      "x": 0.1558,
+      "y": 0.0387,
+      "w": 0.6916,
+      "h": 0.9261
+    }
+  }
+}

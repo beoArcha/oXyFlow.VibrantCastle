@@ -33,6 +33,7 @@
         "id": "bg_far",
         "name": "Courtyard Far Horizon & Spires (High)",
         "tier": "far",
+        "opaque": true,
         "type": "image",
         "imageUrl": "courtyard_far_high",
         "depth": 0.1,

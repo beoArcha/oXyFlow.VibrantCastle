@@ -96,7 +96,8 @@
               "autoDriftX": { "type": "number" },
               "autoDriftY": { "type": "number" },
               "color": { "type": "string" },
-              "opacity": { "type": "number" }
+              "opacity": { "type": "number" },
+              "opaque": { "type": "boolean" }
             }
           }
         }

@@ -32,6 +32,7 @@
         "id": "bg_aether_far",
         "name": "Aether Sanctuary Far Cosmos & Spires (High)",
         "tier": "far",
+        "opaque": true,
         "type": "image",
         "imageUrl": "aether_sanctuary_far_high",
         "depth": 0.1,

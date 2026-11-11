@@ -1,0 +1,69 @@
+import type { NormalizedBox } from "./frameStats";
+import { cellSize, definedAnimations, specOf, type AnimationName, type EnemySpriteDefinition } from "./types";
+import { sheetColumns } from "./render";
+
+const STATE_MAP: [string, AnimationName][] = [
+  ["idle", "idle"],
+  ["move", "move"],
+  ["walk", "move"],
+  ["hit", "hit"],
+];
+
+function statesFor(def: EnemySpriteDefinition): Record<string, { animation: string }> {
+  const pairs = [...STATE_MAP];
+  if (def.kind === "aerial") pairs.push(["fly", "move"]);
+  for (const optional of ["attack", "death"] as const) {
+    if (def.animations[optional]) pairs.push([optional, optional]);
+  }
+  return Object.fromEntries(pairs.map(([state, animation]) => [state, { animation }]));
+}
+
+function animationsFor(def: EnemySpriteDefinition) {
+  const entries = definedAnimations(def).map((name, row) => {
+    const { frames, fps, loop } = specOf(def, name);
+    const ones = Array.from({ length: frames }, () => 1);
+    return [name, { row, frames, fps, loop, wide: false, slotSpan: ones, cells: [...ones] }] as const;
+  });
+  return Object.fromEntries(entries);
+}
+
+function originFor(def: EnemySpriteDefinition, box: NormalizedBox) {
+  const centerX = round4(box.x + box.w / 2);
+  if (def.kind === "aerial") return { type: "center", normalized: { x: centerX, y: round4(box.y + box.h / 2) } };
+  return { type: "feet", normalized: { x: centerX, y: 1.0 } };
+}
+
+const round4 = (n: number): number => Math.round(n * 10000) / 10000;
+
+export function buildMeta(def: EnemySpriteDefinition, bodyBox: NormalizedBox) {
+  const nesCell = cellSize(def, "nes");
+  const snesCell = cellSize(def, "snes");
+  const names = definedAnimations(def);
+  return {
+    characterId: def.id,
+    entityType: "creature",
+    version: "1.0",
+    description: def.description,
+    atlas: {
+      columns: sheetColumns(def),
+      rows: names.length,
+      cellWidth: snesCell,
+      cellHeight: snesCell,
+      spacing: 0,
+      background: "transparent",
+      safeMargin: 1,
+    },
+    naturalFacing: "right",
+    variants: {
+      low: { cellWidth: nesCell, cellHeight: nesCell, scale: nesCell / snesCell, file: `${def.id}_nes.svg` },
+      mid: { cellWidth: snesCell, cellHeight: snesCell, scale: 1, file: `${def.id}_snes.svg` },
+    },
+    animations: animationsFor(def),
+    states: statesFor(def),
+    layout: {
+      ordering: names,
+      origin: originFor(def, bodyBox),
+      bodyBox,
+    },
+  };
+}
