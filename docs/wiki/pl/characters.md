@@ -1,43 +1,43 @@
-# Przebudzeni Szermierze (Bohaterowie)
+# Przebudzeni Szermierze (postacie grywalne)
 
-W *Vibrant Castle* gracze przejmują kontrolę nad dwójką unikalnych szermierzy, których stylistyka łączy dziewiętnastowieczną melancholię gotyku z horologicznym kunsztem Cytadeli Aether.
+W *Vibrant Castle* dowodzisz dwojgiem szermierzy ukutych w melancholijnej, ciepłej estetyce gotyckiej fantasy. Możesz grać jednym z nich solo albo obojgiem we współpracy na jednej klawiaturze. Oboje mają ten sam zestaw ruchów (skok, atak wręcz, wślizg lub dash, dwa czary, mikstury); różni ich styl walki i wygląd. Klawisze znajdziesz w *Sterowaniu*.
 
 ---
 
 ## 1. Valen — Chrono Duelist
 
-> *"Nie ma wrogów nie do pokonania. Istnieją jedynie chwile, których jeszcze nie zmierzono."*
+> *„Nie ma niezwyciężonych wrogów. Są tylko chwile, których jeszcze nie obliczono.”*
 
-- **Rola**: Główny Protagonista (Solo / Gracz 1 w Co-op)
-- **Archetyp**: Uczony · Ocalały z Bastionu · Analityczny Szermierz
-- **Styl Walki**: Oszczędność ruchów, precyzyjne pchnięcia rapierem, manipulacja czasem
+- **Rola**: główny bohater (tryb solo, gracz 1 we współpracy)
+- **Archetyp**: uczony, ocalały z Bastionu, precyzyjny szermierz
+- **Filozofia walki**: oszczędność ruchu, precyzyjne pchnięcia rapierem, panowanie nad czasem
 
-### Wygląd i Sylwetka Valena
+### Wygląd
 
-Valen nosi długi grafitowy płaszcz podróżny ze złotymi obszyciami, dopasowaną kamizelkę uczonego oraz skórzane buty ułatwiające błyskawiczne zwroty. Jego znakami rozpoznawczymi są lekko potargane kasztanowe włosy oraz prostokątne okulary w cienkiej oprawie, podkreślające jego badawczy stosunek do rzeczywistości.
+Długi grafitowy płaszcz podróżny podszyty złotą nicią, praktyczna kamizelka i buty stworzone do nagłych zwrotów. Prostokątne okulary i niesforne kasztanowe włosy zdradzają kontemplacyjną naturę.
 
-### Uzbrojenie i Zdolności Valena
+### Uzbrojenie i zdolności
 
-- **Precyzyjny Rapier Bastionowy**: Kuta ze stali bastionowej, smukła broń optymalizowana pod kątem błyskawicznych pchnięć w słabe punkty pancerza mechanicznych gargulców.
-- **Solar Glyph**: Wyzwolenie promienia aetherowego, który zadaje obrażenia słoneczne i redukuje posturę przeciwników.
-- **Chrono Slide**: Ślizg pod przeszkodami i atakami obszarowymi.
+- **Rapier z bastionowej stali**: smukła broń pojedynkowa do szybkich pchnięć w słabe punkty mechanicznych konstruktów.
+- **Solarny Glif**: skoncentrowana energia słoneczna, która przypala wrogów.
+- **Wślizg**: niski ślizg pod łukami pocisków i wirującymi ostrzami. Do przodu to wślizg, w przeciwną stronę odskok. Prowadzi też do sekretów map, do których da się dotrzeć tylko dashem.
 
 ---
 
 ## 2. Aurelia — Aetherblade Warden
 
-> *"Czas może zamarznąć w kamieniu, lecz światło Aetheru zawsze odnajdzie szczelinę."*
+> *„Czas może zastygnąć w kamieniu, ale światło Aetheru zawsze przebije szczelinę.”*
 
-- **Rola**: Strażniczka Zakonu (Gracz 2 w Co-op)
-- **Archetyp**: Wojowniczka Światła · Eteryczna Szermierka · Zwinny Strażnik
-- **Styl Walki**: Płynna akrobatyka, szerokie cięcia obszarowe, celestialne promienie
+- **Rola**: Strażniczka Zakonu (gracz 2 we współpracy)
+- **Archetyp**: wojowniczka światła, eteryczna szermierka, zwinna obrończyni
+- **Filozofia walki**: płynna akrobatyka, szerokie cięcia, niebiańskie promienie
 
-### Wygląd i Sylwetka Aurelii
+### Wygląd
 
-Aurelia odznacza się aerodynamiczną, smukłą sylwetką w odcieniach głębokiego cyjanu i polerowanego mosiądzu. Wokół jej postaci unosi się delikatna poświata astralna, która intensyfikuje się podczas uników fazowych i cięć.
+Atletyczna sylwetka w głębokim turkusie i polerowanym mosiądzu, z astralną aureolą zostawiającą smugi światła podczas szybkiego ruchu.
 
-### Uzbrojenie i Zdolności Aurelii
+### Uzbrojenie i zdolności
 
-- **Manifestowane Ostrze Aetheru**: Broń ukształtowana z czystej energii gwiezdnej, zdolna do przecinania zbroi wrogich automatów z szerokim łukiem uderzenia.
-- **Phase Dash**: Błyskawiczny unik pozwalający przeniknąć przez pociski i ciało przeciwnika bez utraty pędu.
-- **Promień Celestialny**: Skupiony strumień światła penetrujący linie wielu wrogów naraz.
+- **Zmaterializowane Ostrze Aetheru**: broń ukształtowana z niebiańskiej energii, stworzona do szerokich cięć przez grupy wrogów.
+- **Phase Dash**: szybkie przesunięcie w przestrzeni do uników i do sekretów dostępnych tylko dashem.
+- **Niebiański Promień**: skupiona wiązka astralnego światła.

@@ -1,45 +1,64 @@
-# Przewodnik Sterowania i Kinetyka Szermierki
+# Przewodnik po sterowaniu
 
-*Vibrant Castle* kładzie nacisk na absolutną precyzję ruchu, natychmiastową responsywność klatek animacji oraz czytelną kontrolę nad postaciami.
-
----
-
-## 1. Sterowanie Gracz 1 (Valen — Chrono Duelist)
-
-Domyślny układ klawiatury dla trybu jednoosobowego lub pierwszego gracza w trybie kooperacji:
-
-| Akcja | Klawisze Podstawowe | Klawisze Alternatywne | Opis Kinetyczny |
-| :--- | :--- | :--- | :--- |
-| **Ruch w lewo / w prawo** | <kbd>A</kbd> / <kbd>D</kbd> | <kbd>←</kbd> / <kbd>→</kbd> | Płynny bieg z naturalnym wygaszaniem pędu i pochyleniem płaszcza. |
-| **Skok** | <kbd>Spacja</kbd> | <kbd>W</kbd> lub <kbd>↑</kbd> | Sprężyste wybicie w górę. Przytrzymanie klawisza pozwala osiągnąć pełną wysokość trajektorii. |
-| **Wślizg (Slide)** | <kbd>S</kbd> + <kbd>Spacja</kbd> | <kbd>↓</kbd> + <kbd>Spacja</kbd> | Niskie obniżenie środka ciężkości, pozwalające prześlizgnąć się pod ostrzami i pułapkami ciernistymi. |
-| **Chrono Dash** | <kbd>Shift</kbd> | <kbd>Shift</kbd> (Prawy) | Błyskawiczny uskok fazowy z klatkami nietykalności (*invulnerability frames*). |
-| **Atak Rapierem** | <kbd>J</kbd> | Lewy Przycisk Myszy (<kbd>LPM</kbd>) | Błyskawiczne pchnięcie lub cięcie poziome ze stali bastionowej. |
-| **Czar Solarny (Solar Glyph)** | <kbd>K</kbd> | Prawy Przycisk Myszy (<kbd>PPM</kbd>) | Wyzwolenie promienia aetherowego zużywającego manę. |
-| **Użycie Mikstury** | <kbd>Q</kbd> | <kbd>Num 1</kbd> | Natychmiastowe przywrócenie punktów zdrowia z pasywnego ekwipunku. |
+To ustawienia domyślne, wzięte z danych sterowania dostarczanych z grą. Każdy klawisz można zmienić w menu gry (Sterowanie). Klawiatura i pad działają jednocześnie.
 
 ---
 
-## 2. Sterowanie Gracz 2 (Aurelia — Aetherblade Warden)
+## 1. Gracz 1 (Valen) — klawiatura
 
-W trybie kooperacyjnym drugi gracz kontroluje Aurelię na tej samej klawiaturze:
-
-| Akcja | Klawisze Gracza 2 | Opis Techniczny |
+| Akcja | Klawisze | Uwagi |
 | :--- | :--- | :--- |
-| **Ruch w lewo / w prawo** | <kbd>←</kbd> / <kbd>→</kbd> | Zwinny sprint z organiczną poświatą astralną. |
-| **Skok** | <kbd>↑</kbd> | Eteryczne wybicie o wydłużonej fazie unoszenia. |
-| **Phase Dash** | <kbd>Num 0</kbd> / <kbd>Ctrl</kbd> | Przeniknięcie przez linie wroga w chmurze świetlnych cząsteczek. |
-| **Cięcie Aetherowe** | <kbd>Num 1</kbd> / <kbd>,</kbd> | Szeroki łuk energii astralnej o zwiększonym zasięgu poziomym. |
-| **Promień Celestialny** | <kbd>Num 2</kbd> / <kbd>.</kbd> | Skupiona wiązka czystego światła penetrująca opancerzone cele. |
+| **Ruch** | <kbd>A</kbd> / <kbd>D</kbd> | W lewo i w prawo. |
+| **Góra / dół** | <kbd>W</kbd> / <kbd>S</kbd> | Kierunek celowania. |
+| **Skok** | <kbd>Spacja</kbd> | Przytrzymaj, aby skoczyć wyżej. |
+| **Atak wręcz** | <kbd>J</kbd> | Pchnięcie lub cięcie rapierem. |
+| **Wślizg / unik** | <kbd>L</kbd> | Zużywa staminę. Do przodu to wślizg, w przeciwną stronę odskok. |
+| **Czar 1 / Czar 2** | <kbd>U</kbd> / <kbd>O</kbd> | Zdolności magiczne. |
+| **Mikstury 1 / 2 / 3** | <kbd>1</kbd> / <kbd>2</kbd> / <kbd>3</kbd> | Szybkie miejsca na mikstury. |
+
+## 2. Gracz 2 (Aurelia) — klawiatura
+
+| Akcja | Klawisze |
+| :--- | :--- |
+| **Ruch** | <kbd>←</kbd> / <kbd>→</kbd> |
+| **Góra / dół** | <kbd>↑</kbd> / <kbd>↓</kbd> |
+| **Skok** | <kbd>Num 0</kbd> lub <kbd>/</kbd> |
+| **Atak wręcz** | <kbd>N</kbd>, <kbd>Num 1</kbd> lub <kbd>,</kbd> |
+| **Wślizg / unik** | <kbd>M</kbd>, <kbd>Num 2</kbd> lub <kbd>.</kbd> |
+| **Czar 1 / Czar 2** | <kbd>[</kbd> lub <kbd>Num 4</kbd> / <kbd>]</kbd> lub <kbd>Num 5</kbd> |
+| **Mikstury 1 / 2 / 3** | <kbd>8</kbd> / <kbd>9</kbd> / <kbd>0</kbd> lub <kbd>Num 7</kbd> / <kbd>Num 8</kbd> / <kbd>Num 9</kbd> |
 
 ---
 
-## 3. Globalne Skróty Systemowe
+## 3. Kontroler (gamepad)
 
-Skróty klawiszowe interfejsu działają w każdym momencie gry:
+Gracz 1 używa pierwszego podłączonego pada, gracz 2 drugiego. Obaj mają ten sam układ domyślny (w nawiasach numery przycisków standardowego pada).
 
-- <kbd>P</kbd> lub <kbd>Escape</kbd>: Wstrzymanie pętli symulacji (Pauza) oraz powrót do gry.
-- <kbd>M</kbd>: Główne Menu Gry (wybór poziomów, ustawienia grafiki i dźwięku).
-- <kbd>H</kbd>: Pomoc i zintegrowana ściągawka klawiszologii.
-- <kbd>I</kbd>: Ekwipunek i siatka plecaka szermierza.
-- <kbd>K</kbd>: Drzewo Talentów i konstelacje umiejętności.
+| Akcja | Przycisk |
+| :--- | :--- |
+| **Ruch** | Lewa gałka lub krzyżak |
+| **Skok** | <kbd>A</kbd> (0) |
+| **Atak wręcz** | <kbd>X</kbd> (2) |
+| **Wślizg / unik** | <kbd>B</kbd> (1) |
+| **Czar 1** | <kbd>Y</kbd> (3) |
+| **Czar 2** | <kbd>RB</kbd> (5) |
+| **Mikstury 1 / 2 / 3** | <kbd>LB</kbd> (4) / <kbd>LT</kbd> (6) / <kbd>RT</kbd> (7) |
+
+Martwa strefa gałki wynosi 0,25. Założenie projektowe to oszczędny układ pada: 2 spusty, 4 przyciski akcji, a bumpery jako selektory akcji.
+
+---
+
+## 4. Skróty systemowe
+
+- <kbd>P</kbd> lub <kbd>Escape</kbd>: pauza i wznowienie.
+- <kbd>M</kbd>: menu główne (poziomy, dźwięk, obraz).
+- <kbd>H</kbd>, <kbd>?</kbd> lub <kbd>F1</kbd>: pomoc i karta sterowania.
+- <kbd>I</kbd>: ekwipunek.
+
+---
+
+## 5. Gra na stronie internetowej
+
+- Kliknij grę (lub przycisk **Wejdź do Cytadeli**), aby przejęła fokus klawiatury.
+- Gra nie więzi klawiatury: naciśnij <kbd>Tab</kbd> (lub <kbd>Shift</kbd>+<kbd>Tab</kbd>), aby ją opuścić i wrócić na stronę. Link „Pomiń grę” pod oknem gry przenosi od razu do tego przewodnika.
+- <kbd>F11</kbd> lub przycisk pełnego ekranu powiększa grę; <kbd>Esc</kbd> kończy pełny ekran.

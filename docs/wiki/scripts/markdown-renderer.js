@@ -53,7 +53,9 @@ export class GothicMarkdownRenderer {
       if (headingMatch) {
         const level = headingMatch[1].length;
         const text = this.parseInline(headingMatch[2].trim());
-        output.push(`<h${level}>${text}</h${level}>`);
+        // The page owns the single <h1> and the section <h2>; article headings start at <h3>.
+        const tag = Math.min(level + 2, 6);
+        output.push(`<h${tag} class="md-h${Math.min(level, 3)}">${text}</h${tag}>`);
         idx++;
         continue;
       }

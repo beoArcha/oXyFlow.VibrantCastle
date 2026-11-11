@@ -38,6 +38,8 @@ class WikiApp {
     this.dom.stageWrapper = document.getElementById('stage-wrapper');
     this.dom.gameStatusBadge = document.getElementById('game-status-badge');
     this.dom.footerStatusText = document.getElementById('footer-status-text');
+    this.dom.fullscreenGlyph = document.getElementById('fullscreen-glyph');
+    this.dom.gameFallback = document.getElementById('game-fallback');
   }
 
   bindEvents() {
@@ -95,16 +97,31 @@ class WikiApp {
   /**
    * Activates the game iframe and hides the pre-game splash overlay.
    */
-  launchGame() {
+  async launchGame() {
     if (!this.dom.gameFrame) return;
 
-    this.isGameStarted = true;
     const gameSrc = this.resolveGameUrl();
-    this.dom.gameFrame.src = gameSrc;
-
     if (this.dom.viewportSplash) {
       this.dom.viewportSplash.classList.add('hidden');
     }
+
+    // Verify the game is reachable first, so a missing build shows a text fallback instead of a blank frame.
+    let reachable = false;
+    try {
+      const response = await fetch(gameSrc, { method: 'GET', cache: 'no-store' });
+      reachable = response.ok;
+    } catch {
+      reachable = false;
+    }
+
+    if (!reachable) {
+      if (this.dom.gameFallback) this.dom.gameFallback.classList.remove('hidden');
+      this.dom.gameFrame.setAttribute('hidden', '');
+      return;
+    }
+
+    this.isGameStarted = true;
+    this.dom.gameFrame.src = gameSrc;
 
     this.updateViewportStatus();
 
@@ -121,22 +138,24 @@ class WikiApp {
    */
   resolveGameUrl() {
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('gameUrl')) {
-      return urlParams.get('gameUrl') || '';
+    const override = urlParams.get('gameUrl');
+    if (override) {
+      // Only same-origin targets are accepted, so the query string cannot inject foreign content.
+      try {
+        const target = new URL(override, window.location.href);
+        if (target.origin === window.location.origin) return target.href;
+      } catch {
+        // fall through to the default
+      }
     }
 
-    // Hosted on GitHub Pages: game bundle is in the ./game/ subdirectory
-    if (window.location.hostname.includes('github.io')) {
-      return './game/index.html';
-    }
-
-    // Local Vite dev server on port 3000
+    // Local Vite dev server on port 3000 serves the game at the root
     if (window.location.port === '3000') {
       return '/';
     }
 
-    // Local file preview fallback
-    return '../../index.html';
+    // Assembled distribution (GitHub Pages or any static host): game bundle is in ./game/
+    return './game/index.html';
   }
 
   /**
@@ -165,14 +184,16 @@ class WikiApp {
       if (!document.fullscreenElement) {
         await stage.requestFullscreen();
         if (this.dom.btnFullscreen) {
-          this.dom.btnFullscreen.textContent = '✕';
+          if (this.dom.fullscreenGlyph) this.dom.fullscreenGlyph.textContent = '✕';
           this.dom.btnFullscreen.title = wikiI18n.t('wikiExitFullscreen');
+          this.dom.btnFullscreen.setAttribute('aria-label', wikiI18n.t('wikiExitFullscreen'));
         }
       } else {
         await document.exitFullscreen();
         if (this.dom.btnFullscreen) {
-          this.dom.btnFullscreen.textContent = '⛶';
+          if (this.dom.fullscreenGlyph) this.dom.fullscreenGlyph.textContent = '⛶';
           this.dom.btnFullscreen.title = wikiI18n.t('wikiFullscreen');
+          this.dom.btnFullscreen.setAttribute('aria-label', wikiI18n.t('wikiFullscreen'));
         }
       }
     } catch (err) {
@@ -189,10 +210,10 @@ class WikiApp {
       const match = tab.getAttribute('data-doc-tab') === tabId;
       if (match) {
         tab.classList.add('active');
-        tab.setAttribute('aria-selected', 'true');
+        tab.setAttribute('aria-current', 'true');
       } else {
         tab.classList.remove('active');
-        tab.setAttribute('aria-selected', 'false');
+        tab.removeAttribute('aria-current');
       }
     }
   }

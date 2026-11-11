@@ -151,6 +151,7 @@ export class WikiI18n {
    * Scans DOM and translates all elements marked with [data-i18n].
    */
   translatePage() {
+    document.documentElement.lang = this.currentLanguage;
     const elements = document.querySelectorAll('[data-i18n]');
     for (const el of elements) {
       const key = el.getAttribute('data-i18n');
