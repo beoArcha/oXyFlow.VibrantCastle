@@ -68,7 +68,7 @@ function readFromDisk(): AtlasFileMap {
       if (!host.fs.statSync(dir).isDirectory()) continue;
       for (const file of host.fs.readdirSync(dir)) {
         const path = `${dir}/${file}`;
-        if (/\.(png|svg)$/.test(file)) images[path] = path;
+        if (BUNDLED_IMAGE_PATTERN.test(file)) images[path] = path;
         else if (file.endsWith(".json")) metas[path] = JSON.parse(host.fs.readFileSync(path, "utf-8"));
       }
     }
