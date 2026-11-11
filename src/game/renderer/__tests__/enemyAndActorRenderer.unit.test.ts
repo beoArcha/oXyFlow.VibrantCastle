@@ -12,6 +12,7 @@ describe("EnemyRenderer & ActorRenderer", () => {
 
       const mockAtlasRenderer = {
         hasAtlas: (id: string) => id === "training_dummy",
+        hasAnimation: () => true,
         render: (_ctx: any, opts: any) => {
           renderCalled = true;
           passedOptions = opts;

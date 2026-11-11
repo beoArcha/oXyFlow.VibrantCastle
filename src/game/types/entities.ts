@@ -104,7 +104,10 @@ export interface Enemy {
   nameKey?: string;
   defaultName?: string;
   templateId?: string;
+  atlasId?: string;
+  /** Written by the simulation: "hit" | "fly" | "move" | "idle". */
   animationState?: string;
+  /** Animation clock in 60-per-second units, reset to 0 whenever animationState changes. */
   animationTicks?: number;
 }
 

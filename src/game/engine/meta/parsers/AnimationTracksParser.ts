@@ -1,6 +1,9 @@
 import { ISectionParser } from "./ISectionParser";
 import { IAnimationTracks, IAnimationTrackMeta } from "../types";
 
+/** Keys of `layout` that describe sheet geometry, not animation tracks. */
+const NON_TRACK_LAYOUT_KEYS: ReadonlySet<string> = new Set(["ordering", "origin", "bodyBox"]);
+
 export class AnimationTracksParser implements ISectionParser<IAnimationTracks> {
   public readonly sectionName = "animations";
 
@@ -17,7 +20,7 @@ export class AnimationTracksParser implements ISectionParser<IAnimationTracks> {
 
     const trackKeys = new Set<string>([
       ...Object.keys(rawAnimations),
-      ...Object.keys(rawLayout).filter((k) => k !== "ordering" && k !== "origin"),
+      ...Object.keys(rawLayout).filter((k) => !NON_TRACK_LAYOUT_KEYS.has(k)),
     ]);
 
     // Fallback if no animations are defined: default single-frame idle
