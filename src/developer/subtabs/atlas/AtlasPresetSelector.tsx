@@ -85,7 +85,7 @@ export const AtlasPresetSelector: React.FC<AtlasPresetSelectorProps> = ({
       />
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1.5 z-50 w-[340px] sm:w-[420px] bg-[#0d0705] border border-amber-600/50 rounded-2xl shadow-2xl shadow-black/90 p-3 flex flex-col gap-2.5 backdrop-blur-md animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute top-full left-0 mt-1.5 z-[100] w-[min(420px,calc(100vw-2rem))] min-w-[min(380px,calc(100vw-2rem))] bg-[#0d0705] border border-amber-600/50 rounded-2xl shadow-2xl shadow-black/90 p-3 flex flex-col gap-2.5 backdrop-blur-md animate-in fade-in zoom-in-95 duration-150">
           <AtlasPresetSearchInput
             value={searchQuery}
             onChange={setSearchQuery}
