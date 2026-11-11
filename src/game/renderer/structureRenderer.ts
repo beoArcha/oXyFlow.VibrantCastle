@@ -45,7 +45,7 @@ export class StructureRenderer implements IStructureRenderer {
           break;
 
         case CollisionType.Lever:
-          this.renderLever(ctx, entity);
+          this.renderLever(ctx, entity, tickCount);
           break;
 
         case CollisionType.Solid:
@@ -173,7 +173,21 @@ export class StructureRenderer implements IStructureRenderer {
     ctx.restore();
   }
 
-  private renderLever(ctx: CanvasRenderingContext2D, entity: Entity): void {
+  private renderLever(ctx: CanvasRenderingContext2D, entity: Entity, tickCount: number): void {
+    const leverAtlasId = entity.structureId;
+    if (leverAtlasId && this.atlasRenderer.hasAtlas(leverAtlasId)) {
+      const rendered = this.atlasRenderer.render(ctx, {
+        atlasId: leverAtlasId,
+        animationName: entity.animationState || (entity.isActivated ? "active" : "inactive"),
+        ticks: entity.animationTicks !== undefined ? entity.animationTicks : tickCount,
+        x: entity.x,
+        y: entity.y,
+        width: entity.width,
+        height: entity.height,
+      });
+      if (rendered) return;
+    }
+
     ctx.fillStyle = "#5c3d2e";
     ctx.fillRect(entity.x - 5, entity.y + entity.height - 10, entity.width + 10, 10);
 

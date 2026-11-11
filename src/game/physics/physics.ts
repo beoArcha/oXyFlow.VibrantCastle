@@ -46,6 +46,29 @@ export class GamePhysicsEngine {
         enemy.facingLeft = true;
       }
     }
+
+    this.advanceEnemyAnimation(enemy, dtMultiplier);
+  }
+
+  /**
+   * dtMultiplier is 1.0 at 60 Hz, so the clock runs at 60 units per second at any tick rate.
+   */
+  private advanceEnemyAnimation(enemy: Enemy, dtMultiplier: number): void {
+    let state = "idle";
+    if (enemy.damageTimer > 0) {
+      state = "hit";
+    } else if (enemy.isAerial) {
+      state = "fly";
+    } else if (!enemy.isDummy && enemy.vx !== 0) {
+      state = "move";
+    }
+
+    if (enemy.animationState !== state) {
+      enemy.animationState = state;
+      enemy.animationTicks = 0;
+      return;
+    }
+    enemy.animationTicks = (enemy.animationTicks ?? 0) + dtMultiplier;
   }
 
   /**

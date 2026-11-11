@@ -45,6 +45,8 @@ class AssetLoaderEngine {
   private atlasRegistry: Map<string, RegisteredAtlasItem> = new Map();
   private textureCache: Map<string, HTMLImageElement> = new Map();
   private loadPromises: Map<string, Promise<HTMLImageElement>> = new Map();
+  /** URLs evicted while their load was still in flight: result is released instead of cached. */
+  private discardOnLoad: Set<string> = new Set();
   private currentQuality: AssetQuality = "high";
   private listeners: Set<() => void> = new Set();
 
@@ -174,6 +176,7 @@ class AssetLoaderEngine {
     }
 
     if (this.loadPromises.has(imageUrl)) {
+      this.discardOnLoad.delete(imageUrl);
       return this.loadPromises.get(imageUrl)!;
     }
 
@@ -181,8 +184,15 @@ class AssetLoaderEngine {
       const img = new Image();
       img.crossOrigin = "anonymous";
       img.onload = () => {
-        this.textureCache.set(imageUrl, img);
         this.loadPromises.delete(imageUrl);
+        if (this.discardOnLoad.delete(imageUrl)) {
+          img.onload = null;
+          img.onerror = null;
+          img.src = "";
+          resolve(img);
+          return;
+        }
+        this.textureCache.set(imageUrl, img);
         this.postProcessTextureExtraction(imageUrl, img);
         this.notifyListeners();
         resolve(img);
@@ -238,6 +248,37 @@ class AssetLoaderEngine {
 
   public isTextureLoaded(imageUrl: string): boolean {
     return this.textureCache.has(imageUrl);
+  }
+
+  /**
+   * Evicts a texture (never atlas textures). A later request reloads it normally.
+   */
+  public evictTexture(imageUrl: string): boolean {
+    for (const item of this.atlasRegistry.values()) {
+      if (item.imageSrc === imageUrl) return false;
+    }
+    const img = this.textureCache.get(imageUrl);
+    if (img) {
+      this.textureCache.delete(imageUrl);
+      img.onload = null;
+      img.onerror = null;
+      img.src = "";
+      return true;
+    }
+    if (this.loadPromises.has(imageUrl)) {
+      this.discardOnLoad.add(imageUrl);
+      return true;
+    }
+    return false;
+  }
+
+  /** Read-only cache metrics: texture count and estimated decoded bytes (w*h*4). */
+  public getTextureStats(): { textureCount: number; decodedBytes: number; pendingCount: number } {
+    let decodedBytes = 0;
+    for (const img of this.textureCache.values()) {
+      decodedBytes += (img.naturalWidth || 0) * (img.naturalHeight || 0) * 4;
+    }
+    return { textureCount: this.textureCache.size, decodedBytes, pendingCount: this.loadPromises.size };
   }
 
   /**
