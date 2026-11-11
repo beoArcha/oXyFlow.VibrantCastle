@@ -5,7 +5,6 @@ import { GameRenderer } from "../renderer/renderer";
 import { LocationDefinition } from "../locations";
 import { fpsManager } from "../engine/fpsManager";
 import { debugManager } from "../debug/debugManager";
-import { defaultLocationAssetLifecycle } from "../locations/locationAssetLifecycle";
 
 export interface IEngineFrameRenderHost {
   getRenderer(): GameRenderer | null;
@@ -29,11 +28,6 @@ export interface IEngineFrameRenderHost {
 export function renderEngineFrame(host: IEngineFrameRenderHost, interpolationAlpha: number = 1.0): void {
   const renderer = host.getRenderer();
   if (!renderer) return;
-
-  // Idempotent (string compare): starts layer preload/eviction on any location switch path.
-  if (host.currentLocation) {
-    void defaultLocationAssetLifecycle.enterLocation(host.currentLocation.id);
-  }
 
   const cameraState = host.cameraManager.update(
     host.players,

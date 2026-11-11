@@ -84,8 +84,6 @@ export class CombatSystem implements ICombatSystem {
           const dmg = stats.totalAttack;
           enemy.health = Math.max(0, enemy.health - dmg);
           enemy.damageTimer = 15;
-          enemy.animationState = "hit";
-          enemy.animationTicks = 0;
           context.audio.playSFX(SoundType.SFX_HIT);
           statsManager.recordDamageDealt(player.id, dmg, weaponId);
           statsManager.recordSwordStrike(player.id);
@@ -158,8 +156,6 @@ export class CombatSystem implements ICombatSystem {
         if (hit && enemy.damageTimer === 0) {
           enemy.health = Math.max(0, enemy.health - p.damage);
           enemy.damageTimer = 15;
-          enemy.animationState = "hit";
-          enemy.animationTicks = 0;
           p.life = p.maxLife; // expire projectile
           context.audio.playSFX(SoundType.SFX_HIT);
 

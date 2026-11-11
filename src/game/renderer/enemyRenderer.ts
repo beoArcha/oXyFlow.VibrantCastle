@@ -1,6 +1,5 @@
 import { Enemy } from "@game/types";
 import { IAtlasSpriteRenderer, defaultAtlasSpriteRenderer } from "./atlasSpriteRenderer";
-import { pickEnemyAtlasId, resolveEnemyAnimation } from "./enemyAtlasSelection";
 
 export interface IEnemyRenderer {
   render(ctx: CanvasRenderingContext2D, enemies: Enemy[], tickCount: number): void;
@@ -25,16 +24,28 @@ export class EnemyRenderer implements IEnemyRenderer {
       if (enemy.isDead) continue;
 
       // 1. Determine Atlas ID
-      const atlasId = pickEnemyAtlasId(this.atlasRenderer, enemy);
+      let atlasId: string | null = null;
+      if (enemy.templateId && this.atlasRenderer.hasAtlas(enemy.templateId)) {
+        atlasId = enemy.templateId;
+      } else if (enemy.isDummy && this.atlasRenderer.hasAtlas("training_dummy")) {
+        atlasId = "training_dummy";
+      } else if (enemy.isAerial && this.atlasRenderer.hasAtlas("clockwork_owl_gargoyle")) {
+        atlasId = "clockwork_owl_gargoyle";
+      }
 
-      // 2. Attempt Atlas Rendering
+      // 2. Determine Animation State
+      let animName = enemy.animationState || (enemy.isAerial ? "fly" : "idle");
+      if (enemy.damageTimer > 0) {
+        animName = enemy.isAerial ? "gargoyle_hit" : "hit";
+      }
+
+      // 3. Attempt Atlas Rendering
       let renderedWithAtlas = false;
       if (atlasId) {
-        const requested = enemy.animationState || (enemy.isAerial ? "fly" : "idle");
         const tint = enemy.damageTimer > 0 ? "rgba(239, 68, 68, 0.65)" : undefined;
         renderedWithAtlas = this.atlasRenderer.render(ctx, {
           atlasId,
-          animationName: resolveEnemyAnimation(this.atlasRenderer, atlasId, requested, enemy),
+          animationName: animName,
           ticks: enemy.animationTicks !== undefined ? enemy.animationTicks : tickCount,
           x: enemy.x,
           y: enemy.y,
@@ -45,12 +56,12 @@ export class EnemyRenderer implements IEnemyRenderer {
         });
       }
 
-      // 3. Procedural Fallback if no atlas available or texture not ready
+      // 4. Procedural Fallback if no atlas available or texture not ready
       if (!renderedWithAtlas) {
         this.renderProceduralEnemy(ctx, enemy, tickCount);
       }
 
-      // 4. Mini Overhead Health Bar (when damaged)
+      // 5. Mini Overhead Health Bar (when damaged)
       if (enemy.health < enemy.maxHealth && enemy.health > 0) {
         this.renderHealthBar(ctx, enemy);
       }

@@ -179,7 +179,6 @@ export function buildLocationEnemies(
     let defaultName = "Monster";
     let isDummy = false;
     let isAerial = false;
-    const atlasId = canonicalTemplate?.atlas?.presetId;
 
     if (canonicalTemplate) {
       speed = canonicalTemplate.stats.speed;
@@ -208,7 +207,6 @@ export function buildLocationEnemies(
     enemies.push({
       id: ep.id,
       templateId: ep.monsterKey,
-      atlasId,
       nameKey,
       defaultName,
       x: ep.x,
