@@ -1,6 +1,6 @@
 # Przebudzeni Szermierze (postacie grywalne)
 
-W *Vibrant Castle* dowodzisz dwojgiem szermierzy ukutych w melancholijnej, ciepłej estetyce gotyckiej fantasy. Możesz grać jednym z nich solo albo obojgiem we współpracy na jednej klawiaturze. Oboje mają ten sam zestaw ruchów (skok, atak wręcz, wślizg lub dash, dwa czary, mikstury); różni ich styl walki i wygląd. Klawisze znajdziesz w *Sterowaniu*.
+W *Vibrant Castle* dowodzisz dwojgiem szermierzy ukutych w melancholijnej, ciepłej estetyce gotyckiej fantasy. Możesz grać jednym z nich solo albo obojgiem we współpracy na jednej klawiaturze. Postać gracza 1 wybierasz w menu w *Rozgrywka → Wybór Postaci (Gracz 1)*; zmiana działa od razu, a we współpracy gracz 2 dostaje drugą postać. Każde z nich zachowuje swoje umiejętności, czary i ekwipunek przy zmianie. Oboje mają ten sam zestaw ruchów (skok, atak wręcz, wślizg lub dash, dwa czary, mikstury); różni ich styl walki i wygląd. Klawisze znajdziesz w *Sterowaniu*.
 
 ---
 
@@ -8,7 +8,7 @@ W *Vibrant Castle* dowodzisz dwojgiem szermierzy ukutych w melancholijnej, ciep�
 
 > *„Nie ma niezwyciężonych wrogów. Są tylko chwile, których jeszcze nie obliczono.”*
 
-- **Rola**: główny bohater (tryb solo, gracz 1 we współpracy)
+- **Rola**: główny bohater (domyślny wybór gracza 1)
 - **Archetyp**: uczony, ocalały z Bastionu, precyzyjny szermierz
 - **Filozofia walki**: oszczędność ruchu, precyzyjne pchnięcia rapierem, panowanie nad czasem
 
@@ -28,7 +28,7 @@ Długi grafitowy płaszcz podróżny podszyty złotą nicią, praktyczna kamizel
 
 > *„Czas może zastygnąć w kamieniu, ale światło Aetheru zawsze przebije szczelinę.”*
 
-- **Rola**: Strażniczka Zakonu (gracz 2 we współpracy)
+- **Rola**: Strażniczka Zakonu (domyślnie gracz 2 we współpracy, albo gracz 1 po wybraniu w menu)
 - **Archetyp**: wojowniczka światła, eteryczna szermierka, zwinna obrończyni
 - **Filozofia walki**: płynna akrobatyka, szerokie cięcia, niebiańskie promienie
 

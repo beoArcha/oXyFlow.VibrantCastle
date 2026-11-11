@@ -1,6 +1,6 @@
 # The Awakened Duelists (Playable Champions)
 
-In *Vibrant Castle* you command two distinct duelists forged in the melancholic, warm aesthetic of gothic fantasy. Play either one solo, or both in shared-keyboard co-op. Both share the same movement kit (jump, melee strike, slide or dash, two spells, potions); their fighting style and look differ. See *Controls* for the keys.
+In *Vibrant Castle* you command two distinct duelists forged in the melancholic, warm aesthetic of gothic fantasy. Play either one solo, or both in shared-keyboard co-op. Pick player 1's duelist in the menu under *Gameplay → Character Selection (Player 1)*; the switch takes effect immediately, and in co-op player 2 takes the other duelist. Each duelist keeps their own skills, spells and inventory when you switch. Both share the same movement kit (jump, melee strike, slide or dash, two spells, potions); their fighting style and look differ. See *Controls* for the keys.
 
 ---
 
@@ -8,7 +8,7 @@ In *Vibrant Castle* you command two distinct duelists forged in the melancholic,
 
 > *"There are no invincible foes. Only moments that have yet to be calculated."*
 
-- **Role**: primary protagonist (solo mode, player 1 in co-op)
+- **Role**: primary protagonist (the default pick for player 1)
 - **Archetype**: scholar, Bastion survivor, precision fencer
 - **Combat philosophy**: economy of motion, precise rapier thrusts, temporal pacing
 
@@ -28,7 +28,7 @@ A long graphite travel greatcoat lined with golden thread, a practical waistcoat
 
 > *"Time may freeze in stone, but the light of Aether will always pierce the fracture."*
 
-- **Role**: Order Warden (player 2 in co-op)
+- **Role**: Order Warden (player 2 in co-op by default, or player 1 when picked in the menu)
 - **Archetype**: light warrior, ethereal fencer, agile guardian
 - **Combat philosophy**: fluid acrobatics, wide sweeping cleaves, celestial beams
 
