@@ -6,6 +6,8 @@ import {
   IAtlasMetaLike,
   resolveAnimationKeyFromStates,
   resolveAnimationTrack,
+  resolveEffectiveFrameCount,
+  hasAnimationTrack,
   resolveAnchor,
   resolveVariantScale,
   resolveFacingDirection,
@@ -30,6 +32,7 @@ export interface RenderAtlasFrameOptions {
 export interface IAtlasSpriteRenderer {
   render(ctx: CanvasRenderingContext2D, options: RenderAtlasFrameOptions): boolean;
   hasAtlas(atlasId: string): boolean;
+  hasAnimation(atlasId: string, animationName: string): boolean;
 }
 
 /**
@@ -43,6 +46,12 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
 
   public hasAtlas(atlasId: string): boolean {
     return !!assetLoader.getAtlas(atlasId);
+  }
+
+  public hasAnimation(atlasId: string, animationName: string): boolean {
+    const atlasItem = assetLoader.getAtlas(atlasId);
+    if (!atlasItem) return false;
+    return hasAnimationTrack(atlasItem.meta as unknown as IAtlasMetaLike, animationName);
   }
 
   public clearChromaCache(): void {
@@ -106,7 +115,8 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
     const animKey = resolveAnimationKeyFromStates(meta, options.animationName);
     const animTrack = resolveAnimationTrack(meta, animKey);
 
-    const trackFrames: number = animTrack?.frames ?? 1;
+    const trackFrames: number = resolveEffectiveFrameCount(animTrack);
+    if (trackFrames <= 0) return false;
     const trackFps: number = animTrack?.fps ?? 8;
     const trackLoop: boolean = animTrack?.loop !== undefined ? animTrack.loop : true;
 
@@ -128,15 +138,15 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
     } else if (animTrack?.slotSpan && animTrack.slotSpan.length > 0) {
       col = 0;
       for (let i = 0; i < currentFrame; i++) {
-        col += animTrack.slotSpan[i] || 1;
+        col += animTrack.slotSpan[i];
       }
-      span = animTrack.slotSpan[currentFrame] || 1;
+      span = animTrack.slotSpan[currentFrame];
     } else if (animTrack?.cells && animTrack.cells.length > 0) {
       col = 0;
       for (let i = 0; i < currentFrame; i++) {
-        col += animTrack.cells[i] || 1;
+        col += animTrack.cells[i];
       }
-      span = animTrack.cells[currentFrame] || 1;
+      span = animTrack.cells[currentFrame];
     } else if (animTrack?.startCol !== undefined) {
       col = animTrack.startCol + currentFrame * (animTrack.widthCells || 1);
       span = animTrack.widthCells || 1;

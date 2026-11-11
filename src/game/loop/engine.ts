@@ -28,6 +28,7 @@ import { ILogger } from "@/lib/logger";
 import { createEngineControllers, IEngineControllers, IEngineSubsystemHost } from "./engineSubsystemFactory";
 import { renderEngineFrame } from "./engineFrameRenderer";
 import { IGameDependencies } from "./types";
+import { defaultLocationAssetLifecycle } from "../locations/locationAssetLifecycle";
 
 export type { IGameDependencies };
 
@@ -190,6 +191,8 @@ export class GameEngine implements IEngineSubsystemHost {
 
   public loadLocation(locationId: LocationId, targetSpawnPoint?: { x: number; y: number }, preservePlayerStats: boolean = true): void {
     this.logger.info(`Loading location: ${locationId}`, { locationId, targetSpawnPoint, preservePlayerStats });
+    // Start background texture loading before the first frame of the new location.
+    void defaultLocationAssetLifecycle.enterLocation(locationId);
     this.c.levelLifecycleManager.loadLocation(locationId, targetSpawnPoint, preservePlayerStats);
     this.eventBus.emit("LOCATION_CHANGED", {
       locationId: this.currentLocationId,
@@ -234,7 +237,7 @@ export class GameEngine implements IEngineSubsystemHost {
     const effectiveDt = stepMultiplier * (debugManager.state.timeScale || 1.0);
     this.simulationTicks += effectiveDt;
 
-    this.c.levelLifecycleManager.decrementCooldowns();
+    this.c.levelLifecycleManager.decrementCooldowns(effectiveDt);
     statsManager.addPlayTime(effectiveDt / 60);
 
     const anyPlayerAttacking = this.c.playerUpdateStep.updatePlayers(this.players, effectiveDt);

@@ -157,3 +157,60 @@ describe("StructureRenderer", () => {
     expect(ctx.getFillRectCalls().length).toBe(0);
   });
 });
+
+describe("StructureRenderer animation clock", () => {
+  const capture = () => {
+    const calls: Array<{ atlasId: string; animationName: string; ticks?: number }> = [];
+    const atlas = {
+      hasAtlas: () => true,
+      render: (_ctx: unknown, o: { atlasId: string; animationName: string; ticks?: number }) => {
+        calls.push(o);
+        return true;
+      },
+    };
+    return { calls, renderer: new StructureRenderer(atlas as never) };
+  };
+
+  it("uses per-entity animationTicks instead of the global tick count", () => {
+    const { calls, renderer } = capture();
+    const portal = {
+      id: "p",
+      type: CollisionType.Goal,
+      x: 0,
+      y: 0,
+      width: 32,
+      height: 64,
+      animationState: "active",
+      animationTicks: 7,
+    } as Entity;
+    renderer.render(createMockContext(), [portal], "en", 5000);
+    expect(calls[0].ticks).toBe(7);
+    expect(calls[0].animationName).toBe("active");
+  });
+
+  it("falls back to the global tick count when animationTicks is undefined", () => {
+    const { calls, renderer } = capture();
+    const portal = { id: "p", type: CollisionType.Goal, x: 0, y: 0, width: 32, height: 64 } as Entity;
+    renderer.render(createMockContext(), [portal], "en", 123);
+    expect(calls[0].ticks).toBe(123);
+  });
+
+  it("renders a lever atlas animation from its own clock", () => {
+    const { calls, renderer } = capture();
+    const lever = {
+      id: "l",
+      type: CollisionType.Lever,
+      structureId: "chrono_lever",
+      x: 0,
+      y: 0,
+      width: 25,
+      height: 45,
+      isActivated: true,
+      animationState: "active",
+      animationTicks: 3,
+    } as Entity;
+    renderer.render(createMockContext(), [lever], "en", 999);
+    expect(calls[0].atlasId).toBe("chrono_lever");
+    expect(calls[0].ticks).toBe(3);
+  });
+});

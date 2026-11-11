@@ -51,6 +51,46 @@ export function resolveAnimationKeyFromStates(meta: IAtlasMetaLike, currentKey: 
   return currentKey;
 }
 
+function readAnimationsRecord(meta: IAtlasMetaLike): Record<string, unknown> | null {
+  if (!meta.animations || typeof meta.animations !== "object") return null;
+  const animsContainer = meta.animations as Record<string, unknown>;
+  return "animations" in animsContainer &&
+    typeof animsContainer.animations === "object" &&
+    animsContainer.animations !== null
+    ? (animsContainer.animations as Record<string, unknown>)
+    : animsContainer;
+}
+
+/**
+ * Number of leading frames that actually exist: zero entries in slotSpan/cells mean "no frame".
+ * frameIndices-driven tracks keep their declared frame count.
+ */
+export function resolveEffectiveFrameCount(track: IAtlasAnimationTrack | null): number {
+  const declared = track?.frames ?? 1;
+  if (!track || track.frameIndices) return declared;
+  const spans = track.slotSpan && track.slotSpan.length > 0 ? track.slotSpan : track.cells;
+  if (!spans || spans.length === 0) return declared;
+  const limit = Math.min(declared, spans.length);
+  let count = 0;
+  while (count < limit && spans[count] > 0) count++;
+  return count;
+}
+
+/**
+ * True only when the (state-aliased) animation is explicitly defined with at least one frame;
+ * unlike resolveAnimationTrack it never falls back to the first track.
+ */
+export function hasAnimationTrack(meta: IAtlasMetaLike, animationName: string): boolean {
+  const animKey = resolveAnimationKeyFromStates(meta, animationName);
+  const rawAnims = readAnimationsRecord(meta);
+  let track: unknown = rawAnims ? rawAnims[animKey] : undefined;
+  if (!track || typeof track !== "object") {
+    track = meta.layout && typeof meta.layout === "object" ? meta.layout[animKey] : undefined;
+  }
+  if (!track || typeof track !== "object") return false;
+  return resolveEffectiveFrameCount(track as IAtlasAnimationTrack) > 0;
+}
+
 /**
  * Resolves an animation track from either animations dictionary or layout animations.
  */
