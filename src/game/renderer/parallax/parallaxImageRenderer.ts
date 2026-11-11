@@ -6,6 +6,7 @@ import {
   resolveLayerDrawHeight,
   resolveLayerScreenY,
 } from "../background/parallaxGeometry";
+import { assetLoader } from "@game/engine/assetLoader";
 import { drawHorizontalTiles } from "../background/parallaxTiling";
 
 export interface IParallaxImageRenderer {
@@ -29,18 +30,23 @@ export interface IParallaxImageRenderer {
  */
 export class ParallaxImageRenderer implements IParallaxImageRenderer {
   private readonly farRect = createLayerRect();
-  private readonly imageCache: Map<string, HTMLImageElement> = new Map();
 
   public preload(layers?: readonly ParallaxLayerSchema[]): void {
     if (!layers || typeof Image === "undefined") return;
     for (let i = 0; i < layers.length; i++) {
-      const layer = layers[i];
-      if (layer.imageUrl && !this.imageCache.has(layer.imageUrl)) {
-        const img = new Image();
-        img.src = layer.imageUrl;
-        this.imageCache.set(layer.imageUrl, img);
+      const url = layers[i].imageUrl;
+      if (url && !assetLoader.isTextureLoaded(url)) {
+        assetLoader.loadTexture(url).catch(() => {});
       }
     }
+  }
+
+  private getImage(url: string): HTMLImageElement | null {
+    const cached = assetLoader.getTexture(url);
+    if (!cached && typeof Image !== "undefined") {
+      assetLoader.loadTexture(url).catch(() => {});
+    }
+    return cached;
   }
 
   public render(
@@ -56,13 +62,7 @@ export class ParallaxImageRenderer implements IParallaxImageRenderer {
   ): void {
     if (!layer.imageUrl) return;
 
-    let img = layer.imageElement || this.imageCache.get(layer.imageUrl);
-    if (!img && typeof Image !== "undefined") {
-      img = new Image();
-      img.src = layer.imageUrl;
-      this.imageCache.set(layer.imageUrl, img);
-    }
-
+    const img = layer.imageElement || this.getImage(layer.imageUrl);
     if (!img || !img.complete || img.naturalWidth === 0) return;
 
     const isFarStatic = layer.tier === "far" || (layer.id.includes("_far") && !layer.id.includes("mid"));

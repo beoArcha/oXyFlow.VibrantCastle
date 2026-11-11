@@ -71,7 +71,8 @@ export class EngineSimulationStep {
       collisionEngine: this.context.collisions,
       audio: this.context.audio,
       triggerNarration: (id: string) => this.context.triggerNarration(id),
-      onLeverActivated: (id: string) => this.context.levelLifecycleManager.handleLeverUnlocks(id),
+      onLeverActivated: (id: string, lever: Entity) =>
+        this.context.levelLifecycleManager.handleLeverUnlocks(id, lever),
     };
 
     if (anyPlayerAttacking) {
@@ -128,8 +129,8 @@ export class EngineSimulationStep {
         triggerNarration: (id: string) => this.context.triggerNarration(id),
         onGoalReached: (goalEntity?: Entity) =>
           this.context.levelLifecycleManager.handleGoalCompletion(goalEntity),
-        onLeverActivated: (id: string) =>
-          this.context.levelLifecycleManager.handleLeverUnlocks(id),
+        onLeverActivated: (id: string, lever: Entity) =>
+          this.context.levelLifecycleManager.handleLeverUnlocks(id, lever),
         spawnBurst: (x, y, color, type, count) =>
           this.context.particleSystem.spawnBurst(x, y, color, type, count),
         isNoClip: () => !!debugManager.state.noClip,

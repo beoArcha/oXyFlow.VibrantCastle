@@ -4,7 +4,7 @@ import { statsManager } from "@game/logic/stats";
 
 export interface ICollisionContext {
   triggerNarration: (id: string) => void;
-  onLeverActivated?: (triggerId: string) => void;
+  onLeverActivated?: (triggerId: string, lever: Entity) => void;
   onGoalReached?: (entity?: Entity) => void;
 }
 
@@ -177,7 +177,7 @@ export class LeverCollisionStrategy implements CollisionStrategy {
       gameAudio.playSFX(SoundType.SFX_UNLOCK);
       context.triggerNarration("narration_lever");
       if (entity.triggerId && context.onLeverActivated) {
-        context.onLeverActivated(entity.triggerId);
+        context.onLeverActivated(entity.triggerId, entity);
       }
     }
   }

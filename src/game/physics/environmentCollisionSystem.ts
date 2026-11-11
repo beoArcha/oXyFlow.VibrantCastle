@@ -8,7 +8,7 @@ export interface IEnvironmentCollisionContext {
   collisionEngine: ICollisionEngine;
   triggerNarration(id: string): void;
   onGoalReached(goalEntity?: Entity): void;
-  onLeverActivated(leverId: string): void;
+  onLeverActivated(leverId: string, lever: Entity): void;
   spawnBurst(
     x: number,
     y: number,
@@ -90,7 +90,7 @@ export class EnvironmentCollisionSystem implements IEnvironmentCollisionSystem {
           context.collisionEngine.resolve(player, entity, {
             triggerNarration: (id: string) => context.triggerNarration(id),
             onGoalReached: (goalEntity?: Entity) => context.onGoalReached(goalEntity),
-            onLeverActivated: (id: string) => context.onLeverActivated(id),
+            onLeverActivated: (id: string, lever: Entity) => context.onLeverActivated(id, lever),
           });
 
           if (context.isLevelTransitionPending()) {

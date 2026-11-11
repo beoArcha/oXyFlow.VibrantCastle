@@ -236,15 +236,8 @@ export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
         ctx.globalAlpha = layer.opacity;
       }
 
-      const scale = Math.max(
-        viewportWidth / img.naturalWidth,
-        viewportHeight / img.naturalHeight
-      );
-      const drawW = img.naturalWidth * scale;
-      const drawH = img.naturalHeight * scale;
-      const drawX = (viewportWidth - drawW) / 2;
-
-      ctx.drawImage(img, Math.round(drawX), 0, Math.round(drawW), Math.round(drawH));
+      resolveFarBackdropRect(this.farRect, img.naturalWidth, img.naturalHeight, viewportWidth, viewportHeight);
+      ctx.drawImage(img, this.farRect.x, this.farRect.y, this.farRect.width, this.farRect.height);
       ctx.restore();
       imageRendered = true;
     }

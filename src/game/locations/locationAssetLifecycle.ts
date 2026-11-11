@@ -1,5 +1,6 @@
 import { assetLoader } from "@game/engine/assetLoader";
-import { getLocation } from "./registry";
+import { assetsLogger } from "../logger/gameLogger";
+import { LOCATION_REGISTRY } from "./registry";
 import type { LocationDefinition, LocationId } from "./types";
 
 /**
@@ -47,10 +48,11 @@ export class LocationAssetLifecycle {
   /** Locations whose layer URLs were requested and may still occupy the cache. */
   private readonly tracked = new Set<LocationId>();
   private generation = 0;
+  private readonly warnedUnknown = new Set<string>();
 
   constructor(deps: LocationAssetLifecycleDeps = {}) {
     this.loader = deps.loader ?? assetLoader;
-    this.resolveLocation = deps.resolveLocation ?? ((id) => getLocation(id));
+    this.resolveLocation = deps.resolveLocation ?? ((id) => LOCATION_REGISTRY[id]);
     this.scheduleIdle = deps.scheduleIdle ?? defaultScheduleIdle;
   }
 
@@ -75,13 +77,23 @@ export class LocationAssetLifecycle {
     const result: LocationId[] = [];
     if (!def) return result;
     const add = (id: string | undefined) => {
-      if (id && id !== locationId && !result.includes(id as LocationId) && this.resolveLocation(id as LocationId)) {
+      if (!id || id === locationId || result.includes(id as LocationId)) return;
+      if (this.resolveLocation(id as LocationId)) {
         result.push(id as LocationId);
+        return;
       }
+      this.warnUnknownNeighbour(locationId, id);
     };
     for (const portal of def.portals ?? []) add(portal.targetLocationId);
     add(def.nextLocationId);
     return result;
+  }
+
+  private warnUnknownNeighbour(from: LocationId, target: string): void {
+    const key = `${from}->${target}`;
+    if (this.warnedUnknown.has(key)) return;
+    this.warnedUnknown.add(key);
+    assetsLogger.warn("Portal targets an unknown location, ignoring it for asset preloading", { from, target });
   }
 
   /** Loads exactly the background layers of the location. Failures are swallowed (lazy path remains). */

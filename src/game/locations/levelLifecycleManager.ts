@@ -2,7 +2,6 @@ import {
   Player,
   Enemy,
   Entity,
-  CollisionType,
   SoundType,
   ParticleBurstType,
   PlayerId,
@@ -10,8 +9,8 @@ import {
 import { LocationId, LocationDefinition, getLocation, getNextLocation } from "./index";
 import { LevelDesigner } from "./levels";
 import { statsManager } from "../logic/stats";
-import { engineLogger } from "../logger/gameLogger";
-import { advanceStructureAnimations, setStructureAnimationState } from "./structureAnimationClock";
+import { advanceStructureAnimations } from "./structureAnimationClock";
+import { unlockLeverGates } from "./leverGateUnlock";
 
 /**
  * Context interface provided by GameEngine to LevelLifecycleManager.
@@ -72,7 +71,7 @@ export interface ILevelLifecycleManager {
 
   advanceToNextLocation(): void;
 
-  handleLeverUnlocks(triggerId: string): void;
+  handleLeverUnlocks(triggerId: string, lever?: Entity): void;
 
   handleGoalCompletion(portalEntity?: Entity): void;
 
@@ -193,39 +192,8 @@ export class LevelLifecycleManager implements ILevelLifecycleManager {
     this.context.notifyReact();
   }
 
-  public handleLeverUnlocks(triggerId: string): void {
-    statsManager.recordLeverPulled();
-    const entities = this.context.getEntities();
-    const targetGateId = this.resolveTargetGateId(triggerId);
-
-    if (targetGateId) {
-      const gate = this.findSolidById(entities, targetGateId);
-      if (gate) {
-        this.openGate(gate);
-        this.context.notifyReact();
-        return;
-      }
-      engineLogger.warn("Lever target gate not found, falling back to legacy gate unlock", {
-        triggerId,
-        targetGateId,
-      });
-    } else {
-      engineLogger.warn("Lever declares no targetGateId, falling back to legacy gate unlock", {
-        triggerId,
-      });
-    }
-
-    for (let i = 0; i < entities.length; i++) {
-      const entity = entities[i];
-      // Legacy: any gate-like solid in this location
-      if (
-        entity.type === CollisionType.Solid &&
-        (entity.id.includes("gate") || entity.id.includes("wall") || entity.id === "grand_gate")
-      ) {
-        this.openGate(entity);
-      }
-    }
-    this.context.notifyReact();
+  public handleLeverUnlocks(triggerId: string, lever?: Entity): void {
+    unlockLeverGates(this.context, triggerId, lever);
   }
 
   /**
@@ -234,32 +202,6 @@ export class LevelLifecycleManager implements ILevelLifecycleManager {
    */
   public advanceStructureAnimations(dt: number): void {
     advanceStructureAnimations(this.context.getEntities(), dt);
-  }
-
-  private resolveTargetGateId(triggerId: string): string | undefined {
-    const entities = this.context.getEntities();
-    for (let i = 0; i < entities.length; i++) {
-      const e = entities[i];
-      if (e.type === CollisionType.Lever && e.triggerId === triggerId && e.targetGateId) {
-        return e.targetGateId;
-      }
-    }
-    return undefined;
-  }
-
-  private findSolidById(entities: Entity[], id: string): Entity | undefined {
-    for (let i = 0; i < entities.length; i++) {
-      if (entities[i].type === CollisionType.Solid && entities[i].id === id) return entities[i];
-    }
-    return undefined;
-  }
-
-  private openGate(gate: Entity): void {
-    gate.y = -1000; // lift gate out of collision
-    setStructureAnimationState(gate, "open");
-    this.context.playSFX(SoundType.SFX_UNLOCK);
-    this.context.triggerNarration("trainingLeverSuccess");
-    this.context.spawnBurst(gate.x + gate.width / 2, 300, "#e2b653", "dust", 20);
   }
 
   public handleGoalCompletion(portalEntity?: Entity): void {
@@ -325,7 +267,7 @@ export class LevelLifecycleManager implements ILevelLifecycleManager {
   public decrementCooldowns(stepDt: number = 1): void {
     this.advanceStructureAnimations(stepDt);
     if (this.portalCooldownTimer > 0) {
-      this.portalCooldownTimer -= 1;
+      this.portalCooldownTimer = Math.max(0, this.portalCooldownTimer - stepDt);
     }
   }
 

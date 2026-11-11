@@ -1,0 +1,118 @@
+{
+  "characterId": "aether_archon",
+  "entityType": "creature",
+  "version": "1.0",
+  "description": "A majestic aerial guardian of white marble and gold with orbiting rune-stones and a robe of pale cyan light.",
+  "atlas": {
+    "columns": 4,
+    "rows": 3,
+    "cellWidth": 144,
+    "cellHeight": 144,
+    "spacing": 0,
+    "background": "transparent",
+    "safeMargin": 1
+  },
+  "naturalFacing": "right",
+  "variants": {
+    "low": {
+      "cellWidth": 72,
+      "cellHeight": 72,
+      "scale": 0.5,
+      "file": "aether_archon_nes.svg"
+    },
+    "mid": {
+      "cellWidth": 144,
+      "cellHeight": 144,
+      "scale": 1,
+      "file": "aether_archon_snes.svg"
+    }
+  },
+  "animations": {
+    "idle": {
+      "row": 0,
+      "frames": 2,
+      "fps": 3,
+      "loop": true,
+      "wide": false,
+      "slotSpan": [
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1
+      ]
+    },
+    "move": {
+      "row": 1,
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "wide": false,
+      "slotSpan": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "hit": {
+      "row": 2,
+      "frames": 2,
+      "fps": 10,
+      "loop": false,
+      "wide": false,
+      "slotSpan": [
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1
+      ]
+    }
+  },
+  "states": {
+    "idle": {
+      "animation": "idle"
+    },
+    "move": {
+      "animation": "move"
+    },
+    "walk": {
+      "animation": "move"
+    },
+    "hit": {
+      "animation": "hit"
+    },
+    "fly": {
+      "animation": "move"
+    }
+  },
+  "layout": {
+    "ordering": [
+      "idle",
+      "move",
+      "hit"
+    ],
+    "origin": {
+      "type": "center",
+      "normalized": {
+        "x": 0.5348,
+        "y": 0.4861
+      }
+    },
+    "bodyBox": {
+      "x": 0.2153,
+      "y": 0.0486,
+      "w": 0.6389,
+      "h": 0.875
+    }
+  }
+}

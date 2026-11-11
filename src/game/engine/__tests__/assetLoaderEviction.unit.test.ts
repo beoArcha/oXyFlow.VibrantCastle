@@ -88,6 +88,20 @@ describe("assetLoader texture eviction", () => {
     assetLoader.evictTexture(url);
   });
 
+  it("clears the discard marker when an evicted in-flight load fails", async () => {
+    MockImage.autoLoad = false;
+    const url = "evict_inflight_fail.png";
+    const failing = assetLoader.loadTexture(url);
+    expect(assetLoader.evictTexture(url)).toBe(true);
+    MockImage.created[0].onerror?.();
+    await expect(failing).rejects.toBeDefined();
+
+    MockImage.autoLoad = true;
+    await assetLoader.loadTexture(url);
+    expect(assetLoader.isTextureLoaded(url)).toBe(true);
+    assetLoader.evictTexture(url);
+  });
+
   it("never evicts atlas textures", () => {
     const atlas = assetLoader.getAllAtlases()[0];
     expect(assetLoader.evictTexture(atlas.imageSrc)).toBe(false);

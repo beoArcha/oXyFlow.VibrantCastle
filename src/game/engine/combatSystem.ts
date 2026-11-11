@@ -15,7 +15,7 @@ export interface ICombatContext {
   collisionEngine: ICollisionEngine;
   audio: ICombatAudio;
   triggerNarration: (key: string) => void;
-  onLeverActivated: (triggerId: string) => void;
+  onLeverActivated: (triggerId: string, lever: Entity) => void;
 }
 
 export interface ICombatSystem {

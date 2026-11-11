@@ -98,3 +98,10 @@ Copy `__fixtures__/sample_golem.ts` and edit it; it passes validation as is.
 - NES: flat colours, 2-3 per material, no dithering. SNES: the same silhouette with 2-3 shades per material (highlight, base, shade), plus small details (cracks, glow, rivets). Writing the draw routine once with a scale factor `s` (1 or 2) and a `detailed` flag, as the sample does, keeps both tiers consistent.
 - Give the hit animation a clear read: a white flash palette and a 1-2 px recoil.
 - Run with `--preview` and look at the PNGs before committing.
+
+## Notes for authors
+
+- Type pose tables as `Partial<Record<AnimationName, Pose[]>>` (a full `Record` fails the type check because `attack` and `death` are optional).
+- Verify one sprite with `bun scripts/sprites/compile.ts <id> --check`; the full sync check for all sprites runs in `bun test scripts`.
+- Finished examples to copy from: `enemies/court_sentinel.ts` (upright humanoid), `enemies/chasm_crawler.ts` (wide, low creature), `enemies/chasm_gargoyle.ts` (aerial).
+- A compiled enemy needs no code registration: the game discovers `src/assets/enemies/<id>/` automatically; the template in `src/data/enemies/enemies.json` selects it with `atlas.presetId`.

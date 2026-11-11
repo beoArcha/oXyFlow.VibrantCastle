@@ -171,6 +171,7 @@ class AssetLoaderEngine {
         );
         assetsLogger.error(assetError.message, assetError.toLogContext(), assetError);
         this.loadPromises.delete(imageUrl);
+        this.discardOnLoad.delete(imageUrl);
         reject(assetError);
       };
       img.src = imageUrl;
