@@ -170,7 +170,9 @@ describe("packed Aurelia sheets", () => {
     for (const tier of TIERS) {
       expect(encodePngBuffer(result.sheets[tier]).equals(readFileSync(packedPath(tier)))).toBe(true);
     }
-    expect(formatMetaJson(result.meta)).toBe(readFileSync(join(ASSETS, "aurelia", "aurelia_packed_meta.json"), "utf8"));
+    // Git may check the JSON out with CRLF line endings on Windows; the content is what matters.
+    const committedMeta = readFileSync(join(ASSETS, "aurelia", "aurelia_packed_meta.json"), "utf8").replace(/\r\n/g, "\n");
+    expect(formatMetaJson(result.meta)).toBe(committedMeta);
   });
 });
 
