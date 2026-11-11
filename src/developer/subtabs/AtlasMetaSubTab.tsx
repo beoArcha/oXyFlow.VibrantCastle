@@ -1,4 +1,5 @@
 import React from "react";
+import { useI18n } from "@context/I18nContext";
 import {
   AtlasTextureViewer,
   AtlasAnimationPreview,
@@ -16,8 +17,19 @@ export interface AtlasMetaSubTabProps {
 
 export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLogs }) => {
   const state = useAtlasStudioState();
+  const { t } = useI18n();
 
-  if (!state.activePreset) return null;
+  if (!state.activePreset) {
+    return (
+      <div
+        id="subtab-content-atlas-slicer"
+        role="status"
+        className="p-6 text-sm text-stone-400 animate-in fade-in duration-150"
+      >
+        {t("atlasStudioEmptyRegistry")}
+      </div>
+    );
+  }
 
   return (
     <div
