@@ -6,15 +6,27 @@
   "openingNarrationKey": "trainingIntro",
   "sceneType": "action_platformer",
   "dimensions": {
-    "width": 3800,
-    "height": 750
+    "width": 8000,
+    "height": 1500
   },
   "spawnPoints": {
-    "default": { "x": 150, "y": 560 },
-    "p2Offset": { "x": 45, "y": 0 },
+    "default": {
+      "x": 150,
+      "y": 1300
+    },
+    "p2Offset": {
+      "x": 45,
+      "y": 0
+    },
     "entries": {
-      "from_sanctuary": { "x": 150, "y": 560 },
-      "from_courtyard": { "x": 3400, "y": 505 }
+      "from_sanctuary": {
+        "x": 150,
+        "y": 1300
+      },
+      "from_courtyard": {
+        "x": 7745,
+        "y": 1206
+      }
     }
   },
   "theme": {
@@ -25,8 +37,8 @@
     "musicIntensity": 0.4
   },
   "parallaxBackground": {
-    "boxWidth": 4200,
-    "boxHeight": 950,
+    "boxWidth": 8400,
+    "boxHeight": 1750,
     "layers": [
       {
         "id": "bg_bastion_far",
@@ -36,9 +48,9 @@
         "type": "image",
         "imageUrl": "grand_bastion_far_high",
         "depth": 0.1,
-        "scrollSpeedX": 0.0,
-        "scrollSpeedY": 0.0,
-        "opacity": 1.0
+        "scrollSpeedX": 0,
+        "scrollSpeedY": 0,
+        "opacity": 1
       },
       {
         "id": "bg_bastion_mid_far",
@@ -48,8 +60,9 @@
         "imageUrl": "grand_bastion_mid_far_high",
         "depth": 0.25,
         "scrollSpeedX": 0.24,
-        "scrollSpeedY": 0.10,
-        "opacity": 1.0
+        "scrollSpeedY": 0.1,
+        "opacity": 1,
+        "mirrorTile": true
       },
       {
         "id": "bg_bastion_mid",
@@ -60,7 +73,8 @@
         "depth": 0.45,
         "scrollSpeedX": 0.42,
         "scrollSpeedY": 0.18,
-        "opacity": 1.0
+        "opacity": 1,
+        "mirrorTile": true
       },
       {
         "id": "bg_bastion_mid_close",
@@ -70,8 +84,9 @@
         "imageUrl": "grand_bastion_mid_close_high",
         "depth": 0.65,
         "scrollSpeedX": 0.65,
-        "scrollSpeedY": 0.30,
-        "opacity": 1.0
+        "scrollSpeedY": 0.3,
+        "opacity": 1,
+        "mirrorTile": true
       },
       {
         "id": "bg_bastion_close",
@@ -82,7 +97,8 @@
         "depth": 0.85,
         "scrollSpeedX": 0.85,
         "scrollSpeedY": 0.45,
-        "opacity": 1.0
+        "opacity": 1,
+        "mirrorTile": true
       }
     ]
   },
@@ -151,7 +167,10 @@
         "labelKey": "portalToAetherSanctuary",
         "defaultLabel": "To Aether Sanctuary",
         "targetLocationId": "aether_sanctuary",
-        "targetSpawnPoint": { "x": 2650, "y": 165 },
+        "targetSpawnPoint": {
+          "x": 6175,
+          "y": 402
+        },
         "activation": "touch",
         "particleEffect": "magic",
         "colors": {
@@ -165,7 +184,10 @@
         "labelKey": "portalMastery",
         "defaultLabel": "Mastery Portal",
         "targetLocationId": "courtyard",
-        "targetSpawnPoint": { "x": 1150, "y": 1120 },
+        "targetSpawnPoint": {
+          "x": 1150,
+          "y": 1120
+        },
         "activation": "touch",
         "particleEffect": "magic",
         "colors": {
@@ -179,133 +201,504 @@
   "layout": {
     "solids": [
       {
-        "id": "grand_floor_1",
+        "id": "grand_floor_main",
         "prefabId": "bastion_floor",
         "x": 0,
-        "y": 640,
-        "width": 800,
-        "height": 110
-      },
-      {
-        "id": "grand_step_1",
-        "prefabId": "bastion_step",
-        "x": 450,
-        "y": 550,
-        "width": 100,
-        "height": 25
-      },
-      {
-        "id": "grand_step_2",
-        "prefabId": "bastion_step",
-        "x": 600,
-        "y": 460,
-        "width": 100,
-        "height": 25
-      },
-      {
-        "id": "grand_stone_1",
-        "prefabId": "bastion_step",
-        "x": 880,
-        "y": 540,
-        "width": 90,
-        "height": 25
-      },
-      {
-        "id": "grand_stone_2",
-        "prefabId": "bastion_step",
-        "x": 1060,
-        "y": 480,
-        "width": 90,
-        "height": 25
-      },
-      {
-        "id": "grand_stone_3",
-        "prefabId": "bastion_step",
-        "x": 1240,
-        "y": 520,
-        "width": 90,
-        "height": 25
-      },
-      {
-        "id": "grand_floor_mid",
-        "prefabId": "bastion_floor",
-        "x": 1500,
-        "y": 620,
-        "width": 800,
-        "height": 130
-      },
-      {
-        "id": "grand_tunnel_roof",
-        "prefabId": "bastion_tunnel_roof",
-        "x": 1650,
-        "y": 500,
-        "width": 260,
-        "height": 50
-      },
-      {
-        "id": "grand_moving_plat",
-        "prefabId": "bastion_lift",
-        "x": 2350,
-        "y": 520,
-        "width": 110,
-        "height": 22,
-        "vx": 1.4,
-        "vy": 0,
-        "minX": 2320,
-        "maxX": 2650
-      },
-      {
-        "id": "grand_target_high",
-        "prefabId": "target_step",
-        "x": 2550,
-        "y": 320,
-        "width": 140,
-        "height": 22
-      },
-      {
-        "id": "grand_target_diag",
-        "prefabId": "target_step",
-        "x": 2850,
-        "y": 420,
-        "width": 140,
-        "height": 22
-      },
-      {
-        "id": "grand_floor_end",
-        "prefabId": "bastion_floor",
-        "x": 2700,
-        "y": 600,
-        "width": 1100,
+        "y": 1350,
+        "width": 6460,
         "height": 150
       },
       {
-        "id": "grand_gate",
+        "id": "grand_floor_ward",
+        "prefabId": "bastion_floor",
+        "x": 6460,
+        "y": 1254,
+        "width": 1540,
+        "height": 246
+      },
+      {
+        "id": "grand_barb_block",
+        "prefabId": "bastion_step",
+        "x": 760,
+        "y": 1286,
+        "width": 110,
+        "height": 64
+      },
+      {
+        "id": "grand_barb_ledge_1",
+        "prefabId": "bastion_step",
+        "x": 200,
+        "y": 1254,
+        "width": 110,
+        "height": 22
+      },
+      {
+        "id": "grand_barb_ledge_2",
+        "prefabId": "bastion_step",
+        "x": 860,
+        "y": 1254,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "grand_barb_ledge_3",
+        "prefabId": "bastion_step",
+        "x": 1040,
+        "y": 1158,
+        "width": 120,
+        "height": 22
+      },
+      {
+        "id": "grand_drill_step_1",
+        "prefabId": "bastion_step",
+        "x": 1300,
+        "y": 1254,
+        "width": 130,
+        "height": 22
+      },
+      {
+        "id": "grand_drill_step_2",
+        "prefabId": "bastion_step",
+        "x": 1500,
+        "y": 1158,
+        "width": 130,
+        "height": 22
+      },
+      {
+        "id": "grand_drill_step_3",
+        "prefabId": "bastion_step",
+        "x": 1700,
+        "y": 1254,
+        "width": 130,
+        "height": 22
+      },
+      {
+        "id": "grand_drill_step_4",
+        "prefabId": "bastion_step",
+        "x": 1900,
+        "y": 1254,
+        "width": 130,
+        "height": 22
+      },
+      {
+        "id": "grand_drill_step_5",
+        "prefabId": "bastion_step",
+        "x": 2060,
+        "y": 1158,
+        "width": 130,
+        "height": 22
+      },
+      {
+        "id": "grand_stair_a",
+        "prefabId": "bastion_step",
+        "x": 2260,
+        "y": 1254,
+        "width": 130,
+        "height": 22
+      },
+      {
+        "id": "grand_stair_b",
+        "prefabId": "bastion_step",
+        "x": 2420,
+        "y": 1158,
+        "width": 130,
+        "height": 22
+      },
+      {
+        "id": "grand_rampart_1",
+        "prefabId": "bastion_floor",
+        "x": 2580,
+        "y": 1062,
+        "width": 500,
+        "height": 100
+      },
+      {
+        "id": "grand_rampart_2",
+        "prefabId": "bastion_floor",
+        "x": 3230,
+        "y": 1062,
+        "width": 420,
+        "height": 100
+      },
+      {
+        "id": "grand_rampart_3",
+        "prefabId": "bastion_floor",
+        "x": 3980,
+        "y": 1062,
+        "width": 370,
+        "height": 100
+      },
+      {
+        "id": "grand_rampart_4",
+        "prefabId": "bastion_floor",
+        "x": 4500,
+        "y": 1062,
+        "width": 450,
+        "height": 100
+      },
+      {
+        "id": "grand_merlon_1",
+        "prefabId": "bastion_step",
+        "x": 4660,
+        "y": 1022,
+        "width": 40,
+        "height": 40
+      },
+      {
+        "id": "grand_merlon_2",
+        "prefabId": "bastion_step",
+        "x": 4740,
+        "y": 1022,
+        "width": 40,
+        "height": 40
+      },
+      {
+        "id": "grand_merlon_3",
+        "prefabId": "bastion_step",
+        "x": 4820,
+        "y": 1022,
+        "width": 40,
+        "height": 40
+      },
+      {
+        "id": "grand_merlon_4",
+        "prefabId": "bastion_step",
+        "x": 4900,
+        "y": 1022,
+        "width": 40,
+        "height": 40
+      },
+      {
+        "id": "grand_case_ledge_1",
+        "prefabId": "bastion_step",
+        "x": 2880,
+        "y": 1254,
+        "width": 90,
+        "height": 22
+      },
+      {
+        "id": "grand_case_ledge_2",
+        "prefabId": "bastion_step",
+        "x": 3560,
+        "y": 1254,
+        "width": 80,
+        "height": 22
+      },
+      {
+        "id": "grand_cross_1",
+        "prefabId": "bastion_step",
+        "x": 3650,
+        "y": 1254,
+        "width": 100,
+        "height": 22
+      },
+      {
+        "id": "grand_cross_2",
+        "prefabId": "bastion_step",
+        "x": 3790,
+        "y": 1158,
+        "width": 110,
+        "height": 22
+      },
+      {
+        "id": "grand_dash_rail_1",
+        "prefabId": "target_step",
+        "x": 3020,
+        "y": 1254,
+        "width": 100,
+        "height": 22
+      },
+      {
+        "id": "grand_dash_rail_2",
+        "prefabId": "target_step",
+        "x": 3370,
+        "y": 1234,
+        "width": 100,
+        "height": 22
+      },
+      {
+        "id": "grand_case_stone_1",
+        "prefabId": "bastion_step",
+        "x": 4290,
+        "y": 1254,
+        "width": 80,
+        "height": 22
+      },
+      {
+        "id": "grand_case_stone_2",
+        "prefabId": "bastion_step",
+        "x": 4400,
+        "y": 1254,
+        "width": 80,
+        "height": 22
+      },
+      {
+        "id": "grand_secret_step_1",
+        "prefabId": "target_step",
+        "x": 4000,
+        "y": 966,
+        "width": 110,
+        "height": 22
+      },
+      {
+        "id": "grand_secret_step_2",
+        "prefabId": "target_step",
+        "x": 4170,
+        "y": 870,
+        "width": 110,
+        "height": 22
+      },
+      {
+        "id": "grand_treasury",
+        "prefabId": "target_step",
+        "x": 4330,
+        "y": 774,
+        "width": 300,
+        "height": 24
+      },
+      {
+        "id": "grand_descent_1",
+        "prefabId": "bastion_step",
+        "x": 4990,
+        "y": 1158,
+        "width": 110,
+        "height": 22
+      },
+      {
+        "id": "grand_descent_2",
+        "prefabId": "bastion_step",
+        "x": 5130,
+        "y": 1254,
+        "width": 110,
+        "height": 22
+      },
+      {
+        "id": "grand_keep_step_1",
+        "prefabId": "bastion_step",
+        "x": 5350,
+        "y": 1254,
+        "width": 110,
+        "height": 22
+      },
+      {
+        "id": "grand_keep_step_2",
+        "prefabId": "bastion_step",
+        "x": 5500,
+        "y": 1158,
+        "width": 110,
+        "height": 22
+      },
+      {
+        "id": "grand_gantry",
+        "prefabId": "target_step",
+        "x": 5650,
+        "y": 1062,
+        "width": 300,
+        "height": 22
+      },
+      {
+        "id": "grand_keep_stone_1",
+        "prefabId": "bastion_step",
+        "x": 6040,
+        "y": 1254,
+        "width": 90,
+        "height": 22
+      },
+      {
+        "id": "grand_keep_stone_2",
+        "prefabId": "bastion_step",
+        "x": 6220,
+        "y": 1254,
+        "width": 90,
+        "height": 22
+      },
+      {
+        "id": "grand_keep_lift",
+        "prefabId": "bastion_lift",
+        "x": 6060,
+        "y": 1158,
+        "width": 100,
+        "height": 22,
+        "vx": 1.2,
+        "vy": 0,
+        "minX": 6040,
+        "maxX": 6230
+      },
+      {
+        "id": "grand_gate_keep",
         "prefabId": "bastion_gate",
-        "x": 3250,
-        "y": 300,
-        "width": 35,
-        "height": 300
+        "x": 6400,
+        "y": 950,
+        "width": 36,
+        "height": 400
+      },
+      {
+        "id": "grand_ward_step_1",
+        "prefabId": "bastion_step",
+        "x": 6600,
+        "y": 1158,
+        "width": 100,
+        "height": 22
+      },
+      {
+        "id": "grand_ward_step_2",
+        "prefabId": "bastion_step",
+        "x": 6760,
+        "y": 1062,
+        "width": 100,
+        "height": 22
+      },
+      {
+        "id": "grand_ward_perch",
+        "prefabId": "target_step",
+        "x": 6920,
+        "y": 966,
+        "width": 170,
+        "height": 22
+      },
+      {
+        "id": "grand_ward_block_1",
+        "prefabId": "bastion_step",
+        "x": 7110,
+        "y": 1190,
+        "width": 70,
+        "height": 64
+      },
+      {
+        "id": "grand_ward_block_2",
+        "prefabId": "bastion_step",
+        "x": 7190,
+        "y": 1190,
+        "width": 50,
+        "height": 64
+      },
+      {
+        "id": "grand_gate_ward",
+        "prefabId": "bastion_gate",
+        "x": 7280,
+        "y": 800,
+        "width": 36,
+        "height": 454
+      },
+      {
+        "id": "grand_arena_plate_1",
+        "prefabId": "target_step",
+        "x": 7420,
+        "y": 1158,
+        "width": 110,
+        "height": 22
+      },
+      {
+        "id": "grand_arena_plate_2",
+        "prefabId": "target_step",
+        "x": 7600,
+        "y": 1158,
+        "width": 110,
+        "height": 22
+      },
+      {
+        "id": "grand_arena_plate_3",
+        "prefabId": "target_step",
+        "x": 7340,
+        "y": 1062,
+        "width": 100,
+        "height": 22
+      },
+      {
+        "id": "grand_barb_ledge_4",
+        "prefabId": "bastion_step",
+        "x": 500,
+        "y": 1254,
+        "width": 110,
+        "height": 22
+      },
+      {
+        "id": "grand_case_ledge_0",
+        "prefabId": "bastion_step",
+        "x": 2740,
+        "y": 1254,
+        "width": 90,
+        "height": 22
+      },
+      {
+        "id": "grand_case_ledge_3",
+        "prefabId": "bastion_step",
+        "x": 4700,
+        "y": 1254,
+        "width": 90,
+        "height": 22
+      },
+      {
+        "id": "grand_ward_block_3",
+        "prefabId": "bastion_step",
+        "x": 6510,
+        "y": 1190,
+        "width": 60,
+        "height": 64
+      },
+      {
+        "id": "grand_keep_ledge_3",
+        "prefabId": "bastion_step",
+        "x": 5210,
+        "y": 1158,
+        "width": 110,
+        "height": 22
+      },
+      {
+        "id": "grand_arena_plate_4",
+        "prefabId": "target_step",
+        "x": 7780,
+        "y": 1158,
+        "width": 100,
+        "height": 22
       }
     ],
     "hazards": [
       {
-        "id": "grand_thorn_bed",
+        "id": "grand_thorn_bed_a",
         "prefabId": "bastion_thorns",
-        "x": 800,
-        "y": 690,
-        "width": 700,
-        "height": 60
+        "x": 3380,
+        "y": 1310,
+        "width": 150,
+        "height": 40
+      },
+      {
+        "id": "grand_thorn_bed_b",
+        "prefabId": "bastion_thorns",
+        "x": 4260,
+        "y": 1310,
+        "width": 300,
+        "height": 40
+      },
+      {
+        "id": "grand_thorn_bed_k",
+        "prefabId": "bastion_thorns",
+        "x": 6020,
+        "y": 1310,
+        "width": 300,
+        "height": 40
       }
     ],
     "levers": [
       {
-        "id": "grand_lever",
-        "x": 3000,
-        "y": 555,
+        "id": "grand_lever_keep",
+        "x": 5800,
+        "y": 1017,
         "width": 25,
         "height": 45,
         "triggerId": "lever_1",
-        "targetGateId": "grand_gate",
+        "targetGateId": "grand_gate_keep",
+        "labelKey": "labelMainSluiceLever",
+        "defaultLabel": "Main Sluice Lever"
+      },
+      {
+        "id": "grand_lever_ward",
+        "x": 7000,
+        "y": 921,
+        "width": 25,
+        "height": 45,
+        "triggerId": "lever_2",
+        "targetGateId": "grand_gate_ward",
         "labelKey": "labelMainSluiceLever",
         "defaultLabel": "Main Sluice Lever"
       }
@@ -315,15 +708,15 @@
         "id": "grand_portal_back",
         "portalKey": "portal_return_sanctuary",
         "x": 40,
-        "y": 545,
+        "y": 1255,
         "width": 60,
         "height": 95
       },
       {
         "id": "grand_portal",
         "portalKey": "portal_mastery_loop",
-        "x": 3550,
-        "y": 505,
+        "x": 7880,
+        "y": 1159,
         "width": 75,
         "height": 95
       }
@@ -332,47 +725,187 @@
       {
         "id": "grand_dummy_1",
         "monsterKey": "grand_dummy",
-        "x": 350,
-        "y": 580,
+        "x": 1180,
+        "y": 1290,
         "facingLeft": true
       },
       {
-        "id": "grand_dummy_mid",
+        "id": "grand_dummy_2",
         "monsterKey": "grand_dummy",
-        "x": 2000,
-        "y": 560,
+        "x": 1560,
+        "y": 1098,
         "facingLeft": true
       },
       {
-        "id": "grand_dummy_high",
+        "id": "grand_dummy_3",
         "monsterKey": "grand_dummy",
-        "x": 2590,
-        "y": 260,
+        "x": 1960,
+        "y": 1290,
         "facingLeft": true
       },
       {
-        "id": "grand_dummy_diag",
+        "id": "grand_dummy_4",
         "monsterKey": "grand_dummy",
-        "x": 2890,
-        "y": 360,
+        "x": 2120,
+        "y": 1290,
         "facingLeft": true
       },
       {
-        "id": "grand_gargoyle",
+        "id": "grand_target_1",
+        "monsterKey": "training_target",
+        "x": 1340,
+        "y": 1194,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_target_2",
+        "monsterKey": "training_target",
+        "x": 1740,
+        "y": 1194,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_sentinel_r1",
+        "monsterKey": "court_sentinel",
+        "x": 2760,
+        "y": 1000,
+        "patrolMinX": 2650,
+        "patrolMaxX": 3030,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_automaton_r2",
+        "monsterKey": "clockwork_automaton",
+        "x": 3300,
+        "y": 997,
+        "patrolMinX": 3260,
+        "patrolMaxX": 3590,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_sentinel_r3",
+        "monsterKey": "court_sentinel",
+        "x": 4060,
+        "y": 1000,
+        "patrolMinX": 4010,
+        "patrolMaxX": 4290,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_gargoyle_r1",
         "monsterKey": "bastion_gargoyle",
-        "x": 1050,
-        "y": 360,
-        "patrolMinX": 980,
-        "patrolMaxX": 1180,
+        "x": 2800,
+        "y": 860,
+        "patrolMinX": 2650,
+        "patrolMaxX": 3040,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_gargoyle_r2",
+        "monsterKey": "bastion_gargoyle",
+        "x": 3350,
+        "y": 860,
+        "patrolMinX": 3260,
+        "patrolMaxX": 3600,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_chasm_gargoyle_r4",
+        "monsterKey": "chasm_gargoyle",
+        "x": 4600,
+        "y": 880,
+        "patrolMinX": 4520,
+        "patrolMaxX": 4900,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_hound_1",
+        "monsterKey": "chrono_hound",
+        "x": 2750,
+        "y": 1316,
+        "patrolMinX": 2700,
+        "patrolMaxX": 3300,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_hound_2",
+        "monsterKey": "chrono_hound",
+        "x": 3700,
+        "y": 1316,
+        "patrolMinX": 3640,
+        "patrolMaxX": 4200,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_hound_3",
+        "monsterKey": "chrono_hound",
+        "x": 4700,
+        "y": 1316,
+        "patrolMinX": 4620,
+        "patrolMaxX": 4950,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_automaton_keep",
+        "monsterKey": "clockwork_automaton",
+        "x": 5250,
+        "y": 1285,
+        "patrolMinX": 5200,
+        "patrolMaxX": 5560,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_mite_1",
+        "monsterKey": "gear_mite",
+        "x": 5700,
+        "y": 1332,
+        "patrolMinX": 5660,
+        "patrolMaxX": 5900,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_mite_2",
+        "monsterKey": "gear_mite",
+        "x": 5930,
+        "y": 1332,
+        "patrolMinX": 5920,
+        "patrolMaxX": 5980,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_mite_gantry",
+        "monsterKey": "gear_mite",
+        "x": 5720,
+        "y": 1044,
+        "patrolMinX": 5690,
+        "patrolMaxX": 5880,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_warden_1",
+        "monsterKey": "lantern_warden",
+        "x": 7050,
+        "y": 1090,
+        "patrolMinX": 7000,
+        "patrolMaxX": 7230,
+        "facingLeft": true
+      },
+      {
+        "id": "grand_warden_2",
+        "monsterKey": "lantern_warden",
+        "x": 6480,
+        "y": 1090,
+        "patrolMinX": 6470,
+        "patrolMaxX": 6590,
         "facingLeft": true
       },
       {
         "id": "grand_sentinel_boss",
         "monsterKey": "bastion_sentinel_boss",
-        "x": 3120,
-        "y": 540,
-        "patrolMinX": 3050,
-        "patrolMaxX": 3220,
+        "x": 7500,
+        "y": 1194,
+        "patrolMinX": 7340,
+        "patrolMaxX": 7660,
         "facingLeft": true
       }
     ]
