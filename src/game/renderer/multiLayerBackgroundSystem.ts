@@ -14,6 +14,7 @@ import {
   resolveBackgroundTier,
   renderTiledDynamicLayer,
 } from "./background/parallaxTiling";
+import { createLayerRect, resolveFarBackdropRect } from "./background/parallaxGeometry";
 
 export interface IMultiLayerBackgroundSystem {
   isSupported(locationId: string): boolean;
@@ -40,6 +41,7 @@ export interface IMultiLayerBackgroundSystem {
  */
 export class MultiLayerBackgroundSystem implements IMultiLayerBackgroundSystem {
   private readonly atmosphericRenderer: ISectorAtmosphericRenderer;
+  private readonly farRect = createLayerRect();
   private readonly gradientCache: Map<string, CanvasGradient> = new Map();
   private readonly tierBuckets: Record<BackgroundLayerTier, ParallaxLayerSchema[]> = {
     far: [],
