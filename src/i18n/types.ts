@@ -624,6 +624,7 @@ export interface DebugTelemetryI18n {
 export interface AtlasStudioI18n {
   subtabAtlasSlicer: string;
   atlasStudioPresetSelect: string;
+  atlasStudioEmptyRegistry: string;
   atlasStudioPresetCharacter: string;
   atlasStudioPresetEnemy: string;
   atlasStudioPresetStructure: string;

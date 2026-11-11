@@ -21,7 +21,11 @@ const registryLogger = LoggerManager.getInstance().getLogger("AtlasAssetRegistry
 let viteImageModules: Record<string, string> = {};
 let viteMetaModules: Record<string, unknown> = {};
 
-if (typeof import.meta !== "undefined" && typeof (import.meta as { glob?: unknown }).glob === "function") {
+// NOTE: Vite rewrites only literal `import.meta.glob(...)` call expressions at transform time.
+// Never gate them behind a runtime feature check on the glob helper: such a check is not rewritten, is
+// `undefined` in the browser, and silently leaves the registry empty. Outside Vite (bun test)
+// the call throws and the catch below falls through to the Node filesystem fallback.
+{
   try {
     viteImageModules = import.meta.glob("../../../../assets/**/*.{png,jpg,jpeg,webp,svg}", {
       eager: true,

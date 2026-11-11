@@ -4,6 +4,7 @@ export const atlasStudioTranslations: Record<LanguageCode, AtlasStudioI18n> = {
   pl: {
     subtabAtlasSlicer: "Atlas i meta.json",
     atlasStudioPresetSelect: "Wybierz zasób",
+    atlasStudioEmptyRegistry: "Brak zarejestrowanych atlasów. Rejestr zasobów nie załadował żadnego arkusza.",
     atlasStudioPresetCharacter: "Postacie",
     atlasStudioPresetEnemy: "Wrogowie i Maszyny",
     atlasStudioPresetStructure: "Struktury i Bramy",
@@ -201,6 +202,7 @@ export const atlasStudioTranslations: Record<LanguageCode, AtlasStudioI18n> = {
   en: {
     subtabAtlasSlicer: "Atlas & meta.json",
     atlasStudioPresetSelect: "Select Preset",
+    atlasStudioEmptyRegistry: "No atlases registered. The asset registry did not load any sheet.",
     atlasStudioPresetCharacter: "Characters",
     atlasStudioPresetEnemy: "Enemies & Automatons",
     atlasStudioPresetStructure: "Structures & Portals",
