@@ -252,3 +252,29 @@ describe("hud.mapper - Engine to UI Presentation Mapping", () => {
     });
   });
 });
+
+describe("resolvePlayerStatusVM hero identity", () => {
+  const vitals = { isDead: false, health: 10, maxHealth: 10, mana: 5, maxMana: 5, stamina: 5, maxStamina: 5 };
+
+  it("shows the selected duelist instead of the default HUD label", () => {
+    // Arrange
+    const player = { ...vitals, characterId: "aurelia" as const, characterName: "Aurelia" };
+
+    // Act
+    const vm = resolvePlayerStatusVM(player, null, { characterName: "Valen", theme: "red", playerNumber: 1 });
+
+    // Assert
+    expect([vm?.characterId, vm?.characterName, vm?.theme]).toEqual(["aurelia", "Aurelia", "cyan"]);
+  });
+
+  it("keeps the HUD settings when the snapshot carries no identity", () => {
+    // Arrange
+    const player = { ...vitals };
+
+    // Act
+    const vm = resolvePlayerStatusVM(player, null, { characterName: "Lyra", theme: "cyan", playerNumber: 2 });
+
+    // Assert
+    expect([vm?.characterId, vm?.characterName, vm?.theme]).toEqual(["aurelia", "Lyra", "cyan"]);
+  });
+});

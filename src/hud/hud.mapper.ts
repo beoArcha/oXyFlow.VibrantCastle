@@ -1,7 +1,7 @@
 import { SPELL_REGISTRY } from "@game/logic/magic";
 import { calculatePlayerDerivedStats } from "@game/logic/inventory";
 import { type EquipmentState, type InventoryState, type Item, type Player } from "@game/types";
-import { resolvePlayerTheme } from "@styles/theme";
+import { resolvePlayerTheme, type PlayerTheme } from "@styles/theme";
 import { clampPositiveInt } from "@lib/math";
 import { getLogger } from "@lib/logger";
 import type {
@@ -19,6 +19,9 @@ export type { PlayerDerivedStats, ResolvePlayerStatusOptions, ResolveQuickBeltOp
 
 const logger = getLogger("hud.mapper");
 
+/** Theme of each duelist, so the HUD follows the hero picked in the menu or swapped in co-op. */
+const HERO_THEMES: Readonly<Record<"valen" | "aurelia", PlayerTheme>> = { valen: "crimson", aurelia: "cyan" };
+
 /**
  * Transforms player snapshot data and derived stats into a clean PlayerStatusVM for HUD display.
  */
@@ -29,12 +32,13 @@ export function resolvePlayerStatusVM(
 ): PlayerStatusVM | null {
   if (!player) return null;
 
-  const theme = resolvePlayerTheme(options.theme);
+  // The controlled duelist decides name and colour; the HUD settings only cover a snapshot without one.
+  const theme = player.characterId ? HERO_THEMES[player.characterId] : resolvePlayerTheme(options.theme);
   const fallbackCharacterId = theme === "crimson" ? "valen" : "aurelia";
 
   return {
     characterId: player.characterId || fallbackCharacterId,
-    characterName: options.characterName,
+    characterName: player.characterName || options.characterName,
     playerNumber: options.playerNumber,
     theme,
     health: clampPositiveInt(player.health),
