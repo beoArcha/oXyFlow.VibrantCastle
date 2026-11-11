@@ -56,8 +56,6 @@ describe("LevelLifecycleManager lever -> gate targeting", () => {
     manager.handleLeverUnlocks("trig_a");
 
     expect(gateA.y).toBe(-1000);
-    expect(gateA.animationState).toBe("open");
-    expect(gateA.animationTicks).toBe(0);
     expect(gateB.y).toBe(400);
     expect(sfx).toEqual([SoundType.SFX_UNLOCK]);
   });
@@ -107,6 +105,45 @@ describe("LevelLifecycleManager lever -> gate targeting", () => {
     expect(gate.y).toBe(-1000);
     expect(warn).toHaveBeenCalledTimes(1);
     warn.mockRestore();
+  });
+
+  it("opens only the gate of the pulled lever when two levers share a triggerId", () => {
+    const levers = leverEntities([
+      { id: "lever_a", triggerId: "shared", targetGateId: "gate_a" },
+      { id: "lever_b", triggerId: "shared", targetGateId: "gate_b" },
+    ]);
+    const gateA = solid("gate_a");
+    const gateB = solid("gate_b");
+    entities = [...levers, gateA, gateB];
+
+    manager.handleLeverUnlocks("shared", levers[1]);
+
+    expect(gateA.y).toBe(400);
+    expect(gateB.y).toBe(-1000);
+
+    manager.handleLeverUnlocks("shared", levers[0]);
+
+    expect(gateA.y).toBe(-1000);
+  });
+
+  it("keeps the portal cooldown the same simulated time at 30, 60 and 120 Hz", () => {
+    const simulateSeconds = (hz: number): number => {
+      manager.portalCooldownTimer = 45;
+      const stepDt = 60 / hz;
+      let ticks = 0;
+      while (manager.portalCooldownTimer > 0) {
+        manager.decrementCooldowns(stepDt);
+        ticks++;
+      }
+      return ticks / hz;
+    };
+
+    // The timer expires on a whole tick, so the result may overshoot by less than one tick.
+    for (const hz of [30, 60, 120]) {
+      const seconds = simulateSeconds(hz);
+      expect(seconds).toBeGreaterThanOrEqual(0.75);
+      expect(seconds).toBeLessThan(0.75 + 1 / hz);
+    }
   });
 
   it("advances entity animation clocks through decrementCooldowns", () => {

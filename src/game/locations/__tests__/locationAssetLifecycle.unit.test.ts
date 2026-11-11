@@ -104,6 +104,34 @@ describe("LocationAssetLifecycle", () => {
     expect(loader.evicted).toEqual([]);
   });
 
+  it("treats an unknown portal target as no neighbour and never preloads a fallback location", async () => {
+    // Arrange
+    const withTypo: Record<string, LocationDefinition> = {
+      ...graph,
+      a: fakeLocation("a", ["a1"], ["no_such_location"]),
+      courtyard: fakeLocation("courtyard", ["court1"], []),
+    };
+    const lifecycle = new LocationAssetLifecycle({
+      loader,
+      resolveLocation: (id) => withTypo[id as string],
+      scheduleIdle: (task) => idleTasks.push(task),
+    });
+
+    // Act
+    await lifecycle.enterLocation(asId("a"));
+    await flushIdle();
+
+    // Assert
+    expect(lifecycle.getNeighbours(asId("a"))).toEqual([]);
+    expect(loader.loadCalls).toEqual(["a1"]);
+  });
+
+  it("resolves unknown ids strictly against the real registry by default", () => {
+    const real = new LocationAssetLifecycle({ loader, scheduleIdle: (t) => idleTasks.push(t) });
+
+    expect(real.getLayerUrls(asId("not_a_location"))).toEqual([]);
+  });
+
   it("reports stats", async () => {
     const lifecycle = make();
     await lifecycle.enterLocation(asId("a"));

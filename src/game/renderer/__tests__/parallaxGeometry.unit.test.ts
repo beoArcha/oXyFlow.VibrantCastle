@@ -107,6 +107,33 @@ describe("parallax layer geometry", () => {
       }
     });
 
+    it("keeps a drifting layer covering the viewport and moving, never stuck at an edge", () => {
+      // Arrange
+      const drawH = resolveLayerDrawHeight(768, 1150, VIEWPORT_H);
+      const seen = new Set<number>();
+
+      for (let tick = 0; tick < 20000; tick += 7) {
+        // Act
+        const y = resolveLayerScreenY(drawH, VIEWPORT_H, 0.3, 0.45, tick * 0.05);
+        seen.add(Math.round(y * 1000));
+
+        // Assert
+        expect(y).toBeLessThanOrEqual(0);
+        expect(y + drawH).toBeGreaterThanOrEqual(VIEWPORT_H);
+      }
+      const base = resolveLayerScreenY(drawH, VIEWPORT_H, 0.3, 0.45, 0);
+      const period = 2 * (drawH - VIEWPORT_H + base);
+      const early = resolveLayerScreenY(drawH, VIEWPORT_H, 0.3, 0.45, 12.3);
+      const later = resolveLayerScreenY(drawH, VIEWPORT_H, 0.3, 0.45, 12.3 + period * 3);
+
+      expect(seen.size).toBeGreaterThan(50);
+      expect(later).toBeCloseTo(early, 6);
+    });
+
+    it("keeps the clamped camera position constant when there is no overflow", () => {
+      expect(resolveLayerScreenY(VIEWPORT_H, VIEWPORT_H, 0.5, 1, 9999)).toBe(0);
+    });
+
     it("falls back to the viewport height when the box is shorter than the viewport", () => {
       // Act
       const drawH = resolveLayerDrawHeight(768, 400, VIEWPORT_H);
@@ -135,6 +162,36 @@ describe("parallax layer geometry", () => {
       expect(rect.y).toBe(0);
       expect(rect.x + rect.width).toBeGreaterThanOrEqual(vw);
       expect(rect.height).toBeGreaterThanOrEqual(vh);
+    });
+  });
+
+  describe("FAR backdrop for tall and wide level sizes", () => {
+    it.each([
+      [3600, 900],
+      [8000, 1500],
+      [3600, 3000],
+    ])("covers a 1000x625 viewport regardless of level size %ix%i", () => {
+      // Arrange: FAR is viewport-anchored, so level size must not influence the rect
+      const rect = createLayerRect();
+
+      // Act
+      resolveFarBackdropRect(rect, 2048, 768, 1000, 625);
+
+      // Assert
+      expect(rect.x).toBeLessThanOrEqual(0);
+      expect(rect.x + rect.width).toBeGreaterThanOrEqual(1000);
+      expect(rect.height).toBeGreaterThanOrEqual(625);
+    });
+
+    it("matches the pinned courtyard numbers", () => {
+      const rect = createLayerRect();
+
+      resolveFarBackdropRect(rect, 2048, 768, 1000, 625);
+
+      const scale = 625 / 768;
+      const drawW = 2048 * scale;
+      expect(rect.x).toBe(Math.floor((1000 - drawW) / 2));
+      expect(rect.height).toBe(625);
     });
   });
 

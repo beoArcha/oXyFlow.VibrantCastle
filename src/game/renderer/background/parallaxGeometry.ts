@@ -32,10 +32,19 @@ export function resolveLayerDrawHeight(imageHeight: number, boxHeight: number, v
   return Math.max(viewportHeight, wanted);
 }
 
+/** Triangle wave in [0, range]: constant 0 for an empty range, periodic otherwise. */
+function pingPong(value: number, range: number): number {
+  if (range <= 0) return 0;
+  const period = range * 2;
+  const m = ((value % period) + period) % period;
+  return m <= range ? m : period - m;
+}
+
 /**
- * Vertical placement of a scrolling layer. The offset is clamped to
- * [viewportHeight - drawHeight, 0] so neither the top nor the bottom edge of the image
- * can ever enter the viewport, whatever the speed, progress or drift values are.
+ * Vertical placement of a scrolling layer. The camera-progress term is clamped to
+ * [viewportHeight - drawHeight, 0]; drift then ping-pongs inside the room that is left,
+ * so neither the top nor the bottom edge of the image can ever enter the viewport and a
+ * drifting layer keeps moving instead of sticking at an edge (the axis does not tile).
  */
 export function resolveLayerScreenY(
   drawHeight: number,
@@ -45,8 +54,9 @@ export function resolveLayerScreenY(
   driftY: number
 ): number {
   const overflow = Math.max(0, drawHeight - viewportHeight);
-  const raw = -progressY * overflow * scrollSpeedY - driftY;
-  return Math.max(-overflow, Math.min(0, raw));
+  const base = Math.max(-overflow, Math.min(0, -progressY * overflow * scrollSpeedY));
+  // `|| 0` normalises -0 so a static layer compares equal to 0.
+  return base - pingPong(driftY, overflow + base) || 0;
 }
 
 /**

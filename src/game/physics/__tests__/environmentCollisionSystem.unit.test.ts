@@ -55,7 +55,7 @@ describe("EnvironmentCollisionSystem", () => {
         } else if (e.type === CollisionType.Goal) {
           callbacks?.onGoalReached?.(e);
         } else if (e.type === CollisionType.Lever) {
-          callbacks?.onLeverActivated?.(e.id);
+          callbacks?.onLeverActivated?.(e.id, e);
         }
       },
       registerStrategy: () => { },
