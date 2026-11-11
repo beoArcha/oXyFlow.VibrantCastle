@@ -18,8 +18,8 @@ describe("AtlasAssetRegistry Vite glob wiring", () => {
       const code = result?.code ?? "";
 
       // Assert: globs are expanded into module maps (valen sheet is bundled) ...
-      expect(code).toContain("characters/valen/valen_level_1_high.png");
-      expect(code).toContain("characters/valen/valen_meta.json");
+      expect(code).toContain("characters/valen/valen_level_1_high_packed.png");
+      expect(code).toContain("characters/valen/valen_packed_meta.json");
       // ... and are not gated behind a runtime check that is false in the browser.
       expect(code).not.toMatch(/typeof\s+import\.meta\.glob/);
     } finally {

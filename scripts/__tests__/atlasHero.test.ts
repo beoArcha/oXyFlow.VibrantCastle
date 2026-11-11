@@ -17,13 +17,15 @@ import config from "../atlas/repack.config.json";
 const ASSETS = join(dirname(fileURLToPath(import.meta.url)), "../../src/assets/characters");
 const TIERS: HeroTier[] = ["low", "mid", "high"];
 const aureliaConfig = config.heroes.aurelia as HeroConfig;
+const valenConfig = config.heroes.valen as HeroConfig;
 
 function readMeta(file: string): BaseExtractionMeta & JsonObject {
   return JSON.parse(readFileSync(join(ASSETS, file), "utf8")) as BaseExtractionMeta & JsonObject;
 }
 
-function packedPath(tier: HeroTier): string {
-  return join(ASSETS, "aurelia", `${aureliaConfig.sourceStem}_${tier}_packed.png`);
+function packedPath(tier: HeroTier, hero: "aurelia" | "valen" = "aurelia"): string {
+  const stem = hero === "valen" ? valenConfig.sourceStem : aureliaConfig.sourceStem;
+  return join(ASSETS, hero, `${stem}_${tier}_packed.png`);
 }
 
 function synthetic(bodies: [number, number, number, number][]): RgbaImage {
@@ -85,23 +87,6 @@ describe("hero frame checker", () => {
     // Assert
     expect(report.countMismatches).toEqual([["idle", 3, 2]]);
   });
-});
-
-describe("shipped Valen sheets", () => {
-  for (const tier of TIERS) {
-    it(`${tier} tier yields every declared frame without merged or clipped poses`, () => {
-      // Arrange
-      const meta = readMeta("valen/valen_meta.json");
-      const image = decodePngFile(join(ASSETS, "valen", `valen_level_1_${tier}.png`));
-
-      // Act
-      const report = checkHeroSheet(image, meta, tier);
-
-      // Assert
-      expect(report.countMismatches).toEqual([]);
-      expect(flaggedFrames(report)).toEqual([]);
-    });
-  }
 });
 
 describe("Aurelia source sheet", () => {
@@ -172,6 +157,53 @@ describe("packed Aurelia sheets", () => {
     }
     // Git may check the JSON out with CRLF line endings on Windows; the content is what matters.
     const committedMeta = readFileSync(join(ASSETS, "aurelia", "aurelia_packed_meta.json"), "utf8").replace(/\r\n/g, "\n");
+    expect(formatMetaJson(result.meta)).toBe(committedMeta);
+  });
+});
+
+describe("packed Valen sheets", () => {
+  const packedMeta = readMeta("valen/valen_packed_meta.json");
+
+  for (const tier of TIERS) {
+    it(`${tier} tier gives every animation its declared frame count with one clean pose per frame`, () => {
+      // Arrange
+      const image = decodePngFile(packedPath(tier, "valen"));
+
+      // Act
+      const report = checkHeroSheet(image, packedMeta, tier);
+
+      // Assert
+      expect(report.countMismatches).toEqual([]);
+      expect(flaggedFrames(report)).toEqual([]);
+      expect(report.frames.length).toBe(Object.values(packedMeta.animations ?? {}).reduce((sum, a) => sum + a.frames, 0));
+    });
+  }
+
+  it("keeps the wide attack frames as single poses", () => {
+    // Arrange
+    const image = decodePngFile(packedPath("high", "valen"));
+
+    // Act
+    const report = checkHeroSheet(image, packedMeta, "high");
+
+    // Assert
+    const attack = report.frames.filter((f) => f.animation === "attack");
+    expect(attack.length).toBe(7);
+    expect(Math.max(...attack.map((f) => f.rect.w))).toBeGreaterThan(250);
+  });
+
+  it("is reproduced byte for byte by the repack", () => {
+    // Arrange
+    const source = decodePngFile(join(ASSETS, "valen", "valen_level_1_high.png"));
+
+    // Act
+    const result = repackHero(source, readMeta("valen/valen_meta.json"), valenConfig);
+
+    // Assert
+    for (const tier of TIERS) {
+      expect(encodePngBuffer(result.sheets[tier]).equals(readFileSync(packedPath(tier, "valen")))).toBe(true);
+    }
+    const committedMeta = readFileSync(join(ASSETS, "valen", "valen_packed_meta.json"), "utf8").replace(/\r\n/g, "\n");
     expect(formatMetaJson(result.meta)).toBe(committedMeta);
   });
 });

@@ -17,8 +17,8 @@ export interface IAtlasAssetManifestItem {
   category: AtlasCategory;
   isPopular?: boolean;
   tags?: string[];
-  imageRelPath: string; // Strictly relational, e.g. "./characters/valen/valen_level_1_high.png"
-  metaRelPath: string; // Strictly relational, e.g. "./characters/valen/valen_meta.json"
+  imageRelPath: string; // Strictly relational, e.g. "./characters/valen/valen_level_1_high_packed.png"
+  metaRelPath: string; // Strictly relational, e.g. "./characters/valen/valen_packed_meta.json"
   description?: string;
 }
 
