@@ -7,6 +7,7 @@ import { describePlan, planSheet, repackSheet } from "./atlas/repack";
 import { formatMetaJson, type JsonObject } from "./atlas/metaBuilder";
 import { parseSheetMeta } from "./atlas/parseMeta";
 import { renderOverlay } from "./atlas/overlay";
+import { runHero } from "./atlas/heroRun";
 import type { Rect } from "./atlas/islands";
 import type { RepackConfig, SheetConfig } from "./atlas/repackTypes";
 
@@ -67,17 +68,22 @@ function main(args: string[]): void {
   const overlayIndex = args.indexOf("--overlay");
   const overlayDir = overlayIndex >= 0 ? args[overlayIndex + 1] : undefined;
   const target = args.find((arg, i) => !arg.startsWith("--") && i !== overlayIndex + 1);
-  const { sheets } = loadRepackConfig();
-  const ids = args.includes("--all") ? Object.keys(sheets) : target ? [target] : [];
+  const { sheets, heroes = {} } = loadRepackConfig();
+  const ids = args.includes("--all") ? [...Object.keys(sheets), ...Object.keys(heroes)] : target ? [target] : [];
   if (ids.length === 0) {
     console.error("Usage: bun scripts/repack-atlas.ts <atlasId>|--all [--dry-run] [--overlay <dir>]");
     process.exitCode = 1;
     return;
   }
   for (const id of ids) {
+    const hero = heroes[id];
+    if (hero) {
+      runHero(id, hero, ASSET_ROOT, dryRun, overlayDir);
+      continue;
+    }
     const config = sheets[id];
     if (!config || !existsSync(sheetPaths(id, config).sourceImage)) {
-      throw new AssetError(`Unknown atlas '${id}' (configured: ${Object.keys(sheets).join(", ")})`, ErrorCode.ASSET_NOT_FOUND, {
+      throw new AssetError(`Unknown atlas '${id}' (configured: ${[...Object.keys(sheets), ...Object.keys(heroes)].join(", ")})`, ErrorCode.ASSET_NOT_FOUND, {
         details: { id },
       });
     }

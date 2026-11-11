@@ -28,6 +28,7 @@ export interface SheetConfig {
 
 export interface RepackConfig {
   sheets: Record<string, SheetConfig>;
+  heroes?: Record<string, HeroConfig>;
 }
 
 export interface FrameGroup {
@@ -63,4 +64,21 @@ export interface PlannedLayout {
   margin: number;
   feetOrigin: boolean;
   placements: FramePlacement[][];
+}
+
+export interface HeroConfig {
+  /** Directory below src/assets holding the source sheets and meta. */
+  directory: string;
+  /** Source sheets are `<stem>_high.png`; packed sheets are `<stem>_{low,mid,high}_packed.png`. */
+  sourceStem: string;
+  metaFile: string;
+  packedMetaFile: string;
+  /** Alpha above which a pixel counts as content; matches the runtime island scanner. */
+  alphaThreshold: number;
+  marginX: number;
+  /** Transparent columns between neighbouring frames of a row, high tier pixels. */
+  gapX: number;
+  /** Minimum transparent rows between neighbouring rows, high tier pixels. */
+  minGapY: number;
+  rows: RowConfig[];
 }
