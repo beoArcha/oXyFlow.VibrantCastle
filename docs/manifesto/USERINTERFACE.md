@@ -27,6 +27,18 @@ graph TD
 
 ---
 
+### 1.2. Two Menu Levels
+
+Design pillar: the menu has two levels, one for the game and one for development (`MASTERMAP.md` §1.1). As implemented:
+
+| Level | Modal | Source | Contents |
+| :--- | :--- | :--- | :--- |
+| **Game** | Menu `[M]` | `src/game-menu/menu/MenuModal.tsx`, `MenuPanel.tsx` | Tabs: Gameplay, Stats, Locations, Keyboard, Gamepad, Display, Audio. |
+| **Game** | Help `[H]`, Inventory `[I]`, Skill tree `[K]` | `src/game-menu/help`, `inventory`, `skills` | Controls and tips, paperdoll and backpack, constellation skill trees. |
+| **Development** | Developer Suite `[C]` | `src/developer/DeveloperModal.tsx`, `DeveloperTab.tsx` | Sub-tabs: Testing, Debug, Logs, Atlas Slicer, Data Studio. |
+
+Only one modal is open at a time (`useModalManager`); `P` resumes. **Status**: the separation is partial. All five modals share one navigation bar (`ModalNavigationTabs`, `ModalType = menu | help | inventory | skillTree | creation`), and the Developer Suite is hidden only when the HUD setting `showCreationTab` is false (default true). A distinct game level versus development level, with the developer level out of the player's way, is planned (`AGENTS.md` backlog).
+
 ## 2. Dual-Channel Communication Bridge (`src/context/`)
 
 Communication between the pure TypeScript engine and React 19 is brokered through segregated Context providers:
@@ -74,6 +86,8 @@ Providers are hierarchically composed in `GameProvider` (`src/context/GameContex
 
 UI components must not directly manipulate complex domain entities. Pure TypeScript View Model Mappers transform raw engine data into clean presentation models:
 
+Mappers live next to their feature: `src/hud/hud.mapper.ts`, `src/game-menu/inventory/inventory.mapper.ts`, `src/game-menu/skills/skills.mapper.ts`, `src/game-menu/menu/stats/stats.mapper.ts`, `src/game-menu/character/character.mapper.ts`.
+
 | Mapper Module | Input Domain Data | Output View Model | Purpose |
 | :--- | :--- | :--- | :--- |
 | **`hud.mapper.ts`** | `Player`, `IVitalResources` | `HudPlayerViewModel` | Computes percentage widths for health/mana/stamina bars, formatted score strings, and cooldown overlays. |
@@ -108,7 +122,7 @@ All interface components are constructed exclusively using standardized Design S
 
 ## 5. Design Tokens & Visual Theming (`src/styles/theme.ts`)
 
-Visual styling embodies an **Autumn-Gothic Bastion** aesthetic: warm amber rifts, ancient dark timber, weathered masonry, and mystical celestial illumination.
+Visual styling follows the autumn pillar (`MASTERMAP.md` §1.1): warm amber, dark timber and weathered masonry. Champion identities (below) are the cool accents.
 
 ### 5.1. Central Theme Tokens
 
@@ -172,10 +186,24 @@ export const THEME = {
 ### 6.1. Accessibility Standards
 
 * **Keyboard Navigation**: All modal overlays (Settings, Inventory, Skills, Pause Menu) implement keyboard focus trapping (`Tab` cycle) and dismiss on `Escape`.
-* **Screen Reader & Live Regions**: Reactive narration dialogues are mirrored to `aria-live="polite"` regions so assistive technologies receive story cues.
-* **Contrast Ratios**: All text tokens on dark backgrounds strictly satisfy WCAG AA (minimum 4.5:1 contrast ratio).
+* **Screen Reader & Live Regions (planned)**: Narration subtitles are not yet mirrored to an `aria-live` region; only the Data Studio validation badges use `aria-live="polite"`.
+* **Contrast Ratios (target)**: Text on dark backgrounds should meet WCAG AA (4.5:1). This is not verified by automated tests.
 
-### 6.2. Localization Architecture
+### 6.2. Graphics Quality Setting
+
+The Display tab (`src/game-menu/menu/tabs/display/GraphicsQualitySection.tsx`) exposes `display.assetQuality` (`low` | `mid` | `high`, default `high`, stored with the other display settings). It selects the art tier, not resolution or effects:
+
+- `low`: NES class (12-bit SVG sheets for enemies; the 16-bit retro hero sheet).
+- `mid`: SNES class (RGB565 SVG sheets for enemies; the modern mobile hero sheet).
+- `high`: painted packed PNG sheets.
+
+If the requested tier does not exist for an asset, the renderer falls back requested, then `mid`, then `high`, then `low`, then procedural drawing (`PARALLAX_AND_RENDERING.md` §6). The other display settings are `aspectRatio` (`16:10`, `16:9`, `4:3`, `auto`), `scalingFilter` (`pixel` or `smooth`), `targetFps` (30, 60, 90 or 120, which is also the simulation tick rate), `hardwareAcceleration` and `showFpsCounter`.
+
+### 6.3. Controls UI
+
+The Keyboard and Gamepad tabs remap bindings per player (`src/game-menu/controls/`, `gamepadCaptureService.ts`). Default pad bindings are in `src/data/defaults/defaultControls.json`; the restricted pad layout of the design pillar (2 triggers, 4 face buttons, bumpers as selectors) is not implemented yet (`MASTERMAP.md` §1.2).
+
+### 6.4. Localization Architecture
 
 * **Zero Hardcoded Strings**: No human-facing text exists in component markup. Every string is resolved through `useTranslation()` (`src/i18n/`).
 * **Canonical Dictionaries**: English (`en`) serves as canonical source; Polish (`pl`) provides stylistic equivalent matching the gothic fantasy tone.

@@ -32,9 +32,9 @@ graph TD
         P1["git push to main / PR"]
         S1["Stage 1: Static Analysis<br/>(Parallel: typecheck & lint)"]
         S2["Stage 2: Tests & Coverage<br/>(unit + integration + arch + e2e)"]
-        CG["Stage 2: Coverage Quality Gate<br/>(scripts/coverage-gate.ts)"]
-        S3["Stage 3: Game Client Build<br/>(vite build z src/)"]
-        S4["Stage 4: Candidate Metadata<br/>(Release candidate ID)"]
+        CG["Stage 3: Coverage Quality Gate<br/>(scripts/coverage-gate.ts)"]
+        S3["Stage 4: Build Verification<br/>(vite build from src/)"]
+        S4["Stage 5: Candidate Metadata<br/>(Release candidate ID)"]
 
         P1 --> S1
         S1 -- Pass --> S2
@@ -56,7 +56,7 @@ graph TD
     subgraph GameRelease["3. Production Game Release (release.yml)"]
         RTrigger["workflow_dispatch<br/>(Ref: release / main, Bump: SemVer)"]
         Preflight["Stage 1: Preflight Sanity<br/>(typecheck + test:arch)"]
-        RBuild["Stage 2: Compile Pure Game<br/>(vite build z src/ -> vibrant-castle-game.zip)"]
+        RBuild["Stage 2: Compile Pure Game<br/>(vite build from src/ -> vibrant-castle-game.zip)"]
         GHRelease["Stage 3: GitHub Release<br/>(Tag vX.Y.Z + release notes)"]
 
         FastForward -. Synchronized .-> RTrigger
@@ -90,17 +90,17 @@ graph TD
 - **Stage 1 (Static Analysis)**:
   - `typecheck`: `bun run typecheck` (`tsc --noEmit`).
   - `lint`: `bun run lint` (`tsc --noEmit`).
-- **Stage 2 (Test Suite & Coverage Gate)**:
+- **Stage 2 (Tests)**, in parallel after Stage 1:
   - `unit`: `bun run test:unit:coverage` (generates `coverage/unit/lcov.info`).
   - `integration`: `bun run test:integration:coverage` (generates `coverage/integration/lcov.info`).
-  - `coverage-gate`: Runs `bun run coverage:gate`, validates against `scripts/coverage.json` thresholds, outputs terminal ASCII table, emits GitHub Actions error annotations on failure, and publishes Markdown to `$GITHUB_STEP_SUMMARY`.
-  - `architecture`: `bun run test:arch` (84 AST boundary and SSOT tests).
-  - `e2e`: `bun run test:e2e` (Distribution smoke checks).
-- **Stage 3 (Client Build Verification)**:
+  - `architecture`: `bun run test:arch` (AST boundary, SSOT and level-logic tests).
+  - `e2e`: assembles the distribution with `bun run build:pages` (`VITE_BASE_PATH: ./`), then `bun run test:e2e` (distribution smoke checks).
+- **Stage 3 (Coverage Quality Gate)**: job `coverage-gate`, after `unit` and `integration`. Downloads both lcov profiles and runs `bun run coverage:gate`, which validates against `scripts/coverage.json` (`unitMin` 60, `integrationMin` 40, `combinedMin` 80). `bun run test:scripts` is not part of CI.
+- **Stage 4 (Build Verification)**, after the coverage gate, architecture and e2e jobs:
   - Compiles pure game client with `bun run build:game` (`VITE_BASE_PATH: ./`).
   - Asserts existence of `dist/index.html` and `dist/assets/`.
-- **Stage 4 (Metadata)**:
-  - Publishes candidate identifier (`0.2.2-dev.<run_number>.<sha>`) to `$GITHUB_STEP_SUMMARY`.
+- **Stage 5 (Candidate Metadata)**:
+  - Publishes the candidate identifier `<package.json version>-dev.<run_number>.<sha7>` (currently base `0.2.3`) to `$GITHUB_STEP_SUMMARY`.
 
 ### 3.2. `promote.yml` — Controlled Promotion
 
@@ -108,7 +108,7 @@ graph TD
 - **Invariant**: **Always promotes from `main` to `release`**, regardless of options chosen in GitHub Actions dispatch dialog.
 - **Inputs**:
   - `target_sha`: Commit SHA from `main` to promote (default: latest HEAD of `main`).
-- **Checks Verification**: Queries `gh api "repos/${{ github.repository }}/commits/${TARGET_SHA}/check-runs"`. Enforces that every required test and build verification from `main.yml` has `conclusion: "success"`.
+- **Checks Verification**: Queries `gh api "repos/${{ github.repository }}/commits/${TARGET_SHA}/check-runs"`. Considers check runs whose name starts with `Stage `, requires at least 7 of them, none pending, and every one except the check literally named `Stage 4: Candidate Metadata` to be `success`. Note: that exception is stale, since the metadata job is now named `Stage 5: Candidate Metadata` and is therefore also required to succeed; update `promote.yml` when convenient.
 - **Action**: Atomically fast-forwards `release`:
 
   ```bash
@@ -132,9 +132,9 @@ graph TD
 - **Trigger**:
   - `release`: `types: [published]` (automatically triggers upon new GitHub Release).
   - `workflow_dispatch`: Manual trigger (with optional `release_tag` input, defaulting to latest release).
-  - `push`: On `release` branch when `docs/wiki/**` files change.
+  - `push`: On `release` branch when `docs/wiki/**` or the workflow file changes.
 - **Action**:
-  - Downloads `vibrant-castle-game.zip` from the specified or latest release.
+  - Downloads `vibrant-castle-game.zip` from the specified or latest release (falls back to `vibrant-castle-web.zip`, then to building the client from `src/` with `bun ./scripts/build-distribution.ts`).
   - Mounts game client into `dist/game/` and copies `docs/wiki/` to `dist/` root.
   - Generates `dist/.nojekyll`.
   - Deploys bundle to GitHub Pages via `actions/deploy-pages@v4`.
@@ -148,7 +148,7 @@ graph TD
    - Navigate to **Settings $\rightarrow$ Pages**.
    - Under **Build and deployment $\rightarrow$ Source**, select **GitHub Actions**.
 2. **Branch Protection Rules**:
-   - **`main`**: Require status checks to pass (`Stage 1: Typecheck`, `Stage 1: Lint`, `Stage 2: Unit Tests & Coverage`, `Stage 2: Integration Tests & Coverage`, `Stage 2: Coverage Quality Gate`, `Stage 2: Architecture Boundary Tests`, `Stage 2: E2E Smoke Tests`, `Stage 3: Build Verification`).
+   - **`main`**: Require status checks to pass (`Stage 1: Typecheck`, `Stage 1: Lint`, `Stage 2: Unit Tests & Coverage`, `Stage 2: Integration Tests & Coverage`, `Stage 3: Coverage Quality Gate`, `Stage 2: Architecture Boundary Tests`, `Stage 2: E2E Smoke Tests`, `Stage 4: Build Verification`).
    - **`release`**: Restrict pushes to GitHub Actions bot (`github-actions[bot]`).
 3. **Actions Permissions**:
    - Under **Settings $\rightarrow$ Actions $\rightarrow$ General**:
