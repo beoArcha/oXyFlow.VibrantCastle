@@ -13,14 +13,14 @@ In *Vibrant Castle*, artifacts bridge the boundary between environmental narrati
 * **Mechanism & Function**:
   * In its default locked state, the lever arm is tilted to the left, glowing warning amber/red while maintaining tension on heavy counterweights.
   * Striking the lever with a rapier thrust or spell projectile overcomes mechanical friction with a crisp metallic chime and steam hiss.
-  * The switch flips right, illuminating an emerald signal lamp and permanently raising the associated iron portcullis (`gate_1`) into the ceiling vault.
+  * The switch flips right, illuminating an emerald signal lamp and permanently raising the associated iron portcullis into the ceiling vault (`court_gate_main` in the Courtyard, `chasm_portcullis` in the Chasm of Thorns).
 
 ### The Main Sluice Lever & Grand Portcullis (`labelMainSluiceLever`, `labelGrandPortcullis`)
 
 * **Classification**: Master Sector Lock & Pneumatic Gate
 * **Visual Form**: A massive gilded lever situated atop the battlements of the Grand Bastion, connected to thick iron chains leading into the clocktower substructure.
 * **Mechanism & Function**:
-  * Unlocks the three-tiered, impenetrable iron portcullis barring access to the victory dais.
+  * Unlocks the three-tiered, impenetrable iron portcullis barring access to the victory dais. Each of the two levers (`grand_lever_keep`, `grand_lever_ward`) opens one gate (`grand_gate_keep`, `grand_gate_ward`).
   * Requires a decisive physical or magical strike to trip the pneumatic safety release, releasing grinding gear chimes across the entire sector.
 
 ### Motorized Brass Lifts & Moving Platforms (`labelMovingPlatform`, `labelVerticalLift`)
