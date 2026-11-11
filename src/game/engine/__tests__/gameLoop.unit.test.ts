@@ -101,6 +101,8 @@ describe("Game Loop & 15-FPS Quantum Framerate Architecture", () => {
     it("can run fixedUpdate independently without canvas attached", () => {
       const engine = new GameEngine();
       const p1 = engine.players[0];
+      // The courtyard spawn now stands on the floor, so lift the player into the air first.
+      p1.y -= 120;
       const initialY = p1.y;
 
       // Execute 3 discrete physics steps with gravity

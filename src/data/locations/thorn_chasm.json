@@ -135,7 +135,7 @@
         "labelKey": "portalToCourtyard",
         "defaultLabel": "To Courtyard",
         "targetLocationId": "courtyard",
-        "targetSpawnPoint": { "x": 3280, "y": 640 },
+        "targetSpawnPoint": { "x": 6950, "y": 1120 },
         "activation": "touch",
         "particleEffect": "magic",
         "colors": {
@@ -308,7 +308,7 @@
         "id": "chasm_crawler",
         "monsterKey": "chasm_crawler",
         "x": 1700,
-        "y": 465,
+        "y": 490,
         "patrolMinX": 1600,
         "patrolMaxX": 1900,
         "facingLeft": true

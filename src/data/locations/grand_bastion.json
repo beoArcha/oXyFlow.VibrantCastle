@@ -165,7 +165,7 @@
         "labelKey": "portalMastery",
         "defaultLabel": "Mastery Portal",
         "targetLocationId": "courtyard",
-        "targetSpawnPoint": { "x": 140, "y": 640 },
+        "targetSpawnPoint": { "x": 1150, "y": 1120 },
         "activation": "touch",
         "particleEffect": "magic",
         "colors": {
