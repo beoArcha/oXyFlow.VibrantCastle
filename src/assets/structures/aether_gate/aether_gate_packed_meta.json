@@ -1,0 +1,140 @@
+{
+  "entityId": "aether_gate",
+  "entityType": "structure",
+  "version": "4.0",
+  "description": "Ancient Aether Portal Gateway. Victory point and dimensional transition node. Activates upon player proximity, emits aether particles and triggers level completion sequence.",
+  "atlas": {
+    "image": "aether_gate_packed_high.png",
+    "cellWidth": 288,
+    "cellHeight": 210,
+    "columns": 9,
+    "rows": 5
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 1
+  },
+  "layout": {
+    "idle": {
+      "row": 0,
+      "startCol": 0,
+      "frames": 7,
+      "widthCells": 1
+    },
+    "light_up": {
+      "row": 1,
+      "startCol": 0,
+      "frames": 8,
+      "widthCells": 1
+    },
+    "action": {
+      "row": 2,
+      "startCol": 0,
+      "frames": 5,
+      "widthCells": 2
+    },
+    "close_up": {
+      "row": 3,
+      "startCol": 0,
+      "frames": 6,
+      "widthCells": 1
+    },
+    "info": {
+      "row": 4,
+      "startCol": 0,
+      "frames": 9,
+      "widthCells": 1
+    },
+    "bodyBox": {
+      "x": 0.25,
+      "y": 0.1333,
+      "w": 0.5035,
+      "h": 0.819
+    }
+  },
+  "animations": {
+    "idle": {
+      "fps": 6,
+      "loop": true,
+      "row": 0,
+      "frames": 7,
+      "wide": false,
+      "slotSpan": [1, 1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1, 1]
+    },
+    "light_up": {
+      "fps": 10,
+      "loop": false,
+      "row": 1,
+      "frames": 8,
+      "wide": false,
+      "slotSpan": [1, 1, 1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1, 1, 1]
+    },
+    "action": {
+      "fps": 10,
+      "loop": false,
+      "row": 2,
+      "frames": 5,
+      "wide": true,
+      "slotSpan": [1, 1, 1, 1, 2],
+      "cells": [1, 1, 1, 1, 2]
+    },
+    "close_up": {
+      "fps": 8,
+      "loop": true,
+      "row": 3,
+      "frames": 6,
+      "wide": false,
+      "slotSpan": [1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1]
+    }
+  },
+  "states": {
+    "inactive": {
+      "animation": "idle"
+    },
+    "charging": {
+      "animation": "light_up"
+    },
+    "activating": {
+      "animation": "action"
+    },
+    "active": {
+      "animation": "close_up"
+    }
+  },
+  "infoFrames": {
+    "default": 0,
+    "active": 1,
+    "highlight": 2,
+    "overcharged": 3,
+    "damaged": 4,
+    "ancient": 5,
+    "energized": 6,
+    "ui_focus": 7
+  },
+  "interaction": {
+    "type": "victory_gate",
+    "trigger": {
+      "onPlayerEnterRadius": true,
+      "radius": 180
+    },
+    "effects": {
+      "playFanfare": true,
+      "unlockNextStage": true,
+      "emitParticles": true
+    }
+  },
+  "render": {
+    "layer": "interactive",
+    "zIndex": 10,
+    "blend": "normal"
+  },
+  "constraints": {
+    "fixedBaseline": true,
+    "noFrameOffset": true,
+    "strictGrid": true,
+    "allowOverflow": false
+  }
+}
