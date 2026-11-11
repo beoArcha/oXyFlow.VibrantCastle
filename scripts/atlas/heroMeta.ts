@@ -28,7 +28,8 @@ export function buildHeroMeta(
 
   const animations = asObject(meta.animations);
   rows.forEach((row, rowIndex) => {
-    const existing = asObject(animations[row.config.animation]);
+    // Every animation owns a packed row now, so indices into a shared source row no longer apply.
+    const { frameIndices: _sharedRowIndices, ...existing } = asObject(animations[row.config.animation]);
     const spans = layout.placements[rowIndex].map((p) => Math.max(1, Math.ceil(p.group.extent.w / columnWidth)));
     animations[row.config.animation] = {
       ...existing,
@@ -42,6 +43,15 @@ export function buildHeroMeta(
     };
   });
   meta.animations = animations;
+
+  // Frames sit between grid slots, so the studio needs their exact rectangles to slice them.
+  const frameRects: JsonObject = {};
+  rows.forEach((row, rowIndex) => {
+    layout.placements[rowIndex].forEach((p, frame) => {
+      frameRects[`${row.config.animation}_${frame}`] = { x: p.x, y: p.y, width: p.group.extent.w, height: p.group.extent.h };
+    });
+  });
+  meta.frameRects = frameRects;
 
   const variants = asObject(meta.variants);
   for (const [quality, size] of Object.entries(tiers)) {

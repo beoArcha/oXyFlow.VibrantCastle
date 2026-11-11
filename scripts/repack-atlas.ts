@@ -67,7 +67,7 @@ function main(args: string[]): void {
   const dryRun = args.includes("--dry-run");
   const overlayIndex = args.indexOf("--overlay");
   const overlayDir = overlayIndex >= 0 ? args[overlayIndex + 1] : undefined;
-  const target = args.find((arg, i) => !arg.startsWith("--") && i !== overlayIndex + 1);
+  const target = args.find((arg, i) => !arg.startsWith("--") && (overlayIndex < 0 || i !== overlayIndex + 1));
   const { sheets, heroes = {} } = loadRepackConfig();
   const ids = args.includes("--all") ? [...Object.keys(sheets), ...Object.keys(heroes)] : target ? [target] : [];
   if (ids.length === 0) {

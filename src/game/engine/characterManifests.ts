@@ -14,10 +14,10 @@ import { SpriteExtractorFactory } from "./extractors";
 // Import Vite-bundled character assets from src/assets/characters (strictly immutable source)
 import valenMainPng from "@assets/characters/valen/valen_main.png";
 import valenPortraitsPng from "@assets/characters/valen/valen_portraits.png";
-import valenLowPng from "@assets/characters/valen/valen_level_1_low.png";
-import valenMidPng from "@assets/characters/valen/valen_level_1_mid.png";
-import valenHighPng from "@assets/characters/valen/valen_level_1_high.png";
-import valenMetaJson from "@assets/characters/valen/valen_meta.json";
+import valenLowPng from "@assets/characters/valen/valen_level_1_low_packed.png";
+import valenMidPng from "@assets/characters/valen/valen_level_1_mid_packed.png";
+import valenHighPng from "@assets/characters/valen/valen_level_1_high_packed.png";
+import valenMetaJson from "@assets/characters/valen/valen_packed_meta.json";
 
 import aureliaMainPng from "@assets/characters/aurelia/aurelia_main.png";
 import aureliaPortraitsPng from "@assets/characters/aurelia/aurelia_portraits.png";
@@ -38,7 +38,6 @@ interface ICharacterVariantLike {
  * Resolves exact atlas sheet dimensions based on bundled spritesheet asset characteristics
  */
 function getAtlasDimensions(
-  characterId: string,
   quality: AssetQuality,
   metaJson: Record<string, unknown>
 ): { cellWidth: number; cellHeight: number; sheetWidth: number; sheetHeight: number; scale: number } {
@@ -46,15 +45,7 @@ function getAtlasDimensions(
   const variant = variants?.[quality] || variants?.mid;
   const scale = variant?.scale ?? (quality === "low" ? 0.67 : quality === "high" ? 1.5 : 1);
 
-  if (characterId === "valen") {
-    if (quality === "high") {
-      return { cellWidth: 128, cellHeight: 128, sheetWidth: 1536, sheetHeight: 1024, scale: 1.5 };
-    } else if (quality === "low") {
-      return { cellWidth: 64, cellHeight: 64, sheetWidth: 768, sheetHeight: 512, scale: 0.67 };
-    } else {
-      return { cellWidth: 1024 / 12, cellHeight: 683 / 8, sheetWidth: 1024, sheetHeight: 683, scale: 1.0 };
-    }
-  } else if (characterId === "aurelia" && variant?.sheetWidth && variant.sheetHeight) {
+  if (variant?.sheetWidth && variant.sheetHeight) {
     return {
       cellWidth: variant.sheetWidth / 12,
       cellHeight: variant.sheetHeight / 8,
@@ -89,7 +80,6 @@ function buildSpriteMapFromMeta(
   const variants = metaJson.variants as Record<string, ICharacterVariantLike> | undefined;
   const variant = variants?.[quality] || variants?.mid;
   const { cellWidth, cellHeight, sheetWidth, sheetHeight, scale } = getAtlasDimensions(
-    characterId,
     quality,
     metaJson
   );

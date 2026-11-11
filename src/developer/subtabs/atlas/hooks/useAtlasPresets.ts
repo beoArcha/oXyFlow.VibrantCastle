@@ -7,6 +7,7 @@ import {
   AtlasAnimationTrackDefinition,
 } from "../types";
 import { ATLAS_PRESETS } from "../assetPresets";
+import type { IFreeformFrameRect } from "@game/engine/meta/metaSections";
 import { LoggerManager } from "@lib/logger";
 import { AssetError, ParserError, ErrorCode, GameBaseError } from "@lib/errors";
 
@@ -94,7 +95,9 @@ export function useAtlasPresets({ onTracksParsed, parseTracksFromMeta }: UseAtla
         }
         return null;
       });
-      setMetaDoc(preset.defaultMeta);
+      // Packed hero sheets place frames by island, so grid slicing would cut them; slice by the baked rectangles.
+      const frameRects = (preset.defaultMeta as { frameRects?: Record<string, IFreeformFrameRect> }).frameRects;
+      setMetaDoc(frameRects ? { ...preset.defaultMeta, slicing: { method: "freeform_rects", frames: frameRects } } : preset.defaultMeta);
       setErrorState(null);
 
       studioLogger.info(`Loaded atlas preset: ${preset.name} [${preset.id}]`, {

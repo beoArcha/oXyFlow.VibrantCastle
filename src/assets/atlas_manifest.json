@@ -7,8 +7,8 @@
       "category": "character",
       "isPopular": true,
       "tags": ["hero", "duelist", "player1", "sword"],
-      "imageRelPath": "./characters/valen/valen_level_1_high.png",
-      "metaRelPath": "./characters/valen/valen_meta.json",
+      "imageRelPath": "./characters/valen/valen_level_1_high_packed.png",
+      "metaRelPath": "./characters/valen/valen_packed_meta.json",
       "description": "Master Duelist & Arcanist player character spritesheet"
     },
     {

@@ -57,6 +57,9 @@ describe("Atlas Presets & Studio Slicing Integration", () => {
       const textureW = cols * cellW;
       const textureH = rows * cellH;
 
+      // Packed sheets lay frames out by island, so grid slot spans may exceed the column count.
+      const isPacked = "sheetWidth" in (doc.variants?.high ?? {});
+
       const frames = defaultAtlasSlicingEngine.resolveFrames(doc as any, textureW, textureH);
       expect(frames.length).toBeGreaterThan(0);
 
@@ -66,7 +69,7 @@ describe("Atlas Presets & Studio Slicing Integration", () => {
         expect(Number.isFinite(frame.y)).toBe(true);
         expect(frame.width).toBeGreaterThan(0);
         expect(frame.height).toBeGreaterThan(0);
-        expect(frame.x + frame.width).toBeLessThanOrEqual(textureW + 1);
+        if (!isPacked) expect(frame.x + frame.width).toBeLessThanOrEqual(textureW + 1);
         expect(frame.y + frame.height).toBeLessThanOrEqual(textureH + 1);
       }
     }

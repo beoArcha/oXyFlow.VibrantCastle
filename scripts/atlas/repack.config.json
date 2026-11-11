@@ -56,6 +56,26 @@
         { "animation": "cast", "detectedRow": 6, "frames": 7, "fps": 8, "drop": [[1171, 945]] },
         { "animation": "crouch", "detectedRow": 7, "frames": 2 }
       ]
+    },
+    "valen": {
+      "directory": "characters/valen",
+      "sourceStem": "valen_level_1",
+      "metaFile": "valen_meta.json",
+      "packedMetaFile": "valen_packed_meta.json",
+      "alphaThreshold": 25,
+      "marginX": 12,
+      "gapX": 24,
+      "minGapY": 7,
+      "rows": [
+        { "animation": "idle", "detectedRow": 0, "frames": 12, "fps": 8 },
+        { "animation": "run", "detectedRow": 1, "frames": 12, "fps": 12 },
+        { "animation": "jump", "detectedRow": 2, "frames": 3, "drop": [[23, 317], [139, 303], [584, 307], [696, 318], [810, 333]] },
+        { "animation": "fall", "detectedRow": 2, "frames": 1, "drop": [[23, 317], [139, 303], [261, 280], [367, 271], [584, 307], [696, 318], [810, 333]] },
+        { "animation": "attack", "detectedRow": 3, "frames": 7, "fps": 10, "drop": [[531, 499], [1219, 465]] },
+        { "animation": "dash", "detectedRow": 4, "frames": 9, "fps": 12, "drop": [[324, 628], [821, 613]] },
+        { "animation": "cast", "detectedRow": 5, "frames": 8, "fps": 8 },
+        { "animation": "crouch", "detectedRow": 2, "frames": 2, "drop": [[23, 317], [139, 303], [261, 280], [367, 271], [495, 278], [584, 307]] }
+      ]
     }
   }
 }
