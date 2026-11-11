@@ -1,0 +1,115 @@
+{
+  "characterId": "court_sentinel",
+  "entityType": "creature",
+  "version": "1.0",
+  "description": "A sturdy clockwork sentinel armed with halberd and kite shield.",
+  "atlas": {
+    "columns": 4,
+    "rows": 3,
+    "cellWidth": 96,
+    "cellHeight": 96,
+    "spacing": 0,
+    "background": "transparent",
+    "safeMargin": 1
+  },
+  "naturalFacing": "right",
+  "variants": {
+    "low": {
+      "cellWidth": 48,
+      "cellHeight": 48,
+      "scale": 0.5,
+      "file": "court_sentinel_nes.svg"
+    },
+    "mid": {
+      "cellWidth": 96,
+      "cellHeight": 96,
+      "scale": 1,
+      "file": "court_sentinel_snes.svg"
+    }
+  },
+  "animations": {
+    "idle": {
+      "row": 0,
+      "frames": 2,
+      "fps": 4,
+      "loop": true,
+      "wide": false,
+      "slotSpan": [
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1
+      ]
+    },
+    "move": {
+      "row": 1,
+      "frames": 4,
+      "fps": 8,
+      "loop": true,
+      "wide": false,
+      "slotSpan": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "hit": {
+      "row": 2,
+      "frames": 2,
+      "fps": 10,
+      "loop": false,
+      "wide": false,
+      "slotSpan": [
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1
+      ]
+    }
+  },
+  "states": {
+    "idle": {
+      "animation": "idle"
+    },
+    "move": {
+      "animation": "move"
+    },
+    "walk": {
+      "animation": "move"
+    },
+    "hit": {
+      "animation": "hit"
+    }
+  },
+  "layout": {
+    "ordering": [
+      "idle",
+      "move",
+      "hit"
+    ],
+    "origin": {
+      "type": "feet",
+      "normalized": {
+        "x": 0.5105,
+        "y": 1
+      }
+    },
+    "bodyBox": {
+      "x": 0.2188,
+      "y": 0.0729,
+      "w": 0.5833,
+      "h": 0.9271
+    }
+  }
+}
