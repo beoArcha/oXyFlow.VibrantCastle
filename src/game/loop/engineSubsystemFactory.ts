@@ -21,6 +21,7 @@ import { IPlayerController } from "../engine/playerController";
 import { IEnvironmentCollisionSystem } from "../physics/environmentCollisionSystem";
 import { GameEventBus } from "../engine/eventBus";
 import { ILogger } from "@/lib/logger";
+import type { ISpriteSourceFactory } from "../engine/sprites";
 
 export interface IEngineSubsystemHost extends IEngineContextHost {
   audio: GameAudioEngine;
@@ -37,6 +38,7 @@ export interface IEngineSubsystemHost extends IEngineContextHost {
   currentLocation: LocationDefinition;
   portalCooldownTimer: number;
   engineLogger: ILogger;
+  spriteSources: ISpriteSourceFactory;
   eventBus: GameEventBus;
   isPaused: boolean;
   setDefaultPrimaryCharacter(characterId: "valen" | "aurelia"): void;
@@ -69,6 +71,7 @@ export function createEngineControllers(
   const settingsController = new EngineSettingsController({
     audio: host.audio,
     narration: host.narrationSystem,
+    spriteSources: host.spriteSources,
     onHardwareAccelerationChanged: (enabled) => host.getRenderer()?.setHardwareAcceleration(enabled),
     onTwoPlayerChanged: (enabled) => host.setTwoPlayerMode(enabled, true),
     onPrimaryCharacterChanged: (charId) => host.setDefaultPrimaryCharacter(charId),

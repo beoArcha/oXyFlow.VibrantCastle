@@ -1,5 +1,4 @@
 import type { AssetQuality } from "../../types";
-import type { AtlasVariants } from "./atlasTypes";
 
 const CHAINS: Record<AssetQuality, readonly AssetQuality[]> = {
   low: ["low", "mid", "high"],
@@ -11,8 +10,8 @@ const CHAINS: Record<AssetQuality, readonly AssetQuality[]> = {
  * Picks the tier to draw: the requested one, else mid, high, low.
  * `failed` lists tiers that could not be loaded and must be skipped.
  */
-export function resolveVariantTier(
-  variants: AtlasVariants,
+export function resolveVariantTier<T>(
+  variants: Partial<Record<AssetQuality, T>>,
   requested: AssetQuality,
   failed?: ReadonlySet<AssetQuality>
 ): AssetQuality | null {

@@ -28,6 +28,9 @@ import { ILogger } from "@/lib/logger";
 import { createEngineControllers, IEngineControllers, IEngineSubsystemHost } from "./engineSubsystemFactory";
 import { renderEngineFrame } from "./engineFrameRenderer";
 import { IGameDependencies } from "./types";
+import { assetLoader } from "../engine/assetLoader";
+import type { ISpriteSourceFactory } from "../engine/sprites";
+import { ActorRenderer } from "../renderer/actorRenderer";
 import { defaultLocationAssetLifecycle } from "../locations/locationAssetLifecycle";
 
 export type { IGameDependencies };
@@ -53,6 +56,7 @@ export class GameEngine implements IEngineSubsystemHost {
   public readonly playerController: IPlayerController;
   public readonly environmentCollisionSystem: IEnvironmentCollisionSystem;
   public readonly logger: ILogger;
+  public readonly spriteSources: ISpriteSourceFactory;
   public readonly circuitBreaker: LoopCircuitBreaker;
 
   // Sub-controllers
@@ -83,6 +87,7 @@ export class GameEngine implements IEngineSubsystemHost {
     this.playerController = deps.playerController || defaultPlayerController;
     this.environmentCollisionSystem = deps.environmentCollisions || new EnvironmentCollisionSystem();
     this.logger = deps.logger || engineLogger;
+    this.spriteSources = deps.spriteSources || assetLoader.spriteSources;
 
     this.circuitBreaker = deps.circuitBreaker || new LoopCircuitBreaker({
       logger: this.logger,
@@ -151,7 +156,11 @@ export class GameEngine implements IEngineSubsystemHost {
 
   public attachCanvas(canvas: HTMLCanvasElement): void {
     const isGpu = this.settings.display.hardwareAcceleration !== false;
-    this.renderer = new GameRenderer(canvas, {}, { hardwareAcceleration: isGpu });
+    this.renderer = new GameRenderer(
+      canvas,
+      { actorRenderer: new ActorRenderer(undefined, this.spriteSources) },
+      { hardwareAcceleration: isGpu }
+    );
   }
 
   public setCanvasDimensions(width: number, height: number, dpr: number, filterMode: ScalingFilterMode = "pixel"): void {

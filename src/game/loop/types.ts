@@ -14,6 +14,7 @@ import { LoopCircuitBreaker } from "./loopCircuitBreaker";
 import { GameEventBus } from "../engine/eventBus";
 import { ILogger } from "@/lib/logger";
 import { gameSave } from "../logic/save";
+import type { ISpriteSourceFactory } from "../engine/sprites";
 
 /**
  * Dependency container for GameEngine (Dependency Inversion Principle - DIP).
@@ -35,4 +36,5 @@ export interface IGameDependencies {
   logger?: ILogger;
   circuitBreaker?: LoopCircuitBreaker;
   eventBus?: GameEventBus;
+  spriteSources?: ISpriteSourceFactory;
 }

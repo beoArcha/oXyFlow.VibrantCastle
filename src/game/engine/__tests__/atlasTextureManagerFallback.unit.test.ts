@@ -1,7 +1,7 @@
 import { describe, it, expect } from "bun:test";
 import { AtlasTextureManager } from "../atlas";
 import type { AtlasMeta, AtlasTextureDeps, AtlasVariants, ReleasableTexture } from "../atlas";
-import type { AssetQuality } from "../../types";
+import { SpriteSourceFactory } from "../sprites";
 
 const META = { atlas: { columns: 4, rows: 3 } } as unknown as AtlasMeta;
 
@@ -16,7 +16,6 @@ const flush = async (): Promise<void> => {
 };
 
 function setup(failing: Set<string>) {
-  const quality = { value: "high" as AssetQuality };
   const requested: string[] = [];
   const images = new Map<string, HTMLImageElement>();
   const deps: AtlasTextureDeps = {
@@ -33,7 +32,7 @@ function setup(failing: Set<string>) {
       return { source: {} as CanvasImageSource, width: 400, height: 300, crisp: true, release: () => undefined };
     },
     canLoad: () => true,
-    getQuality: () => quality.value,
+    sprites: new SpriteSourceFactory("high"),
     onChange: () => undefined,
   };
   const manager = new AtlasTextureManager(deps);

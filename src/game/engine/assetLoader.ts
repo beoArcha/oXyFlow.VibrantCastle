@@ -5,6 +5,7 @@ import { extractCharacterTextures } from "./characterTextureExtraction";
 import { assetsLogger } from "../logger/gameLogger";
 import { AssetError, ErrorCode } from "@lib/errors";
 import { ResolvedPortrait, resolveCharacterPortrait, resolveAnimationFrame } from "./portraitResolver";
+import { ISpriteSourceFactory, SpriteSourceFactory } from "./sprites";
 
 export type { ResolvedPortrait };
 
@@ -21,24 +22,28 @@ import {
 
 export type { RegisteredAtlasItem };
 
-class AssetLoaderEngine {
+const PROGRESSION_TIERS: readonly CharacterProgressionTier[] = [1, 2, 3];
+const HERO_IDS: readonly string[] = ["valen", "aurelia"];
+
+export class AssetLoaderEngine {
   private characterRegistry: Map<string, CharacterAssetManifest> = new Map();
-  private atlases = new AtlasTextureManager({
-    getImage: (url) => this.getTexture(url),
-    loadImage: (url) => this.loadTexture(url),
-    loadSvg: loadSvgTexture,
-    canLoad: () => typeof window !== "undefined",
-    getQuality: () => this.currentQuality,
-    onChange: () => this.notifyListeners(),
-  });
+  private readonly atlases: AtlasTextureManager;
   private textureCache: Map<string, HTMLImageElement> = new Map();
   private loadPromises: Map<string, Promise<HTMLImageElement>> = new Map();
   /** URLs evicted while their load was still in flight: result is released instead of cached. */
   private discardOnLoad: Set<string> = new Set();
-  private currentQuality: AssetQuality = "high";
   private listeners: Set<() => void> = new Set();
 
-  constructor() {
+  constructor(public readonly spriteSources: ISpriteSourceFactory) {
+    this.atlases = new AtlasTextureManager({
+      getImage: (url) => this.getTexture(url),
+      loadImage: (url) => this.loadTexture(url),
+      loadSvg: loadSvgTexture,
+      canLoad: () => typeof window !== "undefined",
+      sprites: spriteSources,
+      onChange: () => this.notifyListeners(),
+    });
+    spriteSources.subscribe((quality) => this.onQualityChanged(quality));
     this.registerCharacter(VALEN_MANIFEST);
     this.registerCharacter(AURELIA_MANIFEST);
 
@@ -72,6 +77,11 @@ class AssetLoaderEngine {
 
   public registerCharacter(manifest: CharacterAssetManifest) {
     this.characterRegistry.set(manifest.id, manifest);
+    this.spriteSources.registerCharacter(manifest.id, 1, manifest.spriteMaps);
+    for (const tier of PROGRESSION_TIERS) {
+      const tierManifest = manifest.tiers?.[tier];
+      if (tierManifest) this.spriteSources.registerCharacter(manifest.id, tier, tierManifest.spriteMaps);
+    }
   }
 
   public getCharacterManifest(id: string = "valen"): CharacterAssetManifest | undefined {
@@ -79,21 +89,20 @@ class AssetLoaderEngine {
   }
 
   public setQuality(quality: AssetQuality) {
-    if (this.currentQuality !== quality) {
-      this.currentQuality = quality;
-      this.atlases.setQuality(quality);
-      this.preloadCharacter("valen", quality).catch((err) =>
-        assetsLogger.warn("Failed to preload valen on quality change", { quality }, err)
-      );
-      this.preloadCharacter("aurelia", quality).catch((err) =>
-        assetsLogger.warn("Failed to preload aurelia on quality change", { quality }, err)
-      );
-      this.notifyListeners();
-    }
+    this.spriteSources.setQuality(quality);
   }
 
   public getQuality(): AssetQuality {
-    return this.currentQuality;
+    return this.spriteSources.getQuality();
+  }
+
+  private onQualityChanged(quality: AssetQuality): void {
+    for (const id of HERO_IDS) {
+      this.preloadCharacter(id, quality).catch((err) =>
+        assetsLogger.warn(`Failed to preload ${id} on quality change`, { quality }, err)
+      );
+    }
+    this.notifyListeners();
   }
 
   public subscribe(cb: () => void): () => void {
@@ -111,18 +120,10 @@ class AssetLoaderEngine {
 
   public getActiveSpriteMap(
     characterId: string = "valen",
-    quality: AssetQuality = this.currentQuality,
+    quality: AssetQuality = this.getQuality(),
     tier: CharacterProgressionTier = 1
   ): SpriteAtlasMap | null {
-    const manifest = this.characterRegistry.get(characterId);
-    if (!manifest) return null;
-
-    if (manifest.tiers && manifest.tiers[tier]) {
-      const tierManifest = manifest.tiers[tier];
-      return tierManifest.spriteMaps[quality] || tierManifest.spriteMaps.high;
-    }
-
-    return manifest.spriteMaps[quality] || manifest.spriteMaps.high;
+    return this.spriteSources.resolveCharacterSpriteMap(characterId, tier, quality);
   }
 
   /**
@@ -153,7 +154,7 @@ class AssetLoaderEngine {
         this.textureCache.set(imageUrl, img);
         extractCharacterTextures(
           this.characterRegistry.values(),
-          (id, quality, tier) => this.getActiveSpriteMap(id, quality, tier),
+          (id, quality, tier) => this.spriteSources.getCharacterVariant(id, tier, quality),
           imageUrl,
           img
         );
@@ -186,7 +187,7 @@ class AssetLoaderEngine {
    */
   public async preloadCharacter(
     characterId: string = "valen",
-    quality: AssetQuality = this.currentQuality,
+    quality: AssetQuality = this.getQuality(),
     tier: CharacterProgressionTier = 1
   ): Promise<void> {
     const manifest = this.characterRegistry.get(characterId);
@@ -194,7 +195,9 @@ class AssetLoaderEngine {
 
     const spriteMap = this.getActiveSpriteMap(characterId, quality, tier);
     if (spriteMap) {
-      await this.loadTexture(spriteMap.meta.imageUrl).catch(() => {});
+      await this.loadTexture(spriteMap.meta.imageUrl).catch(() =>
+        this.spriteSources.markCharacterTierFailed(characterId, tier, spriteMap.meta.quality)
+      );
     }
 
     if (manifest.portraitUrl) {
@@ -270,7 +273,7 @@ class AssetLoaderEngine {
     characterId: string,
     animName: AnimationName,
     frameIndex: number,
-    quality: AssetQuality = this.currentQuality,
+    quality: AssetQuality = this.getQuality(),
     tier: CharacterProgressionTier = 1
   ): { texture: HTMLImageElement | null; frame: SpriteFrame | null } {
     const spriteMap = this.getActiveSpriteMap(characterId, quality, tier);
@@ -288,4 +291,4 @@ class AssetLoaderEngine {
   }
 }
 
-export const assetLoader = new AssetLoaderEngine();
+export const assetLoader = new AssetLoaderEngine(new SpriteSourceFactory());

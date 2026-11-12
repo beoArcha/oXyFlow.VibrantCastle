@@ -75,30 +75,6 @@ describe("GameRenderer Integration & Verification", () => {
       expect(resizeCalled).toBe(true);
     });
 
-    it("sets asset quality and updates assetLoader", () => {
-      const origImage = (globalThis as any).Image;
-      try {
-        (globalThis as any).Image = class {
-          onload: any;
-          onerror: any;
-          src: string = "";
-        };
-
-        const { canvas } = createMockCanvas();
-        const renderer = new GameRenderer(canvas as any);
-
-        renderer.setAssetQuality("low");
-        expect(renderer.assetQuality).toBe("low");
-        expect(assetLoader.getQuality()).toBe("low");
-
-        renderer.setAssetQuality("high");
-        expect(renderer.assetQuality).toBe("high");
-        expect(assetLoader.getQuality()).toBe("high");
-      } finally {
-        (globalThis as any).Image = origImage;
-      }
-    });
-
     it("throws EngineError if canvas 2D context cannot be acquired", () => {
       const brokenCanvas: any = {
         width: 800,
@@ -170,7 +146,6 @@ describe("GameRenderer Integration & Verification", () => {
         camera,
         3000,
         1500,
-        "high",
         mockLocation,
         "en",
         120
@@ -266,7 +241,6 @@ describe("GameRenderer Integration & Verification", () => {
         camera,
         1000,
         1000,
-        "high",
         undefined,
         "en",
         0,
@@ -342,7 +316,6 @@ describe("GameRenderer Integration & Verification", () => {
         camera,
         1000,
         1000,
-        "high",
         undefined,
         "en",
         0,

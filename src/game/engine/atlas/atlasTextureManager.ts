@@ -7,7 +7,7 @@ import type {
   RegisteredAtlasItem,
   ResolvedAtlasSource,
 } from "./atlasTypes";
-import { resolveVariantTier } from "./atlasVariantResolver";
+import type { ISpriteSourceFactory } from "../sprites/spriteSourceTypes";
 import type { ReleasableTexture } from "./svgRaster";
 
 export interface AtlasTextureDeps {
@@ -16,7 +16,8 @@ export interface AtlasTextureDeps {
   loadImage(url: string): Promise<unknown>;
   loadSvg(src: string, columns: number): Promise<ReleasableTexture>;
   canLoad(): boolean;
-  getQuality(): AssetQuality;
+  /** Owns the quality and the tier fallback chain; the manager follows its changes. */
+  sprites: ISpriteSourceFactory;
   onChange(): void;
 }
 
@@ -43,13 +44,15 @@ function readColumns(variant: AtlasVariant): number {
 export class AtlasTextureManager {
   private readonly slots = new Map<string, AtlasSlot>();
 
-  constructor(private readonly deps: AtlasTextureDeps) {}
+  constructor(private readonly deps: AtlasTextureDeps) {
+    deps.sprites.subscribe((quality) => this.setQuality(quality));
+  }
 
   public register(entry: AtlasCatalogEntry): void {
     this.slots.get(entry.id)?.svgRasters.forEach((raster) => raster.release());
     const slot: AtlasSlot = {
       entry,
-      desired: resolveVariantTier(entry.variants, this.deps.getQuality()) ?? "high",
+      desired: this.deps.sprites.resolveTier(entry.variants) ?? "high",
       failed: new Set(),
       pending: new Set(),
       active: null,
@@ -63,7 +66,7 @@ export class AtlasTextureManager {
 
   public setQuality(quality: AssetQuality): void {
     for (const slot of this.slots.values()) {
-      slot.desired = resolveVariantTier(slot.entry.variants, quality, slot.failed) ?? slot.desired;
+      slot.desired = this.deps.sprites.resolveTier(slot.entry.variants, quality, slot.failed) ?? slot.desired;
       this.advance(slot);
     }
   }
@@ -184,7 +187,7 @@ export class AtlasTextureManager {
     slot.failed.add(tier);
     assetsLogger.warn(`Atlas variant '${tier}' of '${slot.entry.id}' failed to load`, undefined, err);
     if (this.slots.get(slot.entry.id) !== slot || slot.desired !== tier) return;
-    const fallback = resolveVariantTier(slot.entry.variants, tier, slot.failed);
+    const fallback = this.deps.sprites.resolveTier(slot.entry.variants, tier, slot.failed);
     if (fallback === null) return;
     slot.desired = fallback;
     this.advance(slot);

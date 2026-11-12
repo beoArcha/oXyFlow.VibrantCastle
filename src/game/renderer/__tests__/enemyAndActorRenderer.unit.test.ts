@@ -185,7 +185,7 @@ describe("EnemyRenderer & ActorRenderer", () => {
         facingLeft: false,
       } as unknown as Player;
 
-      actorRenderer.renderPlayers(ctx, [player1], "high", 60);
+      actorRenderer.renderPlayers(ctx, [player1], 60);
 
       expect(ctx.getSaveBalance()).toBe(0);
     });
@@ -219,7 +219,7 @@ describe("EnemyRenderer & ActorRenderer", () => {
         facingLeft: true,
       } as unknown as Player;
 
-      actorRenderer.renderPlayers(ctx, [player2], "high", 60);
+      actorRenderer.renderPlayers(ctx, [player2], 60);
 
       expect(ctx.getSaveBalance()).toBe(0);
     });

@@ -9,11 +9,13 @@ import {
 import { GameAudioEngine } from "@game/engine/audioEngine";
 import { INarrationSystem } from "@game/engine/narrationSystem";
 import { fpsManager } from "@game/engine/fpsManager";
+import type { ISpriteSourceFactory } from "@game/engine/sprites";
 import defaultSettingsJson from "@data/defaults/defaultSettings.json";
 
 export interface IEngineSettingsContext {
   audio: GameAudioEngine;
   narration: INarrationSystem;
+  spriteSources: ISpriteSourceFactory;
   onHardwareAccelerationChanged(enabled: boolean): void;
   onTwoPlayerChanged(enabled: boolean): void;
   onPrimaryCharacterChanged?(characterId: "valen" | "aurelia"): void;
@@ -44,6 +46,7 @@ export class EngineSettingsController {
         showFpsCounter: !!defaultSettingsJson.display.showFpsCounter,
       },
     };
+    this.context.spriteSources.setQuality(this.settings.display.assetQuality);
   }
 
   public setLanguage(lang: SupportedLanguage): void {
@@ -116,6 +119,9 @@ export class EngineSettingsController {
     }
     if (display.hardwareAcceleration !== undefined) {
       this.setHardwareAcceleration(display.hardwareAcceleration);
+    }
+    if (display.assetQuality !== undefined) {
+      this.context.spriteSources.setQuality(display.assetQuality);
     }
     this.settings.display = { ...this.settings.display, ...display };
   }
