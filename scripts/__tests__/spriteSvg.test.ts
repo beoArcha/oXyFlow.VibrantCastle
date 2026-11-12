@@ -9,7 +9,7 @@ import { sheetToSvg } from "../sprites/svgWriter";
 function tinySheet(rows: number[][]): SheetImage {
   const height = rows.length;
   const width = rows[0].length;
-  return { tier: "hi8bit", cell: 2, columns: 2, rows: 1, width, height, pixels: Int32Array.from(rows.flat()) };
+  return { tier: "hi8bit", cell: 2, cellHeight: 2, columns: 2, rows: 1, width, height, pixels: Int32Array.from(rows.flat()) };
 }
 
 describe("sprite colour snapping", () => {

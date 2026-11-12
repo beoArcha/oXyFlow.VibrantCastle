@@ -12,8 +12,7 @@ export function previewScale(sheetWidth: number): number {
 }
 
 function previewColor(sheet: SheetImage, scale: number, ox: number, oy: number): number {
-  const stride = sheet.cell * scale;
-  if (ox % stride === 0 || oy % stride === 0) return GRID_COLOR;
+  if (ox % (sheet.cell * scale) === 0 || oy % (sheet.cellHeight * scale) === 0) return GRID_COLOR;
   const rgb = sheet.pixels[Math.floor(oy / scale) * sheet.width + Math.floor(ox / scale)];
   if (rgb !== TRANSPARENT) return rgb;
   return CHECKER_COLORS[(Math.floor(ox / CHECKER_SIZE) + Math.floor(oy / CHECKER_SIZE)) & 1];
