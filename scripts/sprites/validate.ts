@@ -1,6 +1,6 @@
 import { snap12 } from "./colors";
 import { spriteError } from "./errors";
-import { idleBounds, measure } from "./frameStats";
+import { idleBounds, measure, type Bounds } from "./frameStats";
 import { TRANSPARENT, type PixelCanvas } from "./pixelCanvas";
 import type { RenderedTier } from "./render";
 import { definedAnimations, TIER_LABEL, type AnimationName, type EnemySpriteDefinition } from "./types";
@@ -13,16 +13,22 @@ function where(tier: RenderedTier, anim: AnimationName, frame: number): string {
   return `${TIER_LABEL[tier.tier]} animation "${anim}" frame ${frame}`;
 }
 
+/** Reports opaque pixels touching the left, right or top edge of a slot; `at` prefixes each message. */
+export function marginProblems(at: string, bounds: Bounds, width: number): string[] {
+  const problems: string[] = [];
+  if (bounds.minX === 0) problems.push(`${at}: opaque pixels touch the left edge; keep a 1 px transparent margin.`);
+  if (bounds.maxX === width - 1) problems.push(`${at}: opaque pixels touch the right edge; keep a 1 px transparent margin.`);
+  if (bounds.minY === 0) problems.push(`${at}: opaque pixels touch the top edge; keep a 1 px transparent margin.`);
+  return problems;
+}
+
 function frameProblems(def: EnemySpriteDefinition, tier: RenderedTier, anim: AnimationName, frame: number): string[] {
   const canvas = tier.frames[anim]?.[frame];
   const bounds = canvas ? measure(canvas) : null;
   const at = where(tier, anim, frame);
   if (!bounds) return [`${at}: frame is empty; draw something visible.`];
   const last = tier.cell - 1;
-  const problems: string[] = [];
-  if (bounds.minX === 0) problems.push(`${at}: opaque pixels touch the left edge; keep a 1 px transparent margin.`);
-  if (bounds.maxX === last) problems.push(`${at}: opaque pixels touch the right edge; keep a 1 px transparent margin.`);
-  if (bounds.minY === 0) problems.push(`${at}: opaque pixels touch the top edge; keep a 1 px transparent margin.`);
+  const problems = marginProblems(at, bounds, tier.cell);
   if (def.kind !== "aerial" && bounds.maxY !== last) {
     problems.push(`${at}: lowest opaque row is y=${bounds.maxY} but a ${def.kind} sprite must reach the bottom row y=${last} (feet on the floor).`);
   }
@@ -59,7 +65,7 @@ function snapped12At(canvas: PixelCanvas, x: number, y: number): number {
   return rgb === TRANSPARENT ? TRANSPARENT : snap12(rgb);
 }
 
-function sameAfterScaling(hi8bit: PixelCanvas, hi16bit: PixelCanvas): boolean {
+export function sameAfterScaling(hi8bit: PixelCanvas, hi16bit: PixelCanvas): boolean {
   const factor = hi16bit.width / hi8bit.width;
   for (let y = 0; y < hi16bit.height; y++) {
     for (let x = 0; x < hi16bit.width; x++) {
@@ -82,12 +88,12 @@ function redrawProblems(def: EnemySpriteDefinition, hi8bit: RenderedTier, hi16bi
   return problems;
 }
 
-function centerX(canvas: PixelCanvas): number | null {
+export function centerX(canvas: PixelCanvas): number | null {
   const bounds = measure(canvas);
   return bounds ? (bounds.minX + bounds.maxX + 1) / 2 : null;
 }
 
-function samePixels(a: PixelCanvas, b: PixelCanvas): boolean {
+export function samePixels(a: PixelCanvas, b: PixelCanvas): boolean {
   return a.data.every((value, i) => value === b.data[i]);
 }
 

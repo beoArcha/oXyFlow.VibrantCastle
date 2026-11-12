@@ -20,6 +20,7 @@ export interface RenderedTier {
 export interface SheetImage {
   tier: Tier;
   cell: number;
+  cellHeight: number;
   columns: number;
   rows: number;
   width: number;
@@ -69,10 +70,10 @@ export function buildSheet(def: EnemySpriteDefinition, rendered: RenderedTier): 
       blit(canvas, pixels, width, column * cell, row * cell, tier);
     });
   });
-  return { tier, cell, columns, rows: names.length, width, height, pixels };
+  return { tier, cell, cellHeight: cell, columns, rows: names.length, width, height, pixels };
 }
 
-function blit(canvas: PixelCanvas, target: Int32Array, targetWidth: number, ox: number, oy: number, tier: Tier) {
+export function blit(canvas: PixelCanvas, target: Int32Array, targetWidth: number, ox: number, oy: number, tier: Tier) {
   for (let y = 0; y < canvas.height; y++) {
     for (let x = 0; x < canvas.width; x++) {
       const rgb = canvas.pixelAt(x, y);

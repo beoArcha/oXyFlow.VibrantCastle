@@ -57,11 +57,15 @@ export interface NormalizedBox {
 
 const round4 = (n: number): number => Math.round(n * 10000) / 10000;
 
-export function normalizeBounds(bounds: Bounds, cell: number): NormalizedBox {
+export function normalizeBox(bounds: Bounds, cellWidth: number, cellHeight: number): NormalizedBox {
   return {
-    x: round4(bounds.minX / cell),
-    y: round4(bounds.minY / cell),
-    w: round4((bounds.maxX - bounds.minX + 1) / cell),
-    h: round4((bounds.maxY - bounds.minY + 1) / cell),
+    x: round4(bounds.minX / cellWidth),
+    y: round4(bounds.minY / cellHeight),
+    w: round4((bounds.maxX - bounds.minX + 1) / cellWidth),
+    h: round4((bounds.maxY - bounds.minY + 1) / cellHeight),
   };
+}
+
+export function normalizeBounds(bounds: Bounds, cell: number): NormalizedBox {
+  return normalizeBox(bounds, cell, cell);
 }
