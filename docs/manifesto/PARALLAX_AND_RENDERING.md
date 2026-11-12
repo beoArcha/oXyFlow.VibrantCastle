@@ -128,11 +128,13 @@ Source: `src/game/engine/atlas/`, `src/game/renderer/atlasSpriteRenderer.ts`.
 
 The display setting `assetQuality` (`low` | `mid` | `high`, default `high`) selects the tier an atlas draws:
 
-| Tier | Enemy and structure sheets | Character UI text |
-| :--- | :--- | :--- |
-| `low` | "NES class" SVG (12-bit colour, 48 px cells) | "16-Bit Retro Classic" |
-| `mid` | "SNES class" SVG (RGB565, 96 px cells) | "16-Bit Modern Mobile" |
-| `high` | Packed PNG sheet (`<id>_packed_high.png`) | "16-Bit Modern PC" |
+| Tier | Name | Enemy and structure sheets | Settings label |
+| :--- | :--- | :--- | :--- |
+| `low` | hi-8bit | SVG from the sprite compiler (12-bit colour, 48 px cells) | hi-8bit |
+| `mid` | hi-16bit | SVG from the sprite compiler (RGB565, 96 px cells) | hi-16bit |
+| `high` | high | Painted packed PNG sheet (`<id>_packed_high.png`) | high |
+
+The tiers are defined in `.agents/rules/content_and_assets.md` §6.1 and `docs/manifesto/CONTENT_PIPELINE.md` §5.5.
 
 - **Fallback chain** (`atlasVariantResolver.ts`, called only by `SpriteSourceFactory`, see `ENGINEERING.md` §4.3): requested `low` tries low, mid, high; requested `mid` tries mid, high, low; requested `high` tries high, mid, low. If an enemy has no usable tier at all it is drawn procedurally from `proceduralFallback` in `enemies.json`.
 - **Lazy tier switch** (`AtlasTextureManager`): only the desired tier is fetched; the previously active tier keeps drawing until the new one is ready, then it is released.
@@ -146,4 +148,4 @@ When a sheet's meta carries `layout.bodyBox` (normalized bounding box of the bod
 
 ### 6.3. Current Coverage
 
-All 11 NES/SNES SVG sheets exist (court_sentinel, chasm_crawler, chasm_gargoyle, gear_mite, aether_wisp, lantern_warden, clockwork_automaton, thorn_creeper, aether_archon, aether_sentinel, chrono_hound). Only `training_dummy` and `clockwork_owl_gargoyle` have painted `high` sheets. `shadow_knight` has no art yet. Templates that share a sheet do so through `atlas.presetId`.
+All 11 hi-8bit / hi-16bit SVG sheets exist (court_sentinel, chasm_crawler, chasm_gargoyle, gear_mite, aether_wisp, lantern_warden, clockwork_automaton, thorn_creeper, aether_archon, aether_sentinel, chrono_hound). Only `training_dummy` and `clockwork_owl_gargoyle` have painted `high` sheets. `shadow_knight` has no art yet. Templates that share a sheet do so through `atlas.presetId`.

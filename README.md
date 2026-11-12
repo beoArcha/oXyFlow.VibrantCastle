@@ -25,7 +25,7 @@ Players explore the ancient Citadel of Aether—once the seat of horologists, as
   * **Aurelia (Aetherblade Warden)**: An agile protector commanding organic celestial energy and an ethereal manifested blade.
 * **Co-op & Solo Modes**: Experience the campaign solo or in two-player cooperative play.
 * **Citadel Sectors**: Five large linked maps: the Courtyard of Awakening, the Chasm of Thorns, the Clockwork Tower, the Aether Sky Sanctuary and the Grand Bastion, each checked by an automated level-logic validator.
-* **Pixel Art Tiers**: 19 enemy types, with NES-class, SNES-class and painted art tiers selectable in the Display settings.
+* **Art Quality Tiers**: 19 enemy types drawn in one of three tiers chosen in the Display settings: `hi-8bit` (8-bit look), `hi-16bit` (16-bit look) or `high` (painted). Definitions: `docs/manifesto/CONTENT_PIPELINE.md` §5.5.
 * **Two Menu Levels**: a game menu (settings, help, inventory, skills) and a Developer Suite (Atlas Studio, Data Studio, debug, logs).
 * **Rich World & Lore**: Comprehensive documentation of characters, locations, artifacts, enemies, and lore.
 
@@ -57,7 +57,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 bun run typecheck                      # Static type check
 bun test                               # Full test suite (unit, integration, scripts, arch, e2e)
 bun scripts/validate-level.ts <id>     # Validate one map's logic
-bun scripts/sprites/compile.ts <id>    # Compile NES/SNES class enemy sheets
+bun scripts/sprites/compile.ts <id>    # Compile hi-8bit / hi-16bit enemy sheets
 bun scripts/repack-atlas.ts <id>       # Repack an AI sheet onto a clean grid
 bun run build:game                     # Production game client
 ```

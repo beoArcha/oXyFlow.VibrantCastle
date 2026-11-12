@@ -193,9 +193,9 @@ export const THEME = {
 
 The Display tab (`src/game-menu/menu/tabs/display/GraphicsQualitySection.tsx`) exposes `display.assetQuality` (`low` | `mid` | `high`, default `high`, stored with the other display settings). It selects the art tier, not resolution or effects:
 
-- `low`: NES class (12-bit SVG sheets for enemies; the 16-bit retro hero sheet).
-- `mid`: SNES class (RGB565 SVG sheets for enemies; the modern mobile hero sheet).
-- `high`: painted packed PNG sheets.
+- `low` (label "hi-8bit"): the 8-bit look, the smallest sprites and the lightest rendering. Enemies use the hi-8bit SVG sheets; the hero uses its retro sheet.
+- `mid` (label "hi-16bit"): the 16-bit look with richer shading. Enemies use the hi-16bit SVG sheets; the hero uses its modern sheet.
+- `high` (label "high"): full-colour painted sheets. The tier definitions are in `.agents/rules/content_and_assets.md` §6.1.
 
 Selecting a tier calls the engine settings path once; the engine-owned `SpriteSourceFactory` applies it and the menu previews (`useCharacterSprite`, `CharacterStage`, `AtlasSheetViewer`) follow it through `GameEngineContext.spriteSources` instead of choosing a quality themselves. If the requested tier does not exist for an asset, the factory falls back requested, then `mid`, then `high`, then `low`, then procedural drawing (`PARALLAX_AND_RENDERING.md` §6). The other display settings are `aspectRatio` (`16:10`, `16:9`, `4:3`, `auto`), `scalingFilter` (`pixel` or `smooth`), `targetFps` (30, 60, 90 or 120, which is also the simulation tick rate), `hardwareAcceleration` and `showFpsCounter`.
 
