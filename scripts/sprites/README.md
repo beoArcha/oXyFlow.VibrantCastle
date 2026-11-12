@@ -6,7 +6,7 @@ Enemy sprite sheets are authored as small TypeScript draw scripts (one enemy per
 - `<id>_hi16bit.svg` - "hi-16bit" sheet for quality tier `mid` (RGB565 colour, 96 px cells)
 - `<id>_meta.json` - atlas meta (same shape as `clockwork_owl_gargoyle_meta.json`, plus `layout.bodyBox`)
 
-Output goes to `src/assets/enemies/<id>/`. Fixtures in `__fixtures__/` are never compiled by `--all`.
+Output goes to `src/assets/enemies/<id>/`. Fixtures in `__fixtures__/` are never compiled by `--all`. Hero sheets (Valen, Aurelia) use a second contract, see [Heroes](#heroes).
 
 ## Authoring contract
 
@@ -98,6 +98,53 @@ Copy `__fixtures__/sample_golem.ts` and edit it; it passes validation as is.
 - hi-8bit: flat colours, 2-3 per material, no dithering. hi-16bit: the same silhouette with 2-3 shades per material (highlight, base, shade), plus small details (cracks, glow, rivets). Writing the draw routine once with a scale factor `s` (1 or 2) and a `detailed` flag, as the sample does, keeps both tiers consistent.
 - Give the hit animation a clear read: a white flash palette and a 1-2 px recoil.
 - Run with `--preview` and look at the PNGs before committing.
+
+## Heroes
+
+Heroes (Valen, Aurelia) use the same compiler with a second contract. This tooling ships without hero art: `scripts/sprites/heroes/` is empty and nothing in the runtime loads the output yet. `__fixtures__/sample_hero.ts` is the starting point for hero art; copy it into `heroes/<id>.ts` and replace the drawing.
+
+**Art intent.** A retro 8-bit / 16-bit look at modern pixel density: a limited palette, hard pixel edges, no anti-aliasing and a clear 1 px outline. It is not drawn at original console resolutions; the cells are as large as the painted `mid` sheet (hi-16bit) and half of that (hi-8bit). hi-8bit uses flat colours, hi-16bit adds shading and detail to the same figure.
+
+```ts
+// scripts/sprites/heroes/valen.ts
+import { defineHeroSprite } from "../defineHeroSprite";
+
+export default defineHeroSprite({
+  id: "valen",                       // snake_case
+  description: "one sentence",
+  // grid: {...}                     // optional inline grid (fixtures, tests); omitted for real heroes
+  draw: {
+    hi8bit(c, anim, frame, span)  { /* c is a PixelCanvas of (span * cellWidth) x cellHeight */ },
+    hi16bit(c, anim, frame, span) { /* same figure, more detail */ },
+  },
+});
+```
+
+`anim` is a string from the grid (today: idle, run, jump, fall, attack, dash, cast, crouch). `span` is the number of columns the frame occupies; wide frames (sword swings, dashes) get a canvas `span` cells wide, so the blade can reach into the extra slots.
+
+**Grid rules.** Without an inline `grid` the grid is read from `src/assets/characters/<id>/<id>_packed_meta.json` (read-only, single source of truth):
+
+- `layout.ordering` is the row order; per animation `frames`, `fps`, `loop` and `cells` (column span of each frame, for example Valen attack `[1, 2, 2, 2, 2, 3, 2]`).
+- Frame `f` starts at column = sum of the spans of the frames before it. The sheet has `max(atlas.columns, widest row)` columns, because the painted sheet is bin-packed and its rows can hold more spans than `atlas.columns`.
+- hi-16bit cell = packed `variants.mid` cellWidth x cellHeight, each rounded up to an even number (Valen 126x128, Aurelia 124x143 becomes 124x144). hi-8bit cell = exactly half (63x64, 62x72).
+- Idle frames all span one cell, because the body box is measured relative to one cell.
+
+**Validation** (all problems listed at once, naming tier, animation and frame):
+
+1. A frame is empty.
+2. Opaque pixels touch the left, right or top edge of the frame slot (keep a 1 px margin).
+3. Every animation except `jump` and `fall` has its feet on the bottom row of the slot.
+4. A hi-16bit frame is pixel-identical to its hi-8bit frame scaled 2x (it must be a real redraw).
+5. The idle body is shorter than 55 % of the cell height.
+
+Warnings (printed, not fatal): body centre drifting more than 10 % of the cell width between frames of the same span; two consecutive frames identical.
+
+**Output** goes to `src/assets/characters/<id>/` (with `--out <dir>`, to `<dir>/<id>/`; the grid is still read from `src/assets/characters`):
+
+- `<id>_hi8bit.svg` (12-bit colour) and `<id>_hi16bit.svg` (RGB565), written exactly like the enemy sheets.
+- `<id>_pixel_meta.json`: `characterId`, the `grid` (`ordering`, `columns`, `rows`, per animation `row`, `frames`, `fps`, `loop`, `cells`), `variants.low` (hi-8bit) and `variants.mid` (hi-16bit) with `file`, `cellWidth`, `cellHeight`, `sheetWidth`, `sheetHeight`, `scale` (cell width relative to the packed `mid` cell, so the runtime draws both tiers at the same world size) and `frameRects` (tight opaque bounds in sheet pixels keyed `<anim>_<frame>`, the format of `frameRects` in `<id>_packed_meta.json`), plus `layout.origin` (feet at the body box centre x, y 1.0) and `layout.bodyBox` (normalized, from the hi-16bit idle frames).
+
+`bun scripts/sprites/compile.ts <id>` looks the id up in `enemies/` first and `heroes/` second; `--all`, `--all --check` and `--preview <dir>` cover both kinds.
 
 ## Notes for authors
 
