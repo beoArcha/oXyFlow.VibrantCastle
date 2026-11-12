@@ -3,6 +3,9 @@ import type { PixelCanvas } from "./pixelCanvas";
 
 export type SpriteKind = "ground" | "aerial" | "static";
 export type Tier = "hi8bit" | "hi16bit";
+
+/** Human-readable tier names used in compiler messages and docs. */
+export const TIER_LABEL: Readonly<Record<Tier, string>> = { hi8bit: "hi-8bit", hi16bit: "hi-16bit" };
 export type AnimationName = "idle" | "move" | "hit" | "attack" | "death";
 
 export const ANIMATION_ORDER: readonly AnimationName[] = ["idle", "move", "hit", "attack", "death"];

@@ -23,8 +23,6 @@ const TEXT_EXTENSION = /\.(ts|tsx|js|jsx|mjs|cjs|json|md|svg|css|html|yml|yaml|t
 
 const SCANNED_ROOTS: ReadonlyArray<string> = ["src/", "scripts/", "docs/", ".agents/", "AGENTS.md", "README.md"];
 
-// Reading about a thousand tracked text files on Windows runs past the default 5 s test budget.
-const SCAN_TIMEOUT_MS = 60_000;
 
 function listTrackedFiles(): string[] {
   const listing = spawnSync("git", ["ls-files", "-z"], { cwd: repoRoot, encoding: "utf8" });
@@ -59,7 +57,7 @@ describe("Architectural Rule: Trademark-Free Naming", () => {
     const offenders = trackedFiles.filter(isScannedText).flatMap(findTrademarkLines);
 
     expect(offenders).toEqual([]);
-  }, SCAN_TIMEOUT_MS);
+  });
 
   it("flags brand tokens in identifiers and prose while ignoring ordinary words", () => {
     const brandIdentifier = ["N", "E", "S", "_PALETTE"].join("");

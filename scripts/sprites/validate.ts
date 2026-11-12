@@ -3,14 +3,14 @@ import { spriteError } from "./errors";
 import { idleBounds, measure } from "./frameStats";
 import { TRANSPARENT, type PixelCanvas } from "./pixelCanvas";
 import type { RenderedTier } from "./render";
-import { definedAnimations, type AnimationName, type EnemySpriteDefinition } from "./types";
+import { definedAnimations, TIER_LABEL, type AnimationName, type EnemySpriteDefinition } from "./types";
 
 const ASPECT_TOLERANCE = 0.4;
 const MIN_BODY_FILL = 0.55;
 const MAX_CENTER_DRIFT = 0.1;
 
 function where(tier: RenderedTier, anim: AnimationName, frame: number): string {
-  return `${tier.tier.toUpperCase()} animation "${anim}" frame ${frame}`;
+  return `${TIER_LABEL[tier.tier]} animation "${anim}" frame ${frame}`;
 }
 
 function frameProblems(def: EnemySpriteDefinition, tier: RenderedTier, anim: AnimationName, frame: number): string[] {
@@ -34,7 +34,7 @@ function bodyBoxProblems(def: EnemySpriteDefinition, tier: RenderedTier): string
   if (!bounds) return [];
   const w = bounds.maxX - bounds.minX + 1;
   const h = bounds.maxY - bounds.minY + 1;
-  const name = tier.tier.toUpperCase();
+  const name = TIER_LABEL[tier.tier];
   const problems: string[] = [];
   const bodyAspect = w / h;
   const hitAspect = def.hitbox.width / def.hitbox.height;
@@ -97,7 +97,7 @@ function animationWarnings(tier: RenderedTier, anim: AnimationName): string[] {
   const centers = frames.map(centerX).filter((c): c is number => c !== null);
   const drift = Math.max(...centers) - Math.min(...centers);
   if (centers.length > 1 && drift > tier.cell * MAX_CENTER_DRIFT) {
-    warnings.push(`${tier.tier.toUpperCase()} animation "${anim}": body centre drifts ${drift.toFixed(1)} px between frames (limit ${(tier.cell * MAX_CENTER_DRIFT).toFixed(1)}); the sprite may jitter.`);
+    warnings.push(`${TIER_LABEL[tier.tier]} animation "${anim}": body centre drifts ${drift.toFixed(1)} px between frames (limit ${(tier.cell * MAX_CENTER_DRIFT).toFixed(1)}); the sprite may jitter.`);
   }
   for (let f = 1; f < frames.length; f++) {
     if (samePixels(frames[f - 1], frames[f])) {

@@ -2,6 +2,7 @@ import { snapTo } from "./colors";
 import { spriteError } from "./errors";
 import { PixelCanvas, TRANSPARENT } from "./pixelCanvas";
 import {
+  TIER_LABEL,
   cellSize,
   definedAnimations,
   specOf,
@@ -38,7 +39,7 @@ function drawFrame(def: EnemySpriteDefinition, tier: Tier, cell: number, anim: A
   } catch (cause) {
     const reason = cause instanceof Error ? cause.message : String(cause);
     throw spriteError(
-      `Sprite "${def.id}" ${tier.toUpperCase()} animation "${anim}" frame ${frame}: ${reason}`,
+      `Sprite "${def.id}" ${TIER_LABEL[tier]} animation "${anim}" frame ${frame}: ${reason}`,
       { id: def.id, tier, anim, frame },
       cause,
     );
