@@ -34,14 +34,14 @@ interface Palette {
   slateDark: string; slateMid: string; slateLight: string;
 }
 
-const NES_PALETTE: Palette = {
+const HI8BIT_PALETTE: Palette = {
   outline: "#101018", marbleDark: "#b8c0d0", marbleMid: "#b8c0d0", marbleLight: "#b8c0d0",
   goldDark: "#d09820", goldMid: "#d09820", goldLight: "#d09820",
   cyanDark: "#20b0d0", cyanMid: "#20b0d0", cyanLight: "#20b0d0", cyanCore: "#e0ffff",
   slateDark: "#384050", slateMid: "#384050", slateLight: "#384050",
 };
 
-const SNES_PALETTE: Palette = {
+const HI16BIT_PALETTE: Palette = {
   outline: "#101018", marbleDark: "#8088a0", marbleMid: "#b8c0d0", marbleLight: "#e8f0f8",
   goldDark: "#805810", goldMid: "#d09820", goldLight: "#f8e070",
   cyanDark: "#106888", cyanMid: "#20b0d0", cyanLight: "#70e8f8", cyanCore: "#e0ffff",
@@ -245,7 +245,7 @@ function drawArmsAndSpear(b: Brush, p: Pose): void {
 
 function drawAetherArchon(c: PixelCanvas, s: number, detailed: boolean, anim: AnimationName, frame: number): void {
   const pose = POSES[anim]?.[frame] ?? POSES.idle![0];
-  const pal = pose.flash ? FLASH_PALETTE : detailed ? SNES_PALETTE : NES_PALETTE;
+  const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
 
   drawStones(b, pose, false);
@@ -270,7 +270,7 @@ export default defineEnemySprite({
     hit: { frames: 2, fps: 10, loop: false },
   },
   draw: {
-    nes: (c, anim, frame) => drawAetherArchon(c, 1, false, anim, frame),
-    snes: (c, anim, frame) => drawAetherArchon(c, 2, true, anim, frame),
+    hi8bit: (c, anim, frame) => drawAetherArchon(c, 1, false, anim, frame),
+    hi16bit: (c, anim, frame) => drawAetherArchon(c, 2, true, anim, frame),
   },
 });

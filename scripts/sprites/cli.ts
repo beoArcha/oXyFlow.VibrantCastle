@@ -61,8 +61,8 @@ export interface OutputFile {
 export function outputFiles(def: EnemySpriteDefinition, compiled: CompiledSprite, outDir: string): OutputFile[] {
   const base = join(outDir, def.id);
   return [
-    { path: join(base, `${def.id}_nes.svg`), content: compiled.nesSvg },
-    { path: join(base, `${def.id}_snes.svg`), content: compiled.snesSvg },
+    { path: join(base, `${def.id}_hi8bit.svg`), content: compiled.hi8bitSvg },
+    { path: join(base, `${def.id}_hi16bit.svg`), content: compiled.hi16bitSvg },
     { path: join(base, `${def.id}_meta.json`), content: compiled.metaJson },
   ];
 }
@@ -86,8 +86,8 @@ export function writeFiles(files: OutputFile[]): void {
 
 function writePreviews(def: EnemySpriteDefinition, compiled: CompiledSprite, dir: string): void {
   mkdirSync(dir, { recursive: true });
-  writeFileSync(join(dir, `${def.id}_nes.png`), renderPreviewPng(compiled.sheets.nes));
-  writeFileSync(join(dir, `${def.id}_snes.png`), renderPreviewPng(compiled.sheets.snes));
+  writeFileSync(join(dir, `${def.id}_hi8bit.png`), renderPreviewPng(compiled.sheets.hi8bit));
+  writeFileSync(join(dir, `${def.id}_hi16bit.png`), renderPreviewPng(compiled.sheets.hi16bit));
 }
 
 /** Compiles the requested sprites; returns the process exit code. */

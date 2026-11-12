@@ -18,8 +18,8 @@ describe("sample golem compilation", () => {
     // Assert
     const root = (cell: number) =>
       `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${columns * cell} ${rows * cell}" width="${columns * cell}" height="${rows * cell}" shape-rendering="crispEdges">\n`;
-    expect(compiled.nesSvg.startsWith(root(48))).toBe(true);
-    expect(compiled.snesSvg.startsWith(root(96))).toBe(true);
+    expect(compiled.hi8bitSvg.startsWith(root(48))).toBe(true);
+    expect(compiled.hi16bitSvg.startsWith(root(96))).toBe(true);
   });
 
   it("should write one path per colour and no other elements when serialised", () => {
@@ -27,7 +27,7 @@ describe("sample golem compilation", () => {
     const compiled = compileEnemySprite(sampleGolem);
 
     // Act
-    const lines = compiled.snesSvg.trim().split("\n").slice(1, -1);
+    const lines = compiled.hi16bitSvg.trim().split("\n").slice(1, -1);
 
     // Assert
     expect(lines.length).toBeGreaterThan(5);
@@ -61,8 +61,8 @@ describe("sample golem compilation", () => {
     expect(origin.type).toBe("feet");
     expect(origin.normalized.y).toBe(1);
     expect(origin.normalized.x).toBeCloseTo(bodyBox.x + bodyBox.w / 2, 3);
-    expect(meta.variants.low.file).toBe("sample_golem_nes.svg");
-    expect(meta.variants.mid.file).toBe("sample_golem_snes.svg");
+    expect(meta.variants.low.file).toBe("sample_golem_hi8bit.svg");
+    expect(meta.variants.mid.file).toBe("sample_golem_hi16bit.svg");
     expect(meta.states.walk).toEqual({ animation: "move" });
   });
 
@@ -103,12 +103,12 @@ describe("sprite preview PNG", () => {
     const { sheets } = compileEnemySprite(aSprite());
 
     // Act
-    const png = renderPreviewPng(sheets.nes);
+    const png = renderPreviewPng(sheets.hi8bit);
 
     // Assert
     expect(Array.from(png.subarray(0, 8))).toEqual([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
     const width = new DataView(png.buffer, png.byteOffset).getUint32(16);
-    expect(width).toBe(sheets.nes.width * Math.round(1000 / sheets.nes.width));
+    expect(width).toBe(sheets.hi8bit.width * Math.round(1000 / sheets.hi8bit.width));
   });
 });
 

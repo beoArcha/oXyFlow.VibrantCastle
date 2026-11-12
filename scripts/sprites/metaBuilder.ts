@@ -36,8 +36,8 @@ function originFor(def: EnemySpriteDefinition, box: NormalizedBox) {
 const round4 = (n: number): number => Math.round(n * 10000) / 10000;
 
 export function buildMeta(def: EnemySpriteDefinition, bodyBox: NormalizedBox) {
-  const nesCell = cellSize(def, "nes");
-  const snesCell = cellSize(def, "snes");
+  const hi8bitCell = cellSize(def, "hi8bit");
+  const hi16bitCell = cellSize(def, "hi16bit");
   const names = definedAnimations(def);
   return {
     characterId: def.id,
@@ -47,16 +47,16 @@ export function buildMeta(def: EnemySpriteDefinition, bodyBox: NormalizedBox) {
     atlas: {
       columns: sheetColumns(def),
       rows: names.length,
-      cellWidth: snesCell,
-      cellHeight: snesCell,
+      cellWidth: hi16bitCell,
+      cellHeight: hi16bitCell,
       spacing: 0,
       background: "transparent",
       safeMargin: 1,
     },
     naturalFacing: "right",
     variants: {
-      low: { cellWidth: nesCell, cellHeight: nesCell, scale: nesCell / snesCell, file: `${def.id}_nes.svg` },
-      mid: { cellWidth: snesCell, cellHeight: snesCell, scale: 1, file: `${def.id}_snes.svg` },
+      low: { cellWidth: hi8bitCell, cellHeight: hi8bitCell, scale: hi8bitCell / hi16bitCell, file: `${def.id}_hi8bit.svg` },
+      mid: { cellWidth: hi16bitCell, cellHeight: hi16bitCell, scale: 1, file: `${def.id}_hi16bit.svg` },
     },
     animations: animationsFor(def),
     states: statesFor(def),

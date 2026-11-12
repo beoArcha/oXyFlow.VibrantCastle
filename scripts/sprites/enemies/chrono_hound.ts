@@ -35,13 +35,13 @@ interface Palette {
   eyeDark: string; eyeBase: string; eyeLight: string;
 }
 
-const NES_PALETTE: Palette = {
+const HI8BIT_PALETTE: Palette = {
   outline: "#080c14", steelDark: "#1c2838", steelBase: "#304460", steelMid: "#304460", steelLight: "#506c90",
   brassDark: "#70500c", brassBase: "#c09020", brassLight: "#c09020", dialBase: "#e8ecf0", dialDark: "#304460",
   eyeDark: "#2890e8", eyeBase: "#a0e0ff", eyeLight: "#ffffff",
 };
 
-const SNES_PALETTE: Palette = {
+const HI16BIT_PALETTE: Palette = {
   outline: "#080c14", steelDark: "#1c2838", steelBase: "#304460", steelMid: "#506c90", steelLight: "#88a4c4",
   brassDark: "#70500c", brassBase: "#c09020", brassLight: "#f0d060", dialBase: "#e8ecf0", dialDark: "#a0a8b0",
   eyeDark: "#2890e8", eyeBase: "#a0e0ff", eyeLight: "#ffffff",
@@ -221,7 +221,7 @@ function drawHead(b: Brush, p: Pose): void {
 
 function drawHound(c: PixelCanvas, s: number, detailed: boolean, anim: AnimationName, frame: number): void {
   const pose = POSES[anim]?.[frame] ?? REST;
-  const pal = pose.flash ? FLASH_PALETTE : detailed ? SNES_PALETTE : NES_PALETTE;
+  const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
 
   drawLegs(b, pose, false);
@@ -245,7 +245,7 @@ export default defineEnemySprite({
     hit: { frames: 2, fps: 10, loop: false },
   },
   draw: {
-    nes: (c, anim, frame) => drawHound(c, 1, false, anim, frame),
-    snes: (c, anim, frame) => drawHound(c, 2, true, anim, frame),
+    hi8bit: (c, anim, frame) => drawHound(c, 1, false, anim, frame),
+    hi16bit: (c, anim, frame) => drawHound(c, 2, true, anim, frame),
   },
 });

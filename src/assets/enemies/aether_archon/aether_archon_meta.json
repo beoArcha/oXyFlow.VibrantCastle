@@ -18,13 +18,13 @@
       "cellWidth": 72,
       "cellHeight": 72,
       "scale": 0.5,
-      "file": "aether_archon_nes.svg"
+      "file": "aether_archon_hi8bit.svg"
     },
     "mid": {
       "cellWidth": 144,
       "cellHeight": 144,
       "scale": 1,
-      "file": "aether_archon_snes.svg"
+      "file": "aether_archon_hi16bit.svg"
     }
   },
   "animations": {

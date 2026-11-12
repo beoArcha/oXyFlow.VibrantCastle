@@ -48,19 +48,19 @@ export const GraphicsQualitySection = ({
       {
         id: "low",
         title: t("assetQualityLow"),
-        tierTag: "16-Bit Classic (36×52)",
+        tierTag: "12-bit · 48 px",
         descKey: "assetQualityLowDesc",
       },
       {
         id: "mid",
         title: t("assetQualityMid"),
-        tierTag: "16-Bit Mobile HD (52×66)",
+        tierTag: "RGB565 · 96 px",
         descKey: "assetQualityMidDesc",
       },
       {
         id: "high",
         title: t("assetQualityHigh"),
-        tierTag: "HiPixel Masterclass (72×84)",
+        tierTag: "Painted PNG",
         descKey: "assetQualityHighDesc",
       },
     ];
@@ -151,7 +151,7 @@ export const GraphicsQualitySection = ({
             </CardTitle>
             <Badge variant="amber">
               <Code variant="plain" size="2xs" className="text-inherit">
-                {displaySettings.assetQuality.toUpperCase()}
+                {assetQualities.find((item) => item.id === displaySettings.assetQuality)?.title}
               </Code>
             </Badge>
           </div>

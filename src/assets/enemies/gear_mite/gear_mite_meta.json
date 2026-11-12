@@ -18,13 +18,13 @@
       "cellWidth": 48,
       "cellHeight": 48,
       "scale": 0.5,
-      "file": "gear_mite_nes.svg"
+      "file": "gear_mite_hi8bit.svg"
     },
     "mid": {
       "cellWidth": 96,
       "cellHeight": 96,
       "scale": 1,
-      "file": "gear_mite_snes.svg"
+      "file": "gear_mite_hi16bit.svg"
     }
   },
   "animations": {

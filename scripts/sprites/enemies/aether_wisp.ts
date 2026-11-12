@@ -31,13 +31,13 @@ interface Palette {
   eye: string; sparkle: string;
 }
 
-const NES_PALETTE: Palette = {
+const HI8BIT_PALETTE: Palette = {
   outline: "#100820", rimDark: "#302068", rimMid: "#302068", glowDark: "#4878e0", glowMid: "#68c8f8",
   glowLight: "#68c8f8", core: "#f8ffff", shardDark: "#78e0d0", shardBase: "#78e0d0", shardLight: "#d0fff0",
   eye: "#201040", sparkle: "#f8ffff",
 };
 
-const SNES_PALETTE: Palette = {
+const HI16BIT_PALETTE: Palette = {
   outline: "#100820", rimDark: "#302068", rimMid: "#5038a8", glowDark: "#4878e0", glowMid: "#68c8f8",
   glowLight: "#b8f0ff", core: "#f8ffff", shardDark: "#389898", shardBase: "#78e0d0", shardLight: "#d0fff0",
   eye: "#201040", sparkle: "#ffffff",
@@ -177,7 +177,7 @@ function drawShards(b: Brush, p: Pose, cx: number, cy: number): void {
 
 function drawWisp(c: PixelCanvas, s: number, detailed: boolean, anim: AnimationName, frame: number): void {
   const pose = POSES[anim]?.[frame] ?? REST;
-  const pal = pose.flash ? FLASH_PALETTE : detailed ? SNES_PALETTE : NES_PALETTE;
+  const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
   const cx = 24 + pose.dx;
   const cy = 24 + pose.dy;
@@ -202,7 +202,7 @@ export default defineEnemySprite({
     hit: { frames: 2, fps: 10, loop: false },
   },
   draw: {
-    nes: (c, anim, frame) => drawWisp(c, 1, false, anim, frame),
-    snes: (c, anim, frame) => drawWisp(c, 2, true, anim, frame),
+    hi8bit: (c, anim, frame) => drawWisp(c, 1, false, anim, frame),
+    hi16bit: (c, anim, frame) => drawWisp(c, 2, true, anim, frame),
   },
 });

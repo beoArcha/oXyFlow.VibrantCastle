@@ -40,7 +40,7 @@ interface Palette {
   crimsonFlare: string;
 }
 
-const NES_PALETTE: Palette = {
+const HI8BIT_PALETTE: Palette = {
   outline: "#0c0a10",
   ironDark: "#24222c",
   ironMid: "#3c3a48",
@@ -54,7 +54,7 @@ const NES_PALETTE: Palette = {
   crimsonFlare: "#ff5038",
 };
 
-const SNES_PALETTE: Palette = {
+const HI16BIT_PALETTE: Palette = {
   outline: "#0c0a10",
   ironDark: "#24222c",
   ironMid: "#3c3a48",
@@ -302,7 +302,7 @@ function drawTalons(b: Brush, p: Pose): void {
 
 function drawGargoyle(c: PixelCanvas, s: number, detailed: boolean, anim: AnimationName, frame: number): void {
   const pose = POSES[anim]?.[frame] ?? POSES.idle![0];
-  const pal = pose.flash ? FLASH_PALETTE : detailed ? SNES_PALETTE : NES_PALETTE;
+  const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
 
   drawFarWing(b, pose);
@@ -327,7 +327,7 @@ export default defineEnemySprite({
     hit: { frames: 2, fps: 10, loop: false },
   },
   draw: {
-    nes: (c, anim, frame) => drawGargoyle(c, 1, false, anim, frame),
-    snes: (c, anim, frame) => drawGargoyle(c, 2, true, anim, frame),
+    hi8bit: (c, anim, frame) => drawGargoyle(c, 1, false, anim, frame),
+    hi16bit: (c, anim, frame) => drawGargoyle(c, 2, true, anim, frame),
   },
 });

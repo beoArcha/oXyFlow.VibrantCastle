@@ -2,7 +2,7 @@ import { spriteError } from "./errors";
 import type { PixelCanvas } from "./pixelCanvas";
 
 export type SpriteKind = "ground" | "aerial" | "static";
-export type Tier = "nes" | "snes";
+export type Tier = "hi8bit" | "hi16bit";
 export type AnimationName = "idle" | "move" | "hit" | "attack" | "death";
 
 export const ANIMATION_ORDER: readonly AnimationName[] = ["idle", "move", "hit", "attack", "death"];
@@ -28,14 +28,14 @@ export interface EnemySpriteDefinition {
     attack?: AnimationSpec;
     death?: AnimationSpec;
   };
-  draw: { nes: DrawFn; snes: DrawFn };
+  draw: { hi8bit: DrawFn; hi16bit: DrawFn };
 }
 
-export const NES_BASE_CELL = 48;
-export const SNES_BASE_CELL = 96;
+export const HI8BIT_BASE_CELL = 48;
+export const HI16BIT_BASE_CELL = 96;
 
 export function cellSize(def: EnemySpriteDefinition, tier: Tier): number {
-  return (tier === "nes" ? NES_BASE_CELL : SNES_BASE_CELL) * def.cellScale;
+  return (tier === "hi8bit" ? HI8BIT_BASE_CELL : HI16BIT_BASE_CELL) * def.cellScale;
 }
 
 export function definedAnimations(def: EnemySpriteDefinition): AnimationName[] {

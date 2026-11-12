@@ -24,8 +24,8 @@ interface AtlasFolder {
 const PATH_PATTERN = /(?:^|\/)(enemies|structures)\/([^/]+)\/([^/]+)$/;
 
 const SVG_TIERS: ReadonlyArray<{ tier: AssetQuality; suffix: string }> = [
-  { tier: "low", suffix: "nes" },
-  { tier: "mid", suffix: "snes" },
+  { tier: "low", suffix: "hi8bit" },
+  { tier: "mid", suffix: "hi16bit" },
 ];
 
 function isRecord(value: unknown): value is Record<string, unknown> {

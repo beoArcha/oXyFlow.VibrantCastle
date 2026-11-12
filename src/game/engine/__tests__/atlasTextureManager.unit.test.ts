@@ -221,7 +221,7 @@ describe("svg raster", () => {
   it("rasterises a 48 px cell sheet once at x4 without smoothing", async () => {
     const fake = fakeEnv(192, 144, true);
 
-    const texture = await loadSvgTexture("imp_nes.svg", 4, fake.env);
+    const texture = await loadSvgTexture("imp_hi8bit.svg", 4, fake.env);
 
     expect(texture.width).toBe(768);
     expect(texture.height).toBe(576);
@@ -233,7 +233,7 @@ describe("svg raster", () => {
   });
 
   it("rasterises a 96 px cell sheet at x2", async () => {
-    const texture = await loadSvgTexture("imp_snes.svg", 4, fakeEnv(384, 288, true).env);
+    const texture = await loadSvgTexture("imp_hi16bit.svg", 4, fakeEnv(384, 288, true).env);
 
     expect(texture.width).toBe(768);
     expect(texture.height).toBe(576);
@@ -241,7 +241,7 @@ describe("svg raster", () => {
 
   it("zeroes the canvas on release", async () => {
     const fake = fakeEnv(192, 144, true);
-    const texture = await loadSvgTexture("imp_nes.svg", 4, fake.env);
+    const texture = await loadSvgTexture("imp_hi8bit.svg", 4, fake.env);
 
     texture.release();
 
@@ -252,7 +252,7 @@ describe("svg raster", () => {
   it("degrades to the decoded image when no canvas is available", async () => {
     const fake = fakeEnv(192, 144, false);
 
-    const texture = await loadSvgTexture("imp_nes.svg", 4, fake.env);
+    const texture = await loadSvgTexture("imp_hi8bit.svg", 4, fake.env);
 
     expect(texture.source).toBe(fake.image as unknown as CanvasImageSource);
     expect(texture.width).toBe(192);
@@ -262,11 +262,11 @@ describe("svg raster", () => {
   it("rejects with an asset error when the image cannot be created", async () => {
     const env = { createImage: () => null, createCanvas: () => null };
 
-    await expect(loadSvgTexture("imp_nes.svg", 4, env)).rejects.toMatchObject({ code: "ASSET_LOAD_FAILED" });
+    await expect(loadSvgTexture("imp_hi8bit.svg", 4, env)).rejects.toMatchObject({ code: "ASSET_LOAD_FAILED" });
   });
 
   it("rejects when the svg has no intrinsic size", async () => {
-    await expect(loadSvgTexture("imp_nes.svg", 4, fakeEnv(0, 0, true).env)).rejects.toMatchObject({
+    await expect(loadSvgTexture("imp_hi8bit.svg", 4, fakeEnv(0, 0, true).env)).rejects.toMatchObject({
       code: "ASSET_CORRUPTED",
     });
   });

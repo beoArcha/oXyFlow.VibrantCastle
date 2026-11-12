@@ -18,13 +18,13 @@
       "cellWidth": 48,
       "cellHeight": 48,
       "scale": 0.5,
-      "file": "chasm_crawler_nes.svg"
+      "file": "chasm_crawler_hi8bit.svg"
     },
     "mid": {
       "cellWidth": 96,
       "cellHeight": 96,
       "scale": 1,
-      "file": "chasm_crawler_snes.svg"
+      "file": "chasm_crawler_hi16bit.svg"
     }
   },
   "animations": {

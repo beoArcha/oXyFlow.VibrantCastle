@@ -31,11 +31,11 @@ interface Palette {
   hubDark: string; hubMid: string; eyeDark: string; eyeBright: string; eyeGlint: string;
 }
 
-const NES_PALETTE: Palette = {
+const HI8BIT_PALETTE: Palette = {
   outline: "#181008", brassHi: "#d8a838", brassMid: "#d8a838", brassLow: "#a87820", brassDark: "#5c3c10",
   hubDark: "#28241c", hubMid: "#28241c", eyeDark: "#08a0b8", eyeBright: "#58e8f8", eyeGlint: "#58e8f8",
 };
-const SNES_PALETTE: Palette = {
+const HI16BIT_PALETTE: Palette = {
   outline: "#181008", brassHi: "#f8e088", brassMid: "#d8a838", brassLow: "#a87820", brassDark: "#5c3c10",
   hubDark: "#28241c", hubMid: "#48402c", eyeDark: "#08a0b8", eyeBright: "#58e8f8", eyeGlint: "#f0ffff",
 };
@@ -192,7 +192,7 @@ function drawHeadEyeAntennae(b: Brush, p: Pose): void {
 
 function drawGearMite(c: PixelCanvas, s: number, detailed: boolean, anim: AnimationName, frame: number): void {
   const pose = POSES[anim]?.[frame] ?? REST;
-  const pal = pose.flash ? FLASH_PALETTE : detailed ? SNES_PALETTE : NES_PALETTE;
+  const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
   drawLegs(b, pose, false);
   drawShell(b, pose);
@@ -213,7 +213,7 @@ export default defineEnemySprite({
     hit: { frames: 2, fps: 10, loop: false },
   },
   draw: {
-    nes: (c, anim, frame) => drawGearMite(c, 1, false, anim, frame),
-    snes: (c, anim, frame) => drawGearMite(c, 2, true, anim, frame),
+    hi8bit: (c, anim, frame) => drawGearMite(c, 1, false, anim, frame),
+    hi16bit: (c, anim, frame) => drawGearMite(c, 2, true, anim, frame),
   },
 });

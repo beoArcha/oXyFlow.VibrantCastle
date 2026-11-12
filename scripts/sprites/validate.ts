@@ -59,24 +59,24 @@ function snapped12At(canvas: PixelCanvas, x: number, y: number): number {
   return rgb === TRANSPARENT ? TRANSPARENT : snap12(rgb);
 }
 
-function sameAfterScaling(nes: PixelCanvas, snes: PixelCanvas): boolean {
-  const factor = snes.width / nes.width;
-  for (let y = 0; y < snes.height; y++) {
-    for (let x = 0; x < snes.width; x++) {
-      const small = snapped12At(nes, Math.floor(x / factor), Math.floor(y / factor));
-      if (small !== snapped12At(snes, x, y)) return false;
+function sameAfterScaling(hi8bit: PixelCanvas, hi16bit: PixelCanvas): boolean {
+  const factor = hi16bit.width / hi8bit.width;
+  for (let y = 0; y < hi16bit.height; y++) {
+    for (let x = 0; x < hi16bit.width; x++) {
+      const small = snapped12At(hi8bit, Math.floor(x / factor), Math.floor(y / factor));
+      if (small !== snapped12At(hi16bit, x, y)) return false;
     }
   }
   return true;
 }
 
-function redrawProblems(def: EnemySpriteDefinition, nes: RenderedTier, snes: RenderedTier): string[] {
+function redrawProblems(def: EnemySpriteDefinition, hi8bit: RenderedTier, hi16bit: RenderedTier): string[] {
   const problems: string[] = [];
   for (const anim of definedAnimations(def)) {
-    (snes.frames[anim] ?? []).forEach((canvas, frame) => {
-      const small = nes.frames[anim]?.[frame];
+    (hi16bit.frames[anim] ?? []).forEach((canvas, frame) => {
+      const small = hi8bit.frames[anim]?.[frame];
       if (!small || !measure(canvas) || !sameAfterScaling(small, canvas)) return;
-      problems.push(`${where(snes, anim, frame)}: identical to the NES frame after scaling; SNES must be a real redraw with more detail.`);
+      problems.push(`${where(hi16bit, anim, frame)}: identical to the hi-8bit frame after scaling; hi-16bit must be a real redraw with more detail.`);
     });
   }
   return problems;
@@ -108,18 +108,18 @@ function animationWarnings(tier: RenderedTier, anim: AnimationName): string[] {
 }
 
 /** Throws one error listing every violation; returns non-fatal warnings. */
-export function validateSprite(def: EnemySpriteDefinition, nes: RenderedTier, snes: RenderedTier): string[] {
+export function validateSprite(def: EnemySpriteDefinition, hi8bit: RenderedTier, hi16bit: RenderedTier): string[] {
   const problems: string[] = [];
-  for (const tier of [nes, snes]) {
+  for (const tier of [hi8bit, hi16bit]) {
     for (const anim of definedAnimations(def)) {
       (tier.frames[anim] ?? []).forEach((_, frame) => problems.push(...frameProblems(def, tier, anim, frame)));
     }
     problems.push(...bodyBoxProblems(def, tier));
   }
-  problems.push(...redrawProblems(def, nes, snes));
+  problems.push(...redrawProblems(def, hi8bit, hi16bit));
   if (problems.length > 0) {
     const list = problems.map((p) => `  - ${p}`).join("\n");
     throw spriteError(`Sprite "${def.id}" failed validation:\n${list}`, { id: def.id, problems });
   }
-  return [nes, snes].flatMap((tier) => definedAnimations(def).flatMap((anim) => animationWarnings(tier, anim)));
+  return [hi8bit, hi16bit].flatMap((tier) => definedAnimations(def).flatMap((anim) => animationWarnings(tier, anim)));
 }
