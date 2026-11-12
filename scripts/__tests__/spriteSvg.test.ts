@@ -9,27 +9,27 @@ import { sheetToSvg } from "../sprites/svgWriter";
 function tinySheet(rows: number[][]): SheetImage {
   const height = rows.length;
   const width = rows[0].length;
-  return { tier: "nes", cell: 2, columns: 2, rows: 1, width, height, pixels: Int32Array.from(rows.flat()) };
+  return { tier: "hi8bit", cell: 2, columns: 2, rows: 1, width, height, pixels: Int32Array.from(rows.flat()) };
 }
 
 describe("sprite colour snapping", () => {
-  it("should write 12-bit colours as #rgb when snapping for the NES tier", () => {
+  it("should write 12-bit colours as #rgb when snapping for the hi-8bit tier", () => {
     // Arrange
     const input = parseColor("#808080");
 
     // Act
-    const hex = toHex(snap12(input), "nes");
+    const hex = toHex(snap12(input), "hi8bit");
 
     // Assert
     expect(hex).toBe("#888");
   });
 
-  it("should write RGB565 colours as #rrggbb when snapping for the SNES tier", () => {
+  it("should write RGB565 colours as #rrggbb when snapping for the hi-16bit tier", () => {
     // Arrange
     const input = parseColor("#808080");
 
     // Act
-    const hex = toHex(snap565(input), "snes");
+    const hex = toHex(snap565(input), "hi16bit");
 
     // Assert
     expect(hex).toBe("#848284");
@@ -40,7 +40,7 @@ describe("sprite colour snapping", () => {
     const white = parseColor("#fff");
 
     // Act
-    const hexes = [toHex(snap12(white), "nes"), toHex(snap565(white), "snes")];
+    const hexes = [toHex(snap12(white), "hi8bit"), toHex(snap565(white), "hi16bit")];
 
     // Assert
     expect(hexes).toEqual(["#fff", "#ffffff"]);
@@ -96,7 +96,7 @@ describe("sprite SVG writer", () => {
     const second = compileEnemySprite(def);
 
     // Assert
-    expect([second.nesSvg, second.snesSvg, second.metaJson]).toEqual([first.nesSvg, first.snesSvg, first.metaJson]);
+    expect([second.hi8bitSvg, second.hi16bitSvg, second.metaJson]).toEqual([first.hi8bitSvg, first.hi16bitSvg, first.metaJson]);
   });
 
   it("should use LF newlines and no comments or extra elements when serialising", () => {
@@ -104,7 +104,7 @@ describe("sprite SVG writer", () => {
     const compiled = compileEnemySprite(aSprite());
 
     // Act
-    const body = compiled.snesSvg;
+    const body = compiled.hi16bitSvg;
 
     // Assert
     expect(body).not.toContain("\r");

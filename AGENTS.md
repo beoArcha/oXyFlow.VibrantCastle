@@ -50,10 +50,12 @@ bun run build        # Production bundle build & packaging check
 
 # Content tooling
 bun scripts/validate-level.ts <id>     # Level-logic validator for one location (exit 1 on ERROR)
-bun scripts/sprites/compile.ts <id>    # Compile NES/SNES class enemy SVG sheets (--all, --check, --preview <dir>)
+bun scripts/sprites/compile.ts <id>    # Compile hi-8bit / hi-16bit enemy SVG sheets (--all, --check, --preview <dir>)
 bun scripts/repack-atlas.ts <id>       # Repack an AI sheet into a grid-clean *_packed_high.png (--all, --dry-run, --overlay <dir>)
 bun scripts/check-parallax-seams.ts    # Report horizontal seam quality of src/assets/bg layers (warn layers need mirrorTile)
 ```
+
+Art quality tiers (`hi-8bit` = 8-bit look, `hi-16bit` = 16-bit look, `high` = painted) are defined in `.agents/rules/content_and_assets.md` §6.1 and `docs/manifesto/CONTENT_PIPELINE.md` §5.5.
 
 ---
 
@@ -61,7 +63,7 @@ bun scripts/check-parallax-seams.ts    # Report horizontal seam quality of src/a
 
 * **Milestone M0 (Deterministic Core)**: COMPLETED.
 * **Active Milestone M1**: Implementation and polish of the Courtyard sector, dual-duelist combat mechanics (Valen / Aurelia), inventory paperdoll, and visual novel dialogues.
-* **Delivered on `feat/sprites-enemies-maps`**: five rebuilt maps (6000-8000 px wide, clocktower 3000 px tall) validated by the level-logic suite, 19 enemy templates with 11 NES/SNES class SVG sheets, grid-clean repacked PNG sheets, atlas quality tiers, view culling, parallax geometry with mirrored tiles, background preload/eviction, levers that open their gate.
+* **Delivered on `feat/sprites-enemies-maps`**: five rebuilt maps (6000-8000 px wide, clocktower 3000 px tall) validated by the level-logic suite, 19 enemy templates with 11 hi-8bit / hi-16bit SVG sheets, grid-clean repacked PNG sheets, atlas quality tiers, view culling, parallax geometry with mirrored tiles, background preload/eviction, levers that open their gate.
 * **Still open for M1**: enemies deal no damage and only patrol; no ability gating; pad layout does not match the design restriction; in-game visual novel and reactive narrator are not wired. See backlog.
 
 ---
@@ -79,7 +81,7 @@ bun scripts/check-parallax-seams.ts    # Report horizontal seam quality of src/a
 
 Delivered by `feat/sprites-enemies-maps`:
 
-* [x] `[CONTENT]` Pixel sprite compiler (`scripts/sprites/`), NES/SNES class SVG sheets for 11 enemies, atlas repack tool (`scripts/repack-atlas.ts`) and frame-geometry tests.
+* [x] `[CONTENT]` Pixel sprite compiler (`scripts/sprites/`), hi-8bit / hi-16bit SVG sheets for 11 enemies, atlas repack tool (`scripts/repack-atlas.ts`) and frame-geometry tests.
 * [x] `[CONTENT]` Rebuild all five maps and add the level-logic validator (`src/tests/arch/levelLogic.test.ts`, `scripts/validate-level.ts`) with design grammar in `.agents/rules/content_and_assets.md` §7.
 * [x] `[ENGINE]` Atlas quality tiers with fallback chain and one-time SVG rasterisation; enemy atlas auto-discovery and `bodyBox` scaling.
 * [x] `[ENGINE]` View culling, parallax upscale cap with mirrored tiles, location background preload/eviction, simulation-owned enemy and structure animation clocks.
@@ -93,7 +95,7 @@ Gaps found by the design-pillar audit (see `docs/manifesto/MASTERMAP.md` §1.2):
 * [ ] `[UI]` Pad layout restricted to 2 triggers, 4 face buttons and bumpers as action selectors: today bumpers and triggers are bound directly to magic1/potions in `src/data/defaults/defaultControls.json`; introduce selector semantics (LB/RB cycle spell and potion slot, triggers fire) and update the gamepad mapper and help.
 * [ ] `[UI]` Two-level menu: game menu (menu, help, inventory, skills) and a separate development level; today the developer modal is a fifth tab ("C") in the same navigation bar, gated only by `showCreationTab`.
 * [ ] `[ENGINE]` In-game opening animation for gates; today `openGate` in `src/game/locations/leverGateUnlock.ts` teleports the gate to `y = -1000`. Needs a collision flag instead of the off-screen hack.
-* [ ] `[CONTENT]` Painted (`high`) sheets for the 11 enemies that only have NES/SNES class SVG tiers (only `training_dummy` and `clockwork_owl_gargoyle` have painted sheets).
+* [ ] `[CONTENT]` Painted (`high`) sheets for the 11 enemies that only have hi-8bit / hi-16bit SVG tiers (only `training_dummy` and `clockwork_owl_gargoyle` have painted sheets).
 * [ ] `[CONTENT]` Art for `shadow_knight`: the template exists in `enemies.json` but no sheet folder exists, so it renders procedurally.
 * [ ] `[CONTENT]` Register the remaining structure sheets (`chrono_lever`, `grand_portcullis`, `hazard_thorns`) as atlases and repack them; only `aether_gate` is registered.
 * [ ] `[CONTENT]` Autumn palette review of `aether_sanctuary` (blue/cyan theme) and the UI Aurelia cyan identity against the autumn pillar.

@@ -36,12 +36,12 @@ export function snap565(rgb: number): number {
 }
 
 export function snapTo(rgb: number, tier: Tier): number {
-  return tier === "nes" ? snap12(rgb) : snap565(rgb);
+  return tier === "hi8bit" ? snap12(rgb) : snap565(rgb);
 }
 
-/** Writes an already snapped colour: "#rgb" for NES, "#rrggbb" for SNES. */
+/** Writes an already snapped colour: "#rgb" for hi-8bit, "#rrggbb" for hi-16bit. */
 export function toHex(snapped: number, tier: Tier): string {
-  if (tier === "snes") return `#${snapped.toString(16).padStart(6, "0")}`;
+  if (tier === "hi16bit") return `#${snapped.toString(16).padStart(6, "0")}`;
   const [r, g, b] = channels(snapped);
   return `#${(r / 17).toString(16)}${(g / 17).toString(16)}${(b / 17).toString(16)}`;
 }

@@ -26,10 +26,10 @@ function files(images: string[], metas: string[]): AtlasFileMap {
 const OPTIONS = { structureAllowList: ["aether_gate"] };
 
 describe("buildAtlasCatalog", () => {
-  it("maps nes.svg to low, snes.svg to mid and the original png to high", () => {
+  it("maps hi8bit.svg to low, hi16bit.svg to mid and the original png to high", () => {
     const catalog = buildAtlasCatalog(
       files(
-        ["enemies/imp/imp_nes.svg", "enemies/imp/imp_snes.svg", "enemies/imp/imp_high.png"],
+        ["enemies/imp/imp_hi8bit.svg", "enemies/imp/imp_hi16bit.svg", "enemies/imp/imp_high.png"],
         ["enemies/imp/imp_meta.json"]
       ),
       OPTIONS
@@ -37,8 +37,8 @@ describe("buildAtlasCatalog", () => {
 
     expect(catalog).toHaveLength(1);
     const { variants } = catalog[0];
-    expect(variants.low).toMatchObject({ src: "url:enemies/imp/imp_nes.svg", format: "svg" });
-    expect(variants.mid).toMatchObject({ src: "url:enemies/imp/imp_snes.svg", format: "svg" });
+    expect(variants.low).toMatchObject({ src: "url:enemies/imp/imp_hi8bit.svg", format: "svg" });
+    expect(variants.mid).toMatchObject({ src: "url:enemies/imp/imp_hi16bit.svg", format: "svg" });
     expect(variants.high).toMatchObject({ src: "url:enemies/imp/imp_high.png", format: "png" });
     expect(catalog[0].category).toBe("enemy");
   });
@@ -67,7 +67,7 @@ describe("buildAtlasCatalog", () => {
   it("keeps the packed and shared metas separate per variant", () => {
     const catalog = buildAtlasCatalog(
       files(
-        ["enemies/imp/imp_nes.svg", "enemies/imp/imp_packed_high.png"],
+        ["enemies/imp/imp_hi8bit.svg", "enemies/imp/imp_packed_high.png"],
         ["enemies/imp/imp_meta.json", "enemies/imp/imp_packed_meta.json"]
       ),
       OPTIONS
@@ -78,7 +78,7 @@ describe("buildAtlasCatalog", () => {
 
   it("shares one parsed meta between both svg tiers", () => {
     const catalog = buildAtlasCatalog(
-      files(["enemies/imp/imp_nes.svg", "enemies/imp/imp_snes.svg"], ["enemies/imp/imp_meta.json"]),
+      files(["enemies/imp/imp_hi8bit.svg", "enemies/imp/imp_hi16bit.svg"], ["enemies/imp/imp_meta.json"]),
       OPTIONS
     );
 
@@ -111,7 +111,7 @@ describe("buildAtlasCatalog", () => {
 
   it("skips variants without a meta and folders without any variant", () => {
     const catalog = buildAtlasCatalog(
-      files(["enemies/imp/imp_nes.svg", "enemies/ghost/ghost_notes.txt.png"], []),
+      files(["enemies/imp/imp_hi8bit.svg", "enemies/ghost/ghost_notes.txt.png"], []),
       OPTIONS
     );
 
@@ -160,8 +160,8 @@ describe("buildAtlasCatalog", () => {
     const catalog = buildAtlasCatalog(
       {
         images: {
-          [`${prefix}/sample_golem_nes.svg`]: "nes",
-          [`${prefix}/sample_golem_snes.svg`]: "snes",
+          [`${prefix}/sample_golem_hi8bit.svg`]: "hi8bit",
+          [`${prefix}/sample_golem_hi16bit.svg`]: "hi16bit",
         },
         metas: {
           [`${prefix}/sample_golem_meta.json`]: JSON.parse(
@@ -172,8 +172,8 @@ describe("buildAtlasCatalog", () => {
       OPTIONS
     );
 
-    expect(catalog[0].variants.low?.src).toBe("nes");
-    expect(catalog[0].variants.mid?.src).toBe("snes");
+    expect(catalog[0].variants.low?.src).toBe("hi8bit");
+    expect(catalog[0].variants.mid?.src).toBe("hi16bit");
     expect(catalog[0].variants.high).toBeUndefined();
   });
 });

@@ -32,14 +32,14 @@ interface Palette {
   vineDark: string; vineMid: string; vineHi: string;
 }
 
-const NES_PALETTE: Palette = {
+const HI8BIT_PALETTE: Palette = {
   outline: "#0c0c04",
   barkDark: "#2c2814", barkMid: "#4c4420", barkLight: "#4c4420", barkHi: "#4c4420",
   amberDark: "#804000", amberMid: "#c07808", amberBright: "#f8a820", amberCore: "#f8e868", amberWhite: "#f8e868",
   vineDark: "#283818", vineMid: "#486028", vineHi: "#486028",
 };
 
-const SNES_PALETTE: Palette = {
+const HI16BIT_PALETTE: Palette = {
   outline: "#0c0c04",
   barkDark: "#2c2814", barkMid: "#4c4420", barkLight: "#6c6030", barkHi: "#8c8048",
   amberDark: "#804000", amberMid: "#c07808", amberBright: "#f8a820", amberCore: "#f8e868", amberWhite: "#fff8d0",
@@ -204,7 +204,7 @@ function drawVines(b: Brush, p: Pose): void {
 
 function drawCreeper(c: PixelCanvas, s: number, detailed: boolean, anim: AnimationName, frame: number): void {
   const pose = POSES[anim]?.[frame] ?? REST;
-  const pal = pose.flash ? FLASH_PALETTE : detailed ? SNES_PALETTE : NES_PALETTE;
+  const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
   drawRoots(b);
   drawBulb(b, pose);
@@ -226,7 +226,7 @@ export default defineEnemySprite({
     hit: { frames: 2, fps: 10, loop: false },
   },
   draw: {
-    nes: (c, anim, frame) => drawCreeper(c, 1, false, anim, frame),
-    snes: (c, anim, frame) => drawCreeper(c, 2, true, anim, frame),
+    hi8bit: (c, anim, frame) => drawCreeper(c, 1, false, anim, frame),
+    hi16bit: (c, anim, frame) => drawCreeper(c, 2, true, anim, frame),
   },
 });

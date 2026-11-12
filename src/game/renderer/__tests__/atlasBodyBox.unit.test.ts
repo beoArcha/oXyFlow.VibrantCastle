@@ -223,7 +223,7 @@ describe("AtlasSpriteRenderer with real metas", () => {
     });
   }
 
-  for (const [tier, cell] of [["nes", 48], ["snes", 96]] as const) {
+  for (const [tier, cell] of [["hi8bit", 48], ["hi16bit", 96]] as const) {
     it(`draws the compiled sample golem ${tier} sheet inside its texture`, () => {
       const raw = JSON.parse(
         readFileSync("src/game/engine/__tests__/__fixtures__/sample_golem/sample_golem_meta.json", "utf-8")

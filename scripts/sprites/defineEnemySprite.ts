@@ -1,8 +1,8 @@
 import { spriteError } from "./errors";
 import {
   ANIMATION_ORDER,
-  NES_BASE_CELL,
-  SNES_BASE_CELL,
+  HI8BIT_BASE_CELL,
+  HI16BIT_BASE_CELL,
   type AnimationSpec,
   type EnemySpriteDefinition,
 } from "./types";
@@ -37,7 +37,7 @@ export function defineEnemySprite(def: EnemySpriteDefinition): EnemySpriteDefini
   if (!(width > 0) || !(height > 0)) {
     throw spriteError(`Sprite "${id}" hitbox needs positive width and height.`, { id, hitbox: def.hitbox });
   }
-  const cells = [NES_BASE_CELL, SNES_BASE_CELL].map((base) => base * def.cellScale);
+  const cells = [HI8BIT_BASE_CELL, HI16BIT_BASE_CELL].map((base) => base * def.cellScale);
   if (!cells.every((cell) => Number.isInteger(cell) && cell >= 16)) {
     throw spriteError(`Sprite "${id}" cellScale ${def.cellScale} must give whole-pixel cells (try 1 or 1.5).`, { id });
   }
@@ -45,8 +45,8 @@ export function defineEnemySprite(def: EnemySpriteDefinition): EnemySpriteDefini
   for (const required of ["idle", "move", "hit"] as const) {
     if (!def.animations[required]) throw spriteError(`Sprite "${id}" must define animation "${required}".`, { id });
   }
-  if (typeof def.draw?.nes !== "function" || typeof def.draw?.snes !== "function") {
-    throw spriteError(`Sprite "${id}" needs both draw.nes and draw.snes functions.`, { id });
+  if (typeof def.draw?.hi8bit !== "function" || typeof def.draw?.hi16bit !== "function") {
+    throw spriteError(`Sprite "${id}" needs both draw.hi8bit and draw.hi16bit functions.`, { id });
   }
   return def;
 }

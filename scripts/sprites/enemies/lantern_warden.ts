@@ -36,7 +36,7 @@ interface Palette {
   pupil: string;
 }
 
-const NES_PALETTE: Palette = {
+const HI8BIT_PALETTE: Palette = {
   outline: "#140c08",
   brassDark: "#a06c1c", brassMid: "#a06c1c", brassLight: "#d8a030", brassHi: "#d8a030",
   glassDark: "#10282c", glassLight: "#10282c", glassReflect: "#10282c",
@@ -44,7 +44,7 @@ const NES_PALETTE: Palette = {
   pupil: "#140c08",
 };
 
-const SNES_PALETTE: Palette = {
+const HI16BIT_PALETTE: Palette = {
   outline: "#140c08",
   brassDark: "#5c3810", brassMid: "#a06c1c", brassLight: "#d8a030", brassHi: "#f8dc80",
   glassDark: "#10282c", glassLight: "#1c444c", glassReflect: "#2d6872",
@@ -199,7 +199,7 @@ function drawChains(b: Brush, p: Pose): void {
 
 function drawLantern(c: PixelCanvas, s: number, detailed: boolean, anim: AnimationName, frame: number): void {
   const pose = POSES[anim]?.[frame] ?? REST;
-  const pal = pose.flash ? FLASH_PALETTE : detailed ? SNES_PALETTE : NES_PALETTE;
+  const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
   drawHandle(b, pose);
   drawRoof(b, pose);
@@ -222,7 +222,7 @@ export default defineEnemySprite({
     hit: { frames: 2, fps: 10, loop: false },
   },
   draw: {
-    nes: (c, anim, frame) => drawLantern(c, 1, false, anim, frame),
-    snes: (c, anim, frame) => drawLantern(c, 2, true, anim, frame),
+    hi8bit: (c, anim, frame) => drawLantern(c, 1, false, anim, frame),
+    hi16bit: (c, anim, frame) => drawLantern(c, 2, true, anim, frame),
   },
 });

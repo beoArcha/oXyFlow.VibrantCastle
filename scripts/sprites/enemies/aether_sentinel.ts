@@ -41,7 +41,7 @@ interface Palette {
   crack: string;
 }
 
-const NES_PALETTE: Palette = {
+const HI8BIT_PALETTE: Palette = {
   outline: "#101018",
   marbleDark: "#7880a0", marbleMid: "#b0b8cc", marbleLight: "#b0b8cc",
   goldDark: "#d0a028", goldLight: "#d0a028",
@@ -49,7 +49,7 @@ const NES_PALETTE: Palette = {
   crack: "#7880a0",
 };
 
-const SNES_PALETTE: Palette = {
+const HI16BIT_PALETTE: Palette = {
   outline: "#101018",
   marbleDark: "#7880a0", marbleMid: "#b0b8cc", marbleLight: "#e0e8f4",
   goldDark: "#806010", goldLight: "#d0a028",
@@ -226,7 +226,7 @@ function drawHead(b: Brush, p: Pose): void {
 
 function drawAetherSentinel(c: PixelCanvas, s: number, detailed: boolean, anim: AnimationName, frame: number): void {
   const pose = POSES[anim]?.[frame] ?? REST;
-  const pal = pose.flash ? FLASH_PALETTE : detailed ? SNES_PALETTE : NES_PALETTE;
+  const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
 
   drawHalo(b, pose);
@@ -251,7 +251,7 @@ export default defineEnemySprite({
     hit: { frames: 2, fps: 10, loop: false },
   },
   draw: {
-    nes: (c, anim, frame) => drawAetherSentinel(c, 1, false, anim, frame),
-    snes: (c, anim, frame) => drawAetherSentinel(c, 2, true, anim, frame),
+    hi8bit: (c, anim, frame) => drawAetherSentinel(c, 1, false, anim, frame),
+    hi16bit: (c, anim, frame) => drawAetherSentinel(c, 2, true, anim, frame),
   },
 });

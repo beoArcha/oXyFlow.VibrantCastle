@@ -142,10 +142,19 @@ src/assets/locations/courtyard/far.png <-- Physical graphic texture
 
 ## 6. SVG ENEMY SHEET CONTRACT
 
-- Quality tiers for enemies: `low` = "NES class" SVG, `mid` = "SNES class" SVG, `high` = PNG animation sheet. Fallback chain when a tier is missing: requested tier -> `mid` -> `high` -> `low` -> procedural drawing.
-- Source of truth is a draw script `scripts/sprites/enemies/<id>.ts`. `bun scripts/sprites/compile.ts <id>` generates `src/assets/enemies/<id>/<id>_nes.svg`, `<id>_snes.svg` and `<id>_meta.json`. Generated files are committed and never edited by hand.
-- Both tiers use the same grid: one row per animation in the order idle, move, hit, attack (optional), death (optional); columns = the longest animation. Cell size: NES class 48 px, SNES class 96 px (large enemies use 72 / 144).
-- Colour depth: NES class 12-bit (`#rgb`, 4096 colours), SNES class 16-bit (RGB565). No limit on the number of colours; the compiler snaps colours to the tier depth.
+### 6.1. Quality tiers (canonical definition)
+
+- **`low` = hi-8bit.** The look of the 8-bit era: a small palette per sprite (the shipped enemy sheets use 10–16 colours each), flat fills, hard 1 px outlines, no gradients, no anti-aliasing, chunky silhouettes. It is drawn at a modern pixel density, not at the density of the original hardware: the base cell is 48 px, so it stays crisp on today's screens. Colours are snapped to 12-bit (`#rgb`, 4,096 colours). Cheapest tier to load and render.
+- **`mid` = hi-16bit.** The look of the 16-bit era: a richer palette (16–23 colours per enemy sheet), simple shading ramps and highlights, selective outlines, still hard pixel edges and no anti-aliasing. Base cell 96 px. Colours are snapped to RGB565 (65,536 colours).
+- **`high`.** Painted, full-colour PNG animation sheets: AI-made originals repacked onto a clean grid (`<id>_packed_high.png`, e.g. `training_dummy` cells 308 × 284 px).
+- `hi-8bit` and `hi-16bit` are generated as SVG by the pixel sprite compiler and are never edited by hand. Both are written as one `<path>` per colour, so the files stay small.
+- Fallback chain when a tier is missing: a requested `low` tries low, mid, high; a requested `mid` tries mid, high, low; a requested `high` tries high, mid, low. An enemy with no usable tier is drawn procedurally.
+
+### 6.2. Sheet contract
+
+- Source of truth is a draw script `scripts/sprites/enemies/<id>.ts`. `bun scripts/sprites/compile.ts <id>` generates `src/assets/enemies/<id>/<id>_hi8bit.svg`, `<id>_hi16bit.svg` and `<id>_meta.json`. Generated files are committed and never edited by hand.
+- Both tiers use the same grid: one row per animation in the order idle, move, hit, attack (optional), death (optional); columns = the longest animation. Cell size: hi-8bit 48 px, hi-16bit 96 px. A draw script may opt into `cellScale: 1.5` (72 / 144 px cells); only `aether_archon` does.
+- Colour depth is the only per-tier colour limit: hi-8bit 12-bit, hi-16bit RGB565. There is no cap on the number of colours per sprite; the compiler snaps colours to the tier depth.
 - SVG root carries `width`, `height`, `viewBox` and `shape-rendering="crispEdges"`; the body is one `<path>` per colour. No gradients, filters, opacity, text, images, scripts or styles.
 - Every frame stays inside its own cell with at least 1 px of empty margin on the left, right and top. Ground and static enemies stand on the bottom pixel row of the cell. Natural facing is right.
 - The meta JSON uses the same format as PNG atlas metas plus `layout.bodyBox` (normalized bounding box of the body inside one cell), which the renderer uses for scale and anchoring.

@@ -18,13 +18,13 @@
       "cellWidth": 48,
       "cellHeight": 48,
       "scale": 0.5,
-      "file": "chrono_hound_nes.svg"
+      "file": "chrono_hound_hi8bit.svg"
     },
     "mid": {
       "cellWidth": 96,
       "cellHeight": 96,
       "scale": 1,
-      "file": "chrono_hound_snes.svg"
+      "file": "chrono_hound_hi16bit.svg"
     }
   },
   "animations": {

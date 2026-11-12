@@ -36,7 +36,7 @@ interface Palette {
   steelDark: string; steelMid: string; steelHi: string;
 }
 
-const NES_PALETTE: Palette = {
+const HI8BIT_PALETTE: Palette = {
   outline: "#1a1008",
   ironDark: "#2a242c", ironMid: "#463d4d", ironLight: "#463d4d",
   bronzeDark: "#4a220e", bronzeMid: "#c46e29", bronzeLight: "#c46e29", bronzeHi: "#c46e29",
@@ -45,7 +45,7 @@ const NES_PALETTE: Palette = {
   steelDark: "#463d4d", steelMid: "#94b2c7", steelHi: "#94b2c7",
 };
 
-const SNES_PALETTE: Palette = {
+const HI16BIT_PALETTE: Palette = {
   outline: "#1a1008",
   ironDark: "#2a242c", ironMid: "#463d4d", ironLight: "#72657a",
   bronzeDark: "#4a220e", bronzeMid: "#85441a", bronzeLight: "#c46e29", bronzeHi: "#f09a40",
@@ -204,7 +204,7 @@ function drawArmAndHalberd(b: Brush, p: Pose): void {
 
 function drawSentinel(c: PixelCanvas, s: number, detailed: boolean, anim: AnimationName, frame: number): void {
   const pose = POSES[anim]?.[frame] ?? REST;
-  const pal = pose.flash ? FLASH_PALETTE : detailed ? SNES_PALETTE : NES_PALETTE;
+  const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
 
   drawKiteShield(b, pose);
@@ -229,7 +229,7 @@ export default defineEnemySprite({
     hit: { frames: 2, fps: 10, loop: false },
   },
   draw: {
-    nes: (c, anim, frame) => drawSentinel(c, 1, false, anim, frame),
-    snes: (c, anim, frame) => drawSentinel(c, 2, true, anim, frame),
+    hi8bit: (c, anim, frame) => drawSentinel(c, 1, false, anim, frame),
+    hi16bit: (c, anim, frame) => drawSentinel(c, 2, true, anim, frame),
   },
 });

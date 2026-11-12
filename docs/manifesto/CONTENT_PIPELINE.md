@@ -147,7 +147,7 @@ The enemy SVG sheet contract (grid, colour depth, meta format, fallback chain) i
 
 | Tool | Purpose |
 | :--- | :--- |
-| `bun scripts/sprites/compile.ts <id>` (`--all`, `--check`, `--preview <dir>`) | **Pixel sprite compiler**. Draw scripts in `scripts/sprites/enemies/<id>.ts` (PixelCanvas API, see `scripts/sprites/README.md`) compile to `<id>_nes.svg`, `<id>_snes.svg` and `<id>_meta.json` in `src/assets/enemies/<id>/`. Validation rejects empty frames, content touching the cell edge, floating feet, NES/SNES frames that are pixel-identical, and a body aspect far from the hitbox. `--check` fails when committed files differ from their scripts (also covered by `bun test:scripts`). |
+| `bun scripts/sprites/compile.ts <id>` (`--all`, `--check`, `--preview <dir>`) | **Pixel sprite compiler**. Draw scripts in `scripts/sprites/enemies/<id>.ts` (PixelCanvas API, see `scripts/sprites/README.md`) compile to `<id>_hi8bit.svg`, `<id>_hi16bit.svg` and `<id>_meta.json` in `src/assets/enemies/<id>/`. Validation rejects empty frames, content touching the cell edge, floating feet, hi-8bit / hi-16bit frames that are pixel-identical, and a body aspect far from the hitbox. `--check` fails when committed files differ from their scripts (also covered by `bun test:scripts`). |
 | `bun scripts/repack-atlas.ts <id>` (`--all`, `--dry-run`, `--overlay <dir>`) | **Atlas repack**. Cuts an original AI sheet (`<id>_high.png`) into islands and re-lays it on a clean grid (`<id>_packed_high.png` plus `<id>_packed_meta.json` with `bodyBox`); configuration in `scripts/atlas/repack.config.json`; hero sheets (Aurelia, Valen) are repacked the same way into `<stem>_{low,mid,high}_packed.png`. Frame geometry is verified by the tests in `scripts/__tests__/`. |
 | `bun scripts/check-parallax-seams.ts` | Reports horizontal seam quality of every PNG under `src/assets/bg`; layers that warn need `mirrorTile`. |
 | `bun scripts/validate-level.ts <id>` (`--json`) | **Level validator**, see §5.4. |
@@ -157,6 +157,18 @@ The enemy SVG sheet contract (grid, colour depth, meta format, fallback chain) i
 ### 5.4. Level-Logic Validator
 
 A map can satisfy its JSON schema and still be unplayable. `src/tests/arch/levelLogic.test.ts` (helpers in `src/tests/arch/helpers/levelLogic/`) simulates every location against the player's movement envelope. Constants are mirrored from `playerKinematics.ts` in `constants.ts`: comfortable rise 96 px, maximum rise 109 px, comfortable flat gap 170 px, maximum flat gap 216 px, dash distance 136 px, spawn drop at most 64 px. Rule groups: reachability, levers and gates, portals and entries, spawns, enemies (patrol feet on a platform, aerial clearance), layout. ERRORs fail the test; known defects would be listed in `knownLevelDefects.ts` (empty for all five maps today). The same checks run from the CLI above. The design grammar (zone sequence, 96 px steps, one lever and gate per zone) is in `.agents/rules/content_and_assets.md` §7.
+
+### 5.5. Enemy Quality Tiers
+
+The display setting `assetQuality` (`low` | `mid` | `high`) selects the art tier an enemy is drawn with. The canonical definition is `.agents/rules/content_and_assets.md` §6.1; the facts that matter for content work are:
+
+| Tier | Name | Artwork | Cell size | Colour depth |
+| :--- | :--- | :--- | :--- | :--- |
+| `low` | hi-8bit | SVG from the sprite compiler (`<id>_hi8bit.svg`) | 48 px | 12-bit, 4,096 colours |
+| `mid` | hi-16bit | SVG from the sprite compiler (`<id>_hi16bit.svg`) | 96 px | RGB565, 65,536 colours |
+| `high` | high | Painted PNG sheet (`<id>_packed_high.png`) | Set by the packed meta | Full colour |
+
+Both SVG tiers are generated and never hand-edited. Shipped sheets use 10–16 colours per enemy at hi-8bit and 16–23 at hi-16bit.
 
 ## 6. Developer Workbench Integration (`src/developer/`)
 

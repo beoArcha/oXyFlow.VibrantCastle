@@ -18,13 +18,13 @@
       "cellWidth": 48,
       "cellHeight": 48,
       "scale": 0.5,
-      "file": "lantern_warden_nes.svg"
+      "file": "lantern_warden_hi8bit.svg"
     },
     "mid": {
       "cellWidth": 96,
       "cellHeight": 96,
       "scale": 1,
-      "file": "lantern_warden_snes.svg"
+      "file": "lantern_warden_hi16bit.svg"
     }
   },
   "animations": {

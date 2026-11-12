@@ -31,11 +31,11 @@ interface Palette {
   amberGlow: string; amberBright: string; amberMid: string; amberDark: string; highlight: string;
 }
 
-const NES_PALETTE: Palette = {
+const HI8BIT_PALETTE: Palette = {
   outline: "#080808", shaleHi: "#584038", shaleMid: "#403028", shaleBase: "#403028", shaleDark: "#282018",
   amberGlow: "#f8e830", amberBright: "#f8a820", amberMid: "#b87808", amberDark: "#804000", highlight: "#f8e830",
 };
-const SNES_PALETTE: Palette = {
+const HI16BIT_PALETTE: Palette = {
   outline: "#080808", shaleHi: "#706050", shaleMid: "#584038", shaleBase: "#403028", shaleDark: "#282018",
   amberGlow: "#f8e830", amberBright: "#f8a820", amberMid: "#b87808", amberDark: "#804000", highlight: "#f8f0e8",
 };
@@ -198,7 +198,7 @@ function drawBodyAndHead(b: Brush, p: Pose): void {
 
 function drawCrawler(c: PixelCanvas, s: number, detailed: boolean, anim: AnimationName, frame: number): void {
   const pose = POSES[anim]?.[frame] ?? REST;
-  const pal = pose.flash ? FLASH_PALETTE : detailed ? SNES_PALETTE : NES_PALETTE;
+  const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
 
   drawLegs(b, pose, false);
@@ -221,7 +221,7 @@ export default defineEnemySprite({
     hit: { frames: 2, fps: 10, loop: false },
   },
   draw: {
-    nes: (c, anim, frame) => drawCrawler(c, 1, false, anim, frame),
-    snes: (c, anim, frame) => drawCrawler(c, 2, true, anim, frame),
+    hi8bit: (c, anim, frame) => drawCrawler(c, 1, false, anim, frame),
+    hi16bit: (c, anim, frame) => drawCrawler(c, 2, true, anim, frame),
   },
 });

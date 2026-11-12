@@ -1,7 +1,7 @@
 import { defineEnemySprite, type AnimationName, type PixelCanvas } from "../defineEnemySprite";
 
-// Both tiers share one drawing routine. Coordinates are written in NES pixels
-// (48 px cell); `s` is 1 for NES and 2 for SNES, so the SNES version is the same
+// Both tiers share one drawing routine. Coordinates are written in hi-8bit pixels
+// (48 px cell); `s` is 1 for hi-8bit and 2 for hi-16bit, so the hi-16bit version is the same
 // character on a 96 px cell with extra shading, cracks, moss and a glowing rune.
 
 interface Pose {
@@ -42,10 +42,10 @@ interface Palette {
   moss: string;
 }
 
-const NES_PALETTE: Palette = {
+const HI8BIT_PALETTE: Palette = {
   outline: "#223", light: "#99a", stone: "#889", shade: "#667", dark: "#445", eye: "#4ef", glow: "#4ef", moss: "#586",
 };
-const SNES_PALETTE: Palette = {
+const HI16BIT_PALETTE: Palette = {
   outline: "#1a1b26", light: "#b4b6c8", stone: "#8d8fa3", shade: "#666982", dark: "#41435a",
   eye: "#9ffaff", glow: "#2b94ad", moss: "#62844f",
 };
@@ -115,7 +115,7 @@ function drawHead(b: Brush, p: Pose): void {
 
 function drawGolem(c: PixelCanvas, s: number, detailed: boolean, anim: AnimationName, frame: number): void {
   const pose = POSES[anim]?.[frame] ?? REST;
-  const pal = pose.flash ? FLASH_PALETTE : detailed ? SNES_PALETTE : NES_PALETTE;
+  const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
   drawLeg(b, 12, pose.legL);
   drawLeg(b, 27, pose.legR);
@@ -138,7 +138,7 @@ export default defineEnemySprite({
     hit: { frames: 2, fps: 10, loop: false },
   },
   draw: {
-    nes: (c, anim, frame) => drawGolem(c, 1, false, anim, frame),
-    snes: (c, anim, frame) => drawGolem(c, 2, true, anim, frame),
+    hi8bit: (c, anim, frame) => drawGolem(c, 1, false, anim, frame),
+    hi16bit: (c, anim, frame) => drawGolem(c, 2, true, anim, frame),
   },
 });

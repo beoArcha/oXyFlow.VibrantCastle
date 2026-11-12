@@ -34,7 +34,7 @@ interface Palette {
   exhaust: string; steam: string;
 }
 
-const NES_PALETTE: Palette = {
+const HI8BIT_PALETTE: Palette = {
   outline: "#141008",
   brassDark: "#604010", brassMid: "#a87020", brassLight: "#d8a030", brassHi: "#d8a030",
   steelDark: "#303438", steelMid: "#585c64", steelLight: "#9098a0", steelHi: "#9098a0",
@@ -42,7 +42,7 @@ const NES_PALETTE: Palette = {
   exhaust: "#686058", steam: "#9098a0",
 };
 
-const SNES_PALETTE: Palette = {
+const HI16BIT_PALETTE: Palette = {
   outline: "#141008",
   brassDark: "#604010", brassMid: "#a87020", brassLight: "#d8a030", brassHi: "#f8d878",
   steelDark: "#303438", steelMid: "#585c64", steelLight: "#9098a0", steelHi: "#d0d8e0",
@@ -214,7 +214,7 @@ function drawArmAndBlade(b: Brush, p: Pose): void {
 
 function drawAutomaton(c: PixelCanvas, s: number, detailed: boolean, anim: AnimationName, frame: number): void {
   const pose = POSES[anim]?.[frame] ?? REST;
-  const pal = pose.flash ? FLASH_PALETTE : detailed ? SNES_PALETTE : NES_PALETTE;
+  const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
   drawExhaust(b, pose);
   drawBackArm(b, pose);
@@ -239,7 +239,7 @@ export default defineEnemySprite({
     hit: { frames: 2, fps: 10, loop: false },
   },
   draw: {
-    nes: (c, anim, frame) => drawAutomaton(c, 1, false, anim, frame),
-    snes: (c, anim, frame) => drawAutomaton(c, 2, true, anim, frame),
+    hi8bit: (c, anim, frame) => drawAutomaton(c, 1, false, anim, frame),
+    hi16bit: (c, anim, frame) => drawAutomaton(c, 2, true, anim, frame),
   },
 });

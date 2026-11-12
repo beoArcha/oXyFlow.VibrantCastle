@@ -3,14 +3,14 @@ import { spriteError } from "./errors";
 import { idleBounds, measure } from "./frameStats";
 import { TRANSPARENT, type PixelCanvas } from "./pixelCanvas";
 import type { RenderedTier } from "./render";
-import { definedAnimations, type AnimationName, type EnemySpriteDefinition } from "./types";
+import { definedAnimations, TIER_LABEL, type AnimationName, type EnemySpriteDefinition } from "./types";
 
 const ASPECT_TOLERANCE = 0.4;
 const MIN_BODY_FILL = 0.55;
 const MAX_CENTER_DRIFT = 0.1;
 
 function where(tier: RenderedTier, anim: AnimationName, frame: number): string {
-  return `${tier.tier.toUpperCase()} animation "${anim}" frame ${frame}`;
+  return `${TIER_LABEL[tier.tier]} animation "${anim}" frame ${frame}`;
 }
 
 function frameProblems(def: EnemySpriteDefinition, tier: RenderedTier, anim: AnimationName, frame: number): string[] {
@@ -34,7 +34,7 @@ function bodyBoxProblems(def: EnemySpriteDefinition, tier: RenderedTier): string
   if (!bounds) return [];
   const w = bounds.maxX - bounds.minX + 1;
   const h = bounds.maxY - bounds.minY + 1;
-  const name = tier.tier.toUpperCase();
+  const name = TIER_LABEL[tier.tier];
   const problems: string[] = [];
   const bodyAspect = w / h;
   const hitAspect = def.hitbox.width / def.hitbox.height;
@@ -59,24 +59,24 @@ function snapped12At(canvas: PixelCanvas, x: number, y: number): number {
   return rgb === TRANSPARENT ? TRANSPARENT : snap12(rgb);
 }
 
-function sameAfterScaling(nes: PixelCanvas, snes: PixelCanvas): boolean {
-  const factor = snes.width / nes.width;
-  for (let y = 0; y < snes.height; y++) {
-    for (let x = 0; x < snes.width; x++) {
-      const small = snapped12At(nes, Math.floor(x / factor), Math.floor(y / factor));
-      if (small !== snapped12At(snes, x, y)) return false;
+function sameAfterScaling(hi8bit: PixelCanvas, hi16bit: PixelCanvas): boolean {
+  const factor = hi16bit.width / hi8bit.width;
+  for (let y = 0; y < hi16bit.height; y++) {
+    for (let x = 0; x < hi16bit.width; x++) {
+      const small = snapped12At(hi8bit, Math.floor(x / factor), Math.floor(y / factor));
+      if (small !== snapped12At(hi16bit, x, y)) return false;
     }
   }
   return true;
 }
 
-function redrawProblems(def: EnemySpriteDefinition, nes: RenderedTier, snes: RenderedTier): string[] {
+function redrawProblems(def: EnemySpriteDefinition, hi8bit: RenderedTier, hi16bit: RenderedTier): string[] {
   const problems: string[] = [];
   for (const anim of definedAnimations(def)) {
-    (snes.frames[anim] ?? []).forEach((canvas, frame) => {
-      const small = nes.frames[anim]?.[frame];
+    (hi16bit.frames[anim] ?? []).forEach((canvas, frame) => {
+      const small = hi8bit.frames[anim]?.[frame];
       if (!small || !measure(canvas) || !sameAfterScaling(small, canvas)) return;
-      problems.push(`${where(snes, anim, frame)}: identical to the NES frame after scaling; SNES must be a real redraw with more detail.`);
+      problems.push(`${where(hi16bit, anim, frame)}: identical to the hi-8bit frame after scaling; hi-16bit must be a real redraw with more detail.`);
     });
   }
   return problems;
@@ -97,7 +97,7 @@ function animationWarnings(tier: RenderedTier, anim: AnimationName): string[] {
   const centers = frames.map(centerX).filter((c): c is number => c !== null);
   const drift = Math.max(...centers) - Math.min(...centers);
   if (centers.length > 1 && drift > tier.cell * MAX_CENTER_DRIFT) {
-    warnings.push(`${tier.tier.toUpperCase()} animation "${anim}": body centre drifts ${drift.toFixed(1)} px between frames (limit ${(tier.cell * MAX_CENTER_DRIFT).toFixed(1)}); the sprite may jitter.`);
+    warnings.push(`${TIER_LABEL[tier.tier]} animation "${anim}": body centre drifts ${drift.toFixed(1)} px between frames (limit ${(tier.cell * MAX_CENTER_DRIFT).toFixed(1)}); the sprite may jitter.`);
   }
   for (let f = 1; f < frames.length; f++) {
     if (samePixels(frames[f - 1], frames[f])) {
@@ -108,18 +108,18 @@ function animationWarnings(tier: RenderedTier, anim: AnimationName): string[] {
 }
 
 /** Throws one error listing every violation; returns non-fatal warnings. */
-export function validateSprite(def: EnemySpriteDefinition, nes: RenderedTier, snes: RenderedTier): string[] {
+export function validateSprite(def: EnemySpriteDefinition, hi8bit: RenderedTier, hi16bit: RenderedTier): string[] {
   const problems: string[] = [];
-  for (const tier of [nes, snes]) {
+  for (const tier of [hi8bit, hi16bit]) {
     for (const anim of definedAnimations(def)) {
       (tier.frames[anim] ?? []).forEach((_, frame) => problems.push(...frameProblems(def, tier, anim, frame)));
     }
     problems.push(...bodyBoxProblems(def, tier));
   }
-  problems.push(...redrawProblems(def, nes, snes));
+  problems.push(...redrawProblems(def, hi8bit, hi16bit));
   if (problems.length > 0) {
     const list = problems.map((p) => `  - ${p}`).join("\n");
     throw spriteError(`Sprite "${def.id}" failed validation:\n${list}`, { id: def.id, problems });
   }
-  return [nes, snes].flatMap((tier) => definedAnimations(def).flatMap((anim) => animationWarnings(tier, anim)));
+  return [hi8bit, hi16bit].flatMap((tier) => definedAnimations(def).flatMap((anim) => animationWarnings(tier, anim)));
 }
