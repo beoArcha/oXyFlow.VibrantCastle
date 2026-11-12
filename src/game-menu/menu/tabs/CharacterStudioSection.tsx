@@ -83,7 +83,6 @@ export const CharacterStudioSection: React.FC = () => {
           <CharacterStage
             characterId={previewCharacter}
             mood={previewMood}
-            quality={displaySettings.assetQuality}
             scalingFilter={displaySettings.scalingFilter}
             activeAction={previewAction}
             onActionChange={setPreviewAction}
@@ -99,7 +98,6 @@ export const CharacterStudioSection: React.FC = () => {
         ) : (
           <AtlasSheetViewer
             characterId={previewCharacter}
-            quality={displaySettings.assetQuality}
             activeAnimation={previewAction}
           />
         )}

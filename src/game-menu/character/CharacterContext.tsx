@@ -13,7 +13,6 @@ export interface CharacterContextValue {
 const CharacterContext = createContext<CharacterContextValue>({
   characterId: "valen",
   mood: "main",
-  quality: "high",
   tier: 1,
 });
 
@@ -33,7 +32,7 @@ export interface CharacterProviderProps {
 export const CharacterProvider: React.FC<CharacterProviderProps> = ({
   characterId,
   mood = "main",
-  quality = "high",
+  quality,
   tier = 1,
   accentColor,
   children,

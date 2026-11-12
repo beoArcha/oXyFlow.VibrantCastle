@@ -8,6 +8,7 @@ import {
   preloadCharacterAssets,
 } from "../character.mapper";
 import { useCharacterContext } from "../CharacterContext";
+import { useSpriteQuality } from "./useSpriteSources";
 
 export type CharacterSpriteState = CharacterSpriteVM;
 
@@ -24,7 +25,7 @@ export function useCharacterSprite(
 ): CharacterSpriteState {
   const context = useCharacterContext();
   const characterId = overrideCharacterId || context.characterId || "valen";
-  const quality = overrideQuality || context.quality || "high";
+  const quality = useSpriteQuality(overrideQuality || context.quality);
 
   // Support both modern (id, quality, state, tier) and legacy 5-param (id, quality, state, speed, tier)
   const tier: CharacterProgressionTier =

@@ -9,10 +9,11 @@ import { AtlasSheetType } from "./types";
 import { AtlasViewerToolbar } from "./AtlasViewerToolbar";
 import { AtlasCanvasView } from "./AtlasCanvasView";
 import { AtlasViewerFooter } from "./AtlasViewerFooter";
+import { useSpriteQuality } from "../hooks/useSpriteSources";
 
 export interface AtlasSheetViewerProps {
   readonly characterId: string;
-  readonly quality: AssetQuality;
+  readonly quality?: AssetQuality;
   readonly activeAnimation?: AnimationName;
   readonly className?: string;
 }
@@ -23,7 +24,7 @@ export interface AtlasSheetViewerProps {
  */
 export const AtlasSheetViewer: React.FC<AtlasSheetViewerProps> = React.memo(({
   characterId,
-  quality,
+  quality: qualityOverride,
   activeAnimation = "idle",
   className = "",
 }) => {
@@ -37,6 +38,7 @@ export const AtlasSheetViewer: React.FC<AtlasSheetViewerProps> = React.memo(({
   });
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const quality = useSpriteQuality(qualityOverride);
 
   // Resolve texture URL and grid configuration via adapter
   const meta = resolveAtlasSheetMetaVM(characterId, quality);

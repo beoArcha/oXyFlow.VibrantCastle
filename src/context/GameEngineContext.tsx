@@ -10,6 +10,7 @@ import React, {
 import { Player } from "@game/types";
 import defaultGameEngine, { GameEngine } from "@game/loop/engine";
 import { GameEventBus } from "@game/engine/eventBus";
+import type { ISpriteSourceFactory } from "@game/engine/sprites";
 import {
   getAllLocations,
   getLocation,
@@ -33,6 +34,8 @@ export interface GameEngineContextValue {
   narration: string;
   subAnim: boolean;
   eventBus: GameEventBus;
+  /** Resolves which art tier is drawn; the menu reads previews through the same instance as the canvas. */
+  spriteSources: ISpriteSourceFactory;
 
   setPaused: (paused: boolean) => void;
   togglePause: (forceState?: boolean) => boolean;
@@ -231,6 +234,7 @@ export const GameEngineProvider: React.FC<GameEngineProviderProps> = ({
       narration: currentNarration,
       subAnim,
       eventBus: engine.eventBus,
+      spriteSources: engine.spriteSources,
       setPaused,
       togglePause,
       restart,
@@ -253,6 +257,7 @@ export const GameEngineProvider: React.FC<GameEngineProviderProps> = ({
       currentNarration,
       subAnim,
       engine.eventBus,
+      engine.spriteSources,
       setPaused,
       togglePause,
       restart,
