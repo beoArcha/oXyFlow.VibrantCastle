@@ -10,4 +10,6 @@ The graphics quality setting (in the in-game menu, display settings) changes how
 
 Enemies that do not have a painted sheet yet use the SNES class art on High, so no enemy is ever left without a sprite.
 
+Changes apply immediately, with no restart: heroes and enemies switch to the chosen tier as soon as you pick it.
+
 If the game feels slow on your device, lower the quality first; the level layout and gameplay stay exactly the same on every tier.
