@@ -89,7 +89,7 @@ describe("Renderer Optimization & Zero GC Pressure", () => {
       const ctx = createMockContext();
       const actorRenderer = new ActorRenderer();
 
-      actorRenderer.renderPlayers(ctx, [mockPlayer], "high", 60);
+      actorRenderer.renderPlayers(ctx, [mockPlayer], 60);
 
       expect(ctx.getSaveBalance()).toBe(0);
       expect(ctx.getSaveCount()).toBeGreaterThan(0);

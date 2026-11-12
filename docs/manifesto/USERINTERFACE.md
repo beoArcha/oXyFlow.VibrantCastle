@@ -197,7 +197,7 @@ The Display tab (`src/game-menu/menu/tabs/display/GraphicsQualitySection.tsx`) e
 - `mid`: SNES class (RGB565 SVG sheets for enemies; the modern mobile hero sheet).
 - `high`: painted packed PNG sheets.
 
-If the requested tier does not exist for an asset, the renderer falls back requested, then `mid`, then `high`, then `low`, then procedural drawing (`PARALLAX_AND_RENDERING.md` §6). The other display settings are `aspectRatio` (`16:10`, `16:9`, `4:3`, `auto`), `scalingFilter` (`pixel` or `smooth`), `targetFps` (30, 60, 90 or 120, which is also the simulation tick rate), `hardwareAcceleration` and `showFpsCounter`.
+Selecting a tier calls the engine settings path once; the engine-owned `SpriteSourceFactory` applies it and the menu previews (`useCharacterSprite`, `CharacterStage`, `AtlasSheetViewer`) follow it through `GameEngineContext.spriteSources` instead of choosing a quality themselves. If the requested tier does not exist for an asset, the factory falls back requested, then `mid`, then `high`, then `low`, then procedural drawing (`PARALLAX_AND_RENDERING.md` §6). The other display settings are `aspectRatio` (`16:10`, `16:9`, `4:3`, `auto`), `scalingFilter` (`pixel` or `smooth`), `targetFps` (30, 60, 90 or 120, which is also the simulation tick rate), `hardwareAcceleration` and `showFpsCounter`.
 
 ### 6.3. Controls UI
 

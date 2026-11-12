@@ -29,15 +29,15 @@ describe("GameRenderer - Determinism, Schema Immutability & Proxy Elimination", 
       expect(renderer.currentTickCount).toBe(0);
 
       // Render with explicit tickCount = 42
-      renderer.render([], [], [], [], [], mockCamera, 2000, 1000, "high", undefined, "en", 42);
+      renderer.render([], [], [], [], [], mockCamera, 2000, 1000, undefined, "en", 42);
       expect(renderer.currentTickCount).toBe(42);
 
       // Render again with tickCount = 42.5 (e.g. sub-frame interpolation)
-      renderer.render([], [], [], [], [], mockCamera, 2000, 1000, "high", undefined, "en", 42.5);
+      renderer.render([], [], [], [], [], mockCamera, 2000, 1000, undefined, "en", 42.5);
       expect(renderer.currentTickCount).toBe(42.5);
 
       // Verify that re-rendering without advancing simulation does not accumulate drift
-      renderer.render([], [], [], [], [], mockCamera, 2000, 1000, "high", undefined, "en", 42.5);
+      renderer.render([], [], [], [], [], mockCamera, 2000, 1000, undefined, "en", 42.5);
       expect(renderer.currentTickCount).toBe(42.5);
     });
 
@@ -152,7 +152,7 @@ describe("GameRenderer - Determinism, Schema Immutability & Proxy Elimination", 
         },
       ];
 
-      renderer.render([], [], mockEntities, [], [], mockCamera, 2000, 1000, "high", undefined, "en", 10);
+      renderer.render([], [], mockEntities, [], [], mockCamera, 2000, 1000, undefined, "en", 10);
       expect(renderCalled).toBe(true);
     });
 
@@ -168,7 +168,7 @@ describe("GameRenderer - Determinism, Schema Immutability & Proxy Elimination", 
         levelEntityRenderer: legacyRenderer as any,
       });
 
-      renderer.render([], [], [{ id: "e1" } as any], [], [], mockCamera, 2000, 1000, "high", undefined, "en", 10);
+      renderer.render([], [], [{ id: "e1" } as any], [], [], mockCamera, 2000, 1000, undefined, "en", 10);
       expect(legacyRenderCalled).toBe(true);
     });
   });

@@ -11,6 +11,7 @@ import {
   AnimationTrackSelectionProps,
 } from "./types";
 import { CharacterProvider } from "./CharacterContext";
+import { useSpriteQuality } from "./hooks/useSpriteSources";
 import { CharacterPortrait } from "./CharacterPortrait";
 import { CharacterSpritePreview } from "./CharacterSpritePreview";
 import { CharacterStageControls } from "./CharacterStageControls";
@@ -18,7 +19,8 @@ import { CharacterStageControls } from "./CharacterStageControls";
 export interface CharacterStageBaseProps {
   readonly characterId: string;
   readonly mood?: string;
-  readonly quality: AssetQuality;
+  /** Pins a tier; omitted, the stage follows the graphics setting resolved by the sprite source factory. */
+  readonly quality?: AssetQuality;
   readonly scalingFilter?: string;
   readonly className?: string;
 }
@@ -35,7 +37,7 @@ export type CharacterStageProps = CharacterStageBaseProps &
 export const CharacterStage: React.FC<CharacterStageProps> = React.memo(({
   characterId,
   mood = "neutral",
-  quality,
+  quality: qualityOverride,
   scalingFilter = "pixelated",
   activeAction = "idle",
   onActionChange,
@@ -50,6 +52,7 @@ export const CharacterStage: React.FC<CharacterStageProps> = React.memo(({
   className,
 }) => {
   const { t } = useI18n();
+  const quality = useSpriteQuality(qualityOverride);
   const profile = resolveCharacterProfileVM(characterId);
 
   const handleActionChange = onActionChange ?? (() => { });

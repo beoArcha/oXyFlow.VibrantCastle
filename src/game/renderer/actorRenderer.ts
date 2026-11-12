@@ -1,5 +1,7 @@
-import { Player, Enemy, AssetQuality } from "@game/types";
+import { Player, Enemy } from "@game/types";
 import { SpriteAnimator } from "@game/engine/spriteAnimator";
+import { assetLoader } from "@game/engine/assetLoader";
+import type { ISpriteSourceFactory } from "@game/engine/sprites";
 import { ViewCuller } from "./viewCulling";
 import { IEnemyRenderer, defaultEnemyRenderer } from "./enemyRenderer";
 
@@ -7,7 +9,6 @@ export interface IActorRenderer {
   renderPlayers(
     ctx: CanvasRenderingContext2D,
     players: Player[],
-    assetQuality: AssetQuality,
     tickCount: number
   ): void;
 
@@ -25,15 +26,19 @@ export interface IActorRenderer {
  */
 export class ActorRenderer implements IActorRenderer {
   private readonly enemyRenderer: IEnemyRenderer;
+  private readonly spriteSources: ISpriteSourceFactory;
 
-  constructor(enemyRenderer: IEnemyRenderer = defaultEnemyRenderer) {
+  constructor(
+    enemyRenderer: IEnemyRenderer = defaultEnemyRenderer,
+    spriteSources: ISpriteSourceFactory = assetLoader.spriteSources
+  ) {
     this.enemyRenderer = enemyRenderer;
+    this.spriteSources = spriteSources;
   }
 
   public renderPlayers(
     ctx: CanvasRenderingContext2D,
     players: Player[],
-    assetQuality: AssetQuality,
     tickCount: number
   ): void {
     for (let i = 0; i < players.length; i++) {
@@ -58,7 +63,7 @@ export class ActorRenderer implements IActorRenderer {
       ctx.translate(-feetX, -feetY);
 
       // Render character with Engine SpriteAnimator & loaded PNG Sprite Maps
-      SpriteAnimator.renderPlayer(ctx, player, assetQuality, tickCount);
+      SpriteAnimator.renderPlayer(ctx, player, this.spriteSources.getQuality(), tickCount);
 
       // Prismatic Shield Active Aura
       if (player.shieldActiveTime > 0) {

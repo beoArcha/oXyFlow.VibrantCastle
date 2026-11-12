@@ -134,11 +134,11 @@ The display setting `assetQuality` (`low` | `mid` | `high`, default `high`) sele
 | `mid` | "SNES class" SVG (RGB565, 96 px cells) | "16-Bit Modern Mobile" |
 | `high` | Packed PNG sheet (`<id>_packed_high.png`) | "16-Bit Modern PC" |
 
-- **Fallback chain** (`atlasVariantResolver.ts`): requested `low` tries low, mid, high; requested `mid` tries mid, high, low; requested `high` tries high, mid, low. If an enemy has no usable tier at all it is drawn procedurally from `proceduralFallback` in `enemies.json`.
+- **Fallback chain** (`atlasVariantResolver.ts`, called only by `SpriteSourceFactory`, see `ENGINEERING.md` §4.3): requested `low` tries low, mid, high; requested `mid` tries mid, high, low; requested `high` tries high, mid, low. If an enemy has no usable tier at all it is drawn procedurally from `proceduralFallback` in `enemies.json`.
 - **Lazy tier switch** (`AtlasTextureManager`): only the desired tier is fetched; the previously active tier keeps drawing until the new one is ready, then it is released.
 - **SVG rasterised once** (`svgRaster.ts`): SVG sheets are drawn into an offscreen canvas at an integer scale so a cell is at least 192 px wide (48 to x4, 96 to x2, 72 to x3, 144 to x2); `render()` only blits from that bitmap.
 - **Auto-discovery** (`atlasFileDiscovery.ts`): every `src/assets/enemies/<id>/` and `src/assets/structures/<id>/` folder is collected (Vite `import.meta.glob`, filesystem fallback under Bun). Only `*_packed_high.png` and `*.svg` images are bundled; original AI sheets (`*_high.png`) are repack inputs and never shipped. Of the structure folders only `aether_gate` is registered as an atlas.
-- Hero sheets (`src/assets/characters/`) are chosen by the same setting through the sprite animator and, for Aurelia, have repacked variants.
+- Hero sheets (`src/assets/characters/`) are chosen by the same setting: `SpriteSourceFactory.resolveCharacterSpriteMap` returns the sprite map for the current quality and progression tier, and the sprite animator draws it. The `mid` and `high` hero sheets are currently the same image; only `low` is half resolution.
 
 ### 6.2. Scale and Anchor from `bodyBox`
 

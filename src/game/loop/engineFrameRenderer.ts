@@ -56,7 +56,6 @@ export function renderEngineFrame(host: IEngineFrameRenderHost, interpolationAlp
     cameraState,
     host.levelWidth,
     host.levelHeight,
-    host.settings.display.assetQuality,
     host.currentLocation,
     host.settings.language,
     continuousTick,

@@ -102,7 +102,7 @@ export function resolveCharacterPortraitVM(
  */
 export function resolveCharacterSpriteVM(
   characterId: string = "valen",
-  quality: AssetQuality = "high",
+  quality: AssetQuality,
   state: AnimationName = "idle",
   tier: CharacterProgressionTier = 1
 ): CharacterSpriteVM {
@@ -175,7 +175,7 @@ export function resolveCharacterProfileVM(characterId: string): CharacterProfile
  */
 export function resolveAtlasSheetMetaVM(
   characterId: string = "valen",
-  quality: AssetQuality = "high"
+  quality: AssetQuality
 ): AtlasSheetMetaVM {
   const manifest = assetLoader.getCharacterManifest(characterId);
   const spriteMap = assetLoader.getActiveSpriteMap(characterId, quality);
@@ -226,7 +226,7 @@ export function subscribeToAssetLoader(listener: () => void): () => void {
  */
 export async function preloadCharacterAssets(
   characterId: string,
-  quality: AssetQuality = "high",
+  quality: AssetQuality,
   tier: CharacterProgressionTier = 1
 ): Promise<void> {
   return assetLoader.preloadCharacter(characterId, quality, tier);

@@ -1,5 +1,6 @@
 import { describe, it, expect } from "bun:test";
-import { AtlasTextureManager, chooseRasterScale, loadSvgTexture, resolveVariantTier } from "../atlas";
+import { AtlasTextureManager, chooseRasterScale, loadSvgTexture } from "../atlas";
+import { SpriteSourceFactory } from "../sprites";
 import type { AtlasCatalogEntry, AtlasMeta, AtlasVariants, AtlasTextureDeps, ReleasableTexture } from "../atlas";
 import type { AssetQuality } from "../../types";
 
@@ -24,7 +25,7 @@ function pngImage(): HTMLImageElement {
 
 interface Harness {
   manager: AtlasTextureManager;
-  quality: { value: AssetQuality };
+  sprites: SpriteSourceFactory;
   requested: string[];
   released: string[];
   settle(src: string): Promise<void>;
@@ -32,7 +33,7 @@ interface Harness {
 }
 
 function harness(tiers: AssetQuality[], initial: AssetQuality = "high"): Harness {
-  const quality = { value: initial };
+  const sprites = new SpriteSourceFactory(initial);
   const requested: string[] = [];
   const released: string[] = [];
   const changes = { count: 0 };
@@ -55,7 +56,7 @@ function harness(tiers: AssetQuality[], initial: AssetQuality = "high"): Harness
       return { source: {} as CanvasImageSource, width: 400, height: 300, crisp: true, release: () => released.push(src) };
     },
     canLoad: () => true,
-    getQuality: () => quality.value,
+    sprites,
     onChange: () => {
       changes.count++;
     },
@@ -70,32 +71,8 @@ function harness(tiers: AssetQuality[], initial: AssetQuality = "high"): Harness
     await Promise.resolve();
     await Promise.resolve();
   };
-  return { manager, quality, requested, released, settle, changes };
+  return { manager, sprites, requested, released, settle, changes };
 }
-
-describe("resolveVariantTier", () => {
-  const cases: Array<[AssetQuality, AssetQuality[], AssetQuality | null]> = [
-    ["low", ["low", "mid", "high"], "low"],
-    ["low", ["mid", "high"], "mid"],
-    ["low", ["high"], "high"],
-    ["mid", ["low", "high"], "high"],
-    ["mid", ["low"], "low"],
-    ["high", ["low", "mid"], "mid"],
-    ["high", ["low"], "low"],
-    ["high", ["mid", "high"], "high"],
-    ["mid", [], null],
-  ];
-
-  for (const [requested, available, expected] of cases) {
-    it(`resolves ${requested} with [${available.join(",")}] to ${expected}`, () => {
-      expect(resolveVariantTier(variantsOf(available), requested)).toBe(expected);
-    });
-  }
-
-  it("skips tiers marked as failed", () => {
-    expect(resolveVariantTier(variantsOf(TIERS), "low", new Set<AssetQuality>(["low"]))).toBe("mid");
-  });
-});
 
 describe("AtlasTextureManager", () => {
   it("fetches only the resolved variant", () => {
@@ -134,8 +111,7 @@ describe("AtlasTextureManager", () => {
     const lowSource = h.manager.getSource("imp");
     expect(lowSource?.tier).toBe("low");
 
-    h.quality.value = "mid";
-    h.manager.setQuality("mid");
+    h.sprites.setQuality("mid");
     expect(h.requested).toEqual(["low.svg", "mid.svg"]);
     expect(h.manager.getSource("imp")).toBe(lowSource);
     expect(h.released).toEqual([]);
@@ -150,13 +126,13 @@ describe("AtlasTextureManager", () => {
     const h = harness(["low", "high"], "low");
     await h.settle("low.svg");
 
-    h.manager.setQuality("high");
+    h.sprites.setQuality("high");
     expect(h.manager.getSource("imp")?.tier).toBe("low");
     await h.settle("high.png");
     expect(h.manager.getSource("imp")?.tier).toBe("high");
     expect(h.released).toEqual(["low.svg"]);
 
-    h.manager.setQuality("low");
+    h.sprites.setQuality("low");
     expect(h.manager.getSource("imp")?.tier).toBe("high");
     await h.settle("low.svg");
     expect(h.manager.getSource("imp")?.tier).toBe("low");
@@ -165,8 +141,8 @@ describe("AtlasTextureManager", () => {
   it("releases a raster that finished after the quality moved on", async () => {
     const h = harness(["low", "mid", "high"], "low");
     await h.settle("low.svg");
-    h.manager.setQuality("mid");
-    h.manager.setQuality("high");
+    h.sprites.setQuality("mid");
+    h.sprites.setQuality("high");
 
     await h.settle("mid.svg");
 
@@ -188,7 +164,7 @@ describe("AtlasTextureManager", () => {
     const h = harness(["low", "high"], "low");
     expect(h.manager.getView("imp")?.imageSrc).toBe("low.svg");
     await h.settle("low.svg");
-    h.manager.setQuality("high");
+    h.sprites.setQuality("high");
 
     expect(h.manager.getView("imp")?.imageSrc).toBe("low.svg");
     expect(h.manager.ownsUrl("high.png")).toBe(true);

@@ -1,5 +1,4 @@
-import { Player, Enemy, Entity, Particle, Projectile, AssetQuality } from "../types";
-import { assetLoader } from "../engine/assetLoader";
+import { Player, Enemy, Entity, Particle, Projectile } from "../types";
 import { CameraState } from "../engine/cameraManager";
 import { LocationDefinition } from "../locations/types";
 import { LanguageCode } from "@i18n";
@@ -53,7 +52,6 @@ export class GameRenderer {
   public viewportWidth: number = 1000;
   public viewportHeight: number = 625;
   public scaleFactor: number = 1;
-  public assetQuality: AssetQuality = "high";
   public isHardwareAccelerated: boolean = true;
   private tickCount: number = 0;
 
@@ -106,11 +104,6 @@ export class GameRenderer {
     return this.tickCount;
   }
 
-  public setAssetQuality(quality: AssetQuality) {
-    this.assetQuality = quality;
-    assetLoader.setQuality(quality);
-  }
-
   /**
    * Resizes canvas buffer and updates viewport scaling factors based on display dimensions and pixel ratio.
    */
@@ -152,7 +145,6 @@ export class GameRenderer {
     camera: CameraState,
     levelWidth: number,
     levelHeight: number,
-    assetQuality?: AssetQuality,
     location?: LocationDefinition,
     language: LanguageCode = "en",
     tickCount: number = 0,
@@ -160,9 +152,6 @@ export class GameRenderer {
   ) {
     this.language = language;
     this.tickCount = tickCount;
-    if (assetQuality) {
-      this.assetQuality = assetQuality;
-    }
 
     this.cameraX = camera.x;
     this.cameraY = camera.y;
@@ -232,7 +221,7 @@ export class GameRenderer {
     this.fxRenderer.renderProjectiles(this.ctx, projectiles);
 
     // 7. PLAYERS
-    this.actorRenderer.renderPlayers(this.ctx, players, this.assetQuality, this.tickCount);
+    this.actorRenderer.renderPlayers(this.ctx, players, this.tickCount);
 
     // 8. COMBAT SPARKS
     this.fxRenderer.renderParticles(this.ctx, particles, "spark");
