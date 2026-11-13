@@ -12,8 +12,16 @@ export interface RenderedHeroTier {
 
 function drawFrame(def: HeroSpriteDefinition, tier: Tier, cell: HeroCell, anim: string, frame: number, span: number) {
   const canvas = new PixelCanvas(cell.width * span, cell.height);
+  runHeroDraw(def, tier, canvas, anim, frame, span);
+  return canvas;
+}
+
+/** Runs the draw function of one tier on a canvas, naming tier, animation and frame in any error. */
+export function runHeroDraw(def: HeroSpriteDefinition, tier: Tier, canvas: PixelCanvas, anim: string, frame: number, span: number): void {
+  const draw = def.draw?.[tier];
+  if (!draw) return;
   try {
-    def.draw[tier](canvas, anim, frame, span);
+    draw(canvas, anim, frame, span);
   } catch (cause) {
     const reason = cause instanceof Error ? cause.message : String(cause);
     throw spriteError(
@@ -22,7 +30,6 @@ function drawFrame(def: HeroSpriteDefinition, tier: Tier, cell: HeroCell, anim: 
       cause,
     );
   }
-  return canvas;
 }
 
 export function renderHeroTier(def: HeroSpriteDefinition, grid: HeroGrid, tier: Tier): RenderedHeroTier {

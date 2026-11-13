@@ -1,0 +1,839 @@
+{
+  "characterId": "valen",
+  "entityType": "humanoid",
+  "version": "1.0",
+  "description": "Valen, the scarlet-blade duelist, quantized from his painted frames to a hard-edged 16-colour hi-16bit and 8-colour hi-8bit palette.",
+  "atlas": {
+    "columns": 14,
+    "rows": 8,
+    "cellWidth": 178,
+    "cellHeight": 142,
+    "spacing": 0,
+    "background": "transparent",
+    "safeMargin": 1
+  },
+  "naturalFacing": "right",
+  "grid": {
+    "ordering": [
+      "idle",
+      "run",
+      "jump",
+      "fall",
+      "attack",
+      "dash",
+      "cast",
+      "crouch"
+    ],
+    "columns": 14,
+    "rows": 8,
+    "packedCell": {
+      "width": 126,
+      "height": 128
+    },
+    "animations": {
+      "idle": {
+        "row": 0,
+        "frames": 12,
+        "fps": 8,
+        "loop": true,
+        "cells": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "run": {
+        "row": 1,
+        "frames": 12,
+        "fps": 12,
+        "loop": true,
+        "cells": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "jump": {
+        "row": 2,
+        "frames": 3,
+        "fps": 6,
+        "loop": false,
+        "cells": [
+          1,
+          1,
+          1
+        ]
+      },
+      "fall": {
+        "row": 3,
+        "frames": 1,
+        "fps": 6,
+        "loop": true,
+        "cells": [
+          1
+        ]
+      },
+      "attack": {
+        "row": 4,
+        "frames": 7,
+        "fps": 10,
+        "loop": false,
+        "cells": [
+          1,
+          2,
+          2,
+          2,
+          2,
+          3,
+          2
+        ]
+      },
+      "dash": {
+        "row": 5,
+        "frames": 9,
+        "fps": 12,
+        "loop": false,
+        "cells": [
+          1,
+          2,
+          2,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "cast": {
+        "row": 6,
+        "frames": 8,
+        "fps": 8,
+        "loop": false,
+        "cells": [
+          1,
+          1,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      "crouch": {
+        "row": 7,
+        "frames": 2,
+        "fps": 8,
+        "loop": true,
+        "cells": [
+          1,
+          1
+        ]
+      }
+    }
+  },
+  "variants": {
+    "low": {
+      "file": "valen_hi8bit.svg",
+      "cellWidth": 89,
+      "cellHeight": 71,
+      "sheetWidth": 1246,
+      "sheetHeight": 568,
+      "scale": 0.5,
+      "frameRects": {
+        "idle_0": {
+          "x": 31,
+          "y": 8,
+          "width": 35,
+          "height": 63
+        },
+        "idle_1": {
+          "x": 120,
+          "y": 7,
+          "width": 35,
+          "height": 64
+        },
+        "idle_2": {
+          "x": 209,
+          "y": 7,
+          "width": 36,
+          "height": 64
+        },
+        "idle_3": {
+          "x": 298,
+          "y": 8,
+          "width": 36,
+          "height": 63
+        },
+        "idle_4": {
+          "x": 387,
+          "y": 8,
+          "width": 41,
+          "height": 63
+        },
+        "idle_5": {
+          "x": 476,
+          "y": 8,
+          "width": 35,
+          "height": 63
+        },
+        "idle_6": {
+          "x": 564,
+          "y": 8,
+          "width": 36,
+          "height": 63
+        },
+        "idle_7": {
+          "x": 654,
+          "y": 8,
+          "width": 35,
+          "height": 63
+        },
+        "idle_8": {
+          "x": 743,
+          "y": 7,
+          "width": 35,
+          "height": 64
+        },
+        "idle_9": {
+          "x": 832,
+          "y": 7,
+          "width": 35,
+          "height": 64
+        },
+        "idle_10": {
+          "x": 921,
+          "y": 7,
+          "width": 35,
+          "height": 64
+        },
+        "idle_11": {
+          "x": 1010,
+          "y": 7,
+          "width": 35,
+          "height": 64
+        },
+        "run_0": {
+          "x": 28,
+          "y": 84,
+          "width": 45,
+          "height": 58
+        },
+        "run_1": {
+          "x": 122,
+          "y": 85,
+          "width": 45,
+          "height": 57
+        },
+        "run_2": {
+          "x": 212,
+          "y": 85,
+          "width": 46,
+          "height": 57
+        },
+        "run_3": {
+          "x": 305,
+          "y": 85,
+          "width": 42,
+          "height": 57
+        },
+        "run_4": {
+          "x": 390,
+          "y": 86,
+          "width": 45,
+          "height": 56
+        },
+        "run_5": {
+          "x": 480,
+          "y": 86,
+          "width": 47,
+          "height": 56
+        },
+        "run_6": {
+          "x": 566,
+          "y": 87,
+          "width": 50,
+          "height": 55
+        },
+        "run_7": {
+          "x": 656,
+          "y": 87,
+          "width": 48,
+          "height": 55
+        },
+        "run_8": {
+          "x": 744,
+          "y": 85,
+          "width": 49,
+          "height": 57
+        },
+        "run_9": {
+          "x": 832,
+          "y": 85,
+          "width": 52,
+          "height": 57
+        },
+        "run_10": {
+          "x": 923,
+          "y": 85,
+          "width": 50,
+          "height": 57
+        },
+        "run_11": {
+          "x": 1008,
+          "y": 83,
+          "width": 49,
+          "height": 59
+        },
+        "jump_0": {
+          "x": 40,
+          "y": 144,
+          "width": 39,
+          "height": 69
+        },
+        "jump_1": {
+          "x": 119,
+          "y": 158,
+          "width": 46,
+          "height": 55
+        },
+        "jump_2": {
+          "x": 218,
+          "y": 154,
+          "width": 31,
+          "height": 59
+        },
+        "fall_0": {
+          "x": 40,
+          "y": 225,
+          "width": 31,
+          "height": 59
+        },
+        "attack_0": {
+          "x": 22,
+          "y": 298,
+          "width": 59,
+          "height": 57
+        },
+        "attack_1": {
+          "x": 90,
+          "y": 298,
+          "width": 79,
+          "height": 57
+        },
+        "attack_2": {
+          "x": 270,
+          "y": 299,
+          "width": 101,
+          "height": 56
+        },
+        "attack_3": {
+          "x": 462,
+          "y": 297,
+          "width": 88,
+          "height": 58
+        },
+        "attack_4": {
+          "x": 644,
+          "y": 299,
+          "width": 102,
+          "height": 56
+        },
+        "attack_5": {
+          "x": 816,
+          "y": 297,
+          "width": 132,
+          "height": 58
+        },
+        "attack_6": {
+          "x": 1083,
+          "y": 297,
+          "width": 102,
+          "height": 58
+        },
+        "dash_0": {
+          "x": 30,
+          "y": 374,
+          "width": 52,
+          "height": 52
+        },
+        "dash_1": {
+          "x": 115,
+          "y": 379,
+          "width": 61,
+          "height": 47
+        },
+        "dash_2": {
+          "x": 292,
+          "y": 378,
+          "width": 65,
+          "height": 48
+        },
+        "dash_3": {
+          "x": 475,
+          "y": 378,
+          "width": 58,
+          "height": 48
+        },
+        "dash_4": {
+          "x": 564,
+          "y": 379,
+          "width": 58,
+          "height": 47
+        },
+        "dash_5": {
+          "x": 649,
+          "y": 379,
+          "width": 59,
+          "height": 47
+        },
+        "dash_6": {
+          "x": 737,
+          "y": 379,
+          "width": 59,
+          "height": 47
+        },
+        "dash_7": {
+          "x": 830,
+          "y": 379,
+          "width": 56,
+          "height": 47
+        },
+        "dash_8": {
+          "x": 920,
+          "y": 379,
+          "width": 53,
+          "height": 47
+        },
+        "cast_0": {
+          "x": 23,
+          "y": 434,
+          "width": 48,
+          "height": 63
+        },
+        "cast_1": {
+          "x": 114,
+          "y": 434,
+          "width": 53,
+          "height": 63
+        },
+        "cast_2": {
+          "x": 200,
+          "y": 434,
+          "width": 80,
+          "height": 63
+        },
+        "cast_3": {
+          "x": 378,
+          "y": 434,
+          "width": 78,
+          "height": 63
+        },
+        "cast_4": {
+          "x": 558,
+          "y": 434,
+          "width": 77,
+          "height": 63
+        },
+        "cast_5": {
+          "x": 735,
+          "y": 434,
+          "width": 79,
+          "height": 63
+        },
+        "cast_6": {
+          "x": 919,
+          "y": 434,
+          "width": 68,
+          "height": 63
+        },
+        "cast_7": {
+          "x": 1087,
+          "y": 437,
+          "width": 103,
+          "height": 60
+        },
+        "crouch_0": {
+          "x": 27,
+          "y": 517,
+          "width": 43,
+          "height": 51
+        },
+        "crouch_1": {
+          "x": 111,
+          "y": 524,
+          "width": 52,
+          "height": 44
+        }
+      }
+    },
+    "mid": {
+      "file": "valen_hi16bit.svg",
+      "cellWidth": 178,
+      "cellHeight": 142,
+      "sheetWidth": 2492,
+      "sheetHeight": 1136,
+      "scale": 1,
+      "frameRects": {
+        "idle_0": {
+          "x": 63,
+          "y": 16,
+          "width": 69,
+          "height": 126
+        },
+        "idle_1": {
+          "x": 240,
+          "y": 15,
+          "width": 70,
+          "height": 127
+        },
+        "idle_2": {
+          "x": 418,
+          "y": 14,
+          "width": 71,
+          "height": 128
+        },
+        "idle_3": {
+          "x": 596,
+          "y": 16,
+          "width": 71,
+          "height": 126
+        },
+        "idle_4": {
+          "x": 775,
+          "y": 16,
+          "width": 80,
+          "height": 126
+        },
+        "idle_5": {
+          "x": 952,
+          "y": 16,
+          "width": 70,
+          "height": 126
+        },
+        "idle_6": {
+          "x": 1129,
+          "y": 16,
+          "width": 70,
+          "height": 126
+        },
+        "idle_7": {
+          "x": 1308,
+          "y": 16,
+          "width": 70,
+          "height": 126
+        },
+        "idle_8": {
+          "x": 1487,
+          "y": 15,
+          "width": 69,
+          "height": 127
+        },
+        "idle_9": {
+          "x": 1664,
+          "y": 15,
+          "width": 70,
+          "height": 127
+        },
+        "idle_10": {
+          "x": 1842,
+          "y": 15,
+          "width": 70,
+          "height": 127
+        },
+        "idle_11": {
+          "x": 2021,
+          "y": 15,
+          "width": 69,
+          "height": 127
+        },
+        "run_0": {
+          "x": 56,
+          "y": 169,
+          "width": 89,
+          "height": 115
+        },
+        "run_1": {
+          "x": 245,
+          "y": 170,
+          "width": 88,
+          "height": 114
+        },
+        "run_2": {
+          "x": 424,
+          "y": 170,
+          "width": 91,
+          "height": 114
+        },
+        "run_3": {
+          "x": 610,
+          "y": 171,
+          "width": 84,
+          "height": 113
+        },
+        "run_4": {
+          "x": 780,
+          "y": 173,
+          "width": 89,
+          "height": 111
+        },
+        "run_5": {
+          "x": 960,
+          "y": 172,
+          "width": 93,
+          "height": 112
+        },
+        "run_6": {
+          "x": 1132,
+          "y": 174,
+          "width": 99,
+          "height": 110
+        },
+        "run_7": {
+          "x": 1312,
+          "y": 175,
+          "width": 95,
+          "height": 109
+        },
+        "run_8": {
+          "x": 1488,
+          "y": 171,
+          "width": 98,
+          "height": 113
+        },
+        "run_9": {
+          "x": 1665,
+          "y": 170,
+          "width": 102,
+          "height": 114
+        },
+        "run_10": {
+          "x": 1847,
+          "y": 170,
+          "width": 99,
+          "height": 114
+        },
+        "run_11": {
+          "x": 2016,
+          "y": 167,
+          "width": 97,
+          "height": 117
+        },
+        "jump_0": {
+          "x": 80,
+          "y": 288,
+          "width": 77,
+          "height": 138
+        },
+        "jump_1": {
+          "x": 239,
+          "y": 317,
+          "width": 91,
+          "height": 109
+        },
+        "jump_2": {
+          "x": 437,
+          "y": 309,
+          "width": 61,
+          "height": 117
+        },
+        "fall_0": {
+          "x": 81,
+          "y": 451,
+          "width": 61,
+          "height": 117
+        },
+        "attack_0": {
+          "x": 44,
+          "y": 597,
+          "width": 118,
+          "height": 113
+        },
+        "attack_1": {
+          "x": 181,
+          "y": 596,
+          "width": 157,
+          "height": 114
+        },
+        "attack_2": {
+          "x": 541,
+          "y": 599,
+          "width": 200,
+          "height": 111
+        },
+        "attack_3": {
+          "x": 924,
+          "y": 595,
+          "width": 175,
+          "height": 115
+        },
+        "attack_4": {
+          "x": 1288,
+          "y": 599,
+          "width": 204,
+          "height": 111
+        },
+        "attack_5": {
+          "x": 1632,
+          "y": 595,
+          "width": 264,
+          "height": 115
+        },
+        "attack_6": {
+          "x": 2166,
+          "y": 595,
+          "width": 203,
+          "height": 115
+        },
+        "dash_0": {
+          "x": 60,
+          "y": 748,
+          "width": 103,
+          "height": 104
+        },
+        "dash_1": {
+          "x": 228,
+          "y": 758,
+          "width": 124,
+          "height": 94
+        },
+        "dash_2": {
+          "x": 584,
+          "y": 757,
+          "width": 129,
+          "height": 95
+        },
+        "dash_3": {
+          "x": 950,
+          "y": 757,
+          "width": 115,
+          "height": 95
+        },
+        "dash_4": {
+          "x": 1127,
+          "y": 758,
+          "width": 116,
+          "height": 94
+        },
+        "dash_5": {
+          "x": 1297,
+          "y": 758,
+          "width": 119,
+          "height": 94
+        },
+        "dash_6": {
+          "x": 1472,
+          "y": 758,
+          "width": 119,
+          "height": 94
+        },
+        "dash_7": {
+          "x": 1661,
+          "y": 758,
+          "width": 111,
+          "height": 94
+        },
+        "dash_8": {
+          "x": 1840,
+          "y": 759,
+          "width": 105,
+          "height": 93
+        },
+        "cast_0": {
+          "x": 46,
+          "y": 869,
+          "width": 95,
+          "height": 125
+        },
+        "cast_1": {
+          "x": 228,
+          "y": 869,
+          "width": 105,
+          "height": 125
+        },
+        "cast_2": {
+          "x": 401,
+          "y": 869,
+          "width": 159,
+          "height": 125
+        },
+        "cast_3": {
+          "x": 756,
+          "y": 868,
+          "width": 155,
+          "height": 126
+        },
+        "cast_4": {
+          "x": 1117,
+          "y": 869,
+          "width": 152,
+          "height": 125
+        },
+        "cast_5": {
+          "x": 1471,
+          "y": 869,
+          "width": 157,
+          "height": 125
+        },
+        "cast_6": {
+          "x": 1838,
+          "y": 869,
+          "width": 135,
+          "height": 125
+        },
+        "cast_7": {
+          "x": 2174,
+          "y": 874,
+          "width": 207,
+          "height": 120
+        },
+        "crouch_0": {
+          "x": 54,
+          "y": 1034,
+          "width": 85,
+          "height": 102
+        },
+        "crouch_1": {
+          "x": 222,
+          "y": 1048,
+          "width": 104,
+          "height": 88
+        }
+      }
+    }
+  },
+  "layout": {
+    "origin": {
+      "type": "feet",
+      "normalized": {
+        "x": 0.5506,
+        "y": 1
+      }
+    },
+    "bodyBox": {
+      "x": 0.3427,
+      "y": 0.0986,
+      "w": 0.4607,
+      "h": 0.9014
+    }
+  }
+}
