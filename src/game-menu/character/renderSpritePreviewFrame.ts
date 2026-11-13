@@ -39,7 +39,8 @@ export function renderSpritePreviewFrame(options: RenderSpritePreviewOptions): v
   const h = canvas.height;
   if (w <= 0 || h <= 0) return;
 
-  // hi-8bit, hi-16bit and painted sheets differ in pixel density; draw them all at the same size
+  // hi-8bit, hi-16bit and painted sheets differ in pixel density; the sprite is drawn at the same size in
+  // every tier while the ground line and shadow keep the requested scale
   const scale = rowHeight > 0 ? (baseScale * PREVIEW_REFERENCE_ROW_HEIGHT) / rowHeight : baseScale;
 
   ctx.clearRect(0, 0, w, h);
@@ -85,15 +86,15 @@ export function renderSpritePreviewFrame(options: RenderSpritePreviewOptions): v
   ctx.globalAlpha = 0.35;
   ctx.lineWidth = 1.5;
   ctx.beginPath();
-  ctx.moveTo(Math.max(16, feetX - 120 * scale), groundY);
-  ctx.lineTo(Math.min(w - 16, feetX + 120 * scale), groundY);
+  ctx.moveTo(Math.max(16, feetX - 120 * baseScale), groundY);
+  ctx.lineTo(Math.min(w - 16, feetX + 120 * baseScale), groundY);
   ctx.stroke();
 
   // 4. Contact shadow ellipse
   ctx.globalAlpha = 0.6;
   ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
   ctx.beginPath();
-  ctx.ellipse(feetX, groundY, 24 * scale, 7 * scale, 0, 0, Math.PI * 2);
+  ctx.ellipse(feetX, groundY, 24 * baseScale, 7 * baseScale, 0, 0, Math.PI * 2);
   ctx.fill();
 
   ctx.globalAlpha = 1;
