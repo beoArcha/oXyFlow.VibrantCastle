@@ -182,13 +182,7 @@ interface Pose {
       | "bolt_peak"
       | "bolt_fade"
       | "sparks_fade"
-      | "sparks_end"
-      | "sigil"
-      | "burst"
-      | "detonation"
-      | "dissipate"
-      | "ember"
-      | "ripple";
+      | "sparks_end";
     reachX: number;
   };
 }
@@ -205,7 +199,7 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
       coat: "rest", armL: "rest",
-      hiltOffset: [6, 14], tipPos: [BODY_X8 + 19, 33],
+      hiltOffset: [6, 18], tipPos: [BODY_X8 + 19, 28],
     },
     // 1: neutral hold
     {
@@ -213,40 +207,40 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
       coat: "rest", armL: "rest",
-      hiltOffset: [6, 14], tipPos: [BODY_X8 + 19, 32],
+      hiltOffset: [6, 18], tipPos: [BODY_X8 + 19, 27],
     },
-    // 2: inhale begins (chest & head rise 1px)
+    // 2: inhale begins (chest & head rise smoothly)
     {
-      bob: -1, lean: 0,
+      bob: -0.5, lean: 0,
       legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
       coat: "rest", armL: "rest",
-      hiltOffset: [6, 13], tipPos: [BODY_X8 + 19, 31],
+      hiltOffset: [6, 17], tipPos: [BODY_X8 + 19, 26],
     },
     // 3: inhale expands (blade tip raises smoothly)
     {
-      bob: -1, lean: 1,
+      bob: -0.5, lean: 1,
       legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
       coat: "rest", coatShift: 1, armL: "rest",
-      hiltOffset: [6, 13], tipPos: [BODY_X8 + 20, 29],
+      hiltOffset: [6, 17], tipPos: [BODY_X8 + 20, 24],
     },
     // 4: inhale peak (spectacles glint in ambient light)
     {
-      bob: -1, lean: 1,
+      bob: -0.5, lean: 1,
       legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
       coat: "rest", coatShift: 1, armL: "rest",
-      hiltOffset: [6, 13], tipPos: [BODY_X8 + 20, 28],
+      hiltOffset: [6, 17], tipPos: [BODY_X8 + 20, 23],
       spectacleGlint: true,
     },
     // 5: breath hold at peak
     {
-      bob: -1, lean: 0,
+      bob: -0.5, lean: 0,
       legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
       coat: "rest", armL: "rest",
-      hiltOffset: [6, 13], tipPos: [BODY_X8 + 19, 29],
+      hiltOffset: [6, 17], tipPos: [BODY_X8 + 19, 24],
       spectacleGlint: true,
     },
     // 6: exhale starts (shoulders drop back to neutral)
@@ -255,7 +249,7 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
       coat: "rest", armL: "rest",
-      hiltOffset: [6, 14], tipPos: [BODY_X8 + 19, 31],
+      hiltOffset: [6, 18], tipPos: [BODY_X8 + 19, 26],
     },
     // 7: exhale continues
     {
@@ -263,23 +257,23 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
       coat: "rest", armL: "rest",
-      hiltOffset: [6, 14], tipPos: [BODY_X8 + 19, 33],
+      hiltOffset: [6, 18], tipPos: [BODY_X8 + 19, 28],
     },
-    // 8: duelist settle (1px downward compression, tip dips)
+    // 8: duelist settle (subtle downward compression, tip dips)
     {
-      bob: 1, lean: 0,
+      bob: 0.5, lean: 0,
       legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 4 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 4 },
       coat: "rest", coatShift: -1, armL: "rest",
-      hiltOffset: [6, 15], tipPos: [BODY_X8 + 18, 35],
+      hiltOffset: [6, 19], tipPos: [BODY_X8 + 18, 30],
     },
     // 9: deep settle rest
     {
-      bob: 1, lean: 0,
+      bob: 0.5, lean: 0,
       legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 4 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 4 },
       coat: "rest", armL: "rest",
-      hiltOffset: [6, 15], tipPos: [BODY_X8 + 18, 35],
+      hiltOffset: [6, 19], tipPos: [BODY_X8 + 18, 30],
     },
     // 10: elastic recovery rising
     {
@@ -287,7 +281,7 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
       coat: "rest", armL: "rest",
-      hiltOffset: [6, 14], tipPos: [BODY_X8 + 19, 34],
+      hiltOffset: [6, 18], tipPos: [BODY_X8 + 19, 29],
     },
     // 11: recovery to neutral guard
     {
@@ -295,13 +289,13 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
       coat: "rest", armL: "rest",
-      hiltOffset: [6, 14], tipPos: [BODY_X8 + 19, 33],
+      hiltOffset: [6, 18], tipPos: [BODY_X8 + 19, 28],
       spectacleGlint: true,
     },
   ],
 
   // ─── Run (12 frames, FPS 12, loop: true) ──────────────────────────────────
-  // Dynamic stride cycle: alternating legs, arm swing, flapping coat tails, 1-2px bob
+  // Dynamic stride cycle: alternating legs, arm swing, flapping coat tails, slight stride compression
   run: [
     // 0: Right heel strike forward, left leg high rear
     {
@@ -309,23 +303,23 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: BODY_X8 - 10, lift: 8, kneeX: BODY_X8 - 7 },
       legR: { x: BODY_X8 + 7, lift: 0, kneeX: BODY_X8 + 5 },
       coat: "billow_back", coatShift: 3, armL: "pump_back",
-      hiltOffset: [5, 13], tipPos: [BODY_X8 + 18, 35],
+      hiltOffset: [5, 17], tipPos: [BODY_X8 + 18, 30],
     },
     // 1: Right leg absorbs weight, left driving through
     {
-      bob: 2, lean: 3,
+      bob: 0.5, lean: 3,
       legL: { x: BODY_X8 - 6, lift: 5, kneeX: BODY_X8 - 3 },
       legR: { x: BODY_X8 + 5, lift: 0, kneeX: BODY_X8 + 6 },
       coat: "billow_back", coatShift: 2, armL: "pump_back",
-      hiltOffset: [5, 15], tipPos: [BODY_X8 + 17, 38],
+      hiltOffset: [5, 18], tipPos: [BODY_X8 + 17, 33],
     },
     // 2: Right toe push-off, left knee driving forward
     {
-      bob: 1, lean: 3,
+      bob: 0, lean: 3,
       legL: { x: BODY_X8 - 2, lift: 7, kneeX: BODY_X8 + 2 },
       legR: { x: BODY_X8 + 1, lift: 0, kneeX: BODY_X8 + 2 },
       coat: "billow_back", coatShift: 4, armL: "rest",
-      hiltOffset: [6, 14], tipPos: [BODY_X8 + 18, 36],
+      hiltOffset: [6, 17], tipPos: [BODY_X8 + 18, 31],
     },
     // 3: Flight transition: right toe trailing on floor y=63
     {
@@ -333,7 +327,7 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: BODY_X8 + 4, lift: 5, kneeX: BODY_X8 + 6 },
       legR: { x: BODY_X8 - 5, lift: 0, kneeX: BODY_X8 - 3 },
       coat: "billow_back", coatShift: 5, armL: "pump_forward",
-      hiltOffset: [6, 13], tipPos: [BODY_X8 + 19, 34],
+      hiltOffset: [6, 17], tipPos: [BODY_X8 + 19, 29],
     },
     // 4: Left foot reaching to land, right leg trailing
     {
@@ -341,15 +335,15 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: BODY_X8 + 6, lift: 0, kneeX: BODY_X8 + 4 },
       legR: { x: BODY_X8 - 8, lift: 6, kneeX: BODY_X8 - 6 },
       coat: "billow_back", coatShift: 4, armL: "pump_forward",
-      hiltOffset: [5, 13], tipPos: [BODY_X8 + 18, 35],
+      hiltOffset: [5, 17], tipPos: [BODY_X8 + 18, 30],
     },
     // 5: Left foot flat contact, right sweeping forward
     {
-      bob: 1, lean: 3,
+      bob: 0.5, lean: 3,
       legL: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 5 },
       legR: { x: BODY_X8 - 5, lift: 4, kneeX: BODY_X8 - 2 },
       coat: "billow_back", coatShift: 3, armL: "pump_forward",
-      hiltOffset: [5, 14], tipPos: [BODY_X8 + 17, 37],
+      hiltOffset: [5, 18], tipPos: [BODY_X8 + 17, 32],
     },
     // 6: Left push-off initiate, right knee driving high
     {
@@ -357,23 +351,23 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: BODY_X8 + 7, lift: 0, kneeX: BODY_X8 + 5 },
       legR: { x: BODY_X8 - 10, lift: 8, kneeX: BODY_X8 - 7 },
       coat: "billow_back", coatShift: 2, armL: "pump_back",
-      hiltOffset: [5, 13], tipPos: [BODY_X8 + 18, 35],
+      hiltOffset: [5, 17], tipPos: [BODY_X8 + 18, 30],
     },
     // 7: Left leg weight absorption, right passing stance
     {
-      bob: 2, lean: 3,
+      bob: 0.5, lean: 3,
       legL: { x: BODY_X8 + 5, lift: 0, kneeX: BODY_X8 + 6 },
       legR: { x: BODY_X8 - 6, lift: 5, kneeX: BODY_X8 - 3 },
       coat: "billow_back", coatShift: 3, armL: "pump_back",
-      hiltOffset: [5, 15], tipPos: [BODY_X8 + 17, 38],
+      hiltOffset: [5, 18], tipPos: [BODY_X8 + 17, 33],
     },
     // 8: Left toe push-off, right driving forward
     {
-      bob: 1, lean: 3,
+      bob: 0, lean: 3,
       legL: { x: BODY_X8 + 1, lift: 0, kneeX: BODY_X8 + 2 },
       legR: { x: BODY_X8 - 2, lift: 7, kneeX: BODY_X8 + 2 },
       coat: "billow_back", coatShift: 4, armL: "rest",
-      hiltOffset: [6, 14], tipPos: [BODY_X8 + 18, 36],
+      hiltOffset: [6, 17], tipPos: [BODY_X8 + 18, 31],
     },
     // 9: Second flight transition: left toe trailing on floor y=63
     {
@@ -381,7 +375,7 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: BODY_X8 - 5, lift: 0, kneeX: BODY_X8 - 3 },
       legR: { x: BODY_X8 + 4, lift: 5, kneeX: BODY_X8 + 6 },
       coat: "billow_back", coatShift: 5, armL: "pump_forward",
-      hiltOffset: [6, 13], tipPos: [BODY_X8 + 19, 34],
+      hiltOffset: [6, 17], tipPos: [BODY_X8 + 19, 29],
     },
     // 10: Right foot reaching to land, left leg trailing
     {
@@ -389,15 +383,15 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: BODY_X8 - 8, lift: 6, kneeX: BODY_X8 - 6 },
       legR: { x: BODY_X8 + 6, lift: 0, kneeX: BODY_X8 + 4 },
       coat: "billow_back", coatShift: 4, armL: "pump_forward",
-      hiltOffset: [5, 13], tipPos: [BODY_X8 + 18, 35],
+      hiltOffset: [5, 17], tipPos: [BODY_X8 + 18, 30],
     },
     // 11: Stride reset, weight rolling forward
     {
-      bob: 1, lean: 2,
+      bob: 0.5, lean: 2,
       legL: { x: BODY_X8 - 5, lift: 4, kneeX: BODY_X8 - 2 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 5 },
       coat: "billow_back", coatShift: 3, armL: "pump_forward",
-      hiltOffset: [5, 14], tipPos: [BODY_X8 + 17, 37],
+      hiltOffset: [5, 18], tipPos: [BODY_X8 + 17, 32],
     },
   ],
 
@@ -406,19 +400,19 @@ const POSES: Partial<Record<string, Pose[]>> = {
   jump: [
     // 0: Launch compression, knees bent out, toes snapping off floor
     {
-      bob: 3, lean: 2,
+      bob: 0.5, lean: 2,
       legL: { x: BODY_X8 - 7, lift: 0, kneeX: BODY_X8 - 8 },
       legR: { x: BODY_X8 + 5, lift: 0, kneeX: BODY_X8 + 6 },
       coat: "rest", armL: "rest",
-      hiltOffset: [5, 16], tipPos: [BODY_X8 + 17, 39],
+      hiltOffset: [5, 20], tipPos: [BODY_X8 + 17, 34],
     },
     // 1: Upward rise: knees tucked high, coat flaring UPWARDS, trailing toe touches floor
     {
-      bob: -2, lean: 1,
+      bob: 0, lean: 1,
       legL: { x: BODY_X8 - 5, lift: 0, kneeX: BODY_X8 - 6 },  // trailing toe touches y=63
       legR: { x: BODY_X8 + 4, lift: 10, kneeX: BODY_X8 + 5 }, // right knee tucked high
       coat: "flare_up", armL: "parry",
-      hiltOffset: [6, 11], tipPos: [BODY_X8 + 19, 26],
+      hiltOffset: [6, 15], tipPos: [BODY_X8 + 19, 21],
     },
     // 2: Apex crest: legs extending downward, blade angled down-forward
     {
@@ -426,7 +420,7 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: BODY_X8 - 4, lift: 0, kneeX: BODY_X8 - 4 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 4 },
       coat: "flare_up", armL: "rest",
-      hiltOffset: [6, 14], tipPos: [BODY_X8 + 18, 44],
+      hiltOffset: [6, 18], tipPos: [BODY_X8 + 18, 39],
     },
   ],
 
@@ -438,13 +432,13 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: BODY_X8 - 5, lift: 0, kneeX: BODY_X8 - 5 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 4 },
       coat: "stream_up", armL: "rest",
-      hiltOffset: [6, 14], tipPos: [BODY_X8 + 18, 48],
+      hiltOffset: [6, 18], tipPos: [BODY_X8 + 18, 43],
     },
   ],
 
   // ─── Attack (7 frames: [1, 2, 2, 2, 2, 3, 2] cells) ──────────────────────
   // Lunge thrusts, parries, slashes.
-  // CRITICAL: All span-2 frames (1, 2, 3, 4, 6) keep right edge at x ~ 80..82
+  // All span-2 frames (1, 2, 3, 4, 6) keep right edge at x ~ 80..82
   // so body center drift warning does not fire!
   attack: [
     // 0 [1 cell]: chambering; back-weighted, front toe light
@@ -453,23 +447,23 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: BODY_X8 - 8, lift: 0, kneeX: BODY_X8 - 8 },
       legR: { x: BODY_X8 + 2, lift: 0, kneeX: BODY_X8 + 2 },
       coat: "rest", armL: "rest",
-      hiltOffset: [3, 13], tipPos: [BODY_X8 + 13, 34],
+      hiltOffset: [3, 17], tipPos: [BODY_X8 + 13, 29],
     },
     // 1 [2 cells]: lunge thrust; front leg lunges, blade punches horizontally
     {
-      bob: 1, lean: 4,
+      bob: 0.5, lean: 4,
       legL: { x: BODY_X8 - 9, lift: 0, kneeX: BODY_X8 - 8 },
       legR: { x: BODY_X8 + 8, lift: 0, kneeX: BODY_X8 + 8 },
       coat: "billow_back", coatShift: 2, armL: "lunge",
-      hiltOffset: [9, 14], tipPos: [80, 41],
+      hiltOffset: [9, 18], tipPos: [80, 36],
     },
     // 2 [2 cells]: piercing apex lunge; full duelist lunge, blade gleam at tip
     {
-      bob: 2, lean: 5,
+      bob: 0.5, lean: 5,
       legL: { x: BODY_X8 - 11, lift: 0, kneeX: BODY_X8 - 10 },
       legR: { x: BODY_X8 + 10, lift: 0, kneeX: BODY_X8 + 10 },
       coat: "billow_back", coatShift: 4, armL: "lunge",
-      hiltOffset: [10, 14], tipPos: [82, 41],
+      hiltOffset: [10, 18], tipPos: [82, 36],
       spectacleGlint: true,
     },
     // 3 [2 cells]: retraction; high parry guard covering upper line
@@ -478,23 +472,23 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: BODY_X8 - 8, lift: 0, kneeX: BODY_X8 - 7 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 4 },
       coat: "rest", armL: "parry",
-      hiltOffset: [5, 12], tipPos: [79, 29],
+      hiltOffset: [5, 16], tipPos: [79, 24],
     },
     // 4 [2 cells]: diagonal slash cut; rapier arcing forward-down
     {
-      bob: 2, lean: 4,
+      bob: 0.5, lean: 4,
       legL: { x: BODY_X8 - 9, lift: 0, kneeX: BODY_X8 - 8 },
       legR: { x: BODY_X8 + 7, lift: 0, kneeX: BODY_X8 + 7 },
       coat: "billow_back", coatShift: 3, armL: "lunge",
-      hiltOffset: [8, 14], tipPos: [81, 48],
+      hiltOffset: [8, 18], tipPos: [81, 43],
     },
     // 5 [3 cells]: master lunge extension; horizontal splits lunge + tip sparkle
     {
-      bob: 3, lean: 6,
+      bob: 0.5, lean: 6,
       legL: { x: BODY_X8 - 12, lift: 0, kneeX: BODY_X8 - 11 },
       legR: { x: BODY_X8 + 13, lift: 0, kneeX: BODY_X8 + 12 },
       coat: "billow_back", coatShift: 6, armL: "lunge",
-      hiltOffset: [11, 15], tipPos: [145, 42],
+      hiltOffset: [11, 19], tipPos: [145, 37],
       slashArc: true,
       spectacleGlint: true,
     },
@@ -504,7 +498,7 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: BODY_X8 - 7, lift: 0, kneeX: BODY_X8 - 6 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 4 },
       coat: "rest", armL: "rest",
-      hiltOffset: [6, 14], tipPos: [79, 41],
+      hiltOffset: [6, 18], tipPos: [79, 36],
     },
   ],
 
@@ -514,69 +508,69 @@ const POSES: Partial<Record<string, Pose[]>> = {
   dash: [
     // 0 [1 cell]: compression charge
     {
-      bob: 4, lean: 3,
+      bob: 0.5, lean: 3,
       legL: { x: BODY_X8 - 8, lift: 0, kneeX: BODY_X8 - 9 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 5 },
-      coat: "crouch_bunch", armL: "rest",
-      hiltOffset: [5, 16], tipPos: [BODY_X8 + 19, 44],
+      coat: "billow_back", coatShift: 1, armL: "rest",
+      hiltOffset: [5, 20], tipPos: [BODY_X8 + 19, 39],
     },
     // 1 [2 cells]: temporal launch; streaks behind
     {
-      bob: 3, lean: 5,
+      bob: 0.5, lean: 5,
       legL: { x: BODY_X8 - 9, lift: 0, kneeX: BODY_X8 - 8 },
       legR: { x: BODY_X8 + 7, lift: 0, kneeX: BODY_X8 + 7 },
       coat: "billow_back", coatShift: 4, armL: "lunge",
-      hiltOffset: [9, 14], tipPos: [76, 42],
+      hiltOffset: [9, 18], tipPos: [76, 37],
       dashStreak: 1,
     },
     // 2 [2 cells]: warp transit apex; different streak alignment
     {
-      bob: 2, lean: 6,
+      bob: 0.5, lean: 6,
       legL: { x: BODY_X8 - 10, lift: 0, kneeX: BODY_X8 - 9 },
       legR: { x: BODY_X8 + 8, lift: 0, kneeX: BODY_X8 + 8 },
       coat: "billow_back", coatShift: 5, armL: "lunge",
-      hiltOffset: [10, 14], tipPos: [78, 42],
+      hiltOffset: [10, 18], tipPos: [78, 37],
       dashStreak: 2,
     },
     // 3 [1 cell]: sustained glide 1
     {
-      bob: 2, lean: 4,
+      bob: 0.5, lean: 4,
       legL: { x: BODY_X8 - 8, lift: 0, kneeX: BODY_X8 - 7 },
       legR: { x: BODY_X8 + 5, lift: 0, kneeX: BODY_X8 + 5 },
       coat: "billow_back", coatShift: 3, armL: "rest",
-      hiltOffset: [6, 14], tipPos: [BODY_X8 + 20, 41],
+      hiltOffset: [6, 18], tipPos: [BODY_X8 + 20, 36],
     },
     // 4 [1 cell]: sustained glide 2 (different flutter)
     {
-      bob: 2, lean: 3,
+      bob: 0.5, lean: 3,
       legL: { x: BODY_X8 - 7, lift: 0, kneeX: BODY_X8 - 6 },
       legR: { x: BODY_X8 + 5, lift: 0, kneeX: BODY_X8 + 5 },
       coat: "billow_back", coatShift: 4, armL: "rest",
-      hiltOffset: [6, 14], tipPos: [BODY_X8 + 19, 41],
+      hiltOffset: [6, 18], tipPos: [BODY_X8 + 19, 36],
     },
     // 5 [1 cell]: sustained glide 3
     {
-      bob: 1, lean: 3,
+      bob: 0, lean: 3,
       legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
       legR: { x: BODY_X8 + 6, lift: 0, kneeX: BODY_X8 + 6 },
       coat: "billow_back", coatShift: 2, armL: "rest",
-      hiltOffset: [6, 13], tipPos: [BODY_X8 + 19, 40],
+      hiltOffset: [6, 17], tipPos: [BODY_X8 + 19, 35],
     },
     // 6 [1 cell]: deceleration, front heel drops
     {
-      bob: 1, lean: 1,
+      bob: 0, lean: 1,
       legL: { x: BODY_X8 - 7, lift: 0, kneeX: BODY_X8 - 6 },
       legR: { x: BODY_X8 + 5, lift: 0, kneeX: BODY_X8 + 5 },
       coat: "billow_back", coatShift: 1, armL: "rest",
-      hiltOffset: [5, 14], tipPos: [BODY_X8 + 18, 40],
+      hiltOffset: [5, 18], tipPos: [BODY_X8 + 18, 35],
     },
     // 7 [1 cell]: braking plant
     {
-      bob: 2, lean: 0,
+      bob: 0.5, lean: 0,
       legL: { x: BODY_X8 - 8, lift: 0, kneeX: BODY_X8 - 7 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 4 },
       coat: "rest", armL: "rest",
-      hiltOffset: [5, 15], tipPos: [BODY_X8 + 17, 41],
+      hiltOffset: [5, 19], tipPos: [BODY_X8 + 17, 36],
     },
     // 8 [1 cell]: slide to upright
     {
@@ -584,69 +578,70 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
       coat: "rest", armL: "rest",
-      hiltOffset: [6, 14], tipPos: [BODY_X8 + 18, 33],
+      hiltOffset: [6, 18], tipPos: [BODY_X8 + 18, 28],
     },
   ],
 
   // ─── Cast (8 frames: [1, 1, 2, 2, 2, 2, 2, 2] cells) ──────────────────────
   // Hand raised, glow gathers (0-2), solar bolt from palm (3-5), fading sparks (6-7).
-  // CRITICAL: All span-2 frames (2..7) reach x ~ 80..82 to eliminate body center drift!
+  // All span-2 frames (2..7) reach x ~ 80..82 to eliminate body center drift!
   cast: [
     // 0 [1 cell]: stance drop & hand raised; invocation spark at fingertips
     {
-      bob: 1, lean: 0,
+      bob: 0.5, lean: 0,
       legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
       coat: "rest", armL: "cast_raise",
-      hiltOffset: [5, 15], tipPos: [BODY_X8 + 17, 46],
+      hiltOffset: [5, 18], tipPos: [BODY_X8 + 17, 39],
       castEffect: { stage: "spark", reachX: BODY_X8 + 10 },
     },
     // 1 [1 cell]: hand raised higher; solar energy gathers into an orb
     {
-      bob: 0, lean: 1,
-      legL: { x: BODY_X8 - 7, lift: 0, kneeX: BODY_X8 - 6 },
+      bob: 0, lean: 0,
+      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
       coat: "rest", armL: "cast_raise",
-      hiltOffset: [5, 14], tipPos: [BODY_X8 + 17, 45],
+      hiltOffset: [5, 18], tipPos: [BODY_X8 + 17, 39],
       castEffect: { stage: "gather", reachX: BODY_X8 + 14 },
       spectacleGlint: true,
     },
     // 2 [2 cells]: glow gathers at peak brilliance; radiance expands forward to reachX=80
     {
-      bob: 0, lean: 2,
-      legL: { x: BODY_X8 - 8, lift: 0, kneeX: BODY_X8 - 7 },
+      bob: 0, lean: 1,
+      legL: { x: BODY_X8 - 7, lift: 0, kneeX: BODY_X8 - 6 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
-      coat: "billow_back", coatShift: 2, armL: "cast_raise",
-      hiltOffset: [5, 14], tipPos: [BODY_X8 + 17, 47],
+      coat: "rest", armL: "cast_raise",
+      hiltOffset: [5, 18], tipPos: [BODY_X8 + 17, 40],
       castEffect: { stage: "glow_gather", reachX: 80 },
+      spectacleGlint: true,
     },
     // 3 [2 cells]: palm thrusts forward; solar bolt erupts extending right to reachX=82
     {
-      bob: 1, lean: 3,
+      bob: 0, lean: 3,
       legL: { x: BODY_X8 - 8, lift: 0, kneeX: BODY_X8 - 7 },
       legR: { x: BODY_X8 + 5, lift: 0, kneeX: BODY_X8 + 4 },
-      coat: "billow_back", coatShift: 3, armL: "cast_thrust",
-      hiltOffset: [5, 15], tipPos: [BODY_X8 + 17, 47],
+      coat: "billow_back", coatShift: 2, armL: "cast_thrust",
+      hiltOffset: [5, 18], tipPos: [BODY_X8 + 17, 40],
       castEffect: { stage: "bolt_fire", reachX: 82 },
       spectacleGlint: true,
     },
     // 4 [2 cells]: peak solar ray sustained from palm to reachX=82
     {
-      bob: 1, lean: 3,
+      bob: 0, lean: 3,
       legL: { x: BODY_X8 - 8, lift: 0, kneeX: BODY_X8 - 7 },
       legR: { x: BODY_X8 + 5, lift: 0, kneeX: BODY_X8 + 4 },
-      coat: "billow_back", coatShift: 4, armL: "cast_thrust",
-      hiltOffset: [5, 15], tipPos: [BODY_X8 + 17, 47],
+      coat: "billow_back", coatShift: 3, armL: "cast_thrust",
+      hiltOffset: [5, 18], tipPos: [BODY_X8 + 17, 40],
       castEffect: { stage: "bolt_peak", reachX: 82 },
       spectacleGlint: true,
     },
     // 5 [2 cells]: bolt tail tapering right, still connected to palm, reaches x=81
     {
       bob: 0, lean: 2,
-      legL: { x: BODY_X8 - 8, lift: 0, kneeX: BODY_X8 - 7 },
+      legL: { x: BODY_X8 - 7, lift: 0, kneeX: BODY_X8 - 6 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
-      coat: "billow_back", coatShift: 2, armL: "cast_thrust",
-      hiltOffset: [5, 14], tipPos: [BODY_X8 + 17, 46],
+      coat: "billow_back", coatShift: 1, armL: "cast_thrust",
+      hiltOffset: [5, 18], tipPos: [BODY_X8 + 17, 40],
       castEffect: { stage: "bolt_fade", reachX: 81 },
     },
     // 6 [2 cells]: fading sparks along the bolt path out to reachX=80
@@ -655,7 +650,7 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: BODY_X8 - 7, lift: 0, kneeX: BODY_X8 - 6 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
       coat: "rest", armL: "cast_thrust",
-      hiltOffset: [5, 14], tipPos: [BODY_X8 + 17, 45],
+      hiltOffset: [5, 18], tipPos: [BODY_X8 + 17, 40],
       castEffect: { stage: "sparks_fade", reachX: 80 },
     },
     // 7 [2 cells]: final dissolving embers along bolt path to reachX=80 (nothing on floor)
@@ -664,25 +659,25 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
       coat: "rest", armL: "cast_raise",
-      hiltOffset: [6, 14], tipPos: [BODY_X8 + 18, 33],
+      hiltOffset: [6, 18], tipPos: [BODY_X8 + 18, 28],
       castEffect: { stage: "sparks_end", reachX: 80 },
     },
   ],
 
   // ─── Crouch (2 frames, FPS 8, loop: true) ─────────────────────────────────
-  // Clearly lower (head ~30 % lower than idle), knees bent outward, coat pooling
+  // Clearly lower (~70 % of standing height), knees bent outward, coat pooling
   crouch: [
-    // 0: drop transition (torso dropped 15px, ~28% lower than idle)
+    // 0: drop transition (torso dropped 17px, ~72% of standing height)
     {
-      bob: 15, lean: 1,
+      bob: 17, lean: 1,
       legL: { x: BODY_X8 - 8, lift: 0, kneeX: BODY_X8 - 12 },
       legR: { x: BODY_X8 + 7, lift: 0, kneeX: BODY_X8 + 12 },
       coat: "crouch_bunch", armL: "crouch",
       hiltOffset: [4, 15], tipPos: [BODY_X8 + 18, 52],
     },
-    // 1: full grounded deep crouch (torso dropped 17px, ~32% lower than idle)
+    // 1: full grounded deep crouch (torso dropped 19px, ~70% of standing height)
     {
-      bob: 17, lean: 0,
+      bob: 19, lean: 0,
       legL: { x: BODY_X8 - 9, lift: 0, kneeX: BODY_X8 - 14 },
       legR: { x: BODY_X8 + 8, lift: 0, kneeX: BODY_X8 + 13 },
       coat: "crouch_bunch", armL: "crouch",
@@ -695,11 +690,11 @@ const POSES: Partial<Record<string, Pose[]>> = {
 // ─── Draw Functions ──────────────────────────────────────────────────────────
 
 function torsoTopY(p: Pose): number {
-  return 25 + p.bob;
+  return 16 + p.bob;
 }
 
 function getTorsoHeight(p: Pose): number {
-  return p.coat === "crouch_bunch" ? 11 : 16;
+  return p.coat === "crouch_bunch" ? 14 : 20;
 }
 
 function getHipY(p: Pose): number {
@@ -707,7 +702,7 @@ function getHipY(p: Pose): number {
 }
 
 function headTopY(p: Pose): number {
-  return 11 + p.bob;
+  return 2 + p.bob;
 }
 
 // 1. Draw Greatcoat Tails (behind character)
@@ -737,9 +732,10 @@ function drawCoatTails(b: Brush, p: Pose): void {
           [5, hipX - 13, hipX - 8],
           [6, hipX - 14, hipX - 10],
           [7, hipX - 15, hipX - 11],
-          [8, hipX - 15, hipX - 12],
-          [9, hipX - 15, hipX - 13],
-          [10, hipX - 15, hipX - 14],
+          [8, hipX - 16, hipX - 12],
+          [9, hipX - 16, hipX - 13],
+          [10, hipX - 16, hipX - 14],
+          [11, hipX - 16, hipX - 15],
         ];
       } else if (variant === 1) {
         // High aerodynamic lift flutter
@@ -754,7 +750,8 @@ function drawCoatTails(b: Brush, p: Pose): void {
           [5, hipX - 16, hipX - 11],
           [6, hipX - 17, hipX - 13],
           [7, hipX - 17, hipX - 14],
-          [8, hipX - 17, hipX - 15],
+          [8, hipX - 18, hipX - 15],
+          [9, hipX - 18, hipX - 16],
         ];
       } else {
         // Low trailing ripple flap
@@ -770,9 +767,10 @@ function drawCoatTails(b: Brush, p: Pose): void {
           [6, hipX - 10, hipX - 6],
           [7, hipX - 11, hipX - 7],
           [8, hipX - 12, hipX - 9],
-          [9, hipX - 12, hipX - 10],
-          [10, hipX - 13, hipX - 11],
-          [11, hipX - 13, hipX - 12],
+          [9, hipX - 13, hipX - 10],
+          [10, hipX - 14, hipX - 11],
+          [11, hipX - 14, hipX - 12],
+          [12, hipX - 14, hipX - 13],
         ];
       }
 
@@ -889,8 +887,8 @@ function drawCoatTails(b: Brush, p: Pose): void {
       const poolLeft = BODY_X8 - 15 + p.lean;
       const poolRight = BODY_X8 + 13 + p.lean;
       const poolW = poolRight - poolLeft + 1;
-      const waistX = BODY_X8 - 7 + p.lean;
-      const waistW = 15;
+      const waistX = BODY_X8 - 8 + p.lean;
+      const waistW = 16;
 
       // Waist and upper thigh drapery connecting smoothly to compressed hips
       b.rect(waistX, hipY - 2, waistW, 3, pal.coat);
@@ -930,22 +928,22 @@ function drawCoatTails(b: Brush, p: Pose): void {
     case "rest":
     default: {
       // Elegant split greatcoat tails hanging down to just above floor
-      const tailLX = BODY_X8 - 10 + shift + p.lean;
-      const tailRX = BODY_X8 - 4 + shift + p.lean;
+      const tailLX = BODY_X8 - 11 + shift + p.lean;
+      const tailRX = BODY_X8 - 5 + shift + p.lean;
       const tailH = FLOOR8 - hipY;
 
       // Left coat tail
-      b.rect(tailLX, hipY, 4, tailH, pal.coat);
-      b.rect(tailLX - 1, hipY + tailH - 2, 5, 1, pal.trim);
+      b.rect(tailLX, hipY, 5, tailH, pal.coat);
+      b.rect(tailLX - 1, hipY + tailH - 2, 6, 1, pal.trim);
 
       // Right coat tail
-      b.rect(tailRX, hipY, 4, tailH - 1, pal.coatShade);
-      b.rect(tailRX - 1, hipY + tailH - 3, 5, 1, pal.trim);
+      b.rect(tailRX, hipY, 5, tailH - 1, pal.coatShade);
+      b.rect(tailRX - 1, hipY + tailH - 3, 6, 1, pal.trim);
 
       if (detailed) {
         b.rect(tailLX, hipY, 1, tailH - 2, pal.coatLight);
-        b.rect(tailLX - 1, hipY + tailH - 1, 5, 1, pal.trimShade);
-        b.rect(tailRX - 1, hipY + tailH - 2, 5, 1, pal.trimShade);
+        b.rect(tailLX - 1, hipY + tailH - 1, 6, 1, pal.trimShade);
+        b.rect(tailRX - 1, hipY + tailH - 2, 6, 1, pal.trimShade);
         // Fine fold line between split tails
         b.line16(
           Math.round((tailRX - 1) * 2),
@@ -980,15 +978,15 @@ function drawLegs(b: Brush, p: Pose): void {
     const legLight = isBack ? pal.coat : pal.coatLight;
 
     // Thigh: hip to knee (2px wide)
-    b.line(BODY_X8 - 2 + (isBack ? -3 : 3) + p.lean, hipY, kneeX, kneeY, legCol);
-    b.line(BODY_X8 - 1 + (isBack ? -3 : 3) + p.lean, hipY, kneeX + 1, kneeY, legCol);
+    b.line(BODY_X8 - 2 + (isBack ? -4 : 4) + p.lean, hipY, kneeX, kneeY, legCol);
+    b.line(BODY_X8 - 1 + (isBack ? -4 : 4) + p.lean, hipY, kneeX + 1, kneeY, legCol);
 
     // Shin: knee to ankle (2px wide)
     b.line(kneeX, kneeY, footX, footY - 2, legCol);
     b.line(kneeX + 1, kneeY, footX + 1, footY - 2, legCol);
 
     if (detailed && !isBack) {
-      b.line(BODY_X8 - 1 + 3 + p.lean, hipY, kneeX + 1, kneeY, legLight);
+      b.line(BODY_X8 - 1 + 4 + p.lean, hipY, kneeX + 1, kneeY, legLight);
       b.line(kneeX + 1, kneeY, footX + 1, footY - 2, legLight);
       // Subtle trousers crease
       b.px16(Math.round(kneeX * 2), Math.round(kneeY * 2), pal.coatLight);
@@ -1013,8 +1011,8 @@ function drawLegs(b: Brush, p: Pose): void {
 function drawTorso(b: Brush, p: Pose): void {
   const { pal, detailed } = b;
   const tY = torsoTopY(p);
-  const tX = BODY_X8 - 9 + p.lean;
-  const tW = 18;
+  const tX = BODY_X8 - 10 + p.lean;
+  const tW = 20;
   const tH = getTorsoHeight(p);
 
   // Main coat silhouette
@@ -1026,59 +1024,54 @@ function drawTorso(b: Brush, p: Pose): void {
   }
 
   // Waistcoat center panel
-  b.rect(tX + 6, tY + 2, 6, tH - 4, pal.coatLight);
+  b.rect(tX + 7, tY + 2, 6, tH - 4, pal.coatLight);
   if (detailed) {
-    b.rect(tX + 6, tY + 2, 1, tH - 4, pal.coat);
+    b.rect(tX + 7, tY + 2, 1, tH - 4, pal.coat);
   }
 
   // Double-breasted gold buttons
-  if (tH < 14) {
-    b.px(tX + 7, tY + 3, pal.trim);
-    b.px(tX + 10, tY + 3, pal.trim);
-    b.px(tX + 7, tY + 6, pal.trim);
-    b.px(tX + 10, tY + 6, pal.trim);
+  if (tH < 16) {
+    b.px(tX + 8, tY + 3, pal.trim);
+    b.px(tX + 11, tY + 3, pal.trim);
+    b.px(tX + 8, tY + 6, pal.trim);
+    b.px(tX + 11, tY + 6, pal.trim);
     if (detailed) {
-      b.px16(Math.round((tX + 7) * 2), Math.round((tY + 3) * 2), pal.solarCore);
-      b.px16(Math.round((tX + 10) * 2), Math.round((tY + 3) * 2), pal.solarCore);
-      b.px16(Math.round((tX + 7) * 2), Math.round((tY + 6) * 2), pal.solarCore);
-      b.px16(Math.round((tX + 10) * 2), Math.round((tY + 6) * 2), pal.solarCore);
+      b.px16(Math.round((tX + 8) * 2), Math.round((tY + 3) * 2), pal.solarCore);
+      b.px16(Math.round((tX + 11) * 2), Math.round((tY + 3) * 2), pal.solarCore);
+      b.px16(Math.round((tX + 8) * 2), Math.round((tY + 6) * 2), pal.solarCore);
+      b.px16(Math.round((tX + 11) * 2), Math.round((tY + 6) * 2), pal.solarCore);
     }
   } else {
-    b.px(tX + 7, tY + 4, pal.trim);
-    b.px(tX + 10, tY + 4, pal.trim);
-    b.px(tX + 7, tY + 8, pal.trim);
-    b.px(tX + 10, tY + 8, pal.trim);
-    b.px(tX + 7, tY + 11, pal.trim);
-    b.px(tX + 10, tY + 11, pal.trim);
-
-    if (detailed) {
-      // 16-bit button specular pips
-      b.px16(Math.round((tX + 7) * 2), Math.round((tY + 4) * 2), pal.solarCore);
-      b.px16(Math.round((tX + 10) * 2), Math.round((tY + 4) * 2), pal.solarCore);
-      b.px16(Math.round((tX + 7) * 2), Math.round((tY + 8) * 2), pal.solarCore);
-      b.px16(Math.round((tX + 10) * 2), Math.round((tY + 8) * 2), pal.solarCore);
+    const buttonRows = [4, 8, 12, 15];
+    for (const row of buttonRows) {
+      b.px(tX + 8, tY + row, pal.trim);
+      b.px(tX + 11, tY + row, pal.trim);
+      if (detailed) {
+        b.px16(Math.round((tX + 8) * 2), Math.round((tY + row) * 2), pal.solarCore);
+        b.px16(Math.round((tX + 11) * 2), Math.round((tY + row) * 2), pal.solarCore);
+      }
     }
   }
 
   // Leather utility belt
   b.rect(tX + 1, tY + tH - 3, tW - 2, 2, pal.boot);
   // Gold belt buckle
-  b.rect(tX + 7, tY + tH - 3, 4, 2, pal.trim);
+  b.rect(tX + 8, tY + tH - 3, 4, 2, pal.trim);
   if (detailed) {
-    b.px(tX + 8, tY + tH - 2, pal.outline);
+    b.px(tX + 9, tY + tH - 2, pal.outline);
   }
 
   // Greatcoat high collar framing neck with gold trim
-  b.rect(tX + 3, tY - 2, 2, 3, pal.coat);
-  b.rect(tX + 11, tY - 2, 2, 3, pal.coat);
-  b.rect(tX + 3, tY - 2, 2, 1, pal.trim);
-  b.rect(tX + 11, tY - 2, 2, 1, pal.trim);
+  b.rect(tX + 4, tY - 2, 2, 3, pal.coat);
+  b.rect(tX + 12, tY - 2, 2, 3, pal.coat);
+  b.rect(tX + 4, tY - 2, 2, 1, pal.trim);
+  b.rect(tX + 12, tY - 2, 2, 1, pal.trim);
 
   // Greatcoat lapels with gold trim
-  b.rect(tX + 1, tY, 3, 5, pal.coatShade);
-  b.rect(tX + tW - 4, tY, 3, 5, pal.coatShade);
-  b.line(tX + 1, tY, tX + 4, tY + 4, pal.trim);
-  b.line(tX + tW - 2, tY, tX + tW - 5, tY + 4, pal.trim);
+  b.rect(tX + 1, tY, 3, 6, pal.coatShade);
+  b.rect(tX + tW - 4, tY, 3, 6, pal.coatShade);
+  b.line(tX + 1, tY, tX + 4, tY + 5, pal.trim);
+  b.line(tX + tW - 2, tY, tX + tW - 5, tY + 5, pal.trim);
 
   // Gold hem on coat lower edge
   b.rect(tX, tY + tH - 1, tW, 1, pal.trim);
@@ -1103,9 +1096,9 @@ function drawHead(b: Brush, p: Pose): void {
   b.rect(hX - 1, hY + 2, 11, 2, pal.hair);
 
   // Rear hair sweeping down to nape with shadow
-  b.rect(hX - 1, hY + 4, 3, 4, pal.hairShade);
-  b.rect(hX - 1, hY + 4, 1, 4, pal.hair);
-  b.rect(hX, hY + 7, 2, 2, pal.hairShade);
+  b.rect(hX - 1, hY + 4, 3, 5, pal.hairShade);
+  b.rect(hX - 1, hY + 4, 1, 5, pal.hair);
+  b.rect(hX, hY + 8, 2, 2, pal.hairShade);
 
   if (detailed) {
     // Rich chestnut hair strands & shading in 16-bit
@@ -1120,35 +1113,36 @@ function drawHead(b: Brush, p: Pose): void {
   b.rect(hX + 2, hY + 4, 7, 1, pal.skin);
   b.rect(hX + 2, hY + 5, 7, 1, pal.skin);
   b.rect(hX + 2, hY + 6, 7, 1, pal.skin);
-  b.rect(hX + 2, hY + 7, 6, 1, pal.skin);
+  b.rect(hX + 2, hY + 7, 7, 1, pal.skin);
+  b.rect(hX + 2, hY + 8, 6, 1, pal.skin);
 
   // Tapered jaw & chin (head is not a box!)
-  b.rect(hX + 2, hY + 8, 5, 1, pal.skin);
-  b.rect(hX + 3, hY + 9, 3, 1, pal.skin); // chin tapers forward at x = hX+3..5
+  b.rect(hX + 2, hY + 9, 5, 1, pal.skin);
+  b.rect(hX + 3, hY + 10, 3, 1, pal.skin); // chin tapers forward at x = hX+3..5
 
   // Visible neck connecting head to coat collar
-  b.rect(hX + 3, hY + 10, 3, 3, pal.skin);
-  b.rect(hX + 2, hY + 12, 5, 2, pal.skin);
+  b.rect(hX + 3, hY + 11, 3, 3, pal.skin);
+  b.rect(hX + 2, hY + 13, 5, 3, pal.skin);
 
   // Jaw & neck shadow
-  b.rect(hX + 2, hY + 8, 2, 1, pal.skinShade);
-  b.rect(hX + 3, hY + 10, 1, 4, pal.skinShade);
+  b.rect(hX + 2, hY + 9, 2, 1, pal.skinShade);
+  b.rect(hX + 3, hY + 11, 1, 4, pal.skinShade);
 
   if (detailed) {
     // 16-bit subtle shadow under jawline and ear
-    b.rect16(Math.round((hX + 2) * 2), Math.round((hY + 6) * 2), 2, 4, pal.skinShade);
+    b.rect16(Math.round((hX + 2) * 2), Math.round((hY + 7) * 2), 2, 4, pal.skinShade);
     b.line16(
       Math.round((hX + 3) * 2),
-      Math.round((hY + 9) * 2),
+      Math.round((hY + 10) * 2),
       Math.round((hX + 5) * 2),
-      Math.round((hY + 9) * 2),
+      Math.round((hY + 10) * 2),
       pal.skinShade,
     );
   }
 
   // Visible duelist eye facing forward/right
   const eyeX = hX + 7;
-  const eyeY = hY + 5;
+  const eyeY = hY + 6;
   b.px(eyeX, eyeY, pal.outline);
 
   // Spectacles as small 1-2 px glint (not a giant gold headphone or rim)
@@ -1174,7 +1168,7 @@ function drawHead(b: Brush, p: Pose): void {
 function drawLeftArm(b: Brush, p: Pose): void {
   const { pal, detailed } = b;
   const tY = torsoTopY(p);
-  const shX = BODY_X8 - 9 + p.lean;
+  const shX = BODY_X8 - 10 + p.lean;
   const shY = tY + 2;
 
   switch (p.armL) {
@@ -1192,7 +1186,7 @@ function drawLeftArm(b: Brush, p: Pose): void {
 
     case "cast_thrust": {
       // Thrust forward-right projecting magical sigil
-      const armEndX = shX + 8;
+      const armEndX = shX + 9;
       const armEndY = shY + 1;
       b.line(shX, shY, armEndX, armEndY, pal.coat);
       b.line(shX, shY + 1, armEndX, armEndY + 1, pal.coat);
@@ -1206,51 +1200,51 @@ function drawLeftArm(b: Brush, p: Pose): void {
 
     case "lunge": {
       // Extended rearward for duelist counter-balance
-      b.line(shX, shY, shX - 6, shY + 6, pal.coat);
-      b.line(shX, shY + 1, shX - 6, shY + 7, pal.coat);
-      b.rect(shX - 6, shY + 6, 2, 2, pal.skin);
+      b.line(shX, shY, shX - 7, shY + 7, pal.coat);
+      b.line(shX, shY + 1, shX - 7, shY + 8, pal.coat);
+      b.rect(shX - 8, shY + 7, 2, 2, pal.skin);
       break;
     }
 
     case "parry": {
       // Tucked across chest
-      b.line(shX, shY, shX + 4, shY + 4, pal.coat);
-      b.line(shX, shY + 1, shX + 4, shY + 5, pal.coat);
-      b.rect(shX + 4, shY + 4, 2, 2, pal.skin);
+      b.line(shX, shY, shX + 5, shY + 5, pal.coat);
+      b.line(shX, shY + 1, shX + 5, shY + 6, pal.coat);
+      b.rect(shX + 5, shY + 5, 2, 2, pal.skin);
       break;
     }
 
     case "pump_forward": {
       // Forward swing during run
-      b.line(shX, shY, shX + 5, shY + 6, pal.coat);
-      b.line(shX, shY + 1, shX + 5, shY + 7, pal.coat);
-      b.rect(shX + 5, shY + 6, 2, 2, pal.skin);
+      b.line(shX, shY, shX + 6, shY + 8, pal.coat);
+      b.line(shX, shY + 1, shX + 6, shY + 9, pal.coat);
+      b.rect(shX + 6, shY + 8, 2, 2, pal.skin);
       break;
     }
 
     case "pump_back": {
       // Rearward swing during run
-      b.line(shX, shY, shX - 5, shY + 5, pal.coat);
-      b.line(shX, shY + 1, shX - 5, shY + 6, pal.coat);
-      b.rect(shX - 6, shY + 5, 2, 2, pal.skin);
+      b.line(shX, shY, shX - 6, shY + 7, pal.coat);
+      b.line(shX, shY + 1, shX - 6, shY + 8, pal.coat);
+      b.rect(shX - 7, shY + 7, 2, 2, pal.skin);
       break;
     }
 
     case "crouch": {
       // Resting on front knee
-      b.line(shX, shY, shX + 4, shY + 7, pal.coat);
-      b.rect(shX + 4, shY + 7, 3, 2, pal.skin);
+      b.line(shX, shY, shX + 5, shY + 9, pal.coat);
+      b.rect(shX + 5, shY + 9, 3, 2, pal.skin);
       break;
     }
 
     case "rest":
     default: {
       // Resting gracefully at hip / belt
-      b.rect(shX - 2, shY, 3, 9, pal.coat);
-      b.rect(shX - 2, shY + 8, 3, 1, pal.trim); // gold cuff
-      b.rect(shX - 2, shY + 9, 3, 2, pal.skin); // hand
+      b.rect(shX - 2, shY, 3, 13, pal.coat);
+      b.rect(shX - 2, shY + 12, 3, 1, pal.trim); // gold cuff
+      b.rect(shX - 2, shY + 13, 3, 2, pal.skin); // hand
       if (detailed) {
-        b.rect(shX - 2, shY, 1, 8, pal.coatLight);
+        b.rect(shX - 2, shY, 1, 12, pal.coatLight);
       }
       break;
     }
@@ -1261,7 +1255,7 @@ function drawLeftArm(b: Brush, p: Pose): void {
 function drawRapier(b: Brush, p: Pose): void {
   const { pal, detailed } = b;
   const tY = torsoTopY(p);
-  const shX = BODY_X8 + 4 + p.lean;
+  const shX = BODY_X8 + 5 + p.lean;
   const shY = tY + 2;
 
   const hx = shX + p.hiltOffset[0];
@@ -1325,7 +1319,7 @@ function drawDashAfterimages(b: Brush, p: Pose): void {
     b.line(BODY_X8 - off - 6, tY + 16, BODY_X8 - off, tY + 16, streakCol);
 
     // Subtle gold trim afterimage glint
-    b.line(BODY_X8 - off - 4, tY + 17, BODY_X8 - off, tY + 17, pal.trimShade);
+    b.line(BODY_X8 - off - 4, tY + 18, BODY_X8 - off, tY + 18, pal.trimShade);
   }
 }
 
@@ -1365,7 +1359,7 @@ function drawCastEffects(b: Brush, p: Pose): void {
 
   const { stage, reachX } = p.castEffect;
   const tY = torsoTopY(p);
-  const shX = BODY_X8 - 9 + p.lean;
+  const shX = BODY_X8 - 10 + p.lean;
   const shY = tY + 2;
 
   switch (stage) {
