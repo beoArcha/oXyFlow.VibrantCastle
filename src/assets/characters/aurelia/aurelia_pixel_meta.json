@@ -1,0 +1,696 @@
+{
+  "characterId": "aurelia",
+  "entityType": "humanoid",
+  "version": "1.0",
+  "description": "Autumn mage with voluminous chestnut hair, wine robe, and a crescent staff that channels cyan Aether energy.",
+  "atlas": {
+    "columns": 15,
+    "rows": 8,
+    "cellWidth": 124,
+    "cellHeight": 144,
+    "spacing": 0,
+    "background": "transparent",
+    "safeMargin": 1
+  },
+  "naturalFacing": "right",
+  "grid": {
+    "ordering": [
+      "idle",
+      "run",
+      "jump",
+      "fall",
+      "attack",
+      "dash",
+      "cast",
+      "crouch"
+    ],
+    "columns": 15,
+    "rows": 8,
+    "packedCell": {
+      "width": 124,
+      "height": 143
+    },
+    "animations": {
+      "idle": {
+        "row": 0,
+        "frames": 6,
+        "fps": 5,
+        "loop": true,
+        "cells": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "run": {
+        "row": 1,
+        "frames": 10,
+        "fps": 10,
+        "loop": true,
+        "cells": [
+          1,
+          1,
+          1,
+          1,
+          2,
+          1,
+          2,
+          1,
+          1,
+          1
+        ]
+      },
+      "jump": {
+        "row": 2,
+        "frames": 3,
+        "fps": 6,
+        "loop": false,
+        "cells": [
+          1,
+          1,
+          1
+        ]
+      },
+      "fall": {
+        "row": 3,
+        "frames": 3,
+        "fps": 6,
+        "loop": true,
+        "cells": [
+          1,
+          2,
+          1
+        ]
+      },
+      "attack": {
+        "row": 4,
+        "frames": 7,
+        "fps": 8,
+        "loop": false,
+        "cells": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          3
+        ]
+      },
+      "dash": {
+        "row": 5,
+        "frames": 5,
+        "fps": 12,
+        "loop": false,
+        "cells": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      "cast": {
+        "row": 6,
+        "frames": 7,
+        "fps": 8,
+        "loop": false,
+        "cells": [
+          2,
+          1,
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      "crouch": {
+        "row": 7,
+        "frames": 2,
+        "fps": 8,
+        "loop": true,
+        "cells": [
+          2,
+          2
+        ]
+      }
+    }
+  },
+  "variants": {
+    "low": {
+      "file": "aurelia_hi8bit.svg",
+      "cellWidth": 62,
+      "cellHeight": 72,
+      "sheetWidth": 930,
+      "sheetHeight": 576,
+      "scale": 0.5,
+      "frameRects": {
+        "idle_0": {
+          "x": 18,
+          "y": 3,
+          "width": 29,
+          "height": 69
+        },
+        "idle_1": {
+          "x": 79,
+          "y": 3,
+          "width": 30,
+          "height": 69
+        },
+        "idle_2": {
+          "x": 142,
+          "y": 3,
+          "width": 30,
+          "height": 69
+        },
+        "idle_3": {
+          "x": 205,
+          "y": 3,
+          "width": 29,
+          "height": 69
+        },
+        "idle_4": {
+          "x": 267,
+          "y": 3,
+          "width": 28,
+          "height": 69
+        },
+        "idle_5": {
+          "x": 329,
+          "y": 3,
+          "width": 28,
+          "height": 69
+        },
+        "run_0": {
+          "x": 17,
+          "y": 75,
+          "width": 31,
+          "height": 69
+        },
+        "run_1": {
+          "x": 79,
+          "y": 76,
+          "width": 31,
+          "height": 68
+        },
+        "run_2": {
+          "x": 141,
+          "y": 76,
+          "width": 32,
+          "height": 68
+        },
+        "run_3": {
+          "x": 203,
+          "y": 75,
+          "width": 32,
+          "height": 69
+        },
+        "run_4": {
+          "x": 257,
+          "y": 75,
+          "width": 82,
+          "height": 69
+        },
+        "run_5": {
+          "x": 388,
+          "y": 76,
+          "width": 33,
+          "height": 68
+        },
+        "run_6": {
+          "x": 445,
+          "y": 76,
+          "width": 80,
+          "height": 68
+        },
+        "run_7": {
+          "x": 575,
+          "y": 75,
+          "width": 31,
+          "height": 69
+        },
+        "run_8": {
+          "x": 637,
+          "y": 75,
+          "width": 31,
+          "height": 69
+        },
+        "run_9": {
+          "x": 699,
+          "y": 75,
+          "width": 31,
+          "height": 69
+        },
+        "jump_0": {
+          "x": 18,
+          "y": 150,
+          "width": 28,
+          "height": 66
+        },
+        "jump_1": {
+          "x": 82,
+          "y": 147,
+          "width": 27,
+          "height": 69
+        },
+        "jump_2": {
+          "x": 142,
+          "y": 147,
+          "width": 31,
+          "height": 69
+        },
+        "fall_0": {
+          "x": 19,
+          "y": 219,
+          "width": 28,
+          "height": 69
+        },
+        "fall_1": {
+          "x": 71,
+          "y": 219,
+          "width": 80,
+          "height": 69
+        },
+        "fall_2": {
+          "x": 205,
+          "y": 221,
+          "width": 29,
+          "height": 67
+        },
+        "attack_0": {
+          "x": 17,
+          "y": 292,
+          "width": 80,
+          "height": 68
+        },
+        "attack_1": {
+          "x": 142,
+          "y": 292,
+          "width": 79,
+          "height": 68
+        },
+        "attack_2": {
+          "x": 266,
+          "y": 292,
+          "width": 80,
+          "height": 68
+        },
+        "attack_3": {
+          "x": 389,
+          "y": 291,
+          "width": 81,
+          "height": 69
+        },
+        "attack_4": {
+          "x": 514,
+          "y": 292,
+          "width": 80,
+          "height": 68
+        },
+        "attack_5": {
+          "x": 638,
+          "y": 292,
+          "width": 78,
+          "height": 68
+        },
+        "attack_6": {
+          "x": 762,
+          "y": 291,
+          "width": 139,
+          "height": 69
+        },
+        "dash_0": {
+          "x": 15,
+          "y": 368,
+          "width": 82,
+          "height": 64
+        },
+        "dash_1": {
+          "x": 139,
+          "y": 367,
+          "width": 84,
+          "height": 65
+        },
+        "dash_2": {
+          "x": 263,
+          "y": 366,
+          "width": 84,
+          "height": 66
+        },
+        "dash_3": {
+          "x": 387,
+          "y": 367,
+          "width": 82,
+          "height": 65
+        },
+        "dash_4": {
+          "x": 511,
+          "y": 366,
+          "width": 82,
+          "height": 66
+        },
+        "cast_0": {
+          "x": 18,
+          "y": 436,
+          "width": 78,
+          "height": 68
+        },
+        "cast_1": {
+          "x": 142,
+          "y": 435,
+          "width": 29,
+          "height": 69
+        },
+        "cast_2": {
+          "x": 204,
+          "y": 435,
+          "width": 79,
+          "height": 69
+        },
+        "cast_3": {
+          "x": 328,
+          "y": 436,
+          "width": 80,
+          "height": 68
+        },
+        "cast_4": {
+          "x": 451,
+          "y": 436,
+          "width": 81,
+          "height": 68
+        },
+        "cast_5": {
+          "x": 576,
+          "y": 435,
+          "width": 79,
+          "height": 69
+        },
+        "cast_6": {
+          "x": 700,
+          "y": 435,
+          "width": 76,
+          "height": 69
+        },
+        "crouch_0": {
+          "x": 18,
+          "y": 515,
+          "width": 71,
+          "height": 61
+        },
+        "crouch_1": {
+          "x": 140,
+          "y": 518,
+          "width": 73,
+          "height": 58
+        }
+      }
+    },
+    "mid": {
+      "file": "aurelia_hi16bit.svg",
+      "cellWidth": 124,
+      "cellHeight": 144,
+      "sheetWidth": 1860,
+      "sheetHeight": 1152,
+      "scale": 1,
+      "frameRects": {
+        "idle_0": {
+          "x": 37,
+          "y": 7,
+          "width": 56,
+          "height": 137
+        },
+        "idle_1": {
+          "x": 159,
+          "y": 7,
+          "width": 58,
+          "height": 137
+        },
+        "idle_2": {
+          "x": 285,
+          "y": 7,
+          "width": 58,
+          "height": 137
+        },
+        "idle_3": {
+          "x": 411,
+          "y": 7,
+          "width": 56,
+          "height": 137
+        },
+        "idle_4": {
+          "x": 535,
+          "y": 7,
+          "width": 54,
+          "height": 137
+        },
+        "idle_5": {
+          "x": 659,
+          "y": 7,
+          "width": 54,
+          "height": 137
+        },
+        "run_0": {
+          "x": 35,
+          "y": 151,
+          "width": 60,
+          "height": 137
+        },
+        "run_1": {
+          "x": 159,
+          "y": 153,
+          "width": 60,
+          "height": 135
+        },
+        "run_2": {
+          "x": 283,
+          "y": 153,
+          "width": 62,
+          "height": 135
+        },
+        "run_3": {
+          "x": 407,
+          "y": 151,
+          "width": 62,
+          "height": 137
+        },
+        "run_4": {
+          "x": 515,
+          "y": 151,
+          "width": 162,
+          "height": 137
+        },
+        "run_5": {
+          "x": 777,
+          "y": 153,
+          "width": 64,
+          "height": 135
+        },
+        "run_6": {
+          "x": 891,
+          "y": 153,
+          "width": 158,
+          "height": 135
+        },
+        "run_7": {
+          "x": 1151,
+          "y": 151,
+          "width": 60,
+          "height": 137
+        },
+        "run_8": {
+          "x": 1275,
+          "y": 151,
+          "width": 60,
+          "height": 137
+        },
+        "run_9": {
+          "x": 1399,
+          "y": 151,
+          "width": 60,
+          "height": 137
+        },
+        "jump_0": {
+          "x": 37,
+          "y": 301,
+          "width": 54,
+          "height": 131
+        },
+        "jump_1": {
+          "x": 165,
+          "y": 295,
+          "width": 52,
+          "height": 137
+        },
+        "jump_2": {
+          "x": 285,
+          "y": 295,
+          "width": 60,
+          "height": 137
+        },
+        "fall_0": {
+          "x": 39,
+          "y": 439,
+          "width": 54,
+          "height": 137
+        },
+        "fall_1": {
+          "x": 143,
+          "y": 439,
+          "width": 158,
+          "height": 137
+        },
+        "fall_2": {
+          "x": 411,
+          "y": 443,
+          "width": 56,
+          "height": 133
+        },
+        "attack_0": {
+          "x": 35,
+          "y": 585,
+          "width": 158,
+          "height": 135
+        },
+        "attack_1": {
+          "x": 285,
+          "y": 585,
+          "width": 156,
+          "height": 135
+        },
+        "attack_2": {
+          "x": 533,
+          "y": 585,
+          "width": 158,
+          "height": 135
+        },
+        "attack_3": {
+          "x": 779,
+          "y": 583,
+          "width": 160,
+          "height": 137
+        },
+        "attack_4": {
+          "x": 1029,
+          "y": 585,
+          "width": 158,
+          "height": 135
+        },
+        "attack_5": {
+          "x": 1277,
+          "y": 585,
+          "width": 153,
+          "height": 135
+        },
+        "attack_6": {
+          "x": 1525,
+          "y": 583,
+          "width": 276,
+          "height": 137
+        },
+        "dash_0": {
+          "x": 31,
+          "y": 737,
+          "width": 162,
+          "height": 127
+        },
+        "dash_1": {
+          "x": 279,
+          "y": 735,
+          "width": 166,
+          "height": 129
+        },
+        "dash_2": {
+          "x": 527,
+          "y": 733,
+          "width": 166,
+          "height": 131
+        },
+        "dash_3": {
+          "x": 775,
+          "y": 735,
+          "width": 162,
+          "height": 129
+        },
+        "dash_4": {
+          "x": 1023,
+          "y": 733,
+          "width": 162,
+          "height": 131
+        },
+        "cast_0": {
+          "x": 37,
+          "y": 873,
+          "width": 154,
+          "height": 135
+        },
+        "cast_1": {
+          "x": 285,
+          "y": 871,
+          "width": 56,
+          "height": 137
+        },
+        "cast_2": {
+          "x": 409,
+          "y": 871,
+          "width": 156,
+          "height": 137
+        },
+        "cast_3": {
+          "x": 657,
+          "y": 873,
+          "width": 158,
+          "height": 135
+        },
+        "cast_4": {
+          "x": 903,
+          "y": 873,
+          "width": 160,
+          "height": 135
+        },
+        "cast_5": {
+          "x": 1153,
+          "y": 871,
+          "width": 156,
+          "height": 137
+        },
+        "cast_6": {
+          "x": 1401,
+          "y": 871,
+          "width": 149,
+          "height": 137
+        },
+        "crouch_0": {
+          "x": 37,
+          "y": 1031,
+          "width": 140,
+          "height": 121
+        },
+        "crouch_1": {
+          "x": 281,
+          "y": 1037,
+          "width": 144,
+          "height": 115
+        }
+      }
+    }
+  },
+  "layout": {
+    "origin": {
+      "type": "feet",
+      "normalized": {
+        "x": 0.5243,
+        "y": 1
+      }
+    },
+    "bodyBox": {
+      "x": 0.2823,
+      "y": 0.0486,
+      "w": 0.4839,
+      "h": 0.9514
+    }
+  }
+}
