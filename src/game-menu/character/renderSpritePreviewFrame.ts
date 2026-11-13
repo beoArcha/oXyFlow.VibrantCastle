@@ -6,7 +6,12 @@ export interface RenderSpritePreviewOptions extends SpriteStageVisualProps {
   readonly ctx: CanvasRenderingContext2D;
   readonly frame: SpriteFrame | null;
   readonly texture: SpriteSheetTexture | null;
+  /** Sheet pixels of one painted `mid` row; sizes every quality tier alike. Omitted draws at native pixels. */
+  readonly rowHeight?: number;
 }
+
+/** Height in pixels of a painted `mid` row: the size the preview `scale` is expressed in. */
+export const PREVIEW_REFERENCE_ROW_HEIGHT = 128;
 
 /**
  * Pure 2D canvas drawing routine for CharacterSpritePreview.
@@ -23,7 +28,8 @@ export function renderSpritePreviewFrame(options: RenderSpritePreviewOptions): v
     ctx,
     frame,
     texture,
-    scale = 1.6,
+    rowHeight = 0,
+    scale: baseScale = 1.6,
     flipHorizontal = false,
     backgroundGradient = ["#1a0802", "#080201"],
     accentColor = "#d97706",
@@ -32,6 +38,9 @@ export function renderSpritePreviewFrame(options: RenderSpritePreviewOptions): v
   const w = canvas.width;
   const h = canvas.height;
   if (w <= 0 || h <= 0) return;
+
+  // hi-8bit, hi-16bit and painted sheets differ in pixel density; draw them all at the same size
+  const scale = rowHeight > 0 ? (baseScale * PREVIEW_REFERENCE_ROW_HEIGHT) / rowHeight : baseScale;
 
   ctx.clearRect(0, 0, w, h);
 

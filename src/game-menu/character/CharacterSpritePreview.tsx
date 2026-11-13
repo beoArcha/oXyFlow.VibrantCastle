@@ -122,6 +122,8 @@ export const CharacterSpritePreview = React.memo(
           ctx,
           frame: activeFrame,
           texture: activeTexture,
+          // An explicit texture is not the sheet the view model sized, so it draws at native pixels
+          rowHeight: curExpTex === undefined ? curSpriteData.rowHeight : 0,
           scale: curScale,
           flipHorizontal: curFlip,
           backgroundGradient: curBgGrad,
@@ -175,7 +177,7 @@ export const CharacterSpritePreview = React.memo(
               ? paramsRef.current.explicitTexture
               : paramsRef.current.spriteData.texture;
 
-          const { frame: currentFrame } =
+          const { frame: currentFrame, rowHeight: currentRowHeight } =
             paramsRef.current.spriteData.getFrameForTick(continuousTicks);
 
           renderSpritePreviewFrame({
@@ -183,6 +185,7 @@ export const CharacterSpritePreview = React.memo(
             ctx,
             frame: currentFrame,
             texture: currentTexture,
+            rowHeight: paramsRef.current.explicitTexture === undefined ? currentRowHeight : 0,
             scale: paramsRef.current.scale,
             flipHorizontal: paramsRef.current.flipHorizontal,
             backgroundGradient: paramsRef.current.bgGrad,

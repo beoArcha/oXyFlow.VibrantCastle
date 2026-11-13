@@ -128,12 +128,14 @@ export function resolveCharacterSpriteVM(
     return {
       frame: res.frame,
       frameIndex: frameIdx,
+      rowHeight: res.rowHeight,
     };
   };
 
   return {
     texture,
     frame: initial.frame,
+    rowHeight: initial.rowHeight,
     characterId,
     quality,
     tier,

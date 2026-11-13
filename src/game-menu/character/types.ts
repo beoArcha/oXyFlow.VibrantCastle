@@ -91,9 +91,12 @@ export interface CharacterSpriteVM {
   readonly tier: CharacterProgressionTier;
   readonly state: AnimationName;
   readonly isLoaded: boolean;
+  /** Height in sheet pixels of one painted `mid` row (the size reference); 0 until the sheet is loaded. */
+  readonly rowHeight: number;
   readonly getFrameForTick: (continuousTicks: number) => {
     readonly frame: SpriteFrame | null;
     readonly frameIndex: number;
+    readonly rowHeight: number;
   };
 }
 
