@@ -50,10 +50,11 @@ describe("renderSpritePreviewFrame - Stateless Canvas 2D Renderer", () => {
       originY: 100,
     } as SpriteFrame,
     texture: {
-      complete: true,
-      naturalWidth: 1024,
-      naturalHeight: 1024,
-    } as unknown as HTMLImageElement,
+      source: {} as unknown as CanvasImageSource,
+      width: 1024,
+      height: 1024,
+      crisp: false,
+    },
     scale: 1.5,
     flipHorizontal: false,
     ...overrides,
@@ -102,7 +103,7 @@ describe("renderSpritePreviewFrame - Stateless Canvas 2D Renderer", () => {
 
   it("handles incomplete texture gracefully without drawing image", () => {
     const params = createParams({
-      texture: { complete: false, naturalWidth: 0 } as any,
+      texture: { source: {} as unknown as CanvasImageSource, width: 0, height: 0, crisp: false },
     });
     renderSpritePreviewFrame(params);
 

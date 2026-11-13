@@ -1,6 +1,11 @@
 import React, { useRef, useEffect, useImperativeHandle, useCallback } from "react";
 import { AssetQuality } from "@game/types";
-import { AnimationName, CharacterProgressionTier, SpriteFrame } from "@game/engine/spriteTypes";
+import {
+  AnimationName,
+  CharacterProgressionTier,
+  SpriteFrame,
+  SpriteSheetTexture,
+} from "@game/engine/spriteTypes";
 import { useCharacterSprite } from "./hooks/useCharacterSprite";
 import { useCharacterContext } from "./CharacterContext";
 import { renderSpritePreviewFrame } from "./renderSpritePreviewFrame";
@@ -9,7 +14,7 @@ import { SpriteStageVisualProps } from "./types";
 
 export interface CharacterSpritePreviewProps extends SpriteStageVisualProps {
   /** Optional explicit texture for pure presentation primitive mode */
-  readonly texture?: HTMLImageElement | null;
+  readonly texture?: SpriteSheetTexture | null;
   /** Optional explicit frame slice for pure presentation primitive mode */
   readonly frame?: SpriteFrame | null;
   /** Optional character ID; if omitted, resolved from CharacterContext */

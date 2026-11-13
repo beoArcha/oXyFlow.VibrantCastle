@@ -54,26 +54,38 @@ function getFs(): { fs: FsLike; cwd: string } | null {
   return fs ? { fs, cwd: host.cwd() } : null;
 }
 
-function readFromDisk(): AtlasFileMap {
+/**
+ * Reads `<cwd>/src/assets/<group>/<id>/*` without Vite: files matching `imagePattern` become image
+ * entries and files matching `metaPattern` are parsed as JSON metas.
+ */
+export function readAssetsFromDisk(
+  groups: readonly string[],
+  imagePattern: RegExp,
+  metaPattern: RegExp = /\.json$/
+): AtlasFileMap {
   const images: Record<string, string> = {};
   const metas: Record<string, unknown> = {};
   const host = getFs();
   if (!host) return { images, metas };
 
   const root = `${host.cwd.replace(/\\/g, "/")}/src/assets`;
-  for (const group of ["enemies", "structures"]) {
+  for (const group of groups) {
     if (!host.fs.existsSync(`${root}/${group}`)) continue;
     for (const id of host.fs.readdirSync(`${root}/${group}`)) {
       const dir = `${root}/${group}/${id}`;
       if (!host.fs.statSync(dir).isDirectory()) continue;
       for (const file of host.fs.readdirSync(dir)) {
         const path = `${dir}/${file}`;
-        if (BUNDLED_IMAGE_PATTERN.test(file)) images[path] = path;
-        else if (file.endsWith(".json")) metas[path] = JSON.parse(host.fs.readFileSync(path, "utf-8"));
+        if (imagePattern.test(file)) images[path] = path;
+        else if (metaPattern.test(file)) metas[path] = JSON.parse(host.fs.readFileSync(path, "utf-8"));
       }
     }
   }
   return { images, metas };
+}
+
+function readFromDisk(): AtlasFileMap {
+  return readAssetsFromDisk(["enemies", "structures"], BUNDLED_IMAGE_PATTERN);
 }
 
 /** Collects every atlas image and meta file of the enemy and structure asset folders. */

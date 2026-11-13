@@ -1,11 +1,11 @@
-import { SpriteFrame } from "@game/engine/spriteTypes";
+import { SpriteFrame, SpriteSheetTexture } from "@game/engine/spriteTypes";
 import { SpriteStageVisualProps } from "./types";
 
 export interface RenderSpritePreviewOptions extends SpriteStageVisualProps {
   readonly canvas: HTMLCanvasElement;
   readonly ctx: CanvasRenderingContext2D;
   readonly frame: SpriteFrame | null;
-  readonly texture: HTMLImageElement | null;
+  readonly texture: SpriteSheetTexture | null;
 }
 
 /**
@@ -90,7 +90,7 @@ export function renderSpritePreviewFrame(options: RenderSpritePreviewOptions): v
   ctx.globalAlpha = 1;
 
   // 5. Draw Sprite Frame
-  if (frame && texture && texture.complete && texture.naturalWidth > 0) {
+  if (frame && texture && texture.width > 0) {
     ctx.save();
     ctx.translate(feetX, feetY);
     if (flipHorizontal) {
@@ -102,7 +102,7 @@ export function renderSpritePreviewFrame(options: RenderSpritePreviewOptions): v
 
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(
-      texture,
+      texture.source,
       frame.x,
       frame.y,
       frame.w,

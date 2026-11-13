@@ -4,12 +4,19 @@ import {
   CharacterPortraitMood,
   SpriteAtlasMap,
   SpriteFrame,
+  SpriteSheetTexture,
 } from "./spriteTypes";
 import { PixelBoundsScanner } from "./extractors";
 
+/** Number of animation rows of a painted sheet; its row height is the unit of the on-screen scale. */
+const PAINTED_SHEET_ROWS = 8;
+
 export interface ResolvedFrameResult {
-  texture: HTMLImageElement | null;
+  texture: SpriteSheetTexture | null;
+  /** Source rectangle and feet origin in `texture` pixels. */
   frame: SpriteFrame | null;
+  /** Height in `texture` pixels of one painted `mid` row (the on-screen scale reference); 0 without a texture. */
+  rowHeight: number;
 }
 
 export interface ResolvedPortrait {
@@ -130,22 +137,30 @@ function createMainPortraitFallback(
   };
 }
 
+interface ScaledFrame {
+  readonly textureWidth: number;
+  readonly textureHeight: number;
+  readonly frame: SpriteFrame;
+}
+
+/** Scaled copies by source frame, so a sheet that differs from its nominal size allocates once per frame. */
+const scaledFrames = new WeakMap<SpriteFrame, ScaledFrame>();
+
 /**
- * Dynamically adapts sprite frame bounding box if the loaded image resolution
- * differs from the nominal sheet dimensions defined in metadata.
+ * Dynamically adapts sprite frame bounding box if the loaded sheet resolution
+ * differs from the nominal sheet dimensions defined in metadata (painted PNGs
+ * resized by the bundler, pixel SVG sheets rasterised at an integer scale).
  */
 export function adaptFrameResolution(
   baseFrame: SpriteFrame,
-  texture: HTMLImageElement | null,
+  texture: { readonly width: number; readonly height: number } | null,
   nominalSheetWidth?: number,
   nominalSheetHeight?: number
 ): SpriteFrame {
-  if (!texture || !texture.complete || texture.naturalWidth <= 0 || texture.naturalHeight <= 0) {
-    return baseFrame;
-  }
+  if (!texture || texture.width <= 0 || texture.height <= 0) return baseFrame;
 
-  const natW = texture.naturalWidth;
-  const natH = texture.naturalHeight;
+  const natW = texture.width;
+  const natH = texture.height;
   const sheetW = nominalSheetWidth || natW;
   const sheetH = nominalSheetHeight || natH;
 
@@ -153,10 +168,13 @@ export function adaptFrameResolution(
     return baseFrame;
   }
 
+  const cached = scaledFrames.get(baseFrame);
+  if (cached && cached.textureWidth === natW && cached.textureHeight === natH) return cached.frame;
+
   const scaleX = natW / sheetW;
   const scaleY = natH / sheetH;
 
-  return {
+  const frame: SpriteFrame = {
     x: baseFrame.x * scaleX,
     y: baseFrame.y * scaleY,
     w: baseFrame.w * scaleX,
@@ -166,6 +184,16 @@ export function adaptFrameResolution(
     isWide: baseFrame.isWide,
     widthMultiplier: baseFrame.widthMultiplier,
   };
+  scaledFrames.set(baseFrame, { textureWidth: natW, textureHeight: natH, frame });
+  return frame;
+}
+
+function resolveRowHeight(spriteMap: SpriteAtlasMap, texture: SpriteSheetTexture): number {
+  const { art, referenceRowHeight, sheetHeight } = spriteMap.meta;
+  if (art === "pixel" && referenceRowHeight && sheetHeight > 0) {
+    return referenceRowHeight * (texture.height / sheetHeight);
+  }
+  return texture.height / PAINTED_SHEET_ROWS;
 }
 
 /**
@@ -175,10 +203,10 @@ export function resolveAnimationFrame(
   spriteMap: SpriteAtlasMap | null | undefined,
   animName: AnimationName,
   frameIndex: number,
-  getTexture: (url: string) => HTMLImageElement | null,
-  ensureTextureLoading: (url: string) => void
+  getSheet: (map: SpriteAtlasMap) => SpriteSheetTexture | null,
+  ensureSheetLoading: (map: SpriteAtlasMap) => void
 ): ResolvedFrameResult {
-  if (!spriteMap) return { texture: null, frame: null };
+  if (!spriteMap) return { texture: null, frame: null, rowHeight: 0 };
 
   const resolvedName =
     animName === "move" && !spriteMap.animations.move
@@ -190,13 +218,14 @@ export function resolveAnimationFrame(
   const animTrack = spriteMap.animations[resolvedName] || spriteMap.animations.idle;
   const safeIdx = Math.abs(frameIndex) % Math.max(1, animTrack.frameCount);
   const baseFrame = animTrack.frames[safeIdx] || animTrack.frames[0];
-  const texture = getTexture(spriteMap.meta.imageUrl);
+  const texture = getSheet(spriteMap);
 
   if (!texture) {
-    ensureTextureLoading(spriteMap.meta.imageUrl);
+    ensureSheetLoading(spriteMap);
   }
 
-  if (!baseFrame) return { texture, frame: null };
+  const rowHeight = texture ? resolveRowHeight(spriteMap, texture) : 0;
+  if (!baseFrame) return { texture, frame: null, rowHeight };
 
   const adapted = adaptFrameResolution(
     baseFrame,
@@ -205,5 +234,5 @@ export function resolveAnimationFrame(
     spriteMap.meta.sheetHeight
   );
 
-  return { texture, frame: adapted };
+  return { texture, frame: adapted, rowHeight };
 }

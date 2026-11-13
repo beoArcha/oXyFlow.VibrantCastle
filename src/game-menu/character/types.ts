@@ -1,5 +1,10 @@
 import type { AssetQuality } from "@game/types";
-import type { AnimationName, CharacterProgressionTier, SpriteFrame } from "@game/engine/spriteTypes";
+import type {
+  AnimationName,
+  CharacterProgressionTier,
+  SpriteFrame,
+  SpriteSheetTexture,
+} from "@game/engine/spriteTypes";
 
 /**
  * Basic width and height image dimension bounds.
@@ -79,7 +84,7 @@ export interface CharacterPortraitVM {
 }
 
 export interface CharacterSpriteVM {
-  readonly texture: HTMLImageElement | null;
+  readonly texture: SpriteSheetTexture | null;
   readonly frame: SpriteFrame | null;
   readonly characterId: string;
   readonly quality: AssetQuality;

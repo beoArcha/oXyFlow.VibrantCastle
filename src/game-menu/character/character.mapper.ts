@@ -108,7 +108,7 @@ export function resolveCharacterSpriteVM(
 ): CharacterSpriteVM {
   const initial = assetLoader.getFrame(characterId, state, 0, quality, tier);
   const texture = initial.texture;
-  const isLoaded = Boolean(texture && texture.complete && texture.naturalWidth > 0);
+  const isLoaded = Boolean(texture && texture.width > 0);
 
   const getFrameForTick = (continuousTicks: number) => {
     const frameIdx = SpriteAnimator.getFrameIndex(

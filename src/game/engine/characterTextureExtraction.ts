@@ -27,7 +27,8 @@ export function extractCharacterTextures(
     for (const quality of QUALITIES) {
       for (const tier of TIERS) {
         const sMap = getSpriteMap(manifest.id, quality, tier);
-        if (!sMap || sMap.meta.imageUrl !== imageUrl || !manifest.meta) continue;
+        // Pixel sheets are sliced by their compiled frame rects, never by scanning the painted meta
+        if (!sMap || sMap.meta.art === "pixel" || sMap.meta.imageUrl !== imageUrl || !manifest.meta) continue;
         const humanoidExtractor = SpriteExtractorFactory.getExtractor("humanoid");
         const updatedTracks = humanoidExtractor.extract(manifest.meta, quality, img);
         sMap.animations = updatedTracks as unknown as typeof sMap.animations;
