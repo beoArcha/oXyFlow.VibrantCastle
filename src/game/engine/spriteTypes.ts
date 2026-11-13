@@ -190,6 +190,18 @@ export interface SpriteAnimationTrack {
   frames: SpriteFrame[];
 }
 
+/** Art style of a hero sheet: painted PNG tiers or compiled hi-8bit / hi-16bit pixel SVG tiers. */
+export type SpriteArt = "painted" | "pixel";
+
+/** Drawable hero sheet with explicit pixel size (canvases have no naturalWidth). */
+export interface SpriteSheetTexture {
+  readonly source: CanvasImageSource;
+  readonly width: number;
+  readonly height: number;
+  /** Pixel-art raster: draw with image smoothing disabled. */
+  readonly crisp: boolean;
+}
+
 export interface SpriteAtlasMeta {
   characterId: string;
   quality: AssetQuality;
@@ -207,6 +219,15 @@ export interface SpriteAtlasMeta {
   originY: number;
   offsetX?: number;
   offsetY?: number;
+  /** Absent means painted. Pixel maps are sliced by compiled frame rects and never by the pixel scanner. */
+  art?: SpriteArt;
+  /**
+   * Pixel maps only: height in sheet pixels of one painted `mid` row, so every tier is drawn at the
+   * same world size. Painted maps derive it from the loaded image (`naturalHeight / 8`).
+   */
+  referenceRowHeight?: number;
+  /** Pixel maps only: sheet columns, needed to pick the SVG raster scale. */
+  columns?: number;
 }
 
 export interface SpriteAtlasMap {

@@ -1,12 +1,17 @@
-import { SpriteFrame } from "@game/engine/spriteTypes";
+import { SpriteFrame, SpriteSheetTexture } from "@game/engine/spriteTypes";
 import { SpriteStageVisualProps } from "./types";
 
 export interface RenderSpritePreviewOptions extends SpriteStageVisualProps {
   readonly canvas: HTMLCanvasElement;
   readonly ctx: CanvasRenderingContext2D;
   readonly frame: SpriteFrame | null;
-  readonly texture: HTMLImageElement | null;
+  readonly texture: SpriteSheetTexture | null;
+  /** Sheet pixels of one painted `mid` row; sizes every quality tier alike. Omitted draws at native pixels. */
+  readonly rowHeight?: number;
 }
+
+/** Height in pixels of a painted `mid` row: the size the preview `scale` is expressed in. */
+export const PREVIEW_REFERENCE_ROW_HEIGHT = 128;
 
 /**
  * Pure 2D canvas drawing routine for CharacterSpritePreview.
@@ -23,7 +28,8 @@ export function renderSpritePreviewFrame(options: RenderSpritePreviewOptions): v
     ctx,
     frame,
     texture,
-    scale = 1.6,
+    rowHeight = 0,
+    scale: baseScale = 1.6,
     flipHorizontal = false,
     backgroundGradient = ["#1a0802", "#080201"],
     accentColor = "#d97706",
@@ -32,6 +38,10 @@ export function renderSpritePreviewFrame(options: RenderSpritePreviewOptions): v
   const w = canvas.width;
   const h = canvas.height;
   if (w <= 0 || h <= 0) return;
+
+  // hi-8bit, hi-16bit and painted sheets differ in pixel density; the sprite is drawn at the same size in
+  // every tier while the ground line and shadow keep the requested scale
+  const scale = rowHeight > 0 ? (baseScale * PREVIEW_REFERENCE_ROW_HEIGHT) / rowHeight : baseScale;
 
   ctx.clearRect(0, 0, w, h);
 
@@ -76,21 +86,21 @@ export function renderSpritePreviewFrame(options: RenderSpritePreviewOptions): v
   ctx.globalAlpha = 0.35;
   ctx.lineWidth = 1.5;
   ctx.beginPath();
-  ctx.moveTo(Math.max(16, feetX - 120 * scale), groundY);
-  ctx.lineTo(Math.min(w - 16, feetX + 120 * scale), groundY);
+  ctx.moveTo(Math.max(16, feetX - 120 * baseScale), groundY);
+  ctx.lineTo(Math.min(w - 16, feetX + 120 * baseScale), groundY);
   ctx.stroke();
 
   // 4. Contact shadow ellipse
   ctx.globalAlpha = 0.6;
   ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
   ctx.beginPath();
-  ctx.ellipse(feetX, groundY, 24 * scale, 7 * scale, 0, 0, Math.PI * 2);
+  ctx.ellipse(feetX, groundY, 24 * baseScale, 7 * baseScale, 0, 0, Math.PI * 2);
   ctx.fill();
 
   ctx.globalAlpha = 1;
 
   // 5. Draw Sprite Frame
-  if (frame && texture && texture.complete && texture.naturalWidth > 0) {
+  if (frame && texture && texture.width > 0) {
     ctx.save();
     ctx.translate(feetX, feetY);
     if (flipHorizontal) {
@@ -102,7 +112,7 @@ export function renderSpritePreviewFrame(options: RenderSpritePreviewOptions): v
 
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(
-      texture,
+      texture.source,
       frame.x,
       frame.y,
       frame.w,

@@ -1,13 +1,25 @@
 import { AssetQuality } from "../types";
-import { AnimationName, CharacterAssetManifest, CharacterProgressionTier, SpriteAtlasMap, SpriteFrame } from "./spriteTypes";
+import {
+  AnimationName,
+  CharacterAssetManifest,
+  CharacterProgressionTier,
+  SpriteAtlasMap,
+  SpriteFrame,
+  SpriteSheetTexture,
+} from "./spriteTypes";
 import { VALEN_MANIFEST, AURELIA_MANIFEST } from "./characterManifests";
 import { extractCharacterTextures } from "./characterTextureExtraction";
 import { assetsLogger } from "../logger/gameLogger";
 import { AssetError, ErrorCode } from "@lib/errors";
-import { ResolvedPortrait, resolveCharacterPortrait, resolveAnimationFrame } from "./portraitResolver";
+import {
+  ResolvedFrameResult,
+  ResolvedPortrait,
+  resolveCharacterPortrait,
+  resolveAnimationFrame,
+} from "./portraitResolver";
 import { ISpriteSourceFactory, SpriteSourceFactory } from "./sprites";
 
-export type { ResolvedPortrait };
+export type { ResolvedPortrait, ResolvedFrameResult };
 
 import {
   AtlasTexture,
@@ -19,6 +31,7 @@ import {
   discoverAtlasFiles,
   loadSvgTexture,
 } from "./atlas";
+import type { ReleasableTexture } from "./atlas";
 
 export type { RegisteredAtlasItem };
 
@@ -33,6 +46,11 @@ export class AssetLoaderEngine {
   /** URLs evicted while their load was still in flight: result is released instead of cached. */
   private discardOnLoad: Set<string> = new Set();
   private listeners: Set<() => void> = new Set();
+  /** Rasterised hi-8bit / hi-16bit hero sheets by SVG url; each is rasterised once and then only blitted. */
+  private readonly pixelSheets: Map<string, ReleasableTexture> = new Map();
+  private readonly pixelLoads: Map<string, Promise<void>> = new Map();
+  private readonly failedPixelSheets: Set<string> = new Set();
+  private readonly imageSheets: WeakMap<HTMLImageElement, SpriteSheetTexture> = new WeakMap();
 
   constructor(public readonly spriteSources: ISpriteSourceFactory) {
     this.atlases = new AtlasTextureManager({
@@ -193,11 +211,16 @@ export class AssetLoaderEngine {
     const manifest = this.characterRegistry.get(characterId);
     if (!manifest) return;
 
-    const spriteMap = this.getActiveSpriteMap(characterId, quality, tier);
-    if (spriteMap) {
-      await this.loadTexture(spriteMap.meta.imageUrl).catch(() =>
-        this.spriteSources.markCharacterTierFailed(characterId, tier, spriteMap.meta.quality)
-      );
+    for (let attempt = 0; attempt < PROGRESSION_TIERS.length + 1; attempt++) {
+      const spriteMap = this.getActiveSpriteMap(characterId, quality, tier);
+      if (!spriteMap) break;
+      try {
+        await this.loadSheet(spriteMap);
+        break;
+      } catch {
+        // The failed tier is skipped by the resolver, so the next attempt loads its fallback.
+        this.failSheet(characterId, spriteMap);
+      }
     }
 
     if (manifest.portraitUrl) {
@@ -206,6 +229,69 @@ export class AssetLoaderEngine {
 
     if (manifest.portraitsGridUrl) {
       await this.loadTexture(manifest.portraitsGridUrl).catch(() => {});
+    }
+  }
+
+  /** Sheet of a hero sprite map once it is loaded (painted PNG or rasterised pixel SVG). */
+  public getSheetTexture(spriteMap: SpriteAtlasMap): SpriteSheetTexture | null {
+    const url = spriteMap.meta.imageUrl;
+    if (spriteMap.meta.art === "pixel") return this.pixelSheets.get(url) ?? null;
+
+    const image = this.textureCache.get(url);
+    if (!image || !image.complete || image.naturalWidth <= 0) return null;
+    let sheet = this.imageSheets.get(image);
+    if (!sheet) {
+      sheet = { source: image, width: image.naturalWidth, height: image.naturalHeight, crisp: false };
+      this.imageSheets.set(image, sheet);
+    }
+    return sheet;
+  }
+
+  /** Loads the sheet of a hero sprite map: painted tiers as images, pixel tiers rasterised once. */
+  private loadSheet(spriteMap: SpriteAtlasMap): Promise<void> {
+    const url = spriteMap.meta.imageUrl;
+    if (spriteMap.meta.art !== "pixel") return this.loadTexture(url).then(() => undefined);
+    if (this.pixelSheets.has(url)) return Promise.resolve();
+
+    const pending = this.pixelLoads.get(url);
+    if (pending) return pending;
+    const load = loadSvgTexture(url, spriteMap.meta.columns ?? 1).then(
+      (sheet) => {
+        this.pixelLoads.delete(url);
+        this.pixelSheets.set(url, sheet);
+        this.notifyListeners();
+      },
+      (err: unknown) => {
+        this.pixelLoads.delete(url);
+        this.failedPixelSheets.add(url);
+        throw err;
+      }
+    );
+    this.pixelLoads.set(url, load);
+    return load;
+  }
+
+  /** Makes every progression tier of the hero skip the tier of a sheet that could not be loaded. */
+  private failSheet(characterId: string, spriteMap: SpriteAtlasMap): void {
+    assetsLogger.warn(`Hero sheet '${spriteMap.meta.imageUrl}' failed to load, falling back`, {
+      characterId,
+      quality: spriteMap.meta.quality,
+    });
+    for (const tier of PROGRESSION_TIERS) {
+      this.spriteSources.markCharacterTierFailed(characterId, tier, spriteMap.meta.quality);
+    }
+    this.notifyListeners();
+  }
+
+  private ensureSheetLoading(spriteMap: SpriteAtlasMap): void {
+    const url = spriteMap.meta.imageUrl;
+    if (spriteMap.meta.art === "pixel") {
+      if (this.pixelLoads.has(url) || this.failedPixelSheets.has(url)) return;
+      this.loadSheet(spriteMap).catch(() => this.failSheet(spriteMap.meta.characterId, spriteMap));
+      return;
+    }
+    if (!this.loadPromises.has(url)) {
+      this.loadTexture(url).catch(() => {});
     }
   }
 
@@ -275,18 +361,14 @@ export class AssetLoaderEngine {
     frameIndex: number,
     quality: AssetQuality = this.getQuality(),
     tier: CharacterProgressionTier = 1
-  ): { texture: HTMLImageElement | null; frame: SpriteFrame | null } {
+  ): ResolvedFrameResult {
     const spriteMap = this.getActiveSpriteMap(characterId, quality, tier);
     return resolveAnimationFrame(
       spriteMap,
       animName,
       frameIndex,
-      (url) => this.getTexture(url),
-      (url) => {
-        if (!this.loadPromises.has(url)) {
-          this.loadTexture(url).catch(() => {});
-        }
-      }
+      (map) => this.getSheetTexture(map),
+      (map) => this.ensureSheetLoading(map)
     );
   }
 }

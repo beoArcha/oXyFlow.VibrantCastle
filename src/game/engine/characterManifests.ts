@@ -10,6 +10,7 @@ import {
 } from "./spriteTypes";
 import { AssetQuality } from "../types";
 import { SpriteExtractorFactory } from "./extractors";
+import { buildHeroPixelSpriteMaps, composeHeroSpriteMaps, discoverHeroPixelFiles } from "./heroPixel";
 
 // Import Vite-bundled character assets from src/assets/characters (strictly immutable source)
 import valenMainPng from "@assets/characters/valen/valen_main.png";
@@ -65,6 +66,25 @@ function getAtlasDimensions(
     sheetHeight: cellHeight * 8,
     scale,
   };
+}
+
+/** Compiled hi-8bit / hi-16bit hero sheets, when the art exists (`<id>_pixel_meta.json` plus its SVGs). */
+const heroPixelFiles = discoverHeroPixelFiles();
+
+/**
+ * Painted `high` always; `low` / `mid` come from the compiled pixel sheets when present and from the
+ * downscaled painted PNGs otherwise.
+ */
+function buildHeroSpriteMaps(
+  characterId: string,
+  metaJson: Record<string, unknown>,
+  urls: Record<AssetQuality, string>
+): Record<AssetQuality, SpriteAtlasMap> {
+  return composeHeroSpriteMaps(buildHeroPixelSpriteMaps(characterId, heroPixelFiles, 1), {
+    low: () => buildSpriteMapFromMeta(characterId, metaJson, "low", urls.low, 1),
+    mid: () => buildSpriteMapFromMeta(characterId, metaJson, "mid", urls.mid, 1),
+    high: () => buildSpriteMapFromMeta(characterId, metaJson, "high", urls.high, 1),
+  });
 }
 
 /**
@@ -145,11 +165,11 @@ function buildTierManifest(
 /**
  * Valen - Master Duelist & Arcanist manifest definition.
  */
-const valenSpriteMaps: Record<AssetQuality, SpriteAtlasMap> = {
-  low: buildSpriteMapFromMeta("valen", valenMetaJson, "low", valenLowPng, 1),
-  mid: buildSpriteMapFromMeta("valen", valenMetaJson, "mid", valenMidPng, 1),
-  high: buildSpriteMapFromMeta("valen", valenMetaJson, "high", valenHighPng, 1),
-};
+const valenSpriteMaps = buildHeroSpriteMaps("valen", valenMetaJson, {
+  low: valenLowPng,
+  mid: valenMidPng,
+  high: valenHighPng,
+});
 
 export const VALEN_TIER_1 = buildTierManifest(
   "valen",
@@ -210,11 +230,11 @@ export const VALEN_MANIFEST: CharacterAssetManifest = {
 /**
  * Aurelia - Shadow Weaver & Guardian manifest definition.
  */
-const aureliaSpriteMaps: Record<AssetQuality, SpriteAtlasMap> = {
-  low: buildSpriteMapFromMeta("aurelia", aureliaMetaJson, "low", aureliaLowPng, 1),
-  mid: buildSpriteMapFromMeta("aurelia", aureliaMetaJson, "mid", aureliaMidPng, 1),
-  high: buildSpriteMapFromMeta("aurelia", aureliaMetaJson, "high", aureliaHighPng, 1),
-};
+const aureliaSpriteMaps = buildHeroSpriteMaps("aurelia", aureliaMetaJson, {
+  low: aureliaLowPng,
+  mid: aureliaMidPng,
+  high: aureliaHighPng,
+});
 
 const aureliaPortraitsExtracted = SpriteExtractorFactory.getExtractor("portrait").extract(
   aureliaMetaJson,

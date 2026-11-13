@@ -1,5 +1,9 @@
 import { describe, it, expect, beforeEach, mock } from "bun:test";
-import { renderSpritePreviewFrame, RenderSpritePreviewOptions } from "../renderSpritePreviewFrame";
+import {
+  renderSpritePreviewFrame,
+  RenderSpritePreviewOptions,
+  PREVIEW_REFERENCE_ROW_HEIGHT,
+} from "../renderSpritePreviewFrame";
 import { SpriteFrame } from "@game/engine/spriteTypes";
 
 describe("renderSpritePreviewFrame - Stateless Canvas 2D Renderer", () => {
@@ -50,10 +54,11 @@ describe("renderSpritePreviewFrame - Stateless Canvas 2D Renderer", () => {
       originY: 100,
     } as SpriteFrame,
     texture: {
-      complete: true,
-      naturalWidth: 1024,
-      naturalHeight: 1024,
-    } as unknown as HTMLImageElement,
+      source: {} as unknown as CanvasImageSource,
+      width: 1024,
+      height: 1024,
+      crisp: false,
+    },
     scale: 1.5,
     flipHorizontal: false,
     ...overrides,
@@ -102,7 +107,7 @@ describe("renderSpritePreviewFrame - Stateless Canvas 2D Renderer", () => {
 
   it("handles incomplete texture gracefully without drawing image", () => {
     const params = createParams({
-      texture: { complete: false, naturalWidth: 0 } as any,
+      texture: { source: {} as unknown as CanvasImageSource, width: 0, height: 0, crisp: false },
     });
     renderSpritePreviewFrame(params);
 
@@ -135,5 +140,37 @@ describe("renderSpritePreviewFrame - Stateless Canvas 2D Renderer", () => {
 
     renderSpritePreviewFrame(params);
     expect(mockCtx.drawImage).toHaveBeenCalled();
+  });
+  it("scales a half-density sheet up so every quality tier previews at the same size", () => {
+    // Arrange
+    const params = createParams({ scale: 1, rowHeight: 64 });
+
+    // Act
+    renderSpritePreviewFrame(params);
+
+    // Assert
+    expect(mockCtx.scale).toHaveBeenCalledWith(2, 2);
+  });
+
+  it("keeps the requested scale for a painted mid row", () => {
+    // Arrange
+    const params = createParams({ scale: 1.5, rowHeight: PREVIEW_REFERENCE_ROW_HEIGHT });
+
+    // Act
+    renderSpritePreviewFrame(params);
+
+    // Assert
+    expect(mockCtx.scale).toHaveBeenCalledWith(1.5, 1.5);
+  });
+
+  it("draws at native pixels when no row height is known", () => {
+    // Arrange
+    const params = createParams({ scale: 1, rowHeight: undefined });
+
+    // Act
+    renderSpritePreviewFrame(params);
+
+    // Assert
+    expect(mockCtx.scale).not.toHaveBeenCalledWith(1, 1);
   });
 });

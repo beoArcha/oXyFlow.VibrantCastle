@@ -1,6 +1,11 @@
 import React, { useRef, useEffect, useImperativeHandle, useCallback } from "react";
 import { AssetQuality } from "@game/types";
-import { AnimationName, CharacterProgressionTier, SpriteFrame } from "@game/engine/spriteTypes";
+import {
+  AnimationName,
+  CharacterProgressionTier,
+  SpriteFrame,
+  SpriteSheetTexture,
+} from "@game/engine/spriteTypes";
 import { useCharacterSprite } from "./hooks/useCharacterSprite";
 import { useCharacterContext } from "./CharacterContext";
 import { renderSpritePreviewFrame } from "./renderSpritePreviewFrame";
@@ -9,7 +14,7 @@ import { SpriteStageVisualProps } from "./types";
 
 export interface CharacterSpritePreviewProps extends SpriteStageVisualProps {
   /** Optional explicit texture for pure presentation primitive mode */
-  readonly texture?: HTMLImageElement | null;
+  readonly texture?: SpriteSheetTexture | null;
   /** Optional explicit frame slice for pure presentation primitive mode */
   readonly frame?: SpriteFrame | null;
   /** Optional character ID; if omitted, resolved from CharacterContext */
@@ -117,6 +122,8 @@ export const CharacterSpritePreview = React.memo(
           ctx,
           frame: activeFrame,
           texture: activeTexture,
+          // An explicit texture is not the sheet the view model sized, so it draws at native pixels
+          rowHeight: curExpTex === undefined ? curSpriteData.rowHeight : 0,
           scale: curScale,
           flipHorizontal: curFlip,
           backgroundGradient: curBgGrad,
@@ -170,7 +177,7 @@ export const CharacterSpritePreview = React.memo(
               ? paramsRef.current.explicitTexture
               : paramsRef.current.spriteData.texture;
 
-          const { frame: currentFrame } =
+          const { frame: currentFrame, rowHeight: currentRowHeight } =
             paramsRef.current.spriteData.getFrameForTick(continuousTicks);
 
           renderSpritePreviewFrame({
@@ -178,6 +185,7 @@ export const CharacterSpritePreview = React.memo(
             ctx,
             frame: currentFrame,
             texture: currentTexture,
+            rowHeight: paramsRef.current.explicitTexture === undefined ? currentRowHeight : 0,
             scale: paramsRef.current.scale,
             flipHorizontal: paramsRef.current.flipHorizontal,
             backgroundGradient: paramsRef.current.bgGrad,

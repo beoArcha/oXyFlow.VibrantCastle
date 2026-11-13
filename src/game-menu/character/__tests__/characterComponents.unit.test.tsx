@@ -159,7 +159,7 @@ describe("Character Presentation Components (CharacterPortrait & CharacterSprite
         originY: 56,
       };
 
-      const mockImg = new Image();
+      const mockImg = { source: new Image(), width: 128, height: 128, crisp: false };
 
       const { container } = await renderIntoDom(
         <CharacterSpritePreview

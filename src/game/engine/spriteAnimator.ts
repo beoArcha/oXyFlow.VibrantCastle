@@ -78,7 +78,7 @@ export class SpriteAnimator {
         ? options.frameIndex
         : this.getFrameIndex(characterId, state, ticks, quality, tier);
 
-    const { texture, frame } = assetLoader.getFrame(
+    const { texture, frame, rowHeight } = assetLoader.getFrame(
       characterId,
       state,
       frameIdx,
@@ -104,10 +104,10 @@ export class SpriteAnimator {
       ctx.scale(scale, scale);
     }
 
-    if (texture && texture.complete && texture.naturalWidth > 0) {
+    if (texture && rowHeight > 0) {
       // Texture is loaded: Blit sub-rectangle directly from Sprite Map Atlas
-      // Scale sprite proportionally so that standard standing height matches targetHeight across Low/Mid/High qualities
-      const rowHeight = texture.naturalHeight / 8;
+      // Scale sprite proportionally so that standard standing height matches targetHeight across
+      // painted Low/Mid/High and the pixel sheets (rowHeight is one painted mid row in sheet pixels)
       const standingHeight = characterId === "aurelia" ? rowHeight * 0.90 : rowHeight * 0.92;
       const renderScale = targetHeight / Math.max(1, standingHeight);
       const drawW = frame.w * renderScale;
@@ -115,8 +115,10 @@ export class SpriteAnimator {
       const drawOriginX = frame.originX * renderScale;
       const drawOriginY = frame.originY * renderScale;
 
+      // Pixel tiers keep hard edges; painted tiers keep the smoothing the renderer configured
+      if (texture.crisp) ctx.imageSmoothingEnabled = false;
       ctx.drawImage(
-        texture,
+        texture.source,
         frame.x,
         frame.y,
         frame.w,

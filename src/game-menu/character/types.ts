@@ -1,5 +1,10 @@
 import type { AssetQuality } from "@game/types";
-import type { AnimationName, CharacterProgressionTier, SpriteFrame } from "@game/engine/spriteTypes";
+import type {
+  AnimationName,
+  CharacterProgressionTier,
+  SpriteFrame,
+  SpriteSheetTexture,
+} from "@game/engine/spriteTypes";
 
 /**
  * Basic width and height image dimension bounds.
@@ -79,16 +84,19 @@ export interface CharacterPortraitVM {
 }
 
 export interface CharacterSpriteVM {
-  readonly texture: HTMLImageElement | null;
+  readonly texture: SpriteSheetTexture | null;
   readonly frame: SpriteFrame | null;
   readonly characterId: string;
   readonly quality: AssetQuality;
   readonly tier: CharacterProgressionTier;
   readonly state: AnimationName;
   readonly isLoaded: boolean;
+  /** Height in sheet pixels of one painted `mid` row (the size reference); 0 until the sheet is loaded. */
+  readonly rowHeight: number;
   readonly getFrameForTick: (continuousTicks: number) => {
     readonly frame: SpriteFrame | null;
     readonly frameIndex: number;
+    readonly rowHeight: number;
   };
 }
 
