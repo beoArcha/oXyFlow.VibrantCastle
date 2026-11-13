@@ -172,6 +172,31 @@ class Brush {
     const ly1 = Math.max(2, Math.min(this.c.height - 1, sy1));
     this.c.line(lx0, ly0, lx1, ly1, col);
   }
+
+  ellipse(cx: number, cy: number, rx: number, ry: number, col: string): void {
+    const scx = Math.round(cx * this.s);
+    const scy = Math.round(cy * this.s);
+    const srx = Math.round(rx * this.s);
+    const sry = Math.round(ry * this.s);
+    if (srx <= 0 || sry <= 0) return;
+    if (
+      scx - srx >= 2 &&
+      scy - sry >= 2 &&
+      scx + srx <= this.c.width - 3 &&
+      scy + sry <= this.c.height - 1
+    ) {
+      this.c.ellipse(scx, scy, srx, sry, col);
+    }
+  }
+
+  polygon(pts: [number, number][], col: string): void {
+    if (pts.length < 3) return;
+    const scaled: [number, number][] = pts.map(([x, y]) => [
+      Math.max(2, Math.min(this.c.width - 3, Math.round(x * this.s))),
+      Math.max(2, Math.min(this.c.height - 1, Math.round(y * this.s))),
+    ]);
+    this.c.polygon(scaled, col);
+  }
 }
 
 // ─── Poses and Animation State ───────────────────────────────────────────────
@@ -205,11 +230,6 @@ interface Pose {
   staff: StaffPose;    // Position of focus staff
   magic?: MagicEffect; // Magical VFX
 }
-
-// Standing height target:
-// Head top at y = 5 in hi-8bit (10 in hi-16bit). Outline reaches y = 9.
-// Floor at y = 143 in hi-16bit.
-// Standing height: 143 - 9 + 1 = 135 px! (Requirement: 132-136 px).
 
 const REST_STAFF: StaffPose = {
   grip: [CX + 6, 32],
@@ -250,7 +270,7 @@ const POSES: Partial<Record<string, Pose[]>> = {
       bob: -1, lean: 1,
       hairWind: 1,
       staff: { grip: [CX + 7, 31], tip: [CX + 14, 13] },
-      magic: { kind: "spark", maxX: CX + 15, y: 13 },
+      magic: { kind: "spark", minX: CX + 14, maxX: CX + 16, y: 13, h: 3 },
     },
     // 3: Hold breath (steady posture)
     {
@@ -276,8 +296,6 @@ const POSES: Partial<Record<string, Pose[]>> = {
   ],
 
   // ─── Run (10 frames: [1, 1, 1, 1, 2, 1, 2, 1, 1, 1] cells) ────────────────
-  // Stride cycle with flowing robe tails and streaming hair.
-  // Wide frames 4 & 6 extend rear robes and forward stride across span 2.
   run: [
     // 0 [1 cell]: Right heel strike; right boot on y=71, left driving back
     {
@@ -317,7 +335,7 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: 8,  lift: 0, kneeX: 6 },
       legR: { x: -9, lift: 0, kneeX: -7 },
       robeFlare: 16, hairWind: 7,
-      staff: { grip: [CX + 10, 32], tip: [88, 22] },
+      staff: { grip: [CX + 8, 32], tip: [88, 22] },
     },
     // 5 [1 cell]: Left knee absorption; weight rolls forward
     {
@@ -333,7 +351,7 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: 7,  lift: 0, kneeX: 6 },
       legR: { x: -8, lift: 0, kneeX: -6 },
       robeFlare: 15, hairWind: 7,
-      staff: { grip: [CX + 9, 32], tip: [88, 20] },
+      staff: { grip: [CX + 8, 32], tip: [88, 20] },
     },
     // 7 [1 cell]: Flight phase 2; gliding posture
     {
@@ -362,7 +380,6 @@ const POSES: Partial<Record<string, Pose[]>> = {
   ],
 
   // ─── Jump (3 frames, 1 cell each) ──────────────────────────────────────────
-  // Rule: Lowest pixel ALWAYS on bottom row (y = 71); pose shows air time!
   jump: [
     // 0: Compression launch coil
     {
@@ -391,7 +408,6 @@ const POSES: Partial<Record<string, Pose[]>> = {
   ],
 
   // ─── Fall (3 frames: [1, 2, 1] cells) ──────────────────────────────────────
-  // Rule: Lowest pixel on y = 71; aerodynamic robes and hair billowing up.
   fall: [
     // 0 [1 cell]: Descent initiation; toes pointed down
     {
@@ -437,8 +453,8 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: -8, lift: 0, kneeX: -6 },
       legR: { x: 7,  lift: 0, kneeX: 6 },
       robeFlare: 4, hairWind: 3,
-      staff: { grip: [CX + 12, 33], tip: [74, 36] },
-      magic: { kind: "arc", minX: 72, maxX: 95, y: 34, h: 6 },
+      staff: { grip: [CX + 10, 33], tip: [68, 36] },
+      magic: { kind: "arc", minX: 66, maxX: 95, y: 32, h: 8 },
     },
     // 2 [2 cells]: Crescent sweep slash; vibrant Aether blade manifests to x=96
     {
@@ -446,8 +462,8 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: -8, lift: 0, kneeX: -6 },
       legR: { x: 8,  lift: 0, kneeX: 7 },
       robeFlare: 6, hairWind: 5,
-      staff: { grip: [CX + 14, 33], tip: [82, 30] },
-      magic: { kind: "blade", minX: 78, maxX: 96, y: 28, h: 8 },
+      staff: { grip: [CX + 12, 33], tip: [74, 30] },
+      magic: { kind: "blade", minX: 70, maxX: 96, y: 24, h: 14 },
     },
     // 3 [2 cells]: Rising arc cleave; luminous cyan energy erupts to x=96
     {
@@ -455,8 +471,8 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: -8, lift: 0, kneeX: -6 },
       legR: { x: 8,  lift: 0, kneeX: 7 },
       robeFlare: 6, hairWind: 6,
-      staff: { grip: [CX + 14, 31], tip: [80, 16] },
-      magic: { kind: "wave", minX: 76, maxX: 96, y: 14, h: 16 },
+      staff: { grip: [CX + 12, 31], tip: [72, 16] },
+      magic: { kind: "wave", minX: 68, maxX: 96, y: 12, h: 22 },
     },
     // 4 [2 cells]: Overhead slash release; crescent cuts forward to x=96
     {
@@ -464,8 +480,8 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: -7, lift: 0, kneeX: -5 },
       legR: { x: 7,  lift: 0, kneeX: 6 },
       robeFlare: 5, hairWind: 4,
-      staff: { grip: [CX + 12, 32], tip: [84, 26] },
-      magic: { kind: "blade", minX: 78, maxX: 96, y: 24, h: 10 },
+      staff: { grip: [CX + 11, 32], tip: [74, 26] },
+      magic: { kind: "blade", minX: 70, maxX: 96, y: 22, h: 14 },
     },
     // 5 [2 cells]: Follow-through & energy rip; lingering ember motes to x=95
     {
@@ -473,8 +489,8 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: -6, lift: 0, kneeX: -5 },
       legR: { x: 6,  lift: 0, kneeX: 5 },
       robeFlare: 3, hairWind: 3,
-      staff: { grip: [CX + 10, 33], tip: [78, 30] },
-      magic: { kind: "motes", minX: 74, maxX: 95, y: 26, h: 8 },
+      staff: { grip: [CX + 9, 33], tip: [68, 30] },
+      magic: { kind: "motes", minX: 66, maxX: 95, y: 26, h: 10 },
     },
     // 6 [3 cells]: Master Aether wave; colossal shockwave surges to x=155
     {
@@ -483,13 +499,11 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legR: { x: 5,  lift: 0, kneeX: 4 },
       robeFlare: 3, hairWind: 2,
       staff: { grip: [CX + 7, 32], tip: [CX + 14, 12] },
-      magic: { kind: "wave", minX: CX + 16, maxX: 155, y: 20, h: 28 },
+      magic: { kind: "wave", minX: CX + 16, maxX: 155, y: 16, h: 32 },
     },
   ],
 
   // ─── Dash (5 frames, 2 cells each) ─────────────────────────────────────────
-  // Spectral wine and teal slipstream trailing behind, staff leading to x=96.
-  // Consistent span-2 bounds (minX ~ 16, maxX ~ 96) for zero drift!
   dash: [
     // 0 [2 cells]: Phase charge crouch; cyan glyphs shimmer to x=95
     {
@@ -497,8 +511,8 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: -7, lift: 0, kneeX: -8 },
       legR: { x: 7,  lift: 0, kneeX: 8 },
       robeFlare: 4, hairWind: 4,
-      staff: { grip: [CX + 10, 42], tip: [80, 44] },
-      magic: { kind: "dash_trail", minX: 16, maxX: 95, y: 48, h: 12 },
+      staff: { grip: [CX + 8, 42], tip: [72, 44] },
+      magic: { kind: "dash_trail", minX: 16, maxX: 95, y: 44, h: 14 },
     },
     // 1 [2 cells]: Phase shift launch; spectral afterimages stretch back to x=16
     {
@@ -506,8 +520,8 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: -9, lift: 0, kneeX: -9 },
       legR: { x: 9,  lift: 0, kneeX: 9 },
       robeFlare: 8, hairWind: 7,
-      staff: { grip: [CX + 12, 40], tip: [96, 38] },
-      magic: { kind: "dash_trail", minX: 16, maxX: 96, y: 44, h: 14 },
+      staff: { grip: [CX + 10, 40], tip: [78, 38] },
+      magic: { kind: "dash_trail", minX: 16, maxX: 96, y: 40, h: 16 },
     },
     // 2 [2 cells]: Spectral transit apex; arrow glide
     {
@@ -515,8 +529,8 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: -9, lift: 0, kneeX: -9 },
       legR: { x: 9,  lift: 0, kneeX: 9 },
       robeFlare: 8, hairWind: 8,
-      staff: { grip: [CX + 13, 39], tip: [96, 36] },
-      magic: { kind: "dash_trail", minX: 16, maxX: 96, y: 42, h: 14 },
+      staff: { grip: [CX + 11, 39], tip: [80, 36] },
+      magic: { kind: "dash_trail", minX: 16, maxX: 96, y: 38, h: 16 },
     },
     // 3 [2 cells]: Phase deceleration; staff brakes outward
     {
@@ -524,8 +538,8 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: -8, lift: 0, kneeX: -8 },
       legR: { x: 8,  lift: 0, kneeX: 8 },
       robeFlare: 6, hairWind: 5,
-      staff: { grip: [CX + 11, 40], tip: [90, 40] },
-      magic: { kind: "dash_trail", minX: 16, maxX: 95, y: 46, h: 12 },
+      staff: { grip: [CX + 9, 40], tip: [76, 40] },
+      magic: { kind: "dash_trail", minX: 16, maxX: 95, y: 42, h: 14 },
     },
     // 4 [2 cells]: Ground skid & upright transition; friction embers
     {
@@ -533,13 +547,12 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: -6, lift: 0, kneeX: -6 },
       legR: { x: 6,  lift: 0, kneeX: 5 },
       robeFlare: 4, hairWind: 3,
-      staff: { grip: [CX + 8, 38], tip: [82, 34] },
-      magic: { kind: "dash_trail", minX: 16, maxX: 95, y: 52, h: 10 },
+      staff: { grip: [CX + 8, 38], tip: [70, 34] },
+      magic: { kind: "dash_trail", minX: 16, maxX: 95, y: 48, h: 12 },
     },
   ],
 
   // ─── Cast (7 frames: [2, 1, 2, 2, 2, 2, 2] cells) ──────────────────────────
-  // All span-2 frames (0, 2, 3, 4, 5, 6) reach x ~ 94..96 to eliminate drift!
   cast: [
     // 0 [2 cells]: Incantation drop & focus; staff planted, cyan spark to x=94
     {
@@ -557,7 +570,7 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legR: { x: 4,  lift: 0, kneeX: 3 },
       robeFlare: 1, hairWind: 1,
       staff: { grip: [CX + 6, 32], tip: [CX + 12, 12] },
-      magic: { kind: "spark", minX: CX + 8, maxX: CX + 14, y: 24, h: 4 },
+      magic: { kind: "sigil", minX: CX + 8, maxX: CX + 16, y: 22, h: 12 },
     },
     // 2 [2 cells]: Sigil manifestation; circular Aether glyph to x=95
     {
@@ -565,8 +578,8 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: -6, lift: 0, kneeX: -5 },
       legR: { x: 5,  lift: 0, kneeX: 4 },
       robeFlare: 3, hairWind: 2,
-      staff: { grip: [CX + 8, 32], tip: [72, 26] },
-      magic: { kind: "sigil", minX: 64, maxX: 95, y: 20, h: 22 },
+      staff: { grip: [CX + 8, 32], tip: [66, 26] },
+      magic: { kind: "sigil", minX: 62, maxX: 95, y: 18, h: 22 },
     },
     // 3 [2 cells]: Arcane barrier ignition; rotating shield disc to x=96
     {
@@ -574,8 +587,8 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: -7, lift: 0, kneeX: -6 },
       legR: { x: 6,  lift: 0, kneeX: 5 },
       robeFlare: 4, hairWind: 3,
-      staff: { grip: [CX + 9, 32], tip: [74, 26] },
-      magic: { kind: "shield", minX: 66, maxX: 96, y: 16, h: 26 },
+      staff: { grip: [CX + 9, 32], tip: [68, 26] },
+      magic: { kind: "shield", minX: 64, maxX: 96, y: 14, h: 26 },
     },
     // 4 [2 cells]: Spell detonation pulse; celestial disc shockwave rays to x=96
     {
@@ -583,8 +596,8 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: -7, lift: 0, kneeX: -6 },
       legR: { x: 6,  lift: 0, kneeX: 5 },
       robeFlare: 5, hairWind: 4,
-      staff: { grip: [CX + 10, 32], tip: [76, 26] },
-      magic: { kind: "blast", minX: 64, maxX: 96, y: 14, h: 30 },
+      staff: { grip: [CX + 10, 32], tip: [70, 26] },
+      magic: { kind: "blast", minX: 62, maxX: 96, y: 12, h: 30 },
     },
     // 5 [2 cells]: Energy sustain & discharge; pulsing concentric rings to x=95
     {
@@ -592,8 +605,8 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: -6, lift: 0, kneeX: -5 },
       legR: { x: 5,  lift: 0, kneeX: 4 },
       robeFlare: 3, hairWind: 2,
-      staff: { grip: [CX + 8, 32], tip: [74, 26] },
-      magic: { kind: "sigil", minX: 66, maxX: 95, y: 18, h: 24 },
+      staff: { grip: [CX + 8, 32], tip: [68, 26] },
+      magic: { kind: "sigil", minX: 64, maxX: 95, y: 16, h: 24 },
     },
     // 6 [2 cells]: Arcane dissipation & rest; barrier shatters into motes to x=94
     {
@@ -602,14 +615,11 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legR: { x: 4,  lift: 0, kneeX: 3 },
       robeFlare: 2, hairWind: 1,
       staff: { grip: [CX + 6, 33], tip: [CX + 13, 16] },
-      magic: { kind: "motes", minX: 60, maxX: 94, y: 22, h: 16 },
+      magic: { kind: "motes", minX: 58, maxX: 94, y: 20, h: 18 },
     },
   ],
 
   // ─── Crouch (2 frames, 2 cells each) ───────────────────────────────────────
-  // Clearly lower (~70% standing height: 48 px / 96 px in hi-16bit).
-  // Staff horizontal across knees extending into cell 2 to x=86.
-  // Both frames span 2: consistent minX ~ 18, maxX ~ 86 for zero drift!
   crouch: [
     // 0 [2 cells]: Low drop transition
     {
@@ -715,6 +725,12 @@ function drawRobe(b: Brush, p: Pose): void {
   // Deep wine fabric
   b.rect(skirtLeft, hipY, skirtWidth, skirtHeight, pal.robe);
 
+  // Diagonal stepped folds along the billowing rear
+  if (flare > 4) {
+    b.rect(skirtLeft, hipY + 4, 3, skirtHeight - 4, pal.robeShade);
+    b.rect(skirtLeft + 3, hipY + 8, 3, skirtHeight - 8, pal.robe);
+  }
+
   // Under-fabric dark pine lining peek on left edge
   b.rect(skirtLeft, hipY + 2, 2, skirtHeight - 2, pal.sashShade);
 
@@ -799,31 +815,37 @@ function drawTorso(b: Brush, p: Pose): void {
   }
 }
 
-// 6. Draw Head (Face, Chestnut Hair Cascade, Amber Feather Crest)
+// 6. Draw Head (Face, Voluminous Chestnut Hair Cascade, Amber Feather Plume)
 function drawHead(b: Brush, p: Pose): void {
   const { pal, detailed } = b;
   const hY = headY(p);
   const hX = CX - 4 + p.lean;
   const wind = p.hairWind ?? 0;
 
-  // --- Voluminous Wild Chestnut Hair ---
-  // Large billowing mass behind head on left
+  // --- Voluminous Wild Chestnut Hair (Stepped Organic Locks) ---
   const hairLeft = CX - 12 - wind + p.lean;
-  const hairWidth = 9 + wind;
-  b.rect(hairLeft, hY + 1, hairWidth, 12, pal.hair);
-  b.rect(hairLeft + 1, hY + 12, hairWidth - 2, 7, pal.hair); // Cascade down back
+  // Upper billowing crown mass
+  b.rect(hairLeft + 1, hY + 1, 8, 5, pal.hair);
+  // Mid cascade swelling outward
+  b.rect(hairLeft, hY + 5, 10, 6, pal.hair);
+  // Lower curling tresses tapering down back
+  b.rect(hairLeft + 2, hY + 11, 7, 5, pal.hair);
+  b.rect(hairLeft + 3, hY + 16, 5, 3, pal.hair);
 
   // Hair crown on top of head
   b.rect(hX - 2, hY, 11, 4, pal.hair);
+  // Front face-framing curl
+  b.rect(hX + 7, hY + 4, 2, 4, pal.hair);
 
   if (detailed) {
-    b.rect(hairLeft, hY + 1, 3, 12, pal.hairShade);
-    b.rect(hairLeft + 3, hY + 1, 3, 10, pal.hairLight);
-    b.rect(hX - 2, hY, 8, 2, pal.hairLight);
+    b.rect(hairLeft, hY + 5, 3, 8, pal.hairShade);
+    b.rect(hairLeft + 3, hY + 3, 4, 6, pal.hairLight);
+    b.rect(hX - 1, hY, 7, 2, pal.hairLight);
+    b.px16(Math.round((hX + 3) * 2), Math.round((hY + 1) * 2), pal.hairLight);
   }
 
   // --- Face ---
-  // Sharp jawline & pale complexion
+  // Sharp feline jawline & warm pale complexion
   b.rect(hX, hY + 3, 8, 7, pal.skin);
   b.rect(hX + 1, hY + 9, 6, 2, pal.skin);
 
@@ -836,21 +858,25 @@ function drawHead(b: Brush, p: Pose): void {
     b.px16(Math.round((hX + 4) * 2), Math.round((hY + 5) * 2), pal.feather);
   }
 
-  // --- Amber Crest Feather (Signature Silhouette Accent) ---
+  // --- Amber Crest Feather Plume (Signature Silhouette Accent) ---
   // Tucked behind left ear at crown, pointing up-left.
   // Kept safely at y >= 4 in hi-8bit (y >= 8 in hi-16bit) so row 0 stays clear!
   const featherX = CX - 5 + p.lean;
   const featherY = Math.max(4, hY - 3);
-  b.rect(featherX, featherY, 3, 3, pal.feather);
-  b.rect(featherX - 1, featherY + 1, 2, 2, pal.feather);
+
+  // Angled quill body
+  b.line(featherX, featherY + 3, featherX - 2, featherY, pal.trimShade);
+  b.rect(featherX - 3, featherY, 3, 2, pal.feather);
+  b.rect(featherX - 2, featherY + 2, 3, 2, pal.feather);
+  b.px(featherX - 3, featherY - 1, pal.feather); // Feather tip
 
   if (detailed) {
-    b.px(featherX + 1, featherY + 1, pal.featherShade); // Central rachis
-    b.px16(Math.round((featherX) * 2), Math.round((featherY) * 2), pal.feather);
+    b.line(featherX, featherY + 2, featherX - 2, featherY, pal.featherShade); // Rachis
+    b.px16(Math.round((featherX - 1) * 2), Math.round(featherY * 2), pal.feather);
   }
 }
 
-// 7. Draw Arcane Focus Staff & Crescent Tip
+// 7. Draw Arcane Focus Staff & Bronze Crescent Moon Cage
 function drawStaff(b: Brush, p: Pose, cellW8: number): void {
   const { pal, detailed } = b;
   const gx = p.staff.grip[0];
@@ -862,27 +888,32 @@ function drawStaff(b: Brush, p: Pose, cellW8: number): void {
   const bx = Math.max(3, Math.min(cellW8 - 4, Math.round(gx - (tx - gx) * 0.35)));
   const by = Math.max(3, Math.min(FLOOR8 - 1, Math.round(gy - (ty - gy) * 0.35)));
 
-  // Polished cedar shaft
+  // Polished cedar staff shaft
   b.line(bx, by, tx, ty, pal.staff);
 
   // Bronze ferrule at butt
   b.px(bx, by, pal.trim);
 
-  // Bronze Crescent Cage at crown tip
-  b.rect(tx - 1, ty - 1, 3, 3, pal.trim);
-  b.px(tx, ty, pal.gem); // Glowing cyan Aether crystal
+  // Ornate Bronze Crescent Moon Cage cradling glowing cyan gem
+  // Crescent prongs:
+  b.line(tx - 2, ty + 1, tx - 1, ty - 2, pal.trim);
+  b.line(tx - 1, ty - 2, tx + 2, ty - 1, pal.trim);
+  b.line(tx + 2, ty - 1, tx + 1, ty + 2, pal.trim);
+  b.line(tx + 1, ty + 2, tx - 1, ty + 1, pal.trim);
+
+  // Glowing Cyan Aether Crystal nestled in center
+  b.rect(tx, ty, 2, 2, pal.gem);
 
   if (detailed) {
     b.line(gx, gy, tx, ty, pal.staffLight);
     b.px(tx - 1, ty - 1, pal.trimShade);
     b.px16(Math.round(tx * 2), Math.round(ty * 2), pal.magicCore);
-    // Subtle arcane radiance around gem
-    b.px(tx + 1, ty, pal.magic);
-    b.px(tx, ty - 1, pal.magicDim);
+    b.px(tx + 2, ty, pal.magic);
+    b.px(tx, ty - 2, pal.magicDim);
   }
 }
 
-// 8. Draw Magic Effects (Cyan / Teal Arcane Aether VFX)
+// 8. Draw Magic Effects (Curved Crescent Slashes, Arcane Sigils, Shockwaves)
 function drawMagic(b: Brush, p: Pose, cellW8: number): void {
   if (!p.magic) return;
   const { pal, detailed } = b;
@@ -897,72 +928,140 @@ function drawMagic(b: Brush, p: Pose, cellW8: number): void {
 
   switch (kind) {
     case "spark": {
-      b.rect(x0, cy, w, 2, pal.magic);
+      // Swirling gathered Aether sparks
+      b.line(x0, cy + 1, x1, cy, pal.magic);
       b.px(x1, cy, pal.gem);
+      b.px(x0 + 2, cy + 2, pal.magicDim);
       if (detailed) {
-        b.rect(x0, cy, w, 1, pal.magicCore);
+        b.px16(Math.round(x1 * 2), Math.round(cy * 2), pal.magicCore);
       }
       break;
     }
 
     case "blade":
     case "arc": {
-      // Sweeping crescent blade
-      b.rect(x0, cy, w, h, pal.magicDim);
-      b.rect(x0 + 2, cy + 1, w - 2, h - 2, pal.magic);
-      b.line(x0 + 4, cy + Math.round(h / 2), x1, cy + Math.round(h / 2), pal.magicCore);
+      // Curved crescent slash wave tapering at both tips!
+      const midY = cy + Math.round(h / 2);
+      b.polygon(
+        [
+          [x0, midY],
+          [x0 + Math.round(w * 0.4), cy],
+          [x1, midY],
+          [x0 + Math.round(w * 0.5), cy + h - 1],
+        ],
+        pal.magicDim,
+      );
+      // Inner luminous blade core
+      b.polygon(
+        [
+          [x0 + 2, midY],
+          [x0 + Math.round(w * 0.4), cy + 2],
+          [x1 - 2, midY],
+          [x0 + Math.round(w * 0.5), cy + h - 3],
+        ],
+        pal.magic,
+      );
+      // Sharp glowing cutting line
+      b.line(x0 + 4, midY, x1 - 1, midY, pal.magicCore);
+
       if (detailed) {
-        b.px16(Math.round(x1 * 2), Math.round((cy + Math.round(h / 2)) * 2), pal.magicCore);
+        b.px16(Math.round((x1 - 1) * 2), Math.round(midY * 2), pal.magicCore);
+        b.px(x1, midY - 2, pal.magicDim);
+        b.px(x1, midY + 2, pal.magicDim);
       }
       break;
     }
 
     case "wave":
     case "blast": {
-      // Colossal shockwave / vertical celestial disc eruption
-      b.rect(x0, cy, w, h, pal.magicDim);
-      b.rect(x0 + 3, cy + 2, w - 4, h - 4, pal.magic);
-      b.rect(x0 + 6, cy + 4, w - 8, h - 8, pal.magicCore);
+      // Colossal crescent shockwave: wide curved arc with erupting shock rays
+      const midY = cy + Math.round(h / 2);
+      b.polygon(
+        [
+          [x0, cy + 2],
+          [x0 + Math.round(w * 0.45), cy],
+          [x1, midY],
+          [x0 + Math.round(w * 0.45), cy + h - 1],
+          [x0, cy + h - 3],
+          [x0 + Math.round(w * 0.25), midY],
+        ],
+        pal.magicDim,
+      );
+      // Luminous cyan body
+      b.polygon(
+        [
+          [x0 + 3, cy + 5],
+          [x0 + Math.round(w * 0.5), cy + 3],
+          [x1 - 3, midY],
+          [x0 + Math.round(w * 0.5), cy + h - 4],
+          [x0 + 3, cy + h - 6],
+          [x0 + Math.round(w * 0.35), midY],
+        ],
+        pal.magic,
+      );
+      // Radiant white-cyan shock rays
+      b.line(x0 + 6, midY - 3, x1 - 2, midY, pal.magicCore);
+      b.line(x0 + 6, midY + 3, x1 - 2, midY, pal.magicCore);
+
       if (detailed) {
-        // Shockwave rings
-        b.line(x0 + 2, cy, x1, cy + Math.round(h / 2), pal.magic);
-        b.line(x0 + 2, cy + h - 1, x1, cy + Math.round(h / 2), pal.magic);
+        b.line(x0 + 2, cy + 2, x1, midY, pal.magic);
+        b.line(x0 + 2, cy + h - 3, x1, midY, pal.magic);
       }
       break;
     }
 
     case "sigil":
     case "shield": {
-      // Rotating celestial barrier disc
-      b.rect(x0, cy, w, h, pal.magicDim);
-      b.rect(x0 + 2, cy + 2, w - 4, h - 4, pal.magic);
-      // Amber runes on outer ring
-      b.px(x0 + 1, cy + 1, pal.trim);
-      b.px(x1 - 1, cy + 1, pal.trim);
-      b.px(x0 + 1, cy + h - 2, pal.trim);
-      b.px(x1 - 1, cy + h - 2, pal.trim);
+      // Radiant circular / diamond arcane glyph disc
+      const midX = Math.round((x0 + x1) / 2);
+      const midY = cy + Math.round(h / 2);
+      const radius = Math.min(Math.round(w / 2), Math.round(h / 2));
+
+      // Outer glowing ring
+      b.ellipse(midX, midY, radius, radius, pal.magicDim);
+      // Inner disc
+      if (radius > 3) {
+        b.ellipse(midX, midY, radius - 2, radius - 2, pal.magic);
+      }
       // Glowing core
-      b.rect(x0 + Math.round(w / 3), cy + Math.round(h / 3), Math.round(w / 3), Math.round(h / 3), pal.magicCore);
+      if (radius > 5) {
+        b.ellipse(midX, midY, radius - 4, radius - 4, pal.magicCore);
+      }
+
+      // Amber glyph accents along perimeter
+      b.px(midX, midY - radius + 1, pal.trim);
+      b.px(midX, midY + radius - 1, pal.trim);
+      b.px(midX - radius + 1, midY, pal.trim);
+      b.px(midX + radius - 1, midY, pal.trim);
       break;
     }
 
     case "motes": {
-      // Dissipating teal sparkling particles
-      for (let mx = x0; mx <= x1; mx += 4) {
-        const my = cy + ((mx * 7) % Math.max(1, h));
+      // Dissipating sparkling motes
+      for (let mx = x0; mx <= x1; mx += 3) {
+        const my = cy + ((mx * 11) % Math.max(1, h));
         b.px(mx, my, pal.magic);
-        if (detailed && mx % 8 === 0) b.px(mx + 1, my, pal.magicCore);
+        if (detailed && mx % 6 === 0) {
+          b.px(mx + 1, my, pal.magicCore);
+        }
       }
       break;
     }
 
     case "dash_trail": {
-      // Spectral wine and teal slipstream
-      b.rect(x0, cy, w, 2, pal.robeShade);
-      b.rect(x0 + 4, cy + 2, w - 4, 2, pal.magicDim);
-      b.rect(x0 + 8, cy + 4, w - 8, 2, pal.magic);
+      // Spectral wine afterimage silhouettes + cyan phase slipstream speed lines
+      const midY = cy + Math.round(h / 2);
+      // Spectral afterimages
+      b.rect(x0, cy + 2, Math.round(w * 0.4), h - 4, pal.robeShade);
+      b.rect(x0 + 3, cy, Math.round(w * 0.3), h - 6, pal.hairShade);
+
+      // Horizontal cyan phase slipstream streaks
+      b.line(x0 + 4, midY - 3, x1, midY - 3, pal.magicDim);
+      b.line(x0 + 8, midY,     x1, midY,     pal.magicCore);
+      b.line(x0 + 6, midY + 3, x1, midY + 3, pal.magic);
+
       if (detailed) {
-        b.line(x0 + 12, cy + 3, x1, cy + 3, pal.magicCore);
+        b.px16(Math.round(x1 * 2), Math.round(midY * 2), pal.magicCore);
       }
       break;
     }
