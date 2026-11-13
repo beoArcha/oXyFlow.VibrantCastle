@@ -9,6 +9,8 @@ export * from "./AtlasInspectorDock";
 export * from "./AtlasPresetSelector";
 export * from "./AtlasStatusBar";
 export * from "./AtlasHeaderToolbar";
+export * from "./AtlasTierToggle";
+export * from "./heroPixelTiers";
 export * from "./preview";
 export * from "./slicing";
 export * from "./hooks";

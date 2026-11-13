@@ -20,10 +20,15 @@ import {
 } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { AtlasPresetSelector } from "./AtlasPresetSelector";
+import { AtlasTierToggle } from "./AtlasTierToggle";
+import type { AtlasHeroTier } from "./heroPixelTiers";
 
 export interface AtlasHeaderToolbarProps {
   selectedPresetId: string;
   onSelectPreset: (presetId: string) => void;
+  availableTiers?: readonly AtlasHeroTier[];
+  selectedTier?: AtlasHeroTier;
+  onSelectTier?: (tier: AtlasHeroTier) => void;
   onImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onJsonUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onResetDefaults: () => void;
@@ -34,6 +39,9 @@ export interface AtlasHeaderToolbarProps {
 export const AtlasHeaderToolbar: React.FC<AtlasHeaderToolbarProps> = ({
   selectedPresetId,
   onSelectPreset,
+  availableTiers = [],
+  selectedTier = "high",
+  onSelectTier,
   onImageUpload,
   onJsonUpload,
   onResetDefaults,
@@ -59,6 +67,14 @@ export const AtlasHeaderToolbar: React.FC<AtlasHeaderToolbarProps> = ({
               selectedPresetId={selectedPresetId}
               onSelectPreset={onSelectPreset}
             />
+
+            {onSelectTier && (
+              <AtlasTierToggle
+                tiers={availableTiers}
+                selectedTier={selectedTier}
+                onSelectTier={onSelectTier}
+              />
+            )}
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
