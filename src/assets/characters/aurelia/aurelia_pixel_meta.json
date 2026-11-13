@@ -151,261 +151,261 @@
       "frameRects": {
         "idle_0": {
           "x": 18,
-          "y": 2,
+          "y": 1,
           "width": 30,
-          "height": 70
+          "height": 71
         },
         "idle_1": {
           "x": 79,
-          "y": 2,
+          "y": 1,
           "width": 31,
-          "height": 70
+          "height": 71
         },
         "idle_2": {
           "x": 142,
-          "y": 2,
+          "y": 1,
           "width": 32,
-          "height": 70
+          "height": 71
         },
         "idle_3": {
           "x": 205,
-          "y": 2,
+          "y": 1,
           "width": 30,
-          "height": 70
+          "height": 71
         },
         "idle_4": {
           "x": 267,
-          "y": 2,
+          "y": 1,
           "width": 29,
-          "height": 70
+          "height": 71
         },
         "idle_5": {
           "x": 329,
-          "y": 2,
+          "y": 1,
           "width": 29,
-          "height": 70
+          "height": 71
         },
         "run_0": {
           "x": 17,
-          "y": 74,
+          "y": 73,
           "width": 32,
-          "height": 70
+          "height": 71
         },
         "run_1": {
           "x": 79,
-          "y": 75,
+          "y": 74,
           "width": 32,
-          "height": 69
+          "height": 70
         },
         "run_2": {
           "x": 141,
-          "y": 75,
+          "y": 74,
           "width": 33,
-          "height": 69
+          "height": 70
         },
         "run_3": {
           "x": 203,
-          "y": 74,
+          "y": 73,
           "width": 33,
-          "height": 70
+          "height": 71
         },
         "run_4": {
           "x": 258,
-          "y": 74,
+          "y": 73,
           "width": 42,
-          "height": 70
+          "height": 71
         },
         "run_5": {
           "x": 388,
-          "y": 75,
+          "y": 74,
           "width": 34,
-          "height": 69
+          "height": 70
         },
         "run_6": {
           "x": 446,
-          "y": 75,
+          "y": 74,
           "width": 40,
-          "height": 69
+          "height": 70
         },
         "run_7": {
           "x": 575,
-          "y": 74,
+          "y": 73,
           "width": 32,
-          "height": 70
+          "height": 71
         },
         "run_8": {
           "x": 637,
-          "y": 74,
+          "y": 73,
           "width": 32,
-          "height": 70
+          "height": 71
         },
         "run_9": {
           "x": 699,
-          "y": 74,
+          "y": 73,
           "width": 32,
-          "height": 70
+          "height": 71
         },
         "jump_0": {
           "x": 18,
-          "y": 149,
+          "y": 148,
           "width": 29,
-          "height": 67
+          "height": 68
         },
         "jump_1": {
           "x": 82,
-          "y": 146,
+          "y": 145,
           "width": 28,
-          "height": 70
+          "height": 71
         },
         "jump_2": {
           "x": 142,
-          "y": 146,
+          "y": 145,
           "width": 32,
-          "height": 70
+          "height": 71
         },
         "fall_0": {
           "x": 19,
-          "y": 218,
+          "y": 217,
           "width": 29,
-          "height": 70
+          "height": 71
         },
         "fall_1": {
           "x": 71,
-          "y": 218,
+          "y": 217,
           "width": 46,
-          "height": 70
+          "height": 71
         },
         "fall_2": {
           "x": 205,
-          "y": 220,
+          "y": 219,
           "width": 30,
-          "height": 68
+          "height": 69
         },
         "attack_0": {
           "x": 17,
-          "y": 291,
+          "y": 290,
           "width": 82,
-          "height": 69
+          "height": 70
         },
         "attack_1": {
           "x": 142,
-          "y": 291,
+          "y": 290,
           "width": 79,
-          "height": 69
+          "height": 70
         },
         "attack_2": {
           "x": 266,
-          "y": 291,
+          "y": 290,
           "width": 80,
-          "height": 69
+          "height": 70
         },
         "attack_3": {
           "x": 389,
-          "y": 290,
+          "y": 289,
           "width": 81,
-          "height": 70
+          "height": 71
         },
         "attack_4": {
           "x": 514,
-          "y": 291,
+          "y": 290,
           "width": 80,
-          "height": 69
+          "height": 70
         },
         "attack_5": {
           "x": 638,
-          "y": 291,
+          "y": 290,
           "width": 77,
-          "height": 69
+          "height": 70
         },
         "attack_6": {
           "x": 762,
-          "y": 290,
+          "y": 289,
           "width": 139,
-          "height": 70
+          "height": 71
         },
         "dash_0": {
           "x": 12,
-          "y": 367,
+          "y": 366,
           "width": 85,
-          "height": 65
+          "height": 66
         },
         "dash_1": {
           "x": 138,
-          "y": 366,
+          "y": 365,
           "width": 84,
-          "height": 66
+          "height": 67
         },
         "dash_2": {
           "x": 262,
-          "y": 365,
+          "y": 364,
           "width": 84,
-          "height": 67
+          "height": 68
         },
         "dash_3": {
           "x": 384,
-          "y": 366,
+          "y": 365,
           "width": 85,
-          "height": 66
+          "height": 67
         },
         "dash_4": {
           "x": 506,
-          "y": 365,
+          "y": 364,
           "width": 87,
-          "height": 67
+          "height": 68
         },
         "cast_0": {
           "x": 18,
-          "y": 435,
+          "y": 434,
           "width": 72,
-          "height": 69
+          "height": 70
         },
         "cast_1": {
           "x": 142,
-          "y": 434,
+          "y": 433,
           "width": 33,
-          "height": 70
+          "height": 71
         },
         "cast_2": {
           "x": 204,
-          "y": 434,
+          "y": 433,
           "width": 74,
-          "height": 70
+          "height": 71
         },
         "cast_3": {
           "x": 328,
-          "y": 435,
+          "y": 434,
           "width": 77,
-          "height": 69
+          "height": 70
         },
         "cast_4": {
           "x": 451,
-          "y": 435,
+          "y": 434,
           "width": 81,
-          "height": 69
+          "height": 70
         },
         "cast_5": {
           "x": 576,
-          "y": 434,
+          "y": 433,
           "width": 76,
-          "height": 70
+          "height": 71
         },
         "cast_6": {
           "x": 700,
-          "y": 434,
+          "y": 433,
           "width": 78,
-          "height": 70
+          "height": 71
         },
         "crouch_0": {
           "x": 18,
-          "y": 514,
+          "y": 513,
           "width": 60,
-          "height": 62
+          "height": 63
         },
         "crouch_1": {
           "x": 140,
-          "y": 517,
+          "y": 516,
           "width": 60,
-          "height": 59
+          "height": 60
         }
       }
     },
@@ -419,261 +419,261 @@
       "frameRects": {
         "idle_0": {
           "x": 37,
-          "y": 5,
+          "y": 2,
           "width": 58,
-          "height": 139
+          "height": 142
         },
         "idle_1": {
           "x": 159,
-          "y": 5,
+          "y": 2,
           "width": 60,
-          "height": 139
+          "height": 142
         },
         "idle_2": {
           "x": 285,
-          "y": 5,
+          "y": 2,
           "width": 61,
-          "height": 139
+          "height": 142
         },
         "idle_3": {
           "x": 411,
-          "y": 5,
+          "y": 2,
           "width": 58,
-          "height": 139
+          "height": 142
         },
         "idle_4": {
           "x": 535,
-          "y": 5,
+          "y": 2,
           "width": 56,
-          "height": 139
+          "height": 142
         },
         "idle_5": {
           "x": 659,
-          "y": 5,
+          "y": 2,
           "width": 56,
-          "height": 139
+          "height": 142
         },
         "run_0": {
           "x": 35,
-          "y": 149,
+          "y": 146,
           "width": 62,
-          "height": 139
+          "height": 142
         },
         "run_1": {
           "x": 159,
-          "y": 151,
+          "y": 148,
           "width": 62,
-          "height": 137
+          "height": 140
         },
         "run_2": {
           "x": 283,
-          "y": 151,
+          "y": 148,
           "width": 64,
-          "height": 137
+          "height": 140
         },
         "run_3": {
           "x": 407,
-          "y": 149,
+          "y": 146,
           "width": 64,
-          "height": 139
+          "height": 142
         },
         "run_4": {
           "x": 517,
-          "y": 149,
+          "y": 146,
           "width": 82,
-          "height": 139
+          "height": 142
         },
         "run_5": {
           "x": 777,
-          "y": 151,
+          "y": 148,
           "width": 66,
-          "height": 137
+          "height": 140
         },
         "run_6": {
           "x": 893,
-          "y": 151,
+          "y": 148,
           "width": 78,
-          "height": 137
+          "height": 140
         },
         "run_7": {
           "x": 1151,
-          "y": 149,
+          "y": 146,
           "width": 62,
-          "height": 139
+          "height": 142
         },
         "run_8": {
           "x": 1275,
-          "y": 149,
+          "y": 146,
           "width": 62,
-          "height": 139
+          "height": 142
         },
         "run_9": {
           "x": 1399,
-          "y": 149,
+          "y": 146,
           "width": 62,
-          "height": 139
+          "height": 142
         },
         "jump_0": {
           "x": 37,
-          "y": 299,
+          "y": 296,
           "width": 56,
-          "height": 133
+          "height": 136
         },
         "jump_1": {
           "x": 165,
-          "y": 293,
+          "y": 290,
           "width": 54,
-          "height": 139
+          "height": 142
         },
         "jump_2": {
           "x": 285,
-          "y": 293,
+          "y": 290,
           "width": 62,
-          "height": 139
+          "height": 142
         },
         "fall_0": {
           "x": 39,
-          "y": 437,
+          "y": 434,
           "width": 56,
-          "height": 139
+          "height": 142
         },
         "fall_1": {
           "x": 143,
-          "y": 437,
+          "y": 434,
           "width": 90,
-          "height": 139
+          "height": 142
         },
         "fall_2": {
           "x": 411,
-          "y": 441,
+          "y": 438,
           "width": 58,
-          "height": 135
+          "height": 138
         },
         "attack_0": {
           "x": 35,
-          "y": 583,
+          "y": 580,
           "width": 161,
-          "height": 137
+          "height": 140
         },
         "attack_1": {
           "x": 285,
-          "y": 583,
+          "y": 580,
           "width": 155,
-          "height": 137
+          "height": 140
         },
         "attack_2": {
           "x": 533,
-          "y": 583,
+          "y": 580,
           "width": 157,
-          "height": 137
+          "height": 140
         },
         "attack_3": {
           "x": 779,
-          "y": 581,
+          "y": 578,
           "width": 159,
-          "height": 139
+          "height": 142
         },
         "attack_4": {
           "x": 1029,
-          "y": 583,
+          "y": 580,
           "width": 157,
-          "height": 137
+          "height": 140
         },
         "attack_5": {
           "x": 1277,
-          "y": 583,
+          "y": 580,
           "width": 151,
-          "height": 137
+          "height": 140
         },
         "attack_6": {
           "x": 1525,
-          "y": 581,
+          "y": 578,
           "width": 275,
-          "height": 139
+          "height": 142
         },
         "dash_0": {
           "x": 25,
-          "y": 735,
+          "y": 732,
           "width": 167,
-          "height": 129
+          "height": 132
         },
         "dash_1": {
           "x": 277,
-          "y": 733,
+          "y": 730,
           "width": 165,
-          "height": 131
+          "height": 134
         },
         "dash_2": {
           "x": 525,
-          "y": 731,
+          "y": 728,
           "width": 165,
-          "height": 133
+          "height": 136
         },
         "dash_3": {
           "x": 769,
-          "y": 733,
+          "y": 730,
           "width": 167,
-          "height": 131
+          "height": 134
         },
         "dash_4": {
           "x": 1013,
-          "y": 731,
+          "y": 728,
           "width": 171,
-          "height": 133
+          "height": 136
         },
         "cast_0": {
           "x": 37,
-          "y": 871,
+          "y": 868,
           "width": 141,
-          "height": 137
+          "height": 140
         },
         "cast_1": {
           "x": 285,
-          "y": 869,
+          "y": 866,
           "width": 63,
-          "height": 139
+          "height": 142
         },
         "cast_2": {
           "x": 409,
-          "y": 869,
+          "y": 866,
           "width": 145,
-          "height": 139
+          "height": 142
         },
         "cast_3": {
           "x": 657,
-          "y": 871,
+          "y": 868,
           "width": 151,
-          "height": 137
+          "height": 140
         },
         "cast_4": {
           "x": 903,
-          "y": 871,
+          "y": 868,
           "width": 159,
-          "height": 137
+          "height": 140
         },
         "cast_5": {
           "x": 1153,
-          "y": 869,
+          "y": 866,
           "width": 149,
-          "height": 139
+          "height": 142
         },
         "cast_6": {
           "x": 1401,
-          "y": 869,
+          "y": 866,
           "width": 153,
-          "height": 139
+          "height": 142
         },
         "crouch_0": {
           "x": 37,
-          "y": 1029,
+          "y": 1026,
           "width": 117,
-          "height": 123
+          "height": 126
         },
         "crouch_1": {
           "x": 281,
-          "y": 1035,
+          "y": 1032,
           "width": 117,
-          "height": 117
+          "height": 120
         }
       }
     }
@@ -688,9 +688,9 @@
     },
     "bodyBox": {
       "x": 0.2823,
-      "y": 0.0347,
+      "y": 0.0139,
       "w": 0.5081,
-      "h": 0.9653
+      "h": 0.9861
     }
   }
 }

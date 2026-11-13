@@ -11,7 +11,7 @@ import type { PixelCanvas } from "../../defineHeroSprite";
 // - Feet sit squarely on the bottom row (y = 71 in hi-8bit, y = 143 in hi-16bit)
 //   in EVERY frame (physics engine lifts the body; pose shows air time).
 // - Body is centered at CX = 31 in the first cell; wide frames extend right.
-// - Standing height is ~132-136 px of the 144 px cell (hi-16bit) / 66-68 px (hi-8bit).
+// - Standing height is ~140-142 px of the 144 px cell (hi-16bit) / 70-71 px (hi-8bit).
 // - 1 px transparent margin at top, left, and right after outline().
 // - Clothing in rich autumn tones (wine, amber, deep green, bronze).
 // - Vibrant cyan/teal ONLY for magic arcs, sigils, and Aether crystal flame.
@@ -19,6 +19,11 @@ import type { PixelCanvas } from "../../defineHeroSprite";
 
 export const CX = 31;      // Body centre in hi-8bit coords (62 / 2)
 export const FLOOR8 = 71;  // Bottom row in hi-8bit cell (72 - 1)
+
+// Proportional standing figure height tuning
+export const HEAD_Y_BASE = 5;
+export const TORSO_Y_BASE = 18;
+export const TORSO_HEIGHT = 13;
 
 // ─── Palettes ─────────────────────────────────────────────────────────────────
 
@@ -254,11 +259,11 @@ export const REST_POSE: Pose = {
 // ─── Drawing Functions for Parts ─────────────────────────────────────────────
 
 export function torsoY(p: Pose): number {
-  return 20 + p.bob;
+  return TORSO_Y_BASE + p.bob;
 }
 
 export function headY(p: Pose): number {
-  return 7 + p.bob;
+  return HEAD_Y_BASE + p.bob;
 }
 
 // 1. Draw Boots (sitting on FLOOR8)
@@ -293,7 +298,7 @@ export function drawBoots(b: Brush, p: Pose): void {
 export function drawLegs(b: Brush, p: Pose): void {
   const { pal, detailed } = b;
   const tY = torsoY(p);
-  const hipY = tY + 13;
+  const hipY = tY + TORSO_HEIGHT + 1;
 
   // Back (right) leg under shadows
   const rFootX = CX + p.legR.x + p.lean;
@@ -325,7 +330,7 @@ export function drawLegs(b: Brush, p: Pose): void {
 export function drawRobe(b: Brush, p: Pose): void {
   const { pal, detailed } = b;
   const tY = torsoY(p);
-  const hipY = tY + 12;
+  const hipY = tY + TORSO_HEIGHT;
   const flare = p.robeFlare ?? 0;
 
   // Rear billow / cascade on the left
@@ -367,7 +372,7 @@ export function drawRobe(b: Brush, p: Pose): void {
 export function drawSash(b: Brush, p: Pose): void {
   const { pal, detailed } = b;
   const tY = torsoY(p);
-  const beltY = tY + 11;
+  const beltY = tY + TORSO_HEIGHT - 1;
   const beltX = CX - 7 + p.lean;
   const beltW = 14;
 
@@ -394,35 +399,37 @@ export function drawTorso(b: Brush, p: Pose): void {
   const tY = torsoY(p);
   const tX = CX - 6 + p.lean;
   const tW = 13;
-  const tH = 12;
+  const tH = TORSO_HEIGHT;
 
   // Bodice body
   b.rect(tX, tY, tW, tH, pal.robe);
 
   // Dark cowl neckline hugging collar
   b.rect(tX + 1, tY, tW - 2, 3, pal.robeShade);
-  b.rect(CX - 1 + p.lean, tY - 2, 3, 2, pal.skin); // Throat
+  // Throat: connects chin to collar
+  b.rect(CX - 1 + p.lean, tY - 2, 3, 2, pal.skin);
 
   // Antique bronze filigree fasteners down front
   b.px(CX + p.lean, tY + 4, pal.trim);
   b.px(CX + p.lean, tY + 7, pal.trim);
-  b.px(CX + p.lean, tY + 9, pal.trim);
+  b.px(CX + p.lean, tY + 10, pal.trim);
 
   // Slender arms
   // Left arm (trailing / balance)
-  b.rect(tX - 2, tY + 1, 2, 8, pal.robe);
-  b.rect(tX - 2, tY + 8, 2, 2, pal.skin); // Left hand
+  b.rect(tX - 2, tY + 1, 2, tH - 4, pal.robe);
+  b.rect(tX - 2, tY + tH - 3, 2, 2, pal.skin); // Left hand
 
   // Right arm (holding staff at grip)
   const armX = CX + 3 + p.lean;
-  b.rect(armX, tY + 2, 3, 6, pal.robe);
-  b.rect(armX + 1, tY + 7, 3, 3, pal.skin); // Right hand
+  b.rect(armX, tY + 2, 3, 7, pal.robe);
+  b.rect(armX + 1, tY + 8, 3, 3, pal.skin); // Right hand
 
   if (detailed) {
     b.rect(tX, tY, 2, tH, pal.robeLight);
     b.rect(tX + tW - 2, tY, 2, tH, pal.robeShade);
     b.px16(Math.round((CX + p.lean) * 2), Math.round((tY + 4) * 2), pal.trim);
     b.px16(Math.round((CX + p.lean) * 2), Math.round((tY + 7) * 2), pal.trim);
+    b.px16(Math.round((CX + p.lean) * 2), Math.round((tY + 10) * 2), pal.trim);
   }
 }
 
@@ -473,7 +480,7 @@ export function drawHead(b: Brush, p: Pose): void {
 
   // --- Amber Crest Feather Plume (Signature Silhouette Accent) ---
   const featherX = CX - 5 + p.lean;
-  const featherY = Math.max(4, hY - 3);
+  const featherY = Math.max(3, hY - 2);
 
   // Angled quill body
   b.line(featherX, featherY + 3, featherX - 2, featherY, pal.trimShade);
@@ -484,6 +491,7 @@ export function drawHead(b: Brush, p: Pose): void {
   if (detailed) {
     b.line(featherX, featherY + 2, featherX - 2, featherY, pal.featherShade); // Rachis
     b.px16(Math.round((featherX - 1) * 2), Math.round(featherY * 2), pal.feather);
+    b.px16(Math.round((featherX - 3) * 2), Math.round((featherY - 1) * 2) - 1, pal.feather);
   }
 }
 
