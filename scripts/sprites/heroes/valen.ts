@@ -174,7 +174,21 @@ interface Pose {
   dashStreak?: number;          // afterimage streak offset
   slashArc?: boolean;           // attack 5 golden sparkle trail
   castEffect?: {
-    stage: "spark" | "sigil" | "burst" | "detonation" | "dissipate" | "ember" | "ripple";
+    stage:
+      | "spark"
+      | "gather"
+      | "glow_gather"
+      | "bolt_fire"
+      | "bolt_peak"
+      | "bolt_fade"
+      | "sparks_fade"
+      | "sparks_end"
+      | "sigil"
+      | "burst"
+      | "detonation"
+      | "dissipate"
+      | "ember"
+      | "ripple";
     reachX: number;
   };
 }
@@ -183,92 +197,9 @@ interface Pose {
 
 const POSES: Partial<Record<string, Pose[]>> = {
   // ─── Idle (12 frames, FPS 8, loop: true) ──────────────────────────────────
-  // Classical fencing rest, subtle breathing rhythm, glinting spectacles
+  // Classical fencing rest with subtle breathing rhythm and blade tip bob
   idle: [
-    // 0: neutral rest, textbook en garde
-    {
-      bob: 0, lean: 0,
-      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
-      legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
-      coat: "rest", armL: "rest",
-      hiltOffset: [6, 14], tipPos: [BODY_X8 + 19, 32],
-      spectacleGlint: true,
-    },
-    // 1: inhale start (chest rises 1px, weapon aligns)
-    {
-      bob: -1, lean: 0,
-      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
-      legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
-      coat: "rest", armL: "rest",
-      hiltOffset: [6, 13], tipPos: [BODY_X8 + 19, 31],
-    },
-    // 2: inhale peak (blade tip raises slightly)
-    {
-      bob: -1, lean: 1,
-      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
-      legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
-      coat: "rest", coatShift: 1, armL: "rest",
-      hiltOffset: [6, 13], tipPos: [BODY_X8 + 20, 30],
-    },
-    // 3: hold breath (spectacles catch light)
-    {
-      bob: -1, lean: 1,
-      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
-      legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
-      coat: "rest", armL: "rest",
-      hiltOffset: [6, 13], tipPos: [BODY_X8 + 20, 31],
-      spectacleGlint: true,
-    },
-    // 4: exhale start
-    {
-      bob: 0, lean: 1,
-      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
-      legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
-      coat: "rest", coatShift: 1, armL: "rest",
-      hiltOffset: [6, 14], tipPos: [BODY_X8 + 19, 32],
-    },
-    // 5: exhale trough
-    {
-      bob: 0, lean: 0,
-      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
-      legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
-      coat: "rest", armL: "rest",
-      hiltOffset: [6, 14], tipPos: [BODY_X8 + 18, 33],
-    },
-    // 6: neutral rest
-    {
-      bob: 0, lean: 0,
-      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
-      legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
-      coat: "rest", armL: "rest",
-      hiltOffset: [6, 14], tipPos: [BODY_X8 + 19, 32],
-    },
-    // 7: micro-sway (1px settle)
-    {
-      bob: 1, lean: 0,
-      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 4 },
-      legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 4 },
-      coat: "rest", coatShift: -1, armL: "rest",
-      hiltOffset: [6, 15], tipPos: [BODY_X8 + 18, 33],
-    },
-    // 8: rebound rise
-    {
-      bob: 0, lean: 0,
-      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
-      legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
-      coat: "rest", armL: "rest",
-      hiltOffset: [6, 14], tipPos: [BODY_X8 + 19, 32],
-      spectacleGlint: true,
-    },
-    // 9: guard check (duelist focus)
-    {
-      bob: 0, lean: 0,
-      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
-      legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
-      coat: "rest", armL: "rest",
-      hiltOffset: [6, 14], tipPos: [BODY_X8 + 18, 34],
-    },
-    // 10: settling
+    // 0: neutral rest, duelist breath out
     {
       bob: 0, lean: 0,
       legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
@@ -276,13 +207,96 @@ const POSES: Partial<Record<string, Pose[]>> = {
       coat: "rest", armL: "rest",
       hiltOffset: [6, 14], tipPos: [BODY_X8 + 19, 33],
     },
-    // 11: loop reset
+    // 1: neutral hold
+    {
+      bob: 0, lean: 0,
+      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
+      legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
+      coat: "rest", armL: "rest",
+      hiltOffset: [6, 14], tipPos: [BODY_X8 + 19, 32],
+    },
+    // 2: inhale begins (chest & head rise 1px)
     {
       bob: -1, lean: 0,
       legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
       coat: "rest", armL: "rest",
-      hiltOffset: [6, 13], tipPos: [BODY_X8 + 19, 32],
+      hiltOffset: [6, 13], tipPos: [BODY_X8 + 19, 31],
+    },
+    // 3: inhale expands (blade tip raises smoothly)
+    {
+      bob: -1, lean: 1,
+      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
+      legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
+      coat: "rest", coatShift: 1, armL: "rest",
+      hiltOffset: [6, 13], tipPos: [BODY_X8 + 20, 29],
+    },
+    // 4: inhale peak (spectacles glint in ambient light)
+    {
+      bob: -1, lean: 1,
+      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
+      legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
+      coat: "rest", coatShift: 1, armL: "rest",
+      hiltOffset: [6, 13], tipPos: [BODY_X8 + 20, 28],
+      spectacleGlint: true,
+    },
+    // 5: breath hold at peak
+    {
+      bob: -1, lean: 0,
+      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
+      legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
+      coat: "rest", armL: "rest",
+      hiltOffset: [6, 13], tipPos: [BODY_X8 + 19, 29],
+      spectacleGlint: true,
+    },
+    // 6: exhale starts (shoulders drop back to neutral)
+    {
+      bob: 0, lean: 0,
+      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
+      legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
+      coat: "rest", armL: "rest",
+      hiltOffset: [6, 14], tipPos: [BODY_X8 + 19, 31],
+    },
+    // 7: exhale continues
+    {
+      bob: 0, lean: 0,
+      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
+      legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
+      coat: "rest", armL: "rest",
+      hiltOffset: [6, 14], tipPos: [BODY_X8 + 19, 33],
+    },
+    // 8: duelist settle (1px downward compression, tip dips)
+    {
+      bob: 1, lean: 0,
+      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 4 },
+      legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 4 },
+      coat: "rest", coatShift: -1, armL: "rest",
+      hiltOffset: [6, 15], tipPos: [BODY_X8 + 18, 35],
+    },
+    // 9: deep settle rest
+    {
+      bob: 1, lean: 0,
+      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 4 },
+      legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 4 },
+      coat: "rest", armL: "rest",
+      hiltOffset: [6, 15], tipPos: [BODY_X8 + 18, 35],
+    },
+    // 10: elastic recovery rising
+    {
+      bob: 0, lean: 0,
+      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
+      legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
+      coat: "rest", armL: "rest",
+      hiltOffset: [6, 14], tipPos: [BODY_X8 + 19, 34],
+    },
+    // 11: recovery to neutral guard
+    {
+      bob: 0, lean: 0,
+      legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
+      legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
+      coat: "rest", armL: "rest",
+      hiltOffset: [6, 14], tipPos: [BODY_X8 + 19, 33],
+      spectacleGlint: true,
     },
   ],
 
@@ -575,104 +589,104 @@ const POSES: Partial<Record<string, Pose[]>> = {
   ],
 
   // ─── Cast (8 frames: [1, 1, 2, 2, 2, 2, 2, 2] cells) ──────────────────────
-  // Hand raised, spell effect attached to hand and extending right into cell 2.
+  // Hand raised, glow gathers (0-2), solar bolt from palm (3-5), fading sparks (6-7).
   // CRITICAL: All span-2 frames (2..7) reach x ~ 80..82 to eliminate body center drift!
   cast: [
-    // 0 [1 cell]: stance drop & invocation start (spark at fingers)
+    // 0 [1 cell]: stance drop & hand raised; invocation spark at fingertips
     {
       bob: 1, lean: 0,
       legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
       coat: "rest", armL: "cast_raise",
       hiltOffset: [5, 15], tipPos: [BODY_X8 + 17, 46],
-      castEffect: { stage: "spark", reachX: BODY_X8 + 11 },
+      castEffect: { stage: "spark", reachX: BODY_X8 + 10 },
     },
-    // 1 [1 cell]: inscribing glyph in air (spark traces arc)
+    // 1 [1 cell]: hand raised higher; solar energy gathers into an orb
     {
       bob: 0, lean: 1,
       legL: { x: BODY_X8 - 7, lift: 0, kneeX: BODY_X8 - 6 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
       coat: "rest", armL: "cast_raise",
       hiltOffset: [5, 14], tipPos: [BODY_X8 + 17, 45],
-      castEffect: { stage: "spark", reachX: BODY_X8 + 14 },
+      castEffect: { stage: "gather", reachX: BODY_X8 + 14 },
       spectacleGlint: true,
     },
-    // 2 [2 cells]: sigil projection; beam attached to palm reaches x=80
+    // 2 [2 cells]: glow gathers at peak brilliance; radiance expands forward to reachX=80
     {
       bob: 0, lean: 2,
       legL: { x: BODY_X8 - 8, lift: 0, kneeX: BODY_X8 - 7 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
-      coat: "billow_back", coatShift: 2, armL: "cast_thrust",
+      coat: "billow_back", coatShift: 2, armL: "cast_raise",
       hiltOffset: [5, 14], tipPos: [BODY_X8 + 17, 47],
-      castEffect: { stage: "sigil", reachX: 80 },
+      castEffect: { stage: "glow_gather", reachX: 80 },
     },
-    // 3 [2 cells]: discharge burst; brilliant solar beam pulses forward to x=82
+    // 3 [2 cells]: palm thrusts forward; solar bolt erupts extending right to reachX=82
     {
       bob: 1, lean: 3,
       legL: { x: BODY_X8 - 8, lift: 0, kneeX: BODY_X8 - 7 },
       legR: { x: BODY_X8 + 5, lift: 0, kneeX: BODY_X8 + 4 },
       coat: "billow_back", coatShift: 3, armL: "cast_thrust",
       hiltOffset: [5, 15], tipPos: [BODY_X8 + 17, 47],
-      castEffect: { stage: "burst", reachX: 82 },
+      castEffect: { stage: "bolt_fire", reachX: 82 },
       spectacleGlint: true,
     },
-    // 4 [2 cells]: solar detonation; peak brilliance rays to x=82
+    // 4 [2 cells]: peak solar ray sustained from palm to reachX=82
     {
       bob: 1, lean: 3,
       legL: { x: BODY_X8 - 8, lift: 0, kneeX: BODY_X8 - 7 },
       legR: { x: BODY_X8 + 5, lift: 0, kneeX: BODY_X8 + 4 },
       coat: "billow_back", coatShift: 4, armL: "cast_thrust",
       hiltOffset: [5, 15], tipPos: [BODY_X8 + 17, 47],
-      castEffect: { stage: "detonation", reachX: 82 },
+      castEffect: { stage: "bolt_peak", reachX: 82 },
       spectacleGlint: true,
     },
-    // 5 [2 cells]: energy dissipation; rings fading to x=81
+    // 5 [2 cells]: bolt tail tapering right, still connected to palm, reaches x=81
     {
       bob: 0, lean: 2,
       legL: { x: BODY_X8 - 8, lift: 0, kneeX: BODY_X8 - 7 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
       coat: "billow_back", coatShift: 2, armL: "cast_thrust",
       hiltOffset: [5, 14], tipPos: [BODY_X8 + 17, 46],
-      castEffect: { stage: "dissipate", reachX: 81 },
+      castEffect: { stage: "bolt_fade", reachX: 81 },
     },
-    // 6 [2 cells]: channel release; ember sparks floating to x=80
+    // 6 [2 cells]: fading sparks along the bolt path out to reachX=80
     {
       bob: 0, lean: 1,
       legL: { x: BODY_X8 - 7, lift: 0, kneeX: BODY_X8 - 6 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
-      coat: "rest", armL: "cast_raise",
+      coat: "rest", armL: "cast_thrust",
       hiltOffset: [5, 14], tipPos: [BODY_X8 + 17, 45],
-      castEffect: { stage: "ember", reachX: 80 },
+      castEffect: { stage: "sparks_fade", reachX: 80 },
     },
-    // 7 [2 cells]: final ripple & reset; residual ground ripple to x=80
+    // 7 [2 cells]: final dissolving embers along bolt path to reachX=80 (nothing on floor)
     {
       bob: 0, lean: 0,
       legL: { x: BODY_X8 - 6, lift: 0, kneeX: BODY_X8 - 5 },
       legR: { x: BODY_X8 + 4, lift: 0, kneeX: BODY_X8 + 3 },
-      coat: "rest", armL: "rest",
+      coat: "rest", armL: "cast_raise",
       hiltOffset: [6, 14], tipPos: [BODY_X8 + 18, 33],
-      castEffect: { stage: "ripple", reachX: 80 },
+      castEffect: { stage: "sparks_end", reachX: 80 },
     },
   ],
 
   // ─── Crouch (2 frames, FPS 8, loop: true) ─────────────────────────────────
-  // Clearly lower (~70% height), knees bent wide
+  // Clearly lower (head ~30 % lower than idle), knees bent outward, coat pooling
   crouch: [
-    // 0: drop transition (torso dropped 9px, ~80% height)
+    // 0: drop transition (torso dropped 15px, ~28% lower than idle)
     {
-      bob: 9, lean: 1,
-      legL: { x: BODY_X8 - 8, lift: 0, kneeX: BODY_X8 - 9 },
-      legR: { x: BODY_X8 + 6, lift: 0, kneeX: BODY_X8 + 8 },
+      bob: 15, lean: 1,
+      legL: { x: BODY_X8 - 8, lift: 0, kneeX: BODY_X8 - 12 },
+      legR: { x: BODY_X8 + 7, lift: 0, kneeX: BODY_X8 + 12 },
       coat: "crouch_bunch", armL: "crouch",
-      hiltOffset: [5, 16], tipPos: [BODY_X8 + 18, 48],
+      hiltOffset: [4, 15], tipPos: [BODY_X8 + 18, 52],
     },
-    // 1: full grounded crouch (torso dropped 14px, 70% height: 38px out of 54px)
+    // 1: full grounded deep crouch (torso dropped 17px, ~32% lower than idle)
     {
-      bob: 14, lean: 0,
-      legL: { x: BODY_X8 - 9, lift: 0, kneeX: BODY_X8 - 11 },
-      legR: { x: BODY_X8 + 7, lift: 0, kneeX: BODY_X8 + 10 },
+      bob: 17, lean: 0,
+      legL: { x: BODY_X8 - 9, lift: 0, kneeX: BODY_X8 - 14 },
+      legR: { x: BODY_X8 + 8, lift: 0, kneeX: BODY_X8 + 13 },
       coat: "crouch_bunch", armL: "crouch",
-      hiltOffset: [5, 17], tipPos: [BODY_X8 + 19, 51],
+      hiltOffset: [4, 16], tipPos: [BODY_X8 + 19, 54],
       spectacleGlint: true,
     },
   ],
@@ -684,6 +698,14 @@ function torsoTopY(p: Pose): number {
   return 25 + p.bob;
 }
 
+function getTorsoHeight(p: Pose): number {
+  return p.coat === "crouch_bunch" ? 11 : 16;
+}
+
+function getHipY(p: Pose): number {
+  return torsoTopY(p) + getTorsoHeight(p);
+}
+
 function headTopY(p: Pose): number {
   return 11 + p.bob;
 }
@@ -691,35 +713,101 @@ function headTopY(p: Pose): number {
 // 1. Draw Greatcoat Tails (behind character)
 function drawCoatTails(b: Brush, p: Pose): void {
   const { pal, detailed } = b;
-  const tY = torsoTopY(p);
-  const hipY = tY + 16;
+  const hipY = getHipY(p);
   const shift = p.coatShift ?? 0;
+  const hipX = BODY_X8 - 3 + p.lean;
 
   switch (p.coat) {
     case "billow_back": {
-      // Billowing rearward horizontally in motion; does NOT touch floor!
-      // This leaves legs clearly visible underneath in the stride cycle.
-      const tailX = BODY_X8 - 14 - shift + p.lean;
-      const tailW = 12 + shift;
-      const tailTop = hipY - 2;
-      const tailH = 11; // stays well above floor (hipY+9 ~ y=50..52)
+      // Tapered, angled flap attached firmly at the waist/hips,
+      // narrowing toward the tip; 3 alternating dynamic shapes.
+      const variant = Math.abs(shift) % 3;
 
-      b.rect(tailX, tailTop, tailW, tailH, pal.coat);
-      b.rect(tailX - 2, tailTop + 2, tailW, tailH - 3, pal.coat);
-      // Gold trim on rear hem
-      b.rect(tailX - 2, tailTop + tailH - 1, tailW + 2, 1, pal.trim);
+      let spans: Array<[number, number, number]>; // [yOffset, minX, maxX]
+      if (variant === 0) {
+        // Mid-angle dynamic flutter (~45 deg)
+        spans = [
+          [-2, hipX - 2, hipX + 1],
+          [-1, hipX - 3, hipX + 1],
+          [0, hipX - 5, hipX],
+          [1, hipX - 7, hipX - 1],
+          [2, hipX - 9, hipX - 2],
+          [3, hipX - 11, hipX - 4],
+          [4, hipX - 12, hipX - 6],
+          [5, hipX - 13, hipX - 8],
+          [6, hipX - 14, hipX - 10],
+          [7, hipX - 15, hipX - 11],
+          [8, hipX - 15, hipX - 12],
+          [9, hipX - 15, hipX - 13],
+          [10, hipX - 15, hipX - 14],
+        ];
+      } else if (variant === 1) {
+        // High aerodynamic lift flutter
+        spans = [
+          [-2, hipX - 2, hipX + 1],
+          [-1, hipX - 4, hipX + 1],
+          [0, hipX - 6, hipX],
+          [1, hipX - 9, hipX - 1],
+          [2, hipX - 12, hipX - 3],
+          [3, hipX - 14, hipX - 6],
+          [4, hipX - 15, hipX - 9],
+          [5, hipX - 16, hipX - 11],
+          [6, hipX - 17, hipX - 13],
+          [7, hipX - 17, hipX - 14],
+          [8, hipX - 17, hipX - 15],
+        ];
+      } else {
+        // Low trailing ripple flap
+        spans = [
+          [-2, hipX - 2, hipX + 1],
+          [-1, hipX - 3, hipX + 1],
+          [0, hipX - 4, hipX],
+          [1, hipX - 5, hipX],
+          [2, hipX - 6, hipX - 1],
+          [3, hipX - 7, hipX - 2],
+          [4, hipX - 8, hipX - 3],
+          [5, hipX - 9, hipX - 4],
+          [6, hipX - 10, hipX - 6],
+          [7, hipX - 11, hipX - 7],
+          [8, hipX - 12, hipX - 9],
+          [9, hipX - 12, hipX - 10],
+          [10, hipX - 13, hipX - 11],
+          [11, hipX - 13, hipX - 12],
+        ];
+      }
+
+      // Draw tapered flap body
+      const tipIndex = spans.length - 2;
+      for (let i = 0; i < spans.length; i++) {
+        const [dy, x0, x1] = spans[i]!;
+        const y = hipY + dy;
+        const w = x1 - x0 + 1;
+        if (i >= tipIndex) {
+          // Gold trim at narrow flap tip
+          b.rect(x0, y, w, 1, pal.trim);
+          if (detailed) {
+            b.rect(x0, y, 1, 1, pal.trimShade);
+          }
+        } else {
+          b.rect(x0, y, w, 1, pal.coat);
+          // Upper crest highlight
+          b.px(x0, y, pal.coatLight);
+          // Lower edge shadow
+          if (w > 2) {
+            b.px(x1, y, pal.coatShade);
+          }
+        }
+      }
 
       if (detailed) {
-        b.rect(tailX, tailTop, 2, tailH, pal.coatLight);
-        b.rect(tailX + tailW - 3, tailTop, 3, tailH, pal.coatShade);
-        b.line(tailX + 4, tailTop + 2, tailX + 2, tailTop + tailH - 2, pal.coatShade);
-        b.rect(tailX - 2, tailTop + tailH, tailW + 2, 1, pal.trimShade);
-        // Rich 16-bit fold highlight
+        // Rich 16-bit fold line along the flapping crest
+        const [dy0, x00] = spans[1]!;
+        const [dyT, x0T] = spans[tipIndex]!;
         b.line16(
-          Math.round((tailX + 3) * 2),
-          Math.round((tailTop + 1) * 2),
-          Math.round((tailX + 1) * 2),
-          Math.round((tailTop + tailH - 2) * 2),
+          Math.round(x00 * 2),
+          Math.round((hipY + dy0) * 2),
+          Math.round(x0T * 2),
+          Math.round((hipY + dyT) * 2),
           pal.coatLight,
         );
       }
@@ -727,50 +815,114 @@ function drawCoatTails(b: Brush, p: Pose): void {
     }
 
     case "flare_up": {
-      // Flaring up on both sides during jump
-      const leftX = BODY_X8 - 15;
-      const rightX = BODY_X8 + 8;
-      // Wing-like flare on left
-      b.rect(leftX, hipY - 6, 7, 12, pal.coat);
-      b.rect(leftX - 2, hipY - 8, 4, 8, pal.coat);
-      b.rect(leftX - 2, hipY - 8, 4, 1, pal.trim);
-      // Wing-like flare on right
-      b.rect(rightX, hipY - 4, 6, 10, pal.coat);
-      b.rect(rightX + 3, hipY - 6, 4, 7, pal.coat);
-      b.rect(rightX + 3, hipY - 6, 4, 1, pal.trim);
+      // Tapered wings flaring upward from waist on both sides during jump
+      // Left tapered flap
+      const lSpans = [
+        [0, hipX - 3, hipX],
+        [-2, hipX - 6, hipX - 2],
+        [-4, hipX - 9, hipX - 4],
+        [-6, hipX - 11, hipX - 7],
+        [-7, hipX - 12, hipX - 9],
+      ];
+      for (let i = 0; i < lSpans.length; i++) {
+        const [dy, x0, x1] = lSpans[i]!;
+        const col = i === lSpans.length - 1 ? pal.trim : pal.coat;
+        b.rect(x0, hipY + dy, x1 - x0 + 1, 2, col);
+      }
+
+      // Right tapered flap
+      const rSpans = [
+        [0, hipX + 3, hipX + 6],
+        [-2, hipX + 5, hipX + 8],
+        [-4, hipX + 7, hipX + 10],
+        [-5, hipX + 8, hipX + 10],
+      ];
+      for (let i = 0; i < rSpans.length; i++) {
+        const [dy, x0, x1] = rSpans[i]!;
+        const col = i === rSpans.length - 1 ? pal.trim : pal.coat;
+        b.rect(x0, hipY + dy, x1 - x0 + 1, 2, col);
+      }
+
       if (detailed) {
-        b.rect(leftX, hipY - 5, 2, 10, pal.coatLight);
-        b.rect(rightX + 2, hipY - 3, 2, 8, pal.coatShade);
+        b.rect(hipX - 11, hipY - 6, 2, 2, pal.coatLight);
+        b.rect(hipX + 7, hipY - 4, 2, 2, pal.coatShade);
       }
       break;
     }
 
     case "stream_up": {
-      // Streaming up around waist during fall
-      const leftX = BODY_X8 - 13;
-      const rightX = BODY_X8 + 7;
-      b.rect(leftX, hipY - 10, 6, 14, pal.coat);
-      b.rect(leftX - 2, hipY - 12, 4, 10, pal.coat);
-      b.rect(leftX - 2, hipY - 12, 4, 1, pal.trim);
-      b.rect(rightX, hipY - 8, 5, 12, pal.coat);
-      b.rect(rightX + 2, hipY - 10, 4, 8, pal.coat);
-      b.rect(rightX + 2, hipY - 10, 4, 1, pal.trim);
+      // Tapered upward streams from hips during fall
+      const lFall = [
+        [0, hipX - 3, hipX],
+        [-3, hipX - 6, hipX - 2],
+        [-6, hipX - 9, hipX - 5],
+        [-9, hipX - 11, hipX - 8],
+        [-11, hipX - 11, hipX - 9],
+      ];
+      for (let i = 0; i < lFall.length; i++) {
+        const [dy, x0, x1] = lFall[i]!;
+        const col = i === lFall.length - 1 ? pal.trim : pal.coat;
+        b.rect(x0, hipY + dy, x1 - x0 + 1, 3, col);
+      }
+
+      const rFall = [
+        [0, hipX + 3, hipX + 6],
+        [-3, hipX + 5, hipX + 8],
+        [-6, hipX + 7, hipX + 9],
+        [-8, hipX + 7, hipX + 8],
+      ];
+      for (let i = 0; i < rFall.length; i++) {
+        const [dy, x0, x1] = rFall[i]!;
+        const col = i === rFall.length - 1 ? pal.trim : pal.coat;
+        b.rect(x0, hipY + dy, x1 - x0 + 1, 3, col);
+      }
+
       if (detailed) {
-        b.rect(leftX, hipY - 9, 2, 12, pal.coatLight);
-        b.rect(rightX, hipY - 7, 2, 10, pal.coatShade);
+        b.rect(hipX - 9, hipY - 6, 2, 3, pal.coatLight);
+        b.rect(hipX + 6, hipY - 4, 2, 3, pal.coatShade);
       }
       break;
     }
 
     case "crouch_bunch": {
-      // Bunched around legs on floor during crouch
-      const bunchX = BODY_X8 - 13 + p.lean;
-      const bunchW = 22;
-      b.rect(bunchX, hipY, bunchW, FLOOR8 - hipY + 1, pal.coat);
-      b.rect(bunchX - 1, FLOOR8 - 2, bunchW + 2, 2, pal.coatShade);
-      b.rect(bunchX - 1, FLOOR8, bunchW + 2, 1, pal.trim);
+      // Greatcoat pooling widely across the floor during crouch
+      const poolLeft = BODY_X8 - 15 + p.lean;
+      const poolRight = BODY_X8 + 13 + p.lean;
+      const poolW = poolRight - poolLeft + 1;
+      const waistX = BODY_X8 - 7 + p.lean;
+      const waistW = 15;
+
+      // Waist and upper thigh drapery connecting smoothly to compressed hips
+      b.rect(waistX, hipY - 2, waistW, 3, pal.coat);
+      b.rect(waistX - 2, hipY + 1, waistW + 4, 3, pal.coat);
+
+      // Deep pooled mass expanding across the ground
+      b.rect(poolLeft + 2, hipY + 3, poolW - 4, FLOOR8 - (hipY + 3) + 1, pal.coat);
+      b.rect(poolLeft, FLOOR8 - 3, poolW, 4, pal.coat);
+      b.rect(poolLeft, FLOOR8 - 1, poolW, 2, pal.coatShade);
+
+      // Gold trim on pooled lower edge and fold creases
+      b.rect(poolLeft, FLOOR8, poolW, 1, pal.trim);
+      b.rect(poolLeft + 2, FLOOR8 - 3, 5, 1, pal.trim);
+      b.rect(poolRight - 7, FLOOR8 - 3, 5, 1, pal.trim);
+
       if (detailed) {
-        b.rect(bunchX, hipY, 3, FLOOR8 - hipY, pal.coatLight);
+        b.rect(waistX - 1, hipY, 3, 4, pal.coatLight);
+        b.line16(
+          Math.round(poolLeft * 2),
+          Math.round(FLOOR8 * 2),
+          Math.round((poolLeft + 7) * 2),
+          Math.round((FLOOR8 - 3) * 2),
+          pal.coatLight,
+        );
+        b.line16(
+          Math.round((poolRight - 7) * 2),
+          Math.round((FLOOR8 - 3) * 2),
+          Math.round(poolRight * 2),
+          Math.round(FLOOR8 * 2),
+          pal.coatLight,
+        );
+        b.rect(poolLeft, FLOOR8, poolW, 1, pal.trimShade);
       }
       break;
     }
@@ -811,8 +963,7 @@ function drawCoatTails(b: Brush, p: Pose): void {
 // 2. Draw Legs and Boots
 function drawLegs(b: Brush, p: Pose): void {
   const { pal, detailed } = b;
-  const tY = torsoTopY(p);
-  const hipY = tY + 16;
+  const hipY = getHipY(p);
 
   const legs = [
     { pose: p.legL, isBack: true },
@@ -864,7 +1015,7 @@ function drawTorso(b: Brush, p: Pose): void {
   const tY = torsoTopY(p);
   const tX = BODY_X8 - 9 + p.lean;
   const tW = 18;
-  const tH = 16;
+  const tH = getTorsoHeight(p);
 
   // Main coat silhouette
   b.rect(tX, tY, tW, tH, pal.coat);
@@ -881,19 +1032,32 @@ function drawTorso(b: Brush, p: Pose): void {
   }
 
   // Double-breasted gold buttons
-  b.px(tX + 7, tY + 4, pal.trim);
-  b.px(tX + 10, tY + 4, pal.trim);
-  b.px(tX + 7, tY + 8, pal.trim);
-  b.px(tX + 10, tY + 8, pal.trim);
-  b.px(tX + 7, tY + 11, pal.trim);
-  b.px(tX + 10, tY + 11, pal.trim);
+  if (tH < 14) {
+    b.px(tX + 7, tY + 3, pal.trim);
+    b.px(tX + 10, tY + 3, pal.trim);
+    b.px(tX + 7, tY + 6, pal.trim);
+    b.px(tX + 10, tY + 6, pal.trim);
+    if (detailed) {
+      b.px16(Math.round((tX + 7) * 2), Math.round((tY + 3) * 2), pal.solarCore);
+      b.px16(Math.round((tX + 10) * 2), Math.round((tY + 3) * 2), pal.solarCore);
+      b.px16(Math.round((tX + 7) * 2), Math.round((tY + 6) * 2), pal.solarCore);
+      b.px16(Math.round((tX + 10) * 2), Math.round((tY + 6) * 2), pal.solarCore);
+    }
+  } else {
+    b.px(tX + 7, tY + 4, pal.trim);
+    b.px(tX + 10, tY + 4, pal.trim);
+    b.px(tX + 7, tY + 8, pal.trim);
+    b.px(tX + 10, tY + 8, pal.trim);
+    b.px(tX + 7, tY + 11, pal.trim);
+    b.px(tX + 10, tY + 11, pal.trim);
 
-  if (detailed) {
-    // 16-bit button specular pips
-    b.px16(Math.round((tX + 7) * 2), Math.round((tY + 4) * 2), pal.solarCore);
-    b.px16(Math.round((tX + 10) * 2), Math.round((tY + 4) * 2), pal.solarCore);
-    b.px16(Math.round((tX + 7) * 2), Math.round((tY + 8) * 2), pal.solarCore);
-    b.px16(Math.round((tX + 10) * 2), Math.round((tY + 8) * 2), pal.solarCore);
+    if (detailed) {
+      // 16-bit button specular pips
+      b.px16(Math.round((tX + 7) * 2), Math.round((tY + 4) * 2), pal.solarCore);
+      b.px16(Math.round((tX + 10) * 2), Math.round((tY + 4) * 2), pal.solarCore);
+      b.px16(Math.round((tX + 7) * 2), Math.round((tY + 8) * 2), pal.solarCore);
+      b.px16(Math.round((tX + 10) * 2), Math.round((tY + 8) * 2), pal.solarCore);
+    }
   }
 
   // Leather utility belt
@@ -903,6 +1067,12 @@ function drawTorso(b: Brush, p: Pose): void {
   if (detailed) {
     b.px(tX + 8, tY + tH - 2, pal.outline);
   }
+
+  // Greatcoat high collar framing neck with gold trim
+  b.rect(tX + 3, tY - 2, 2, 3, pal.coat);
+  b.rect(tX + 11, tY - 2, 2, 3, pal.coat);
+  b.rect(tX + 3, tY - 2, 2, 1, pal.trim);
+  b.rect(tX + 11, tY - 2, 2, 1, pal.trim);
 
   // Greatcoat lapels with gold trim
   b.rect(tX + 1, tY, 3, 5, pal.coatShade);
@@ -920,69 +1090,83 @@ function drawTorso(b: Brush, p: Pose): void {
   }
 }
 
-// 4. Draw Head: Chestnut Hair, Face, Spectacles with Glint, and High Collar
+// 4. Draw Head: Chestnut Hair, Face with Visible Eye, Spectacle Glint, and Tapered Jaw/Neck
 function drawHead(b: Brush, p: Pose): void {
   const { pal, detailed } = b;
   const hY = headTopY(p);
-  const hX = BODY_X8 - 6 + p.lean;
-  const hW = 13;
-  const hH = 12;
+  const hX = BODY_X8 - 5 + p.lean;
 
-  // High upturned collar hugging the jawline
-  b.rect(hX - 2, hY + 6, 2, 6, pal.coat);
-  b.rect(hX + hW, hY + 6, 2, 6, pal.coat);
-  b.rect(hX - 2, hY + 6, 1, 6, pal.trim);
-  b.rect(hX + hW + 1, hY + 6, 1, 6, pal.trim);
+  // Chestnut hair crown & silhouette (NO gold trim anywhere on head!)
+  // Top rows of hair
+  b.rect(hX + 1, hY, 8, 1, pal.hair);
+  b.rect(hX, hY + 1, 10, 2, pal.hair);
+  b.rect(hX - 1, hY + 2, 11, 2, pal.hair);
 
-  // Chestnut hair crown (top rows)
-  b.rect(hX, hY, hW, 4, pal.hair);
-  b.rect(hX - 1, hY + 1, 2, 5, pal.hair); // sideburns left
-  b.rect(hX + hW - 1, hY + 1, 2, 4, pal.hair);
+  // Rear hair sweeping down to nape with shadow
+  b.rect(hX - 1, hY + 4, 3, 4, pal.hairShade);
+  b.rect(hX - 1, hY + 4, 1, 4, pal.hair);
+  b.rect(hX, hY + 7, 2, 2, pal.hairShade);
 
   if (detailed) {
-    // Hair tufts and shading
-    b.rect(hX, hY, 4, 3, pal.hairShade);
-    b.rect(hX + 4, hY, 5, 2, pal.hair);
-    // Wind-ruffled tuft sticking right
-    b.px(hX + hW, hY, pal.hair);
-    b.px(hX + hW + 1, hY + 1, pal.hair);
-    b.px(hX + hW, hY + 1, pal.hairShade);
-    // Fine strands in 16-bit
+    // Rich chestnut hair strands & shading in 16-bit
+    b.rect(hX, hY + 1, 4, 2, pal.hairShade);
+    b.px(hX + 9, hY + 1, pal.hair);
+    b.px(hX + 10, hY + 2, pal.hair);
     b.px16(Math.round((hX + 3) * 2), Math.round(hY * 2), pal.hair);
-    b.px16(Math.round((hX + 7) * 2), Math.round(hY * 2), pal.hair);
+    b.px16(Math.round((hX + 6) * 2), Math.round(hY * 2), pal.hair);
   }
 
-  // Face complexion block (tapered at jaw)
-  b.rect(hX + 1, hY + 4, hW - 2, hH - 5, pal.skin);
-  b.rect(hX + 2, hY + hH - 2, hW - 4, 2, pal.skin);
+  // Face (facing right): Forehead, brow, cheek, and nose
+  b.rect(hX + 2, hY + 4, 7, 1, pal.skin);
+  b.rect(hX + 2, hY + 5, 7, 1, pal.skin);
+  b.rect(hX + 2, hY + 6, 7, 1, pal.skin);
+  b.rect(hX + 2, hY + 7, 6, 1, pal.skin);
+
+  // Tapered jaw & chin (head is not a box!)
+  b.rect(hX + 2, hY + 8, 5, 1, pal.skin);
+  b.rect(hX + 3, hY + 9, 3, 1, pal.skin); // chin tapers forward at x = hX+3..5
+
+  // Visible neck connecting head to coat collar
+  b.rect(hX + 3, hY + 10, 3, 3, pal.skin);
+  b.rect(hX + 2, hY + 12, 5, 2, pal.skin);
+
+  // Jaw & neck shadow
+  b.rect(hX + 2, hY + 8, 2, 1, pal.skinShade);
+  b.rect(hX + 3, hY + 10, 1, 4, pal.skinShade);
 
   if (detailed) {
-    // Terracotta shadow on lower jaw and throat
-    b.rect(hX + 2, hY + hH - 2, hW - 4, 2, pal.skinShade);
-    b.rect(hX + 1, hY + 4, 1, hH - 5, pal.skinShade);
-    // Ear detail
-    b.rect16(Math.round((hX - 1) * 2), Math.round((hY + 6) * 2), 2, 4, pal.skinShade);
+    // 16-bit subtle shadow under jawline and ear
+    b.rect16(Math.round((hX + 2) * 2), Math.round((hY + 6) * 2), 2, 4, pal.skinShade);
+    b.line16(
+      Math.round((hX + 3) * 2),
+      Math.round((hY + 9) * 2),
+      Math.round((hX + 5) * 2),
+      Math.round((hY + 9) * 2),
+      pal.skinShade,
+    );
   }
 
-  // Analytical Spectacles with Visible Glint
-  const specY = hY + 6;
-  const specX = hX + 5;
-  // Gold spectacle frame rim
-  b.rect(specX, specY, 5, 2, pal.trim);
-  // Lens interior
-  b.rect(specX + 1, specY, 3, 1, pal.skin);
+  // Visible duelist eye facing forward/right
+  const eyeX = hX + 7;
+  const eyeY = hY + 5;
+  b.px(eyeX, eyeY, pal.outline);
 
-  // Spectacle glint (bright amber / steel flash)
+  // Spectacles as small 1-2 px glint (not a giant gold headphone or rim)
+  const specX = eyeX + 1; // x = hX + 8
+  const specY = eyeY;
   if (p.spectacleGlint) {
-    b.px(specX + 2, specY, pal.solarCore);
+    // Bright 1-2 px glint catching light
+    b.px(specX, specY, pal.solarCore);
     if (detailed) {
-      b.px(specX + 3, specY, pal.solar);
-      // Brilliant specular reflection in 16-bit
-      b.px16(Math.round((specX + 2) * 2), Math.round(specY * 2), pal.solarCore);
-      b.px16(Math.round((specX + 2) * 2) + 1, Math.round(specY * 2), pal.solarCore);
+      b.px16(Math.round(specX * 2), Math.round(specY * 2), pal.solarCore);
+      b.px16(Math.round(specX * 2) + 1, Math.round(specY * 2), pal.solarCore);
+      b.px16(Math.round(specX * 2), Math.round((specY - 1) * 2), pal.bladeEdge);
     }
   } else {
-    b.px(specX + 3, specY, pal.solar);
+    // Subtle fine glint / thin steel reflection
+    if (detailed) {
+      b.px16(Math.round(specX * 2), Math.round(specY * 2), pal.bladeEdge);
+    }
   }
 }
 
@@ -1174,7 +1358,7 @@ function drawSlashArc(b: Brush, p: Pose): void {
   }
 }
 
-// 9. Cast Spell Effects: Attached to Hand & Extending Right
+// 9. Cast Spell Effects: Connected to Hand & Extending Right along Bolt Path
 function drawCastEffects(b: Brush, p: Pose): void {
   const { pal, detailed } = b;
   if (!p.castEffect) return;
@@ -1186,130 +1370,146 @@ function drawCastEffects(b: Brush, p: Pose): void {
 
   switch (stage) {
     case "spark": {
-      // Spark at fingertips
-      const fx = reachX;
-      const fy = shY - 11;
-      b.px(fx, fy, pal.solarCore);
-      b.px(fx + 1, fy, pal.solar);
-      b.px(fx - 1, fy, pal.solar);
-      b.px(fx, fy - 1, pal.solar);
-      break;
-    }
-
-    case "sigil": {
-      // Golden magic stream attached to hand, forming solar glyph at x=74 reaching reachX (80)
-      const handX = shX + 11;
-      const handY = shY + 1;
-      const glyphX = 73;
-      const glyphY = handY;
-      const r = 6;
-
-      // Connecting magic tendrils
-      b.line(handX, handY, glyphX - r, glyphY, pal.solar);
-      b.line(handX, handY - 1, glyphX - r, glyphY - 1, pal.solar);
-
-      // Solar glyph ring
-      b.c.ellipse(glyphX * b.s, glyphY * b.s, r * b.s, r * b.s, pal.solar);
-      // Cross axes
-      b.line(glyphX - r, glyphY, glyphX + r, glyphY, pal.solar);
-      b.line(glyphX, glyphY - r, glyphX, glyphY + r, pal.solar);
-      b.px(glyphX, glyphY, pal.solarCore);
-
+      // Small spark gathering at raised fingertips
+      const hx = shX;
+      const hy = shY - 11;
+      b.px(hx + 1, hy - 1, pal.solarCore);
+      b.px(hx, hy - 1, pal.solar);
+      b.px(hx + 2, hy - 1, pal.solar);
+      b.px(hx + 1, hy - 2, pal.solar);
       if (detailed) {
-        // Inner diamond rune in 16-bit
-        b.line16(Math.round(glyphX * 2), Math.round((glyphY - 3) * 2), Math.round((glyphX + 3) * 2), Math.round(glyphY * 2), pal.solarCore);
-        b.line16(Math.round((glyphX + 3) * 2), Math.round(glyphY * 2), Math.round(glyphX * 2), Math.round((glyphY + 3) * 2), pal.solarCore);
-        b.line16(Math.round(glyphX * 2), Math.round((glyphY + 3) * 2), Math.round((glyphX - 3) * 2), Math.round(glyphY * 2), pal.solarCore);
-        b.line16(Math.round((glyphX - 3) * 2), Math.round(glyphY * 2), Math.round(glyphX * 2), Math.round((glyphY - 3) * 2), pal.solarCore);
+        b.px16(Math.round((hx + 1) * 2), Math.round((hy - 1) * 2), pal.solarCore);
       }
       break;
     }
 
-    case "burst": {
-      // Intense discharge beam pulsing from hand to reachX (82)
-      const handX = shX + 11;
-      const handY = shY + 1;
-      const glyphX = 72;
-      const glyphY = handY;
-
-      // Energy stream
-      b.line(handX, handY, reachX, handY, pal.solar);
-      b.line(handX, handY - 1, reachX - 1, handY - 1, pal.solar);
-      b.line(handX, handY + 1, reachX - 1, handY + 1, pal.solar);
-
-      // Radiant core
-      b.line(glyphX - 3, glyphY, reachX - 2, glyphY, pal.solarCore);
-
-      // Solar flare spurs
-      b.line(glyphX, glyphY - 4, glyphX + 4, glyphY, pal.solar);
-      b.line(glyphX, glyphY + 4, glyphX + 4, glyphY, pal.solar);
-      b.px(reachX, handY, pal.solarCore);
-
+    case "gather": {
+      // Radiant solar glow gathers into an orb above raised palm
+      const ox = shX + 1;
+      const oy = shY - 14;
+      b.rect(ox - 1, oy - 1, 3, 3, pal.solar);
+      b.px(ox, oy, pal.solarCore);
+      b.px(ox - 2, oy, pal.solar);
+      b.px(ox + 2, oy, pal.solar);
+      b.px(ox, oy - 2, pal.solar);
+      b.px(ox, oy + 2, pal.solar);
       if (detailed) {
-        b.line16(Math.round((reachX - 3) * 2), Math.round((handY - 2) * 2), Math.round(reachX * 2), Math.round(handY * 2), pal.solarCore);
-        b.line16(Math.round((reachX - 3) * 2), Math.round((handY + 2) * 2), Math.round(reachX * 2), Math.round(handY * 2), pal.solarCore);
+        b.line16(Math.round((ox - 1) * 2), Math.round(oy * 2), Math.round((ox + 1) * 2), Math.round(oy * 2), pal.solarCore);
+        b.line16(Math.round(ox * 2), Math.round((oy - 1) * 2), Math.round(ox * 2), Math.round((oy + 1) * 2), pal.solarCore);
       }
       break;
     }
 
-    case "detonation": {
-      // Detonation starburst at reachX (82)
-      const handX = shX + 11;
-      const handY = shY + 1;
-      const coreX = 74;
-      const coreY = handY;
-
-      b.line(handX, handY, reachX, handY, pal.solar);
-      b.line(handX, handY - 1, reachX - 1, handY - 1, pal.solar);
-      b.line(handX, handY + 1, reachX - 1, handY + 1, pal.solar);
-
-      // Starburst rays
-      b.line(coreX - 5, coreY - 5, coreX + 5, coreY + 5, pal.solar);
-      b.line(coreX - 5, coreY + 5, coreX + 5, coreY - 5, pal.solar);
-      b.line(coreX, coreY - 6, coreX, coreY + 6, pal.solarCore);
-      b.line(coreX - 6, coreY, reachX, coreY, pal.solarCore);
-
+    case "glow_gather": {
+      // Glow gathers at peak intensity, radiance expanding forward to reachX=80
+      const ox = shX + 2;
+      const oy = shY - 13;
+      b.rect(ox - 2, oy - 2, 5, 5, pal.solar);
+      b.rect(ox - 1, oy - 1, 3, 3, pal.solarCore);
+      // Direct forward solar rays extending to reachX
+      b.line(ox + 3, oy, reachX, oy, pal.solar);
+      b.line(ox + 3, oy - 1, reachX - 2, oy - 1, pal.solar);
+      b.line(ox + 3, oy + 1, reachX - 2, oy + 1, pal.solar);
+      b.line(ox + 2, oy, reachX - 4, oy, pal.solarCore);
+      b.px(reachX, oy, pal.solarCore);
       if (detailed) {
-        b.px(reachX + 1, coreY, pal.solar);
-        b.px(coreX + 4, coreY - 4, pal.solarCore);
-        b.px(coreX + 4, coreY + 4, pal.solarCore);
-        b.c.ellipse(coreX * 2, coreY * 2, 4, 4, pal.solarCore);
+        b.px16(Math.round(reachX * 2), Math.round(oy * 2), pal.solarCore);
+        b.line16(Math.round((ox - 1) * 2), Math.round(oy * 2), Math.round((ox + 1) * 2), Math.round(oy * 2), pal.solarCore);
       }
       break;
     }
 
-    case "dissipate": {
-      // Dissipating rings from hand to reachX (81)
-      const handX = shX + 11;
-      const handY = shY + 1;
-      b.line(handX, handY, handX + 6, handY, pal.solar);
-      // Dissolving ring arc
-      b.line(72, handY - 4, reachX, handY, pal.solar);
-      b.line(72, handY + 4, reachX, handY, pal.solar);
-      b.px(76, handY - 3, pal.solar);
-      b.px(76, handY + 3, pal.solar);
-      b.px(reachX, handY, pal.solarCore);
+    case "bolt_fire": {
+      // Palm thrusts forward; solar bolt erupts from palm to reachX=82
+      const palmX = shX + 11;
+      const palmY = shY + 1;
+      b.line(palmX, palmY, reachX, palmY, pal.solar);
+      b.line(palmX, palmY - 1, reachX - 2, palmY - 1, pal.solar);
+      b.line(palmX, palmY + 1, reachX - 2, palmY + 1, pal.solar);
+      b.line(palmX + 1, palmY, reachX - 3, palmY, pal.solarCore);
+      // Arrowhead bolt spear at tip
+      b.line(reachX, palmY, reachX - 4, palmY - 3, pal.solar);
+      b.line(reachX, palmY, reachX - 4, palmY + 3, pal.solar);
+      b.px(reachX, palmY, pal.solarCore);
+      if (detailed) {
+        b.line16(Math.round((reachX - 3) * 2), Math.round((palmY - 2) * 2), Math.round(reachX * 2), Math.round(palmY * 2), pal.solarCore);
+        b.line16(Math.round((reachX - 3) * 2), Math.round((palmY + 2) * 2), Math.round(reachX * 2), Math.round(palmY * 2), pal.solarCore);
+      }
       break;
     }
 
-    case "ember": {
-      // Floating spark stream to reachX (80)
-      const handX = shX + 8;
-      const handY = shY + 3;
-      b.line(handX, handY, handX + 5, handY, pal.solar);
-      b.px(70, handY - 2, pal.solar);
-      b.px(74, handY + 1, pal.solar);
-      b.px(78, handY - 1, pal.solar);
-      b.px(reachX, handY, pal.solarCore);
+    case "bolt_peak": {
+      // Peak solar discharge beam from palm to reachX=82
+      const palmX = shX + 11;
+      const palmY = shY + 1;
+      b.line(palmX, palmY, reachX, palmY, pal.solar);
+      b.line(palmX, palmY - 1, reachX - 1, palmY - 1, pal.solar);
+      b.line(palmX, palmY + 1, reachX - 1, palmY + 1, pal.solar);
+      b.line(palmX + 2, palmY - 2, reachX - 3, palmY - 2, pal.solar);
+      b.line(palmX + 2, palmY + 2, reachX - 3, palmY + 2, pal.solar);
+      b.line(palmX + 1, palmY, reachX - 2, palmY, pal.solarCore);
+      b.line(palmX + 3, palmY - 1, reachX - 4, palmY - 1, pal.solarCore);
+      b.line(palmX + 3, palmY + 1, reachX - 4, palmY + 1, pal.solarCore);
+      b.px(reachX, palmY, pal.solarCore);
+      b.line(reachX, palmY, reachX - 4, palmY - 4, pal.solar);
+      b.line(reachX, palmY, reachX - 4, palmY + 4, pal.solar);
+      if (detailed) {
+        b.px16(Math.round(reachX * 2), Math.round(palmY * 2), pal.solarCore);
+        b.px16(Math.round((reachX - 1) * 2), Math.round((palmY - 1) * 2), pal.solarCore);
+        b.px16(Math.round((reachX - 1) * 2), Math.round((palmY + 1) * 2), pal.solarCore);
+      }
       break;
     }
 
-    case "ripple": {
-      // Amber energy ground wave extending forward from feet to reachX (80)
-      const ripY = FLOOR8;
-      b.line(BODY_X8 + 6, ripY, reachX, ripY, pal.solar);
-      b.line(BODY_X8 + 12, ripY - 1, reachX - 2, ripY - 1, pal.solar);
-      b.px(reachX, ripY, pal.solarCore);
+    case "bolt_fade": {
+      // Tapering beam connected to palm, extending right to reachX=81
+      const palmX = shX + 11;
+      const palmY = shY + 1;
+      b.line(palmX, palmY, reachX, palmY, pal.solar);
+      b.line(palmX, palmY - 1, palmX + 8, palmY - 1, pal.solar);
+      b.line(palmX, palmY + 1, palmX + 8, palmY + 1, pal.solar);
+      b.line(palmX + 2, palmY, reachX - 4, palmY, pal.solarCore);
+      b.px(56, palmY - 2, pal.solar);
+      b.px(65, palmY + 2, pal.solar);
+      b.px(74, palmY - 1, pal.solarCore);
+      b.px(reachX, palmY, pal.solarCore);
+      if (detailed) {
+        b.px16(Math.round(reachX * 2), Math.round(palmY * 2), pal.solarCore);
+        b.px16(Math.round(65 * 2), Math.round((palmY + 2) * 2), pal.solarCore);
+      }
+      break;
+    }
+
+    case "sparks_fade": {
+      // Fading sparks close to bolt path out to reachX=80
+      const palmX = shX + 11;
+      const palmY = shY + 1;
+      b.line(palmX, palmY, palmX + 2, palmY, pal.solar);
+      b.px(palmX + 6, palmY, pal.solar);
+      b.px(52, palmY - 1, pal.solarCore);
+      b.px(53, palmY, pal.solar);
+      b.px(62, palmY + 1, pal.solar);
+      b.px(70, palmY, pal.solarCore);
+      b.px(76, palmY - 1, pal.solar);
+      b.px(reachX, palmY, pal.solarCore);
+      if (detailed) {
+        b.px16(Math.round(reachX * 2), Math.round(palmY * 2), pal.solarCore);
+        b.px16(Math.round(70 * 2), Math.round(palmY * 2), pal.solarCore);
+      }
+      break;
+    }
+
+    case "sparks_end": {
+      // Final dissolving embers along bolt path to reachX=80 (nothing on floor)
+      const palmY = shY + 1;
+      b.px(42, palmY, pal.solar);
+      b.px(54, palmY + 1, pal.solar);
+      b.px(66, palmY - 1, pal.solar);
+      b.px(74, palmY, pal.solar);
+      b.px(reachX, palmY, pal.solarCore);
+      if (detailed) {
+        b.px16(Math.round(reachX * 2), Math.round(palmY * 2), pal.solarCore);
+      }
       break;
     }
   }
