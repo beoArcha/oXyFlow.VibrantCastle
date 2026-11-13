@@ -101,7 +101,7 @@ Copy `__fixtures__/sample_golem.ts` and edit it; it passes validation as is.
 
 ## Heroes
 
-Heroes (Valen, Aurelia) use the same compiler with a second contract. This tooling ships without hero art: `scripts/sprites/heroes/` is empty and nothing in the runtime loads the output yet. `__fixtures__/sample_hero.ts` is the starting point for hero art; copy it into `heroes/<id>.ts` and replace the drawing.
+Heroes (Valen, Aurelia) use the same compiler with a second contract. The runtime loads the output when present: if `src/assets/characters/<id>/<id>_pixel_meta.json` and its SVGs exist, the hero's `low` quality uses the hi-8bit sheet and `mid` the hi-16bit sheet (sliced by `frameRects`, drawn at the painted size with image smoothing off); without them the painted tiers are used unchanged, and `high` is always painted. No code registration is needed. This tooling itself ships without hero art: `scripts/sprites/heroes/` holds no art, and the art lives on its own branches. `__fixtures__/sample_hero.ts` is the starting point for hero art; copy it into `heroes/<id>.ts` and replace the drawing.
 
 **Art intent.** A retro 8-bit / 16-bit look at modern pixel density: a limited palette, hard pixel edges, no anti-aliasing and a clear 1 px outline. It is not drawn at original console resolutions; the cells are as large as the painted `mid` sheet (hi-16bit) and half of that (hi-8bit). hi-8bit uses flat colours, hi-16bit adds shading and detail to the same figure.
 
