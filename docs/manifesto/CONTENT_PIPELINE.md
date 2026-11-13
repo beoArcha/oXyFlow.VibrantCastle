@@ -188,5 +188,6 @@ graph TD
 ```
 
 * **Atlas Studio**: Visualizes sprite grids, configures slicing presets, inspects hitboxes/hurtboxes, and previews animation sequences in real time.
+* **Atlas Studio hero tiers**: for a hero with compiled pixel files (`<id>_hi8bit.svg`, `<id>_hi16bit.svg`, `<id>_pixel_meta.json`) a tier toggle (hi-8bit / hi-16bit / painted) appears next to the preset picker (`atlas/AtlasTierToggle.tsx`, `atlas/heroPixelTiers.ts`). Pixel tiers load through `src/game/engine/heroPixel` and are sliced by the meta `frameRects` (freeform rects, smoothing off); heroes without pixel files only show the painted sheet.
 * **Data Studio** (`src/developer/subtabs/datastudio/`): Inspection and validation of data blueprints, a bestiary gallery and inspector, a visual novel preview and an AI generator card. Live editing during play is not verified.
 * **RingBuffer Log Viewer**: Diagnostic inspection of recent game engine tick events, domain state transitions, and audio triggers without polluting the browser console.

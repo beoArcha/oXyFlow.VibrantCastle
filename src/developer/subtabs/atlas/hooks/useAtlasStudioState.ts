@@ -15,6 +15,7 @@ import {
   IAtlasBackgroundConfig,
   AtlasAssetPreset,
 } from "../types";
+import type { AtlasHeroTier } from "../heroPixelTiers";
 import { useAtlasPresets } from "./useAtlasPresets";
 import { useAtlasAnimationTracks, ToggleFrameTarget } from "./useAtlasAnimationTracks";
 import { useAtlasSlicingConfig, ISliceMetrics } from "./useAtlasSlicingConfig";
@@ -53,7 +54,7 @@ export interface AtlasPresetSlice {
   setImageSrc: (src: string) => void;
   setOrigin: (origin: AtlasOriginDefinition) => void;
   setErrorState: (err: GameBaseError | null) => void;
-  applyPreset: (preset: AtlasAssetPreset) => void;
+  applyPreset: (preset: AtlasAssetPreset, tier?: AtlasHeroTier) => void;
   handleResetDefaults: () => void;
   handleImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleJsonUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -105,6 +106,9 @@ export interface AtlasStudioStateReturn {
 
   // Flattened convenience properties for backward compatibility
   selectedPresetId: string;
+  selectedTier: AtlasHeroTier;
+  availableTiers: AtlasHeroTier[];
+  handleSelectTier: (tier: AtlasHeroTier) => void;
   activePreset: AtlasAssetPreset;
   metaDoc: AtlasMetaDoc;
   imageSrc: string;
@@ -137,7 +141,7 @@ export interface AtlasStudioStateReturn {
   setOrigin: (origin: AtlasOriginDefinition) => void;
   setMetaDoc: (doc: AtlasMetaDoc) => void;
   setImageSrc: (src: string) => void;
-  applyPreset: (preset: AtlasAssetPreset) => void;
+  applyPreset: (preset: AtlasAssetPreset, tier?: AtlasHeroTier) => void;
   handleResetDefaults: () => void;
   handleImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleJsonUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -200,6 +204,9 @@ export function useAtlasStudioState(): AtlasStudioStateReturn {
   // 2. Presets & Texture Assets Slice
   const {
     selectedPresetId,
+    selectedTier,
+    availableTiers,
+    handleSelectTier,
     activePreset,
     metaDoc,
     imageSrc,
@@ -448,6 +455,9 @@ export function useAtlasStudioState(): AtlasStudioStateReturn {
 
     // Flattened Convenience
     selectedPresetId,
+    selectedTier,
+    availableTiers,
+    handleSelectTier,
     activePreset,
     metaDoc,
     imageSrc,

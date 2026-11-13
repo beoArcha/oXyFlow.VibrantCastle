@@ -7,6 +7,7 @@ import {
   AtlasAnimationTrackDefinition,
 } from "../types";
 import { ATLAS_PRESETS } from "../assetPresets";
+import { buildHeroTierPreset, listHeroTiers, type AtlasHeroTier } from "../heroPixelTiers";
 import type { IFreeformFrameRect } from "@game/engine/meta/metaSections";
 import { LoggerManager } from "@lib/logger";
 import { AssetError, ParserError, ErrorCode, GameBaseError } from "@lib/errors";
@@ -40,6 +41,7 @@ export function useAtlasPresets({ onTracksParsed, parseTracksFromMeta }: UseAtla
   const studioLogger = useMemo(() => LoggerManager.getInstance().getLogger("AtlasStudio"), []);
 
   const [selectedPresetId, setSelectedPresetId] = useState<string>("valen");
+  const [selectedTier, setSelectedTier] = useState<AtlasHeroTier>("high");
   const [customImageSrc, setCustomImageSrc] = useState<string | null>(null);
   const [errorState, setErrorState] = useState<GameBaseError | null>(null);
 
@@ -86,7 +88,9 @@ export function useAtlasPresets({ onTracksParsed, parseTracksFromMeta }: UseAtla
   });
 
   const applyPreset = useCallback(
-    (preset: AtlasPresetItem) => {
+    (basePreset: AtlasPresetItem, tier: AtlasHeroTier = "high") => {
+      const preset = buildHeroTierPreset(basePreset, tier);
+      setSelectedTier(preset === basePreset ? "high" : tier);
       setSelectedPresetId(preset.id);
       setImageSrc(preset.imageSrc);
       setCustomImageSrc((prev) => {
@@ -156,9 +160,20 @@ export function useAtlasPresets({ onTracksParsed, parseTracksFromMeta }: UseAtla
 
   const handleResetDefaults = useCallback(() => {
     if (activePreset) {
-      applyPreset(activePreset);
+      applyPreset(activePreset, selectedTier);
     }
-  }, [activePreset, applyPreset]);
+  }, [activePreset, applyPreset, selectedTier]);
+
+  const availableTiers = useMemo(() => listHeroTiers(selectedPresetId), [selectedPresetId]);
+
+  const handleSelectTier = useCallback(
+    (tier: AtlasHeroTier) => {
+      if (activePreset) {
+        applyPreset(activePreset, tier);
+      }
+    },
+    [activePreset, applyPreset]
+  );
 
   const handleImageUpload = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -282,6 +297,9 @@ export function useAtlasPresets({ onTracksParsed, parseTracksFromMeta }: UseAtla
 
   return {
     selectedPresetId,
+    selectedTier,
+    availableTiers,
+    handleSelectTier,
     activePreset,
     metaDoc,
     imageSrc,

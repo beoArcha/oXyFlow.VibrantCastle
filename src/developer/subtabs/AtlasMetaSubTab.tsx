@@ -39,6 +39,9 @@ export const AtlasMetaSubTab: React.FC<AtlasMetaSubTabProps> = ({ onNavigateToLo
       {/* 1. Header Toolbar: Searchable Atlas Selector & File Buttons */}
       <AtlasHeaderToolbar
         selectedPresetId={state.selectedPresetId}
+        availableTiers={state.availableTiers}
+        selectedTier={state.selectedTier}
+        onSelectTier={state.handleSelectTier}
         onSelectPreset={(presetId) => {
           const resolved = defaultAtlasAssetRegistry.resolveAsset(presetId);
           if (resolved) {
