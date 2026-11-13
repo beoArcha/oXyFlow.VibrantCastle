@@ -213,7 +213,7 @@ interface StaffPose {
 }
 
 interface MagicEffect {
-  kind: "spark" | "blade" | "arc" | "blast" | "wave" | "sigil" | "shield" | "motes" | "dash_trail";
+  kind: "vortex" | "blade" | "arc" | "blast" | "wave" | "sigil" | "shield" | "motes" | "dash_trail";
   minX?: number;
   maxX: number;
   y: number;
@@ -228,6 +228,7 @@ interface Pose {
   robeFlare?: number;  // Extra robe billowing width on left
   hairWind?: number;   // Hair trailing shift
   staff: StaffPose;    // Position of focus staff
+  dashAfterimages?: boolean; // Draw spectral ghost figures behind
   magic?: MagicEffect; // Magical VFX
 }
 
@@ -270,7 +271,7 @@ const POSES: Partial<Record<string, Pose[]>> = {
       bob: -1, lean: 1,
       hairWind: 1,
       staff: { grip: [CX + 7, 31], tip: [CX + 14, 13] },
-      magic: { kind: "spark", minX: CX + 14, maxX: CX + 16, y: 13, h: 3 },
+      magic: { kind: "vortex", minX: CX + 13, maxX: CX + 16, y: 13, h: 3 },
     },
     // 3: Hold breath (steady posture)
     {
@@ -296,6 +297,9 @@ const POSES: Partial<Record<string, Pose[]>> = {
   ],
 
   // ─── Run (10 frames: [1, 1, 1, 1, 2, 1, 2, 1, 1, 1] cells) ────────────────
+  // Stride cycle with flowing robe tails and streaming hair.
+  // Staff stays authentic length (~18 px), held naturally!
+  // Span-2 frames 4 & 6 have matching minX ~ 16 and maxX ~ 49 (drift = 0).
   run: [
     // 0 [1 cell]: Right heel strike; right boot on y=71, left driving back
     {
@@ -329,13 +333,13 @@ const POSES: Partial<Record<string, Pose[]>> = {
       robeFlare: 5, hairWind: 6,
       staff: { grip: [CX + 6, 32], tip: [CX + 15, 22] },
     },
-    // 4 [2 cells]: Left foot plant & wide flare; robe tails whip out to x:15..88
+    // 4 [2 cells]: Left foot plant & wide flare; robe tails whip out to x:16..49
     {
       bob: 0, lean: 4,
       legL: { x: 8,  lift: 0, kneeX: 6 },
       legR: { x: -9, lift: 0, kneeX: -7 },
-      robeFlare: 16, hairWind: 7,
-      staff: { grip: [CX + 8, 32], tip: [88, 22] },
+      robeFlare: 15, hairWind: 7,
+      staff: { grip: [CX + 6, 33], tip: [CX + 17, 24] },
     },
     // 5 [1 cell]: Left knee absorption; weight rolls forward
     {
@@ -345,13 +349,13 @@ const POSES: Partial<Record<string, Pose[]>> = {
       robeFlare: 4, hairWind: 5,
       staff: { grip: [CX + 6, 33], tip: [CX + 15, 24] },
     },
-    // 6 [2 cells]: Left toe launch & extension; wine robes stream to x:15..88
+    // 6 [2 cells]: Left toe launch & extension; wine robes stream to x:16..49
     {
       bob: 1, lean: 5,
       legL: { x: 7,  lift: 0, kneeX: 6 },
       legR: { x: -8, lift: 0, kneeX: -6 },
-      robeFlare: 15, hairWind: 7,
-      staff: { grip: [CX + 8, 32], tip: [88, 20] },
+      robeFlare: 14, hairWind: 7,
+      staff: { grip: [CX + 6, 33], tip: [CX + 17, 23] },
     },
     // 7 [1 cell]: Flight phase 2; gliding posture
     {
@@ -417,13 +421,13 @@ const POSES: Partial<Record<string, Pose[]>> = {
       robeFlare: 3, hairWind: -3,
       staff: { grip: [CX + 6, 31], tip: [CX + 13, 10] },
     },
-    // 1 [2 cells]: Aerodynamic terminal drop; wide arms and billowing robes to x:16..86
+    // 1 [2 cells]: Aerodynamic terminal drop; wide arms and billowing robes
     {
       bob: -1, lean: 2,
       legL: { x: -6, lift: 0, kneeX: -4 },
       legR: { x: 7,  lift: 0, kneeX: 5 },
       robeFlare: 14, hairWind: -4,
-      staff: { grip: [CX + 8, 30], tip: [86, 12] },
+      staff: { grip: [CX + 8, 30], tip: [CX + 20, 16] },
     },
     // 2 [1 cell]: Pre-landing flare; knees bending to absorb impact
     {
@@ -438,14 +442,14 @@ const POSES: Partial<Record<string, Pose[]>> = {
   // ─── Attack (7 frames: [2, 2, 2, 2, 2, 2, 3] cells) ───────────────────────
   // CRITICAL: All span-2 frames (0..5) reach x ~ 95..96 to eliminate drift!
   attack: [
-    // 0 [2 cells]: Arc windup coil; cyan sparks gather forward to x=95
+    // 0 [2 cells]: Arc windup coil; swirling vortex gathering to x=95
     {
       bob: 1, lean: -2,
       legL: { x: -6, lift: 0, kneeX: -5 },
       legR: { x: 4,  lift: 0, kneeX: 3 },
       robeFlare: 2, hairWind: -1,
       staff: { grip: [CX + 2, 32], tip: [CX - 8, 14] },
-      magic: { kind: "spark", minX: CX + 8, maxX: 95, y: 28, h: 4 },
+      magic: { kind: "vortex", minX: 65, maxX: 95, y: 26, h: 14 },
     },
     // 1 [2 cells]: Step lunge & low crescent arc igniting forward to x=95
     {
@@ -504,6 +508,7 @@ const POSES: Partial<Record<string, Pose[]>> = {
   ],
 
   // ─── Dash (5 frames, 2 cells each) ─────────────────────────────────────────
+  // Spectral afterimages + horizontal phase streaks to x=95..96.
   dash: [
     // 0 [2 cells]: Phase charge crouch; cyan glyphs shimmer to x=95
     {
@@ -512,6 +517,7 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legR: { x: 7,  lift: 0, kneeX: 8 },
       robeFlare: 4, hairWind: 4,
       staff: { grip: [CX + 8, 42], tip: [72, 44] },
+      dashAfterimages: true,
       magic: { kind: "dash_trail", minX: 16, maxX: 95, y: 44, h: 14 },
     },
     // 1 [2 cells]: Phase shift launch; spectral afterimages stretch back to x=16
@@ -521,6 +527,7 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legR: { x: 9,  lift: 0, kneeX: 9 },
       robeFlare: 8, hairWind: 7,
       staff: { grip: [CX + 10, 40], tip: [78, 38] },
+      dashAfterimages: true,
       magic: { kind: "dash_trail", minX: 16, maxX: 96, y: 40, h: 16 },
     },
     // 2 [2 cells]: Spectral transit apex; arrow glide
@@ -530,6 +537,7 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legR: { x: 9,  lift: 0, kneeX: 9 },
       robeFlare: 8, hairWind: 8,
       staff: { grip: [CX + 11, 39], tip: [80, 36] },
+      dashAfterimages: true,
       magic: { kind: "dash_trail", minX: 16, maxX: 96, y: 38, h: 16 },
     },
     // 3 [2 cells]: Phase deceleration; staff brakes outward
@@ -539,6 +547,7 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legR: { x: 8,  lift: 0, kneeX: 8 },
       robeFlare: 6, hairWind: 5,
       staff: { grip: [CX + 9, 40], tip: [76, 40] },
+      dashAfterimages: true,
       magic: { kind: "dash_trail", minX: 16, maxX: 95, y: 42, h: 14 },
     },
     // 4 [2 cells]: Ground skid & upright transition; friction embers
@@ -548,20 +557,21 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legR: { x: 6,  lift: 0, kneeX: 5 },
       robeFlare: 4, hairWind: 3,
       staff: { grip: [CX + 8, 38], tip: [70, 34] },
+      dashAfterimages: true,
       magic: { kind: "dash_trail", minX: 16, maxX: 95, y: 48, h: 12 },
     },
   ],
 
   // ─── Cast (7 frames: [2, 1, 2, 2, 2, 2, 2] cells) ──────────────────────────
   cast: [
-    // 0 [2 cells]: Incantation drop & focus; staff planted, cyan spark to x=94
+    // 0 [2 cells]: Incantation drop & focus; summoning circle hovering to x=94
     {
       bob: 1, lean: 0,
       legL: { x: -6, lift: 0, kneeX: -5 },
       legR: { x: 5,  lift: 0, kneeX: 4 },
       robeFlare: 2, hairWind: 0,
       staff: { grip: [CX + 7, 33], tip: [CX + 7, FLOOR8 - 2] },
-      magic: { kind: "spark", minX: CX + 8, maxX: 94, y: 30, h: 4 },
+      magic: { kind: "sigil", minX: 68, maxX: 94, y: 24, h: 14 },
     },
     // 1 [1 cell]: Harmonic resonance; both hands channel energy
     {
@@ -570,7 +580,7 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legR: { x: 4,  lift: 0, kneeX: 3 },
       robeFlare: 1, hairWind: 1,
       staff: { grip: [CX + 6, 32], tip: [CX + 12, 12] },
-      magic: { kind: "sigil", minX: CX + 8, maxX: CX + 16, y: 22, h: 12 },
+      magic: { kind: "vortex", minX: CX + 8, maxX: CX + 16, y: 22, h: 10 },
     },
     // 2 [2 cells]: Sigil manifestation; circular Aether glyph to x=95
     {
@@ -620,6 +630,8 @@ const POSES: Partial<Record<string, Pose[]>> = {
   ],
 
   // ─── Crouch (2 frames, 2 cells each) ───────────────────────────────────────
+  // Clearly lower (~70% standing height: 48 px / 96 px in hi-16bit).
+  // Staff rested across thighs, protective barrier to x=86.
   crouch: [
     // 0 [2 cells]: Low drop transition
     {
@@ -627,7 +639,8 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: -7, lift: 0, kneeX: -9 },
       legR: { x: 6,  lift: 0, kneeX: 8 },
       robeFlare: 5, hairWind: 1,
-      staff: { grip: [CX + 6, 44], tip: [86, 46] },
+      staff: { grip: [CX + 4, 46], tip: [CX + 18, 46] },
+      magic: { kind: "sigil", minX: CX + 18, maxX: 86, y: 40, h: 16 },
     },
     // 1 [2 cells]: Grounded predatory coil; compact feline squat
     {
@@ -635,7 +648,8 @@ const POSES: Partial<Record<string, Pose[]>> = {
       legL: { x: -8, lift: 0, kneeX: -10 },
       legR: { x: 7,  lift: 0, kneeX: 9 },
       robeFlare: 6, hairWind: 0,
-      staff: { grip: [CX + 5, 47], tip: [86, 49] },
+      staff: { grip: [CX + 3, 49], tip: [CX + 17, 49] },
+      magic: { kind: "sigil", minX: CX + 17, maxX: 86, y: 44, h: 14 },
     },
   ],
 };
@@ -725,7 +739,7 @@ function drawRobe(b: Brush, p: Pose): void {
   // Deep wine fabric
   b.rect(skirtLeft, hipY, skirtWidth, skirtHeight, pal.robe);
 
-  // Diagonal stepped folds along the billowing rear
+  // Billowing stepped folds
   if (flare > 4) {
     b.rect(skirtLeft, hipY + 4, 3, skirtHeight - 4, pal.robeShade);
     b.rect(skirtLeft + 3, hipY + 8, 3, skirtHeight - 8, pal.robe);
@@ -859,8 +873,6 @@ function drawHead(b: Brush, p: Pose): void {
   }
 
   // --- Amber Crest Feather Plume (Signature Silhouette Accent) ---
-  // Tucked behind left ear at crown, pointing up-left.
-  // Kept safely at y >= 4 in hi-8bit (y >= 8 in hi-16bit) so row 0 stays clear!
   const featherX = CX - 5 + p.lean;
   const featherY = Math.max(4, hY - 3);
 
@@ -895,7 +907,6 @@ function drawStaff(b: Brush, p: Pose, cellW8: number): void {
   b.px(bx, by, pal.trim);
 
   // Ornate Bronze Crescent Moon Cage cradling glowing cyan gem
-  // Crescent prongs:
   b.line(tx - 2, ty + 1, tx - 1, ty - 2, pal.trim);
   b.line(tx - 1, ty - 2, tx + 2, ty - 1, pal.trim);
   b.line(tx + 2, ty - 1, tx + 1, ty + 2, pal.trim);
@@ -913,6 +924,21 @@ function drawStaff(b: Brush, p: Pose, cellW8: number): void {
   }
 }
 
+// Draw Dash Afterimage Ghosts
+function drawDashGhosts(b: Brush, p: Pose): void {
+  const { pal } = b;
+  const tY = torsoY(p);
+  const hY = headY(p);
+
+  // Ghost 1 (shifted -8px)
+  b.rect(CX - 14 + p.lean, tY + 2, 10, 10, pal.robeShade);
+  b.rect(CX - 12 + p.lean, hY + 2, 7, 6, pal.hairShade);
+
+  // Ghost 2 (shifted -16px)
+  b.rect(CX - 22 + p.lean, tY + 3, 8, 8, pal.robeShade);
+  b.rect(CX - 20 + p.lean, hY + 3, 6, 5, pal.hairShade);
+}
+
 // 8. Draw Magic Effects (Curved Crescent Slashes, Arcane Sigils, Shockwaves)
 function drawMagic(b: Brush, p: Pose, cellW8: number): void {
   if (!p.magic) return;
@@ -927,20 +953,22 @@ function drawMagic(b: Brush, p: Pose, cellW8: number): void {
   const cy = Math.max(3, Math.min(FLOOR8 - h, y));
 
   switch (kind) {
-    case "spark": {
-      // Swirling gathered Aether sparks
-      b.line(x0, cy + 1, x1, cy, pal.magic);
-      b.px(x1, cy, pal.gem);
-      b.px(x0 + 2, cy + 2, pal.magicDim);
+    case "vortex": {
+      // Swirling gathered Aether sparks & energy rune motes
+      const midY = cy + Math.round(h / 2);
+      b.ellipse(x0 + Math.round(w / 2), midY, Math.round(w / 2), Math.round(h / 2), pal.magicDim);
+      b.px(x1, midY, pal.gem);
+      b.px(x0 + 2, midY - 2, pal.magic);
+      b.px(x0 + Math.round(w / 2), midY, pal.magicCore);
       if (detailed) {
-        b.px16(Math.round(x1 * 2), Math.round(cy * 2), pal.magicCore);
+        b.px16(Math.round(x1 * 2), Math.round(midY * 2), pal.magicCore);
       }
       break;
     }
 
     case "blade":
     case "arc": {
-      // Curved crescent slash wave tapering at both tips!
+      // Curved crescent slash wave tapering at both tips
       const midY = cy + Math.round(h / 2);
       b.polygon(
         [
@@ -1012,7 +1040,7 @@ function drawMagic(b: Brush, p: Pose, cellW8: number): void {
 
     case "sigil":
     case "shield": {
-      // Radiant circular / diamond arcane glyph disc
+      // Radiant circular arcane glyph disc
       const midX = Math.round((x0 + x1) / 2);
       const midY = cy + Math.round(h / 2);
       const radius = Math.min(Math.round(w / 2), Math.round(h / 2));
@@ -1049,16 +1077,11 @@ function drawMagic(b: Brush, p: Pose, cellW8: number): void {
     }
 
     case "dash_trail": {
-      // Spectral wine afterimage silhouettes + cyan phase slipstream speed lines
+      // Horizontal phase slipstream speed lines
       const midY = cy + Math.round(h / 2);
-      // Spectral afterimages
-      b.rect(x0, cy + 2, Math.round(w * 0.4), h - 4, pal.robeShade);
-      b.rect(x0 + 3, cy, Math.round(w * 0.3), h - 6, pal.hairShade);
-
-      // Horizontal cyan phase slipstream streaks
-      b.line(x0 + 4, midY - 3, x1, midY - 3, pal.magicDim);
+      b.line(x0 + 4, midY - 4, x1, midY - 4, pal.magicDim);
       b.line(x0 + 8, midY,     x1, midY,     pal.magicCore);
-      b.line(x0 + 6, midY + 3, x1, midY + 3, pal.magic);
+      b.line(x0 + 6, midY + 4, x1, midY + 4, pal.magic);
 
       if (detailed) {
         b.px16(Math.round(x1 * 2), Math.round(midY * 2), pal.magicCore);
@@ -1082,6 +1105,11 @@ function drawAurelia(
   const pal = detailed ? HI16 : HI8;
   const b = new Brush(c, s, detailed, pal);
   const cellW8 = Math.round(c.width / s);
+
+  // Dash ghosts behind character
+  if (p.dashAfterimages) {
+    drawDashGhosts(b, p);
+  }
 
   // Background layers first
   drawRobe(b, p);
