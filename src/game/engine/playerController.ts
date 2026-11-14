@@ -1,5 +1,6 @@
 import { Player, InputMap, SoundType } from "../types";
 import { calculatePlayerDerivedStats } from "../logic/inventory";
+import { ATTACK_DURATION_TICKS } from "./playerAnimationState";
 
 /**
  * Audio interface for player action SFX.
@@ -115,7 +116,7 @@ export class PlayerController implements IPlayerController {
     // 4. Trigger Melee Attack (Action 1)
     if (inputs.action1 && player.attackCooldown <= 0 && !player.isAttacking) {
       player.isAttacking = true;
-      player.attackTime = 14;
+      player.attackTime = ATTACK_DURATION_TICKS;
       player.attackCooldown = 20;
       if (audio) {
         audio.playSFX(SoundType.SFX_SLASH);
