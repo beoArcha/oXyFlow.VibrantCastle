@@ -14,7 +14,7 @@ W *Vibrant Castle* dowodzisz dwojgiem szermierzy ukutych w melancholijnej, ciep�
 
 ### Wygląd
 
-Długi grafitowy płaszcz podróżny podszyty złotą nicią, praktyczna kamizelka i buty stworzone do nagłych zwrotów. Prostokątne okulary i niesforne kasztanowe włosy zdradzają kontemplacyjną naturę.
+Długi grafitowy płaszcz podróżny podszyty złotą nicią, praktyczna kamizelka i buty stworzone do nagłych zwrotów. Prostokątne okulary i niesforne kasztanowe włosy zdradzają kontemplacyjną naturę. Jego magia świeci ciepłym złotem.
 
 ### Uzbrojenie i zdolności
 
@@ -34,10 +34,10 @@ Długi grafitowy płaszcz podróżny podszyty złotą nicią, praktyczna kamizel
 
 ### Wygląd
 
-Atletyczna sylwetka w głębokim turkusie i polerowanym mosiądzu, z astralną aureolą zostawiającą smugi światła podczas szybkiego ruchu.
+Atletyczna sylwetka z długimi kasztanowymi włosami i powiewną fioletową suknią obszytą złotem oraz fioletową poświatą zostawiającą smugi światła podczas szybkiego ruchu.
 
 ### Uzbrojenie i zdolności
 
 - **Zmaterializowane Ostrze Aetheru**: broń ukształtowana z niebiańskiej energii, stworzona do szerokich cięć przez grupy wrogów.
 - **Phase Dash**: szybkie przesunięcie w przestrzeni do uników i do sekretów dostępnych tylko dashem.
-- **Niebiański Promień**: skupiona wiązka astralnego światła.
+- **Niebiański Promień**: skupiona wiązka astralnego światła, w kolorze fioletu.

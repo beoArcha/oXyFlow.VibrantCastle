@@ -1,6 +1,19 @@
 # Nowości
 
-## 2026-11-14: Grafika hi-bit, tilesety, dekoracje i bramy
+## 0.3 (2026-11-14): Grafika hi-bit, tilesety, dekoracje i bramy
+
+Wersja 0.3 przynosi nowy potok grafiki oraz odświeżone wiki i lore:
+
+- **Poziomy jakości z przełączaniem na żywo**: hi-8bit, hi-16bit i malowane high, zmieniane w locie w ustawieniach obrazu.
+- **Bohaterowie kwantyzowani z malowanych klatek**: Valen i Aurelia wyglądają tak samo na każdym poziomie.
+- **Tilesety platform** i **dekoracje ze światłem**: lampy, kosze z ogniem, pochodnie, sztandary i kryształy.
+- **Otwierane bramy**: kraty unoszą się na ekranie po uderzeniu w dźwignię; atlasy struktur dla dźwigni, bram i cierni.
+- **Poprawki błędów**: bohaterowie nie znikają już na kilka klatek.
+- **Dokumentacja**: lore i to wiki sprawdzono z danymi gry (mapy, przeciwnicy, sterowanie, bohaterowie).
+
+Szczegóły poniżej.
+
+### Grafika hi-bit, tilesety, dekoracje i bramy
 
 - **Trzy poziomy jakości dla wszystkiego**: hi-8bit, hi-16bit i high (malowane) obejmują teraz bohaterów, przeciwników, platformy i dekoracje i przełączają się od razu w ustawieniach obrazu. Zobacz *Jakość grafiki*.
 - **Bohaterowie z malowanych klatek**: Valen i Aurelia dostają arkusze hi-8bit i hi-16bit, zbudowane z ich malowanych klatek.

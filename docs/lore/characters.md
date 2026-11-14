@@ -32,7 +32,7 @@ Every movement has purpose. Every action is the product of deliberate calculatio
 
 * Graphite / Deep Slate Charcoal (`#1e293b`, `#334155`)
 * Muted Leather Brown / Ochre (`#78350f`, `#92400e`)
-* Warm Radiant Gold / Amber Accents (`#f59e0b`, `#fbbf24`)
+* Warm Radiant Gold / Amber Accents (`#f59e0b`, `#fbbf24`), which is also the colour of his magic: warm golden, solar glow
 
 ---
 
@@ -84,7 +84,7 @@ Valen channels the radiant, ordered energy of the Sun and Bastion architecture:
 
 ### Design Principles (Sprite & Animation Asset Standards)
 
-* **Clear Silhouette**: Distinct readability in low, mid, and high resolution atlas sheets.
+* **Clear Silhouette**: Distinct readability on every quality tier (hi-8bit, hi-16bit and painted `high`). The hi-8bit and hi-16bit hero sheets are quantized from the painted frames, so the greatcoat, glasses and rapier read the same on each tier.
 * **Rooted Footwork**: Strict foot-level anchor point (pivot at normalized `(0.5, 1.0)`) across all animation frames (`idle`, `run`, `jump`, `fall`, `attack`, `dash`, `cast`, `crouch`).
 * **Controlled FX**: Effects remain bounded within character sprite cells, emphasizing crisp geometric clarity over unbounded particle chaos.
 
@@ -108,16 +108,16 @@ Aurelia is a living conduit to the Aetherial currents pulsing through the castle
 
 ### Silhouette, Attire & Appearance
 
-* **Flowing Robes**: Layered silk and velvet robes in rich shades of imperial violet and twilight purple, adorned with ritualistic gold filigree.
-* **Hair & Movement**: Long, undulating dark hair that reacts dynamically to movement, acceleration, and ambient Aether currents.
-* **Aetherial Aura**: Subtle luminescent glow radiating from her gaze and fingertip conduits when mana surges.
+* **Dress**: A flowing purple dress in rich shades of imperial violet and twilight purple, adorned with ritualistic gold filigree.
+* **Hair & Movement**: Long chestnut hair that reacts dynamically to movement, acceleration, and ambient Aether currents.
+* **Aetherial Aura**: A violet glow radiating from her fingertip conduits when mana surges.
 * **Jewelry & Talismans**: Gilded hoops and resonant crystal pendants that sway in harmony with her acrobatic strides.
 * **Expression**: Confident, alert, intuitive, slightly mysterious.
 
 **Color Palette**:
 
 * Deep Imperial Violet / Twilight Purple (`#4c1d95`, `#581c87`, `#7e22ce`)
-* Radiant Cerulean / Aether Cyan (`#06b6d4`, `#22d3ee`)
+* Violet Aether Glow (`#a855f7`, `#c084fc`), the colour of her magic in the painted sheets. Some of her spell projectiles in `spells.json` still carry blue-cyan colours (`aether_bolt`, `sentinel_spark`); the autumn palette review of the UI and effects will reconcile them.
 * Ornate Ancient Gold (`#f59e0b`, `#d97706`)
 
 ---
@@ -175,15 +175,15 @@ Aurelia commands the primordial fabric of Aether, gravity, and temporal dilation
 | **Core Trait** | Deliberate Control & Precision | Fluid Momentum & Instinctive Flow |
 | **Locomotion** | Grounded, minimalist, crisp footwork | Acrobatic, feline, sweeping transitions |
 | **Primary Weapon** | Tempered Steel Rapier (Thrust/Pierce) | Manifested Aetherblade (Wide Cleave/Arc) |
-| **Magic Domain** | Solar Light, Geometric Glyphs, Fortitude | Celestial Aether, Cryo-Temporal Waves, Mana |
+| **Magic Domain** | Solar Light, Geometric Glyphs, Fortitude (`solar`) | Celestial Aether, Cryo-Temporal Waves, Mana (`astral`, `frost`, `chrono`) |
 | **Starter Spells** | `solar_flare` + `prismatic_shield` | `aether_bolt` + `aether_barrier` |
 | **Evasion Mode** | `Chrono Dash` (Precise shift) | `Phase Dash` (Chromatic slipstream) |
-| **Visual Tone** | Graphite, muted leather, golden spectacles | Royal purple, glowing cerulean, gilded jewelry |
+| **Visual Tone** | Graphite greatcoat, glasses, golden magic | Long chestnut hair, purple dress, violet magic, gilded jewelry |
 
 ---
 
 ### Asset & Animation Specifications (v4.0 Standard)
 
-1. **Resolution Scalability**: Fully supported across `low` (64x64/57x71), `mid` (85x85/114x143), and `high` (128x128/114x143) variants.
+1. **Quality Tiers**: `hi-8bit` and `hi-16bit` pixel sheets (`<hero>_hi8bit.png`, `<hero>_hi16bit.png`, quantized from the painted frames by `scripts/sprites/`) plus the painted `high` sheets. The tier switches live from the display settings. The older `low` / `mid` / `high` painted atlas files (64x64/57x71, 85x85/114x143, 128x128/114x143) remain in `src/assets/characters/` as sources.
 2. **Animation Tracks**: Complete 8-track layout: `idle`, `run` (or `move`), `jump`, `fall`, `attack` (wide frames supported), `dash` (wide motion trail), `cast` (spell channel), and `crouch`.
 3. **Portraits Matrix**: 5x5 grid (25 distinct emotional expressions and moods) utilized across dynamic dialogue prompts, HUD status cards, and the Character Studio.

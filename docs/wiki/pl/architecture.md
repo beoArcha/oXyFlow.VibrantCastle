@@ -19,7 +19,7 @@ graph TD
 
 ### 1.1. Rdzeń Symulacji (Simulation Core — `src/game/`)
 
-- **Deterministyczna pętla 60 Hz**: Pętla symulacji działa w stałych krokach czasowych (fixed timestep), niezależnie od częstotliwości odświeżania monitora użytkownika (30, 60, 120, 144 Hz).
+- **Deterministyczna pętla 60 Hz**: Pętla symulacji działa w stałych krokach czasowych (fixed timestep), niezależnie od częstotliwości odświeżania monitora użytkownika (tempo symulacji wybierasz spośród 30, 60, 90 i 120 Hz; domyślnie 60 Hz).
 - **Czysty TypeScript**: Kod silnika nie zawiera żadnych importów z Reacta, DOM ani zewnętrznych frameworków gier.
 - **Zero alokacji w pętli renderowania**: Wewnątrz metod `render()` zabronione jest tworzenie nowych obiektów wektorów, tablic czy funkcji anonimowych, co chroni przed zacięciami Garbage Collectora.
 
@@ -31,7 +31,7 @@ graph TD
 
 ### 1.3. Pojedyncze Źródło Prawdy (SSOT — `src/data/`)
 
-- Lokacje, potwory, przedmioty i czary są definiowane w deklaratywnych plikach JSON podlegających rygorystycznym testom parsowania i integralności.
+- Lokacje, potwory, przedmioty i czary są definiowane w deklaratywnych plikach JSON podlegających rygorystycznym testom parsowania i integralności. Walidator logiki poziomów (`bun scripts/validate-level.ts <id>`) sprawdza, czy każdą mapę da się ukończyć.
 
 ---
 
@@ -40,7 +40,9 @@ graph TD
 Głębia wizualna Cytadeli Aether tworzona jest z 5 warstw odległości:
 
 1. **`FAR` (Tło odległe)**: 100% nieprzezroczysty skybox i wieczny zachód słońca. Bezwzględny rygor braku przezroczystości chroni przed prześwitywaniem czarnego canvasa.
-2. **`MID_FAR`**: Odległe sylwetki iglic Cytadeli i obracające się zębatki horologiczne.
-3. **`MID` (Płaszczyzna gry)**: Chodniki, platformy, bohaterowie, potwory i pociski.
-4. **`MID_CLOSE`**: Bliskie gotyckie kolumny i wiszące żyrandole.
-5. **`CLOSE` (Pierwszy plan)**: Spadające złote liście, powiewające sztandary i winiety.
+2. **`MID_FAR`**: Odległa architektura zamku i iglice.
+3. **`MID`**: Wały i iglice za płaszczyzną gry. Bohaterowie, potwory, pociski i kafle platform są rysowane między tymi warstwami tła a pierwszym planem.
+4. **`MID_CLOSE`**: Bliskie kamieniarka, łuki i kolumny.
+5. **`CLOSE` (Pierwszy plan)**: Roślinność i elementy pierwszego planu.
+
+Tła przewijają się z prędkością 0 (`FAR`), 0,24, 0,42, 0,65 i 0,85 prędkości kamery, a zbyt małe warstwy są odbijane lustrzanie, by kafelkować się bez szwów. Rysowane są tylko widoczne fragmenty.

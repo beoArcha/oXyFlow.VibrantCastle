@@ -1,6 +1,19 @@
 # What's New
 
-## 2026-11-14: Hi-bit art, tilesets, decor and gates
+## 0.3 (2026-11-14): Hi-bit art, tilesets, decor and gates
+
+Version 0.3 brings the new art pipeline and a refresh of the wiki and lore:
+
+- **Quality tiers with live switching**: hi-8bit, hi-16bit and painted high, changed on the fly from the display settings.
+- **Heroes quantized from painted frames**: Valen and Aurelia look the same on every tier.
+- **Platform tilesets** and **decor props with light**: lanterns, braziers, torches, banners and crystals.
+- **Opening gates**: portcullises lift on screen when their lever is struck; structure atlases for levers, gates and thorns.
+- **Bug fixes**: heroes no longer vanish for a few frames.
+- **Docs**: the lore and this wiki were checked against the game data (maps, enemies, controls, heroes).
+
+Details below.
+
+### Hi-bit art, tilesets, decor and gates
 
 - **Three quality tiers for everything**: hi-8bit, hi-16bit and high (painted) now apply to heroes, enemies, platforms and decor, and switch live from the display settings. See *Graphics Quality*.
 - **Heroes from painted frames**: Valen and Aurelia get hi-8bit and hi-16bit sheets quantized from their painted frames.

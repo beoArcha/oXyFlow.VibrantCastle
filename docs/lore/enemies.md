@@ -125,7 +125,7 @@ All enemies are governed by modular hitboxes, damage flash feedback, distinct pa
 * **Combat Role & Behavior**:
   * Projects kinetic pulse waves that knock players backward toward ledge drop-offs.
   * Periodically activates a shimmering reflective ward that deflects frontal physical thrusts.
-  * **Tactics**: Dispel its ward with pure celestial spells (`Aether Bolt`, `Solar Flare`) before engaging with rapier combos.
+  * **Tactics**: It shrugs off astral magic (50% resistance), so skip `Aether Bolt` and break its ward with fire, frost or steel before engaging with rapier combos. Shadow is its weak point.
 
 ---
 
@@ -140,7 +140,7 @@ All enemies are governed by modular hitboxes, damage flash feedback, distinct pa
 * **Combat Role & Behavior**:
   * Erratic, floating movement pattern ignoring platform boundaries.
   * Fires tracking needle sparks at regular intervals, and violently discharges an aetheric burst upon death.
-  * **Tactics**: Eliminate from extreme range before they close distance.
+  * **Tactics**: Eliminate from extreme range before they close distance. Astral spells barely scratch it (60% resistance); steel and shadow do the work.
 
 ---
 
@@ -238,6 +238,32 @@ All enemies are governed by modular hitboxes, damage flash feedback, distinct pa
   * Currently sprints along its patrol and reverses at the bounds. Damage and attacks are planned (a lunging slash) and not yet implemented.
   * Fastest patroller in the castle.
   * **Tactics**: Wait for it to turn at the patrol edge, then strike or dash behind it; a ranged opener is safer.
+
+---
+
+## Elemental Weaknesses
+
+Each template carries `elementalResistances` in `src/data/enemies/enemies.json` (physical, fire, frost, astral, shadow). A negative value is a weakness: the enemy takes extra damage of that element. Fire (Valen's solar magic and the Solar Rapier) is the most common weakness among the castle's wood, thorn and brass creatures; frost bites the heavy constructs; the sanctuary guardians resist astral magic and fear shadow.
+
+| Enemy | Weak to | Strongly resists |
+| :--- | :--- | :--- |
+| Straw Training Dummy (and variants) | Fire (-0.5) | None |
+| Courtyard Sentinel | Frost (-0.2) | Physical (0.3) |
+| Bastion Sentinel (boss) | Frost (-0.1) | Physical (0.4) |
+| Gargoyle Scout | Fire (-0.3) | None |
+| Clockwork Owl Gargoyle | Fire (-0.2) | None |
+| Chasm Gargoyle | Fire (-0.3) | Shadow (0.4) |
+| Bastion Gargoyle | Fire (-0.2) | Shadow (0.3) |
+| Chasm Crawler | Fire (-0.4) | Shadow (0.3) |
+| Clockwork Automaton | Frost (-0.4) | Physical (0.4) |
+| Aether Sentinel | Shadow (-0.3) | Astral (0.5) |
+| Aether Wisp | Shadow (-0.2), Physical (-0.1) | Astral (0.6) |
+| Aether Archon | Shadow (-0.5) | Astral (0.7) |
+| Shadow Knight | Astral (-0.4), Fire (-0.2) | Shadow (0.8) |
+| Gear Mite | Fire (-0.2) | None |
+| Thorn Creeper | Fire (-0.5) | None |
+| Lantern Warden | Shadow (-0.3), Frost (-0.2) | Fire (0.5) |
+| Chrono Hound | Frost (-0.2) | None |
 
 ---
 

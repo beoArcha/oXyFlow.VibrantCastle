@@ -45,6 +45,12 @@ W grze jest **19 szablonów przeciwników**. Czternaście to odrębne stworzenia
 
 ---
 
+## Słabości
+
+Każdy przeciwnik ma odporności żywiołowe; wartość ujemna oznacza słabość. Najczęstszą słabością jest ogień (słomiane kukły, ciernie, pełzacze, gargulce i roztocza), mróz kąsa ciężkie konstrukty (Automaton, Sentinel), a strażnicy Sanktuarium (Aether Sentinel, Wisp i Archon) mocno opierają się magii astralnej, ale boją się cienia. Lantern Warden jest odporny na ogień.
+
+---
+
 ## Jeszcze nieumieszczeni
 
 - **Shadow Knight** (260 HP): upiorny szermierz; żadna mapa jeszcze go nie zawiera. Jego umieszczenie jest w planach.

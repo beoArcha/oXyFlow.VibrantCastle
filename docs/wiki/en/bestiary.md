@@ -45,6 +45,12 @@ The game has **19 enemy templates**. Fourteen are distinct creatures; the other 
 
 ---
 
+## Weaknesses
+
+Every enemy has elemental resistances; a negative value is a weakness. Fire is the most common weakness (the straw dummies, thorn creepers, crawlers, gargoyles and mites), frost bites the heavy constructs (Automaton, Sentinel), and the sanctuary guardians (Aether Sentinel, Wisp and Archon) resist astral magic hard but fear shadow. The Lantern Warden resists fire.
+
+---
+
 ## Not Placed Yet
 
 - **Shadow Knight** (260 HP): a phantom duelist; no map places it yet. Its placement is planned.
