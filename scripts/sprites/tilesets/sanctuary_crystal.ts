@@ -268,10 +268,17 @@ function drawHi16(c: PixelCanvas, tile: string, pal: Palette): void {
   } else {
     // --- ledge tiles (thin platforms: 22-25px tall in game) ---
     // top crystal cap (y=0..3 across x=0..31)
-    c.rect(0, 0, 32, 1, pal.crystalGlint);
-    c.rect(0, 1, 32, 1, pal.crystalLight);
-    c.rect(0, 2, 32, 1, pal.crystalMid);
+    c.rect(0, 0, 32, 1, pal.crystalLight);
+    c.rect(0, 1, 32, 1, pal.crystalMid);
+    c.rect(0, 2, 32, 1, pal.crystalDark);
     c.rect(0, 3, 32, 1, pal.crystalDark);
+
+    // rhythmic crystalline glints along the walkable rim
+    for (let x = 1; x < 32; x += 4) {
+      c.px(x, 0, pal.crystalGlint);
+      c.px(x + 1, 0, pal.crystalGlint);
+      c.px(x, 1, pal.crystalLight);
+    }
 
     // 2 px shadow band under the rim/coping
     c.rect(0, 4, 32, 1, pal.mortar);
@@ -418,14 +425,23 @@ function drawHi8(c: PixelCanvas, tile: string, pal: Palette): void {
       c.rect(0, 15, 16, 1, pal.faceShadow);
     }
 
-    // staggered vertical joints in 1px warm mortar
-    const topStartY = tile.startsWith("top") ? 2 : 1;
-    c.rect(7, topStartY, 1, 4 - topStartY, pal.mortar);
-    c.rect(7, 13, 1, 2, pal.mortar);
+    // staggered vertical joints in 1px warm mortar with bevel highlight
+    const topStartY = tile.startsWith("top") ? 2 : 0;
+    c.rect(7, topStartY, 1, 5 - topStartY, pal.mortar);
+    c.rect(8, topStartY, 1, 4 - topStartY, pal.faceLight);
+
+    c.rect(7, 12, 1, 4, pal.mortar);
+    c.rect(8, 12, 1, 3, pal.faceLight);
 
     // course b joints at x=3 and x=11
-    if (!tile.includes("left")) c.rect(3, 7, 1, 3, pal.mortar);
-    if (!tile.includes("right")) c.rect(11, 7, 1, 3, pal.mortar);
+    if (!tile.includes("left")) {
+      c.rect(3, 6, 1, 5, pal.mortar);
+      c.rect(4, 6, 1, 4, pal.faceLight);
+    }
+    if (!tile.includes("right")) {
+      c.rect(11, 6, 1, 5, pal.mortar);
+      c.rect(12, 6, 1, 4, pal.faceLight);
+    }
 
     // walkable top rim on "top*"
     if (tile.startsWith("top")) {
