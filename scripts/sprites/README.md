@@ -101,7 +101,7 @@ Copy `__fixtures__/sample_golem.ts` and edit it; it passes validation as is.
 
 ## Heroes
 
-Heroes (Valen, Aurelia) use the same compiler with a second contract. The runtime loads the output when present: if `src/assets/characters/<id>/<id>_pixel_meta.json` and its SVGs exist, the hero's `low` quality uses the hi-8bit sheet and `mid` the hi-16bit sheet (sliced by `frameRects`, drawn at the painted size with image smoothing off); without them the painted tiers are used unchanged, and `high` is always painted. No code registration is needed. This tooling itself ships without hero art: `scripts/sprites/heroes/` holds no art, and the art lives on its own branches. `__fixtures__/sample_hero.ts` is the starting point for hero art; copy it into `heroes/<id>.ts` and replace the drawing.
+Heroes (Valen, Aurelia) use the same compiler with a second contract. The runtime loads the output when present: if `src/assets/characters/<id>/<id>_pixel_meta.json` and its PNGs exist, the hero's `low` quality uses the hi-8bit sheet and `mid` the hi-16bit sheet (sliced by `frameRects`, drawn at the painted size with image smoothing off); without them the painted tiers are used unchanged, and `high` is always painted. No code registration is needed. `__fixtures__/sample_hero.ts` is the starting point for hand-drawn hero art; copy it into `heroes/<id>.ts` and replace the drawing. Valen and Aurelia are built from their painted frames instead, see [Heroes from painted frames](#heroes-from-painted-frames).
 
 **Art intent.** A retro 8-bit / 16-bit look at modern pixel density: a limited palette, hard pixel edges, no anti-aliasing and a clear 1 px outline. It is not drawn at original console resolutions; the cells are as large as the painted `mid` sheet (hi-16bit) and half of that (hi-8bit). hi-8bit uses flat colours, hi-16bit adds shading and detail to the same figure.
 
@@ -141,8 +141,20 @@ Warnings (printed, not fatal): body centre drifting more than 10 % of the cell w
 
 **Output** goes to `src/assets/characters/<id>/` (with `--out <dir>`, to `<dir>/<id>/`; the grid is still read from `src/assets/characters`):
 
-- `<id>_hi8bit.svg` (12-bit colour) and `<id>_hi16bit.svg` (RGB565), written exactly like the enemy sheets.
+- `<id>_hi8bit.png` (12-bit colour) and `<id>_hi16bit.png` (RGB565): lossless 1:1 RGBA PNG sheets with deterministic bytes (`--check` compares them byte for byte). Heroes use PNG, not SVG, because quantized painted frames make multi-megabyte SVGs (Valen hi-16bit 2.6 MB as SVG, about 200 KB as PNG). Enemies keep SVG.
 - `<id>_pixel_meta.json`: `characterId`, the `grid` (`ordering`, `columns`, `rows`, per animation `row`, `frames`, `fps`, `loop`, `cells`), `variants.low` (hi-8bit) and `variants.mid` (hi-16bit) with `file`, `cellWidth`, `cellHeight`, `sheetWidth`, `sheetHeight`, `scale` (cell width relative to the packed `mid` cell, so the runtime draws both tiers at the same world size) and `frameRects` (tight opaque bounds in sheet pixels keyed `<anim>_<frame>`, the format of `frameRects` in `<id>_packed_meta.json`), plus `layout.origin` (feet at the body box centre x, y 1.0) and `layout.bodyBox` (normalized, from the hi-16bit idle frames).
+
+## Heroes from painted frames
+
+Valen and Aurelia set `source: { kind: "painted", colors, remap? }` in `defineHeroSprite` instead of drawing pixels. The quantizer (`quantize.ts`, `paintedHero.ts`) reads the painted `_packed_high.png` frames and builds both tiers:
+
+- **hi-16bit** places each painted frame 1:1 on the painted feet anchor; **hi-8bit** area-averages it 2x down.
+- Alpha is thresholded at 50 %: a pixel is fully opaque or fully transparent, so there is no anti-aliasing.
+- An optional hue remap (`remap`, ranges of hue, saturation and value) recolours the painted colours first, for example Valen's blue slash and glow to amber.
+- One global palette per tier (`colors.hi16bit`, `colors.hi8bit`) is built from all frames by median cut plus k-means, deterministic, and snapped to RGB565 (hi-16bit) or 12-bit (hi-8bit). Every pixel takes its nearest palette entry.
+- The darkest palette entry becomes the 1 px outline around the figure.
+- Optional `draw` hooks run on top of the quantized frame for touch-ups.
+- Output is PNG (see Output above); enemies are unaffected.
 
 `bun scripts/sprites/compile.ts <id>` looks the id up in `enemies/` first and `heroes/` second; `--all`, `--all --check` and `--preview <dir>` cover both kinds.
 
