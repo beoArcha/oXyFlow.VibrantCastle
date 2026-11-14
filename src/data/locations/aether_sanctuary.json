@@ -770,6 +770,116 @@
         "patrolMaxX": 6060,
         "facingLeft": true
       }
+    ],
+    "decor": [
+      {
+        "id": "sanctuary_decor_1",
+        "propId": "candelabra",
+        "x": 140,
+        "y": 1200,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "sanctuary_decor_2",
+        "propId": "aether_crystal_cluster",
+        "x": 480,
+        "y": 1200,
+        "layer": "back",
+        "flipX": false,
+        "phase": 1
+      },
+      {
+        "id": "sanctuary_decor_3",
+        "propId": "candelabra",
+        "x": 1260,
+        "y": 1070,
+        "layer": "back",
+        "flipX": false,
+        "phase": 2
+      },
+      {
+        "id": "sanctuary_decor_4",
+        "propId": "aether_crystal_cluster",
+        "x": 2140,
+        "y": 930,
+        "layer": "front",
+        "flipX": true,
+        "phase": 3
+      },
+      {
+        "id": "sanctuary_decor_5",
+        "propId": "candelabra",
+        "x": 2600,
+        "y": 930,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "sanctuary_decor_6",
+        "propId": "aether_crystal_cluster",
+        "x": 3380,
+        "y": 738,
+        "layer": "back",
+        "flipX": false,
+        "phase": 1
+      },
+      {
+        "id": "sanctuary_decor_7",
+        "propId": "aether_crystal_cluster",
+        "x": 3550,
+        "y": 546,
+        "layer": "back",
+        "flipX": true,
+        "phase": 2
+      },
+      {
+        "id": "sanctuary_decor_8",
+        "propId": "candelabra",
+        "x": 3940,
+        "y": 834,
+        "layer": "back",
+        "flipX": false,
+        "phase": 3
+      },
+      {
+        "id": "sanctuary_decor_9",
+        "propId": "candelabra",
+        "x": 4240,
+        "y": 354,
+        "layer": "back",
+        "flipX": true,
+        "phase": 0
+      },
+      {
+        "id": "sanctuary_decor_10",
+        "propId": "candelabra",
+        "x": 4900,
+        "y": 450,
+        "layer": "back",
+        "flipX": false,
+        "phase": 1
+      },
+      {
+        "id": "sanctuary_decor_11",
+        "propId": "aether_crystal_cluster",
+        "x": 5300,
+        "y": 546,
+        "layer": "front",
+        "flipX": false,
+        "phase": 2
+      },
+      {
+        "id": "sanctuary_decor_12",
+        "propId": "candelabra",
+        "x": 6240,
+        "y": 450,
+        "layer": "back",
+        "flipX": false,
+        "phase": 3
+      }
     ]
   }
 }

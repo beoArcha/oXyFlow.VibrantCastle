@@ -912,6 +912,134 @@
         "patrolMaxX": 7660,
         "facingLeft": true
       }
+    ],
+    "decor": [
+      {
+        "id": "grand_decor_1",
+        "propId": "tattered_banner",
+        "x": 180,
+        "y": 1050,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "grand_decor_2",
+        "propId": "wall_torch",
+        "x": 340,
+        "y": 1350,
+        "layer": "back",
+        "flipX": false,
+        "phase": 1
+      },
+      {
+        "id": "grand_decor_3",
+        "propId": "war_brazier",
+        "x": 800,
+        "y": 1286,
+        "layer": "back",
+        "flipX": false,
+        "phase": 2
+      },
+      {
+        "id": "grand_decor_4",
+        "propId": "iron_chain",
+        "x": 1400,
+        "y": 1000,
+        "layer": "front",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "grand_decor_5",
+        "propId": "wall_torch",
+        "x": 2650,
+        "y": 1062,
+        "layer": "back",
+        "flipX": false,
+        "phase": 3
+      },
+      {
+        "id": "grand_decor_6",
+        "propId": "tattered_banner",
+        "x": 3350,
+        "y": 820,
+        "layer": "back",
+        "flipX": true,
+        "phase": 1
+      },
+      {
+        "id": "grand_decor_7",
+        "propId": "war_brazier",
+        "x": 4420,
+        "y": 774,
+        "layer": "back",
+        "flipX": false,
+        "phase": 2
+      },
+      {
+        "id": "grand_decor_8",
+        "propId": "hanging_lantern",
+        "x": 4850,
+        "y": 880,
+        "layer": "back",
+        "flipX": false,
+        "phase": 3
+      },
+      {
+        "id": "grand_decor_9",
+        "propId": "wall_torch",
+        "x": 5750,
+        "y": 1062,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "grand_decor_10",
+        "propId": "tattered_banner",
+        "x": 6330,
+        "y": 1050,
+        "layer": "back",
+        "flipX": false,
+        "phase": 1
+      },
+      {
+        "id": "grand_decor_11",
+        "propId": "war_brazier",
+        "x": 6540,
+        "y": 1190,
+        "layer": "back",
+        "flipX": false,
+        "phase": 2
+      },
+      {
+        "id": "grand_decor_12",
+        "propId": "wall_torch",
+        "x": 7040,
+        "y": 966,
+        "layer": "back",
+        "flipX": true,
+        "phase": 3
+      },
+      {
+        "id": "grand_decor_13",
+        "propId": "iron_chain",
+        "x": 7240,
+        "y": 920,
+        "layer": "front",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "grand_decor_14",
+        "propId": "war_brazier",
+        "x": 7720,
+        "y": 1254,
+        "layer": "back",
+        "flipX": true,
+        "phase": 1
+      }
     ]
   }
 }

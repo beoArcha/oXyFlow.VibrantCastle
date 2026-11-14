@@ -814,6 +814,152 @@
         "patrolMaxX": 5960,
         "facingLeft": true
       }
+    ],
+    "decor": [
+      {
+        "id": "chasm_decor_1",
+        "propId": "iron_chain",
+        "x": 260,
+        "y": 140,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "chasm_decor_2",
+        "propId": "thorn_bramble",
+        "x": 420,
+        "y": 360,
+        "layer": "back",
+        "flipX": false,
+        "phase": 1
+      },
+      {
+        "id": "chasm_decor_3",
+        "propId": "wall_torch",
+        "x": 1240,
+        "y": 660,
+        "layer": "back",
+        "flipX": false,
+        "phase": 2
+      },
+      {
+        "id": "chasm_decor_4",
+        "propId": "ember_skull_lantern",
+        "x": 1880,
+        "y": 640,
+        "layer": "back",
+        "flipX": false,
+        "phase": 3
+      },
+      {
+        "id": "chasm_decor_5",
+        "propId": "thorn_bramble",
+        "x": 2400,
+        "y": 1060,
+        "layer": "back",
+        "flipX": true,
+        "phase": 0
+      },
+      {
+        "id": "chasm_decor_6",
+        "propId": "iron_chain",
+        "x": 2850,
+        "y": 550,
+        "layer": "front",
+        "flipX": false,
+        "phase": 1
+      },
+      {
+        "id": "chasm_decor_7",
+        "propId": "wall_torch",
+        "x": 3240,
+        "y": 1060,
+        "layer": "back",
+        "flipX": false,
+        "phase": 2
+      },
+      {
+        "id": "chasm_decor_8",
+        "propId": "ember_skull_lantern",
+        "x": 3660,
+        "y": 820,
+        "layer": "back",
+        "flipX": true,
+        "phase": 3
+      },
+      {
+        "id": "chasm_decor_9",
+        "propId": "ember_skull_lantern",
+        "x": 3860,
+        "y": 640,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "chasm_decor_10",
+        "propId": "thorn_bramble",
+        "x": 4000,
+        "y": 1060,
+        "layer": "back",
+        "flipX": false,
+        "phase": 1
+      },
+      {
+        "id": "chasm_decor_11",
+        "propId": "iron_chain",
+        "x": 4058,
+        "y": 460,
+        "layer": "front",
+        "flipX": true,
+        "phase": 2
+      },
+      {
+        "id": "chasm_decor_12",
+        "propId": "wall_torch",
+        "x": 4180,
+        "y": 1060,
+        "layer": "back",
+        "flipX": false,
+        "phase": 3
+      },
+      {
+        "id": "chasm_decor_13",
+        "propId": "ember_skull_lantern",
+        "x": 5020,
+        "y": 100,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "chasm_decor_14",
+        "propId": "thorn_bramble",
+        "x": 5240,
+        "y": 196,
+        "layer": "back",
+        "flipX": true,
+        "phase": 1
+      },
+      {
+        "id": "chasm_decor_15",
+        "propId": "wall_torch",
+        "x": 5840,
+        "y": 388,
+        "layer": "back",
+        "flipX": false,
+        "phase": 2
+      },
+      {
+        "id": "chasm_decor_16",
+        "propId": "iron_chain",
+        "x": 5940,
+        "y": 180,
+        "layer": "back",
+        "flipX": false,
+        "phase": 3
+      }
     ]
   }
 }
