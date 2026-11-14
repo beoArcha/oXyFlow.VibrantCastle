@@ -33,6 +33,8 @@ import type { ISpriteSourceFactory } from "../engine/sprites";
 import { ActorRenderer } from "../renderer/actorRenderer";
 import { StructureRenderer } from "../renderer/structureRenderer";
 import { createDiscoveredTilesetManager } from "../engine/tiles";
+import { createDiscoveredPropManager } from "../engine/props";
+import { DecorRenderer } from "../renderer/decorRenderer";
 import { defaultLocationAssetLifecycle } from "../locations/locationAssetLifecycle";
 
 export type { IGameDependencies };
@@ -163,6 +165,7 @@ export class GameEngine implements IEngineSubsystemHost {
       {
         actorRenderer: new ActorRenderer(undefined, this.spriteSources),
         structureRenderer: new StructureRenderer(undefined, createDiscoveredTilesetManager(this.spriteSources)),
+        decorRenderer: new DecorRenderer(createDiscoveredPropManager(this.spriteSources)),
       },
       { hardwareAcceleration: isGpu }
     );
