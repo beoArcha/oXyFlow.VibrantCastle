@@ -3,9 +3,12 @@ import type { Tier } from "./types";
 
 const HEX_COLOR = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 
+/** True for "#rgb" or "#rrggbb" strings. */
+export const isHexColor = (input: unknown): input is string => typeof input === "string" && HEX_COLOR.test(input);
+
 /** Parses "#rgb" or "#rrggbb" into a packed 0xRRGGBB integer. */
 export function parseColor(input: string): number {
-  if (typeof input !== "string" || !HEX_COLOR.test(input)) {
+  if (!isHexColor(input)) {
     throw spriteError(`Invalid colour ${JSON.stringify(input)}: use "#rgb" or "#rrggbb".`, { input });
   }
   const digits = input.slice(1);
