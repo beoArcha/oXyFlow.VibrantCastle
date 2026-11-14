@@ -33,10 +33,6 @@ export function parseTileName(name: string): ParsedTileName {
   return { base: match[1], variant: Number(match[2]) };
 }
 
-export function requiredTiles(kind: TilesetKind): readonly string[] {
-  return REQUIRED[kind];
-}
-
 /** Every problem with a tile list, one message each; empty when the list is valid. */
 export function tileListProblems(kind: TilesetKind, tiles: readonly string[]): string[] {
   const bases = new Set(tiles.filter((name) => parseTileName(name).variant === null));

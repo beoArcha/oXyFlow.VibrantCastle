@@ -6,7 +6,7 @@ Enemy sprite sheets are authored as small TypeScript draw scripts (one enemy per
 - `<id>_hi16bit.svg` - "hi-16bit" sheet for quality tier `mid` (RGB565 colour, 96 px cells)
 - `<id>_meta.json` - atlas meta (same shape as `clockwork_owl_gargoyle_meta.json`, plus `layout.bodyBox`)
 
-Output goes to `src/assets/enemies/<id>/`. Fixtures in `__fixtures__/` are never compiled by `--all`. Hero sheets (Valen, Aurelia) use a second contract, see [Heroes](#heroes).
+Output goes to `src/assets/enemies/<id>/`. Fixtures in `__fixtures__/` are never compiled by `--all`. Hero sheets (Valen, Aurelia) use a second contract, see [Heroes](#heroes). Platform tilesets use a third, see [Tilesets](#tilesets).
 
 ## Authoring contract
 
@@ -157,6 +157,54 @@ Valen and Aurelia set `source: { kind: "painted", colors, remap? }` in `defineHe
 - Output is PNG (see Output above); enemies are unaffected.
 
 `bun scripts/sprites/compile.ts <id>` looks the id up in `enemies/` first and `heroes/` second; `--all`, `--all --check` and `--preview <dir>` cover both kinds.
+
+## Tilesets
+
+Platform tilesets (solid and oneway platforms) are authored in `scripts/sprites/tilesets/<id>.ts` with `defineTileset`, and compile to `src/assets/tiles/<id>/`:
+
+- `<id>_hi8bit.png` (16 px tiles) and `<id>_hi16bit.png` (32 px tiles): lossless PNG sheets. Tiles are packed row-major in listing order, at most 8 columns, no spacing.
+- `<id>_tiles_meta.json`: `tilesetId`, `kind`, `worldTile` (32), `columns`, `rows`, `variants` (`low` = hi-8bit file and tile size, `mid` = hi-16bit) and `tiles` (name to `col`, `row`).
+
+```ts
+// scripts/sprites/tilesets/courtyard_stone.ts
+import { defineTileset, type PixelCanvas } from "../defineTileset";
+
+export default defineTileset({
+  id: "courtyard_stone",
+  kind: "solid",                         // "solid" | "oneway"
+  description: "one sentence",
+  tiles: ["top_left", "top", "top_right", /* ... */ "fill_2"], // listing order = sheet order
+  draw: {
+    hi8bit(c, tile)  { /* c is a 16x16 PixelCanvas for this tile */ },
+    hi16bit(c, tile) { /* c is a 32x32 PixelCanvas, the same tile with more detail */ },
+  },
+});
+```
+
+`__fixtures__/sample_tileset.ts` is a complete worked example (solid stone with a `fill_2` variant).
+
+**Tile names.** Solid tilesets require `top_left, top, top_right, left, fill, right, bottom_left, bottom, bottom_right, ledge_left, ledge, ledge_right`. Oneway tilesets require `ledge_left, ledge, ledge_right` and may add `support` (a bracket under the ledge). Any listed base may have numbered variants `<base>_<n>` with n from 2 (`fill_2`, `ledge_3`); the base must be listed too. `defineTileset` rejects a bad id, a missing required tile, a variant without its base, `support` on a solid tileset, duplicate names and missing draw functions, and lists all of them in one error.
+
+**Validation.** Compile fails with every problem at once, naming tier and tile:
+
+1. A tile is empty.
+2. A tile has transparent pixels, except oneway `ledge*` tiles and `support`: a ledge may be open below the walking surface.
+3. A hi-16bit tile is identical to its hi-8bit tile scaled 2x. Both are compared after snapping to 12-bit, as enemies and heroes do, so the hi-16bit tile must be a real redraw.
+
+Warning, not fatal: for `top`, `fill`, `ledge`, `bottom` and their variants, the right edge of one tile does not continue into the left edge of another (more than 25 % of rows differ).
+
+**Runtime rules.** The rect is tiled on a `worldTile` grid anchored at the entity's top-left; the last column or row is cropped, not stretched. A platform no taller than one tile is one row: `ledge_left`, `ledge`, `ledge_right`, or `ledge` alone when one cell wide. A taller platform has a `top_*` row, `left/fill/right` middle rows and a `bottom_*` row; a one-cell-wide block uses the middle names only. A base with variants is chosen by `variantHash(col, row, originX, originY) % (1 + variants)` from `tilingRules.ts`, which is stable across frames. The runtime cannot import from `scripts/`, so it copies this formula; keep the two in step.
+
+**Commands.**
+
+```bash
+bun scripts/sprites/compile.ts courtyard_stone                       # tileset ids are found in tilesets/ as well
+bun scripts/sprites/compile.ts courtyard_stone --preview tmp/preview # also <id>_hi8bit_x4.png, <id>_hi16bit_x4.png, <id>_tiling_demo.png
+bun scripts/sprites/compile.ts --all --check                         # enemies, heroes and tilesets
+bun scripts/sprites/compile.ts scripts/sprites/__fixtures__/sample_tileset.ts --out tmp/out   # worked example by path
+```
+
+The tiling demo shows the hi-8bit panel above the hi-16bit panel, each tile drawn at the same world size: a 10-tile ledge strip and, for solid tilesets, a 6x4 block. Seams and variant repeats show there, so open it before committing art.
 
 ## Notes for authors
 

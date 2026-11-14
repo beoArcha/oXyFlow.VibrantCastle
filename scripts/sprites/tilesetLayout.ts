@@ -6,7 +6,7 @@ export interface TileCell {
   row: number;
 }
 
-export interface TileLayout {
+interface TileLayout {
   columns: number;
   rows: number;
   cells: TileCell[];
