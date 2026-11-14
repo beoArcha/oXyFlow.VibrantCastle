@@ -21,6 +21,7 @@ export function buildLocationEntities(
       entities.push({
         id: s.id,
         structureId:
+          prefab?.structureId ||
           s.prefabId ||
           (s.id.includes("portcullis")
             ? "grand_portcullis"

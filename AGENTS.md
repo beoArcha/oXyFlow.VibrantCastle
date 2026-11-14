@@ -96,10 +96,10 @@ Gaps found by the design-pillar audit (see `docs/manifesto/MASTERMAP.md` §1.2):
 * [ ] `[ENGINE]` Mario-feel pass on movement: add run/sprint tier, tune acceleration and turn-around, review the fixed apex float threshold (1.8) and squash/stretch against the pillar.
 * [ ] `[UI]` Pad layout restricted to 2 triggers, 4 face buttons and bumpers as action selectors: today bumpers and triggers are bound directly to magic1/potions in `src/data/defaults/defaultControls.json`; introduce selector semantics (LB/RB cycle spell and potion slot, triggers fire) and update the gamepad mapper and help.
 * [ ] `[UI]` Two-level menu: game menu (menu, help, inventory, skills) and a separate development level; today the developer modal is a fifth tab ("C") in the same navigation bar, gated only by `showCreationTab`.
-* [ ] `[ENGINE]` In-game opening animation for gates; today `openGate` in `src/game/locations/leverGateUnlock.ts` teleports the gate to `y = -1000`. Needs a collision flag instead of the off-screen hack.
+* [x] `[ENGINE]` In-game opening animation for gates: explicit gate state in `src/game/physics/gateState.ts` (1.2 s, collision shrinks from the bottom), drawn with the portcullis sheet; the `y = -1000` hack is gone and guarded by an arch test.
 * [ ] `[CONTENT]` Painted (`high`) sheets for the 11 enemies that only have hi-8bit / hi-16bit SVG tiers (only `training_dummy` and `clockwork_owl_gargoyle` have painted sheets).
 * [ ] `[CONTENT]` Art for `shadow_knight`: the template exists in `enemies.json` but no sheet folder exists, so it renders procedurally.
-* [ ] `[CONTENT]` Register the remaining structure sheets (`chrono_lever`, `grand_portcullis`, `hazard_thorns`) as atlases and repack them; only `aether_gate` is registered.
+* [x] `[CONTENT]` Register the remaining structure sheets (`chrono_lever`, `grand_portcullis`, `hazard_thorns`) as atlases and repack them; levers, gates and hazards render from them with procedural fallbacks.
 * [ ] `[CONTENT]` Autumn palette review of `aether_sanctuary` (blue/cyan theme) and the UI Aurelia cyan identity against the autumn pillar.
 * [ ] `[LORE]` Wire the Bastion-style narrator: `ReactiveNarratorManager` and `DialogueGraphRunner` (`src/game/logic/narrative/`) are not connected to the engine; runtime narration is timed subtitles from i18n keys (`narrationSystem.ts`). Connect `narrator_reactive.json` events (hazard, lever, low health, boss) and `triggers.json`.
 

@@ -22,6 +22,8 @@ function createRenderer(atlases: Record<string, string[]>) {
       calls.push({ atlasId: o.atlasId, animationName: o.animationName, ticks: o.ticks });
       return true;
     },
+    renderRegion: () => false,
+    getBodyAspect: () => 0,
   };
   return { renderer: new EnemyRenderer(atlasRenderer), calls };
 }

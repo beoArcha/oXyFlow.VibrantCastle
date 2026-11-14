@@ -55,8 +55,8 @@ describe("LevelLifecycleManager lever -> gate targeting", () => {
 
     manager.handleLeverUnlocks("trig_a");
 
-    expect(gateA.y).toBe(-1000);
-    expect(gateB.y).toBe(400);
+    expect(gateA.animationState).toBe("opening");
+    expect(gateB.animationState).toBeUndefined();
     expect(sfx).toEqual([SoundType.SFX_UNLOCK]);
   });
 
@@ -71,8 +71,8 @@ describe("LevelLifecycleManager lever -> gate targeting", () => {
 
     manager.handleLeverUnlocks("trig_b");
 
-    expect(gateA.y).toBe(400);
-    expect(gateB.y).toBe(-1000);
+    expect(gateA.animationState).toBeUndefined();
+    expect(gateB.animationState).toBe("opening");
   });
 
   it("keeps legacy behaviour and warns for a lever without targetGateId", () => {
@@ -85,9 +85,9 @@ describe("LevelLifecycleManager lever -> gate targeting", () => {
 
     manager.handleLeverUnlocks("trig_a");
 
-    expect(gate.y).toBe(-1000);
-    expect(wall.y).toBe(-1000);
-    expect(floor.y).toBe(400);
+    expect(gate.animationState).toBe("opening");
+    expect(wall.animationState).toBe("opening");
+    expect(floor.animationState).toBeUndefined();
     expect(warn).toHaveBeenCalledTimes(1);
     warn.mockRestore();
   });
@@ -102,7 +102,7 @@ describe("LevelLifecycleManager lever -> gate targeting", () => {
 
     manager.handleLeverUnlocks("trig_a");
 
-    expect(gate.y).toBe(-1000);
+    expect(gate.animationState).toBe("opening");
     expect(warn).toHaveBeenCalledTimes(1);
     warn.mockRestore();
   });
@@ -118,12 +118,12 @@ describe("LevelLifecycleManager lever -> gate targeting", () => {
 
     manager.handleLeverUnlocks("shared", levers[1]);
 
-    expect(gateA.y).toBe(400);
-    expect(gateB.y).toBe(-1000);
+    expect(gateA.animationState).toBeUndefined();
+    expect(gateB.animationState).toBe("opening");
 
     manager.handleLeverUnlocks("shared", levers[0]);
 
-    expect(gateA.y).toBe(-1000);
+    expect(gateA.animationState).toBe("opening");
   });
 
   it("keeps the portal cooldown the same simulated time at 30, 60 and 120 Hz", () => {

@@ -4,6 +4,7 @@ import { calculatePlayerDerivedStats } from "../logic/inventory";
 import { CameraManager } from "./cameraManager";
 import { ParticleSystem } from "./particleSystem";
 import { ICollisionEngine } from "../physics/collisions";
+import { isGateOpen } from "../physics/gateState";
 
 export interface ICombatAudio {
   playSFX(sound: SoundType): void;
@@ -204,7 +205,7 @@ export class CombatSystem implements ICombatSystem {
 
       // Check collision with Solid walls/platforms
       entities.forEach((entity) => {
-        if (entity.type === CollisionType.Solid && entity.y !== -1000) {
+        if (entity.type === CollisionType.Solid && !isGateOpen(entity)) {
           if (
             p.x > entity.x &&
             p.x < entity.x + entity.width &&

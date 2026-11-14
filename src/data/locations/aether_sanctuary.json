@@ -130,6 +130,7 @@
       },
       "sanctuary_gate": {
         "prefabId": "sanctuary_gate",
+        "structureId": "grand_portcullis",
         "type": "solid",
         "color": "#0f172a",
         "borderColor": "#38bdf8",

@@ -3,6 +3,7 @@ import { CollisionType } from "../../types";
 import type { Entity } from "../../types";
 import {
   advanceStructureAnimations,
+  LEVER_ACTIVATING_TICKS,
   setStructureAnimationState,
 } from "../structureAnimationClock";
 
@@ -47,10 +48,22 @@ describe("structureAnimationClock", () => {
     advanceStructureAnimations([lever], 10);
     lever.isActivated = true;
     advanceStructureAnimations([lever], 10);
-    expect(lever.animationState).toBe("active");
+    expect(lever.animationState).toBe("activating");
     expect(lever.animationTicks).toBe(0);
     advanceStructureAnimations([lever], 2);
     expect(lever.animationTicks).toBe(2);
+  });
+
+  it("plays a pulled lever's activating animation once, then settles on active", () => {
+    const lever = makeEntity(CollisionType.Lever, { isActivated: true });
+    advanceStructureAnimations([lever], 1);
+    expect(lever.animationState).toBe("activating");
+    for (let i = 0; i < LEVER_ACTIVATING_TICKS; i++) advanceStructureAnimations([lever], 1);
+    advanceStructureAnimations([lever], 1);
+    expect(lever.animationState).toBe("active");
+    expect(lever.animationTicks).toBe(0);
+    advanceStructureAnimations([lever], 100);
+    expect(lever.animationState).toBe("active");
   });
 
   it("only advances an already-started clock on other structures", () => {

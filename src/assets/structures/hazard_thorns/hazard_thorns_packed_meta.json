@@ -1,0 +1,81 @@
+{
+  "entityId": "hazard_thorns",
+  "entityType": "structure",
+  "version": "1.0",
+  "description": "Crystalline Amber Hazard Thorns. Resonant crystal spikes causing damage to unshielded adventurers.",
+  "atlas": {
+    "image": "hazard_thorns_packed_high.png",
+    "cellWidth": 204,
+    "cellHeight": 70,
+    "columns": 6,
+    "rows": 2,
+    "spacing": 0,
+    "safeMargin": 0,
+    "background": "transparent"
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 1
+  },
+  "layout": {
+    "idle": {
+      "row": 0,
+      "startCol": 0,
+      "frames": 6,
+      "widthCells": 1
+    },
+    "active": {
+      "row": 1,
+      "startCol": 0,
+      "frames": 6,
+      "widthCells": 1
+    },
+    "bodyBox": {
+      "x": 0.049,
+      "y": 0.1429,
+      "w": 0.902,
+      "h": 0.7143
+    }
+  },
+  "animations": {
+    "idle": {
+      "row": 0,
+      "frames": 6,
+      "fps": 6,
+      "loop": true,
+      "wide": false,
+      "slotSpan": [1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1]
+    },
+    "active": {
+      "row": 1,
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "wide": false,
+      "slotSpan": [1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1]
+    }
+  },
+  "states": {
+    "idle": {
+      "animation": "idle"
+    },
+    "active": {
+      "animation": "active"
+    }
+  },
+  "infoFrames": {
+    "default": 0,
+    "surge": 1
+  },
+  "render": {
+    "layer": "interactive",
+    "zIndex": 5,
+    "blend": "normal"
+  },
+  "constraints": {
+    "strictGrid": true,
+    "fixedBaseline": true
+  }
+}

@@ -158,6 +158,7 @@
       },
       "bastion_gate": {
         "prefabId": "bastion_gate",
+        "structureId": "grand_portcullis",
         "type": "solid",
         "color": "#6e473b",
         "borderColor": "#9a3412",

@@ -142,6 +142,7 @@
       },
       "spire_gate": {
         "prefabId": "spire_gate",
+        "structureId": "grand_portcullis",
         "type": "solid",
         "color": "#451a03",
         "borderColor": "#9a3412",

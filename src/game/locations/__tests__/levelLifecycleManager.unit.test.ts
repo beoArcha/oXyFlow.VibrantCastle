@@ -171,7 +171,7 @@ describe("LevelLifecycleManager", () => {
   });
 
   describe("Lever and Gate Unlocks", () => {
-    it("lifts gates out of collision bounds when lever is pulled", () => {
+    it("starts opening gates when lever is pulled", () => {
       manager.resetLevel("courtyard");
       const gate = entities.find(
         (e) => e.type === CollisionType.Solid && (e.id.includes("gate") || e.id.includes("wall"))
@@ -179,7 +179,8 @@ describe("LevelLifecycleManager", () => {
 
       if (gate) {
         manager.handleLeverUnlocks("lever_1");
-        expect(gate.y).toBe(-1000);
+        expect(gate.animationState).toBe("opening");
+        expect(gate.y).toBeGreaterThan(0);
         expect(sfxPlayed).toContain(SoundType.SFX_UNLOCK);
         expect(bursts.length).toBeGreaterThan(0);
       }

@@ -1,6 +1,7 @@
 import { CollisionType, Entity, ParticleBurstType, SoundType } from "../types";
 import { engineLogger } from "../logger/gameLogger";
 import { statsManager } from "../logic/stats";
+import { beginOpeningGate } from "../physics/gateState";
 
 /** Subset of the lifecycle context the lever logic needs; declared here to avoid an import cycle. */
 export interface LeverGateContext {
@@ -31,8 +32,7 @@ function findSolidById(entities: Entity[], id: string): Entity | undefined {
 }
 
 function openGate(context: LeverGateContext, gate: Entity): void {
-  // Moving off-screen is how a gate stops colliding; an opening animation needs a collision flag instead.
-  gate.y = -1000;
+  if (!beginOpeningGate(gate)) return;
   context.playSFX(SoundType.SFX_UNLOCK);
   context.triggerNarration("trainingLeverSuccess");
   context.spawnBurst(gate.x + gate.width / 2, 300, "#e2b653", "dust", 20);

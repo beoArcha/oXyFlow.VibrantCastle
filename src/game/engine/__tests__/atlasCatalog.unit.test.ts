@@ -179,15 +179,12 @@ describe("buildAtlasCatalog", () => {
 });
 
 describe("discoverAtlasFiles (filesystem fallback)", () => {
-  it("registers the three packed legacy atlases and leaves other structures out", () => {
+  it("registers the packed enemy and structure atlases", () => {
     const catalog = buildAtlasCatalog(discoverAtlasFiles(), { structureAllowList: REGISTERED_STRUCTURE_IDS });
     const byId = new Map(catalog.map((entry) => [entry.id, entry]));
 
-    for (const id of ["training_dummy", "clockwork_owl_gargoyle", "aether_gate"]) {
+    for (const id of ["training_dummy", "clockwork_owl_gargoyle", "aether_gate", "chrono_lever", "grand_portcullis", "hazard_thorns"]) {
       expect(byId.get(id)?.variants.high?.src).toContain(`${id}_packed_high.png`);
     }
-    expect(byId.has("chrono_lever")).toBe(false);
-    expect(byId.has("grand_portcullis")).toBe(false);
-    expect(byId.has("hazard_thorns")).toBe(false);
   });
 });

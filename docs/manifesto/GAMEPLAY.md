@@ -94,7 +94,7 @@ graph LR
 ### 3.2. Levers, Gates and Maps
 
 - **Rule**: one lever and one gate per zone, the lever reachable while the gate is closed, every gate blocks something; a lever names its gate with `targetGateId` (grammar in `.agents/rules/content_and_assets.md` §7, enforced by the level validator).
-- **Opening**: `unlockLeverGates` (`src/game/locations/leverGateUnlock.ts`) moves the target solid to `y = -1000`, plays the unlock sound, a narration key and a dust burst. There is no opening animation yet (planned). A lever without a resolvable target falls back to opening every solid whose id contains `gate` or `wall` and logs a warning.
+- **Opening**: `unlockLeverGates` (`src/game/locations/leverGateUnlock.ts`) calls `beginOpeningGate` (`src/game/physics/gateState.ts`), plays the unlock sound, a narration key and a dust burst. The gate then runs an explicit state on the structure animation clock: `closed` (no state), `opening` for 1.2 s (`GATE_OPEN_TICKS` = 72 clock units), `open`. While opening, the collision rect keeps its top and shrinks from the bottom (`entity.height`, rounded, never below 1 px) while `entity.gateBaseHeight` holds the closed height; at progress 1 the gate is `open`, height 0, and `isGateOpen` makes physics, projectile and hitbox code skip it. The clock is simulation time, so the opening is deterministic and frozen while paused. Reloading a level rebuilds the entities, so a gate always starts closed (gate state is not persisted). A lever without a resolvable target falls back to opening every solid whose id contains `gate` or `wall` and logs a warning.
 - **Progression**: lever gates are the only blocking mechanism; there are no ability gates (planned, see `MASTERMAP.md` §1.2).
 
 | Map | Size (px) | Levers | Enemies | Exits |

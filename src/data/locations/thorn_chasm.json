@@ -159,6 +159,7 @@
       },
       "chasm_barrier": {
         "prefabId": "chasm_barrier",
+        "structureId": "grand_portcullis",
         "type": "solid",
         "color": "#6e473b",
         "borderColor": "#9a3412",

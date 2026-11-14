@@ -92,12 +92,12 @@ Per step, in order: auto skills, player-player collision, melee, projectiles, en
 Animation state is owned by the simulation, never by the renderer:
 
 - **Enemies**: `GamePhysicsEngine.advanceEnemyAnimation` sets `enemy.animationState` (`hit` while `damageTimer > 0`, else `fly` for aerial, `move` for moving ground enemies, otherwise `idle`) and advances `enemy.animationTicks` by `dtMultiplier`. The clock resets to 0 on every state change; a melee or projectile hit sets `hit` and resets it.
-- **Structures**: `src/game/locations/structureAnimationClock.ts` keeps `entity.animationTicks` for levers and portals (`inactive` / `active` from `isActivated`) and advances any other entity whose clock was started.
+- **Structures**: `src/game/locations/structureAnimationClock.ts` keeps `entity.animationTicks` for levers and portals. Portals map `isActivated` to `inactive` / `active`; a pulled lever plays `activating` once (`LEVER_ACTIVATING_TICKS` = 30, six frames at 12 fps) and then stays `active`. Any other entity whose clock was started advances too; opening gates also recompute their collision height there (`updateGateCollision`, see `GAMEPLAY.md` §3.2).
 - **Unit**: `animationTicks` accumulates 60 units per simulated second at every tick rate. Renderers convert ticks to frames; they must not read wall-clock time.
 
 ### 4.2. Level Lifecycle and Lever/Gate Rule
 
-`LevelLifecycleManager` (`src/game/locations/levelLifecycleManager.ts`) loads locations, handles portals and runs the structure clocks. A lever carries `targetGateId`; when pulled, `unlockLeverGates` (`src/game/locations/leverGateUnlock.ts`) opens exactly that solid. A lever without a resolvable target falls back to the legacy behaviour (opening every solid whose id contains `gate` or `wall`) and logs a warning. Opening a gate moves it to `y = -1000`, which collision code treats as removed; there is no opening animation yet (planned).
+`LevelLifecycleManager` (`src/game/locations/levelLifecycleManager.ts`) loads locations, handles portals and runs the structure clocks. A lever carries `targetGateId`; when pulled, `unlockLeverGates` (`src/game/locations/leverGateUnlock.ts`) opens exactly that solid. A lever without a resolvable target falls back to the legacy behaviour (opening every solid whose id contains `gate` or `wall`) and logs a warning. Opening a gate starts its `opening` state (1.2 s on the structure clock, collision shrinking from the bottom, then `open`); see `GAMEPLAY.md` §3.2.
 
 ### 4.3. Asset Lifecycle
 
