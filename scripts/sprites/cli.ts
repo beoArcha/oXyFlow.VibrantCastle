@@ -3,10 +3,13 @@ import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { compileHeroSprite } from "./compileHero";
 import { compileEnemySprite, type CompiledSprite } from "./compileSprite";
+import { compileProp, type CompiledProp } from "./compileProp";
 import { compileTileset, type CompiledTileset } from "./compileTileset";
 import type { HeroSpriteDefinition } from "./heroTypes";
 import { spriteError } from "./errors";
 import { renderPreviewPng } from "./previewPng";
+import { renderPropStrip } from "./propPreview";
+import type { PropSpriteDefinition } from "./propTypes";
 import type { SheetImage } from "./render";
 import { renderTilingDemo } from "./tilingDemo";
 import type { TilesetSpriteDefinition } from "./tilesetTypes";
@@ -17,33 +20,41 @@ const ASSETS_DIR = resolve(SPRITES_DIR, "..", "..", "src", "assets");
 export const ENEMIES_DIR = join(SPRITES_DIR, "enemies");
 export const HEROES_DIR = join(SPRITES_DIR, "heroes");
 export const TILESETS_DIR = join(SPRITES_DIR, "tilesets");
+export const PROPS_DIR = join(SPRITES_DIR, "props");
 export const DEFAULT_OUT_DIR = join(ASSETS_DIR, "enemies");
 export const DEFAULT_HERO_OUT_DIR = join(ASSETS_DIR, "characters");
 export const DEFAULT_TILE_OUT_DIR = join(ASSETS_DIR, "tiles");
+export const DEFAULT_PROP_OUT_DIR = join(ASSETS_DIR, "props");
 
-const TILESET_PREVIEW_SCALE = 4;
+/** zoom of the `_x4` sheet previews for tilesets and props. */
+const ZOOM_PREVIEW_SCALE = 4;
 
-export type SpriteDefinition = EnemySpriteDefinition | HeroSpriteDefinition | TilesetSpriteDefinition;
+export type SpriteDefinition = EnemySpriteDefinition | HeroSpriteDefinition | TilesetSpriteDefinition | PropSpriteDefinition;
 
 /** Where sprite scripts live and where their output goes; tests point these at temporary folders. */
 export interface SpriteDirs {
   enemies: string;
   heroes: string;
   tilesets: string;
+  props: string;
   enemyOut: string;
   /** Default hero output; also the folder whose `<id>/<id>_packed_meta.json` files supply the hero grids. */
   heroOut: string;
   /** Default tileset output; each tileset is written to `<tileOut>/<id>/`. */
   tileOut: string;
+  /** default prop output; each prop is written to `<propOut>/<id>/`. */
+  propOut: string;
 }
 
 export const DEFAULT_DIRS: SpriteDirs = {
   enemies: ENEMIES_DIR,
   heroes: HEROES_DIR,
   tilesets: TILESETS_DIR,
+  props: PROPS_DIR,
   enemyOut: DEFAULT_OUT_DIR,
   heroOut: DEFAULT_HERO_OUT_DIR,
   tileOut: DEFAULT_TILE_OUT_DIR,
+  propOut: DEFAULT_PROP_OUT_DIR,
 };
 
 export interface CliOptions {
@@ -83,6 +94,7 @@ function listScriptIds(dir: string): string[] {
 export const listEnemyIds = (dir: string = ENEMIES_DIR): string[] => listScriptIds(dir);
 export const listHeroIds = (dir: string = HEROES_DIR): string[] => listScriptIds(dir);
 export const listTilesetIds = (dir: string = TILESETS_DIR): string[] => listScriptIds(dir);
+export const listPropIds = (dir: string = PROPS_DIR): string[] => listScriptIds(dir);
 
 const isScriptPath = (idOrPath: string): boolean =>
   idOrPath.endsWith(".ts") || idOrPath.includes("/") || idOrPath.includes("\\");
@@ -95,12 +107,16 @@ export function isTilesetDefinition(def: SpriteDefinition): def is TilesetSprite
   return "tiles" in def;
 }
 
+export function isPropDefinition(def: SpriteDefinition): def is PropSpriteDefinition {
+  return "anchor" in def;
+}
+
 async function importDefault(file: string): Promise<SpriteDefinition> {
   if (!existsSync(file)) throw spriteError(`Sprite script not found: ${file}`, { file });
   const module = (await import(pathToFileURL(file).href)) as { default?: SpriteDefinition };
   if (!module.default) {
     throw spriteError(
-      `${file} must export default defineEnemySprite({...}), defineHeroSprite({...}) or defineTileset({...}).`,
+      `${file} must export default defineEnemySprite({...}), defineHeroSprite({...}), defineTileset({...}) or defineProp({...}).`,
       { file },
     );
   }
@@ -113,10 +129,10 @@ export async function loadDefinition(idOrPath: string, dir: string = ENEMIES_DIR
   return (await importDefault(file)) as EnemySpriteDefinition;
 }
 
-/** Resolves an id against the enemy, hero and tileset folders; paths are imported as given. */
+/** Resolves an id against the enemy, hero, tileset and prop folders; paths are imported as given. */
 export async function loadSprite(idOrPath: string, dirs: SpriteDirs = DEFAULT_DIRS): Promise<SpriteDefinition> {
   if (isScriptPath(idOrPath)) return importDefault(resolve(idOrPath));
-  const candidates = [dirs.enemies, dirs.heroes, dirs.tilesets].map((dir) => join(dir, `${idOrPath}.ts`));
+  const candidates = [dirs.enemies, dirs.heroes, dirs.tilesets, dirs.props].map((dir) => join(dir, `${idOrPath}.ts`));
   const found = candidates.filter((candidate) => existsSync(candidate));
   if (found.length === 0) {
     throw spriteError(`Sprite script not found for "${idOrPath}"; looked in ${candidates.join(" and ")}.`, { id: idOrPath });
@@ -127,9 +143,12 @@ export async function loadSprite(idOrPath: string, dirs: SpriteDirs = DEFAULT_DI
   return importDefault(found[0]);
 }
 
-export function compileSprite(def: SpriteDefinition, dirs: SpriteDirs = DEFAULT_DIRS): CompiledSprite | CompiledTileset {
+export type CompiledAny = CompiledSprite | CompiledTileset | CompiledProp;
+
+export function compileSprite(def: SpriteDefinition, dirs: SpriteDirs = DEFAULT_DIRS): CompiledAny {
   if (isEnemyDefinition(def)) return compileEnemySprite(def);
   if (isTilesetDefinition(def)) return compileTileset(def);
+  if (isPropDefinition(def)) return compileProp(def);
   return compileHeroSprite(def, dirs.heroOut);
 }
 
@@ -140,10 +159,11 @@ export interface OutputFile {
 
 function metaFileName(def: SpriteDefinition): string {
   if (isEnemyDefinition(def)) return `${def.id}_meta.json`;
-  return isTilesetDefinition(def) ? `${def.id}_tiles_meta.json` : `${def.id}_pixel_meta.json`;
+  if (isTilesetDefinition(def)) return `${def.id}_tiles_meta.json`;
+  return isPropDefinition(def) ? `${def.id}_prop_meta.json` : `${def.id}_pixel_meta.json`;
 }
 
-export function outputFiles(def: SpriteDefinition, compiled: CompiledSprite | CompiledTileset, outDir: string): OutputFile[] {
+export function outputFiles(def: SpriteDefinition, compiled: CompiledAny, outDir: string): OutputFile[] {
   const base = join(outDir, def.id);
   const sheets: OutputFile[] =
     "hi8bitPng" in compiled
@@ -180,17 +200,23 @@ export function writeFiles(files: OutputFile[]): void {
 }
 
 function writeSheetPreviews(def: SpriteDefinition, sheets: { hi8bit: SheetImage; hi16bit: SheetImage }, dir: string): void {
+  if (isPropDefinition(def)) {
+    writeFileSync(join(dir, `${def.id}_hi8bit_x4.png`), renderPreviewPng(sheets.hi8bit, ZOOM_PREVIEW_SCALE));
+    writeFileSync(join(dir, `${def.id}_hi16bit_x4.png`), renderPreviewPng(sheets.hi16bit, ZOOM_PREVIEW_SCALE));
+    writeFileSync(join(dir, `${def.id}_strip.png`), renderPropStrip(def, sheets));
+    return;
+  }
   if (!isTilesetDefinition(def)) {
     writeFileSync(join(dir, `${def.id}_hi8bit.png`), renderPreviewPng(sheets.hi8bit));
     writeFileSync(join(dir, `${def.id}_hi16bit.png`), renderPreviewPng(sheets.hi16bit));
     return;
   }
-  writeFileSync(join(dir, `${def.id}_hi8bit_x4.png`), renderPreviewPng(sheets.hi8bit, TILESET_PREVIEW_SCALE));
-  writeFileSync(join(dir, `${def.id}_hi16bit_x4.png`), renderPreviewPng(sheets.hi16bit, TILESET_PREVIEW_SCALE));
+  writeFileSync(join(dir, `${def.id}_hi8bit_x4.png`), renderPreviewPng(sheets.hi8bit, ZOOM_PREVIEW_SCALE));
+  writeFileSync(join(dir, `${def.id}_hi16bit_x4.png`), renderPreviewPng(sheets.hi16bit, ZOOM_PREVIEW_SCALE));
   writeFileSync(join(dir, `${def.id}_tiling_demo.png`), renderTilingDemo(def, sheets));
 }
 
-function writePreviews(def: SpriteDefinition, compiled: CompiledSprite | CompiledTileset, dir: string): void {
+function writePreviews(def: SpriteDefinition, compiled: CompiledAny, dir: string): void {
   mkdirSync(dir, { recursive: true });
   writeSheetPreviews(def, compiled.sheets, dir);
 }
@@ -198,6 +224,7 @@ function writePreviews(def: SpriteDefinition, compiled: CompiledSprite | Compile
 function resolveOutDir(def: SpriteDefinition, options: CliOptions, dirs: SpriteDirs): string {
   if (options.outDir) return options.outDir;
   if (isTilesetDefinition(def)) return dirs.tileOut;
+  if (isPropDefinition(def)) return dirs.propOut;
   return isEnemyDefinition(def) ? dirs.enemyOut : dirs.heroOut;
 }
 
@@ -209,7 +236,12 @@ export async function run(
 ): Promise<number> {
   const options = parseArgs(argv);
   const targets = options.all
-    ? [...listEnemyIds(dirs.enemies), ...listHeroIds(dirs.heroes), ...listTilesetIds(dirs.tilesets)]
+    ? [
+        ...listEnemyIds(dirs.enemies),
+        ...listHeroIds(dirs.heroes),
+        ...listTilesetIds(dirs.tilesets),
+        ...listPropIds(dirs.props),
+      ]
     : options.ids;
   let stale = 0;
   for (const target of targets) {

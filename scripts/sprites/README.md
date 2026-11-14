@@ -6,7 +6,7 @@ Enemy sprite sheets are authored as small TypeScript draw scripts (one enemy per
 - `<id>_hi16bit.svg` - "hi-16bit" sheet for quality tier `mid` (RGB565 colour, 96 px cells)
 - `<id>_meta.json` - atlas meta (same shape as `clockwork_owl_gargoyle_meta.json`, plus `layout.bodyBox`)
 
-Output goes to `src/assets/enemies/<id>/`. Fixtures in `__fixtures__/` are never compiled by `--all`. Hero sheets (Valen, Aurelia) use a second contract, see [Heroes](#heroes). Platform tilesets use a third, see [Tilesets](#tilesets).
+Output goes to `src/assets/enemies/<id>/`. Fixtures in `__fixtures__/` are never compiled by `--all`. Hero sheets (Valen, Aurelia) use a second contract, see [Heroes](#heroes). Platform tilesets use a third, see [Tilesets](#tilesets). Decor props use a fourth, see [Props](#props).
 
 ## Authoring contract
 
@@ -200,11 +200,61 @@ Warning, not fatal: for `top`, `fill`, `ledge`, `bottom` and their variants, the
 ```bash
 bun scripts/sprites/compile.ts courtyard_stone                       # tileset ids are found in tilesets/ as well
 bun scripts/sprites/compile.ts courtyard_stone --preview tmp/preview # also <id>_hi8bit_x4.png, <id>_hi16bit_x4.png, <id>_tiling_demo.png
-bun scripts/sprites/compile.ts --all --check                         # enemies, heroes and tilesets
+bun scripts/sprites/compile.ts --all --check                         # enemies, heroes, tilesets and props
 bun scripts/sprites/compile.ts scripts/sprites/__fixtures__/sample_tileset.ts --out tmp/out   # worked example by path
 ```
 
 The tiling demo shows the hi-8bit panel above the hi-16bit panel, each tile drawn at the same world size: a 10-tile ledge strip and, for solid tilesets, a 6x4 block. Seams and variant repeats show there, so open it before committing art.
+
+## Props
+
+Decor props (lanterns, torches, banners, braziers, crystals) are authored in `scripts/sprites/props/<id>.ts` with `defineProp`, and compile to `src/assets/props/<id>/`. Props never collide; the runtime places them from `layout.decor` and draws the glow, so this compiler only produces the art and its meta.
+
+- `<id>_hi8bit.png` (half the world size per frame, quality `low`) and `<id>_hi16bit.png` (world size, quality `mid`): lossless PNG sheets with the frames in one row, in frame order.
+- `<id>_prop_meta.json`: `propId`, `worldWidth`, `worldHeight`, `anchor`, `frames`, `fps`, `variants` (`low` and `mid` with `file`, `frameWidth`, `frameHeight`) and `glow` (only when the prop emits light: `color`, `radius`, `x`, `y`, `flicker`).
+
+```ts
+// scripts/sprites/props/wall_torch.ts
+import { defineProp, type PixelCanvas } from "../defineProp";
+
+export default defineProp({
+  id: "wall_torch",
+  description: "one sentence",
+  size: { width: 24, height: 48 },   // world units == hi-16bit pixels; both even; hi-8bit frame is half
+  anchor: "bottom",                  // "bottom" stands on the floor, "top" hangs, "center" is free
+  frames: 3,                         // 1..12, one row
+  fps: 8,                            // > 0
+  glow: { color: "#ffb347", radius: 72, x: 12, y: 8, flicker: true }, // optional; x/y inside the sprite
+  draw: {
+    hi8bit(c: PixelCanvas, frame: number) { /* c is 12 x 24 */ },
+    hi16bit(c: PixelCanvas, frame: number) { /* c is 24 x 48, the same prop with more detail */ },
+  },
+});
+```
+
+`__fixtures__/sample_prop.ts` is a complete worked example (a three-frame iron torch with a flickering glow); copy it to start a prop.
+
+**Validation.** `defineProp` rejects a bad id, an odd or zero size, an anchor other than `bottom`, `top` or `center`, frames outside 1..12, fps of 0 or less, a glow with a bad colour, radius of 0 or a centre outside the sprite, and missing draw functions; every problem is listed at once. Compile then checks every tier and frame, naming both:
+
+1. A frame is empty.
+2. Anchor rule: `bottom` props must touch the bottom row, `top` props the top row.
+3. A 1 px transparent margin on every side except the anchor side (`center` props keep all four sides clear).
+4. A hi-16bit frame is identical to its hi-8bit frame scaled 2x (after snapping to 12-bit, as tilesets do). It must be a real redraw.
+
+Warning, not fatal: two consecutive frames identical in one tier.
+
+**Previews.** `--preview <dir>` writes `<id>_hi8bit_x4.png` and `<id>_hi16bit_x4.png` (each tier enlarged 4x with the frame grid) and `<id>_strip.png`: every frame of both tiers side by side at world size, with the glow added on a dark stage so the light can be judged. A flickering glow samples the runtime's 0.75..1.0 alpha across the frames. Open the strip before committing a light source.
+
+**Commands.**
+
+```bash
+bun scripts/sprites/compile.ts <prop-id>                        # prop ids are found in props/ as well
+bun scripts/sprites/compile.ts <prop-id> --preview tmp/preview  # also the x4 sheets and the strip
+bun scripts/sprites/compile.ts scripts/sprites/__fixtures__/sample_prop.ts --out tmp/out   # worked example by path
+bun scripts/sprites/compile.ts --all --check                    # enemies, heroes, tilesets and props
+```
+
+`props/README.md` is the folder note; the folder holds no real props until the first one is authored.
 
 ## Notes for authors
 

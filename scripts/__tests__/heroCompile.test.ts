@@ -24,9 +24,11 @@ const fixtureDirs = (out: string): SpriteDirs => ({
   enemies: ENEMIES_DIR,
   heroes: FIXTURES_DIR,
   tilesets: TILESETS_DIR,
+  props: join(out, "no-props"),
   enemyOut: out,
   heroOut: out,
   tileOut: out,
+  propOut: out,
 });
 
 const compileFixture = () => compileHeroSprite(sampleHero, DEFAULT_HERO_OUT_DIR);
