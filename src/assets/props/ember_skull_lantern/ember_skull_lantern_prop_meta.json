@@ -1,0 +1,27 @@
+{
+  "propId": "ember_skull_lantern",
+  "worldWidth": 32,
+  "worldHeight": 48,
+  "anchor": "top",
+  "frames": 4,
+  "fps": 8,
+  "variants": {
+    "low": {
+      "file": "ember_skull_lantern_hi8bit.png",
+      "frameWidth": 16,
+      "frameHeight": 24
+    },
+    "mid": {
+      "file": "ember_skull_lantern_hi16bit.png",
+      "frameWidth": 32,
+      "frameHeight": 48
+    }
+  },
+  "glow": {
+    "color": "#ff6a1a",
+    "radius": 80,
+    "x": 16,
+    "y": 28,
+    "flicker": true
+  }
+}
