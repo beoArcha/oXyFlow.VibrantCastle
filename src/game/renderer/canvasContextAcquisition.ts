@@ -12,9 +12,10 @@ export function acquireCanvas2DContext(
 
   if (isHardwareAccelerated) {
     try {
+      // never `desynchronized`: that single-buffered mode lets the compositor present a half-drawn
+      // frame, and actors drawn late in the pass (players) intermittently vanish from the screen
       context = canvas.getContext("2d", {
         alpha: false,
-        desynchronized: true,
         willReadFrequently: false,
       });
     } catch (err) {

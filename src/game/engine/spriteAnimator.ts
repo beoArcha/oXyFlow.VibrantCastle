@@ -1,6 +1,7 @@
 import { AssetQuality } from "../types";
 import { AnimationName, CharacterProgressionTier } from "./spriteTypes";
 import { assetLoader } from "./assetLoader";
+import { resolvePlayerAnimation } from "./playerAnimationState";
 
 export interface RenderSpriteOptions {
   characterId?: string;
@@ -186,44 +187,8 @@ export class SpriteAnimator {
     }
 
     // 2. Resolve active animation state & frame index
-    let activeAnim: AnimationName = "idle";
-    let frameIndex: number | undefined = undefined;
-
-    if (player.isAttacking) {
-      activeAnim = "attack";
-      const spriteMap = assetLoader.getActiveSpriteMap(characterId, quality, tier);
-      const meta = spriteMap?.animations.attack || { frameCount: 6 };
-      const maxTime = 14;
-      const progress = Math.max(0, Math.min(0.99, 1 - (player.attackTime / maxTime)));
-      frameIndex = Math.min(Math.floor(progress * meta.frameCount), meta.frameCount - 1);
-    } else if (player.isDashing) {
-      activeAnim = "dash";
-      const spriteMap = assetLoader.getActiveSpriteMap(characterId, quality, tier);
-      const meta = spriteMap?.animations.dash || { frameCount: 4 };
-      const maxTime = 13;
-      const progress = Math.max(0, Math.min(0.99, 1 - ((player.dashTime ?? 0) / maxTime)));
-      frameIndex = Math.min(Math.floor(progress * meta.frameCount), meta.frameCount - 1);
-    } else if (player.isCasting) {
-      activeAnim = "cast";
-      const spriteMap = assetLoader.getActiveSpriteMap(characterId, quality, tier);
-      const meta = spriteMap?.animations.cast || { frameCount: 6 };
-      const maxTime = 16;
-      const progress = Math.max(0, Math.min(0.99, 1 - ((player.castTime ?? 0) / maxTime)));
-      frameIndex = Math.min(Math.floor(progress * meta.frameCount), meta.frameCount - 1);
-    } else if (player.isCrouching) {
-      activeAnim = "crouch";
-    } else if (!player.isGrounded) {
-      if (player.vy < -0.5) {
-        activeAnim = "jump";
-        frameIndex = Math.min(2, Math.floor(Math.abs(player.vy) / 4));
-      } else {
-        activeAnim = "fall";
-      }
-    } else if (Math.abs(player.vx) > 0.5) {
-      activeAnim = "run";
-    } else {
-      activeAnim = "idle";
-    }
+    const spriteMap = assetLoader.getActiveSpriteMap(characterId, quality, tier);
+    const { state: activeAnim, frameIndex } = resolvePlayerAnimation(player, spriteMap);
 
     // 3. Dash & Slide Ghost Trails
     if (player.isDashing) {
