@@ -151,3 +151,27 @@ When a sheet's meta carries `layout.bodyBox` (normalized bounding box of the bod
 ### 6.3. Current Coverage
 
 All 11 hi-8bit / hi-16bit SVG sheets exist (court_sentinel, chasm_crawler, chasm_gargoyle, gear_mite, aether_wisp, lantern_warden, clockwork_automaton, thorn_creeper, aether_archon, aether_sentinel, chrono_hound). Only `training_dummy` and `clockwork_owl_gargoyle` have painted `high` sheets. `shadow_knight` has no art yet. Templates that share a sheet do so through `atlas.presetId`.
+
+## 7. Platform Tilesets
+
+Solid and one-way platforms (`StructureRenderer.renderSolidPlatform` / `renderOneWayPlatform`) are drawn from pixel-art tilesets when the entity carries a `tileset` id (copied from its prefab, see `CONTENT_PIPELINE.md` §3). Gates, hazards, levers and portals are not part of this system.
+
+### 7.1. Files and Tiers
+
+`src/assets/tiles/<id>/` holds `<id>_hi8bit.png` (16 px tiles, quality `low`), `<id>_hi16bit.png` (32 px tiles, quality `mid`) and `<id>_tiles_meta.json` (`tilesetId`, `kind` solid or oneway, `worldTile`, `columns`, `rows`, per-tier `variants` with file and tile size, and the `tiles` name-to-cell map). There is no painted tier: quality `high` falls back to hi-16bit through `resolveVariantTier` (mid, then low). Files are discovered with `import.meta.glob` (filesystem fallback under Bun), validated by `parseTilesetMeta` (`AssetError` `ASSET_CORRUPTED`, invalid metas are logged and skipped) and owned by `TilesetManager` (`src/game/engine/tiles/`), which follows the quality of the shared `ISpriteSourceFactory`, so the menu setting switches live.
+
+### 7.2. Loading and Fallback
+
+A sheet is loaded once, on first use. While the requested tier loads, a tier that is already loaded keeps being drawn. A failed load marks the tier failed and later resolutions fall back past it. The procedural platform drawing stays exactly as before when the prefab has no `tileset`, the id has no files, every tier failed, or nothing is loaded yet.
+
+### 7.3. Fill Rules
+
+`buildTilePlan` computes a flat `Int32Array` draw list once per entity (cached by entity, rebuilt only if its size changes); drawing is allocation-free.
+
+* The rect is tiled on a `worldTile` (32) grid anchored at its top-left. hi-16bit tiles draw 1:1, hi-8bit tiles 2x, smoothing off, destination rects are integers (no seams).
+* Thin rect (`height <= worldTile`) and every one-way: one `ledge_left / ledge / ledge_right` row; one cell wide uses `ledge`.
+* Tall solid: `top_*`, then `left / fill / right` rows, then `bottom_*`; one cell wide uses the centre names.
+* The last column and row are cropped, never stretched. Cropped edge cells keep their right / bottom border visible; ledge rows are cropped from the top so the rim stays.
+* Variants (`fill_2`, `top_3`...) are picked by a hash of (tile column, tile row, entity x, entity y), stable across frames.
+* One-way tilesets with a `support` tile draw it under the ledge every third tile.
+* Culling is unchanged: entities outside the view are skipped before any tile is drawn.
