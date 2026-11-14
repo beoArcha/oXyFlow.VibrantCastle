@@ -172,6 +172,12 @@ export function resolveFacingDirection(meta: IAtlasMetaLike): "left" | "right" {
 
 /** Body bounding box of one cell in normalized coordinates, ready for scale and anchor maths. */
 export interface BodyMetrics {
+  /** Body left edge as a fraction of the cell width. */
+  x: number;
+  /** Body top edge as a fraction of the cell height. */
+  y: number;
+  /** Body width as a fraction of the cell width. */
+  width: number;
   /** Body height as a fraction of the cell height. */
   height: number;
   /** Horizontal body centre inside the first cell. */
@@ -200,6 +206,9 @@ function resolveBodyMetrics(meta: IAtlasMetaLike): BodyMetrics | null {
   const box = meta.layout?.bodyBox;
   if (!box || !(box.w > 0) || !(box.h > 0)) return null;
   return {
+    x: box.x,
+    y: box.y,
+    width: box.w,
     height: box.h,
     centerX: box.x + box.w / 2,
     footY: box.y + box.h,

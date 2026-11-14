@@ -94,6 +94,8 @@ export interface EntityPrefabSchema {
   defaultHeight?: number;
   /** Platform tileset id (solid / oneway prefabs); see `src/assets/tiles`. */
   tileset?: string;
+  /** Structure atlas that draws this prefab (e.g. `grand_portcullis` for gates). */
+  structureId?: string;
 }
 
 /**

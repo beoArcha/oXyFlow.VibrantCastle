@@ -32,8 +32,31 @@ export interface RenderAtlasFrameOptions {
   quality?: AssetQuality;
 }
 
+/**
+ * Draws a sub-rectangle of one animation frame stretched into a destination rectangle.
+ * The region is normalized to the frame's body box (the whole cell when the sheet has none), so
+ * callers can slice a structure into lintel / body / base without knowing the cell size.
+ */
+export interface RenderAtlasRegionOptions {
+  atlasId: string;
+  animationName: string;
+  ticks: number;
+  regionX: number;
+  regionY: number;
+  regionW: number;
+  regionH: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export interface IAtlasSpriteRenderer {
   render(ctx: CanvasRenderingContext2D, options: RenderAtlasFrameOptions): boolean;
+  /** Stretches a body-box region of the current frame into the destination rect; false when unavailable. */
+  renderRegion(ctx: CanvasRenderingContext2D, options: RenderAtlasRegionOptions): boolean;
+  /** World width / height ratio of the sheet's body box; 0 when the atlas or its body box is unknown. */
+  getBodyAspect(atlasId: string): number;
   hasAtlas(atlasId: string): boolean;
   hasAnimation(atlasId: string, animationName: string): boolean;
 }
@@ -51,6 +74,9 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
   private drawW = 0;
   private drawH = 0;
   private pivotX = 0;
+  private selSx = 0;
+  private selSy = 0;
+  private selSw = 0;
 
   public hasAtlas(atlasId: string): boolean {
     return !!assetLoader.getAtlas(atlasId);
@@ -151,6 +177,83 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
     this.drawY = Math.round(anchorY - info.anchorY * this.drawH);
   }
 
+  /**
+   * Picks the animation frame for `ticks` (or an explicit `frameIndex`) and stores its source rect in
+   * `selSx` / `selSy` / `selSw`. Returns the frame span in cells, or 0 when the animation has no frames.
+   */
+  private selectFrame(
+    meta: IAtlasMetaLike,
+    cellW: number,
+    cellH: number,
+    animationName: string,
+    frameIndex: number | undefined,
+    ticks: number | undefined
+  ): number {
+    const animKey = resolveAnimationKeyFromStates(meta, animationName);
+    const animTrack = resolveAnimationTrack(meta, animKey);
+
+    const trackFrames: number = resolveEffectiveFrameCount(animTrack);
+    if (trackFrames <= 0) return 0;
+    const trackFps: number = animTrack?.fps ?? 8;
+    const trackLoop: boolean = animTrack?.loop !== undefined ? animTrack.loop : true;
+
+    let currentFrame = 0;
+    if (frameIndex !== undefined) {
+      currentFrame = Math.abs(frameIndex) % Math.max(1, trackFrames);
+    } else {
+      const frameDuration = Math.max(1, Math.round(60 / Math.max(1, trackFps)));
+      const step = Math.floor((ticks ?? 0) / frameDuration);
+      currentFrame = trackLoop ? step % trackFrames : Math.min(step, trackFrames - 1);
+    }
+
+    const span = resolveFrameSpan(animTrack, currentFrame);
+    this.selSx = resolveFrameColumn(animTrack, currentFrame) * cellW;
+    this.selSy = (animTrack?.row ?? 0) * cellH;
+    this.selSw = span * cellW;
+    return span;
+  }
+
+  public getBodyAspect(atlasId: string): number {
+    const resolved = assetLoader.getAtlasSource(atlasId);
+    if (!resolved || resolved.texture.width <= 0 || resolved.texture.height <= 0) return 0;
+    const info = getAtlasRenderInfo(resolved.meta as unknown as IAtlasMetaLike);
+    if (!info.body) return 0;
+    const cellW = resolved.texture.width / info.cols;
+    const cellH = resolved.texture.height / info.rows;
+    return (info.body.width * cellW) / (info.body.height * cellH);
+  }
+
+  public renderRegion(ctx: CanvasRenderingContext2D, options: RenderAtlasRegionOptions): boolean {
+    const resolved = assetLoader.getAtlasSource(options.atlasId);
+    if (!resolved) return false;
+    const texture = resolved.texture;
+    if (texture.width <= 0 || texture.height <= 0) return false;
+
+    const meta = resolved.meta as unknown as IAtlasMetaLike;
+    const info = getAtlasRenderInfo(meta);
+    const cellW = texture.width / info.cols;
+    const cellH = texture.height / info.rows;
+    if (this.selectFrame(meta, cellW, cellH, options.animationName, undefined, options.ticks) <= 0) return false;
+
+    const body = info.body;
+    const originX = body ? body.x : 0;
+    const originY = body ? body.y : 0;
+    const spanW = body ? body.width : 1;
+    const spanH = body ? body.height : 1;
+    const column = this.selSx;
+    const srcX = column + (originX + options.regionX * spanW) * cellW;
+    const srcY = this.selSy + (originY + options.regionY * spanH) * cellH;
+    const srcW = options.regionW * spanW * cellW;
+    const srcH = options.regionH * spanH * cellH;
+    if (srcW <= 0 || srcH <= 0 || options.width <= 0 || options.height <= 0) return false;
+
+    const smoothing = ctx.imageSmoothingEnabled;
+    if (texture.crisp) ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(this.getEffectiveSource(texture, meta), srcX, srcY, srcW, srcH, options.x, options.y, options.width, options.height);
+    ctx.imageSmoothingEnabled = smoothing;
+    return true;
+  }
+
   public render(ctx: CanvasRenderingContext2D, options: RenderAtlasFrameOptions): boolean {
     const resolved = assetLoader.getAtlasSource(options.atlasId);
     if (!resolved) return false;
@@ -166,28 +269,11 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
     const cellW = texture.width / info.cols;
     const cellH = texture.height / info.rows;
 
-    const animKey = resolveAnimationKeyFromStates(meta, options.animationName);
-    const animTrack = resolveAnimationTrack(meta, animKey);
-
-    const trackFrames: number = resolveEffectiveFrameCount(animTrack);
-    if (trackFrames <= 0) return false;
-    const trackFps: number = animTrack?.fps ?? 8;
-    const trackLoop: boolean = animTrack?.loop !== undefined ? animTrack.loop : true;
-
-    let currentFrame = 0;
-    if (options.frameIndex !== undefined) {
-      currentFrame = Math.abs(options.frameIndex) % Math.max(1, trackFrames);
-    } else {
-      const ticks = options.ticks ?? 0;
-      const frameDuration = Math.max(1, Math.round(60 / Math.max(1, trackFps)));
-      const step = Math.floor(ticks / frameDuration);
-      currentFrame = trackLoop ? step % trackFrames : Math.min(step, trackFrames - 1);
-    }
-
-    const span = resolveFrameSpan(animTrack, currentFrame);
-    const sx = resolveFrameColumn(animTrack, currentFrame) * cellW;
-    const sy = (animTrack?.row ?? 0) * cellH;
-    const sw = span * cellW;
+    const span = this.selectFrame(meta, cellW, cellH, options.animationName, options.frameIndex, options.ticks);
+    if (span <= 0) return false;
+    const sx = this.selSx;
+    const sy = this.selSy;
+    const sw = this.selSw;
 
     this.placeFrame(info, options, quality, meta, cellW, cellH, span);
     const { drawX, drawY, drawW: dw, drawH: dh, pivotX } = this;

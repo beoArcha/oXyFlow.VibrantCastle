@@ -1,7 +1,17 @@
 import { Entity, CollisionType } from "@game/types";
 import { LanguageCode, t } from "@i18n";
 import { ViewCuller } from "./viewCulling";
-import { IAtlasSpriteRenderer, defaultAtlasSpriteRenderer } from "./atlasSpriteRenderer";
+import { IAtlasSpriteRenderer, RenderAtlasRegionOptions, defaultAtlasSpriteRenderer } from "./atlasSpriteRenderer";
+import { gateFullHeight, gateOpenProgress, isGateOpen } from "@game/physics/gateState";
+import {
+  HAZARD_ATLAS_ID,
+  PORTCULLIS_ATLAS_ID,
+  PORTCULLIS_SLICES,
+  gateLiftOffset,
+  hazardTileCount,
+  planPortcullis,
+  type PortcullisLayout,
+} from "./structurePlans";
 import { assetLoader } from "@game/engine/assetLoader";
 import {
   buildTilePlan,
@@ -32,6 +42,30 @@ export class StructureRenderer implements IStructureRenderer {
   private readonly portalGradientCache: Map<string, CanvasGradient> = new Map();
   private readonly tilePlans: WeakMap<Entity, TilePlan> = new WeakMap();
   private tilesetProvider: ITilesetProvider | null;
+  /** Reused every frame so slicing a gate allocates nothing. */
+  private readonly region: RenderAtlasRegionOptions = {
+    atlasId: "",
+    animationName: "closed",
+    ticks: 0,
+    regionX: 0,
+    regionY: 0,
+    regionW: 1,
+    regionH: 1,
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  };
+  private readonly gateLayout: PortcullisLayout = { lintelH: 0, spikesH: 0, postW: 0, bayH: 0 };
+  private readonly hazardOptions = {
+    atlasId: HAZARD_ATLAS_ID,
+    animationName: "idle",
+    ticks: 0,
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  };
 
   public clearCaches(): void {
     this.portalGradientCache.clear();
@@ -100,8 +134,7 @@ export class StructureRenderer implements IStructureRenderer {
     let drawn = 0;
     for (let i = 0; i < entities.length; i++) {
       const entity = entities[i];
-      if (entity.y === -1000) continue;
-      if (view && !view.intersects(entity.x, entity.y, entity.width, entity.height)) continue;
+      if (view && !view.intersects(entity.x, entity.y, entity.width, gateFullHeight(entity))) continue;
       drawn++;
 
       switch (entity.type) {
@@ -114,7 +147,8 @@ export class StructureRenderer implements IStructureRenderer {
           break;
 
         case CollisionType.Solid:
-          this.renderSolidPlatform(ctx, entity);
+          if (entity.structureId === PORTCULLIS_ATLAS_ID) this.renderGate(ctx, entity, tickCount);
+          else if (!isGateOpen(entity)) this.renderSolidPlatform(ctx, entity);
           break;
 
         case CollisionType.OneWay:
@@ -122,7 +156,7 @@ export class StructureRenderer implements IStructureRenderer {
           break;
 
         case CollisionType.Hazard:
-          this.renderHazardSpikes(ctx, entity);
+          this.renderHazard(ctx, entity, tickCount);
           break;
       }
     }
@@ -311,6 +345,134 @@ export class StructureRenderer implements IStructureRenderer {
     for (let bx = entity.x + 8; bx < entity.x + entity.width - 8; bx += 22) {
       ctx.fillRect(bx, entity.y + 4, 3, Math.max(6, entity.height - 4));
     }
+  }
+
+  /** Draws a column of tiled portcullis bays between `top` and `bottom`; the last tile is cut, not squashed. */
+  private drawBays(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    width: number,
+    regionX: number,
+    regionW: number,
+    top: number,
+    bottom: number,
+    bayH: number,
+    tickCount: number
+  ): void {
+    const r = this.region;
+    for (let ty = top; ty < bottom; ty += bayH) {
+      const visibleH = Math.min(bayH, bottom - ty);
+      if (ty + visibleH <= 0) continue;
+      r.regionX = regionX;
+      r.regionW = regionW;
+      r.regionY = PORTCULLIS_SLICES.bayY;
+      r.regionH = (PORTCULLIS_SLICES.bayH * visibleH) / bayH;
+      r.x = x;
+      r.y = ty;
+      r.width = width;
+      r.height = visibleH;
+      r.ticks = tickCount;
+      this.atlasRenderer.renderRegion(ctx, r);
+    }
+  }
+
+  /**
+   * Gate solid drawn from the portcullis sheet: stone posts and lintel stay put while the iron grid
+   * (bays and spikes) slides up into the lintel, clipped to the gate's closed rect. Falls back to the
+   * procedural platform (which already shrinks with the collision height) when the atlas is missing.
+   */
+  private renderGate(ctx: CanvasRenderingContext2D, entity: Entity, tickCount: number): void {
+    const aspect = this.atlasRenderer.hasAtlas(PORTCULLIS_ATLAS_ID)
+      ? this.atlasRenderer.getBodyAspect(PORTCULLIS_ATLAS_ID)
+      : 0;
+    if (aspect <= 0) {
+      if (!isGateOpen(entity)) this.renderSolidPlatform(ctx, entity);
+      return;
+    }
+
+    const x = Math.round(entity.x);
+    const y = Math.round(entity.y);
+    const w = Math.round(entity.width);
+    const full = Math.round(gateFullHeight(entity));
+    const layout = planPortcullis(w, aspect, this.gateLayout);
+    const lift = gateLiftOffset(gateOpenProgress(entity), full);
+    const postRegionW = PORTCULLIS_SLICES.postW;
+    const gridX = x + layout.postW;
+    const gridW = w - 2 * layout.postW;
+    const r = this.region;
+    r.atlasId = PORTCULLIS_ATLAS_ID;
+    r.animationName = "closed";
+    r.ticks = tickCount;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x, y, w, full);
+    ctx.clip();
+
+    // stone posts, static
+    this.drawBays(ctx, x, layout.postW, 0, postRegionW, y + layout.lintelH, y + full, layout.bayH, tickCount);
+    this.drawBays(
+      ctx,
+      x + w - layout.postW,
+      layout.postW,
+      1 - postRegionW,
+      postRegionW,
+      y + layout.lintelH,
+      y + full,
+      layout.bayH,
+      tickCount
+    );
+
+    // iron grid and spikes, lifted by the opening progress
+    if (lift < full && gridW > 0) {
+      const gridTop = y + layout.lintelH - lift;
+      const gridBottom = y + full - layout.spikesH - lift;
+      this.drawBays(ctx, gridX, gridW, postRegionW, 1 - 2 * postRegionW, gridTop, gridBottom, layout.bayH, tickCount);
+      r.regionX = postRegionW;
+      r.regionW = 1 - 2 * postRegionW;
+      r.regionY = PORTCULLIS_SLICES.spikesY;
+      r.regionH = PORTCULLIS_SLICES.spikesH;
+      r.x = gridX;
+      r.y = gridBottom;
+      r.width = gridW;
+      r.height = layout.spikesH;
+      this.atlasRenderer.renderRegion(ctx, r);
+    }
+
+    // lintel on top hides the grid as it slides in
+    r.regionX = 0;
+    r.regionW = 1;
+    r.regionY = 0;
+    r.regionH = PORTCULLIS_SLICES.lintelH;
+    r.x = x;
+    r.y = y;
+    r.width = w;
+    r.height = layout.lintelH;
+    this.atlasRenderer.renderRegion(ctx, r);
+
+    ctx.restore();
+  }
+
+  /** Thorn strip tiled along the hazard width; procedural spikes when the atlas is missing. */
+  private renderHazard(ctx: CanvasRenderingContext2D, entity: Entity, tickCount: number): void {
+    const aspect = this.atlasRenderer.hasAtlas(HAZARD_ATLAS_ID) ? this.atlasRenderer.getBodyAspect(HAZARD_ATLAS_ID) : 0;
+    const count = hazardTileCount(entity.width, entity.height, aspect);
+    if (count > 0) {
+      const step = entity.width / count;
+      const o = this.hazardOptions;
+      const tileH = Math.min(entity.height, step / aspect);
+      o.y = entity.y + entity.height - tileH;
+      o.height = tileH;
+      o.width = step;
+      let drawn = true;
+      for (let i = 0; i < count && drawn; i++) {
+        o.x = entity.x + i * step;
+        o.ticks = tickCount + i * 7;
+        drawn = this.atlasRenderer.render(ctx, o);
+      }
+      if (drawn) return;
+    }
+    this.renderHazardSpikes(ctx, entity);
   }
 
   private renderHazardSpikes(ctx: CanvasRenderingContext2D, entity: Entity): void {
