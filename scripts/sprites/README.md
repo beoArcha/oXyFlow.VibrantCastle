@@ -193,7 +193,7 @@ export default defineTileset({
 
 Warning, not fatal: for `top`, `fill`, `ledge`, `bottom` and their variants, the right edge of one tile does not continue into the left edge of another (more than 25 % of rows differ).
 
-**Runtime rules.** The rect is tiled on a `worldTile` grid anchored at the entity's top-left; the last column or row is cropped, not stretched. A platform no taller than one tile is one row: `ledge_left`, `ledge`, `ledge_right`, or `ledge` alone when one cell wide. A taller platform has a `top_*` row, `left/fill/right` middle rows and a `bottom_*` row; a one-cell-wide block uses the middle names only. A base with variants is chosen by `variantHash(col, row, originX, originY) % (1 + variants)` from `tilingRules.ts`, which is stable across frames. The runtime cannot import from `scripts/`, so it copies this formula; keep the two in step.
+**Runtime rules.** The rect is tiled on a `worldTile` grid anchored at the entity's top-left; the last column or row is cropped, not stretched. A platform no taller than one tile is one row: `ledge_left`, `ledge`, `ledge_right`, or `ledge` alone when one cell wide. A taller platform has a `top_*` row, `left/fill/right` middle rows and a `bottom_*` row; a one-cell-wide block uses the middle names only. A base with variants is chosen by `variantHash(col, row, originX, originY) % (1 + variants)` from `tilingRules.ts`, which is stable across frames. It is the same formula as `tileHash` in `src/game/engine/tiles/tilePlan.ts` (scripts cannot import the runtime); keep the two in step.
 
 **Commands.**
 

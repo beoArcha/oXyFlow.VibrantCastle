@@ -26,15 +26,24 @@ function blockBaseName(row: number, col: number, columns: number, rows: number):
   return side || "fill";
 }
 
-/** Integer hash of a tile position and its platform origin; a fixed input always gives the same variant. */
+/**
+ * Integer hash of a tile position and its platform origin; a fixed input always gives the same variant.
+ * Must stay identical to `tileHash` in src/game/engine/tiles/tilePlan.ts (scripts cannot import the runtime),
+ * so the tiling demo shows the same variants the game draws.
+ */
 export function variantHash(col: number, row: number, originX: number, originY: number): number {
-  let h = Math.imul(col, 0x9e3779b1) ^ Math.imul(row, 0x85ebca77) ^ Math.imul(originX, 0xc2b2ae3d) ^ Math.imul(originY, 0x27d4eb2f);
-  h = Math.imul(h ^ (h >>> 15), 0x2c1b3c6d);
-  return (h ^ (h >>> 13)) >>> 0;
+  let h = Math.imul(col | 0, 73856093) ^ Math.imul(row | 0, 19349663);
+  h ^= Math.imul(Math.round(originX) | 0, 83492791) ^ Math.imul(Math.round(originY) | 0, 668265263);
+  h = Math.imul(h ^ (h >>> 15), 2246822519);
+  h = Math.imul(h ^ (h >>> 13), 3266489917);
+  return (h ^ (h >>> 16)) >>> 0;
 }
 
-/** Picks the base tile or one of its numbered variants for a position; stable across frames. */
+const variantNumber = (name: string): number => Number(/_(\d+)$/.exec(name)?.[1] ?? 0);
+
+/** Picks the base tile or one of its numbered variants (base first, then `_2`, `_3`... in numeric order, like the runtime). */
 export function chooseTile(tiles: readonly string[], base: string, col: number, row: number, originX: number, originY: number): string {
-  const choices = [base, ...variantsOf(tiles, base)];
+  const variants = variantsOf(tiles, base).sort((a, b) => variantNumber(a) - variantNumber(b));
+  const choices = [base, ...variants];
   return choices[variantHash(col, row, originX, originY) % choices.length];
 }
