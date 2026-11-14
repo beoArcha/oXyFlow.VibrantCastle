@@ -1,7 +1,7 @@
 # Raport z manualnych testów serwera Graphify MCP (Takt 3)
 **Data testu:** 2026-11-07 18:39:28
-**Ścieżka serwera MCP:** `C:\Users\Krzysiu\.local\bin\graphify-mcp.exe`
-**Ścieżka grafu:** `C:\Users\Krzysiu\Source\oXyFlow.VibrantCastle\graphify-out\graph.json`
+**Ścieżka serwera MCP:** `%USERPROFILE%\.local\bin\graphify-mcp.exe`
+**Ścieżka grafu:** `graphify-out/graph.json (repo root)`
 **Protokół:** MCP JSON-RPC 2.0 przez stdio
 
 ---
