@@ -36,6 +36,7 @@ export function buildLocationEntities(
         height: s.height || prefab?.defaultHeight || 25,
         color: s.color || prefab?.color || "#b35a38",
         borderColor: prefab?.borderColor,
+        tileset: prefab?.tileset,
         labelKey: s.labelKey || prefab?.labelKey,
         label: s.defaultLabel || s.label || prefab?.defaultLabel || prefab?.label,
         vx: s.vx,

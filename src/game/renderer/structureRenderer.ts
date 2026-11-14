@@ -2,6 +2,14 @@ import { Entity, CollisionType } from "@game/types";
 import { LanguageCode, t } from "@i18n";
 import { ViewCuller } from "./viewCulling";
 import { IAtlasSpriteRenderer, defaultAtlasSpriteRenderer } from "./atlasSpriteRenderer";
+import { assetLoader } from "@game/engine/assetLoader";
+import {
+  buildTilePlan,
+  createDiscoveredTilesetManager,
+  PLAN_STRIDE,
+  type ITilesetProvider,
+  type TilePlan,
+} from "@game/engine/tiles";
 
 export interface IStructureRenderer {
   render(
@@ -22,13 +30,64 @@ export class StructureRenderer implements IStructureRenderer {
   private readonly atlasRenderer: IAtlasSpriteRenderer;
 
   private readonly portalGradientCache: Map<string, CanvasGradient> = new Map();
+  private readonly tilePlans: WeakMap<Entity, TilePlan> = new WeakMap();
+  private tilesetProvider: ITilesetProvider | null;
 
   public clearCaches(): void {
     this.portalGradientCache.clear();
   }
 
-  constructor(atlasRenderer: IAtlasSpriteRenderer = defaultAtlasSpriteRenderer) {
+  /** `tilesets` defaults to the tilesets discovered under `src/assets/tiles`, created on first use. */
+  constructor(atlasRenderer: IAtlasSpriteRenderer = defaultAtlasSpriteRenderer, tilesets?: ITilesetProvider) {
     this.atlasRenderer = atlasRenderer;
+    this.tilesetProvider = tilesets ?? null;
+  }
+
+  private get tilesets(): ITilesetProvider {
+    return (this.tilesetProvider ??= createDiscoveredTilesetManager(assetLoader.spriteSources));
+  }
+
+  /**
+   * Fills a platform from its tileset at the active quality. Returns false (caller draws the procedural
+   * platform) when the entity has no tileset or its sheet is not loaded. Allocation-free after the
+   * first frame of an entity: the tile plan is cached and destination rects are integers.
+   */
+  private renderTiled(ctx: CanvasRenderingContext2D, entity: Entity): boolean {
+    if (!entity.tileset) return false;
+    const tileset = this.tilesets.resolve(entity.tileset);
+    if (!tileset) return false;
+
+    let plan = this.tilePlans.get(entity);
+    if (!plan || plan.width !== entity.width || plan.height !== entity.height) {
+      plan = buildTilePlan(tileset.meta, entity.x, entity.y, entity.width, entity.height);
+      this.tilePlans.set(entity, plan);
+    }
+
+    const k = tileset.tile / tileset.meta.worldTile;
+    const tile = tileset.tile;
+    const originX = Math.round(entity.x);
+    const originY = Math.round(entity.y);
+    const cells = plan.cells;
+    const smoothing = ctx.imageSmoothingEnabled;
+    ctx.imageSmoothingEnabled = false;
+    for (let i = 0; i < plan.count; i++) {
+      const o = i * PLAN_STRIDE;
+      const sw = Math.max(1, Math.round(cells[o + 4] * k));
+      const sh = Math.max(1, Math.round(cells[o + 5] * k));
+      ctx.drawImage(
+        tileset.image,
+        cells[o] * tile + Math.round(cells[o + 6] * k),
+        cells[o + 1] * tile + Math.round(cells[o + 7] * k),
+        sw,
+        sh,
+        originX + cells[o + 2],
+        originY + cells[o + 3],
+        cells[o + 4],
+        cells[o + 5]
+      );
+    }
+    ctx.imageSmoothingEnabled = smoothing;
+    return true;
   }
 
   public render(
@@ -224,6 +283,7 @@ export class StructureRenderer implements IStructureRenderer {
   }
 
   private renderSolidPlatform(ctx: CanvasRenderingContext2D, entity: Entity): void {
+    if (this.renderTiled(ctx, entity)) return;
     ctx.fillStyle = entity.color || "#b35a38";
     ctx.fillRect(entity.x, entity.y, entity.width, entity.height);
 
@@ -240,6 +300,7 @@ export class StructureRenderer implements IStructureRenderer {
   }
 
   private renderOneWayPlatform(ctx: CanvasRenderingContext2D, entity: Entity): void {
+    if (this.renderTiled(ctx, entity)) return;
     ctx.fillStyle = entity.color || "#d98a55";
     ctx.fillRect(entity.x, entity.y, entity.width, entity.height);
 

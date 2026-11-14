@@ -95,6 +95,8 @@ Every level blueprint in `src/data/locations/` conforms to the canonical locatio
 | `aether_sanctuary` | 6400 x 1600 | 44 | 1 | 13 | clocktower, grand_bastion |
 | `grand_bastion` | 8000 x 1500 | 56 | 2 | 22 | aether_sanctuary, courtyard (`from_bastion`) |
 
+**Platform tileset field.** A solid or one-way prefab may carry an optional `"tileset": "<id>"` (`EntityPrefabSchema.tileset`). The location parser copies it to the runtime `Entity.tileset`; the structure renderer then fills the platform from `src/assets/tiles/<id>/` (see `PARALLAX_AND_RENDERING.md` §7). Without the field, or without the files, the platform keeps its procedural look. Planned ids: `courtyard_stone`, `courtyard_wood`, `bastion_stone`, `clocktower_brick`, `chasm_rock`, `chasm_ledge`, `sanctuary_crystal`.
+
 Counts are taken from `src/data/locations/*.json`. The courtyard has no portal of its own towards the tower or bastion; those entries only receive players.
 
 ### 3.1. Portal World Graph Integrity

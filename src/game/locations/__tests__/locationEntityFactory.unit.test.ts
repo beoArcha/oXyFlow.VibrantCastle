@@ -63,3 +63,27 @@ describe("buildLocationEntities lever targeting", () => {
     expect(b?.targetGateId).toBeUndefined();
   });
 });
+
+describe("buildLocationEntities tileset", () => {
+  it("carries the prefab tileset to solid and oneway entities and leaves others undefined", () => {
+    const layout = {
+      solids: [
+        { id: "floor", prefabId: "stone", x: 0, y: 0 },
+        { id: "wood", prefabId: "plank", x: 0, y: 0 },
+        { id: "plain", prefabId: "bare", x: 0, y: 0 },
+      ],
+    } as unknown as LocationJsonSchema["layout"];
+    const dictionaries = {
+      entities: {
+        stone: { prefabId: "stone", type: "solid", tileset: "courtyard_stone" },
+        plank: { prefabId: "plank", type: "oneway", tileset: "courtyard_wood" },
+        bare: { prefabId: "bare", type: "solid" },
+      },
+      portals: {},
+    } as unknown as LocationJsonSchema["dictionaries"];
+
+    const entities = buildLocationEntities(layout, dictionaries);
+
+    expect(entities.map((e) => e.tileset)).toEqual(["courtyard_stone", "courtyard_wood", undefined]);
+  });
+});

@@ -107,6 +107,7 @@
       "bastion_floor": {
         "prefabId": "bastion_floor",
         "type": "solid",
+        "tileset": "bastion_stone",
         "color": "#b35a38",
         "borderColor": "#e2b653",
         "labelKey": "labelStoneFloor",
@@ -115,6 +116,7 @@
       "bastion_step": {
         "prefabId": "bastion_step",
         "type": "solid",
+        "tileset": "bastion_stone",
         "color": "#d98a55",
         "borderColor": "#fed7aa",
         "labelKey": "labelStoneStep",
@@ -139,6 +141,7 @@
       "bastion_lift": {
         "prefabId": "bastion_lift",
         "type": "solid",
+        "tileset": "bastion_stone",
         "color": "#f59e0b",
         "borderColor": "#fbbf24",
         "labelKey": "labelMovingPlatform",
@@ -147,6 +150,7 @@
       "target_step": {
         "prefabId": "target_step",
         "type": "solid",
+        "tileset": "bastion_stone",
         "color": "#c29547",
         "borderColor": "#fef08a",
         "labelKey": "labelStonePlatform",

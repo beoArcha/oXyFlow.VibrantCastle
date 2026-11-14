@@ -137,6 +137,8 @@ export interface Entity {
   /** Lever only: id of the Solid gate this lever opens. */
   targetGateId?: string;
   structureId?: string;
+  /** Platform tileset id (`src/assets/tiles/<id>`); absent or unloaded means procedural drawing. */
+  tileset?: string;
   animationState?: string;
   animationTicks?: number;
   targetLocationId?: string;

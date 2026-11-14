@@ -105,6 +105,7 @@
       "sanctuary_masonry": {
         "prefabId": "sanctuary_masonry",
         "type": "solid",
+        "tileset": "sanctuary_crystal",
         "color": "#1e3a8a",
         "borderColor": "#38bdf8",
         "labelKey": "labelStonePlatform",
@@ -113,6 +114,7 @@
       "crystal_plat": {
         "prefabId": "crystal_plat",
         "type": "solid",
+        "tileset": "sanctuary_crystal",
         "color": "#38bdf8",
         "borderColor": "#e0f2fe",
         "labelKey": "labelMovingPlatform",
