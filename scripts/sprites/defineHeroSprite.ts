@@ -16,6 +16,12 @@ function assertPaintedSource(id: string, def: HeroSpriteDefinition): void {
     throw spriteError(`Hero "${id}": dithering is not implemented, leave source.dither unset or false.`, { id });
   }
   for (const tier of ["hi8bit", "hi16bit"] as const) {
+    const tune = source.tune?.[tier];
+    if (tune !== undefined) {
+      const { gamma = 1, contrast = 1, saturation = 1 } = tune;
+      const valid = [gamma, contrast, saturation].every(Number.isFinite) && gamma > 0 && contrast >= 0 && saturation >= 0;
+      if (!valid) throw spriteError(`Hero "${id}": source.tune.${tier} needs gamma > 0, contrast >= 0 and saturation >= 0.`, { id, tier });
+    }
     if (draw?.[tier] !== undefined && typeof draw[tier] !== "function") {
       throw spriteError(`Hero "${id}": draw.${tier} must be a function.`, { id, tier });
     }

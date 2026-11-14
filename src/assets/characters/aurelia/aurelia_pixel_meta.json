@@ -2,7 +2,7 @@
   "characterId": "aurelia",
   "entityType": "humanoid",
   "version": "1.0",
-  "description": "Aurelia, the arcane duelist, quantized from her painted frames to a hard-edged 16-colour hi-16bit and 8-colour hi-8bit palette.",
+  "description": "Aurelia, the arcane duelist, quantized from her painted frames to a hard-edged 16-colour hi-16bit and 12-colour hi-8bit palette.",
   "atlas": {
     "columns": 15,
     "rows": 8,

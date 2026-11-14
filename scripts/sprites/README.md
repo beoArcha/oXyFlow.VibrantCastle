@@ -156,6 +156,8 @@ Valen and Aurelia set `source: { kind: "painted", colors, remap? }` in `defineHe
 - Optional `draw` hooks run on top of the quantized frame for touch-ups.
 - Output is PNG (see Output above); enemies are unaffected.
 
+Optional `tune` (`{ hi8bit?, hi16bit? }`, each `{ gamma?, contrast?, saturation? }`) grades one tier's RGB before its palette is built: saturation first (0 is greyscale), then contrast around mid grey, then gamma (below 1 brightens the mid tones), all deterministic and alpha-preserving; omitted or default values change nothing. Valen and Aurelia grade hi-8bit only (`gamma` 0.8, `contrast` 1.15, `saturation` 1.2) with 12 hi-8bit colours instead of 8: the plain 2x average and 8-colour palette were too dark and muddy, the faces washed out and the dark coat merged into brown. hi-16bit is never graded for them, so its sheets stay byte-identical. Compare with `bun scripts/sprites/compile.ts valen aurelia --preview <dir>`.
+
 `bun scripts/sprites/compile.ts <id>` looks the id up in `enemies/` first and `heroes/` second; `--all`, `--all --check` and `--preview <dir>` cover both kinds.
 
 ## Tilesets
