@@ -890,6 +890,116 @@
         "patrolMaxX": 1800,
         "facingLeft": true
       }
+    ],
+    "decor": [
+      {
+        "id": "tower_decor_1",
+        "propId": "hanging_lantern",
+        "x": 180,
+        "y": 2680,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "tower_decor_2",
+        "propId": "wall_gear",
+        "x": 1100,
+        "y": 2700,
+        "layer": "back",
+        "flipX": false,
+        "phase": 1
+      },
+      {
+        "id": "tower_decor_3",
+        "propId": "iron_chain",
+        "x": 2650,
+        "y": 2150,
+        "layer": "front",
+        "flipX": false,
+        "phase": 2
+      },
+      {
+        "id": "tower_decor_4",
+        "propId": "wall_gear",
+        "x": 750,
+        "y": 2050,
+        "layer": "back",
+        "flipX": true,
+        "phase": 3
+      },
+      {
+        "id": "tower_decor_5",
+        "propId": "hanging_lantern",
+        "x": 1950,
+        "y": 2100,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "tower_decor_6",
+        "propId": "iron_chain",
+        "x": 3350,
+        "y": 1250,
+        "layer": "back",
+        "flipX": false,
+        "phase": 1
+      },
+      {
+        "id": "tower_decor_7",
+        "propId": "wall_gear",
+        "x": 2100,
+        "y": 1550,
+        "layer": "back",
+        "flipX": false,
+        "phase": 2
+      },
+      {
+        "id": "tower_decor_8",
+        "propId": "hanging_lantern",
+        "x": 1550,
+        "y": 1520,
+        "layer": "back",
+        "flipX": true,
+        "phase": 3
+      },
+      {
+        "id": "tower_decor_9",
+        "propId": "hanging_lantern",
+        "x": 620,
+        "y": 960,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "tower_decor_10",
+        "propId": "wall_gear",
+        "x": 280,
+        "y": 920,
+        "layer": "back",
+        "flipX": false,
+        "phase": 1
+      },
+      {
+        "id": "tower_decor_11",
+        "propId": "iron_chain",
+        "x": 800,
+        "y": 260,
+        "layer": "front",
+        "flipX": true,
+        "phase": 2
+      },
+      {
+        "id": "tower_decor_12",
+        "propId": "hanging_lantern",
+        "x": 3320,
+        "y": 0,
+        "layer": "back",
+        "flipX": false,
+        "phase": 3
+      }
     ]
   }
 }

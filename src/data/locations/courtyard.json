@@ -940,6 +940,152 @@
         "patrolMaxX": 6700,
         "twoPlayerOnly": false
       }
+    ],
+    "decor": [
+      {
+        "id": "court_decor_1",
+        "propId": "garden_lamp_post",
+        "x": 380,
+        "y": 1170,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "court_decor_2",
+        "propId": "leaf_pile",
+        "x": 500,
+        "y": 1170,
+        "layer": "back",
+        "flipX": false,
+        "phase": 1
+      },
+      {
+        "id": "court_decor_3",
+        "propId": "hanging_lantern",
+        "x": 1060,
+        "y": 920,
+        "layer": "back",
+        "flipX": false,
+        "phase": 2
+      },
+      {
+        "id": "court_decor_4",
+        "propId": "tattered_banner",
+        "x": 1360,
+        "y": 840,
+        "layer": "front",
+        "flipX": false,
+        "phase": 3
+      },
+      {
+        "id": "court_decor_5",
+        "propId": "hanging_lantern",
+        "x": 2120,
+        "y": 906,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "court_decor_6",
+        "propId": "garden_lamp_post",
+        "x": 2775,
+        "y": 1170,
+        "layer": "back",
+        "flipX": true,
+        "phase": 1
+      },
+      {
+        "id": "court_decor_7",
+        "propId": "leaf_pile",
+        "x": 3040,
+        "y": 1270,
+        "layer": "front",
+        "flipX": true,
+        "phase": 2
+      },
+      {
+        "id": "court_decor_8",
+        "propId": "wall_torch",
+        "x": 3440,
+        "y": 1190,
+        "layer": "back",
+        "flipX": false,
+        "phase": 3
+      },
+      {
+        "id": "court_decor_9",
+        "propId": "hanging_lantern",
+        "x": 3980,
+        "y": 936,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "court_decor_10",
+        "propId": "garden_lamp_post",
+        "x": 4455,
+        "y": 1170,
+        "layer": "back",
+        "flipX": false,
+        "phase": 1
+      },
+      {
+        "id": "court_decor_11",
+        "propId": "wall_torch",
+        "x": 4940,
+        "y": 882,
+        "layer": "back",
+        "flipX": false,
+        "phase": 2
+      },
+      {
+        "id": "court_decor_12",
+        "propId": "hanging_lantern",
+        "x": 5260,
+        "y": 820,
+        "layer": "back",
+        "flipX": false,
+        "phase": 3
+      },
+      {
+        "id": "court_decor_13",
+        "propId": "leaf_pile",
+        "x": 5880,
+        "y": 1170,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "court_decor_14",
+        "propId": "hanging_lantern",
+        "x": 6450,
+        "y": 720,
+        "layer": "back",
+        "flipX": true,
+        "phase": 1
+      },
+      {
+        "id": "court_decor_15",
+        "propId": "garden_lamp_post",
+        "x": 6885,
+        "y": 1170,
+        "layer": "back",
+        "flipX": false,
+        "phase": 2
+      },
+      {
+        "id": "court_decor_16",
+        "propId": "tattered_banner",
+        "x": 7020,
+        "y": 920,
+        "layer": "back",
+        "flipX": true,
+        "phase": 3
+      }
     ]
   }
 }
