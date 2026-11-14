@@ -96,7 +96,7 @@ Every level blueprint in `src/data/locations/` conforms to the canonical locatio
 | `aether_sanctuary` | 6400 x 1600 | 44 | 1 | 13 | clocktower, grand_bastion |
 | `grand_bastion` | 8000 x 1500 | 56 | 2 | 22 | aether_sanctuary, courtyard (`from_bastion`) |
 
-**Platform tileset field.** A solid or one-way prefab may carry an optional `"tileset": "<id>"` (`EntityPrefabSchema.tileset`). The location parser copies it to the runtime `Entity.tileset`; the structure renderer then fills the platform from `src/assets/tiles/<id>/` (see `PARALLAX_AND_RENDERING.md` §7). Without the field, or without the files, the platform keeps its procedural look. Planned ids: `courtyard_stone`, `courtyard_wood`, `bastion_stone`, `clocktower_brick`, `chasm_rock`, `chasm_ledge`, `sanctuary_crystal`.
+**Platform tileset field.** A solid or one-way prefab may carry an optional `"tileset": "<id>"` (`EntityPrefabSchema.tileset`). The location parser copies it to the runtime `Entity.tileset`; the structure renderer then fills the platform from `src/assets/tiles/<id>/` (see `PARALLAX_AND_RENDERING.md` §7). Without the field, or without the files, the platform keeps its procedural look. Shipped ids (8): `courtyard_stone`, `courtyard_wood`, `courtyard_marble`, `bastion_stone`, `clocktower_brick`, `chasm_rock`, `chasm_ledge`, `sanctuary_crystal`.
 
 Counts are taken from `src/data/locations/*.json`. The courtyard has no portal of its own towards the tower or bastion; those entries only receive players.
 
@@ -160,6 +160,17 @@ The enemy SVG sheet contract (grid, colour depth, meta format, fallback chain) i
 ---
 
 ### 5.3. Sprite and Atlas Tooling (Bun)
+
+The sprite compiler (`scripts/sprites/compile.ts`) accepts four authoring contracts. It finds the id in `enemies/`, `heroes/`, `tilesets/` and `props/`, in that order, and writes each kind to its own output folder. `--all`, `--check` and `--preview <dir>` work for all four kinds.
+
+| Contract | Define function | Source folder | Output folder | Output format | Command |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Enemy** | `defineEnemySprite` | `scripts/sprites/enemies/<id>.ts` (PixelCanvas drawing) | `src/assets/enemies/<id>/` | `<id>_hi8bit.svg`, `<id>_hi16bit.svg`, `<id>_meta.json` (the painted `high` sheet comes from `repack-atlas.ts`) | `bun scripts/sprites/compile.ts <id>` |
+| **Hero** | `defineHeroSprite` | `scripts/sprites/heroes/<id>.ts` (`source: painted` for quantized heroes) | `src/assets/characters/<id>/` | `<id>_hi8bit.png`, `<id>_hi16bit.png` (lossless PNG), `<id>_pixel_meta.json`; the painted `high` frames and `<id>_packed_meta.json` that the quantizer reads stay in the same folder | `bun scripts/sprites/compile.ts <id>` |
+| **Tileset** | `defineTileset` | `scripts/sprites/tilesets/<id>.ts` | `src/assets/tiles/<id>/` | `<id>_hi8bit.png` (16 px tiles), `<id>_hi16bit.png` (32 px tiles), `<id>_tiles_meta.json` (lossless PNG) | `bun scripts/sprites/compile.ts <id>` |
+| **Prop** | `defineProp` | `scripts/sprites/props/<id>.ts` | `src/assets/props/<id>/` | `<id>_hi8bit.png`, `<id>_hi16bit.png` (frames in one row, lossless PNG), `<id>_prop_meta.json` | `bun scripts/sprites/compile.ts <id>` |
+
+Each contract has its own README: `scripts/sprites/README.md` (enemies and heroes), `scripts/sprites/tilesets/README.md` and `scripts/sprites/props/README.md`.
 
 | Tool | Purpose |
 | :--- | :--- |
