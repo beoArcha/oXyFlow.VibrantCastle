@@ -93,7 +93,7 @@ describe("composeHeroSpriteMaps", () => {
   it("should replace only the tier that has art", () => {
     // Arrange
     const files = createHeroPixelFiles();
-    const images = Object.fromEntries(Object.entries(files.images).filter(([path]) => path.endsWith("_hi16bit.svg")));
+    const images = Object.fromEntries(Object.entries(files.images).filter(([path]) => path.endsWith("_hi16bit.png")));
     const pixel = buildHeroPixelSpriteMaps("testhero", { images, metas: files.metas });
 
     // Act
@@ -123,8 +123,8 @@ describe("sprite source factory with pixel hero tiers", () => {
     const high = factory.resolveCharacterSpriteMap("testhero", 1, "high");
 
     // Assert
-    expect(low?.meta.imageUrl).toBe("/assets/hi8bit-hash.svg");
-    expect(mid?.meta.imageUrl).toBe("/assets/hi16bit-hash.svg");
+    expect(low?.meta.imageUrl).toBe("/assets/hi8bit-hash.png");
+    expect(mid?.meta.imageUrl).toBe("/assets/hi16bit-hash.png");
     expect(high?.meta.imageUrl).toBe("testhero_high.png");
   });
 
@@ -213,6 +213,6 @@ describe("resolveAnimationFrame with pixel sheets", () => {
     // Assert
     expect(result.texture).toBeNull();
     expect(result.rowHeight).toBe(0);
-    expect(requested).toEqual(["/assets/hi16bit-hash.svg"]);
+    expect(requested).toEqual(["/assets/hi16bit-hash.png"]);
   });
 });

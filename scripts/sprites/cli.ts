@@ -107,17 +107,23 @@ export function compileSprite(def: SpriteDefinition, dirs: SpriteDirs = DEFAULT_
 
 export interface OutputFile {
   path: string;
-  content: string;
+  content: string | Uint8Array;
 }
 
 export function outputFiles(def: SpriteDefinition, compiled: CompiledSprite, outDir: string): OutputFile[] {
   const base = join(outDir, def.id);
   const metaName = isEnemyDefinition(def) ? `${def.id}_meta.json` : `${def.id}_pixel_meta.json`;
-  return [
-    { path: join(base, `${def.id}_hi8bit.svg`), content: compiled.hi8bitSvg },
-    { path: join(base, `${def.id}_hi16bit.svg`), content: compiled.hi16bitSvg },
-    { path: join(base, metaName), content: compiled.metaJson },
-  ];
+  const sheets: OutputFile[] =
+    "hi8bitPng" in compiled
+      ? [
+          { path: join(base, `${def.id}_hi8bit.png`), content: compiled.hi8bitPng },
+          { path: join(base, `${def.id}_hi16bit.png`), content: compiled.hi16bitPng },
+        ]
+      : [
+          { path: join(base, `${def.id}_hi8bit.svg`), content: compiled.hi8bitSvg },
+          { path: join(base, `${def.id}_hi16bit.svg`), content: compiled.hi16bitSvg },
+        ];
+  return [...sheets, { path: join(base, metaName), content: compiled.metaJson }];
 }
 
 const normalizeNewlines = (text: string): string => text.replace(/\r\n/g, "\n");
@@ -126,7 +132,11 @@ const normalizeNewlines = (text: string): string => text.replace(/\r\n/g, "\n");
 export function findStaleFiles(files: OutputFile[]): string[] {
   return files.flatMap(({ path, content }) => {
     if (!existsSync(path)) return [`missing: ${path}`];
-    return normalizeNewlines(readFileSync(path, "utf8")) === content ? [] : [`out of date: ${path}`];
+    const upToDate =
+      typeof content === "string"
+        ? normalizeNewlines(readFileSync(path, "utf8")) === content
+        : Buffer.compare(readFileSync(path), content) === 0;
+    return upToDate ? [] : [`out of date: ${path}`];
   });
 }
 

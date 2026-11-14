@@ -1,4 +1,4 @@
-import type { CompiledSprite } from "./compileSprite";
+import type { CompiledHero } from "./compileSprite";
 import { spriteError } from "./errors";
 import { assertGrid, loadPackedGrid } from "./heroGrid";
 import { buildHeroMeta, heroBodyBox } from "./heroMeta";
@@ -6,7 +6,7 @@ import { buildHeroSheet, renderHeroTier, type RenderedHeroTier } from "./heroRen
 import type { HeroGrid, HeroSpriteDefinition } from "./heroTypes";
 import { loadPaintedFiles, renderPaintedHero } from "./paintedHero";
 import { validateHero } from "./heroValidate";
-import { sheetToSvg } from "./svgWriter";
+import { sheetToPng } from "./sheetPng";
 
 /** The inline grid when given, otherwise the grid derived from the packed meta of the painted character. */
 export function resolveHeroGrid(def: HeroSpriteDefinition, charactersDir: string): HeroGrid {
@@ -28,15 +28,15 @@ function renderHero(def: HeroSpriteDefinition, charactersDir: string): RenderedH
 }
 
 /** Renders, validates and serialises one hero without touching the disk (apart from reading the packed meta). */
-export function compileHeroSprite(def: HeroSpriteDefinition, charactersDir: string): CompiledSprite {
+export function compileHeroSprite(def: HeroSpriteDefinition, charactersDir: string): CompiledHero {
   const { grid, hi8bit, hi16bit } = renderHero(def, charactersDir);
   const warnings = validateHero(def, grid, hi8bit, hi16bit);
   const bodyBox = heroBodyBox(hi16bit);
   if (!bodyBox) throw spriteError(`Hero "${def.id}" has no opaque idle pixels.`, { id: def.id });
   const sheets = { hi8bit: buildHeroSheet(grid, hi8bit), hi16bit: buildHeroSheet(grid, hi16bit) };
   return {
-    hi8bitSvg: sheetToSvg(sheets.hi8bit),
-    hi16bitSvg: sheetToSvg(sheets.hi16bit),
+    hi8bitPng: sheetToPng(sheets.hi8bit),
+    hi16bitPng: sheetToPng(sheets.hi16bit),
     metaJson: `${JSON.stringify(buildHeroMeta(def, grid, { hi8bit, hi16bit }, bodyBox), null, 2)}\n`,
     warnings,
     sheets,

@@ -53,7 +53,7 @@ function gridMeta(grid: HeroGrid) {
 function variantMeta(id: string, grid: HeroGrid, tier: Tier, rendered: RenderedHeroTier) {
   const { width, height } = rendered.cell;
   return {
-    file: `${id}_${tier}.svg`,
+    file: `${id}_${tier}.png`,
     cellWidth: width,
     cellHeight: height,
     sheetWidth: grid.columns * width,

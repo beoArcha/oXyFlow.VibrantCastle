@@ -19,7 +19,7 @@ export function createHeroPixelMetaJson(characterId = "testhero"): Record<string
     },
     variants: {
       low: {
-        file: `${characterId}_hi8bit.svg`,
+        file: `${characterId}_hi8bit.png`,
         cellWidth: 5,
         cellHeight: 4,
         sheetWidth: 15,
@@ -32,7 +32,7 @@ export function createHeroPixelMetaJson(characterId = "testhero"): Record<string
         },
       },
       mid: {
-        file: `${characterId}_hi16bit.svg`,
+        file: `${characterId}_hi16bit.png`,
         cellWidth: 10,
         cellHeight: 8,
         sheetWidth: 30,
@@ -57,8 +57,8 @@ export function createHeroPixelFiles(characterId = "testhero"): AtlasFileMap {
   const dir = `/src/assets/characters/${characterId}`;
   return {
     images: {
-      [`${dir}/${characterId}_hi8bit.svg`]: "/assets/hi8bit-hash.svg",
-      [`${dir}/${characterId}_hi16bit.svg`]: "/assets/hi16bit-hash.svg",
+      [`${dir}/${characterId}_hi8bit.png`]: "/assets/hi8bit-hash.png",
+      [`${dir}/${characterId}_hi16bit.png`]: "/assets/hi16bit-hash.png",
     },
     metas: { [`${dir}/${characterId}_pixel_meta.json`]: createHeroPixelMetaJson(characterId) },
   };

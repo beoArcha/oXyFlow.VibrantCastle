@@ -142,7 +142,7 @@
   },
   "variants": {
     "low": {
-      "file": "aurelia_hi8bit.svg",
+      "file": "aurelia_hi8bit.png",
       "cellWidth": 92,
       "cellHeight": 78,
       "sheetWidth": 1380,
@@ -410,7 +410,7 @@
       }
     },
     "mid": {
-      "file": "aurelia_hi16bit.svg",
+      "file": "aurelia_hi16bit.png",
       "cellWidth": 184,
       "cellHeight": 156,
       "sheetWidth": 2760,

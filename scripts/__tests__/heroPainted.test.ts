@@ -1,4 +1,5 @@
 import { describe, expect, it } from "bun:test";
+import { decodePngBuffer } from "../lib/png";
 import { DEFAULT_HERO_OUT_DIR } from "../sprites/cli";
 import { compileHeroSprite } from "../sprites/compileHero";
 import { snap565 } from "../sprites/colors";
@@ -38,8 +39,8 @@ describe("painted hero determinism", () => {
     const second = compile();
 
     // Assert
-    expect(second.hi8bitSvg).toBe(first.hi8bitSvg);
-    expect(second.hi16bitSvg).toBe(first.hi16bitSvg);
+    expect(Buffer.compare(second.hi8bitPng, first.hi8bitPng)).toBe(0);
+    expect(Buffer.compare(second.hi16bitPng, first.hi16bitPng)).toBe(0);
     expect(second.metaJson).toBe(first.metaJson);
   });
 
@@ -75,13 +76,22 @@ describe("painted hero palettes", () => {
     expect(paletteOf(hi8bit).every((rgb) => unpack(rgb).every((channel) => channel % 17 === 0))).toBe(true);
   });
 
-  it("should write hex colours of the tier depth into the SVG sheets", () => {
+  it("should write PNG sheets whose opaque colours sit at the tier depth", () => {
     // Arrange & Act
     const compiled = compile();
 
     // Assert
-    expect((compiled.hi8bitSvg.match(/fill="#[0-9a-f]+"/g) ?? []).every((m) => /^fill="#[0-9a-f]{3}"$/.test(m))).toBe(true);
-    expect((compiled.hi16bitSvg.match(/fill="#[0-9a-f]+"/g) ?? []).every((m) => /^fill="#[0-9a-f]{6}"$/.test(m))).toBe(true);
+    const opaque = (png: Uint8Array) => {
+      const { data } = decodePngBuffer(png);
+      const colors: number[] = [];
+      for (let i = 0; i < data.length; i += 4) if (data[i + 3] === 255) colors.push((data[i] << 16) | (data[i + 1] << 8) | data[i + 2]);
+      return colors;
+    };
+    const low = opaque(compiled.hi8bitPng);
+    const mid = opaque(compiled.hi16bitPng);
+    expect(low.length).toBeGreaterThan(0);
+    expect(low.every((rgb) => [rgb >> 16, (rgb >> 8) & 255, rgb & 255].every((c) => c % 17 === 0))).toBe(true);
+    expect(mid.every((rgb) => snap565(rgb) === rgb)).toBe(true);
   });
 });
 

@@ -86,7 +86,7 @@ describe("buildHeroPixelSpriteMap", () => {
     const meta = parsedMeta();
 
     // Act
-    const map = buildHeroPixelSpriteMap(meta, "mid", "mid.svg");
+    const map = buildHeroPixelSpriteMap(meta, "mid", "mid.png");
 
     // Assert
     const attack = map?.animations.attack.frames ?? [];
@@ -101,7 +101,7 @@ describe("buildHeroPixelSpriteMap", () => {
     const meta = parsedMeta();
 
     // Act
-    const map = buildHeroPixelSpriteMap(meta, "mid", "mid.svg");
+    const map = buildHeroPixelSpriteMap(meta, "mid", "mid.png");
 
     // Assert
     const idle = map?.animations.idle.frames[0];
@@ -115,7 +115,7 @@ describe("buildHeroPixelSpriteMap", () => {
     const meta = parsedMeta();
 
     // Act
-    const map = buildHeroPixelSpriteMap(meta, "mid", "mid.svg");
+    const map = buildHeroPixelSpriteMap(meta, "mid", "mid.png");
 
     // Assert
     const wide = map?.animations.attack.frames[1];
@@ -133,8 +133,8 @@ describe("buildHeroPixelSpriteMap", () => {
     const meta = parsedMeta();
 
     // Act
-    const low = buildHeroPixelSpriteMap(meta, "low", "low.svg");
-    const mid = buildHeroPixelSpriteMap(meta, "mid", "mid.svg");
+    const low = buildHeroPixelSpriteMap(meta, "low", "low.png");
+    const mid = buildHeroPixelSpriteMap(meta, "mid", "mid.png");
 
     // Assert
     const lowIdle = low?.animations.idle.frames[0];
@@ -150,8 +150,8 @@ describe("buildHeroPixelSpriteMap", () => {
     const meta = parsedMeta();
 
     // Act
-    const low = buildHeroPixelSpriteMap(meta, "low", "low.svg");
-    const mid = buildHeroPixelSpriteMap(meta, "mid", "mid.svg");
+    const low = buildHeroPixelSpriteMap(meta, "low", "low.png");
+    const mid = buildHeroPixelSpriteMap(meta, "mid", "mid.png");
 
     // Assert
     expect(mid?.meta.referenceRowHeight).toBe(8);
@@ -166,7 +166,7 @@ describe("buildHeroPixelSpriteMap", () => {
     const meta = parsedMeta();
 
     // Act
-    const map = buildHeroPixelSpriteMap(meta, "mid", "mid.svg");
+    const map = buildHeroPixelSpriteMap(meta, "mid", "mid.png");
 
     // Assert
     expect(map?.animations.attack.frameDuration).toBe(5);
@@ -182,7 +182,7 @@ describe("buildHeroPixelSpriteMap", () => {
     const meta = metaFrom(raw);
 
     // Act
-    const map = meta ? buildHeroPixelSpriteMap(meta, "mid", "mid.svg") : null;
+    const map = meta ? buildHeroPixelSpriteMap(meta, "mid", "mid.png") : null;
 
     // Assert
     expect(map?.animations.move.name).toBe("move");
@@ -196,7 +196,7 @@ describe("buildHeroPixelSpriteMap", () => {
     const meta = metaFrom(raw);
 
     // Act
-    const map = meta ? buildHeroPixelSpriteMap(meta, "low", "low.svg") : undefined;
+    const map = meta ? buildHeroPixelSpriteMap(meta, "low", "low.png") : undefined;
 
     // Assert
     expect(map).toBeNull();
@@ -209,7 +209,7 @@ describe("buildHeroPixelSpriteMap", () => {
     const meta = metaFrom(raw);
 
     // Act
-    const map = meta ? buildHeroPixelSpriteMap(meta, "mid", "mid.svg") : null;
+    const map = meta ? buildHeroPixelSpriteMap(meta, "mid", "mid.png") : null;
 
     // Assert
     const frame = map?.animations.attack.frames[1];
@@ -218,7 +218,7 @@ describe("buildHeroPixelSpriteMap", () => {
 });
 
 describe("buildHeroPixelSpriteMaps", () => {
-  it("should build low and mid maps pointing at their SVG urls when the art exists", () => {
+  it("should build low and mid maps pointing at their PNG urls when the art exists", () => {
     // Arrange
     const files = createHeroPixelFiles();
 
@@ -226,8 +226,8 @@ describe("buildHeroPixelSpriteMaps", () => {
     const maps = buildHeroPixelSpriteMaps("testhero", files);
 
     // Assert
-    expect(maps.low?.meta.imageUrl).toBe("/assets/hi8bit-hash.svg");
-    expect(maps.mid?.meta.imageUrl).toBe("/assets/hi16bit-hash.svg");
+    expect(maps.low?.meta.imageUrl).toBe("/assets/hi8bit-hash.png");
+    expect(maps.mid?.meta.imageUrl).toBe("/assets/hi16bit-hash.png");
     expect(maps.low?.meta.quality).toBe("low");
     expect(maps.mid?.meta.quality).toBe("mid");
   });
@@ -243,17 +243,17 @@ describe("buildHeroPixelSpriteMaps", () => {
     expect(maps).toEqual({});
   });
 
-  it("should skip a tier whose SVG is missing and keep the other", () => {
+  it("should skip a tier whose PNG is missing and keep the other", () => {
     // Arrange
     const files = createHeroPixelFiles();
-    const images = Object.fromEntries(Object.entries(files.images).filter(([path]) => !path.endsWith("_hi8bit.svg")));
+    const images = Object.fromEntries(Object.entries(files.images).filter(([path]) => !path.endsWith("_hi8bit.png")));
 
     // Act
     const maps = buildHeroPixelSpriteMaps("testhero", { images, metas: files.metas });
 
     // Assert
     expect(maps.low).toBeUndefined();
-    expect(maps.mid?.meta.imageUrl).toBe("/assets/hi16bit-hash.svg");
+    expect(maps.mid?.meta.imageUrl).toBe("/assets/hi16bit-hash.png");
   });
 
   it("should ignore the files of another hero", () => {

@@ -1,5 +1,6 @@
+import { decodePngBuffer } from "../lib/png";
 import { describe, expect, it } from "bun:test";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -45,19 +46,18 @@ describe("sample hero compilation", () => {
 
     // Assert
     expect(second.metaJson).toBe(first.metaJson);
-    expect(second.hi16bitSvg).toBe(first.hi16bitSvg);
+    expect(Buffer.compare(second.hi16bitPng, first.hi16bitPng)).toBe(0);
   });
 
-  it("should size the SVG roots by the derived cell and sheet columns when compiled", () => {
+  it("should size the PNG sheets by the derived cell and sheet columns when compiled", () => {
     // Arrange & Act
     const compiled = compileFixture();
 
     // Assert
-    const root = (width: number, height: number) =>
-      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" shape-rendering="crispEdges">\n`;
-    expect(compiled.hi8bitSvg.startsWith(root(120, 160))).toBe(true);
-    expect(compiled.hi16bitSvg.startsWith(root(240, 320))).toBe(true);
-    expect(compiled.hi16bitSvg.includes("\r")).toBe(false);
+    const low = decodePngBuffer(compiled.hi8bitPng);
+    const mid = decodePngBuffer(compiled.hi16bitPng);
+    expect([low.width, low.height]).toEqual([120, 160]);
+    expect([mid.width, mid.height]).toEqual([240, 320]);
   });
 
   it("should write tier files, scale and sheet size to the meta when compiled", () => {
@@ -68,8 +68,8 @@ describe("sample hero compilation", () => {
     const { low, mid } = meta.variants;
 
     // Assert
-    expect(low).toMatchObject({ file: "sample_hero_hi8bit.svg", cellWidth: 24, cellHeight: 32, sheetWidth: 120, sheetHeight: 160, scale: 0.5 });
-    expect(mid).toMatchObject({ file: "sample_hero_hi16bit.svg", cellWidth: 48, cellHeight: 64, sheetWidth: 240, sheetHeight: 320, scale: 1 });
+    expect(low).toMatchObject({ file: "sample_hero_hi8bit.png", cellWidth: 24, cellHeight: 32, sheetWidth: 120, sheetHeight: 160, scale: 0.5 });
+    expect(mid).toMatchObject({ file: "sample_hero_hi16bit.png", cellWidth: 48, cellHeight: 64, sheetWidth: 240, sheetHeight: 320, scale: 1 });
   });
 
   it("should record the grid with row, frames, fps, loop and cells when compiled", () => {
@@ -181,7 +181,7 @@ describe("hero sprite CLI", () => {
     const names = outputFiles(sampleHero, compiled, "out").map((file) => file.path.split(/[\\/]/).pop());
 
     // Assert
-    expect(names).toEqual(["sample_hero_hi8bit.svg", "sample_hero_hi16bit.svg", "sample_hero_pixel_meta.json"]);
+    expect(names).toEqual(["sample_hero_hi8bit.png", "sample_hero_hi16bit.png", "sample_hero_pixel_meta.json"]);
   });
 
   it("should report missing hero files when --check runs before anything was written", async () => {
@@ -210,5 +210,22 @@ describe("hero sprite CLI", () => {
 
     // Assert
     expect(code).toBe(0);
+  });
+
+  it("should report a hero PNG whose bytes changed when --check runs", async () => {
+    // Arrange
+    const out = mkdtempSync(join(tmpdir(), "hero-stale-"));
+    const dirs = fixtureDirs(out);
+    await run(["sample_hero"], () => undefined, dirs);
+    writeFileSync(join(out, "sample_hero", "sample_hero_hi16bit.png"), Buffer.from([1, 2, 3]));
+    const lines: string[] = [];
+
+    // Act
+    const code = await run(["sample_hero", "--check"], (line) => lines.push(line), dirs);
+    rmSync(out, { recursive: true, force: true });
+
+    // Assert
+    expect(code).toBe(1);
+    expect(lines.some((line) => line.includes("out of date") && line.endsWith("sample_hero_hi16bit.png"))).toBe(true);
   });
 });
