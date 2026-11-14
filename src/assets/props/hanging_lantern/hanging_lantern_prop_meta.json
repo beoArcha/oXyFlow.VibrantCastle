@@ -1,0 +1,27 @@
+{
+  "propId": "hanging_lantern",
+  "worldWidth": 32,
+  "worldHeight": 64,
+  "anchor": "top",
+  "frames": 4,
+  "fps": 8,
+  "variants": {
+    "low": {
+      "file": "hanging_lantern_hi8bit.png",
+      "frameWidth": 16,
+      "frameHeight": 32
+    },
+    "mid": {
+      "file": "hanging_lantern_hi16bit.png",
+      "frameWidth": 32,
+      "frameHeight": 64
+    }
+  },
+  "glow": {
+    "color": "#ffb347",
+    "radius": 72,
+    "x": 16,
+    "y": 44,
+    "flicker": true
+  }
+}
