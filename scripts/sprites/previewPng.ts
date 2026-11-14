@@ -19,8 +19,7 @@ function previewColor(sheet: SheetImage, scale: number, ox: number, oy: number):
 }
 
 /** Nearest-neighbour upscaled sheet on a grey checkerboard with cell grid lines. */
-export function renderPreviewPng(sheet: SheetImage): Uint8Array {
-  const scale = previewScale(sheet.width);
+export function renderPreviewPng(sheet: SheetImage, scale: number = previewScale(sheet.width)): Uint8Array {
   const width = sheet.width * scale;
   const height = sheet.height * scale;
   const data = new Uint8Array(width * height * 4);

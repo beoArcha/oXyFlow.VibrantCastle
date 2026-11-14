@@ -8,6 +8,7 @@ import {
   DEFAULT_DIRS,
   DEFAULT_HERO_OUT_DIR,
   ENEMIES_DIR,
+  TILESETS_DIR,
   loadSprite,
   outputFiles,
   run,
@@ -22,8 +23,10 @@ const FIXTURES_DIR = fileURLToPath(new URL("../sprites/__fixtures__", import.met
 const fixtureDirs = (out: string): SpriteDirs => ({
   enemies: ENEMIES_DIR,
   heroes: FIXTURES_DIR,
+  tilesets: TILESETS_DIR,
   enemyOut: out,
   heroOut: out,
+  tileOut: out,
 });
 
 const compileFixture = () => compileHeroSprite(sampleHero, DEFAULT_HERO_OUT_DIR);
