@@ -7,7 +7,7 @@ import sampleProp from "../sprites/__fixtures__/sample_prop";
 const STONE = "#8c8170";
 const RIM = "#d9b766";
 
-/** A 2-pixel-wide column of stone standing on the bottom row (or hanging from the top row when `top`). */
+/** a 2-pixel-wide column of stone standing on the bottom row (or hanging from the top row when `top`). */
 function column(c: PixelCanvas, s: number, detailed: boolean, anchor: PropAnchor): void {
   const y = anchor === "top" ? 0 : 4 * s;
   c.rect(2 * s, y, 4 * s, 12 * s, STONE);

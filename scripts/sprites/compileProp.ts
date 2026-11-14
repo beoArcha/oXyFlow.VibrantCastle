@@ -14,7 +14,7 @@ export interface CompiledProp {
   sheets: { hi8bit: SheetImage; hi16bit: SheetImage };
 }
 
-/** Renders, validates and serialises one prop without touching the disk. */
+/** renders, validates and serialises one prop without touching the disk. */
 export function compileProp(def: PropSpriteDefinition): CompiledProp {
   const rendered = { hi8bit: renderProp(def, "hi8bit"), hi16bit: renderProp(def, "hi16bit") };
   const { problems, warnings } = checkProp(def, rendered);

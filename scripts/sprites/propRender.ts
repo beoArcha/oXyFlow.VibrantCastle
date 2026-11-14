@@ -6,7 +6,7 @@ import { TIER_LABEL, type Tier } from "./types";
 
 export interface RenderedProp {
   sheet: SheetImage;
-  /** Authored canvases in frame order; the redraw check compares these, not the snapped sheet. */
+  /** authored canvases in frame order; the redraw check compares these, not the snapped sheet. */
   canvases: PixelCanvas[];
 }
 
@@ -25,7 +25,7 @@ function drawFrame(def: PropSpriteDefinition, tier: Tier, frame: number, width: 
   return canvas;
 }
 
-/** Draws every frame of one tier and packs them into one row, in frame order. */
+/** draws every frame of one tier and packs them into one row, in frame order. */
 export function renderProp(def: PropSpriteDefinition, tier: Tier): RenderedProp {
   const { width, height } = propFrameSize(def.size, tier);
   const sheetWidth = width * def.frames;

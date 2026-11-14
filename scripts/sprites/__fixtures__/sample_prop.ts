@@ -1,6 +1,6 @@
 import { defineProp, type PixelCanvas } from "../defineProp";
 
-// Both tiers share one drawing routine. Coordinates are in hi-8bit pixels (a 12 x 24 frame); `s` is 1
+// both tiers share one drawing routine. Coordinates are in hi-8bit pixels (a 12 x 24 frame); `s` is 1
 // for hi-8bit and 2 for hi-16bit. The hi-16bit tier adds a highlight, a rim glint and a flame core.
 
 const IRON = "#4a4a55";
@@ -12,7 +12,7 @@ const FLAME_OUTER = "#e0602a";
 const FLAME_MID = "#ffb347";
 const FLAME_CORE = "#fff0a8";
 
-// Flame radii per frame in hi-8bit pixels: the flame swells and shrinks across the three frames.
+// flame radii per frame in hi-8bit pixels: the flame swells and shrinks across the three frames.
 const FLAME: { rx: number; ry: number }[] = [
   { rx: 2, ry: 3 },
   { rx: 3, ry: 2 },

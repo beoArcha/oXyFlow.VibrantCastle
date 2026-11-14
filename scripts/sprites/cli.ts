@@ -26,7 +26,7 @@ export const DEFAULT_HERO_OUT_DIR = join(ASSETS_DIR, "characters");
 export const DEFAULT_TILE_OUT_DIR = join(ASSETS_DIR, "tiles");
 export const DEFAULT_PROP_OUT_DIR = join(ASSETS_DIR, "props");
 
-/** Zoom of the `_x4` sheet previews for tilesets and props. */
+/** zoom of the `_x4` sheet previews for tilesets and props. */
 const ZOOM_PREVIEW_SCALE = 4;
 
 export type SpriteDefinition = EnemySpriteDefinition | HeroSpriteDefinition | TilesetSpriteDefinition | PropSpriteDefinition;
@@ -42,7 +42,7 @@ export interface SpriteDirs {
   heroOut: string;
   /** Default tileset output; each tileset is written to `<tileOut>/<id>/`. */
   tileOut: string;
-  /** Default prop output; each prop is written to `<propOut>/<id>/`. */
+  /** default prop output; each prop is written to `<propOut>/<id>/`. */
   propOut: string;
 }
 

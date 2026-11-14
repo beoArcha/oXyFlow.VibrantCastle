@@ -4,23 +4,23 @@ import { TRANSPARENT } from "./pixelCanvas";
 import type { PropSpriteDefinition } from "./propTypes";
 import type { SheetImage } from "./render";
 
-/** Dark stage the light is judged against. */
+/** dark stage the light is judged against. */
 const BACKGROUND = 0x161210;
 const MAX_STRIP_WIDTH = 1600;
 const MAX_STRIP_SCALE = 4;
-/** Flicker frames sample the runtime's 0.75..1.0 alpha range in order. */
+/** flicker frames sample the runtime's 0.75..1.0 alpha range in order. */
 const FLICKER_MIN = 0.75;
 
 const channel = (rgb: number, shift: number): number => (rgb >> shift) & 0xff;
 
-/** Alpha of the glow for one frame: constant, or ramping 0.75..1.0 across the frames when it flickers. */
+/** alpha of the glow for one frame: constant, or ramping 0.75..1.0 across the frames when it flickers. */
 function glowAlpha(def: PropSpriteDefinition, frame: number): number {
   if (!def.glow?.flicker) return 1;
   const phase = def.frames > 1 ? frame / (def.frames - 1) : 1;
   return FLICKER_MIN + (1 - FLICKER_MIN) * phase;
 }
 
-/** Writes one tier's frames into the strip; `top` is the output row of the tier. */
+/** writes one tier's frames into the strip; `top` is the output row of the tier. */
 function paintTier(
   data: Uint8Array,
   stripWidth: number,
@@ -66,7 +66,7 @@ function paintTier(
 }
 
 /**
- * Animation strip for judging the light: one row per tier (hi-8bit above hi-16bit), every frame of the
+ * animation strip for judging the light: one row per tier (hi-8bit above hi-16bit), every frame of the
  * animation side by side, both drawn at world size. The glow is added on top of the sprite (additive),
  * on a dark stage, with a radial falloff of radius `glow.radius` around `glow.x, glow.y`.
  */

@@ -18,7 +18,7 @@ export interface PropCheck {
 
 type Side = "left" | "right" | "top" | "bottom";
 
-/** Sides that must keep a 1 px transparent margin: every side except the anchor side. */
+/** sides that must keep a 1 px transparent margin: every side except the anchor side. */
 function marginSides(anchor: PropAnchor): Side[] {
   if (anchor === "bottom") return ["left", "right", "top"];
   if (anchor === "top") return ["left", "right", "bottom"];
@@ -53,7 +53,7 @@ function frameProblems(def: PropSpriteDefinition, tier: Tier, frame: number, can
   return [...anchorProblems(at, def.anchor, bounds, width, height), ...margins];
 }
 
-/** Snapped colours per pixel, so two frames count as identical exactly when the sheet would show them so. */
+/** snapped colours per pixel, so two frames count as identical exactly when the sheet would show them so. */
 function sameSnapped(a: PixelCanvas, b: PixelCanvas, tier: Tier): boolean {
   for (let y = 0; y < a.height; y++) {
     for (let x = 0; x < a.width; x++) {
@@ -75,7 +75,7 @@ function consecutiveWarnings(tier: Tier, canvases: readonly PixelCanvas[]): stri
   });
 }
 
-/** Collects every problem (fatal) and consecutive-frame warning (advisory) for both tiers of a prop. */
+/** collects every problem (fatal) and consecutive-frame warning (advisory) for both tiers of a prop. */
 export function checkProp(def: PropSpriteDefinition, rendered: RenderedProps): PropCheck {
   const tiers: Tier[] = ["hi8bit", "hi16bit"];
   const problems = tiers.flatMap((tier) =>

@@ -52,6 +52,7 @@ bun run build        # Production bundle build & packaging check
 bun scripts/validate-level.ts <id>     # Level-logic validator for one location (exit 1 on ERROR)
 bun scripts/sprites/compile.ts <id>    # Compile hi-8bit / hi-16bit enemy or hero SVG sheets (--all, --check, --preview <dir>)
 bun scripts/sprites/compile.ts <tileset-id>  # Compile platform tilesets (scripts/sprites/tilesets/) to PNG sheets + tiles meta in src/assets/tiles/<id>/
+bun scripts/sprites/compile.ts <prop-id>     # Compile decor props (scripts/sprites/props/) to hi-8bit / hi-16bit PNG sheets + prop meta in src/assets/props/<id>/
 bun scripts/repack-atlas.ts <id>       # Repack an AI sheet into a grid-clean *_packed_high.png (--all, --dry-run, --overlay <dir>)
 bun scripts/check-parallax-seams.ts    # Report horizontal seam quality of src/assets/bg layers (warn layers need mirrorTile)
 ```

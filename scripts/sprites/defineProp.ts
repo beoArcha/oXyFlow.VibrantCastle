@@ -59,7 +59,7 @@ function shapeProblems(def: PropSpriteDefinition): string[] {
   return problems;
 }
 
-/** Validates a prop definition and returns it unchanged; every problem is reported at once. */
+/** validates a prop definition and returns it unchanged; every problem is reported at once. */
 export function defineProp(def: PropSpriteDefinition): PropSpriteDefinition {
   const problems = shapeProblems(def);
   if (problems.length > 0) {

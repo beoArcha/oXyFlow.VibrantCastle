@@ -14,11 +14,11 @@ export interface PropMeta {
   frames: number;
   fps: number;
   variants: { low: PropVariantMeta; mid: PropVariantMeta };
-  /** Present only for props that emit light. */
+  /** present only for props that emit light. */
   glow?: { color: string; radius: number; x: number; y: number; flicker: boolean };
 }
 
-/** Meta for the runtime: the world size, animation timing, both tier sheets and the optional glow. */
+/** meta for the runtime: the world size, animation timing, both tier sheets and the optional glow. */
 export function buildPropMeta(def: PropSpriteDefinition): PropMeta {
   const low = propFrameSize(def.size, "hi8bit");
   const mid = propFrameSize(def.size, "hi16bit");
