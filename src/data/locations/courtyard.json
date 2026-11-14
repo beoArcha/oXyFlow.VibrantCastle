@@ -146,7 +146,7 @@
       "marble_balcony": {
         "prefabId": "marble_balcony",
         "type": "oneway",
-        "tileset": "courtyard_wood",
+        "tileset": "courtyard_marble",
         "color": "#d97706",
         "borderColor": "#fef08a",
         "labelKey": "labelBalcony",
