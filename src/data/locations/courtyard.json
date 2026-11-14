@@ -110,6 +110,7 @@
       "stone_floor": {
         "prefabId": "stone_floor",
         "type": "solid",
+        "tileset": "courtyard_stone",
         "color": "#b35a38",
         "borderColor": "#e2b653",
         "labelKey": "labelStoneFloor",
@@ -118,6 +119,7 @@
       "stone_step": {
         "prefabId": "stone_step",
         "type": "solid",
+        "tileset": "courtyard_stone",
         "color": "#d98a55",
         "borderColor": "#fed7aa",
         "labelKey": "labelStoneStep",
@@ -126,6 +128,7 @@
       "stone_arch": {
         "prefabId": "stone_arch",
         "type": "solid",
+        "tileset": "courtyard_stone",
         "color": "#c29547",
         "borderColor": "#fef08a",
         "labelKey": "labelHighArcade",
@@ -134,6 +137,7 @@
       "scaffold_oneway": {
         "prefabId": "scaffold_oneway",
         "type": "oneway",
+        "tileset": "courtyard_wood",
         "color": "#c07b46",
         "borderColor": "#fde047",
         "labelKey": "labelScaffold",
@@ -142,6 +146,7 @@
       "marble_balcony": {
         "prefabId": "marble_balcony",
         "type": "oneway",
+        "tileset": "courtyard_wood",
         "color": "#d97706",
         "borderColor": "#fef08a",
         "labelKey": "labelBalcony",

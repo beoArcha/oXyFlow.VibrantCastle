@@ -108,6 +108,7 @@
       "tower_masonry": {
         "prefabId": "tower_masonry",
         "type": "solid",
+        "tileset": "clocktower_brick",
         "color": "#78350f",
         "borderColor": "#d97706",
         "labelKey": "labelStonePlatform",
@@ -116,6 +117,7 @@
       "vertical_lift": {
         "prefabId": "vertical_lift",
         "type": "solid",
+        "tileset": "clocktower_brick",
         "color": "#f59e0b",
         "borderColor": "#fbbf24",
         "labelKey": "labelVerticalLift",
@@ -124,6 +126,7 @@
       "target_ledge": {
         "prefabId": "target_ledge",
         "type": "solid",
+        "tileset": "clocktower_brick",
         "color": "#d97706",
         "borderColor": "#fef08a",
         "labelKey": "labelStoneStep",

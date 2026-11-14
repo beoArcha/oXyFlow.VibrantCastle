@@ -31,6 +31,8 @@ import { IGameDependencies } from "./types";
 import { assetLoader } from "../engine/assetLoader";
 import type { ISpriteSourceFactory } from "../engine/sprites";
 import { ActorRenderer } from "../renderer/actorRenderer";
+import { StructureRenderer } from "../renderer/structureRenderer";
+import { createDiscoveredTilesetManager } from "../engine/tiles";
 import { defaultLocationAssetLifecycle } from "../locations/locationAssetLifecycle";
 
 export type { IGameDependencies };
@@ -158,7 +160,10 @@ export class GameEngine implements IEngineSubsystemHost {
     const isGpu = this.settings.display.hardwareAcceleration !== false;
     this.renderer = new GameRenderer(
       canvas,
-      { actorRenderer: new ActorRenderer(undefined, this.spriteSources) },
+      {
+        actorRenderer: new ActorRenderer(undefined, this.spriteSources),
+        structureRenderer: new StructureRenderer(undefined, createDiscoveredTilesetManager(this.spriteSources)),
+      },
       { hardwareAcceleration: isGpu }
     );
   }

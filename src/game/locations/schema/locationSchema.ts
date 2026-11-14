@@ -92,6 +92,8 @@ export interface EntityPrefabSchema {
   label?: string; // Backward compatibility fallback (English)
   defaultWidth?: number;
   defaultHeight?: number;
+  /** Platform tileset id (solid / oneway prefabs); see `src/assets/tiles`. */
+  tileset?: string;
 }
 
 /**
