@@ -1,0 +1,39 @@
+{
+  "tilesetId": "courtyard_wood",
+  "kind": "oneway",
+  "worldTile": 32,
+  "columns": 5,
+  "rows": 1,
+  "variants": {
+    "low": {
+      "file": "courtyard_wood_hi8bit.png",
+      "tile": 16
+    },
+    "mid": {
+      "file": "courtyard_wood_hi16bit.png",
+      "tile": 32
+    }
+  },
+  "tiles": {
+    "ledge_left": {
+      "col": 0,
+      "row": 0
+    },
+    "ledge": {
+      "col": 1,
+      "row": 0
+    },
+    "ledge_2": {
+      "col": 2,
+      "row": 0
+    },
+    "ledge_right": {
+      "col": 3,
+      "row": 0
+    },
+    "support": {
+      "col": 4,
+      "row": 0
+    }
+  }
+}
