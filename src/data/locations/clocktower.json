@@ -896,7 +896,43 @@
         "id": "tower_decor_1",
         "propId": "hanging_lantern",
         "x": 180,
-        "y": 2680,
+        "y": 2758,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "tower_decor_1_chain_0",
+        "propId": "iron_chain",
+        "x": 180,
+        "y": 2374,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "tower_decor_1_chain_1",
+        "propId": "iron_chain",
+        "x": 180,
+        "y": 2470,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "tower_decor_1_chain_2",
+        "propId": "iron_chain",
+        "x": 180,
+        "y": 2566,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "tower_decor_1_chain_3",
+        "propId": "iron_chain",
+        "x": 180,
+        "y": 2662,
         "layer": "back",
         "flipX": false,
         "phase": 0
@@ -911,10 +947,46 @@
         "phase": 1
       },
       {
+        "id": "tower_decor_3_up_0",
+        "propId": "iron_chain",
+        "x": 2650,
+        "y": 1798,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "tower_decor_3_up_1",
+        "propId": "iron_chain",
+        "x": 2650,
+        "y": 1894,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "tower_decor_3_up_2",
+        "propId": "iron_chain",
+        "x": 2650,
+        "y": 1990,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "tower_decor_3_up_3",
+        "propId": "iron_chain",
+        "x": 2650,
+        "y": 2086,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
         "id": "tower_decor_3",
         "propId": "iron_chain",
         "x": 2650,
-        "y": 2150,
+        "y": 2182,
         "layer": "front",
         "flipX": false,
         "phase": 2
@@ -959,16 +1031,106 @@
         "id": "tower_decor_8",
         "propId": "hanging_lantern",
         "x": 1550,
-        "y": 1520,
+        "y": 1606,
         "layer": "back",
         "flipX": true,
         "phase": 3
       },
       {
+        "id": "tower_decor_8_chain_0",
+        "propId": "iron_chain",
+        "x": 1550,
+        "y": 1222,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "tower_decor_8_chain_1",
+        "propId": "iron_chain",
+        "x": 1550,
+        "y": 1318,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "tower_decor_8_chain_2",
+        "propId": "iron_chain",
+        "x": 1550,
+        "y": 1414,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "tower_decor_8_chain_3",
+        "propId": "iron_chain",
+        "x": 1550,
+        "y": 1510,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
         "id": "tower_decor_9",
         "propId": "hanging_lantern",
         "x": 620,
-        "y": 960,
+        "y": 1002,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "tower_decor_9_chain_0",
+        "propId": "iron_chain",
+        "x": 620,
+        "y": 426,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "tower_decor_9_chain_1",
+        "propId": "iron_chain",
+        "x": 620,
+        "y": 522,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "tower_decor_9_chain_2",
+        "propId": "iron_chain",
+        "x": 620,
+        "y": 618,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "tower_decor_9_chain_3",
+        "propId": "iron_chain",
+        "x": 620,
+        "y": 714,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "tower_decor_9_chain_4",
+        "propId": "iron_chain",
+        "x": 620,
+        "y": 810,
+        "layer": "back",
+        "flipX": false,
+        "phase": 0
+      },
+      {
+        "id": "tower_decor_9_chain_5",
+        "propId": "iron_chain",
+        "x": 620,
+        "y": 906,
         "layer": "back",
         "flipX": false,
         "phase": 0
