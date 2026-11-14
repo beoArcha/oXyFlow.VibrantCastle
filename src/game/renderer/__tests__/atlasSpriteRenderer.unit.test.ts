@@ -1,14 +1,49 @@
 import { describe, it, expect } from "bun:test";
 import { AtlasSpriteRenderer } from "../atlasSpriteRenderer";
 import { assetLoader } from "@game/engine/assetLoader";
+import type { AtlasMeta } from "@game/engine/atlas/atlasTypes";
 
-function createMockContext() {
+interface DrawImageCall {
+  img: CanvasImageSource;
+  sx: number;
+  sy: number;
+  sw: number;
+  sh: number;
+  dx: number;
+  dy: number;
+  dw: number;
+  dh: number;
+}
+
+interface FillRectCall {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+type MockContext = CanvasRenderingContext2D & {
+  getSaveBalance(): number;
+  getDrawImageCalls(): DrawImageCall[];
+  getFillRectCalls(): FillRectCall[];
+};
+
+/** Private texture cache of the shared asset loader, typed for test injection. */
+const textureCacheOf = (loader: typeof assetLoader) =>
+  (loader as unknown as { textureCache: Map<string, HTMLImageElement> }).textureCache;
+
+/** Typed view of globalThis for stubbing the DOM document in tests. */
+interface GlobalWithDocument {
+  document?: unknown;
+}
+
+function createMockContext(): MockContext {
   let saveCalls = 0;
   let restoreCalls = 0;
-  let drawImageCalls: any[] = [];
-  let fillRectCalls: any[] = [];
+  const drawImageCalls: DrawImageCall[] = [];
+  const fillRectCalls: FillRectCall[] = [];
 
-  const ctx: any = {
+  const ctx = {
     save: () => {
       saveCalls++;
     },
@@ -17,7 +52,7 @@ function createMockContext() {
     },
     translate: () => { },
     scale: () => { },
-    drawImage: (img: any, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number) => {
+    drawImage: (img: CanvasImageSource, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number) => {
       drawImageCalls.push({ img, sx, sy, sw, sh, dx, dy, dw, dh });
     },
     fillRect: (x: number, y: number, w: number, h: number) => {
@@ -29,7 +64,7 @@ function createMockContext() {
     getSaveBalance: () => saveCalls - restoreCalls,
     getDrawImageCalls: () => drawImageCalls,
     getFillRectCalls: () => fillRectCalls,
-  };
+  } as unknown as MockContext;
   return ctx;
 }
 
@@ -89,12 +124,12 @@ describe("AtlasSpriteRenderer", () => {
           },
         },
         anchor: { x: 0.5, y: 1.0 },
-      } as any,
+      } as unknown as AtlasMeta,
     };
 
     assetLoader.registerAtlas(customAtlas);
     // Inject loaded texture into textureCache
-    (assetLoader as any).textureCache.set("mock://hero_slotspan.png", mockTex);
+    textureCacheOf(assetLoader).set("mock://hero_slotspan.png", mockTex);
 
     // Frame 1 (currentFrame = 1, should skip span[0] = 1, so col = 1, span = 2)
     const rendered = renderer.render(ctx, {
@@ -136,11 +171,11 @@ describe("AtlasSpriteRenderer", () => {
             loop: true,
           },
         },
-      } as any,
+      } as unknown as AtlasMeta,
     };
 
     assetLoader.registerAtlas(customAtlas);
-    (assetLoader as any).textureCache.set("mock://creature_ticks.png", mockTex);
+    textureCacheOf(assetLoader).set("mock://creature_ticks.png", mockTex);
 
     // Tick 0 -> Frame 0
     renderer.render(ctx, {
@@ -184,11 +219,11 @@ describe("AtlasSpriteRenderer", () => {
           hurt: { row: 2, frames: 1 },
         },
         layout: { naturalFacing: "right" },
-      } as any,
+      } as unknown as AtlasMeta,
     };
 
     assetLoader.registerAtlas(customAtlas);
-    (assetLoader as any).textureCache.set("mock://tint_flip.png", mockTex);
+    textureCacheOf(assetLoader).set("mock://tint_flip.png", mockTex);
 
     const rendered = renderer.render(ctx, {
       atlasId: "mock_tint_flip",
@@ -238,11 +273,11 @@ describe("AtlasSpriteRenderer", () => {
         layout: {
           anchor: { x: 0.5, y: 0.9 },
         },
-      } as any,
+      } as unknown as AtlasMeta,
     };
 
     assetLoader.registerAtlas(customAtlas);
-    (assetLoader as any).textureCache.set("mock://cells_and_states.png", mockTex);
+    textureCacheOf(assetLoader).set("mock://cells_and_states.png", mockTex);
 
     // Call with state alias 'inactive' -> routes to 'sleep' frame 1 (skips cell 0 = 1, col = 1, span = 2)
     const renderedSleep = renderer.render(ctx, {
@@ -298,11 +333,11 @@ describe("AtlasSpriteRenderer", () => {
         variants: {
           high: { scale: 1.5 },
         },
-      } as any,
+      } as unknown as AtlasMeta,
     };
 
     assetLoader.registerAtlas(customAtlas);
-    (assetLoader as any).textureCache.set("mock://variant_scale.png", mockTex);
+    textureCacheOf(assetLoader).set("mock://variant_scale.png", mockTex);
 
     const rendered = renderer.render(ctx, {
       atlasId: "mock_variant_scale",
@@ -340,15 +375,16 @@ describe("AtlasSpriteRenderer", () => {
           colorHex: "#00ff00",
           tolerance: 20,
         },
-      } as any,
+      } as unknown as AtlasMeta,
     };
 
     assetLoader.registerAtlas(customAtlas);
-    (assetLoader as any).textureCache.set("mock://chroma.png", mockTex);
+    textureCacheOf(assetLoader).set("mock://chroma.png", mockTex);
 
-    const origDoc = (globalThis as any).document;
+    const globalScope = globalThis as unknown as GlobalWithDocument;
+    const origDoc = globalScope.document;
     try {
-      (globalThis as any).document = {
+      globalScope.document = {
         createElement: (tag: string) => {
           if (tag === "canvas") {
             const offscreenCtx = {
@@ -394,7 +430,7 @@ describe("AtlasSpriteRenderer", () => {
 
       renderer.clearChromaCache();
     } finally {
-      (globalThis as any).document = origDoc;
+      globalScope.document = origDoc;
     }
   });
 
@@ -417,9 +453,9 @@ describe("AtlasSpriteRenderer body regions", () => {
         animations: { closed: { row: 1, frames: 6, fps: 6 } },
         layout: { bodyBox: { x: 0.1, y: 0.1, w: 0.8, h: 0.8 } },
         anchor: { x: 0.5, y: 1.0 },
-      } as any,
+      } as unknown as AtlasMeta,
     });
-    (assetLoader as any).textureCache.set(`mock://${id}.png`, mockTex);
+    textureCacheOf(assetLoader).set(`mock://${id}.png`, mockTex);
   };
 
   it("reports the world aspect of the body box and 0 for unknown atlases", () => {
