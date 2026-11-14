@@ -17,16 +17,16 @@ interface Palette {
 
 const HI8BIT: Palette = {
   outline: "#181210",
-  mortar: "#181210",
+  mortar: "#583e28",
   faceShadow: "#604830",
   face: "#a07840",
   faceLight: "#f0c070",
   top: "#f0c070",
   topHighlight: "#f0c070",
-  crystalDark: "#20b0d0",
+  crystalDark: "#105878",
   crystalMid: "#20b0d0",
-  crystalLight: "#20b0d0",
-  crystalGlint: "#f0c070",
+  crystalLight: "#70e8f8",
+  crystalGlint: "#e0ffff",
   detailed: false,
 };
 
@@ -45,31 +45,88 @@ const HI16BIT: Palette = {
   detailed: true,
 };
 
-// --- Hi-16bit Drawing (32x32) ---
+// --- hi-16bit crystal cluster helper (32x32) ---
+function drawHi16Crystals(c: PixelCanvas, pal: Palette): void {
+  // 4 faceted aether crystal shards clustered at x=10..22 within y=0..9
+
+  // shard 1 (left shard, leaning left, apex at x=12, y=2)
+  c.px(12, 2, pal.crystalGlint);
+  c.px(12, 3, pal.crystalGlint);
+  // light face (left)
+  c.rect(11, 3, 1, 4, pal.crystalLight);
+  c.rect(12, 4, 1, 3, pal.crystalMid);
+  // dark face (right)
+  c.rect(13, 3, 1, 5, pal.crystalDark);
+  c.rect(14, 4, 1, 4, pal.crystalDark);
+
+  // shard 2 (tallest central spire, apex at x=16, y=0)
+  c.px(16, 0, pal.crystalGlint);
+  c.px(16, 1, pal.crystalGlint);
+  c.px(16, 2, pal.crystalGlint);
+  c.rect(16, 3, 1, 4, pal.crystalLight);
+  // light face (left)
+  c.rect(15, 1, 1, 3, pal.crystalLight);
+  c.rect(14, 2, 1, 5, pal.crystalLight);
+  c.rect(15, 4, 1, 4, pal.crystalMid);
+  // dark face (right)
+  c.rect(17, 1, 1, 7, pal.crystalDark);
+  c.rect(18, 2, 1, 5, pal.crystalDark);
+
+  // shard 3 (right shard, leaning right, apex at x=20, y=1)
+  c.px(20, 1, pal.crystalGlint);
+  c.px(20, 2, pal.crystalGlint);
+  // light face (left)
+  c.rect(19, 2, 1, 6, pal.crystalLight);
+  // dark face (right)
+  c.rect(20, 3, 1, 5, pal.crystalDark);
+  c.rect(21, 2, 1, 5, pal.crystalDark);
+
+  // shard 4 (small foreground shard, apex at x=14, y=5)
+  c.px(14, 5, pal.crystalGlint);
+  c.px(13, 6, pal.crystalLight);
+  c.px(13, 7, pal.crystalLight);
+  c.px(14, 6, pal.crystalMid);
+  c.px(14, 7, pal.crystalDark);
+  c.px(15, 6, pal.crystalDark);
+  c.px(15, 7, pal.crystalDark);
+
+  // stone collar bedding at y=8..9
+  c.rect(11, 8, 10, 1, pal.faceShadow);
+  c.rect(12, 9, 8, 1, pal.faceShadow);
+}
+
+// --- hi-16bit drawing (32x32) ---
 function drawHi16(c: PixelCanvas, tile: string, pal: Palette): void {
-  // Base ashlar masonry stone
+  // base ashlar stone
   c.rect(0, 0, 32, 32, pal.face);
 
   const isLedge = tile.startsWith("ledge");
 
   if (!isLedge) {
-    // 32x32 Ashlar Grid:
-    // Course A: y=0..9
-    // Mortar 1: y=10 (shadow y=9, mortar y=10, highlight y=11)
-    // Course B: y=11..20
-    // Mortar 2: y=21 (shadow y=20, mortar y=21, highlight y=22)
-    // Course C: y=22..31
+    // 32x32 ashlar grid:
+    // course a: y=0..9
+    // mortar 1: y=10 (darker block bottom y=8..9, mortar y=10, highlight y=11)
+    // course b: y=11..20
+    // mortar 2: y=21 (darker block bottom y=19..20, mortar y=21, highlight y=22)
+    // course c: y=22..31
 
-    // Horizontal Mortar Seams (Continuous across all horizontal tiles)
-    c.rect(0, 9, 32, 1, pal.faceShadow);
+    // horizontal mortar seams and depth shading
+    c.rect(0, 8, 32, 2, pal.faceShadow);
     c.rect(0, 10, 32, 1, pal.mortar);
     c.rect(0, 11, 32, 1, pal.faceLight);
 
-    c.rect(0, 20, 32, 1, pal.faceShadow);
+    c.rect(0, 19, 32, 2, pal.faceShadow);
     c.rect(0, 21, 32, 1, pal.mortar);
     c.rect(0, 22, 32, 1, pal.faceLight);
 
-    // Staggered Vertical Ashlar Joints (Stop at horizontal mortar lines)
+    if (!tile.startsWith("bottom")) {
+      c.rect(0, 30, 32, 2, pal.faceShadow);
+    }
+    if (!tile.startsWith("top")) {
+      c.rect(0, 0, 32, 1, pal.faceLight);
+    }
+
+    // staggered vertical joints
     const drawVertJoint = (x: number, y0: number, y1: number) => {
       const h = y1 - y0 + 1;
       c.rect(x - 1, y0, 1, h, pal.faceShadow);
@@ -77,106 +134,104 @@ function drawHi16(c: PixelCanvas, tile: string, pal: Palette): void {
       c.rect(x + 1, y0, 1, h, pal.faceLight);
     };
 
-    // Course A vertical joint at x=15 (y=4..8 on top tiles, y=0..8 on others)
-    const topStartY = tile.startsWith("top") ? 4 : 0;
-    drawVertJoint(15, topStartY, 8);
+    // course a vertical joint at x=15
+    const topStartY = tile.startsWith("top") ? 5 : 1;
+    drawVertJoint(15, topStartY, 7);
 
-    // Course B vertical joints at x=7 and x=23 (y=12..19)
+    // course b vertical joints at x=7 and x=23
     if (!tile.includes("left")) {
-      drawVertJoint(7, 12, 19);
+      drawVertJoint(7, 12, 18);
     }
     if (!tile.includes("right")) {
-      drawVertJoint(23, 12, 19);
+      drawVertJoint(23, 12, 18);
     }
 
-    // Course C vertical joint at x=15 (y=23..31 or y=23..27 on bottom tiles)
-    const botEndY = tile.startsWith("bottom") ? 27 : 31;
+    // course c vertical joint at x=15
+    const botEndY = tile.startsWith("bottom") ? 27 : 29;
     drawVertJoint(15, 23, botEndY);
 
-    // Subtle Chisel Texture on stone blocks (consistent within courses)
-    // Course A
+    // subtle chisel texture on stone blocks
+    // course a
     c.rect(3, 5, 3, 1, pal.faceLight);
     c.rect(8, 7, 2, 1, pal.faceShadow);
     c.rect(19, 5, 3, 1, pal.faceLight);
     c.rect(25, 7, 2, 1, pal.faceShadow);
-    // Course B
+    // course b
     c.rect(10, 15, 3, 1, pal.faceLight);
     c.rect(15, 17, 2, 1, pal.faceShadow);
     c.rect(27, 15, 3, 1, pal.faceLight);
-    // Course C
+    // course c
     c.rect(4, 25, 3, 1, pal.faceLight);
     c.rect(9, 27, 2, 1, pal.faceShadow);
     c.rect(19, 25, 3, 1, pal.faceLight);
     c.rect(26, 27, 2, 1, pal.faceShadow);
 
-    // Walkable Top Surface on "top*"
+    // walkable top surface on "top*"
     if (tile.startsWith("top")) {
-      c.rect(0, 0, 32, 1, pal.topHighlight); // Specular golden-amber highlight line
-      c.rect(0, 1, 32, 1, pal.top);          // Sunlit warm stone upper rim
-      c.rect(0, 2, 32, 1, pal.faceLight);    // Illuminated stone bevel
-      c.rect(0, 3, 32, 1, pal.faceShadow);   // Under-lip cast shadow
+      c.rect(0, 0, 32, 1, pal.topHighlight); // specular golden highlight
+      c.rect(0, 1, 32, 1, pal.top);          // sunlit warm stone rim
+      c.rect(0, 2, 32, 1, pal.faceLight);    // illuminated stone bevel
+      // 2 px shadow band under the rim/coping
+      c.rect(0, 3, 32, 1, pal.mortar);
+      c.rect(0, 4, 32, 1, pal.faceShadow);
 
       if (tile === "top_2") {
-        // Embedded geometric crystal lozenge at x=13..18, y=3..8
-        // Ornate stone setting bezel
-        c.rect(12, 5, 8, 2, pal.faceLight);
-        c.rect(14, 3, 4, 6, pal.faceShadow);
-        // Crystal bezel contour
-        c.rect(14, 3, 4, 1, pal.crystalDark);
-        c.rect(13, 4, 6, 4, pal.crystalDark);
-        c.rect(14, 8, 4, 1, pal.crystalDark);
-        // Crystal body
-        c.rect(14, 4, 4, 4, pal.crystalMid);
-        c.rect(15, 4, 2, 4, pal.crystalLight);
-        // Brilliant glint center
-        c.rect(15, 5, 2, 2, pal.crystalGlint);
-        c.px(14, 5, pal.crystalLight);
-        c.px(17, 6, pal.crystalDark);
+        drawHi16Crystals(c, pal);
       }
     }
 
-    // Engraved sanctuary chevron relief on "fill_2"
+    // engraved chevron relief and mortar glints on "fill_2"
     if (tile === "fill_2") {
-      // Course B sanctuary chevron etched at x=12..19, y=14..18
+      // small teal glints in horizontal mortar
+      c.px(6, 10, pal.crystalLight);
+      c.px(7, 10, pal.crystalGlint);
+      c.px(24, 10, pal.crystalMid);
+      c.px(25, 10, pal.crystalGlint);
+
+      c.px(10, 21, pal.crystalGlint);
+      c.px(11, 21, pal.crystalLight);
+      c.px(20, 21, pal.crystalMid);
+      c.px(21, 21, pal.crystalGlint);
+
+      // course b sanctuary chevron etched at x=12..19, y=14..18
       const chevron = [
         [15, 13], [16, 13],
         [14, 14], [17, 14],
         [13, 15], [18, 15],
         [12, 16], [19, 16],
       ];
-      // Dark etched groove
       for (const [x, y] of chevron) {
         c.px(x, y, pal.mortar);
         c.px(x, y - 1, pal.faceShadow);
         c.px(x, y + 1, pal.faceLight);
       }
-      // Inner chevron accent
-      c.px(15, 15, pal.faceShadow);
-      c.px(16, 15, pal.faceShadow);
+      c.px(15, 14, pal.crystalGlint);
+      c.px(16, 14, pal.crystalLight);
+      c.px(15, 15, pal.crystalLight);
+      c.px(16, 15, pal.crystalDark);
       c.px(15, 16, pal.faceLight);
       c.px(16, 16, pal.faceLight);
     }
 
-    // Decorative chamfered base plinth on "bottom*"
+    // decorative chamfered base plinth on "bottom*"
     if (tile.startsWith("bottom")) {
       c.rect(0, 27, 32, 1, pal.faceLight);
       c.rect(0, 28, 32, 2, pal.faceShadow);
       c.rect(0, 30, 32, 2, pal.outline);
     }
 
-    // Left border & corners
+    // left border & corners
     if (tile.includes("left")) {
       c.rect(0, 0, 2, 32, pal.outline);
       c.rect(2, 0, 1, 32, pal.faceShadow);
 
       if (tile === "top_left") {
-        // 3px corner bevel (x=0..2, y=0..2)
         c.rect(0, 0, 3, 3, pal.outline);
         c.px(3, 0, pal.outline);
         c.px(0, 3, pal.outline);
         c.px(3, 1, pal.topHighlight);
 
-        // Course A carved rosette accent at x=6..10, y=5..9
+        // course a carved rosette accent
         c.rect(6, 6, 5, 3, pal.faceLight);
         c.rect(7, 5, 3, 5, pal.faceLight);
         c.rect(7, 6, 3, 3, pal.faceShadow);
@@ -185,7 +240,6 @@ function drawHi16(c: PixelCanvas, tile: string, pal: Palette): void {
       }
 
       if (tile === "bottom_left") {
-        // Corbel plinth bevel tapering upward at x=0..7, y=28..31
         c.rect(0, 28, 7, 4, pal.outline);
         c.rect(0, 26, 4, 2, pal.faceShadow);
         c.px(7, 28, pal.faceShadow);
@@ -193,20 +247,18 @@ function drawHi16(c: PixelCanvas, tile: string, pal: Palette): void {
       }
     }
 
-    // Right border & corners
+    // right border & corners
     if (tile.includes("right")) {
       c.rect(30, 0, 2, 32, pal.outline);
       c.rect(29, 0, 1, 32, pal.faceShadow);
 
       if (tile === "top_right") {
-        // 3px corner bevel (x=29..31, y=0..2)
         c.rect(29, 0, 3, 3, pal.outline);
         c.px(28, 0, pal.outline);
         c.px(31, 3, pal.outline);
       }
 
       if (tile === "bottom_right") {
-        // Corbel plinth bevel tapering upward at x=24..31, y=28..31
         c.rect(25, 28, 7, 4, pal.outline);
         c.rect(28, 26, 4, 2, pal.faceShadow);
         c.px(24, 28, pal.faceShadow);
@@ -214,65 +266,52 @@ function drawHi16(c: PixelCanvas, tile: string, pal: Palette): void {
       }
     }
   } else {
-    // --- Ledge Tiles (Thin Platforms: 22-25px tall in game) ---
-    // Top Crystal Cap (y=0..3 across x=0..31)
-    c.rect(0, 0, 32, 1, pal.crystalGlint);
-    c.rect(0, 1, 32, 1, pal.crystalLight);
-    c.rect(0, 2, 32, 1, pal.crystalMid);
+    // --- ledge tiles (thin platforms: 22-25px tall in game) ---
+    // top crystal cap (y=0..3 across x=0..31)
+    c.rect(0, 0, 32, 1, pal.crystalLight);
+    c.rect(0, 1, 32, 1, pal.crystalMid);
+    c.rect(0, 2, 32, 1, pal.crystalDark);
     c.rect(0, 3, 32, 1, pal.crystalDark);
 
-    // Warm stone core (y=4..18)
-    c.rect(0, 4, 32, 15, pal.face);
-    // Vertical mortar joint at x=15
-    c.rect(14, 4, 1, 15, pal.faceShadow);
-    c.rect(15, 4, 1, 15, pal.mortar);
-    c.rect(16, 4, 1, 15, pal.faceLight);
+    // rhythmic crystalline glints along the walkable rim
+    for (let x = 1; x < 32; x += 4) {
+      c.px(x, 0, pal.crystalGlint);
+      c.px(x + 1, 0, pal.crystalGlint);
+      c.px(x, 1, pal.crystalLight);
+    }
 
-    // Subtle stone chisel marks
+    // 2 px shadow band under the rim/coping
+    c.rect(0, 4, 32, 1, pal.mortar);
+    c.rect(0, 5, 32, 1, pal.faceShadow);
+
+    // warm stone core (y=6..18)
+    c.rect(0, 6, 32, 13, pal.face);
+    // vertical mortar joint at x=15
+    c.rect(14, 6, 1, 11, pal.faceShadow);
+    c.rect(15, 6, 1, 11, pal.mortar);
+    c.rect(16, 6, 1, 11, pal.faceLight);
+
+    // subtle stone chisel marks
     c.rect(5, 8, 3, 1, pal.faceLight);
     c.rect(9, 12, 2, 1, pal.faceShadow);
     c.rect(21, 9, 3, 1, pal.faceLight);
     c.rect(26, 13, 2, 1, pal.faceShadow);
 
-    // Under-bevel at y=19..21 (resolves fully within 22px!)
+    // darker block bottom at y=17..18
+    c.rect(0, 17, 32, 2, pal.faceShadow);
+
+    // under-bevel at y=19..21 (resolves fully within 22px)
     c.rect(0, 19, 32, 1, pal.faceLight);
     c.rect(0, 20, 32, 1, pal.faceShadow);
     c.rect(0, 21, 32, 1, pal.outline);
 
-    // Foundation structure at y=22..31 (ensures 100% solid opacity)
+    // foundation structure at y=22..31
     c.rect(0, 22, 32, 10, pal.mortar);
     c.rect(0, 22, 32, 1, pal.outline);
     c.rect(0, 27, 32, 1, pal.faceShadow);
 
     if (tile === "ledge_2") {
-      // Upright faceted aether crystal cluster rising at x=12..19:
-      // Central spire (apex y=0 at x=15..16)
-      c.px(15, 0, pal.crystalGlint);
-      c.px(16, 0, pal.crystalGlint);
-      // Main faceted body catching illumination
-      c.rect(14, 1, 4, 1, pal.crystalLight);
-      c.px(15, 1, pal.crystalGlint);
-      c.px(16, 1, pal.crystalGlint);
-      // Mid prism tier
-      c.rect(13, 2, 6, 1, pal.crystalMid);
-      c.px(14, 2, pal.crystalLight);
-      c.px(15, 2, pal.crystalLight);
-      c.px(17, 2, pal.crystalDark);
-      c.px(18, 2, pal.crystalDark);
-      // Lower facets
-      c.rect(13, 3, 6, 1, pal.crystalDark);
-      c.px(14, 3, pal.crystalMid);
-      c.px(15, 3, pal.crystalMid);
-      c.px(16, 3, pal.crystalLight);
-      // Stone bezel collar at y=4
-      c.px(12, 4, pal.faceLight);
-      c.px(13, 4, pal.crystalDark);
-      c.px(14, 4, pal.crystalMid);
-      c.px(15, 4, pal.crystalMid);
-      c.px(16, 4, pal.crystalDark);
-      c.px(17, 4, pal.crystalDark);
-      c.px(18, 4, pal.faceLight);
-      c.px(19, 4, pal.faceShadow);
+      drawHi16Crystals(c, pal);
     }
 
     if (tile === "ledge_left") {
@@ -325,55 +364,116 @@ function drawHi16(c: PixelCanvas, tile: string, pal: Palette): void {
   }
 }
 
-// --- Hi-8bit Drawing (16x16) ---
+// --- hi-8bit crystal cluster helper (16x16) ---
+function drawHi8Crystals(c: PixelCanvas, pal: Palette): void {
+  // 3 faceted teal shards clustered at x=5..11 within y=0..4
+
+  // shard 1 (left, apex at x=6, y=1)
+  c.px(6, 1, pal.crystalGlint);
+  c.px(5, 2, pal.crystalLight);
+  c.px(5, 3, pal.crystalLight);
+  c.px(6, 2, pal.crystalMid);
+  c.px(6, 3, pal.crystalDark);
+
+  // shard 2 (tallest center spire, apex at x=8, y=0)
+  c.px(8, 0, pal.crystalGlint);
+  c.px(8, 1, pal.crystalGlint);
+  c.px(7, 1, pal.crystalLight);
+  c.px(7, 2, pal.crystalLight);
+  c.px(7, 3, pal.crystalMid);
+  c.px(8, 2, pal.crystalDark);
+  c.px(8, 3, pal.crystalDark);
+
+  // shard 3 (right, apex at x=10, y=1)
+  c.px(10, 1, pal.crystalGlint);
+  c.px(9, 2, pal.crystalLight);
+  c.px(9, 3, pal.crystalMid);
+  c.px(10, 2, pal.crystalDark);
+  c.px(10, 3, pal.crystalDark);
+
+  // base collar at y=4
+  c.rect(6, 4, 5, 1, pal.faceShadow);
+}
+
+// --- hi-8bit drawing (16x16) ---
 function drawHi8(c: PixelCanvas, tile: string, pal: Palette): void {
-  // Base stone
+  // base stone
   c.rect(0, 0, 16, 16, pal.face);
 
   const isLedge = tile.startsWith("ledge");
 
   if (!isLedge) {
-    // 16x16 Masonry Grid:
-    // Course A: y=0..4, Seam 1: y=5
-    // Course B: y=6..10, Seam 2: y=11
-    // Course C: y=12..15
-    c.rect(0, 5, 16, 1, pal.outline);
-    c.rect(0, 11, 16, 1, pal.outline);
+    // 16x16 masonry grid:
+    // course a: y=0..4, seam 1: y=5
+    // course b: y=6..10, seam 2: y=11
+    // course c: y=12..15
+    // horizontal 1px mortar in mid-dark warm tone
+    c.rect(0, 5, 16, 1, pal.mortar);
+    c.rect(0, 11, 16, 1, pal.mortar);
 
-    // Staggered vertical seams
-    // Course A & C: x=7
-    c.rect(7, 0, 1, 5, pal.outline);
-    c.rect(7, 12, 1, 4, pal.outline);
+    // lighter top edge on each block
+    if (!tile.startsWith("top")) {
+      c.rect(0, 0, 16, 1, pal.faceLight);
+    }
+    c.rect(0, 6, 16, 1, pal.faceLight);
+    c.rect(0, 12, 16, 1, pal.faceLight);
 
-    // Course B: x=3 and x=11
-    if (!tile.includes("left")) c.rect(3, 6, 1, 5, pal.outline);
-    if (!tile.includes("right")) c.rect(11, 6, 1, 5, pal.outline);
+    // darker block bottom on each block
+    c.rect(0, 4, 16, 1, pal.faceShadow);
+    c.rect(0, 10, 16, 1, pal.faceShadow);
+    if (!tile.startsWith("bottom")) {
+      c.rect(0, 15, 16, 1, pal.faceShadow);
+    }
 
-    // Walkable top rim on "top*"
+    // staggered vertical joints in 1px warm mortar with bevel highlight
+    const topStartY = tile.startsWith("top") ? 2 : 0;
+    c.rect(7, topStartY, 1, 5 - topStartY, pal.mortar);
+    c.rect(8, topStartY, 1, 4 - topStartY, pal.faceLight);
+
+    c.rect(7, 12, 1, 4, pal.mortar);
+    c.rect(8, 12, 1, 3, pal.faceLight);
+
+    // course b joints at x=3 and x=11
+    if (!tile.includes("left")) {
+      c.rect(3, 6, 1, 5, pal.mortar);
+      c.rect(4, 6, 1, 4, pal.faceLight);
+    }
+    if (!tile.includes("right")) {
+      c.rect(11, 6, 1, 5, pal.mortar);
+      c.rect(12, 6, 1, 4, pal.faceLight);
+    }
+
+    // walkable top rim on "top*"
     if (tile.startsWith("top")) {
       c.rect(0, 0, 16, 1, pal.topHighlight);
+      c.rect(0, 1, 16, 1, pal.faceShadow);
 
       if (tile === "top_2") {
-        // 2x2 teal crystal inlay at x=7..8, y=2..3
-        c.rect(7, 2, 2, 2, pal.crystalMid);
-        c.px(7, 2, pal.topHighlight); // Glint spark
+        drawHi8Crystals(c, pal);
       }
     }
 
-    // Fill_2 3px diamond rune notch in stone_dark centered at x=7..9, y=7..9
+    // fill_2 diamond rune and mortar glints
     if (tile === "fill_2") {
-      c.px(8, 7, pal.faceShadow);
-      c.rect(7, 8, 3, 1, pal.faceShadow);
+      c.px(4, 5, pal.crystalLight);
+      c.px(12, 5, pal.crystalGlint);
+      c.px(8, 11, pal.crystalGlint);
+      c.px(9, 11, pal.crystalMid);
+
+      c.px(8, 7, pal.crystalDark);
+      c.px(7, 8, pal.crystalLight);
+      c.px(8, 8, pal.crystalGlint);
+      c.px(9, 8, pal.crystalDark);
       c.px(8, 9, pal.faceShadow);
     }
 
-    // Bottom plinth on "bottom*"
+    // bottom plinth on "bottom*"
     if (tile.startsWith("bottom")) {
       c.rect(0, 14, 16, 1, pal.faceShadow);
       c.rect(0, 15, 16, 1, pal.outline);
     }
 
-    // Left border & corners
+    // left border & corners
     if (tile.includes("left")) {
       c.rect(0, 0, 1, 16, pal.outline);
       c.rect(1, 0, 1, 16, pal.faceShadow);
@@ -386,7 +486,7 @@ function drawHi8(c: PixelCanvas, tile: string, pal: Palette): void {
       }
     }
 
-    // Right border & corners
+    // right border & corners
     if (tile.includes("right")) {
       c.rect(15, 0, 1, 16, pal.outline);
       c.rect(14, 0, 1, 16, pal.faceShadow);
@@ -399,32 +499,33 @@ function drawHi8(c: PixelCanvas, tile: string, pal: Palette): void {
       }
     }
   } else {
-    // --- Ledge (Thin Platform: 11px tall in 16x16 = 22px in world units) ---
+    // --- ledge (thin platform: 11px tall in 16x16 = 22px in world units) ---
     // y=0: crystal rim with alternating glint dots
     c.rect(0, 0, 16, 1, pal.crystalMid);
     for (let x = 1; x < 16; x += 3) {
       c.px(x, 0, pal.crystalGlint);
     }
 
-    // Warm stone body
-    c.rect(0, 1, 16, 9, pal.face);
-    // Vertical seam at x=7
-    c.rect(7, 1, 1, 9, pal.outline);
+    // 1px shadow band under rim
+    c.rect(0, 1, 16, 1, pal.faceShadow);
 
-    // Bottom bevel at y=10..11
-    c.rect(0, 10, 16, 1, pal.faceShadow);
+    // warm stone body
+    c.rect(0, 2, 16, 7, pal.face);
+    // vertical seam at x=7 in mortar with bevel highlight
+    c.rect(7, 2, 1, 7, pal.mortar);
+    c.rect(8, 2, 1, 6, pal.faceLight);
+    // darker block bottom at y=9
+    c.rect(0, 9, 16, 1, pal.faceShadow);
+
+    // bottom bevel at y=10..11
+    c.rect(0, 10, 16, 1, pal.faceLight);
     c.rect(0, 11, 16, 1, pal.outline);
 
-    // Foundation y=12..15 (opaque solid)
-    c.rect(0, 12, 16, 4, pal.faceShadow);
+    // foundation y=12..15 (opaque solid)
+    c.rect(0, 12, 16, 4, pal.mortar);
 
     if (tile === "ledge_2") {
-      // 2px tall crystal spire cluster at x=6..9, y=0..1
-      c.rect(6, 0, 4, 1, pal.crystalMid);
-      c.px(7, 0, pal.crystalGlint);
-      c.px(8, 0, pal.crystalGlint);
-      c.px(7, 1, pal.crystalMid);
-      c.px(8, 1, pal.crystalMid);
+      drawHi8Crystals(c, pal);
     }
 
     if (tile === "ledge_left") {
