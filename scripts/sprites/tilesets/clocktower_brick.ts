@@ -46,7 +46,7 @@ const PAL8: Palette8 = {
 };
 
 // ==========================================
-// HI-16BIT DRAWING ROUTINES (32x32)
+// hi-16bit drawing routines (32x32)
 // ==========================================
 
 function drawBrickSegment16(
@@ -526,7 +526,7 @@ function drawHi16bit(c: PixelCanvas, tile: string): void {
 }
 
 // ==========================================
-// HI-8BIT DRAWING ROUTINES (16x16)
+// hi-8bit drawing routines (16x16)
 // ==========================================
 
 function drawMasonry8(c: PixelCanvas, minX: number, maxX: number, firstCourse: number, lastCourse: number): void {
