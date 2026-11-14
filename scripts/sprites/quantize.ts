@@ -26,6 +26,19 @@ export interface HueRemap {
   saturation?: number;
 }
 
+/**
+ * colour grading of one tier's painted pixels, applied after the downscale and before the palette is built. a missing
+ * or default value leaves that step out, so `{}` changes nothing. applied in the order saturation, contrast, gamma.
+ */
+export interface ColorTune {
+  /** power of each channel (0..1 scale): below 1 brightens the mid tones, above 1 darkens them. default 1. */
+  gamma?: number;
+  /** stretch around mid grey (128): above 1 adds contrast, 0 flattens to grey. default 1. */
+  contrast?: number;
+  /** distance from the luma: 0 is greyscale, 1 unchanged, above 1 more vivid. default 1. */
+  saturation?: number;
+}
+
 export type Rgb = [number, number, number];
 
 export const unpack = (rgb: number): Rgb => [(rgb >> 16) & 0xff, (rgb >> 8) & 0xff, rgb & 0xff];
@@ -77,6 +90,27 @@ export function downscale2x(image: RgbaImage): RgbaImage {
     }
   }
   return { width, height, data };
+}
+
+const clampByte = (value: number): number => Math.min(255, Math.max(0, Math.round(value)));
+
+/** grades the rgb of an image with saturation, contrast and gamma; alpha is kept. returns the input itself when nothing is set. */
+export function tuneColors(image: RgbaImage, tune: ColorTune): RgbaImage {
+  const gamma = tune.gamma ?? 1;
+  const contrast = tune.contrast ?? 1;
+  const saturation = tune.saturation ?? 1;
+  if (gamma === 1 && contrast === 1 && saturation === 1) return image;
+  const data = new Uint8Array(image.data);
+  for (let i = 0; i < data.length; i += 4) {
+    const luma = LUMA[0] * data[i] + LUMA[1] * data[i + 1] + LUMA[2] * data[i + 2];
+    for (let c = 0; c < 3; c++) {
+      const saturated = luma + (data[i + c] - luma) * saturation;
+      const contrasted = (saturated - 128) * contrast + 128;
+      const unit = Math.min(1, Math.max(0, contrasted / 255));
+      data[i + c] = clampByte(255 * unit ** gamma);
+    }
+  }
+  return { width: image.width, height: image.height, data };
 }
 
 /** Packed 0xRRGGBB for opaque pixels (alpha >= 50 %), TRANSPARENT otherwise. */

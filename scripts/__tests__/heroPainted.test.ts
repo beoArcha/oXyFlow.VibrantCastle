@@ -7,7 +7,7 @@ import { defineHeroSprite } from "../sprites/defineHeroSprite";
 import { measure } from "../sprites/frameStats";
 import { extractPaintedFrames, footColumn, loadPaintedFiles, paletteOf, renderPaintedHero } from "../sprites/paintedHero";
 import { TRANSPARENT } from "../sprites/pixelCanvas";
-import { buildPalette, downscale2x, remapColor, thresholdAlpha, unpack } from "../sprites/quantize";
+import { buildPalette, type ColorTune, downscale2x, remapColor, thresholdAlpha, tuneColors, unpack } from "../sprites/quantize";
 import sampleHero from "../sprites/__fixtures__/sample_hero";
 import {
   aPaintedHero,
@@ -332,5 +332,102 @@ describe("painted hero hooks and contracts", () => {
 
     // Assert
     expect([...half.data]).toEqual([150, 0, 0, 128]);
+  });
+});
+
+describe("painted hero colour tuning", () => {
+  const grey = (value: number) => ({ width: 1, height: 1, data: new Uint8Array([value, value, value, 255]) });
+  const tuned = (tune: { hi8bit?: ColorTune; hi16bit?: ColorTune }) => aPaintedHero({ tune });
+
+  it("should produce identical hi-8bit bytes when a tuned hero is compiled twice", () => {
+    // Arrange
+    const def = tuned({ hi8bit: { gamma: 0.8, contrast: 1.15, saturation: 1.2 } });
+
+    // Act
+    const first = compile(def);
+    const second = compile(def);
+
+    // Assert
+    expect(Buffer.compare(second.hi8bitPng, first.hi8bitPng)).toBe(0);
+    expect(second.metaJson).toBe(first.metaJson);
+  });
+
+  it("should brighten the mid tones with a gamma below one and keep black and white", () => {
+    // Arrange
+    const mid = grey(100);
+    const black = { width: 1, height: 1, data: new Uint8Array([0, 0, 0, 255]) };
+    const white = { width: 1, height: 1, data: new Uint8Array([255, 255, 255, 255]) };
+
+    // Act
+    const brighter = tuneColors(mid, { gamma: 0.8 }).data[0];
+    const darker = tuneColors(mid, { gamma: 1.25 }).data[0];
+
+    // Assert
+    expect(brighter).toBeGreaterThan(100);
+    expect(darker).toBeLessThan(100);
+    expect(tuneColors(black, { gamma: 0.8 }).data[0]).toBe(0);
+    expect(tuneColors(white, { gamma: 0.8 }).data[0]).toBe(255);
+  });
+
+  it("should spread colours away from mid grey with contrast and collapse them with saturation zero", () => {
+    // Arrange
+    const light = grey(200);
+    const vivid = { width: 1, height: 1, data: new Uint8Array([200, 100, 50, 255]) };
+
+    // Act
+    const stretched = tuneColors(light, { contrast: 1.5 }).data[0];
+    const flat = tuneColors(vivid, { saturation: 0 });
+
+    // Assert
+    expect(stretched).toBeGreaterThan(200);
+    expect(flat.data[0]).toBe(flat.data[1]);
+    expect(flat.data[1]).toBe(flat.data[2]);
+  });
+
+  it("should leave the alpha channel and the image untouched when no option is set", () => {
+    // Arrange
+    const image = { width: 1, height: 1, data: new Uint8Array([10, 20, 30, 77]) };
+
+    // Act
+    const same = tuneColors(image, {});
+    const explicit = tuneColors(image, { gamma: 1, contrast: 1, saturation: 1 });
+
+    // Assert
+    expect(same).toBe(image);
+    expect(explicit).toBe(image);
+  });
+
+  it("should give the same sheets as an untuned hero when every tune value is the default", () => {
+    // Arrange
+    const plain = compile();
+
+    // Act
+    const defaults = compile(tuned({ hi8bit: {}, hi16bit: { gamma: 1, contrast: 1, saturation: 1 } }));
+
+    // Assert
+    expect(Buffer.compare(defaults.hi8bitPng, plain.hi8bitPng)).toBe(0);
+    expect(Buffer.compare(defaults.hi16bitPng, plain.hi16bitPng)).toBe(0);
+  });
+
+  it("should grade only the hi-8bit tier and leave the hi-16bit sheet byte-identical", () => {
+    // Arrange
+    const plain = compile();
+
+    // Act
+    const graded = compile(tuned({ hi8bit: { gamma: 0.8, contrast: 1.15, saturation: 1.2 } }));
+
+    // Assert
+    expect(Buffer.compare(graded.hi16bitPng, plain.hi16bitPng)).toBe(0);
+    expect(Buffer.compare(graded.hi8bitPng, plain.hi8bitPng)).not.toBe(0);
+  });
+
+  it("should reject a grade with a non-positive gamma or a negative contrast", () => {
+    // Arrange & Act
+    const badGamma = () => tuned({ hi8bit: { gamma: 0 } });
+    const badContrast = () => tuned({ hi8bit: { contrast: -1 } });
+
+    // Assert
+    expect(badGamma).toThrow(/source.tune.hi8bit needs gamma > 0/);
+    expect(badContrast).toThrow(/source.tune.hi8bit needs gamma > 0/);
   });
 });

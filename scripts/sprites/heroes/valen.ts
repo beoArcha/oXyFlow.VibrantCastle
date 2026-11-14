@@ -6,10 +6,12 @@ import { defineHeroSprite } from "../defineHeroSprite";
 // (minValue keeps the dark shades out of the remap).
 export default defineHeroSprite({
   id: "valen",
-  description: "Valen, the scarlet-blade duelist, quantized from his painted frames to a hard-edged 16-colour hi-16bit and 8-colour hi-8bit palette.",
+  description: "Valen, the scarlet-blade duelist, quantized from his painted frames to a hard-edged 16-colour hi-16bit and 12-colour hi-8bit palette.",
   source: {
     kind: "painted",
-    colors: { hi16bit: 16, hi8bit: 8 },
+    colors: { hi16bit: 16, hi8bit: 12 },
     remap: [{ hue: [180, 260], toHue: 40, minSaturation: 0.3, minValue: 0.45 }],
+    // hi-8bit only: brighter mids so the skin reads, a firmer contrast so the navy coat stands off the brown boots.
+    tune: { hi8bit: { gamma: 0.8, contrast: 1.15, saturation: 1.2 } },
   },
 });

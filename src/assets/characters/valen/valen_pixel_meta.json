@@ -2,7 +2,7 @@
   "characterId": "valen",
   "entityType": "humanoid",
   "version": "1.0",
-  "description": "Valen, the scarlet-blade duelist, quantized from his painted frames to a hard-edged 16-colour hi-16bit and 8-colour hi-8bit palette.",
+  "description": "Valen, the scarlet-blade duelist, quantized from his painted frames to a hard-edged 16-colour hi-16bit and 12-colour hi-8bit palette.",
   "atlas": {
     "columns": 14,
     "rows": 8,

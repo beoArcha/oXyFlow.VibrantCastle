@@ -1,6 +1,6 @@
 import type { RgbaImage } from "../lib/png";
 import type { PixelCanvas } from "./pixelCanvas";
-import type { HueRemap } from "./quantize";
+import type { ColorTune, HueRemap } from "./quantize";
 import type { Tier } from "./types";
 
 export interface HeroAnimationGrid {
@@ -47,6 +47,11 @@ export interface PaintedSource {
   dither?: false;
   /** Hue remaps applied to the painted colours before the palettes are built (first match wins). */
   remap?: HueRemap[];
+  /**
+   * colour grading per tier, applied to that tier's pixels before its palette is built. hi-8bit is graded after the
+   * 2x downscale (readability at low depth); hi-16bit is graded on the 1:1 frames. omitted or default values change nothing.
+   */
+  tune?: { hi8bit?: ColorTune; hi16bit?: ColorTune };
   /** Painted sheet to use instead of `<id>_level_1_high_packed.png` (tests). */
   image?: RgbaImage;
   /** Painted frame rects to use instead of the `frameRects` of the packed meta (tests). */

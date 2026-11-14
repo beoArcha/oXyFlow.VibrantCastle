@@ -19,9 +19,11 @@ import {
   ALPHA_CUTOFF,
   applyPalette,
   buildPalette,
+  type ColorTune,
   downscale2x,
   remapColor,
   thresholdAlpha,
+  tuneColors,
 } from "./quantize";
 import { toHex } from "./colors";
 import type { Tier } from "./types";
@@ -231,10 +233,20 @@ export function renderPaintedHero(def: HeroSpriteDefinition, grid: HeroGrid, fil
   const fitted = fitPaintedGrid(grid, frames);
   const cell = heroCell(fitted, "hi16bit");
   const slots16 = frames.map((f) => ({ anim: f.anim, frame: f.frame, span: f.span, rgba: placeFrame(f, cell, fitted.anchorX ?? 0) }));
-  const slots8 = slots16.map((slot) => ({ ...slot, rgba: downscale2x(slot.rgba) }));
-  const hi16bit = renderTier(def, source, fitted, "hi16bit", slots16);
+  // hi-8bit is always derived from the untuned 1:1 frames, so grading one tier never changes the other one's shape.
+  const slots8 = gradeSlots(
+    slots16.map((slot) => ({ ...slot, rgba: downscale2x(slot.rgba) })),
+    source.tune?.hi8bit,
+  );
+  const hi16bit = renderTier(def, source, fitted, "hi16bit", gradeSlots(slots16, source.tune?.hi16bit));
   const hi8bit = renderTier(def, source, fitted, "hi8bit", slots8);
   return { grid: fitted, hi8bit, hi16bit };
+}
+
+/** applies a tier's colour grade to every slot; without a grade the slots are returned as they are. */
+function gradeSlots<T extends Slot & { rgba: RgbaImage }>(slots: readonly T[], tune: ColorTune | undefined): T[] {
+  if (!tune) return [...slots];
+  return slots.map((slot) => ({ ...slot, rgba: tuneColors(slot.rgba, tune) }));
 }
 
 /** Distinct colours used by a rendered tier, sorted by value. */
