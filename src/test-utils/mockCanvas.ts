@@ -90,6 +90,7 @@ export function createMockContext2D(width = 1000, height = 625): MockContext2D {
       ellipseCalls.push({ x, y, rx, ry, rot, sa, ea });
     },
     rect: () => {},
+    clip: () => {},
     roundRect: () => {},
     fillRect: (x: number, y: number, w: number, h: number) => {
       fillRectCalls.push({ x, y, w, h });

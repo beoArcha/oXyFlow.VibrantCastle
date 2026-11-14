@@ -216,3 +216,148 @@ describe("StructureRenderer animation clock", () => {
     expect(calls[0].ticks).toBe(3);
   });
 });
+
+describe("StructureRenderer structure atlases", () => {
+  interface Spy {
+    renders: Array<{ atlasId: string; animationName: string; x: number; width: number; height: number }>;
+    regions: Array<{ atlasId: string; y: number; height: number; regionY: number }>;
+    renderer: StructureRenderer;
+  }
+
+  const makeRenderer = (atlases: Record<string, number>): Spy => {
+    const renders: Spy["renders"] = [];
+    const regions: Spy["regions"] = [];
+    const atlas = {
+      hasAtlas: (id: string) => id in atlases,
+      hasAnimation: () => true,
+      getBodyAspect: (id: string) => atlases[id] ?? 0,
+      render: (_c: unknown, o: Spy["renders"][number]) => {
+        renders.push({ atlasId: o.atlasId, animationName: o.animationName, x: o.x, width: o.width, height: o.height });
+        return true;
+      },
+      renderRegion: (_c: unknown, o: Spy["regions"][number]) => {
+        regions.push({ atlasId: o.atlasId, y: o.y, height: o.height, regionY: o.regionY });
+        return true;
+      },
+    };
+    return { renders, regions, renderer: new StructureRenderer(atlas as never) };
+  };
+
+  const gate = (extra: Partial<Entity> = {}): Entity =>
+    ({
+      id: "g",
+      type: CollisionType.Solid,
+      structureId: "grand_portcullis",
+      x: 100,
+      y: 300,
+      width: 36,
+      height: 200,
+      ...extra,
+    }) as Entity;
+
+  it("draws a closed gate from the portcullis sheet instead of the grey rectangle", () => {
+    const { regions, renderer } = makeRenderer({ grand_portcullis: 0.456 });
+    const ctx = createMockContext();
+
+    renderer.render(ctx, [gate()], "en", 0);
+
+    expect(regions.length).toBeGreaterThan(4);
+    expect(regions.every((r) => r.atlasId === "grand_portcullis")).toBe(true);
+    expect(ctx.getFillRectCalls().length).toBe(0);
+    expect(ctx.getSaveBalance()).toBe(0);
+  });
+
+  it("slides the iron grid up while opening", () => {
+    const closed = makeRenderer({ grand_portcullis: 0.456 });
+    const opening = makeRenderer({ grand_portcullis: 0.456 });
+
+    closed.renderer.render(createMockContext(), [gate()], "en", 0);
+    opening.renderer.render(
+      createMockContext(),
+      [gate({ gateBaseHeight: 200, height: 100, animationState: "opening", animationTicks: 36 })],
+      "en",
+      0
+    );
+
+    const spikesY = (spy: Spy) => spy.regions.find((r) => r.regionY >= 0.9)?.y ?? Infinity;
+    expect(spikesY(opening)).toBeLessThan(spikesY(closed));
+  });
+
+  it("keeps drawing the lintel and posts of an open gate but no grid", () => {
+    const { regions, renderer } = makeRenderer({ grand_portcullis: 0.456 });
+
+    renderer.render(
+      createMockContext(),
+      [gate({ gateBaseHeight: 200, height: 0, animationState: "open", animationTicks: 99 })],
+      "en",
+      0
+    );
+
+    expect(regions.length).toBeGreaterThan(0);
+    expect(regions.some((r) => r.regionY === 0)).toBe(true);
+  });
+
+  it("falls back to the procedural gate when the portcullis atlas is missing", () => {
+    const { regions, renderer } = makeRenderer({});
+    const ctx = createMockContext();
+
+    renderer.render(ctx, [gate()], "en", 0);
+
+    expect(regions.length).toBe(0);
+    expect(ctx.getFillRectCalls().length).toBeGreaterThan(0);
+  });
+
+  it("does not draw an open gate procedurally", () => {
+    const { renderer } = makeRenderer({});
+    const ctx = createMockContext();
+
+    renderer.render(ctx, [gate({ gateBaseHeight: 200, height: 0, animationState: "open" })], "en", 0);
+
+    expect(ctx.getFillRectCalls().length).toBe(0);
+  });
+
+  it("tiles the thorn strip along the hazard width", () => {
+    const { renders, renderer } = makeRenderer({ hazard_thorns: 3.68 });
+    const hazard = { id: "h", type: CollisionType.Hazard, x: 50, y: 400, width: 368, height: 50 } as Entity;
+
+    renderer.render(createMockContext(), [hazard], "en", 0);
+
+    expect(renders.length).toBe(2);
+    expect(renders.every((r) => r.atlasId === "hazard_thorns" && r.animationName === "idle")).toBe(true);
+    expect(renders[0].x).toBe(50);
+    expect(renders[1].x).toBe(50 + renders[0].width);
+    expect(renders[0].width * 2).toBeCloseTo(368, 6);
+  });
+
+  it("draws procedural spikes when the thorn atlas is missing", () => {
+    const { renders, renderer } = makeRenderer({});
+    const hazard = { id: "h", type: CollisionType.Hazard, x: 50, y: 400, width: 100, height: 40 } as Entity;
+    const ctx = createMockContext();
+
+    renderer.render(ctx, [hazard], "en", 0);
+
+    expect(renders.length).toBe(0);
+    expect(ctx.getSaveBalance()).toBe(0);
+  });
+
+  it("renders a pulled lever through the activating animation of chrono_lever", () => {
+    const { renders, renderer } = makeRenderer({ chrono_lever: 1 });
+    const lever = {
+      id: "l",
+      type: CollisionType.Lever,
+      structureId: "chrono_lever",
+      x: 0,
+      y: 0,
+      width: 25,
+      height: 45,
+      isActivated: true,
+      animationState: "activating",
+      animationTicks: 4,
+    } as Entity;
+
+    renderer.render(createMockContext(), [lever], "en", 0);
+
+    expect(renders[0].atlasId).toBe("chrono_lever");
+    expect(renders[0].animationName).toBe("activating");
+  });
+});

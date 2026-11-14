@@ -404,3 +404,68 @@ describe("AtlasSpriteRenderer", () => {
     expect(true).toBe(true);
   });
 });
+
+describe("AtlasSpriteRenderer body regions", () => {
+  const register = (id: string) => {
+    const mockTex = createMockTexture(600, 400); // 6 cols x 2 rows => 100x200 cells
+    assetLoader.registerAtlas({
+      id,
+      category: "structure" as const,
+      imageSrc: `mock://${id}.png`,
+      meta: {
+        atlas: { columns: 6, rows: 2 },
+        animations: { closed: { row: 1, frames: 6, fps: 6 } },
+        layout: { bodyBox: { x: 0.1, y: 0.1, w: 0.8, h: 0.8 } },
+        anchor: { x: 0.5, y: 1.0 },
+      } as any,
+    });
+    (assetLoader as any).textureCache.set(`mock://${id}.png`, mockTex);
+  };
+
+  it("reports the world aspect of the body box and 0 for unknown atlases", () => {
+    const renderer = new AtlasSpriteRenderer();
+    register("mock_region_aspect");
+
+    // body 80 px wide, 160 px tall
+    expect(renderer.getBodyAspect("mock_region_aspect")).toBeCloseTo(0.5, 6);
+    expect(renderer.getBodyAspect("nope")).toBe(0);
+  });
+
+  it("slices a region of the current frame body into the destination rect", () => {
+    const renderer = new AtlasSpriteRenderer();
+    const ctx = createMockContext();
+    register("mock_region_slice");
+
+    const drawn = renderer.renderRegion(ctx, {
+      atlasId: "mock_region_slice",
+      animationName: "closed",
+      ticks: 0,
+      regionX: 0,
+      regionY: 0.5,
+      regionW: 0.5,
+      regionH: 0.25,
+      x: 10,
+      y: 20,
+      width: 30,
+      height: 40,
+    });
+
+    expect(drawn).toBe(true);
+    const call = ctx.getDrawImageCalls()[0];
+    expect(call.sx).toBeCloseTo(10, 6); // body.x 0.1 * 100
+    expect(call.sy).toBeCloseTo(200 + 20 + 80, 6); // row 1 + body.y 20 + 0.5 * 160
+    expect(call.sw).toBeCloseTo(40, 6);
+    expect(call.sh).toBeCloseTo(40, 6);
+    expect([call.dx, call.dy, call.dw, call.dh]).toEqual([10, 20, 30, 40]);
+  });
+
+  it("returns false for a missing atlas or an empty region", () => {
+    const renderer = new AtlasSpriteRenderer();
+    const ctx = createMockContext();
+    register("mock_region_empty");
+    const base = { animationName: "closed", ticks: 0, regionX: 0, regionY: 0, regionW: 1, regionH: 1, x: 0, y: 0, width: 10, height: 10 };
+
+    expect(renderer.renderRegion(ctx, { ...base, atlasId: "nope" })).toBe(false);
+    expect(renderer.renderRegion(ctx, { ...base, atlasId: "mock_region_empty", regionH: 0 })).toBe(false);
+  });
+});
