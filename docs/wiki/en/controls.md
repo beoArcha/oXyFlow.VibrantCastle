@@ -50,10 +50,13 @@ The stick dead zone is 0.25. The design goal is a restricted pad layout: 2 trigg
 
 ## 4. System Hotkeys
 
-- <kbd>P</kbd> or <kbd>Escape</kbd>: pause and resume.
+- <kbd>P</kbd>: pause and resume.
+- <kbd>Escape</kbd>: closes the open window, or opens the menu when none is open.
 - <kbd>M</kbd>: main menu (levels, audio, display).
 - <kbd>H</kbd>, <kbd>?</kbd> or <kbd>F1</kbd>: help and controls card.
 - <kbd>I</kbd>: inventory.
+- <kbd>K</kbd>: skill tree.
+- <kbd>C</kbd>: developer tools (the second menu level, for creators).
 
 ---
 

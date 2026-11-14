@@ -50,10 +50,13 @@ Martwa strefa gałki wynosi 0,25. Założenie projektowe to oszczędny układ pa
 
 ## 4. Skróty systemowe
 
-- <kbd>P</kbd> lub <kbd>Escape</kbd>: pauza i wznowienie.
+- <kbd>P</kbd>: pauza i wznowienie.
+- <kbd>Escape</kbd>: zamyka otwarte okno albo otwiera menu, gdy żadne nie jest otwarte.
 - <kbd>M</kbd>: menu główne (poziomy, dźwięk, obraz).
 - <kbd>H</kbd>, <kbd>?</kbd> lub <kbd>F1</kbd>: pomoc i karta sterowania.
 - <kbd>I</kbd>: ekwipunek.
+- <kbd>K</kbd>: drzewko umiejętności.
+- <kbd>C</kbd>: narzędzia deweloperskie (drugi poziom menu, dla twórców).
 
 ---
 

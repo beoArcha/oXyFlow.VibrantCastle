@@ -14,7 +14,7 @@ In *Vibrant Castle* you command two distinct duelists forged in the melancholic,
 
 ### Appearance
 
-A long graphite travel greatcoat lined with golden thread, a practical waistcoat and boots built for sudden pivots. Rectangular spectacles and unruly chestnut hair mark a contemplative nature.
+A long graphite travel greatcoat lined with golden thread, a practical waistcoat and boots built for sudden pivots. Rectangular spectacles and unruly chestnut hair mark a contemplative nature. His magic glows warm gold.
 
 ### Armament & Abilities
 
@@ -34,10 +34,10 @@ A long graphite travel greatcoat lined with golden thread, a practical waistcoat
 
 ### Appearance
 
-An athletic silhouette in deep cyan and polished brass, with an astral halo that trails light particles during fast movement.
+An athletic silhouette with long chestnut hair and a flowing purple dress trimmed in gold, and a violet glow that trails light particles during fast movement.
 
 ### Armament & Abilities
 
 - **Manifested Aetherblade**: a weapon shaped from celestial energy, built for wide cleaves through groups of enemies.
 - **Phase Dash**: a quick spatial shift for dodging and for reaching dash-only secrets.
-- **Celestial Beam**: a focused ray of astral light.
+- **Celestial Beam**: a focused ray of astral light, shown in violet.
