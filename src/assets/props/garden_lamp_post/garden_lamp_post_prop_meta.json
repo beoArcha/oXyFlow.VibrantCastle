@@ -1,0 +1,27 @@
+{
+  "propId": "garden_lamp_post",
+  "worldWidth": 32,
+  "worldHeight": 96,
+  "anchor": "bottom",
+  "frames": 3,
+  "fps": 6,
+  "variants": {
+    "low": {
+      "file": "garden_lamp_post_hi8bit.png",
+      "frameWidth": 16,
+      "frameHeight": 48
+    },
+    "mid": {
+      "file": "garden_lamp_post_hi16bit.png",
+      "frameWidth": 32,
+      "frameHeight": 96
+    }
+  },
+  "glow": {
+    "color": "#f59e0b",
+    "radius": 84,
+    "x": 16,
+    "y": 22,
+    "flicker": true
+  }
+}
