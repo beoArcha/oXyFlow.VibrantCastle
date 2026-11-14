@@ -37,11 +37,11 @@ All AI assistants must consult the authoritative documentation pillars rather th
 bun dev              # Launch local development server (Vite, port 3000)
 bun run typecheck    # Static TypeScript typecheck (tsc --noEmit)
 bun run lint         # Static TypeScript verification (tsc --noEmit)
-bun test:unit        # Execute AAA unit test suite (1574 pass)
-bun test:integration # Execute integration test suite (105 pass)
-bun test:scripts     # Execute tooling & scripts test suite (105 pass)
-bun test:arch        # Execute AST Architecture & Boundary test suite (124 pass)
-bun test:e2e         # Execute distribution package smoke test suite (6 pass)
+bun test:unit        # Execute AAA unit test suite (1743 pass)
+bun test:integration # Execute integration test suite (107 pass)
+bun test:scripts     # Execute tooling & scripts test suite (256 pass)
+bun test:arch        # Execute AST Architecture & Boundary test suite (146 pass)
+bun test:e2e         # Execute distribution package smoke test suite (6 pass; needs `bun run build:pages` first)
 bun test             # Execute full test suite
 bun run coverage:gate # Evaluate test suite coverage quality gates
 bun run build:game   # Compile pure production game client (src/)
@@ -50,7 +50,7 @@ bun run build        # Production bundle build & packaging check
 
 # Content tooling
 bun scripts/validate-level.ts <id>     # Level-logic validator for one location (exit 1 on ERROR)
-bun scripts/sprites/compile.ts <id>    # Compile hi-8bit / hi-16bit enemy or hero SVG sheets (--all, --check, --preview <dir>)
+bun scripts/sprites/compile.ts <id>    # Compile hi-8bit / hi-16bit enemy sheets (SVG) or hero sheets (PNG) (--all, --check, --preview <dir>)
 bun scripts/sprites/compile.ts <tileset-id>  # Compile platform tilesets (scripts/sprites/tilesets/) to PNG sheets + tiles meta in src/assets/tiles/<id>/
 bun scripts/sprites/compile.ts <prop-id>     # Compile decor props (scripts/sprites/props/) to hi-8bit / hi-16bit PNG sheets + prop meta in src/assets/props/<id>/
 bun scripts/repack-atlas.ts <id>       # Repack an AI sheet into a grid-clean *_packed_high.png (--all, --dry-run, --overlay <dir>)
@@ -88,6 +88,13 @@ Delivered by `feat/sprites-enemies-maps`:
 * [x] `[ENGINE]` Atlas quality tiers with fallback chain and one-time SVG rasterisation; enemy atlas auto-discovery and `bodyBox` scaling.
 * [x] `[ENGINE]` View culling, parallax upscale cap with mirrored tiles, location background preload/eviction, simulation-owned enemy and structure animation clocks.
 * [x] `[ENGINE]` Levers open their `targetGateId` gate.
+
+Delivered by the art pipeline (PRs #17–#58, 2026-11-14):
+
+* [x] `[CONTENT]` Quality tiers hi-8bit / hi-16bit / `high` apply to heroes, enemies, platform tilesets and decor props; one injected sprite source factory; the menu switches live.
+* [x] `[CONTENT]` Hero hi-bit sheets quantized from painted frames (`scripts/sprites/quantize.ts`, `paintedHero.ts`), PNG output, runtime `src/game/engine/heroPixel/`, Atlas Studio tier toggle.
+* [x] `[CONTENT]` Platform tilesets: `defineTileset` compiler contract (`scripts/sprites/tilesets/`), runtime `src/game/engine/tiles/`, prefab `tileset` field, 8 tilesets.
+* [x] `[CONTENT]` Decor props: `defineProp` compiler contract (`scripts/sprites/props/`), runtime `src/game/engine/props/` and `DecorRenderer` (back and front layers, additive glow), `layout.decor` in all five maps, 12 props.
 
 Gaps found by the design-pillar audit (see `docs/manifesto/MASTERMAP.md` §1.2):
 
