@@ -1,0 +1,20 @@
+{
+  "propId": "iron_chain",
+  "worldWidth": 16,
+  "worldHeight": 96,
+  "anchor": "top",
+  "frames": 1,
+  "fps": 8,
+  "variants": {
+    "low": {
+      "file": "iron_chain_hi8bit.png",
+      "frameWidth": 8,
+      "frameHeight": 48
+    },
+    "mid": {
+      "file": "iron_chain_hi16bit.png",
+      "frameWidth": 16,
+      "frameHeight": 96
+    }
+  }
+}
