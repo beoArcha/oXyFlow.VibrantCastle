@@ -1,0 +1,20 @@
+{
+  "propId": "tattered_banner",
+  "worldWidth": 32,
+  "worldHeight": 80,
+  "anchor": "top",
+  "frames": 4,
+  "fps": 6,
+  "variants": {
+    "low": {
+      "file": "tattered_banner_hi8bit.png",
+      "frameWidth": 16,
+      "frameHeight": 40
+    },
+    "mid": {
+      "file": "tattered_banner_hi16bit.png",
+      "frameWidth": 32,
+      "frameHeight": 80
+    }
+  }
+}
