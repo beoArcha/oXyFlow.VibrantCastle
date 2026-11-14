@@ -1,11 +1,12 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { GameRenderer } from "../renderer";
 import { ParallaxRenderer } from "../parallaxRenderer";
-import { StructureRenderer, defaultStructureRenderer } from "../structureRenderer";
+import { StructureRenderer, defaultStructureRenderer, type IStructureRenderer } from "../structureRenderer";
 import { LevelEntityRenderer, defaultLevelEntityRenderer } from "../levelEntityRenderer";
 import { Entity, CollisionType } from "@game/types";
 import { CameraState } from "@game/engine/cameraManager";
 import { ParallaxLayerSchema } from "@game/locations/schema/locationSchema";
+import type { LocationDefinition } from "@game/locations/types";
 import gameEngine from "@game/loop/engine";
 import { createMockCanvas } from "@test-utils";
 
@@ -97,7 +98,7 @@ describe("GameRenderer - Determinism, Schema Immutability & Proxy Elimination", 
           boxWidth: 3500,
           boxHeight: 1200,
         },
-      } as any;
+      } as unknown as LocationDefinition;
 
       parallax.render(mockCtx, location, 3000, 1000, 1000, 625, 0, 0, 1);
 
@@ -138,7 +139,7 @@ describe("GameRenderer - Determinism, Schema Immutability & Proxy Elimination", 
       };
 
       const renderer = new GameRenderer(mockCanvas, {
-        structureRenderer: customStructureRenderer as any,
+        structureRenderer: customStructureRenderer as unknown as IStructureRenderer,
       });
 
       const mockEntities: Entity[] = [
@@ -165,10 +166,10 @@ describe("GameRenderer - Determinism, Schema Immutability & Proxy Elimination", 
       };
 
       const renderer = new GameRenderer(mockCanvas, {
-        levelEntityRenderer: legacyRenderer as any,
+        levelEntityRenderer: legacyRenderer as unknown as IStructureRenderer,
       });
 
-      renderer.render([], [], [{ id: "e1" } as any], [], [], mockCamera, 2000, 1000, undefined, "en", 10);
+      renderer.render([], [], [{ id: "e1", type: CollisionType.Solid, x: 0, y: 0, width: 10, height: 10 }], [], [], mockCamera, 2000, 1000, undefined, "en", 10);
       expect(legacyRenderCalled).toBe(true);
     });
   });

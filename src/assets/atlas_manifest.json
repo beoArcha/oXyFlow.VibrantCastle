@@ -17,8 +17,8 @@
       "category": "character",
       "isPopular": true,
       "tags": ["heroine", "mage", "player2", "staff"],
-      "imageRelPath": "./characters/aurelia/aurelia_level_1_high.png",
-      "metaRelPath": "./characters/aurelia/aurelia_meta.json",
+      "imageRelPath": "./characters/aurelia/aurelia_level_1_high_packed.png",
+      "metaRelPath": "./characters/aurelia/aurelia_packed_meta.json",
       "description": "Archmage & Astral Scholar player character spritesheet"
     },
     {

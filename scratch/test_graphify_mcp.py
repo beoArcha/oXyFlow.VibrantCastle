@@ -12,9 +12,9 @@ import subprocess
 from pathlib import Path
 
 # Paths
-REPO_ROOT = Path(r"C:\Users\Krzysiu\Source\oXyFlow.VibrantCastle")
+REPO_ROOT = Path(__file__).resolve().parent.parent
 GRAPH_PATH = REPO_ROOT / "graphify-out" / "graph.json"
-MCP_EXE = Path(r"C:\Users\Krzysiu\.local\bin\graphify-mcp.exe")
+MCP_EXE = Path.home() / ".local" / "bin" / "graphify-mcp.exe"
 
 class GraphifyMCPClient:
     def __init__(self, exe_path: Path, graph_path: Path):
