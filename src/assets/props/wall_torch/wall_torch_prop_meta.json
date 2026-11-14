@@ -1,0 +1,27 @@
+{
+  "propId": "wall_torch",
+  "worldWidth": 24,
+  "worldHeight": 48,
+  "anchor": "bottom",
+  "frames": 4,
+  "fps": 8,
+  "variants": {
+    "low": {
+      "file": "wall_torch_hi8bit.png",
+      "frameWidth": 12,
+      "frameHeight": 24
+    },
+    "mid": {
+      "file": "wall_torch_hi16bit.png",
+      "frameWidth": 24,
+      "frameHeight": 48
+    }
+  },
+  "glow": {
+    "color": "#ffb347",
+    "radius": 72,
+    "x": 12,
+    "y": 14,
+    "flicker": true
+  }
+}
