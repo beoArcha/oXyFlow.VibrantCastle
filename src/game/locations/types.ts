@@ -3,6 +3,7 @@ import {
   ParallaxBackgroundSchema,
   PortalDefinitionSchema,
   LocationJsonSchema,
+  DecorPlacementSchema,
   LocationSceneType,
   ParticleType,
 } from "./schema/locationSchema";
@@ -38,6 +39,8 @@ export interface LocationDefinition {
   nextLocationId?: LocationId;
   parallaxBackground?: ParallaxBackgroundSchema;
   portals?: PortalDefinitionSchema[];
+  /** Validated decor placements: pure visuals, never entities, no collision. */
+  decor?: DecorPlacementSchema[];
   jsonBlueprint?: LocationJsonSchema;
   createEntities: (isTwoPlayer: boolean) => Entity[];
   createEnemies: (isTwoPlayer: boolean) => Enemy[];

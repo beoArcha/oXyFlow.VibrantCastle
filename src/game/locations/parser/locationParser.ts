@@ -1,6 +1,7 @@
 import { LocationDefinition, LocationId } from "../types";
 import { Entity, Enemy } from "../../types";
-import { LocationJsonSchema, PortalDefinitionSchema } from "../schema/locationSchema";
+import { DecorPlacementSchema, LocationJsonSchema, PortalDefinitionSchema } from "../schema/locationSchema";
+import { assetsLogger } from "../../logger/gameLogger";
 import { ErrorCode, ParserError } from "@lib/errors";
 import enemiesData from "@data/enemies/enemies.json";
 import { enemyCodec, DomainEnemyTemplate } from "@lib/codecs";
@@ -10,6 +11,45 @@ const decodedEnemiesRes = enemyCodec.decodeDictionary(enemiesData);
 export const CANONICAL_ENEMY_REGISTRY: Record<string, DomainEnemyTemplate> = decodedEnemiesRes.isOk()
   ? decodedEnemiesRes.value
   : {};
+
+/**
+ * Keeps the well-formed decor placements of a layout; malformed entries are warned about and skipped,
+ * since decor is pure visuals and must never block a level from loading.
+ */
+export function parseDecorPlacements(raw: unknown, locationId: string): DecorPlacementSchema[] | undefined {
+  if (raw === undefined) return undefined;
+  if (!Array.isArray(raw)) {
+    assetsLogger.warn(`Location '${locationId}' layout.decor must be an array, ignoring`);
+    return undefined;
+  }
+  const out: DecorPlacementSchema[] = [];
+  for (const entry of raw as unknown[]) {
+    const e = entry as Partial<DecorPlacementSchema> | null;
+    const valid =
+      typeof e === "object" &&
+      e !== null &&
+      typeof e.id === "string" &&
+      typeof e.propId === "string" &&
+      Number.isFinite(e.x) &&
+      Number.isFinite(e.y) &&
+      (e.layer === undefined || e.layer === "back" || e.layer === "front") &&
+      (e.phase === undefined || Number.isFinite(e.phase));
+    if (!valid) {
+      assetsLogger.warn(`Location '${locationId}' has a malformed decor entry, skipping`, { entry });
+      continue;
+    }
+    out.push({
+      id: e.id as string,
+      propId: e.propId as string,
+      x: e.x as number,
+      y: e.y as number,
+      layer: e.layer ?? "back",
+      flipX: e.flipX === true,
+      phase: e.phase ?? 0,
+    });
+  }
+  return out;
+}
 
 /**
  * Parser for Location JSON Blueprints.
@@ -98,6 +138,7 @@ export class LocationParser {
       theme,
       parallaxBackground,
       portals: resolvedPortals,
+      decor: parseDecorPlacements(layout.decor, id),
       nextLocationId: primaryNextLocation,
       jsonBlueprint: blueprint,
 

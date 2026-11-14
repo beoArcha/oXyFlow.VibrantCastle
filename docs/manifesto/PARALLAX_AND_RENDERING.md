@@ -175,3 +175,21 @@ A sheet is loaded once, on first use. While the requested tier loads, a tier tha
 * Variants (`fill_2`, `top_3`...) are picked by a hash of (tile column, tile row, entity x, entity y), stable across frames.
 * One-way tilesets with a `support` tile draw it under the ledge every third tile.
 * Culling is unchanged: entities outside the view are skipped before any tile is drawn.
+
+## 8. Decor Props
+
+Decor props (lanterns, torches, banners, chains) are pure visuals placed by `layout.decor` (see `CONTENT_PIPELINE.md` §3.2). `DecorRenderer` (`src/game/renderer/decorRenderer.ts`) draws them; they are not entities and take no part in physics or collision.
+
+### 8.1. Draw Order
+
+parallax -> **back decor (+ glow)** -> structures and platforms -> enemies -> projectiles -> players -> **front decor (+ glow)** -> sparks -> debug overlays -> HUD.
+
+### 8.2. Files, Tiers and Fallback
+
+`src/assets/props/<id>/` holds `<id>_hi8bit.png` (quality `low`, drawn 2x), `<id>_hi16bit.png` (quality `mid`) and `<id>_prop_meta.json`; frames sit in one row. Quality `high` falls back to hi-16bit through the shared resolver. Discovery (`import.meta.glob`, filesystem fallback under Bun), `parsePropMeta` (`AssetError` `ASSET_CORRUPTED`, invalid metas are skipped) and `PropManager` (`src/game/engine/props/`) mirror the tileset runtime: lazy load, failed tiers skipped, live switching with the menu quality. With no prop files nothing is drawn. Image smoothing is off while decor is drawn.
+
+### 8.3. Animation, Glow and Culling
+
+* Frame = `floor(tick / 60 * fps + phase) mod frames` from the simulation tick, so it is deterministic and frozen while the game is paused.
+* Glow is a radial gradient pre-rendered once per (colour, radius) into an offscreen canvas when the location plan is built, then composited with `globalCompositeOperation = "lighter"` after its sprite. `flicker` modulates alpha within 0.75..1.0 through a deterministic hash of tick and decor index.
+* The per-decor draw data (anchor rectangle, mirrored glow centre, culling box) is built once per location. The culling box is the sprite rectangle unioned with the glow disc, so a lantern just outside the view still lights the screen. `render()` allocates nothing.

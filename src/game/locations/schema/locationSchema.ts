@@ -215,6 +215,19 @@ export interface EnemyPlacementSchema {
   twoPlayerOnly?: boolean;
 }
 
+/** Non-colliding visual prop; `x, y` is the anchor point defined by the prop meta (bottom, top or centre). */
+export interface DecorPlacementSchema {
+  id: string;
+  propId: string;
+  x: number;
+  y: number;
+  /** `back` is drawn after the parallax and before structures, `front` after the players. Defaults to `back`. */
+  layer?: "back" | "front";
+  flipX?: boolean;
+  /** Frame offset so neighbouring props do not animate in sync. */
+  phase?: number;
+}
+
 export interface LocationLayoutSchema {
   solids: SolidPlacementSchema[];
   hazards?: HazardPlacementSchema[];
@@ -222,6 +235,7 @@ export interface LocationLayoutSchema {
   levers?: LeverPlacementSchema[];
   portals?: PortalPlacementSchema[];
   enemies?: EnemyPlacementSchema[];
+  decor?: DecorPlacementSchema[];
 }
 
 export const LOCATION_SCENE_TYPES = [

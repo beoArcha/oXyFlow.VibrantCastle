@@ -80,7 +80,8 @@ Every level blueprint in `src/data/locations/` conforms to the canonical locatio
     "triggers": [ /* narration volumes */ ],
     "levers": [ { "id": "court_gate_lever", "triggerId": "lever_courtyard", "targetGateId": "court_gate_main" } ],
     "portals": [ /* placements referencing dictionary portals */ ],
-    "enemies": [ { "id": "court_dummy_1", "monsterKey": "training_dummy", "x": 380, "y": 1110 } ]
+    "enemies": [ { "id": "court_dummy_1", "monsterKey": "training_dummy", "x": 380, "y": 1110 } ],
+    "decor": [ { "id": "court_lantern_1", "propId": "hanging_lantern", "x": 820, "y": 640, "layer": "back", "flipX": false, "phase": 0 } ]
   }
 }
 ```
@@ -105,6 +106,19 @@ To maintain world coherence, every portal targets an existing location and entry
 
 * If location `courtyard` defines a portal with target `"clocktower"` and entry `"from_courtyard"`, file `clocktower.json` MUST exist and declare `spawnPoints.entries.from_courtyard`.
 * Any orphaned portal or dangling entry key fails automated architecture tests (`src/tests/arch/locationBlueprints.test.ts`).
+
+
+### 3.2. Decor (`layout.decor`)
+
+`layout.decor` is an optional array of non-colliding visual props. Decor is never an entity: it is not in physics, never blocks and is not seen by the level validator. Each entry is `{ id, propId, x, y, layer, flipX, phase }`:
+
+* `propId` names a compiled prop under `src/assets/props/<propId>/` (`<propId>_prop_meta.json` plus the hi-8bit and hi-16bit sheets). An unknown `propId` is warned about once and the entry is skipped; a missing sheet draws nothing.
+* `x, y` is the anchor point of the prop, set by its meta: bottom-centre (`bottom`), top-centre (`top`) or centre (`center`), in world units.
+* `layer` is `back` (default; after the parallax, before platforms) or `front` (after the players, used sparingly).
+* `flipX` mirrors the sprite and its glow; `phase` offsets the animation frame so neighbours do not move in sync.
+* Malformed entries (wrong types, unknown layer) are skipped by `LocationParser` with a warning; they never fail the level.
+
+The meta contract (`propId`, `worldWidth`, `worldHeight`, `anchor`, `frames` 1..12, `fps`, per-tier `variants` with `file`, `frameWidth`, `frameHeight`, optional `glow`) is validated by `parsePropMeta`; see `PARALLAX_AND_RENDERING.md` §8.
 
 ---
 

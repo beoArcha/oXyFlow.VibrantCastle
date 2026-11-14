@@ -19,6 +19,7 @@ import { IDebugProfilerOverlay, defaultDebugProfilerOverlay } from "./debugProfi
 import { acquireCanvas2DContext } from "./canvasContextAcquisition";
 import { ViewCuller } from "./viewCulling";
 import { renderFpsBadge } from "./fpsOverlayRenderer";
+import { IDecorRenderer, DecorRenderer } from "./decorRenderer";
 
 const SCENERY_TREE_OFFSETS = [350, 1100, 1600, 2450, 3050, 3500] as const;
 
@@ -36,6 +37,7 @@ export interface IRendererDependencies {
   levelEntityRenderer?: ILevelEntityRenderer;
   actorRenderer?: IActorRenderer;
   fxRenderer?: IFxRenderer;
+  decorRenderer?: IDecorRenderer;
   hitboxRenderer?: IHitboxRenderer;
   debugProfilerOverlay?: IDebugProfilerOverlay;
   proceduralBackdropCache?: ProceduralBackdropCache;
@@ -63,6 +65,7 @@ export class GameRenderer {
   private readonly structureRenderer: IStructureRenderer;
   private readonly actorRenderer: IActorRenderer;
   private readonly fxRenderer: IFxRenderer;
+  private readonly decorRenderer: IDecorRenderer;
   private readonly hitboxRenderer: IHitboxRenderer;
   private readonly debugProfilerOverlay: IDebugProfilerOverlay;
   private readonly backdropCache: ProceduralBackdropCache;
@@ -84,6 +87,7 @@ export class GameRenderer {
     this.structureRenderer = deps.structureRenderer || deps.levelEntityRenderer || defaultStructureRenderer;
     this.actorRenderer = deps.actorRenderer || defaultActorRenderer;
     this.fxRenderer = deps.fxRenderer || defaultFxRenderer;
+    this.decorRenderer = deps.decorRenderer || new DecorRenderer();
     this.hitboxRenderer = deps.hitboxRenderer || defaultHitboxRenderer;
     this.debugProfilerOverlay = deps.debugProfilerOverlay || defaultDebugProfilerOverlay;
     this.backdropCache = deps.proceduralBackdropCache || defaultProceduralBackdropCache;
@@ -211,6 +215,9 @@ export class GameRenderer {
       }
     }
 
+    // 3b. BACK DECOR (behind platforms and actors, with additive glow)
+    this.decorRenderer.render(this.ctx, location, "back", this.tickCount, this.viewCuller);
+
     // 4. LEVEL ENTITIES & STRUCTURES
     this.structureRenderer.render(this.ctx, entities, this.language, this.tickCount, this.viewCuller);
 
@@ -222,6 +229,9 @@ export class GameRenderer {
 
     // 7. PLAYERS
     this.actorRenderer.renderPlayers(this.ctx, players, this.tickCount);
+
+    // 7b. FRONT DECOR (in front of actors)
+    this.decorRenderer.render(this.ctx, location, "front", this.tickCount, this.viewCuller);
 
     // 8. COMBAT SPARKS
     this.fxRenderer.renderParticles(this.ctx, particles, "spark");
