@@ -28,7 +28,7 @@ function fakeCtx() {
     imageSmoothingEnabled: true,
     globalAlpha: 1,
     globalCompositeOperation: "source-over",
-    drawImage: (...args: unknown[]) => calls.push({ op: `draw:${args[0] === glowImage ? "glow" : "sheet"}`, args }),
+    drawImage: (...args: unknown[]) => void calls.push({ op: `draw:${args[0] === glowImage ? "glow" : "sheet"}`, args }),
     save: () => calls.push({ op: "save", args: [] }),
     restore: () => calls.push({ op: "restore", args: [] }),
     translate: (...args: unknown[]) => calls.push({ op: "translate", args }),
