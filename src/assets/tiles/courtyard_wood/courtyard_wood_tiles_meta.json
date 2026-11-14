@@ -2,7 +2,7 @@
   "tilesetId": "courtyard_wood",
   "kind": "oneway",
   "worldTile": 32,
-  "columns": 6,
+  "columns": 5,
   "rows": 1,
   "variants": {
     "low": {
@@ -27,16 +27,12 @@
       "col": 2,
       "row": 0
     },
-    "ledge_3": {
+    "ledge_right": {
       "col": 3,
       "row": 0
     },
-    "ledge_right": {
-      "col": 4,
-      "row": 0
-    },
     "support": {
-      "col": 5,
+      "col": 4,
       "row": 0
     }
   }
