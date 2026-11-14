@@ -1,0 +1,27 @@
+{
+  "propId": "aether_crystal_cluster",
+  "worldWidth": 32,
+  "worldHeight": 48,
+  "anchor": "bottom",
+  "frames": 4,
+  "fps": 6,
+  "variants": {
+    "low": {
+      "file": "aether_crystal_cluster_hi8bit.png",
+      "frameWidth": 16,
+      "frameHeight": 24
+    },
+    "mid": {
+      "file": "aether_crystal_cluster_hi16bit.png",
+      "frameWidth": 32,
+      "frameHeight": 48
+    }
+  },
+  "glow": {
+    "color": "#38bdf8",
+    "radius": 80,
+    "x": 16,
+    "y": 20,
+    "flicker": true
+  }
+}
