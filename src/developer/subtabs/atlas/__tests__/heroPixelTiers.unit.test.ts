@@ -45,7 +45,7 @@ describe("listHeroTiers", () => {
   it("should skip a tier whose sheet file is missing", () => {
     // Arrange
     const files = createHeroPixelFiles();
-    const images = Object.fromEntries(Object.entries(files.images).filter(([path]) => !path.endsWith("_hi8bit.svg")));
+    const images = Object.fromEntries(Object.entries(files.images).filter(([path]) => !path.endsWith("_hi8bit.png")));
 
     // Act
     const tiers = listHeroTiers("testhero", { ...files, images });
@@ -86,7 +86,7 @@ describe("buildHeroTierPreset", () => {
     const preset = buildHeroTierPreset(base, "low", createHeroPixelFiles());
 
     // Assert
-    expect(preset.imageSrc).toBe("/assets/hi8bit-hash.svg");
+    expect(preset.imageSrc).toBe("/assets/hi8bit-hash.png");
     expect(preset.defaultMeta.atlas).toMatchObject({ columns: 3, rows: 2, cellWidth: 5, cellHeight: 4 });
     expect(preset.defaultMeta.variants?.high).toMatchObject({ cellWidth: 5, cellHeight: 4 });
     expect(preset.defaultMeta.animations?.attack).toMatchObject({ row: 1, frames: 2, cells: [1, 2], wide: true });

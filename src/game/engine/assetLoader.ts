@@ -46,7 +46,7 @@ export class AssetLoaderEngine {
   /** URLs evicted while their load was still in flight: result is released instead of cached. */
   private discardOnLoad: Set<string> = new Set();
   private listeners: Set<() => void> = new Set();
-  /** Rasterised hi-8bit / hi-16bit hero sheets by SVG url; each is rasterised once and then only blitted. */
+  /** Rasterised hi-8bit / hi-16bit hero sheets by url; each is rasterised once and then only blitted. */
   private readonly pixelSheets: Map<string, ReleasableTexture> = new Map();
   private readonly pixelLoads: Map<string, Promise<void>> = new Map();
   private readonly failedPixelSheets: Set<string> = new Set();
@@ -232,7 +232,7 @@ export class AssetLoaderEngine {
     }
   }
 
-  /** Sheet of a hero sprite map once it is loaded (painted PNG or rasterised pixel SVG). */
+  /** Sheet of a hero sprite map once it is loaded (painted PNG or upscaled pixel PNG). */
   public getSheetTexture(spriteMap: SpriteAtlasMap): SpriteSheetTexture | null {
     const url = spriteMap.meta.imageUrl;
     if (spriteMap.meta.art === "pixel") return this.pixelSheets.get(url) ?? null;
@@ -247,7 +247,7 @@ export class AssetLoaderEngine {
     return sheet;
   }
 
-  /** Loads the sheet of a hero sprite map: painted tiers as images, pixel tiers rasterised once. */
+  /** Loads the sheet of a hero sprite map: painted tiers as images, pixel tiers upscaled once with smoothing off. */
   private loadSheet(spriteMap: SpriteAtlasMap): Promise<void> {
     const url = spriteMap.meta.imageUrl;
     if (spriteMap.meta.art !== "pixel") return this.loadTexture(url).then(() => undefined);

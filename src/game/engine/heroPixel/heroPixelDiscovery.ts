@@ -9,7 +9,7 @@ import { readAssetsFromDisk } from "../atlas/atlasFileDiscovery";
  */
 function readViteGlobs(): AtlasFileMap | null {
   try {
-    const images = import.meta.glob<string>("/src/assets/characters/*/*.svg", {
+    const images = import.meta.glob<string>("/src/assets/characters/*/*_hi{8,16}bit.png", {
       eager: true,
       query: "?url",
       import: "default",
@@ -25,7 +25,7 @@ function readViteGlobs(): AtlasFileMap | null {
   }
 }
 
-/** Collects the compiled hero pixel sheets (`*.svg`) and metas (`*_pixel_meta.json`) of `src/assets/characters`. */
+/** Collects the compiled hero pixel sheets (`*_hi8bit.png`, `*_hi16bit.png`) and metas (`*_pixel_meta.json`) of `src/assets/characters`. */
 export function discoverHeroPixelFiles(): AtlasFileMap {
-  return readViteGlobs() ?? readAssetsFromDisk(["characters"], /\.svg$/, /_pixel_meta\.json$/);
+  return readViteGlobs() ?? readAssetsFromDisk(["characters"], /_hi(?:8|16)bit\.png$/, /_pixel_meta\.json$/);
 }

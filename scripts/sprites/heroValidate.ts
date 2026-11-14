@@ -50,11 +50,11 @@ function driftWarning(tier: RenderedHeroTier, anim: string, span: number, center
   return [`${TIER_LABEL[tier.tier]} animation "${anim}": body centre drifts ${drift.toFixed(1)} px between frames of span ${span} (limit ${limit.toFixed(1)}); the sprite may jitter.`];
 }
 
-function animationWarnings(tier: RenderedHeroTier, grid: HeroGrid, anim: string): string[] {
+function animationWarnings(tier: RenderedHeroTier, grid: HeroGrid, anim: string, checkDrift: boolean): string[] {
   const frames = tier.frames[anim];
   const warnings: string[] = [];
   const spans = new Set(grid.animations[anim].cells);
-  for (const span of spans) {
+  for (const span of checkDrift ? spans : []) {
     const centers = frames
       .filter((_, frame) => grid.animations[anim].cells[frame] === span)
       .map(centerX)
@@ -88,5 +88,5 @@ export function validateHero(
     const list = problems.map((p) => `  - ${p}`).join("\n");
     throw spriteError(`Hero "${def.id}" failed validation:\n${list}`, { id: def.id, problems });
   }
-  return [hi8bit, hi16bit].flatMap((tier) => grid.ordering.flatMap((anim) => animationWarnings(tier, grid, anim)));
+  return [hi8bit, hi16bit].flatMap((tier) => grid.ordering.flatMap((anim) => animationWarnings(tier, grid, anim, !def.source)));
 }

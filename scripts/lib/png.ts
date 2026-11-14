@@ -39,20 +39,29 @@ function paeth(a: number, b: number, c: number): number {
 }
 
 function unfilterScanline(filter: number, raw: Uint8Array, rawPos: number, cur: Uint8Array, prev: Uint8Array, bpp: number): void {
-  for (let i = 0; i < cur.length; i++) {
-    const x = raw[rawPos + i];
-    const a = i >= bpp ? cur[i - bpp] : 0;
-    const b = prev[i];
-    const c = i >= bpp ? prev[i - bpp] : 0;
-    switch (filter) {
-      case 0: cur[i] = x; break;
-      case 1: cur[i] = (x + a) & 255; break;
-      case 2: cur[i] = (x + b) & 255; break;
-      case 3: cur[i] = (x + ((a + b) >> 1)) & 255; break;
-      case 4: cur[i] = (x + paeth(a, b, c)) & 255; break;
-      default:
-        throw new AssetError(`Unsupported PNG scanline filter ${filter}`, ErrorCode.ASSET_CORRUPTED, { details: { filter } });
-    }
+  const length = cur.length;
+  switch (filter) {
+    case 0:
+      for (let i = 0; i < length; i++) cur[i] = raw[rawPos + i];
+      return;
+    case 1:
+      for (let i = 0; i < length; i++) cur[i] = (raw[rawPos + i] + (i >= bpp ? cur[i - bpp] : 0)) & 255;
+      return;
+    case 2:
+      for (let i = 0; i < length; i++) cur[i] = (raw[rawPos + i] + prev[i]) & 255;
+      return;
+    case 3:
+      for (let i = 0; i < length; i++) cur[i] = (raw[rawPos + i] + (((i >= bpp ? cur[i - bpp] : 0) + prev[i]) >> 1)) & 255;
+      return;
+    case 4:
+      for (let i = 0; i < length; i++) {
+        const a = i >= bpp ? cur[i - bpp] : 0;
+        const c = i >= bpp ? prev[i - bpp] : 0;
+        cur[i] = (raw[rawPos + i] + paeth(a, prev[i], c)) & 255;
+      }
+      return;
+    default:
+      throw new AssetError(`Unsupported PNG scanline filter ${filter}`, ErrorCode.ASSET_CORRUPTED, { details: { filter } });
   }
 }
 
@@ -66,6 +75,10 @@ interface PngHeader {
 
 function toRgba(colorType: number, line: Uint8Array, width: number, bytesPerSample: number, palette: Uint8Array | null, trns: Uint8Array | null, out: Uint8Array, outRow: number): void {
   const bpp = CHANNELS_BY_COLOR_TYPE[colorType] * bytesPerSample;
+  if (colorType === 6 && bytesPerSample === 1) {
+    out.set(line.subarray(0, width * 4), outRow * width * 4);
+    return;
+  }
   for (let x = 0; x < width; x++) {
     const o = (outRow * width + x) * 4;
     const s = x * bpp;

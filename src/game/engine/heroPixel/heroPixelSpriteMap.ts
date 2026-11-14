@@ -114,7 +114,7 @@ function findByPath<T>(files: Readonly<Record<string, T>>, suffix: string): T | 
 
 /**
  * Pixel tiers of one hero found in the discovered files: `low` when `<id>_pixel_meta.json` and the
- * hi-8bit SVG exist, `mid` when it and the hi-16bit SVG exist. Missing or broken files give no entry,
+ * hi-8bit PNG exist, `mid` when it and the hi-16bit PNG exist. Missing or broken files give no entry,
  * so the caller keeps the painted tier for it.
  */
 export function buildHeroPixelSpriteMaps(

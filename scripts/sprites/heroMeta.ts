@@ -1,6 +1,6 @@
 import { measure, normalizeBox, unionBounds, type NormalizedBox } from "./frameStats";
 import type { RenderedHeroTier } from "./heroRender";
-import { frameColumn, heroRows, type HeroGrid, type HeroSpriteDefinition } from "./heroTypes";
+import { frameColumn, heroRows, heroScale, type HeroGrid, type HeroSpriteDefinition } from "./heroTypes";
 import type { Tier } from "./types";
 
 export interface FrameRect {
@@ -53,14 +53,19 @@ function gridMeta(grid: HeroGrid) {
 function variantMeta(id: string, grid: HeroGrid, tier: Tier, rendered: RenderedHeroTier) {
   const { width, height } = rendered.cell;
   return {
-    file: `${id}_${tier}.svg`,
+    file: `${id}_${tier}.png`,
     cellWidth: width,
     cellHeight: height,
     sheetWidth: grid.columns * width,
     sheetHeight: heroRows(grid) * height,
-    scale: round4(width / grid.packedCell.width),
+    scale: round4(heroScale(grid, tier)),
     frameRects: frameRects(grid, rendered),
   };
+}
+
+/** Normalized feet column: the fixed anchor of a painted source, otherwise the centre of the idle body box. */
+function originX(grid: HeroGrid, hi16bit: RenderedHeroTier, bodyBox: NormalizedBox): number {
+  return grid.anchorX === undefined ? bodyBox.x + bodyBox.w / 2 : grid.anchorX / hi16bit.cell.width;
 }
 
 export function buildHeroMeta(
@@ -91,7 +96,7 @@ export function buildHeroMeta(
       mid: variantMeta(def.id, grid, "hi16bit", hi16bit),
     },
     layout: {
-      origin: { type: "feet", normalized: { x: round4(bodyBox.x + bodyBox.w / 2), y: 1.0 } },
+      origin: { type: "feet", normalized: { x: round4(originX(grid, hi16bit, bodyBox)), y: 1.0 } },
       bodyBox,
     },
   };

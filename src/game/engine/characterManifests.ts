@@ -68,7 +68,7 @@ function getAtlasDimensions(
   };
 }
 
-/** Compiled hi-8bit / hi-16bit hero sheets, when the art exists (`<id>_pixel_meta.json` plus its SVGs). */
+/** Compiled hi-8bit / hi-16bit hero sheets, when the art exists (`<id>_pixel_meta.json` plus its PNGs). */
 const heroPixelFiles = discoverHeroPixelFiles();
 
 /**

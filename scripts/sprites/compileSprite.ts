@@ -6,16 +6,28 @@ import { sheetToSvg } from "./svgWriter";
 import type { EnemySpriteDefinition } from "./types";
 import { validateSprite } from "./validate";
 
-export interface CompiledSprite {
-  hi8bitSvg: string;
-  hi16bitSvg: string;
+interface CompiledBase {
   metaJson: string;
   warnings: string[];
   sheets: { hi8bit: SheetImage; hi16bit: SheetImage };
 }
 
+/** Enemies ship their sheets as SVG. */
+export interface CompiledEnemy extends CompiledBase {
+  hi8bitSvg: string;
+  hi16bitSvg: string;
+}
+
+/** Heroes ship their sheets as lossless PNG: quantized painted frames make SVGs many times larger. */
+export interface CompiledHero extends CompiledBase {
+  hi8bitPng: Uint8Array;
+  hi16bitPng: Uint8Array;
+}
+
+export type CompiledSprite = CompiledEnemy | CompiledHero;
+
 /** Renders, validates and serialises one sprite without touching the disk. */
-export function compileEnemySprite(def: EnemySpriteDefinition): CompiledSprite {
+export function compileEnemySprite(def: EnemySpriteDefinition): CompiledEnemy {
   const hi8bit = renderTier(def, "hi8bit");
   const hi16bit = renderTier(def, "hi16bit");
   const warnings = validateSprite(def, hi8bit, hi16bit);
