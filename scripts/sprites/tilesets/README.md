@@ -1,0 +1,1 @@
+Platform tileset scripts go here, one file per material, each exporting `defineTileset({...})`; see the Tilesets section of `../README.md`. No real tilesets exist yet; `__fixtures__/sample_tileset.ts` is the starting point.
