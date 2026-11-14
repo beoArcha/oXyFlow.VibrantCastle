@@ -8,3 +8,6 @@ coverage/
 !.env.example
 docs/plan/
 graphify-out/
+
+# Leftover agent worktrees
+.claude/worktrees/

@@ -78,7 +78,7 @@ declare module "bun:test" {
     export function each(table: readonly any[]): (name: string, fn: (...args: any[]) => void | Promise<void>) => void;
   }
 
-  export function it(name: string, fn: () => void | Promise<void>): void;
+  export function it(name: string, fn: () => void | Promise<void>, timeout?: number): void;
   export namespace it {
     export function only(name: string, fn: () => void | Promise<void>): void;
     export function skip(name: string, fn: () => void | Promise<void>): void;
