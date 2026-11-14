@@ -357,6 +357,11 @@ function drawHi16bit(c: PixelCanvas, tile: string): void {
     // highlight bevel under coping shadow
     c.rect(0, 5, 32, 1, p.faceLight);
 
+    // vertical joint in course 0 below coping
+    c.rect(14, 6, 1, 9, p.faceShadow);
+    c.rect(15, 6, 1, 9, p.mortar);
+    c.rect(16, 6, 1, 9, p.faceLight);
+
     // coping slab joint at x=31 in coping body (y=1..3)
     c.rect(31, 1, 1, 3, p.topShadow);
     c.rect(0, 1, 1, 3, p.topHighlight);
@@ -376,8 +381,8 @@ function drawHi16bit(c: PixelCanvas, tile: string): void {
       c.rect(1, 1, 2, 1, p.accentGold);
       c.rect(1, 2, 2, 1, p.topFace);
       c.rect(1, 3, 2, 1, p.topShadow);
-      c.rect(1, 4, 1, 1, p.shadowDeep);
-      c.rect(2, 4, 1, 4, p.faceLight);
+      c.rect(1, 4, 2, 1, p.shadowDeep);
+      c.rect(2, 5, 1, 3, p.faceLight);
     } else if (tile === "top_right") {
       // 1 px coping overhang at right quoin corner
       c.rect(30, 0, 2, 32, p.outline);
@@ -386,8 +391,8 @@ function drawHi16bit(c: PixelCanvas, tile: string): void {
       c.rect(29, 1, 2, 1, p.accentGold);
       c.rect(29, 2, 2, 1, p.topFace);
       c.rect(29, 3, 2, 1, p.topShadow);
-      c.rect(30, 4, 1, 1, p.shadowDeep);
-      c.rect(29, 4, 1, 4, p.faceLight);
+      c.rect(29, 4, 2, 1, p.shadowDeep);
+      c.rect(29, 5, 1, 3, p.faceLight);
     }
   } else if (isBottom) {
     // projecting foundation plinth footer at y=27..30, outline at y=31
@@ -435,7 +440,8 @@ function drawHi16bit(c: PixelCanvas, tile: string): void {
     // additional chisel grooves on Course 1
     c.line(5, 21, 9, 21, p.faceShadow);
     c.line(6, 22, 10, 22, p.faceLight);
-    c.line(22, 25, 26, 25, p.faceShadow);
+    c.line(21, 24, 25, 24, p.faceShadow);
+    c.line(22, 25, 26, 25, p.faceLight);
   }
 }
 
