@@ -511,8 +511,9 @@ function drawHi8(c: PixelCanvas, tile: string, pal: Palette): void {
 
     // warm stone body
     c.rect(0, 2, 16, 7, pal.face);
-    // vertical seam at x=7 in mortar
+    // vertical seam at x=7 in mortar with bevel highlight
     c.rect(7, 2, 1, 7, pal.mortar);
+    c.rect(8, 2, 1, 6, pal.faceLight);
     // darker block bottom at y=9
     c.rect(0, 9, 16, 1, pal.faceShadow);
 
