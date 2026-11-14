@@ -25,9 +25,11 @@ const tilesetDirs = (tilesets: string, out: string): SpriteDirs => ({
   enemies: ENEMIES_DIR,
   heroes: HEROES_DIR,
   tilesets,
+  props: join(out, "no-props"),
   enemyOut: out,
   heroOut: out,
   tileOut: out,
+  propOut: out,
 });
 
 function emptyFolder(name: string): string {
