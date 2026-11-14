@@ -100,7 +100,7 @@ graph TD
   - Compiles pure game client with `bun run build:game` (`VITE_BASE_PATH: ./`).
   - Asserts existence of `dist/index.html` and `dist/assets/`.
 - **Stage 5 (Candidate Metadata)**:
-  - Publishes the candidate identifier `<package.json version>-dev.<run_number>.<sha7>` (currently base `0.2.3`) to `$GITHUB_STEP_SUMMARY`.
+  - Publishes the candidate identifier `<package.json version>-dev.<run_number>.<sha7>` (currently base `0.3.0`) to `$GITHUB_STEP_SUMMARY`.
 
 ### 3.2. `promote.yml` — Controlled Promotion
 
