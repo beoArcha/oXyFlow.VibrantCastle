@@ -28,13 +28,13 @@ const HI8BIT: Palette = {
 
 const HI16BIT: Palette = {
   outline: "#160c08",
-  mortar: "#26140e",
-  shadowDeep: "#381c14",
-  faceShadow: "#52281b",
-  faceMid: "#783c28",
-  faceLight: "#9c5237",
-  topShadow: "#54320c",
-  topFace: "#9e6216",
+  mortar: "#22110c",
+  shadowDeep: "#341812",
+  faceShadow: "#4e261c",
+  faceMid: "#763c2a",
+  faceLight: "#9a523a",
+  topShadow: "#52300c",
+  topFace: "#9c6016",
   topHighlight: "#fcd36a",
   accentGold: "#c8821e",
 };
@@ -201,7 +201,7 @@ function drawHi16bit(c: PixelCanvas, tile: string): void {
     c.rect(0, 13, 32, 1, p.faceShadow);
     c.rect(0, 14, 32, 1, p.shadowDeep);
 
-    // thin vertical joint at x=15 flanked by shadow and highlight
+    // thin vertical joint at x=15 connecting to bottom edge
     c.rect(14, 5, 1, 10, p.faceShadow);
     c.rect(15, 5, 1, 10, p.mortar);
     c.rect(16, 5, 1, 10, p.faceLight);
@@ -299,45 +299,48 @@ function drawHi16bit(c: PixelCanvas, tile: string): void {
     c.rect(0, 0, 2, 32, p.outline);
     c.rect(2, 0, 1, 32, p.shadowDeep);
 
-    // course 0 header joint at x=15
-    c.rect(14, 1, 1, 12, p.faceShadow);
-    c.rect(15, 1, 1, 12, p.mortar);
-    c.rect(16, 1, 1, 12, p.faceLight);
+    // course 0 header joint at x=15 (connecting to y=15 bed mortar)
+    c.rect(14, 1, 1, 14, p.faceShadow);
+    c.rect(15, 1, 1, 14, p.mortar);
+    c.rect(16, 1, 1, 14, p.faceLight);
 
-    // course 1 stretcher extends to right edge joint at x=31
-    c.rect(30, 17, 1, 12, p.faceShadow);
-    c.rect(31, 17, 1, 12, p.mortar);
+    // course 1 stretcher extends to right edge joint at x=31 (connecting to y=31 bed mortar)
+    c.rect(30, 17, 1, 14, p.faceShadow);
+    c.rect(31, 17, 1, 14, p.mortar);
   } else if (isRightQuoin) {
     // right outer wall corner
     c.rect(30, 0, 2, 32, p.outline);
     c.rect(29, 0, 1, 32, p.shadowDeep);
 
-    // course 0 joint at x=15, header continues to right corner
-    c.rect(14, 1, 1, 12, p.faceShadow);
-    c.rect(15, 1, 1, 12, p.mortar);
-    c.rect(16, 1, 1, 12, p.faceLight);
+    // course 0 joint at x=15 (connecting to y=15 bed mortar), header continues to right corner
+    c.rect(14, 1, 1, 14, p.faceShadow);
+    c.rect(15, 1, 1, 14, p.mortar);
+    c.rect(16, 1, 1, 14, p.faceLight);
 
     // course 1 stretcher begins at x=0 (highlight from joint at x=31) and runs to right corner
-    c.rect(0, 17, 1, 12, p.faceLight);
+    c.rect(0, 17, 1, 14, p.faceLight);
   } else {
     // standard running bond ashlar:
-    // course 0: joint at x=15
-    c.rect(14, 1, 1, 12, p.faceShadow);
-    c.rect(15, 1, 1, 12, p.mortar);
-    c.rect(16, 1, 1, 12, p.faceLight);
+    // course 0: joint at x=15 running y=1..14 into y=15 bed joint
+    c.rect(14, 1, 1, 14, p.faceShadow);
+    c.rect(15, 1, 1, 14, p.mortar);
+    c.rect(16, 1, 1, 14, p.faceLight);
 
-    // course 1: joint at x=31 (mortar) and highlight at x=0
-    c.rect(0, 17, 1, 12, p.faceLight);
-    c.rect(30, 17, 1, 12, p.faceShadow);
-    c.rect(31, 17, 1, 12, p.mortar);
+    // course 1: joint at x=31 (mortar) running y=17..30 into y=31 bed joint, highlight at x=0
+    c.rect(0, 17, 1, 14, p.faceLight);
+    c.rect(30, 17, 1, 14, p.faceShadow);
+    c.rect(31, 17, 1, 14, p.mortar);
   }
 
-  // chisel marks and weathered granite texture
+  // chisel marks and chipped corner on standard blocks
   c.line(4, 7, 7, 7, p.faceShadow);
-  c.px(8, 10, p.shadowDeep);
+  c.px(8, 9, p.shadowDeep);
   c.line(20, 23, 24, 23, p.faceShadow);
   c.px(10, 25, p.faceLight);
   c.px(26, 26, p.shadowDeep);
+  // chipped corner at upper edge of course 0 joint
+  c.px(14, 1, p.shadowDeep);
+  c.px(13, 1, p.faceLight);
 
   if (isTop) {
     // thick 4-5 px dressed coping stone:
@@ -353,6 +356,10 @@ function drawHi16bit(c: PixelCanvas, tile: string): void {
     c.rect(0, 4, 32, 1, p.shadowDeep);
     // highlight bevel under coping shadow
     c.rect(0, 5, 32, 1, p.faceLight);
+
+    // coping slab joint at x=31 in coping body (y=1..3)
+    c.rect(31, 1, 1, 3, p.topShadow);
+    c.rect(0, 1, 1, 3, p.topHighlight);
 
     if (tile === "top_2") {
       // chipped stone fracture at x=18..21 y=2..4
