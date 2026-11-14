@@ -2,18 +2,20 @@
 
 The world of *Vibrant Castle* is brought to life through legendary mentors, mysterious animal companions, and the resonant voice of the citadel's chronicler, who witnesses and commemorates every step of the heroes' ascension.
 
+**Implementation status**: today only the Narrator speaks in-game, as timed subtitles from `narrations.ts`. Corvus, Amber and the Bastion Sage have greeting lines in `src/i18n/modules/dialogues.ts` but no map places them yet, and Master Oakhaven exists only in the lore. They are design targets, not live characters. The reactive Narrator (`src/data/narrative/narrator_reactive.json`) is written but not yet wired to the engine.
+
 ---
 
 ## 1. The Bastion Narrator (The Voice of the Past / The Chronicler)
 
 * **Role**: Omniscient Storyteller & Reactive Acoustic Guide (Inspired by *Bastion*)
 * **Manifestation**:
-  * Not physically bound to the arena floor; instead manifests via the dynamic **Bastion Narrator Bar** along the lower HUD overlay.
+  * Not physically bound to the arena floor; instead manifests as subtitles on the HUD. The goal is the *Bastion* style: short, warm lines that react to what the duelists do (hazards, levers, low health, secrets, boss kills, unison strikes) and never explain the layout.
   * Speaks in a rich, warm, melancholic baritone that reacts dynamically to player agency, successes, close calls, and setbacks in real time.
 * **Personality & Philosophy**:
   * Calibrated, observant, quietly nostalgic. He regards the duelists with quiet admiration rather than hollow cheers.
   * Treats the castle not merely as a tomb of stones, but as a living clockwork organism waiting to be wound once more.
-* **Signature In-Game Commentary (from `src/i18n/modules/narrations.ts`)**:
+* **Signature In-Game Commentary (from `src/i18n/modules/narrations.ts`; the reactive lines live next to them as `narrator*Quote` keys)**:
   * *On Awakening*:
     > *"The youth awoke upon the vast castle grounds. The crisp air carried scents of dry autumn leaves and fresh aether."*
   * *On Movement & Footwork*:
@@ -51,7 +53,7 @@ The world of *Vibrant Castle* is brought to life through legendary mentors, myst
   * A plush, russet-furred ginger cat sporting a tailored dark leather collar fitted with a miniature, functioning brass hourglass.
   * Golden eyes that dilate with faint cerulean luminescence when in proximity to concentrated Aether currents.
 * **Function in the Castle**:
-  * Resides within the meta-game interface known as the **Save Crypt** (`save.ts`).
+  * Resides within the meta-game interface known as the **Save Crypt** (`src/game/logic/save.ts`).
   * Oversees the secure serialization, export, and import of world states (`.json` chronicles), ensuring data integrity.
   * Purrs in harmonic frequency with Aether crystals, signaling when players possess sufficient mana or items to survive upcoming hazard gauntlets.
 * **Key In-Game Dialogue (from `src/i18n/modules/dialogues.ts`)**:

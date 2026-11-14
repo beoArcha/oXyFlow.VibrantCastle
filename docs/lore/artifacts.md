@@ -13,14 +13,14 @@ In *Vibrant Castle*, artifacts bridge the boundary between environmental narrati
 * **Mechanism & Function**:
   * In its default locked state, the lever arm is tilted to the left, glowing warning amber/red while maintaining tension on heavy counterweights.
   * Striking the lever with a rapier thrust or spell projectile overcomes mechanical friction with a crisp metallic chime and steam hiss.
-  * The switch flips right, illuminating an emerald signal lamp and permanently raising the associated iron portcullis into the ceiling vault (`court_gate_main` in the Courtyard, `chasm_portcullis` in the Chasm of Thorns).
+  * The switch flips right, illuminating an emerald signal lamp and permanently raising the associated iron portcullis into the ceiling vault (`court_gate_main` in the Courtyard, `chasm_portcullis` in the Chasm of Thorns, `tower_spire_gate` in the Clockwork Tower via `tower_gear_lever`, and `aether_altar_gate` in the Sanctuary via `aether_altar_lever`). The gate rises on screen in 1.2 s and its collision shrinks from the bottom as it goes.
 
 ### The Main Sluice Lever & Grand Portcullis (`labelMainSluiceLever`, `labelGrandPortcullis`)
 
 * **Classification**: Master Sector Lock & Pneumatic Gate
 * **Visual Form**: A massive gilded lever situated atop the battlements of the Grand Bastion, connected to thick iron chains leading into the clocktower substructure.
 * **Mechanism & Function**:
-  * Unlocks the three-tiered, impenetrable iron portcullis barring access to the victory dais. Each of the two levers (`grand_lever_keep`, `grand_lever_ward`) opens one gate (`grand_gate_keep`, `grand_gate_ward`).
+  * Unlocks the three-tiered, impenetrable iron portcullis barring access to the victory dais. Each of the two levers (`grand_lever_keep`, `grand_lever_ward`) lifts one gate (`grand_gate_keep`, `grand_gate_ward`).
   * Requires a decisive physical or magical strike to trip the pneumatic safety release, releasing grinding gear chimes across the entire sector.
 
 ### Motorized Brass Lifts & Moving Platforms (`labelMovingPlatform`, `labelVerticalLift`)
@@ -38,6 +38,12 @@ In *Vibrant Castle*, artifacts bridge the boundary between environmental narrati
 * **Mechanism & Function**:
   * Formed from concentrated, unrefined terrestrial Aether. Contact instantly depletes HP or triggers hazard respawn unless shielded by the `Prismatic Barrier` or `Aether Barrier`.
 
+### Lanterns, Braziers & Crystals (Decor)
+
+* **Classification**: Light-casting scenery
+* **Visual Form**: Garden lamp posts, hanging lanterns, wall torches, war braziers, ember skull lanterns, candelabra and aether crystal clusters, each with a soft glow.
+* **Function**: Purely visual. They never block movement; they keep every sector warm and lit against the autumn dusk (see `docs/lore/locations.md` for what stands where).
+
 ### Aether Portal Gateways (`portalMastery`, `labelSanctuaryGateway`)
 
 * **Classification**: Dimensional Conduit / Victory Sanctuary
@@ -46,7 +52,7 @@ In *Vibrant Castle*, artifacts bridge the boundary between environmental narrati
   * Continuously emits stellar particles and gravity-defying motes.
   * Stepping into the gateway registers sector mastery, tallies total performance score, and transitions the party seamlessly to the next location or loops the circuit.
 
-### The Chrono-Codex JSON (`save.ts`)
+### The Chrono-Codex JSON (`src/game/logic/save.ts`)
 
 * **Classification**: Meta-Chronicle Artifact
 * **Visual Form**: A leather-bound grimoire secured with brass clasp chronometers and guarded by Pip the Chrono-Cat.
@@ -58,15 +64,15 @@ In *Vibrant Castle*, artifacts bridge the boundary between environmental narrati
 
 ## 2. Citadel Armory & Equipment (Baldur's Gate II System)
 
-The equipment interface (`inventory.ts`) equips items across classical silhouette slots: **Main Hand, Off-Hand, Head, Armor, Neck, Ring, and Quick Belt (3 Potion Slots)**.
+The equipment interface (`src/game-menu/inventory/`) equips items across classical silhouette slots: **Main Hand, Off-Hand, Head, Armor, Neck, Ring, and Quick Belt (3 Potion Slots)**.
 
 ### Weapons (Main Hand)
 
 | Item ID | Item Name | Rarity | Stats & Enchantments | Lore & Visual Description |
 | :--- | :--- | :---: | :--- | :--- |
-| `solar_rapier` | **Aristocrat's Solar Rapier** | Uncommon | +15 Attack, +10 Max Stamina | Forged in Bastion foundries. The blade leaves a radiant trail of warm golden light with every thrust. |
-| `frost_rapier` | **Northern Frost Rapier** | Rare | +22 Attack, +20 Max Mana | A crystalline rapier honed from glacial ice and polar Aether. Emanates a pale azure mist and chills air on impact. |
-| `aether_staff` | **Aether Scholar's Staff** | Rare | +10 Attack, +40 Max Mana, +15% Mana Regen | Polished mahogany staff crowned with a humming amber crystal core that harmonizes with celestial incantations. |
+| `solar_rapier` | **Aristocrat's Solar Rapier** | Uncommon | +15 Attack, +10 Max Stamina, fire damage with a burning DoT | Forged in Bastion foundries. The blade leaves a radiant trail of warm golden light with every thrust. |
+| `frost_rapier` | **Northern Frost Rapier** | Rare | +22 Attack, +20 Max Mana, frost damage with a frostbite DoT | A crystalline rapier honed from glacial ice and polar Aether. Emanates a pale azure mist and chills air on impact. |
+| `aether_staff` | **Aether Scholar's Staff** | Rare | +10 Attack, +40 Max Mana, +15% Mana Regen, aether damage with a burn DoT | Polished mahogany staff crowned with a humming amber crystal core that harmonizes with celestial incantations. |
 
 ### Off-Hand, Shields & Grimoires
 
@@ -102,18 +108,18 @@ The equipment interface (`inventory.ts`) equips items across classical silhouett
 
 | Item ID | Item Name | Rarity | Immediate Effect | Description & Formulation |
 | :--- | :--- | :---: | :--- | :--- |
-| `potion_health` | **Crimson Vitality Draught** | Common | Restores +45 HP | Thick, ruby-red herbal distillation that knits flesh and mends armor integrity. |
-| `potion_mana` | **Cerulean Mana Draught** | Common | Restores +40 Mana | Luminescent sapphire liquid sparkling with suspended micro-crystals of pure Aether. |
-| `potion_elixir` | **Supreme Elixir** | Rare | Restores +50 HP, +50 Mana, +50 Stamina | The royal panacea of the Bastion grandmasters, instantly invigorating mind, body, and spirit. |
+| `potion_health` | **Health Potion** | Common | Restores +45 HP, then heals over 4 s | Thick, ruby-red herbal distillation that knits flesh and mends armor integrity. |
+| `potion_mana` | **Mana Potion** | Common | Restores +40 Mana, then restores over 4 s | Luminescent sapphire liquid sparkling with suspended micro-crystals of pure Aether. |
+| `potion_elixir` | **Supreme Elixir** | Rare | Restores +50 HP, +50 Mana, +50 Stamina, then heals over 5 s | The royal panacea of the Bastion grandmasters, instantly invigorating mind, body, and spirit. |
 
 ---
 
 ## 3. The Constellation Grimoire (Magic Relic System)
 
-Inscribed within the citadel's celestial observatory, the **Constellation Grimoire** (`skills.ts`) categorizes arcane knowledge into three tiers across **Offensive, Defensive, and Passive** disciplines:
+Inscribed within the citadel's celestial observatory, the **Constellation Grimoire** (`src/data/skills/spells.json` and `src/data/progression/skill_trees.json`) categorizes arcane knowledge into three tiers across **Offensive, Defensive, and Passive** disciplines:
 
 1. **Action Spells (Cast on Command)**:
-   * *Equippable Slots*: Primary Magic (`[U]` on 1P / `[Numpad 4]` on 2P) and Secondary Magic (`[I]` on 1P / `[Numpad 5]` on 2P).
+   * *Equippable Slots*: Primary Magic (`[U]` on 1P / `[` or `[Numpad 4]` on 2P) and Secondary Magic (`[O]` on 1P / `]` or `[Numpad 5]` on 2P).
    * Projectiles (`Solar Flare`, `Aether Bolt`, `Solar Fireball`, `Celestial Comet`) adjust trajectory dynamically according to character aim angles (horizontal, 45° elevated, or 90° vertical).
 2. **Defensive Wards (Instant Aegis)**:
    * Spells like `Prismatic Barrier`, `Solar Shield Bash`, and `Aether Barrier` create temporary aura shields absorbing 100% of damage from physical strikes and environmental spike pits.

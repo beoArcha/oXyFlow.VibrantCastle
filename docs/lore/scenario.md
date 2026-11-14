@@ -2,7 +2,7 @@
 
 ## Introduction & World Concept
 
-The world of *Vibrant Castle* merges the warm, melancholic aesthetic of late 19th-century gothic fantasy (inspired by *Owlboy* and *Castlevania: Aria of Sorrow*) with kinetic, responsive action and dynamic acoustic narration reminiscent of *Bastion* and *Hades*.
+The world of *Vibrant Castle* merges the warm, melancholic aesthetic of late 19th-century gothic fantasy (in the style and feeling of *Castlevania: Aria of Sorrow*) with kinetic, Mario-like movement and dynamic acoustic narration in the manner of *Bastion*.
 
 The castle is suspended in an eternal, golden autumn. Once the illustrious seat of a guild of fencing scholars, astronomers, and horologists, the ancient Citadel of Aether fell into stasis following a catastrophic temporal fracture. Players embody the Awakened Duelists who, under the watchful chronicle of an omniscient Narrator, traverse the citadel's interconnected sectors, restarting dormant clockwork apparatuses and pacifying guardians corrupted by wild Aetherial radiation.
 
@@ -10,12 +10,12 @@ The castle is suspended in an eternal, golden autumn. Once the illustrious seat 
 
 ## Tone and Direction
 
-* **Autumn of the Citadel**: The castle is caught in one unending golden autumn. Ochre and amber light warm the courtyards, crimson haze hangs over the chasm, bronze and sepia fill the tower, cerulean starlight floats over the sanctuary, and royal gold closes the Bastion.
+* **Autumn of the Citadel**: The castle is caught in one unending golden autumn. Ochre and amber light warm the courtyards, crimson haze hangs over the chasm, bronze and sepia fill the tower, cerulean starlight floats over the sanctuary (the one blue sector, still due an autumn palette pass), and royal gold closes the Bastion. Lanterns, braziers and torches keep light in every sector.
 * **Decay and Warmth**: Stone crumbles, leaves fall and gears rust, yet the lamps are still lit. Every sector should feel old and tired but still cared for.
 * **Mood**: The melancholy and gothic atmosphere of *Castlevania: Aria of Sorrow*, with simplified, readable combat.
 * **Movement**: Platforming should feel like a Mario game: springy, forgiving jumps, clear landings and quick turns.
 * **Reactive Narrator**: The Bastion Narrator answers what the duelists do in short lines, and never explains the layout.
-* **Loop, Not Line**: The route runs forward through five sectors, but portals run both ways between the first four and the Mastery Portal returns players to the Courtyard, so each sector is revisited with new skills and new eyes.
+* **Loop, Not Line**: The route runs forward through five sectors, but portals run both ways between the first four and the Mastery Portal returns players to the Courtyard, so each sector can be revisited (ability gates that force real backtracking are planned, not built yet).
 
 ---
 
@@ -42,7 +42,7 @@ The route runs forward through the five sectors. Portals run both ways between t
 * **Opening Chronicle**:
   > *"The youth awoke upon the vast castle grounds. The crisp air carried scents of dry autumn leaves and fresh aether..."*
 * **Player Objective**: Re-attune to fundamental footwork, rapid sprints, directional slides, and initial rapier thrusts against Master Oakhaven's training automata.
-* **Cooperative Dynamic**: In two-player mode, Aurelia awakens beside Valen; the Narrator observes the resurgence of their historic covenant of steel and celestial craft.
+* **Cooperative Dynamic**: In two-player mode, Aurelia awakens beside Valen; the Narrator observes the resurgence of their historic covenant of steel and celestial craft. In the solo story the two meet later, in the Clockwork Tower summit scene (`dialogues_vn.json`, a visual novel scene that is written but not yet wired into the game).
 * **Route Zones**: Awakening Yard, Arcade Terraces, Fountain Basin, Gatehouse (the golden gate lever on the parapet), then Chasm Road to the east gate.
 
 ---
@@ -51,7 +51,7 @@ The route runs forward through the five sectors. Portals run both ways between t
 
 * **Setting & Tone**: Fractured foundations over a sheer gorge, carpeted with glowing amber spikes (`labelAmberThorns`).
 * **Platforming Gauntlet**:
-  * Precision leaps across isolated stone slabs suspended at staggered elevations (`y: 460`, `360`, `280`).
+  * Precision leaps across isolated stone slabs and bridges suspended above the amber spikes.
   * Low archway clearances requiring sliding under full momentum while dodging crawling subterranean beasts.
 * **Narrative Reaction**:
   > *"One false step and it was over. But this kid knew how to bend gravity to his will."*
@@ -68,7 +68,7 @@ The route runs forward through the five sectors. Portals run both ways between t
   * Angled Target Practice: Targets positioned aloft and sunken below necessitate mastering 45° elevation shots while running or true 90° vertical shots while stationary.
 * **Route Zones**: Foundry floor, Gear gallery, Pendulum shaft, Escapement hall (the spire gate), then the Belfry and the apex portal to the Sanctuary.
 * **Mechanical Obstacle**:
-  * Striking the golden escapement lever with blade or projectile releases pneumatic locks, lifting the spire gate. The Clockwork Gear lever (`tower_gear_lever`) opens the spire gate (`tower_spire_gate`).
+  * Striking the golden escapement lever with blade or projectile releases pneumatic locks, and the portcullis spire gate visibly lifts. The Clockwork Gear lever (`tower_gear_lever`) opens the spire gate (`tower_spire_gate`).
 * **Narrator Commentary**:
   > *"Deep within the clocktower, massive iron cogs groaned, lifting the portcullis toward the clouds."*
 
@@ -100,6 +100,8 @@ The route runs forward through the five sectors. Portals run both ways between t
 ---
 
 ## Future Campaign Outline (Subsequent Acts)
+
+*Concept only: nothing in Acts II and III exists in the game yet.*
 
 ### Act II: The Sunken Clockwork Gardens (Clockwork Aqueducts)
 
