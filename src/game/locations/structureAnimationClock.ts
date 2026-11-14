@@ -1,5 +1,6 @@
 import { CollisionType } from "../types/enums";
 import type { Entity } from "../types/entities";
+import { updateGateCollision } from "../physics/gateState";
 
 export const STRUCTURE_STATE_INACTIVE = "inactive";
 export const STRUCTURE_STATE_ACTIVE = "active";
@@ -20,7 +21,7 @@ export function setStructureAnimationState(entity: Entity, state: string): void 
  * `dt` is the fixed-step multiplier (1.0 == one 60 Hz tick), so `animationTicks`
  * accumulates 60 units per simulated second regardless of the engine tick rate.
  * Levers and portals derive their state from `isActivated`; the clock resets to 0
- * on every state change. Other structures only advance an already-started clock.
+ * on every state change. Other structures only advance an already-started clock; opening gates also shrink their collision height.
  * Allocation-free.
  */
 export function advanceStructureAnimations(entities: Entity[], dt: number): void {
@@ -36,6 +37,7 @@ export function advanceStructureAnimations(entities: Entity[], dt: number): void
       entity.animationTicks += dt;
     } else if (entity.animationTicks !== undefined) {
       entity.animationTicks += dt;
+      if (entity.gateBaseHeight !== undefined) updateGateCollision(entity);
     }
   }
 }

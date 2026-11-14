@@ -34,6 +34,35 @@
         { "animation": "close_up", "detectedRow": 3, "frames": 6 },
         { "animation": "info", "detectedRow": 4, "frames": 9 }
       ]
+    },
+    "chrono_lever": {
+      "directory": "structures/chrono_lever",
+      "margin": 10,
+      "defaultAnimation": "idle",
+      "rows": [
+        { "animation": "idle", "detectedRow": 0, "frames": 6 },
+        { "animation": "activating", "detectedRow": 1, "frames": 6 },
+        { "animation": "active", "detectedRow": 2, "frames": 6 }
+      ]
+    },
+    "grand_portcullis": {
+      "directory": "structures/grand_portcullis",
+      "margin": 10,
+      "defaultAnimation": "closed",
+      "rows": [
+        { "animation": "closed", "detectedRow": 0, "frames": 6 },
+        { "animation": "opening", "detectedRow": 1, "frames": 6 },
+        { "animation": "open", "detectedRow": 2, "frames": 6 }
+      ]
+    },
+    "hazard_thorns": {
+      "directory": "structures/hazard_thorns",
+      "margin": 10,
+      "defaultAnimation": "idle",
+      "rows": [
+        { "animation": "idle", "detectedRow": 0, "frames": 6 },
+        { "animation": "active", "detectedRow": 1, "frames": 6 }
+      ]
     }
   },
   "heroes": {

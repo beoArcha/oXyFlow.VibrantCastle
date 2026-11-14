@@ -141,6 +141,8 @@ export interface Entity {
   tileset?: string;
   animationState?: string;
   animationTicks?: number;
+  /** Gate only: closed height, set once the gate starts opening; `height` then carries the collision height. */
+  gateBaseHeight?: number;
   targetLocationId?: string;
   targetSpawnPoint?: { x: number; y: number };
   portalActivation?: "touch" | "interact";

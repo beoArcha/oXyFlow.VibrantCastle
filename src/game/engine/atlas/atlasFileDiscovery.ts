@@ -1,8 +1,8 @@
 import { assetsLogger } from "../../logger/gameLogger";
 import type { AtlasFileMap } from "./atlasTypes";
 
-/** Structure folders registered as atlases; the remaining structure sheets stay unregistered for now. */
-export const REGISTERED_STRUCTURE_IDS: readonly string[] = ["aether_gate"];
+/** Structure folders registered as atlases; structures without a packed sheet stay unregistered. */
+export const REGISTERED_STRUCTURE_IDS: readonly string[] = ["aether_gate", "chrono_lever", "grand_portcullis", "hazard_thorns"];
 
 /**
  * Only grid-clean sheets are bundled: repacked PNG (`*_packed_high.png`) and compiled SVG tiers.

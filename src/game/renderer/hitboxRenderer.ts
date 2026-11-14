@@ -1,5 +1,6 @@
 import { Player, Enemy, Entity, Projectile, CollisionType } from "@game/types";
 import { ViewCuller } from "./viewCulling";
+import { isGateOpen } from "@game/physics/gateState";
 import {
   IDebugProfilerOverlay,
   defaultDebugProfilerOverlay,
@@ -86,7 +87,7 @@ export class HitboxRenderer implements IHitboxRenderer {
     // 1. Entities
     for (let i = 0; i < entities.length; i++) {
       const entity = entities[i];
-      if (entity.y === -1000) continue;
+      if (isGateOpen(entity)) continue;
       if (view && !view.intersects(entity.x, entity.y, entity.width, entity.height)) continue;
 
       let strokeColor = "#38bdf8";

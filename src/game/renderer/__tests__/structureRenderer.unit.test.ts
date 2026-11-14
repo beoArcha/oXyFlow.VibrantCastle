@@ -140,17 +140,19 @@ describe("StructureRenderer", () => {
     expect(ctx.getSaveBalance()).toBe(0);
   });
 
-  it("skips lifted/deactivated entities (y === -1000)", () => {
+  it("skips fully opened gates", () => {
     const renderer = defaultStructureRenderer;
     const ctx = createMockContext();
 
     const lifted: Entity = {
       id: "lifted_gate",
-      type: CollisionType.Goal,
+      type: CollisionType.Solid,
       x: 100,
-      y: -1000,
+      y: 400,
       width: 64,
-      height: 96,
+      height: 0,
+      gateBaseHeight: 96,
+      animationState: "open",
     } as Entity;
 
     renderer.render(ctx, [lifted], "en", 60);

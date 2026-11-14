@@ -63,6 +63,9 @@ describe("repack on a synthetic sheet", () => {
   });
 });
 
+/** Structure sheets whose AI original already sat on a clean grid; the repack only normalises their cells. */
+const GRID_CLEAN_ORIGINALS: ReadonlySet<string> = new Set(["chrono_lever", "grand_portcullis", "hazard_thorns"]);
+
 describe("generated packed sheets", () => {
   const sheets = Object.entries(config.sheets) as [string, SheetConfig][];
 
@@ -109,7 +112,7 @@ describe("generated packed sheets", () => {
       expect(bodyBox.y + bodyBox.h).toBeLessThanOrEqual(1);
     });
 
-    it(`${id}: the original sheet is reported broken, confirming the checker catches the defect`, () => {
+    it(`${id}: the original sheet is ${GRID_CLEAN_ORIGINALS.has(id) ? "already grid-clean" : "reported broken, confirming the checker catches the defect"}`, () => {
       // Arrange
       const original = decodePngFile(join(dir, `${id}_high.png`));
       const meta = parseSheetMeta(JSON.parse(readFileSync(join(dir, `${id}_meta.json`), "utf8")));
@@ -118,7 +121,8 @@ describe("generated packed sheets", () => {
       const reports = checkFrames(original, meta);
 
       // Assert
-      expect(brokenFrames(reports).length).toBeGreaterThan(0);
+      if (GRID_CLEAN_ORIGINALS.has(id)) expect(brokenFrames(reports)).toEqual([]);
+      else expect(brokenFrames(reports).length).toBeGreaterThan(0);
     });
   }
 });

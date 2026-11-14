@@ -1,5 +1,6 @@
 import { Player, Entity, CollisionType, ParticleBurstType } from "@game/types";
 import { ICollisionEngine } from "./collisions";
+import { isGateOpen } from "./gateState";
 
 /**
  * Context callbacks and state queries for EnvironmentCollisionSystem.
@@ -65,8 +66,8 @@ export class EnvironmentCollisionSystem implements IEnvironmentCollisionSystem {
         if (context.isLevelTransitionPending()) break;
         const entity = entities[eIdx];
 
-        // Skip lifted gates
-        if (entity.y === -1000) continue;
+        // Skip fully opened gates
+        if (isGateOpen(entity)) continue;
 
         // Portal grace period after transition prevents immediate re-trigger / ping-pong
         if (entity.type === CollisionType.Goal && portalCooldownTimer > 0) {
@@ -138,7 +139,7 @@ export class EnvironmentCollisionSystem implements IEnvironmentCollisionSystem {
           const entity = entities[j];
           if (
             (entity.type === CollisionType.Solid || entity.type === CollisionType.OneWay) &&
-            entity.y !== -1000
+            !isGateOpen(entity)
           ) {
             if (
               feetX < entity.x + entity.width &&

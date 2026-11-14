@@ -1,0 +1,110 @@
+{
+  "entityId": "chrono_lever",
+  "entityType": "structure",
+  "version": "1.0",
+  "description": "Gilded Clockwork Gate Lever. Actuates portcullises and castle mechanisms upon player interaction.",
+  "atlas": {
+    "image": "chrono_lever_packed_high.png",
+    "cellWidth": 80,
+    "cellHeight": 82,
+    "columns": 6,
+    "rows": 3,
+    "spacing": 0,
+    "safeMargin": 0,
+    "background": "transparent"
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 1
+  },
+  "layout": {
+    "idle": {
+      "row": 0,
+      "startCol": 0,
+      "frames": 6,
+      "widthCells": 1
+    },
+    "activating": {
+      "row": 1,
+      "startCol": 0,
+      "frames": 6,
+      "widthCells": 1
+    },
+    "active": {
+      "row": 2,
+      "startCol": 0,
+      "frames": 6,
+      "widthCells": 1
+    },
+    "bodyBox": {
+      "x": 0.1375,
+      "y": 0.2195,
+      "w": 0.7375,
+      "h": 0.6585
+    }
+  },
+  "animations": {
+    "idle": {
+      "row": 0,
+      "frames": 6,
+      "fps": 6,
+      "loop": true,
+      "wide": false,
+      "slotSpan": [1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1]
+    },
+    "activating": {
+      "row": 1,
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "wide": false,
+      "slotSpan": [1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1]
+    },
+    "active": {
+      "row": 2,
+      "frames": 6,
+      "fps": 6,
+      "loop": true,
+      "wide": false,
+      "slotSpan": [1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1]
+    }
+  },
+  "states": {
+    "inactive": {
+      "animation": "idle"
+    },
+    "activating": {
+      "animation": "activating"
+    },
+    "active": {
+      "animation": "active"
+    }
+  },
+  "infoFrames": {
+    "default": 0,
+    "active": 1,
+    "highlight": 2
+  },
+  "interaction": {
+    "type": "switch",
+    "trigger": {
+      "onPlayerInteract": true,
+      "radius": 50
+    },
+    "effects": {
+      "openGate": true
+    }
+  },
+  "render": {
+    "layer": "interactive",
+    "zIndex": 10,
+    "blend": "normal"
+  },
+  "constraints": {
+    "strictGrid": true,
+    "fixedBaseline": true
+  }
+}
