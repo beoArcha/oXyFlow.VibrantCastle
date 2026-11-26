@@ -13,8 +13,6 @@ export default [
         ],
     },
 
-    js.configs.recommended,
-
     ...tseslint.configs.recommended,
 
     {

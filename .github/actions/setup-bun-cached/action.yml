@@ -1,0 +1,28 @@
+name: Setup Bun with Dependency Cache
+description: Installs Bun, restores the global Bun package cache keyed on bun.lock, and runs frozen-lockfile install.
+
+inputs:
+  bun-version:
+    description: Bun version to install
+    required: false
+    default: latest
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: ${{ inputs.bun-version }}
+
+    - name: Cache Bun package store
+      uses: actions/cache@v4
+      with:
+        path: ~/.bun/install/cache
+        key: bun-cache-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+        restore-keys: |
+          bun-cache-${{ runner.os }}-
+
+    - name: Install dependencies
+      shell: bash
+      run: bun install --frozen-lockfile

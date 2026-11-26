@@ -1,0 +1,114 @@
+name: CI — Main Full Verification
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ci-main-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Bun & dependencies
+        uses: ./.github/actions/setup-bun-cached
+      - name: Run TypeScript typecheck
+        run: bun run typecheck
+
+  unit-coverage:
+    name: Unit Tests + Coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Bun & dependencies
+        uses: ./.github/actions/setup-bun-cached
+      - name: Run unit tests with LCOV coverage
+        run: bun run test:unit:coverage
+      - name: Upload unit coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-unit
+          path: coverage/unit
+          retention-days: 3
+          if-no-files-found: warn
+
+  integration-coverage:
+    name: Integration Tests + Coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Bun & dependencies
+        uses: ./.github/actions/setup-bun-cached
+      - name: Run integration tests with LCOV coverage
+        run: bun run test:integration:coverage
+      - name: Upload integration coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-integration
+          path: coverage/integration
+          retention-days: 3
+          if-no-files-found: warn
+
+  arch-and-scripts:
+    name: Architecture, Levels & Scripts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Bun & dependencies
+        uses: ./.github/actions/setup-bun-cached
+      - name: Run architecture suite
+        run: bun run test:arch
+      - name: Validate all 8 worlds
+        run: bun scripts/validate-level.ts --all
+      - name: Run scripts tests
+        run: bun run test:scripts
+
+  distribution-and-gates:
+    name: Coverage Gate, Distribution & E2E Smoke
+    needs:
+      - typecheck
+      - unit-coverage
+      - integration-coverage
+      - arch-and-scripts
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Bun & dependencies
+        uses: ./.github/actions/setup-bun-cached
+      - name: Download unit coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-unit
+          path: coverage/unit
+        continue-on-error: true
+      - name: Download integration coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-integration
+          path: coverage/integration
+        continue-on-error: true
+      - name: Evaluate coverage gate
+        run: bun run coverage:gate
+      - name: Build GitHub Pages distribution package
+        run: bun run build:pages
+      - name: Run E2E distribution smoke tests
+        run: bun run test:e2e

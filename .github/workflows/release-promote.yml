@@ -1,0 +1,171 @@
+name: Release — Promote Verified Main
+
+on:
+  schedule:
+    # Weekly promotion window: Sundays at 03:00 UTC
+    - cron: "0 3 * * 0"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Verify main without pushing the release branch
+        required: false
+        default: false
+        type: boolean
+      create_tag:
+        description: Create a dated release tag after promotion
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: release-promote
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  check-diff:
+    name: Check Pending Commits on Main
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      has_changes: ${{ steps.diff.outputs.has_changes }}
+      target_sha: ${{ steps.diff.outputs.target_sha }}
+      commit_count: ${{ steps.diff.outputs.commit_count }}
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Compare main against release
+        id: diff
+        shell: bash
+        run: |
+          MAIN_SHA=$(git rev-parse origin/main)
+          echo "target_sha=$MAIN_SHA" >> "$GITHUB_OUTPUT"
+
+          if git show-ref --verify --quiet refs/remotes/origin/release; then
+            COMMIT_COUNT=$(git rev-list --count origin/release..origin/main)
+            echo "commit_count=$COMMIT_COUNT" >> "$GITHUB_OUTPUT"
+            if [ "$COMMIT_COUNT" -gt 0 ]; then
+              echo "has_changes=true" >> "$GITHUB_OUTPUT"
+              echo "Found $COMMIT_COUNT new commit(s) on main ready for verification."
+            else
+              echo "has_changes=false" >> "$GITHUB_OUTPUT"
+              echo "Release branch is already up to date with main ($MAIN_SHA)."
+            fi
+          else
+            echo "commit_count=initial" >> "$GITHUB_OUTPUT"
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            echo "Release branch does not exist yet; will bootstrap from verified main ($MAIN_SHA)."
+          fi
+
+  verify-main:
+    name: Full Release Gate Verification
+    needs: check-diff
+    if: needs.check-diff.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact target commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.check-diff.outputs.target_sha }}
+          fetch-depth: 0
+
+      - name: Setup Bun & dependencies
+        uses: ./.github/actions/setup-bun-cached
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Unit tests with coverage
+        run: bun run test:unit:coverage
+
+      - name: Integration tests with coverage
+        run: bun run test:integration:coverage
+
+      - name: Architecture, levels & scripts verification
+        run: |
+          bun run test:arch
+          bun scripts/validate-level.ts --all
+          bun run test:scripts
+
+      - name: Coverage gate
+        run: bun run coverage:gate
+
+      - name: Build Pages distribution & E2E smoke test
+        run: |
+          bun run build:pages
+          bun run test:e2e
+
+  promote:
+    name: Promote Main to Release
+    needs:
+      - check-diff
+      - verify-main
+    if: needs.check-diff.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout target commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.check-diff.outputs.target_sha }}
+          fetch-depth: 0
+
+      - name: Update release branch
+        shell: bash
+        env:
+          DRY_RUN: ${{ inputs.dry_run || false }}
+          CREATE_TAG: ${{ inputs.create_tag || false }}
+          TARGET_SHA: ${{ needs.check-diff.outputs.target_sha }}
+          COMMIT_COUNT: ${{ needs.check-diff.outputs.commit_count }}
+        run: |
+          SHORT_SHA="${TARGET_SHA:0:7}"
+
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "### Release Dry Run Passed" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Verified commit: \`$SHORT_SHA\` ($COMMIT_COUNT commit(s) ahead of release)" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Branch \`release\` was **not** modified because \`dry_run=true\`." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          git push origin "$TARGET_SHA:refs/heads/release"
+
+          TAG_LINE="Not requested"
+          if [ "$CREATE_TAG" = "true" ]; then
+            TAG_NAME="release-$(date -u +%Y.%m.%d)-${SHORT_SHA}"
+            git tag -f "$TAG_NAME" "$TARGET_SHA"
+            git push origin "refs/tags/$TAG_NAME"
+            TAG_LINE="\`$TAG_NAME\`"
+          fi
+
+          {
+            echo "### Promoted Verified Main to Release"
+            echo "- Commit: \`$SHORT_SHA\`"
+            echo "- Commits promoted: $COMMIT_COUNT"
+            echo "- Tag: $TAG_LINE"
+            echo "- Next step: deploying \`release\` to GitHub Pages."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  deploy-release:
+    name: Deploy Promoted Release to GitHub Pages
+    needs:
+      - check-diff
+      - promote
+    if: needs.check-diff.outputs.has_changes == 'true' && inputs.dry_run != true
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/deploy-pages.yml
+    with:
+      ref: release

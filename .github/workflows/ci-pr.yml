@@ -1,0 +1,66 @@
+name: CI — Pull Request Gate
+
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ci-pr-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Bun & dependencies
+        uses: ./.github/actions/setup-bun-cached
+      - name: Run TypeScript typecheck
+        run: bun run typecheck
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Bun & dependencies
+        uses: ./.github/actions/setup-bun-cached
+      - name: Run unit tests
+        run: bun run test:unit
+
+  arch-and-levels:
+    name: Architecture, Levels & Scripts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Bun & dependencies
+        uses: ./.github/actions/setup-bun-cached
+      - name: Run architecture test suite
+        run: bun run test:arch
+      - name: Validate all shipped locations
+        run: bun scripts/validate-level.ts --all
+      - name: Run script unit tests
+        run: bun run test:scripts
+
+  quick-build:
+    name: Quick Client Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Bun & dependencies
+        uses: ./.github/actions/setup-bun-cached
+      - name: Build production game client
+        run: bun run build:game
