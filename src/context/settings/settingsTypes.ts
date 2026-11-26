@@ -72,7 +72,7 @@ export const DEFAULT_SETTINGS: GameSettingsState = {
   isTwoPlayer: false,
   primaryCharacter: "valen",
   display: {
-    aspectRatio: "16:10",
+    aspectRatio: "auto",
     scalingFilter: "pixel",
     assetQuality: "high",
     targetFps: 60,

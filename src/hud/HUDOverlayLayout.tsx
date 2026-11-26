@@ -15,12 +15,12 @@ export const HUDOverlayLayout: React.FC<HUDOverlayLayoutProps> = React.memo(({
   const hasFlanks = Boolean(leftFlankSlot || rightFlankSlot);
 
   return (
-    <div className="relative w-full h-full flex-1 flex flex-col justify-between bg-stone-950 overflow-hidden select-none">
+    <div className="relative w-full h-full flex-1 min-h-0 flex flex-col justify-between bg-stone-950 overflow-hidden select-none">
       {viewportSlot}
 
       <header className="relative z-20 pointer-events-none p-3 md:p-4 flex items-start justify-between gap-2">
         <div className="pointer-events-auto">{topLeftSlot}</div>
-        <div className="pointer-events-auto">{topCenterSlot}</div>
+        {topCenterSlot && <div className="pointer-events-auto">{topCenterSlot}</div>}
         <div className="pointer-events-auto">{topRightSlot}</div>
       </header>
 

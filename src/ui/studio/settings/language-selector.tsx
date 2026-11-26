@@ -93,14 +93,14 @@ export const LanguageSelector = React.memo(
       <div
         ref={ref}
         className={cn(
-          "flex items-center gap-1.5 p-1 bg-surface-darkest border border-amber-primary/30 rounded-xl select-none shadow-sm",
+          "inline-flex items-center gap-0.5 h-8 p-0.5 bg-surface-darkest/90 border border-amber-900/45 rounded-lg select-none whitespace-nowrap shrink-0",
           className
         )}
         role="group"
         aria-label="Language selection"
         {...props}
       >
-        {showIcon && <Languages className="w-3.5 h-3.5 text-amber-primary ml-1 shrink-0" />}
+        {showIcon && <Languages className="w-3.5 h-3.5 text-amber-primary ml-1.5 mr-0.5 shrink-0" />}
         {options.map((opt) => {
           const isSelected = currentLanguage === opt.value;
           const displayLabel = opt.shortLabel ?? opt.label;
@@ -112,10 +112,10 @@ export const LanguageSelector = React.memo(
               onClick={() => handleLanguageChange(opt.value)}
               aria-pressed={isSelected}
               className={cn(
-                "px-2 py-0.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer",
+                "h-6 px-2 rounded-md text-[11px] font-bold leading-none transition-colors cursor-pointer whitespace-nowrap",
                 isSelected
-                  ? "bg-gradient-to-r from-amber-600 to-amber-700 text-white border border-amber-light shadow-xs"
-                  : "text-stone-400 hover:text-stone-200"
+                  ? "bg-amber-700/90 text-amber-50 border border-amber-500/60"
+                  : "text-stone-400 hover:text-stone-200 border border-transparent"
               )}
               title={opt.label}
             >

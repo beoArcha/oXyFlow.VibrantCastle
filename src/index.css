@@ -57,6 +57,17 @@
   --vital-skill-points: #8b5cf6;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #120704;
+}
+
 /* WebKit (Chrome, Edge, Safari, Opera) */
 ::-webkit-scrollbar {
   width: 8px;

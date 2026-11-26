@@ -73,11 +73,13 @@ export const Button = React.memo(
         {...props}
       >
         {effectiveLeftIcon && (
-          <span className="shrink-0 flex items-center">{effectiveLeftIcon}</span>
+          <span className="shrink-0 inline-flex items-center">{effectiveLeftIcon}</span>
         )}
-        {children && <span>{children}</span>}
+        {children && (
+          <span className="inline-flex items-center gap-1.5">{children}</span>
+        )}
         {rightIcon && !isLoading && (
-          <span className="shrink-0 flex items-center">{rightIcon}</span>
+          <span className="shrink-0 inline-flex items-center">{rightIcon}</span>
         )}
       </button>
     );

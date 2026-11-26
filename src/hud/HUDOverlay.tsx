@@ -5,12 +5,10 @@ import {
   resolveQuickBeltVM,
 } from "./hud.mapper";
 import { useGameSession, useSettings } from "@context/GameContext";
-import { useI18n } from "@context/I18nContext";
 import { HUDOverlayLayout } from "./HUDOverlayLayout";
 import { HUDViewportCanvas } from "./HUDViewportCanvas";
 import { HUDStatusOverlay } from "./HUDStatusOverlay";
 import { HUDPlayerStatusCard } from "./HUDPlayerStatusCard";
-import { HUDTopControls } from "./HUDTopControls";
 import { HUDQuickBelt } from "./HUDQuickBelt";
 import { HUDNarratorBanner } from "./HUDNarratorBanner";
 import type { HUDOverlayProps } from "./types";
@@ -20,7 +18,6 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
   onOpenSkillTree,
   onOpenHelp,
   onOpenMenu,
-  onTogglePause,
   isModalOpen = false,
 }) => {
   const {
@@ -30,19 +27,14 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
     isDefeat,
     isPaused,
     setPaused,
-    togglePause,
-    currentLocation,
     narration,
     subAnim,
-    isAudioInitialized,
-    initializeAudio,
     restart,
     advanceLocation,
     useQuickPotion,
   } = useGameSession();
 
   const { isTwoPlayer, displaySettings, hudSettings } = useSettings();
-  const { t } = useI18n();
 
   const p1Stats = useMemo(() => resolvePlayerDerivedStats(p1), [p1]);
   const p2Stats = useMemo(() => resolvePlayerDerivedStats(p2), [p2]);
@@ -95,8 +87,6 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
     [p2, hudSettings.p2QuickKeys]
   );
 
-  const currentLocationName = currentLocation ? t(currentLocation.nameKey) : "";
-
   const handlePotionClick = useCallback(
     (playerIndex: number, slotIndex: number) => {
       useQuickPotion(playerIndex, slotIndex);
@@ -138,15 +128,6 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
             onOpenSkillTree={onOpenSkillTree}
           />
         )
-      }
-      topCenterSlot={
-        <HUDTopControls
-          isPaused={isPaused}
-          onTogglePause={onTogglePause || togglePause}
-          locationName={currentLocationName}
-          isAudioInitialized={isAudioInitialized}
-          onInitializeAudio={initializeAudio}
-        />
       }
       topRightSlot={
         isTwoPlayer && p2StatusVM ? (

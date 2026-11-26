@@ -75,7 +75,7 @@ export const MODAL_REGISTRY: readonly ModalDefinition[] = [
     },
     headerShortcut: {
       hotkeyLabel: "H",
-      labelKey: "hints",
+      labelKey: "headerHints",
       iconKey: "help",
       order: 4,
     },
@@ -109,7 +109,7 @@ export const MODAL_REGISTRY: readonly ModalDefinition[] = [
     },
     headerShortcut: {
       hotkeyLabel: "K",
-      labelKey: "skillTreeBtn",
+      labelKey: "headerSkillTree",
       iconKey: "skillTree",
       order: 2,
     },

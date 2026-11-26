@@ -1,4 +1,4 @@
-import { describe, it, expect, mock, spyOn, beforeEach, afterEach } from "bun:test";
+import { describe, it, expect, spyOn, beforeEach, afterEach } from "bun:test";
 import React from "react";
 import { setupDomEnvironment, cleanupDom, renderIntoDom, TestProviders } from "@test-utils";
 import gameEngine from "@game/loop/engine";
@@ -24,7 +24,7 @@ describe("HUDOverlay Orchestrator Component", () => {
     gameEngine.stop();
   });
 
-  it("renders clean single-player HUD with viewport, P1 lore status, slim top strip, and bottom dock without flank clutter", async () => {
+  it("renders clean single-player HUD with full-height viewport, P1 lore status, and bottom dock without floating top-center toolbar or flank clutter", async () => {
     const { container, unmount } = await renderIntoDom(
       <TestProviders>
         <HUDOverlay
@@ -36,12 +36,13 @@ describe("HUDOverlay Orchestrator Component", () => {
       </TestProviders>
     );
 
-    // Canvas viewport is mounted
+    // Canvas viewport is mounted inside a full-height flex container
+    expect(container.querySelector("#canvas-container-viewport")).not.toBeNull();
     expect(container.querySelector("#game-viewport-canvas")).not.toBeNull();
 
-    // Slim Top Strip (no duplicated help/menu/creation buttons)
-    expect(container.querySelector('[role="toolbar"]')).not.toBeNull();
-    expect(container.querySelector("#top-pause-btn")).not.toBeNull();
+    // Floating top-center toolbar was merged into the top app header
+    expect(container.querySelector('[role="toolbar"]')).toBeNull();
+    expect(container.querySelector("#top-pause-btn")).toBeNull();
     expect(container.querySelector("#top-help-btn")).toBeNull();
     expect(container.querySelector("#top-menu-btn")).toBeNull();
 
@@ -55,27 +56,6 @@ describe("HUDOverlay Orchestrator Component", () => {
     // No redundant RPG buttons on the quick belt dock
     expect(container.querySelector("#flank-inventory-btn")).toBeNull();
     expect(container.querySelector("#flank-skilltree-btn")).toBeNull();
-
-    await unmount();
-  });
-
-  it("dispatches pause action when top pause button is clicked", async () => {
-    const onTogglePause = mock(() => {});
-
-    const { container, click, unmount } = await renderIntoDom(
-      <TestProviders>
-        <HUDOverlay
-          onOpenInventory={() => {}}
-          onOpenSkillTree={() => {}}
-          onOpenHelp={() => {}}
-          onOpenMenu={() => {}}
-          onTogglePause={onTogglePause}
-        />
-      </TestProviders>
-    );
-
-    await click(container.querySelector("#top-pause-btn")!);
-    expect(onTogglePause).toHaveBeenCalledTimes(1);
 
     await unmount();
   });

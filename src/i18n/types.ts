@@ -32,6 +32,11 @@ export interface HudI18n {
   skillTreeBtn: string;
   creationBtn: string;
   enableAudio: string;
+  clickToEnableSound: string;
+  gameControls: string;
+  headerSkillTree: string;
+  headerHints: string;
+  headerAudioShort: string;
   victory: string;
   defeat: string;
   defeatSubtitle: string;
@@ -262,6 +267,7 @@ export interface SettingsDisplayI18n {
   viewportTipTitle: string;
   viewportTipDesc: string;
   fpsOption: string;
+  targetFpsOption: string;
   fpsCounterOption: string;
   gpuAccelerationOption: string;
   gpuAccelerationDesc: string;
@@ -916,6 +922,8 @@ export interface SkillsProgressionI18n {
   characterClassScholar: string;
   playerValenLabel: string;
   playerAureliaLabel: string;
+  valen: string;
+  aurelia: string;
   shieldDurationLabel: string;
   autoIntervalLabel: string;
   equippedActiveSlot: string;

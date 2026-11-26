@@ -61,7 +61,7 @@ export class SettingsStorage implements ISettingsStorage {
             ...DEFAULT_SETTINGS,
             display: {
               ...DEFAULT_SETTINGS.display,
-              aspectRatio: parsedDisplay.aspectRatio || "16:10",
+              aspectRatio: parsedDisplay.aspectRatio || "auto",
               scalingFilter: parsedDisplay.scalingFilter || "pixel",
               assetQuality: parsedDisplay.assetQuality || "high",
               targetFps: parsedDisplay.targetFps || 60,

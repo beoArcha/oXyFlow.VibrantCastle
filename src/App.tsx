@@ -1,5 +1,14 @@
 import React, { useCallback, useMemo } from "react";
-import { HelpCircle, Menu as MenuIcon, Backpack, BookOpen, Layers } from "lucide-react";
+import {
+  HelpCircle,
+  Menu as MenuIcon,
+  Backpack,
+  BookOpen,
+  Layers,
+  Pause,
+  Play,
+  Volume2,
+} from "lucide-react";
 import { APP_CONFIG } from "@/app/appConfig";
 import { I18nProvider, useI18n } from "@context/I18nContext";
 import { GameProvider, useGameSession } from "@context/GameContext";
@@ -18,16 +27,23 @@ import { GameErrorBoundary, Toast, useToast } from "@ui";
 import { formatGameDiagnosticReport } from "@lib/logger";
 
 const HEADER_SHORTCUT_ICONS: Record<ModalIconKey, React.ReactNode> = {
-  help: <HelpCircle size={13} />,
-  menu: <MenuIcon size={13} />,
-  inventory: <Backpack size={13} />,
-  skillTree: <BookOpen size={13} />,
-  creation: <Layers size={13} />,
+  help: <HelpCircle size={14} />,
+  menu: <MenuIcon size={14} />,
+  inventory: <Backpack size={14} />,
+  skillTree: <BookOpen size={14} />,
+  creation: <Layers size={14} />,
 };
 
 function GameScreen() {
   const { t } = useI18n();
-  const { initializeAudio, setPaused, togglePause } = useGameSession();
+  const {
+    currentLocation,
+    isPaused,
+    isAudioInitialized,
+    initializeAudio,
+    setPaused,
+    togglePause,
+  } = useGameSession();
   const { toastMessage, showToast } = useToast();
 
   const { bindingTarget, isRebinding, startRebind, cancelRebind } = useKeyRebind({
@@ -60,14 +76,19 @@ function GameScreen() {
     [allHeaderShortcuts]
   );
 
+  const currentLocationName = currentLocation ? t(currentLocation.nameKey) : "";
+
   const renderDeveloperSuite = useCallback(() => <DeveloperSuite />, []);
 
   return (
     <GameLayout.Root onInteract={initializeAudio}>
       <GameLayout.Header>
-        <GameLayout.Brand title={t(APP_CONFIG.i18nKeys.title)} />
+        <GameLayout.Brand
+          title={t(APP_CONFIG.i18nKeys.title)}
+          locationName={currentLocationName}
+        />
 
-        <GameLayout.HotkeyGroup>
+        <GameLayout.HotkeyGroup ariaLabel={t("gameControls")}>
           {centerShortcuts.map((def) => {
             const cfg = def.headerShortcut!;
             return (
@@ -76,6 +97,7 @@ function GameScreen() {
                 hotkey={cfg.hotkeyLabel}
                 label={t(cfg.labelKey)}
                 icon={HEADER_SHORTCUT_ICONS[cfg.iconKey]}
+                labelVisibility="lg"
                 onClick={() => coordinator.openModal(def.id)}
               />
             );
@@ -83,13 +105,40 @@ function GameScreen() {
         </GameLayout.HotkeyGroup>
 
         <GameLayout.Actions>
-          <LanguageSelector variant="pills" />
+          <GameLayout.HotkeyHint
+            id="top-pause-btn"
+            hotkey="P"
+            label={isPaused ? t("resume") : t("pause")}
+            tooltip={`${isPaused ? t("resume") : t("pause")} [P]`}
+            icon={isPaused ? <Play size={14} /> : <Pause size={14} />}
+            active={isPaused}
+            ariaPressed={isPaused}
+            labelVisibility="md"
+            onClick={coordinator.togglePause}
+          />
+
+          {!isAudioInitialized && (
+            <GameLayout.HotkeyHint
+              id="top-audio-btn"
+              label={t("headerAudioShort")}
+              tooltip={t("clickToEnableSound")}
+              icon={<Volume2 size={14} />}
+              emphasized
+              labelVisibility="xl"
+              onClick={initializeAudio}
+            />
+          )}
+
+          <LanguageSelector variant="pills" showIcon={false} />
+
           {menuShortcut?.headerShortcut && (
             <GameLayout.HotkeyHint
+              id="top-menu-btn"
               hotkey={menuShortcut.headerShortcut.hotkeyLabel}
               label={t(menuShortcut.headerShortcut.labelKey)}
               icon={HEADER_SHORTCUT_ICONS[menuShortcut.headerShortcut.iconKey]}
               emphasized
+              labelVisibility="sm"
               onClick={() => coordinator.openModal(ModalId.Menu)}
             />
           )}
