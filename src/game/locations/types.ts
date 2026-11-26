@@ -6,15 +6,20 @@ import {
   DecorPlacementSchema,
   LocationSceneType,
   ParticleType,
+  BossZoneSchema,
 } from "./schema/locationSchema";
 
-export type LocationId =
+export type WorldId =
   | "courtyard"
   | "thorn_chasm"
+  | "ashen_catacombs"
   | "clocktower"
+  | "alchemist_library"
   | "aether_sanctuary"
   | "grand_bastion"
-  | (string & {});
+  | "eclipse_crown";
+
+export type LocationId = WorldId | (string & {});
 
 export interface LocationTheme {
   bgGradientTop: string;
@@ -26,6 +31,8 @@ export interface LocationTheme {
 
 export interface LocationDefinition {
   id: LocationId;
+  worldId?: WorldId;
+  stageNumber?: number;
   nameKey: string;
   descriptionKey: string;
   width: number;
@@ -38,6 +45,7 @@ export interface LocationDefinition {
   linkedSceneId?: string;
   nextLocationId?: LocationId;
   parallaxBackground?: ParallaxBackgroundSchema;
+  bossZones?: BossZoneSchema[];
   portals?: PortalDefinitionSchema[];
   /** Validated decor placements: pure visuals, never entities, no collision. */
   decor?: DecorPlacementSchema[];

@@ -45,6 +45,8 @@ export class DebugManager {
       mid: true,
       mid_close: true,
       close: true,
+      boss_stage: true,
+      boss_world: true,
     },
   };
 
@@ -167,28 +169,50 @@ export class DebugManager {
         return [
           { id: "start", name: "Chasm Entrance", namePl: "Wejście do rozpadliny", x: 100, y: 480 },
           { id: "mid", name: "Bramble Bridge", namePl: "Most cierniowy", x: 1150, y: 440 },
-          { id: "spikes", name: "Jagged Pillars", namePl: "Szpiczaste filary", x: 1850, y: 400 },
-          { id: "portal", name: "Exit Portal", namePl: "Portal do Bastionu", x: 2350, y: 420 },
+          { id: "upper", name: "Canopy Route", namePl: "Górna ścieżka", x: 1220, y: 270 },
+          { id: "boss", name: "Thorn Warden Arena", namePl: "Arena Strażnika Cierni", x: 2220, y: 420 },
+          { id: "portal", name: "To Catacombs", namePl: "Portal do Katakumb", x: 2660, y: 420 },
         ];
-      case "grand_bastion":
+      case "ashen_catacombs":
         return [
-          { id: "start", name: "Bastion Gates", namePl: "Bramy Bastionu", x: 100, y: 520 },
-          { id: "mid", name: "Great Rampart", namePl: "Główne mury", x: 1200, y: 480 },
-          { id: "knight", name: "Bastion Knight Arena", namePl: "Arena rycerza", x: 1950, y: 460 },
-          { id: "portal", name: "Spire Portal", namePl: "Portal do Iglicy", x: 2650, y: 440 },
+          { id: "start", name: "Ossuary Descent", namePl: "Zejście do Ossuarium", x: 110, y: 440 },
+          { id: "hall", name: "Hall of Chains", namePl: "Korytarz Łańcuchów", x: 1040, y: 560 },
+          { id: "crypt", name: "Ember Crypt", namePl: "Krypta Żaru", x: 1860, y: 520 },
+          { id: "boss", name: "Chapel of Embers (Boss)", namePl: "Kaplica Żaru (Boss)", x: 2480, y: 460 },
         ];
       case "clocktower":
         return [
           { id: "start", name: "Clocktower Base", namePl: "Podstawa wieży zegarowej", x: 100, y: 560 },
           { id: "mid", name: "Giant Gears", namePl: "Koła zębate", x: 1100, y: 420 },
           { id: "gargoyle", name: "Gargoyle Roost", namePl: "Gniazdo gargulców", x: 1700, y: 340 },
-          { id: "portal", name: "Tower Spire", namePl: "Szczyt wieży", x: 2200, y: 280 },
+          { id: "boss", name: "Spire Summit", namePl: "Szczyt Iglicy", x: 2200, y: 280 },
+        ];
+      case "alchemist_library":
+        return [
+          { id: "start", name: "Reading Hall", namePl: "Czytelnia Szmaragdu", x: 110, y: 540 },
+          { id: "galleries", name: "Upper Galleries", namePl: "Górne Galerie", x: 1180, y: 320 },
+          { id: "distillery", name: "Aether Distillery", namePl: "Destylarnia Eteru", x: 1820, y: 440 },
+          { id: "boss", name: "Astrolabe Rotunda (Boss)", namePl: "Rotunda Astrolabium (Boss)", x: 2520, y: 420 },
         ];
       case "aether_sanctuary":
         return [
           { id: "start", name: "Sanctuary Steps", namePl: "Schody sanktuarium", x: 100, y: 480 },
           { id: "mid", name: "Astral Bridge", namePl: "Most astralny", x: 1200, y: 420 },
-          { id: "portal", name: "Celestial Altar", namePl: "Niebiański ołtarz", x: 2400, y: 400 },
+          { id: "boss", name: "Archon Altar (Boss)", namePl: "Ołtarz Archonta (Boss)", x: 2220, y: 400 },
+        ];
+      case "grand_bastion":
+        return [
+          { id: "start", name: "Bastion Gates", namePl: "Bramy Bastionu", x: 100, y: 520 },
+          { id: "mid", name: "Great Rampart", namePl: "Główne mury", x: 1200, y: 480 },
+          { id: "boss", name: "Commander Arena (Boss)", namePl: "Arena Komendanta (Boss)", x: 2150, y: 460 },
+          { id: "portal", name: "To Eclipse Crown", namePl: "Portal do Korony Zaćmienia", x: 2800, y: 440 },
+        ];
+      case "eclipse_crown":
+        return [
+          { id: "start", name: "Obsidian Steps", namePl: "Schody Obsydianu", x: 110, y: 560 },
+          { id: "spires", name: "Crimson Spires", namePl: "Karmazynowe Iglice", x: 1280, y: 440 },
+          { id: "bridge", name: "Sacrificial Bridge", namePl: "Most Ofiarny", x: 2040, y: 460 },
+          { id: "world_boss", name: "Eclipse Throne (World Boss)", namePl: "Tron Zaćmienia (Boss Świata)", x: 2740, y: 420 },
         ];
       default:
         return [

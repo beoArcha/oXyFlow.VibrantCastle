@@ -40,6 +40,8 @@ const PARALLAX_TIERS: readonly BackgroundLayerTier[] = [
   "mid",
   "mid_close",
   "close",
+  "boss_stage",
+  "boss_world",
 ];
 
 const SPAWNABLE_MONSTERS = [

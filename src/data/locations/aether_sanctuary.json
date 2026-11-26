@@ -1,21 +1,24 @@
 {
   "schemaVersion": "1.0",
   "id": "aether_sanctuary",
+  "worldId": "aether_sanctuary",
+  "stageNumber": 1,
   "nameKey": "locationAetherSanctuaryName",
   "descriptionKey": "locationAetherSanctuaryDesc",
   "openingNarrationKey": "narrationMagicUsed",
   "sceneType": "action_platformer",
   "nextLocationId": "grand_bastion",
   "dimensions": {
-    "width": 2720,
-    "height": 840
+    "width": 2880,
+    "height": 860
   },
   "spawnPoints": {
     "default": { "x": 100, "y": 480 },
     "p2Offset": { "x": 60, "y": 0 },
     "entries": {
+      "from_library": { "x": 100, "y": 480 },
       "from_clocktower": { "x": 100, "y": 480 },
-      "from_bastion": { "x": 2360, "y": 400 }
+      "from_bastion": { "x": 2540, "y": 400 }
     }
   },
   "theme": {
@@ -26,16 +29,31 @@
     "musicIntensity": 0.75
   },
   "parallaxBackground": {
-    "boxWidth": 3120,
-    "boxHeight": 840,
+    "boxWidth": 3280,
+    "boxHeight": 860,
     "layers": [
-      { "id": "bg_aether_far", "name": "Celestial Sky", "tier": "far", "type": "image", "depth": 0.1, "scrollSpeedX": 0.08, "scrollSpeedY": 0.04, "opaque": true, "imageUrl": "aether_sanctuary_far_high" },
-      { "id": "bg_aether_mid_far", "name": "Distant Aqueduct", "tier": "mid_far", "type": "image", "depth": 0.25, "scrollSpeedX": 0.2, "scrollSpeedY": 0.08, "imageUrl": "aether_sanctuary_mid_far_high" },
-      { "id": "bg_aether_mid", "name": "Floating Islets", "tier": "mid", "type": "image", "depth": 0.45, "scrollSpeedX": 0.35, "scrollSpeedY": 0.12, "imageUrl": "aether_sanctuary_mid_high" },
-      { "id": "bg_aether_mid_close", "name": "Astral Pillars", "tier": "mid_close", "type": "image", "depth": 0.65, "scrollSpeedX": 0.55, "scrollSpeedY": 0.18, "imageUrl": "aether_sanctuary_mid_close_high" },
-      { "id": "bg_aether_close", "name": "Foreground Runes", "tier": "close", "type": "image", "depth": 0.85, "scrollSpeedX": 0.78, "scrollSpeedY": 0.22, "imageUrl": "aether_sanctuary_close_high" }
+      { "id": "bg_aether_far", "name": "Celestial Sky", "tier": "far", "layerKey": "world:aether_sanctuary:far", "type": "image", "depth": 0.08, "scrollSpeedX": 0.04, "scrollSpeedY": 0.02, "opaque": true, "imageUrl": "world:aether_sanctuary:far" },
+      { "id": "bg_aether_mid_far", "name": "Distant Aqueduct", "tier": "mid_far", "layerKey": "shared:mid_far:aether_aqueduct_a", "type": "image", "depth": 0.24, "scrollSpeedX": 0.18, "scrollSpeedY": 0.07, "imageUrl": "shared:mid_far:aether_aqueduct_a" },
+      { "id": "bg_aether_mid", "name": "Floating Islets", "tier": "mid", "layerKey": "shared:mid:aether_islets_a", "type": "image", "depth": 0.45, "scrollSpeedX": 0.36, "scrollSpeedY": 0.12, "imageUrl": "shared:mid:aether_islets_a" },
+      { "id": "bg_aether_mid_close", "name": "Astral Pillars", "tier": "mid_close", "layerKey": "shared:mid_close:astral_pillars_a", "type": "image", "depth": 0.65, "scrollSpeedX": 0.56, "scrollSpeedY": 0.18, "imageUrl": "shared:mid_close:astral_pillars_a" },
+      { "id": "bg_aether_boss_stage", "name": "Archon Astral Sigil", "tier": "boss_stage", "bossScope": "stage", "layerKey": "boss:stage:arcane_sigil_arena", "type": "image", "depth": 0.72, "scrollSpeedX": 0.44, "scrollSpeedY": 0.14, "opacity": 0.74, "blendMode": "screen", "imageUrl": "boss:stage:arcane_sigil_arena" },
+      { "id": "bg_aether_close", "name": "Foreground Runes", "tier": "close", "layerKey": "shared:close:foreground_runes_a", "type": "image", "depth": 0.86, "scrollSpeedX": 0.78, "scrollSpeedY": 0.24, "imageUrl": "shared:close:foreground_runes_a" }
     ]
   },
+  "bossZones": [
+    {
+      "id": "aether_archon_altar",
+      "scope": "stage",
+      "x": 2000,
+      "y": 160,
+      "width": 740,
+      "height": 540,
+      "layerKey": "boss:stage:arcane_sigil_arena",
+      "bossEnemyId": "aether_archon_boss",
+      "ambientColor": "rgba(56, 189, 248, 0.26)",
+      "defaultLabel": "Archon's Celestial Altar"
+    }
+  ],
   "dictionaries": {
     "entities": {
       "stone_floor": { "prefabId": "stone_floor", "type": "solid", "color": "#334155", "borderColor": "#38bdf8", "labelKey": "labelStoneFloor", "defaultLabel": "Stone Floor" },
@@ -44,15 +62,15 @@
       "aether_void": { "prefabId": "aether_void", "type": "hazard", "color": "#312e81", "borderColor": "#6366f1", "labelKey": "labelAetherVoid", "defaultLabel": "Aether Void" }
     },
     "portals": {
-      "back_to_clocktower": {
-        "id": "back_to_clocktower",
-        "labelKey": "portalToClocktower",
-        "defaultLabel": "To Clocktower",
-        "targetLocationId": "clocktower",
+      "back_to_library": {
+        "id": "back_to_library",
+        "labelKey": "portalToAlchemistLibrary",
+        "defaultLabel": "To Alchemist's Library",
+        "targetLocationId": "alchemist_library",
         "targetEntryKey": "from_sanctuary",
         "activation": "interact",
-        "particleEffect": "spark",
-        "colors": { "inner": "#fbbf24", "outer": "#92400e", "border": "#fef3c7" }
+        "particleEffect": "magic",
+        "colors": { "inner": "#10b981", "outer": "#065f46", "border": "#a7f3d0" }
       },
       "to_grand_bastion": {
         "id": "to_grand_bastion",
@@ -68,30 +86,32 @@
   },
   "layout": {
     "solids": [
-      { "id": "sanctuary_steps", "prefabId": "stone_floor", "x": 0, "y": 560, "width": 520, "height": 280 },
+      { "id": "sanctuary_steps", "prefabId": "stone_floor", "x": 0, "y": 560, "width": 520, "height": 300 },
       { "id": "isle_1", "prefabId": "stone_platform", "x": 620, "y": 500, "width": 220, "height": 28 },
-      { "id": "astral_bridge", "prefabId": "stone_floor", "x": 960, "y": 500, "width": 620, "height": 340 },
+      { "id": "isle_sky_secret", "prefabId": "stone_platform", "x": 680, "y": 320, "width": 200, "height": 24 },
+      { "id": "astral_bridge", "prefabId": "stone_floor", "x": 960, "y": 500, "width": 620, "height": 360 },
       { "id": "isle_upper", "prefabId": "stone_platform", "x": 1160, "y": 350, "width": 240, "height": 26 },
       { "id": "isle_2", "prefabId": "stone_platform", "x": 1680, "y": 460, "width": 240, "height": 28 },
-      { "id": "celestial_altar", "prefabId": "stone_floor", "x": 2040, "y": 480, "width": 680, "height": 360 },
-      { "id": "sanctuary_barrier", "prefabId": "celestial_barrier", "x": 2240, "y": 300, "width": 38, "height": 180 }
+      { "id": "celestial_altar", "prefabId": "stone_floor", "x": 2040, "y": 480, "width": 840, "height": 380 },
+      { "id": "altar_hover_step", "prefabId": "stone_platform", "x": 2160, "y": 388, "width": 240, "height": 24 },
+      { "id": "sanctuary_barrier", "prefabId": "celestial_barrier", "x": 2480, "y": 40, "width": 38, "height": 440 }
     ],
     "hazards": [
-      { "id": "void_1", "prefabId": "aether_void", "x": 520, "y": 780, "width": 440, "height": 40 },
-      { "id": "void_2", "prefabId": "aether_void", "x": 1580, "y": 780, "width": 460, "height": 40 }
+      { "id": "void_1", "prefabId": "aether_void", "x": 520, "y": 790, "width": 440, "height": 40 },
+      { "id": "void_2", "prefabId": "aether_void", "x": 1580, "y": 790, "width": 460, "height": 40 }
     ],
     "levers": [
       { "id": "sanctuary_lever", "x": 1780, "y": 406, "width": 44, "height": 54, "targetGateId": "sanctuary_barrier", "labelKey": "labelSanctuaryGateway", "defaultLabel": "Sanctuary Gateway" }
     ],
     "portals": [
-      { "id": "portal_back_clocktower", "portalKey": "back_to_clocktower", "x": 30, "y": 420, "width": 90, "height": 140 },
-      { "id": "portal_to_bastion", "portalKey": "to_grand_bastion", "x": 2460, "y": 340, "width": 100, "height": 140 }
+      { "id": "portal_back_library", "portalKey": "back_to_library", "x": 30, "y": 420, "width": 90, "height": 140 },
+      { "id": "portal_to_bastion", "portalKey": "to_grand_bastion", "x": 2660, "y": 340, "width": 100, "height": 140 }
     ],
     "enemies": [
       { "id": "wisp_1", "monsterKey": "aether_wisp", "x": 720, "y": 370, "patrolMinX": 580, "patrolMaxX": 880 },
       { "id": "aether_sentinel_1", "monsterKey": "aether_sentinel", "x": 1240, "y": 412, "patrolMinX": 1000, "patrolMaxX": 1500 },
       { "id": "sanctuary_hound_1", "monsterKey": "chrono_hound", "x": 1360, "y": 458, "patrolMinX": 1080, "patrolMaxX": 1480 },
-      { "id": "aether_archon_boss", "monsterKey": "aether_archon", "x": 2120, "y": 290, "patrolMinX": 2040, "patrolMaxX": 2360 }
+      { "id": "aether_archon_boss", "monsterKey": "aether_archon", "x": 2220, "y": 260, "patrolMinX": 2060, "patrolMaxX": 2440 }
     ]
   }
 }

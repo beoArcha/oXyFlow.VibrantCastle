@@ -11,6 +11,7 @@ import {
   LOCATION_SCENE_TYPES,
 } from "@game/locations/schema/locationSchema";
 import { translations } from "@i18n";
+import { resolveParallaxLayerAsset } from "@game/locations/parallaxLayerRegistry";
 
 /**
  * ARCHITECTURAL TEST SUITE: Location Blueprint Schema Contracts
@@ -20,7 +21,7 @@ import { translations } from "@i18n";
  * Runtime crashes or broken game progression can occur if:
  * 1. Portals reference non-existent rooms (broken navigation graph).
  * 2. Placed enemies reference missing monster templates in the dictionary.
- * 3. Parallax layers reference missing background PNG files on disk.
+ * 3. Parallax layers reference missing background assets in the hybrid registry.
  * 4. Blueprint translation keys are missing from i18n dictionaries (showing raw fallback keys to players).
  *
  * This test suite enforces contract integrity across all location blueprints in src/data/locations/.
@@ -28,14 +29,16 @@ import { translations } from "@i18n";
 describe("Location Blueprint Schema Contracts", () => {
   const rootDir = path.resolve(__dirname, "../../..");
   const dataDir = path.join(rootDir, "src/data/locations");
-  const assetsBgDir = path.join(rootDir, "src/assets/bg");
 
   const CANONICAL_ROOMS = [
     "courtyard",
     "thorn_chasm",
+    "ashen_catacombs",
     "clocktower",
+    "alchemist_library",
     "aether_sanctuary",
     "grand_bastion",
+    "eclipse_crown",
   ];
 
   const VALID_TIERS: Set<BackgroundLayerTier> = new Set([
@@ -44,6 +47,8 @@ describe("Location Blueprint Schema Contracts", () => {
     "mid",
     "mid_close",
     "close",
+    "boss_stage",
+    "boss_world",
   ]);
 
   // Read and parse all JSON blueprint files
@@ -65,7 +70,7 @@ describe("Location Blueprint Schema Contracts", () => {
   const registeredLocationIds = new Set(loadedBlueprints.map((b) => b.json.id));
 
   describe("Blueprint Discovery & Parsing", () => {
-    it("discovers all 5 canonical location blueprints", () => {
+    it("discovers all 8 canonical world location blueprints", () => {
       expect(loadedBlueprints.length).toBe(CANONICAL_ROOMS.length);
       for (const roomId of CANONICAL_ROOMS) {
         expect(registeredLocationIds.has(roomId)).toBe(true);
@@ -276,19 +281,16 @@ describe("Location Blueprint Schema Contracts", () => {
       }
     });
 
-    it("ensures every image parallax layer points to a non-empty physical PNG asset on disk", () => {
-      const missingAssets: { file: string; layerId: string; expectedPath: string }[] = [];
+    it("ensures every image parallax layer resolves via the hybrid parallax layer registry", () => {
+      const missingAssets: { file: string; layerId: string; key: string }[] = [];
 
       for (const { filename, json } of loadedBlueprints) {
-        const locId = json.id;
         for (const layer of json.parallaxBackground.layers) {
-          if (layer.type === "image" && layer.imageUrl) {
-            const expectedPath = path.join(assetsBgDir, locId, `${layer.imageUrl}.png`);
-            if (!fs.existsSync(expectedPath)) {
-              missingAssets.push({ file: filename, layerId: layer.id, expectedPath });
-            } else {
-              const stat = fs.statSync(expectedPath);
-              expect(stat.size).toBeGreaterThan(0);
+          if (layer.type === "image") {
+            const lookupKey = layer.layerKey || layer.imageUrl || layer.id;
+            const resolved = resolveParallaxLayerAsset(lookupKey);
+            if (!resolved || !resolved.url) {
+              missingAssets.push({ file: filename, layerId: layer.id, key: lookupKey });
             }
           }
         }

@@ -1046,20 +1046,29 @@ export interface LocationsI18n {
   locationCourtyardDesc: string;
   locationThornChasmName: string;
   locationThornChasmDesc: string;
+  locationAshenCatacombsName: string;
+  locationAshenCatacombsDesc: string;
   locationClocktowerName: string;
   locationClocktowerDesc: string;
+  locationAlchemistLibraryName: string;
+  locationAlchemistLibraryDesc: string;
   locationAetherSanctuaryName: string;
   locationAetherSanctuaryDesc: string;
   locationGrandBastionName: string;
   locationGrandBastionDesc: string;
+  locationEclipseCrownName: string;
+  locationEclipseCrownDesc: string;
   selectLocationTitle: string;
   locationDimensions: string;
   // Portals
   portalToCourtyard: string;
   portalToThornChasm: string;
+  portalToAshenCatacombs: string;
   portalToClocktower: string;
+  portalToAlchemistLibrary: string;
   portalToAetherSanctuary: string;
   portalToGrandBastion: string;
+  portalToEclipseCrown: string;
   portalReturn: string;
   portalMastery: string;
   // Entity Prefabs & Levers
@@ -1080,6 +1089,15 @@ export interface LocationsI18n {
   labelCelestialBarrier: string;
   labelMainSluiceLever: string;
   labelGrandPortcullis: string;
+  labelAshenCryptGate: string;
+  labelAshenLever: string;
+  labelEmberPit: string;
+  labelLibraryGallery: string;
+  labelAlchemicalBarrier: string;
+  labelAlchemicalLever: string;
+  labelObsidianStep: string;
+  labelEclipseGate: string;
+  labelEclipseSealLever: string;
   // Monsters & Dummies
   monsterTrainingDummy: string;
   monsterCourtSentinel: string;

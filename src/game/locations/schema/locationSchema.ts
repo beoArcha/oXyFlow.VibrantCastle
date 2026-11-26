@@ -14,12 +14,44 @@ export interface ParallaxElementSchema {
   color: string;
 }
 
-export type BackgroundLayerTier = "far" | "mid_far" | "mid" | "mid_close" | "close";
+export type BackgroundLayerTier =
+  | "far"
+  | "mid_far"
+  | "mid"
+  | "mid_close"
+  | "close"
+  | "boss_stage"
+  | "boss_world";
+
+export type BossZoneScope = "stage" | "world";
+
+export interface BossZoneSchema {
+  id: string;
+  scope: BossZoneScope;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  /** Canonical hybrid parallax layer key (e.g. boss:stage:arcane_sigil_arena). */
+  layerKey?: string;
+  /** Optional explicit layer id inside parallaxBackground.layers. */
+  layerId?: string;
+  /** Optional boss enemy placement id bound to this arena. */
+  bossEnemyId?: string;
+  /** Ambient glow/vignette color blended when camera enters this boss zone. */
+  ambientColor?: string;
+  labelKey?: string;
+  defaultLabel?: string;
+}
 
 export interface ParallaxLayerSchema {
   id: string;
   name: string;
   tier?: BackgroundLayerTier;
+  /** Canonical hybrid registry key: world:<id>:far | shared:<tier>:<motif> | boss:<scope>:<motif> */
+  layerKey?: string;
+  /** Optional boss scope when tier is boss_stage or boss_world. */
+  bossScope?: BossZoneScope;
   opaque?: boolean;
   mirrorTile?: boolean; // Mirror alternate horizontal tiles (layers whose left and right edges do not match)
   type:
@@ -37,7 +69,9 @@ export interface ParallaxLayerSchema {
   autoDriftX?: number;  // Constant drifting speed (clouds, fog)
   autoDriftY?: number;
   color?: string;
+  atmosphericTint?: string;
   opacity?: number;
+  blendMode?: GlobalCompositeOperation;
   imageUrl?: string;
   imageElement?: HTMLImageElement;
   elements?: ParallaxElementSchema[];
@@ -253,6 +287,8 @@ export type LocationSceneType = (typeof LOCATION_SCENE_TYPES)[number];
 export interface LocationJsonSchema {
   schemaVersion: "1.0" | string;
   id: string;
+  worldId?: string;
+  stageNumber?: number;
   nameKey: string;
   descriptionKey: string;
   openingNarrationKey: string;
@@ -276,6 +312,7 @@ export interface LocationJsonSchema {
     musicIntensity: number;
   };
   parallaxBackground: ParallaxBackgroundSchema;
+  bossZones?: BossZoneSchema[];
   dictionaries: LocationDictionariesSchema;
   layout: LocationLayoutSchema;
 }

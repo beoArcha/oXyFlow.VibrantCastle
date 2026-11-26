@@ -1,13 +1,15 @@
 import React from "react";
-import { Layers, Database, FlaskConical, Bug, ScrollText } from "lucide-react";
+import { Layers, Database, FlaskConical, Bug, ScrollText, Map as MapIcon } from "lucide-react";
 import { AtlasSlicerSubtab } from "@developer/subtabs/atlas/AtlasSlicerSubtab";
 import { DataStudioSubtab } from "@developer/subtabs/datastudio/DataStudioSubtab";
 import { TestingSubtab } from "@developer/subtabs/testing/TestingSubtab";
 import { DebugSubtab } from "@developer/subtabs/debug/DebugSubtab";
 import { LogsSubtab } from "@developer/subtabs/logs/LogsSubtab";
+import { LevelsSubtab } from "@developer/subtabs/levels/LevelsSubtab";
 
 export enum DevToolId {
   AtlasSlicer = "atlas-slicer",
+  Levels = "levels",
   DataStudio = "data-studio",
   Testing = "testing",
   Debug = "debug",
@@ -37,6 +39,12 @@ export const DEV_TOOL_REGISTRY: readonly DevToolDefinition[] = [
     render: ({ navigateToTool }) => (
       <AtlasSlicerSubtab onOpenLogs={() => navigateToTool(DevToolId.Logs)} />
     ),
+  },
+  {
+    id: DevToolId.Levels,
+    label: "Poziomy 8×8",
+    icon: <MapIcon size={14} className="text-sky-400 shrink-0" />,
+    render: () => <LevelsSubtab />,
   },
   {
     id: DevToolId.DataStudio,

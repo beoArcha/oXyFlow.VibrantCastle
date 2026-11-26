@@ -9,7 +9,9 @@ export const TIER_ORDER: readonly BackgroundLayerTier[] = [
   "far",
   "mid_far",
   "mid",
+  "boss_world",
   "mid_close",
+  "boss_stage",
   "close",
 ];
 
@@ -20,14 +22,21 @@ export const DYNAMIC_TIERS: readonly BackgroundLayerTier[] = [
   "close",
 ] as const;
 
+export const BOSS_TIERS: readonly BackgroundLayerTier[] = [
+  "boss_world",
+  "boss_stage",
+] as const;
+
 export const DEFAULT_TIER_SPEEDS: Readonly<
   Record<BackgroundLayerTier, { readonly x: number; readonly y: number }>
 > = {
-  far: { x: 0.0, y: 0.0 },
-  mid_far: { x: 0.22, y: 0.09 },
-  mid: { x: 0.42, y: 0.18 },
-  mid_close: { x: 0.65, y: 0.3 },
-  close: { x: 0.85, y: 0.45 },
+  far: { x: 0.04, y: 0.02 },
+  mid_far: { x: 0.2, y: 0.08 },
+  mid: { x: 0.38, y: 0.14 },
+  mid_close: { x: 0.58, y: 0.22 },
+  close: { x: 0.8, y: 0.32 },
+  boss_stage: { x: 0.44, y: 0.14 },
+  boss_world: { x: 0.24, y: 0.08 },
 };
 
 /**
@@ -36,7 +45,9 @@ export const DEFAULT_TIER_SPEEDS: Readonly<
 export function resolveBackgroundTier(layer: ParallaxLayerSchema): BackgroundLayerTier {
   if (layer.tier) return layer.tier;
 
-  const id = layer.id.toLowerCase();
+  const id = (layer.layerKey || layer.id).toLowerCase();
+  if (id.includes("boss_world") || id.includes("boss:world")) return "boss_world";
+  if (id.includes("boss_stage") || id.includes("boss:stage")) return "boss_stage";
   if (id.includes("mid_far") || id.includes("mid-far")) return "mid_far";
   if (id.includes("mid_close") || id.includes("mid-close") || id.includes("close_mid")) return "mid_close";
   if (id.includes("far") && !id.includes("mid")) return "far";
@@ -102,11 +113,19 @@ export function renderTiledDynamicLayer(
   progressY: number,
   viewportWidth: number,
   viewportHeight: number,
-  tickCount: number
+  tickCount: number,
+  alphaMultiplier = 1
 ): void {
+  if (alphaMultiplier <= 0.005) return;
+
   ctx.save();
-  if (layer.opacity !== undefined && layer.opacity < 1) {
-    ctx.globalAlpha = layer.opacity;
+  const baseOpacity = layer.opacity !== undefined ? layer.opacity : 1;
+  const finalAlpha = Math.max(0, Math.min(1, baseOpacity * alphaMultiplier));
+  if (finalAlpha < 1) {
+    ctx.globalAlpha = finalAlpha;
+  }
+  if (layer.blendMode) {
+    ctx.globalCompositeOperation = layer.blendMode;
   }
 
   const drawH = resolveLayerDrawHeight(img.naturalHeight, boxHeight, viewportHeight);
@@ -147,12 +166,16 @@ function renderTierWireframe(
         ? "#22c55e"
         : tier === "mid_close"
           ? "#eab308"
-          : "#ec4899";
+          : tier === "boss_stage"
+            ? "#f97316"
+            : tier === "boss_world"
+              ? "#e11d48"
+              : "#ec4899";
   ctx.lineWidth = 2;
   ctx.setLineDash([6, 6]);
   ctx.strokeRect(0, 0, viewportWidth, viewportHeight);
   ctx.font = "bold 11px monospace";
   ctx.fillStyle = ctx.strokeStyle;
-  ctx.fillText(`TIER: ${tier.toUpperCase()} [${layerId}]`, 14, 24 + DYNAMIC_TIERS.indexOf(tier) * 16);
+  ctx.fillText(`TIER: ${tier.toUpperCase()} [${layerId}]`, 14, 24 + TIER_ORDER.indexOf(tier) * 16);
   ctx.restore();
 }

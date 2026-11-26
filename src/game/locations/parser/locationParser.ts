@@ -112,13 +112,16 @@ export class LocationParser {
       }
     }
 
-    // Canonical forward progression across location room network
+    // Canonical forward progression across all 8 worlds
     const CANONICAL_PROGRESSION: Record<LocationId, LocationId | undefined> = {
       courtyard: "thorn_chasm",
-      thorn_chasm: "clocktower",
-      clocktower: "aether_sanctuary",
+      thorn_chasm: "ashen_catacombs",
+      ashen_catacombs: "clocktower",
+      clocktower: "alchemist_library",
+      alchemist_library: "aether_sanctuary",
       aether_sanctuary: "grand_bastion",
-      grand_bastion: "courtyard",
+      grand_bastion: "eclipse_crown",
+      eclipse_crown: "courtyard",
     };
 
     const primaryNextLocation = (blueprint.nextLocationId ||
@@ -126,6 +129,8 @@ export class LocationParser {
 
     return {
       id: id as LocationId,
+      worldId: (blueprint.worldId || id) as LocationDefinition["worldId"],
+      stageNumber: blueprint.stageNumber ?? 1,
       nameKey,
       descriptionKey,
       openingNarrationKey: openingNarrationKey || "narrationOpening",
@@ -137,6 +142,7 @@ export class LocationParser {
       p2SpawnOffset: spawnPoints.p2Offset || { x: 40, y: 0 },
       theme,
       parallaxBackground,
+      bossZones: blueprint.bossZones,
       portals: resolvedPortals,
       decor: parseDecorPlacements(layout.decor, id),
       nextLocationId: primaryNextLocation,

@@ -91,7 +91,7 @@ export class ParallaxRenderer {
     cameraY: number,
     tickCount: number
   ): void {
-    if (this.multiLayerSystem.isSupported(location.id)) {
+    if (this.multiLayerSystem.isSupported(location)) {
       this.multiLayerSystem.render(
         ctx,
         location,

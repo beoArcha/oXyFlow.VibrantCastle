@@ -1,22 +1,26 @@
 {
   "schemaVersion": "1.0",
   "id": "clocktower",
+  "worldId": "clocktower",
+  "stageNumber": 1,
   "nameKey": "locationClocktowerName",
   "descriptionKey": "locationClocktowerDesc",
   "openingNarrationKey": "narrationShootingRange",
   "sceneType": "action_platformer",
   "linkedSceneId": "scene_clocktower_meeting",
-  "nextLocationId": "aether_sanctuary",
+  "nextLocationId": "alchemist_library",
   "dimensions": {
-    "width": 2520,
-    "height": 900
+    "width": 2760,
+    "height": 920
   },
   "spawnPoints": {
     "default": { "x": 100, "y": 560 },
     "p2Offset": { "x": 60, "y": 0 },
     "entries": {
       "from_chasm": { "x": 100, "y": 560 },
-      "from_sanctuary": { "x": 2140, "y": 280 }
+      "from_catacombs": { "x": 100, "y": 560 },
+      "from_library": { "x": 2480, "y": 280 },
+      "from_sanctuary": { "x": 2480, "y": 280 }
     }
   },
   "theme": {
@@ -27,16 +31,31 @@
     "musicIntensity": 0.65
   },
   "parallaxBackground": {
-    "boxWidth": 2920,
-    "boxHeight": 900,
+    "boxWidth": 3160,
+    "boxHeight": 920,
     "layers": [
-      { "id": "bg_clocktower_far", "name": "Tower Distant Gears", "tier": "far", "type": "image", "depth": 0.1, "scrollSpeedX": 0.08, "scrollSpeedY": 0.05, "opaque": true, "imageUrl": "clocktower_far_high" },
-      { "id": "bg_clocktower_mid_far", "name": "Outer Pendulums", "tier": "mid_far", "type": "image", "depth": 0.25, "scrollSpeedX": 0.2, "scrollSpeedY": 0.1, "imageUrl": "clocktower_mid_far_high" },
-      { "id": "bg_clocktower_mid", "name": "Great Clockface", "tier": "mid", "type": "image", "depth": 0.45, "scrollSpeedX": 0.35, "scrollSpeedY": 0.15, "imageUrl": "clocktower_mid_high" },
-      { "id": "bg_clocktower_mid_close", "name": "Brass Galleries", "tier": "mid_close", "type": "image", "depth": 0.65, "scrollSpeedX": 0.55, "scrollSpeedY": 0.2, "imageUrl": "clocktower_mid_close_high" },
-      { "id": "bg_clocktower_close", "name": "Foreground Cogs", "tier": "close", "type": "image", "depth": 0.85, "scrollSpeedX": 0.78, "scrollSpeedY": 0.25, "imageUrl": "clocktower_close_high" }
+      { "id": "bg_clocktower_far", "name": "Tower Distant Gears", "tier": "far", "layerKey": "world:clocktower:far", "type": "image", "depth": 0.08, "scrollSpeedX": 0.04, "scrollSpeedY": 0.02, "opaque": true, "imageUrl": "world:clocktower:far" },
+      { "id": "bg_clocktower_mid_far", "name": "Outer Pendulums", "tier": "mid_far", "layerKey": "shared:mid_far:clockwork_pendulums_a", "type": "image", "depth": 0.24, "scrollSpeedX": 0.18, "scrollSpeedY": 0.08, "imageUrl": "shared:mid_far:clockwork_pendulums_a" },
+      { "id": "bg_clocktower_mid", "name": "Great Clockface", "tier": "mid", "layerKey": "shared:mid:clockface_hall_a", "type": "image", "depth": 0.45, "scrollSpeedX": 0.36, "scrollSpeedY": 0.14, "imageUrl": "shared:mid:clockface_hall_a" },
+      { "id": "bg_clocktower_mid_close", "name": "Brass Galleries", "tier": "mid_close", "layerKey": "shared:mid_close:brass_galleries_a", "type": "image", "depth": 0.65, "scrollSpeedX": 0.56, "scrollSpeedY": 0.2, "imageUrl": "shared:mid_close:brass_galleries_a" },
+      { "id": "bg_clocktower_boss_stage", "name": "Automaton Chamber Sigil", "tier": "boss_stage", "bossScope": "stage", "layerKey": "boss:stage:arcane_sigil_arena", "type": "image", "depth": 0.72, "scrollSpeedX": 0.44, "scrollSpeedY": 0.14, "opacity": 0.72, "blendMode": "screen", "imageUrl": "boss:stage:arcane_sigil_arena" },
+      { "id": "bg_clocktower_close", "name": "Foreground Cogs", "tier": "close", "layerKey": "shared:close:foreground_cogs_a", "type": "image", "depth": 0.86, "scrollSpeedX": 0.78, "scrollSpeedY": 0.25, "imageUrl": "shared:close:foreground_cogs_a" }
     ]
   },
+  "bossZones": [
+    {
+      "id": "clocktower_summit_chamber",
+      "scope": "stage",
+      "x": 1940,
+      "y": 140,
+      "width": 660,
+      "height": 420,
+      "layerKey": "boss:stage:arcane_sigil_arena",
+      "bossEnemyId": "tower_summit_automaton",
+      "ambientColor": "rgba(234, 179, 8, 0.24)",
+      "defaultLabel": "Automaton Summit Chamber"
+    }
+  ],
   "dictionaries": {
     "entities": {
       "stone_floor": { "prefabId": "stone_floor", "type": "solid", "color": "#57534e", "borderColor": "#292524", "labelKey": "labelStoneFloor", "defaultLabel": "Stone Floor" },
@@ -45,38 +64,41 @@
       "spire_gate": { "prefabId": "spire_gate", "type": "solid", "color": "#475569", "borderColor": "#fbbf24", "labelKey": "labelSpireGate", "defaultLabel": "Spire Gate", "structureId": "grand_portcullis" }
     },
     "portals": {
-      "back_to_chasm": {
-        "id": "back_to_chasm",
-        "labelKey": "portalToThornChasm",
-        "defaultLabel": "To Thorn Chasm",
-        "targetLocationId": "thorn_chasm",
+      "back_to_catacombs": {
+        "id": "back_to_catacombs",
+        "labelKey": "portalToAshenCatacombs",
+        "defaultLabel": "To Ashen Catacombs",
+        "targetLocationId": "ashen_catacombs",
         "targetEntryKey": "from_clocktower",
         "activation": "interact",
         "particleEffect": "dust",
         "colors": { "inner": "#f97316", "outer": "#7c2d12", "border": "#fed7aa" }
       },
-      "to_sanctuary": {
-        "id": "to_sanctuary",
-        "labelKey": "portalToAetherSanctuary",
-        "defaultLabel": "To Aether Sanctuary",
-        "targetLocationId": "aether_sanctuary",
+      "to_alchemist_library": {
+        "id": "to_alchemist_library",
+        "labelKey": "portalToAlchemistLibrary",
+        "defaultLabel": "To Alchemist's Library",
+        "targetLocationId": "alchemist_library",
         "targetEntryKey": "from_clocktower",
         "activation": "interact",
         "particleEffect": "magic",
-        "colors": { "inner": "#38bdf8", "outer": "#312e81", "border": "#e0e7ff" }
+        "colors": { "inner": "#10b981", "outer": "#065f46", "border": "#a7f3d0" }
       }
     }
   },
   "layout": {
     "solids": [
-      { "id": "tower_base", "prefabId": "stone_floor", "x": 0, "y": 640, "width": 720, "height": 260 },
+      { "id": "tower_base", "prefabId": "stone_floor", "x": 0, "y": 640, "width": 720, "height": 280 },
+      { "id": "horologist_secret_nook", "prefabId": "stone_platform", "x": 280, "y": 460, "width": 240, "height": 24 },
       { "id": "lift_west", "prefabId": "vertical_lift", "x": 760, "y": 540, "width": 150, "height": 26, "vy": -1.4, "minY": 380, "maxY": 620 },
-      { "id": "gears_deck", "prefabId": "stone_floor", "x": 960, "y": 500, "width": 520, "height": 400 },
+      { "id": "gears_deck", "prefabId": "stone_floor", "x": 960, "y": 500, "width": 520, "height": 420 },
       { "id": "angled_ledge_low", "prefabId": "stone_platform", "x": 1120, "y": 350, "width": 220, "height": 26 },
+      { "id": "angled_ledge_high", "prefabId": "stone_platform", "x": 1060, "y": 210, "width": 240, "height": 24 },
       { "id": "lift_east", "prefabId": "vertical_lift", "x": 1520, "y": 420, "width": 150, "height": 26, "vy": -1.6, "minY": 280, "maxY": 520 },
       { "id": "gargoyle_roost", "prefabId": "stone_platform", "x": 1700, "y": 420, "width": 280, "height": 28 },
-      { "id": "spire_summit", "prefabId": "stone_floor", "x": 1960, "y": 360, "width": 560, "height": 540 },
-      { "id": "spire_gate", "prefabId": "spire_gate", "x": 2080, "y": 180, "width": 38, "height": 180 }
+      { "id": "spire_summit", "prefabId": "stone_floor", "x": 1960, "y": 360, "width": 800, "height": 560 },
+      { "id": "summit_bell_rafter", "prefabId": "stone_platform", "x": 2140, "y": 268, "width": 260, "height": 24 },
+      { "id": "spire_gate", "prefabId": "spire_gate", "x": 2440, "y": 40, "width": 38, "height": 320 }
     ],
     "levers": [
       { "id": "clockwork_gear_lever", "x": 1790, "y": 366, "width": 44, "height": 54, "targetGateId": "spire_gate", "labelKey": "labelClockworkGear", "defaultLabel": "Clockwork Gear" }
@@ -85,14 +107,15 @@
       { "id": "trig_range", "x": 980, "y": 320, "width": 160, "height": 180, "triggerId": "trainingRangePrompt", "oneShot": true }
     ],
     "portals": [
-      { "id": "portal_back_chasm", "portalKey": "back_to_chasm", "x": 30, "y": 500, "width": 90, "height": 140 },
-      { "id": "portal_to_sanctuary", "portalKey": "to_sanctuary", "x": 2260, "y": 220, "width": 100, "height": 140 }
+      { "id": "portal_back_catacombs", "portalKey": "back_to_catacombs", "x": 30, "y": 500, "width": 90, "height": 140 },
+      { "id": "portal_to_library", "portalKey": "to_alchemist_library", "x": 2580, "y": 220, "width": 100, "height": 140 }
     ],
     "enemies": [
       { "id": "tower_mite_1", "monsterKey": "gear_mite", "x": 420, "y": 612, "patrolMinX": 220, "patrolMaxX": 640 },
       { "id": "tower_automaton_1", "monsterKey": "clockwork_automaton", "x": 1220, "y": 406, "patrolMinX": 1000, "patrolMaxX": 1380 },
       { "id": "tower_lantern_1", "monsterKey": "lantern_warden", "x": 1340, "y": 240, "patrolMinX": 1080, "patrolMaxX": 1520 },
-      { "id": "tower_owl_1", "monsterKey": "clockwork_owl_gargoyle", "x": 1840, "y": 240, "patrolMinX": 1660, "patrolMaxX": 2040 }
+      { "id": "tower_owl_1", "monsterKey": "clockwork_owl_gargoyle", "x": 1840, "y": 240, "patrolMinX": 1660, "patrolMaxX": 2040 },
+      { "id": "tower_summit_automaton", "monsterKey": "clockwork_automaton", "x": 2220, "y": 266, "patrolMinX": 2020, "patrolMaxX": 2380, "healthOverride": 200 }
     ]
   }
 }

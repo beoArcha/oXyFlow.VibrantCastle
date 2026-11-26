@@ -1,0 +1,134 @@
+{
+  "schemaVersion": "1.0",
+  "id": "eclipse_crown",
+  "worldId": "eclipse_crown",
+  "stageNumber": 1,
+  "nameKey": "locationEclipseCrownName",
+  "descriptionKey": "locationEclipseCrownDesc",
+  "openingNarrationKey": "trainingIntro",
+  "sceneType": "action_platformer",
+  "nextLocationId": "courtyard",
+  "dimensions": {
+    "width": 3500,
+    "height": 900
+  },
+  "spawnPoints": {
+    "default": { "x": 110, "y": 560 },
+    "p2Offset": { "x": 64, "y": 0 },
+    "entries": {
+      "from_bastion": { "x": 110, "y": 560 },
+      "from_courtyard": { "x": 110, "y": 560 }
+    }
+  },
+  "theme": {
+    "bgGradientTop": "#160711",
+    "bgGradientBottom": "#9f1239",
+    "ambientParticle": "spark",
+    "fogColor": "rgba(225, 29, 72, 0.16)",
+    "musicIntensity": 1.0
+  },
+  "parallaxBackground": {
+    "boxWidth": 3900,
+    "boxHeight": 900,
+    "layers": [
+      { "id": "bg_eclipse_far", "name": "Solar Eclipse Horizon", "tier": "far", "layerKey": "world:eclipse_crown:far", "type": "image", "depth": 0.08, "scrollSpeedX": 0.04, "scrollSpeedY": 0.02, "opaque": true, "imageUrl": "world:eclipse_crown:far" },
+      { "id": "bg_eclipse_mid_far", "name": "Outer Citadel Walls", "tier": "mid_far", "layerKey": "shared:mid_far:bastion_walls_a", "type": "image", "depth": 0.24, "scrollSpeedX": 0.18, "scrollSpeedY": 0.07, "opacity": 0.72, "imageUrl": "shared:mid_far:bastion_walls_a" },
+      { "id": "bg_eclipse_mid", "name": "Obsidian Rune Spires", "tier": "mid", "layerKey": "shared:mid:obsidian_spires_a", "type": "image", "depth": 0.45, "scrollSpeedX": 0.36, "scrollSpeedY": 0.12, "opacity": 0.58, "blendMode": "screen", "mirrorTile": true, "imageUrl": "shared:mid:obsidian_spires_a" },
+      { "id": "bg_eclipse_boss_world", "name": "Eclipse Monarch Throne", "tier": "boss_world", "bossScope": "world", "layerKey": "boss:world:eclipse_throne_colossus", "type": "image", "depth": 0.56, "scrollSpeedX": 0.24, "scrollSpeedY": 0.08, "opacity": 0.88, "blendMode": "screen", "imageUrl": "boss:world:eclipse_throne_colossus" },
+      { "id": "bg_eclipse_mid_close", "name": "Astral Monoliths", "tier": "mid_close", "layerKey": "shared:mid_close:astral_pillars_a", "type": "image", "depth": 0.68, "scrollSpeedX": 0.56, "scrollSpeedY": 0.18, "opacity": 0.82, "imageUrl": "shared:mid_close:astral_pillars_a" },
+      { "id": "bg_eclipse_boss_stage", "name": "Vanguard Seal Altar", "tier": "boss_stage", "bossScope": "stage", "layerKey": "boss:stage:arcane_sigil_arena", "type": "image", "depth": 0.74, "scrollSpeedX": 0.44, "scrollSpeedY": 0.14, "opacity": 0.72, "blendMode": "screen", "imageUrl": "boss:stage:arcane_sigil_arena" },
+      { "id": "bg_eclipse_close", "name": "Foreground Obsidian Towers", "tier": "close", "layerKey": "shared:close:foreground_towers_a", "type": "image", "depth": 0.88, "scrollSpeedX": 0.8, "scrollSpeedY": 0.24, "opacity": 0.9, "imageUrl": "shared:close:foreground_towers_a" }
+    ]
+  },
+  "bossZones": [
+    {
+      "id": "eclipse_vanguard_sanctum",
+      "scope": "stage",
+      "x": 1160,
+      "y": 240,
+      "width": 620,
+      "height": 540,
+      "layerKey": "boss:stage:arcane_sigil_arena",
+      "bossEnemyId": "eclipse_vanguard_knight",
+      "ambientColor": "rgba(245, 158, 11, 0.24)",
+      "defaultLabel": "Vanguard Sanctum (Level Boss)"
+    },
+    {
+      "id": "eclipse_monarch_throne",
+      "scope": "world",
+      "x": 2420,
+      "y": 140,
+      "width": 1020,
+      "height": 680,
+      "layerKey": "boss:world:eclipse_throne_colossus",
+      "bossEnemyId": "eclipse_monarch_boss",
+      "ambientColor": "rgba(225, 29, 72, 0.34)",
+      "defaultLabel": "Throne of the Eclipse (World Boss)"
+    }
+  ],
+  "dictionaries": {
+    "entities": {
+      "stone_floor": { "prefabId": "stone_floor", "type": "solid", "color": "#27202b", "borderColor": "#e11d48", "labelKey": "labelStoneFloor", "defaultLabel": "Stone Floor" },
+      "obsidian_step": { "prefabId": "obsidian_step", "type": "oneway", "color": "#3f2739", "borderColor": "#f43f5e", "labelKey": "labelObsidianStep", "defaultLabel": "Obsidian Step" },
+      "moving_platform": { "prefabId": "moving_platform", "type": "solid", "color": "#581c87", "borderColor": "#fbbf24", "labelKey": "labelMovingPlatform", "defaultLabel": "Moving Platform" },
+      "eclipse_gate": { "prefabId": "eclipse_gate", "type": "solid", "color": "#312e81", "borderColor": "#e11d48", "labelKey": "labelEclipseGate", "defaultLabel": "Eclipse Gate", "structureId": "grand_portcullis" },
+      "amber_thorns": { "prefabId": "amber_thorns", "type": "hazard", "color": "#881337", "borderColor": "#fb7185", "labelKey": "labelAmberThorns", "defaultLabel": "Amber Thorns", "structureId": "hazard_thorns" }
+    },
+    "portals": {
+      "back_to_bastion": {
+        "id": "back_to_bastion",
+        "labelKey": "portalToGrandBastion",
+        "defaultLabel": "To Grand Bastion",
+        "targetLocationId": "grand_bastion",
+        "targetEntryKey": "from_eclipse",
+        "activation": "interact",
+        "particleEffect": "spark",
+        "colors": { "inner": "#f59e0b", "outer": "#78350f", "border": "#fef3c7" }
+      },
+      "mastery_loop_courtyard": {
+        "id": "mastery_loop_courtyard",
+        "labelKey": "portalMastery",
+        "defaultLabel": "Mastery Portal",
+        "targetLocationId": "courtyard",
+        "targetEntryKey": "from_eclipse",
+        "activation": "interact",
+        "particleEffect": "magic",
+        "colors": { "inner": "#fb7185", "outer": "#881337", "border": "#ffe4e6" }
+      }
+    }
+  },
+  "layout": {
+    "solids": [
+      { "id": "obsidian_entry", "prefabId": "stone_floor", "x": 0, "y": 640, "width": 540, "height": 260 },
+      { "id": "spire_step_1", "prefabId": "obsidian_step", "x": 620, "y": 570, "width": 190, "height": 26 },
+      { "id": "spire_step_2", "prefabId": "obsidian_step", "x": 880, "y": 500, "width": 190, "height": 26 },
+      { "id": "vanguard_plaza", "prefabId": "stone_floor", "x": 1140, "y": 540, "width": 660, "height": 360 },
+      { "id": "vanguard_upper_ring", "prefabId": "obsidian_step", "x": 1300, "y": 448, "width": 300, "height": 24 },
+      { "id": "eclipse_mover", "prefabId": "moving_platform", "x": 1880, "y": 510, "width": 170, "height": 28, "vx": 1.9, "minX": 1850, "maxX": 2120 },
+      { "id": "sacrificial_bridge", "prefabId": "stone_floor", "x": 2180, "y": 540, "width": 280, "height": 360 },
+      { "id": "corona_seal_ledge", "prefabId": "obsidian_step", "x": 2210, "y": 448, "width": 200, "height": 24 },
+      { "id": "eclipse_throne_dais", "prefabId": "stone_floor", "x": 2460, "y": 520, "width": 1040, "height": 380 },
+      { "id": "throne_wing_west", "prefabId": "obsidian_step", "x": 2580, "y": 428, "width": 220, "height": 24 },
+      { "id": "throne_wing_east", "prefabId": "obsidian_step", "x": 2920, "y": 428, "width": 220, "height": 24 },
+      { "id": "eclipse_exit_gate", "prefabId": "eclipse_gate", "x": 3220, "y": 40, "width": 38, "height": 480 }
+    ],
+    "hazards": [
+      { "id": "eclipse_chasm_1", "prefabId": "amber_thorns", "x": 540, "y": 820, "width": 600, "height": 42 },
+      { "id": "eclipse_chasm_2", "prefabId": "amber_thorns", "x": 1800, "y": 820, "width": 380, "height": 42 }
+    ],
+    "levers": [
+      { "id": "corona_seal_lever", "x": 2285, "y": 394, "width": 44, "height": 54, "targetGateId": "eclipse_exit_gate", "labelKey": "labelEclipseSealLever", "defaultLabel": "Corona Seal" }
+    ],
+    "portals": [
+      { "id": "portal_back_bastion", "portalKey": "back_to_bastion", "x": 30, "y": 500, "width": 90, "height": 140 },
+      { "id": "portal_mastery_courtyard", "portalKey": "mastery_loop_courtyard", "x": 3340, "y": 380, "width": 100, "height": 140 }
+    ],
+    "enemies": [
+      { "id": "eclipse_hound_1", "monsterKey": "chrono_hound", "x": 320, "y": 598, "patrolMinX": 180, "patrolMaxX": 480 },
+      { "id": "eclipse_gargoyle_1", "monsterKey": "bastion_gargoyle", "x": 960, "y": 320, "patrolMinX": 740, "patrolMaxX": 1180 },
+      { "id": "eclipse_vanguard_knight", "monsterKey": "shadow_knight", "x": 1480, "y": 450, "patrolMinX": 1220, "patrolMaxX": 1720, "healthOverride": 200 },
+      { "id": "eclipse_archon_guard", "monsterKey": "aether_archon", "x": 2700, "y": 270, "patrolMinX": 2520, "patrolMaxX": 3060 },
+      { "id": "eclipse_monarch_boss", "monsterKey": "bastion_sentinel_boss", "x": 2920, "y": 408, "patrolMinX": 2540, "patrolMaxX": 3140, "healthOverride": 380 }
+    ]
+  }
+}

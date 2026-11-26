@@ -208,6 +208,9 @@ export function buildLocationEnemies(
 
     const vx = speed > 0 ? (isFacingLeft ? -speed : speed) : 0;
 
+    const resolvedHealth = ep.healthOverride ?? health;
+    const resolvedMaxHealth = Math.max(maxHealth, resolvedHealth);
+
     enemies.push({
       id: ep.id,
       templateId: ep.monsterKey,
@@ -220,8 +223,8 @@ export function buildLocationEnemies(
       vy: 0,
       width,
       height,
-      health: ep.healthOverride ?? health,
-      maxHealth,
+      health: resolvedHealth,
+      maxHealth: resolvedMaxHealth,
       isDead: false,
       patrolMinX: ep.patrolMinX ?? (speed > 0 ? ep.x - 120 : 0),
       patrolMaxX: ep.patrolMaxX ?? (speed > 0 ? ep.x + 120 : 0),

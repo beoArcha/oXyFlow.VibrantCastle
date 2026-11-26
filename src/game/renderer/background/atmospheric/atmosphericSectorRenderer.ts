@@ -22,14 +22,16 @@ export interface ISectorAtmosphericRenderer {
 
 const PROCEDURAL_FAR_THEMES: Record<string, { glow: string; mountain: string }> = {
   thorn_chasm: { glow: "rgba(147, 51, 234, 0.18)", mountain: "#15041c" },
+  ashen_catacombs: { glow: "rgba(234, 88, 12, 0.22)", mountain: "#1a0c08" },
   aether_sanctuary: { glow: "rgba(56, 189, 248, 0.20)", mountain: "#0f172a" },
+  alchemist_library: { glow: "rgba(16, 185, 129, 0.20)", mountain: "#071f1a" },
   clocktower: { glow: "rgba(245, 158, 11, 0.16)", mountain: "#1c0b05" },
+  eclipse_crown: { glow: "rgba(225, 29, 72, 0.24)", mountain: "#160711" },
 };
 
 /**
  * Dedicated renderer for sector-specific atmospheric blending phenomena
- * (Chasm Mist, Bastion Solar, Clocktower Steam, Aether Aura, Courtyard Haze)
- * and procedural far backdrops with cached gradients.
+ * across all 8 castle worlds and procedural far backdrops with cached gradients.
  */
 export class AtmosphericSectorRenderer implements ISectorAtmosphericRenderer {
   private readonly gradientCache: Map<string, CanvasGradient> = new Map();
@@ -91,14 +93,23 @@ export class AtmosphericSectorRenderer implements ISectorAtmosphericRenderer {
       case "thorn_chasm":
         this.renderChasmAtmosphericMist(ctx, viewportWidth, viewportHeight, tickCount);
         break;
+      case "ashen_catacombs":
+        this.renderCatacombsEmberHaze(ctx, viewportWidth, viewportHeight, tickCount);
+        break;
       case "grand_bastion":
         this.renderBastionSolarGlow(ctx, viewportWidth, viewportHeight, tickCount);
         break;
       case "clocktower":
         this.renderClocktowerAtmosphericSteam(ctx, viewportWidth, viewportHeight, tickCount);
         break;
+      case "alchemist_library":
+        this.renderLibraryEmeraldGlow(ctx, viewportWidth, viewportHeight, tickCount);
+        break;
       case "aether_sanctuary":
         this.renderAetherAtmosphericAura(ctx, viewportWidth, viewportHeight, tickCount);
+        break;
+      case "eclipse_crown":
+        this.renderEclipseCoronaAura(ctx, viewportWidth, viewportHeight, tickCount);
         break;
       case "courtyard":
         this.renderCourtyardAutumnHaze(ctx, viewportWidth, viewportHeight, tickCount);
@@ -290,6 +301,91 @@ export class AtmosphericSectorRenderer implements ISectorAtmosphericRenderer {
     );
     ctx.fillStyle = hazeGrad;
     ctx.fillRect(0, viewportHeight * 0.55, viewportWidth, viewportHeight * 0.45);
+    ctx.restore();
+  }
+
+  private renderCatacombsEmberHaze(
+    ctx: CanvasRenderingContext2D,
+    viewportWidth: number,
+    viewportHeight: number,
+    tickCount: number
+  ): void {
+    ctx.save();
+    ctx.globalAlpha = 0.12 + Math.sin(tickCount * 0.022) * 0.03;
+    const key = `catacombs_ember_${viewportHeight}`;
+    const emberGrad = this.getOrCreateLinearGradient(
+      ctx,
+      key,
+      0,
+      viewportHeight * 0.45,
+      0,
+      viewportHeight,
+      [
+        [0, "rgba(234, 88, 12, 0)"],
+        [0.65, "rgba(234, 88, 12, 0.22)"],
+        [1, "rgba(124, 45, 18, 0.35)"],
+      ]
+    );
+    ctx.fillStyle = emberGrad;
+    ctx.fillRect(0, viewportHeight * 0.45, viewportWidth, viewportHeight * 0.55);
+    ctx.restore();
+  }
+
+  private renderLibraryEmeraldGlow(
+    ctx: CanvasRenderingContext2D,
+    viewportWidth: number,
+    viewportHeight: number,
+    tickCount: number
+  ): void {
+    ctx.save();
+    ctx.globalAlpha = 0.1 + Math.sin(tickCount * 0.018) * 0.025;
+    const key = `library_emerald_${viewportWidth}_${viewportHeight}`;
+    const glowGrad = this.getOrCreateRadialGradient(
+      ctx,
+      key,
+      viewportWidth * 0.5,
+      viewportHeight * 0.2,
+      40,
+      viewportWidth * 0.5,
+      viewportHeight * 0.2,
+      viewportWidth * 0.65,
+      [
+        [0, "rgba(16, 185, 129, 0.22)"],
+        [0.55, "rgba(20, 184, 166, 0.08)"],
+        [1, "rgba(6, 78, 59, 0)"],
+      ]
+    );
+    ctx.fillStyle = glowGrad;
+    ctx.fillRect(0, 0, viewportWidth, viewportHeight);
+    ctx.restore();
+  }
+
+  private renderEclipseCoronaAura(
+    ctx: CanvasRenderingContext2D,
+    viewportWidth: number,
+    viewportHeight: number,
+    tickCount: number
+  ): void {
+    ctx.save();
+    ctx.globalAlpha = 0.14 + Math.sin(tickCount * 0.03) * 0.035;
+    const key = `eclipse_corona_${viewportWidth}_${viewportHeight}`;
+    const coronaGrad = this.getOrCreateRadialGradient(
+      ctx,
+      key,
+      viewportWidth * 0.5,
+      viewportHeight * 0.28,
+      30,
+      viewportWidth * 0.5,
+      viewportHeight * 0.28,
+      viewportWidth * 0.7,
+      [
+        [0, "rgba(225, 29, 72, 0.28)"],
+        [0.45, "rgba(245, 158, 11, 0.12)"],
+        [1, "rgba(15, 23, 42, 0)"],
+      ]
+    );
+    ctx.fillStyle = coronaGrad;
+    ctx.fillRect(0, 0, viewportWidth, viewportHeight);
     ctx.restore();
   }
 }
