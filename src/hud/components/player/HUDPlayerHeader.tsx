@@ -1,9 +1,10 @@
 import React from "react";
-import { Sparkles } from "lucide-react";
-import { Badge, Button, Text, Code } from "@ui";
+import { Sparkles, Sun, Compass } from "lucide-react";
+import { Button, Text, Code } from "@ui";
 import { CharacterPortrait } from "@game-menu/character";
 import { useI18n } from "@context/I18nContext";
 import type { PlayerThemeTokens } from "@styles/theme";
+import type { CharacterEmblemType } from "@game/characters";
 import type { AssetQuality } from "@/types/assets";
 import { cn } from "@lib/utils";
 
@@ -12,6 +13,12 @@ export interface HUDPlayerHeaderProps {
   readonly characterName: string;
   readonly playerNumber: 1 | 2;
   readonly attackPower: number;
+  readonly defensePower?: number;
+  readonly spellPowerMultiplier?: number;
+  readonly loreTitleKey?: string;
+  readonly passiveNameKey?: string;
+  readonly passiveDescKey?: string;
+  readonly emblem?: CharacterEmblemType;
   readonly assetQuality?: AssetQuality;
   readonly skillPoints?: number;
   readonly themeTokens: PlayerThemeTokens;
@@ -20,15 +27,21 @@ export interface HUDPlayerHeaderProps {
 }
 
 /**
- * Renders player identity header in HUD player status card: avatar portrait, quality badge,
- * player name, player number tag, attack power, and optional level-up / Co-op indicator.
+ * Renders player identity header in HUD player status card:
+ * clean portrait, character name + lore emblem + P1/P2 tag, lore title,
+ * compact combat/passive line, and optional skill-point level-up action.
  */
 export const HUDPlayerHeader: React.FC<HUDPlayerHeaderProps> = React.memo(({
   characterId,
   characterName,
   playerNumber,
   attackPower,
-  assetQuality = "mid",
+  defensePower,
+  spellPowerMultiplier = 1,
+  loreTitleKey,
+  passiveNameKey,
+  passiveDescKey,
+  emblem,
   skillPoints = 0,
   themeTokens,
   onOpenSkillTree,
@@ -36,15 +49,18 @@ export const HUDPlayerHeader: React.FC<HUDPlayerHeaderProps> = React.memo(({
 }) => {
   const { t } = useI18n();
 
-  const qualityLabel =
-    assetQuality === "low" ? "16b" : assetQuality === "mid" ? "32b" : "HD";
+  const resolvedEmblem: CharacterEmblemType =
+    emblem ?? (characterId === "aurelia" ? "astrolabe" : "sun");
+  const isSpellcaster = spellPowerMultiplier > 1.001;
+  const spellBonusPct = Math.round((spellPowerMultiplier - 1) * 100);
+  const passiveTooltip = passiveDescKey ? t(passiveDescKey) : undefined;
 
   return (
-    <div className={cn("flex items-center justify-between", className)}>
-      <div className="flex items-center gap-2.5">
+    <div className={cn("flex items-center justify-between gap-2", className)}>
+      <div className="flex items-center gap-2.5 min-w-0">
         <div
           className={cn(
-            "relative w-9 h-9 rounded-lg overflow-hidden border bg-black/60 shadow-inner shrink-0",
+            "relative w-10 h-10 rounded-lg overflow-hidden border bg-black/60 shadow-inner shrink-0",
             themeTokens.avatarBorder
           )}
         >
@@ -52,42 +68,69 @@ export const HUDPlayerHeader: React.FC<HUDPlayerHeaderProps> = React.memo(({
             characterId={characterId}
             className="w-full h-full"
           />
-          <Text
-            as="div"
-            family="mono"
-            weight="bold"
-            size="3xs"
-            className={cn(
-              "absolute bottom-0 right-0 px-1 py-0.2 bg-black/80 rounded-tl",
-              themeTokens.qualityBadgeColor
-            )}
-          >
-            {qualityLabel}
-          </Text>
         </div>
 
-        <div className="flex flex-col">
+        <div className="flex flex-col min-w-0">
           <div className="flex items-center gap-1.5">
+            {resolvedEmblem === "sun" ? (
+              <Sun size={12} className={cn("shrink-0", themeTokens.emblemClass)} />
+            ) : (
+              <Compass size={12} className={cn("shrink-0", themeTokens.emblemClass)} />
+            )}
             <Text
               weight="bold"
               size="xs"
-              className={cn("leading-tight", themeTokens.nameColor)}
+              className={cn("leading-tight truncate", themeTokens.nameColor)}
             >
               {characterName}
             </Text>
             <Code
               size="2xs"
               className={cn(
-                "px-1 rounded border",
+                "px-1 rounded border shrink-0",
                 themeTokens.tagClass
               )}
             >
               P{playerNumber}
             </Code>
           </div>
-          <Text size="2xs" variant="muted">
-            {t("attackPower")}: {Math.round(attackPower)}
-          </Text>
+
+          {loreTitleKey && (
+            <Text
+              size="3xs"
+              weight="semibold"
+              className={cn("leading-tight truncate", themeTokens.loreTitleColor)}
+            >
+              {t(loreTitleKey)}
+            </Text>
+          )}
+
+          <div
+            title={passiveTooltip}
+            className="flex items-center gap-1.5 mt-0.5 text-[10px] leading-tight whitespace-nowrap overflow-hidden"
+          >
+            <Text size="3xs" family="mono" variant="muted" className="tabular-nums">
+              {t("statAttackShort")} {Math.round(attackPower)}
+            </Text>
+            {isSpellcaster ? (
+              <Text size="3xs" family="mono" className="text-violet-300 tabular-nums">
+                · {t("statSpellShort")} +{spellBonusPct}%
+              </Text>
+            ) : typeof defensePower === "number" ? (
+              <Text size="3xs" family="mono" variant="muted" className="tabular-nums">
+                · {t("statDefenseShort")} {Math.round(defensePower)}
+              </Text>
+            ) : null}
+            {passiveNameKey && (
+              <Text
+                size="3xs"
+                weight="semibold"
+                className={cn("truncate", themeTokens.passiveColor)}
+              >
+                · {t(passiveNameKey)}
+              </Text>
+            )}
+          </div>
         </div>
       </div>
 
@@ -96,15 +139,11 @@ export const HUDPlayerHeader: React.FC<HUDPlayerHeaderProps> = React.memo(({
           size="sm"
           variant="accent"
           onClick={onOpenSkillTree}
-          className="h-6 px-2 py-0.5 rounded-full animate-pulse gap-1"
+          className="h-6 px-2 py-0.5 rounded-full gap-1 shrink-0 whitespace-nowrap"
           leftIcon={<Sparkles size={11} />}
         >
           +{skillPoints} {t("skillPointsUnit")}
         </Button>
-      ) : playerNumber === 2 ? (
-        <Badge variant="cyan" size="sm">
-          Co-op
-        </Badge>
       ) : null}
     </div>
   );

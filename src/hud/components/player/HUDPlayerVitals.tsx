@@ -17,7 +17,8 @@ export interface HUDPlayerVitalsProps {
 }
 
 /**
- * Renders the health, mana, and stamina progress bars for a player with theme colors.
+ * Renders the health, mana, and stamina progress bars for a player with clear visual hierarchy:
+ * primary Health bar (h-2.5) above sleeker Mana and Stamina bars (h-1.5).
  */
 export const HUDPlayerVitals: React.FC<HUDPlayerVitalsProps> = React.memo(({
   health,
@@ -55,7 +56,7 @@ export const HUDPlayerVitals: React.FC<HUDPlayerVitalsProps> = React.memo(({
         variant="mana"
         label={t("mana")}
         icon={<Sparkles className="w-3 h-3 text-cyan-400" />}
-        heightClass="h-2"
+        heightClass="h-1.5"
       />
       <ProgressBar
         value={stamina}
@@ -63,7 +64,7 @@ export const HUDPlayerVitals: React.FC<HUDPlayerVitalsProps> = React.memo(({
         variant="stamina"
         label={t("stamina")}
         icon={<Zap className="w-3 h-3 text-amber-400" />}
-        heightClass="h-2"
+        heightClass="h-1.5"
       />
     </div>
   );

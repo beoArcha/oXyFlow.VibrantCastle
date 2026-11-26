@@ -9,8 +9,11 @@ export const HUDOverlayLayout: React.FC<HUDOverlayLayoutProps> = React.memo(({
   leftFlankSlot,
   rightFlankSlot,
   bottomSlot,
+  bottomDockSlot,
   statusOverlaySlot,
 }) => {
+  const hasFlanks = Boolean(leftFlankSlot || rightFlankSlot);
+
   return (
     <div className="relative w-full h-full flex-1 flex flex-col justify-between bg-stone-950 overflow-hidden select-none">
       {viewportSlot}
@@ -21,16 +24,28 @@ export const HUDOverlayLayout: React.FC<HUDOverlayLayoutProps> = React.memo(({
         <div className="pointer-events-auto">{topRightSlot}</div>
       </header>
 
-      <main className="relative z-20 pointer-events-none px-3 md:px-4 flex items-center justify-between gap-4">
-        <div className="pointer-events-auto">{leftFlankSlot}</div>
-        <div className="pointer-events-auto">{rightFlankSlot}</div>
-      </main>
+      {hasFlanks && (
+        <main className="relative z-20 pointer-events-none px-3 md:px-4 flex items-center justify-between gap-4">
+          <div className="pointer-events-auto">{leftFlankSlot}</div>
+          <div className="pointer-events-auto">{rightFlankSlot}</div>
+        </main>
+      )}
 
-      <footer className="relative z-20 pointer-events-none p-3 md:p-4 flex flex-col items-center justify-end">
-        <div className="pointer-events-auto w-full flex justify-center">{bottomSlot}</div>
+      <footer className="relative z-20 pointer-events-none px-3 pb-3 md:px-4 md:pb-4 flex flex-col items-center justify-end gap-2">
+        {bottomSlot && (
+          <div className="pointer-events-auto w-full flex justify-center">{bottomSlot}</div>
+        )}
+        {bottomDockSlot && (
+          <div className="pointer-events-auto flex items-center justify-center gap-3 flex-wrap">
+            {bottomDockSlot}
+          </div>
+        )}
       </footer>
 
       {statusOverlaySlot}
     </div>
   );
 });
+
+HUDOverlayLayout.displayName = "HUDOverlayLayout";
+export default HUDOverlayLayout;

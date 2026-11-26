@@ -1,4 +1,5 @@
 import { Item, InventoryState, EquipmentState, Player } from "@game/types";
+import { getCharacterProfile } from "@game/characters";
 
 export interface PlayerDerivedStats {
   totalAttack: number;
@@ -8,6 +9,8 @@ export interface PlayerDerivedStats {
   maxStamina: number;
   manaRegen: number;
   staminaRegen: number;
+  spellPowerMultiplier: number;
+  manaCostMultiplier: number;
 }
 
 /**
@@ -44,19 +47,29 @@ export function createDefaultInventory(itemRegistry: Record<string, Item>): Inve
 }
 
 /**
- * Recalculates total stats given base stats and active equipped gear.
+ * Recalculates total stats given character lore profile, active equipped gear, and passive skills.
  */
 export function calculatePlayerDerivedStats(player: Player): PlayerDerivedStats {
-  const baseHp = 100;
-  const baseMana = 100;
-  const baseStamina = 100;
-  let totalAttack = 20; // base rapier damage
-  let totalDefense = 5;
+  const profile = getCharacterProfile(player.characterId);
+  const {
+    maxHp: baseHp,
+    maxMana: baseMana,
+    maxStamina: baseStamina,
+    baseAttack,
+    baseDefense,
+    manaRegen: baseManaRegen,
+    staminaRegen: baseStaminaRegen,
+    spellPowerMultiplier,
+    manaCostMultiplier,
+  } = profile.baseStats;
+
+  let totalAttack = baseAttack;
+  let totalDefense = baseDefense;
   let hpBonus = 0;
   let manaBonus = 0;
   let staminaBonus = 0;
-  let manaRegen = 0.08;
-  let staminaRegen = 0.25;
+  let manaRegen = baseManaRegen;
+  let staminaRegen = baseStaminaRegen;
 
   const eq = player.inventory.equipment;
   const equippedItems = [eq.mainHand, eq.offHand, eq.helmet, eq.armor, eq.amulet, eq.ring].filter(Boolean) as Item[];
@@ -83,6 +96,13 @@ export function calculatePlayerDerivedStats(player: Player): PlayerDerivedStats 
   if (player.unlockedSkills.includes("blade_infusion")) {
     totalAttack += 15;
   }
+  if (player.unlockedSkills.includes("vitality_surge")) {
+    hpBonus += 35;
+    totalDefense += 4;
+  }
+  if (player.unlockedSkills.includes("scholarly_focus")) {
+    manaRegen += 0.12;
+  }
 
   return {
     totalAttack,
@@ -92,5 +112,7 @@ export function calculatePlayerDerivedStats(player: Player): PlayerDerivedStats 
     maxStamina: baseStamina + staminaBonus,
     manaRegen,
     staminaRegen,
+    spellPowerMultiplier,
+    manaCostMultiplier,
   };
 }

@@ -28,7 +28,7 @@ describe("HUDNarratorBanner Component", () => {
     await unmount();
   });
 
-  it("applies scale animation style when isAnimating is true", async () => {
+  it("applies active highlight styling when isAnimating is true", async () => {
     const { container, unmount } = await renderIntoDom(
       <TestProviders>
         <HUDNarratorBanner
@@ -38,14 +38,14 @@ describe("HUDNarratorBanner Component", () => {
       </TestProviders>
     );
 
-    const banner = container.querySelector(".scale-105");
+    const banner = container.querySelector(".border-amber-400\\/70");
     expect(banner).not.toBeNull();
-    expect(banner?.className).toContain("border-amber-400");
+    expect(banner?.className).toContain("scale-[1.02]");
 
     await unmount();
   });
 
-  it("renders idle prompt when narration is null", async () => {
+  it("renders nothing when narration is null to keep playfield uncluttered", async () => {
     const { container, unmount } = await renderIntoDom(
       <TestProviders>
         <HUDNarratorBanner
@@ -55,10 +55,7 @@ describe("HUDNarratorBanner Component", () => {
       </TestProviders>
     );
 
-    // Polish translation in default TestProviders
-    expect(container.textContent).toContain("Zrób krok");
-    const idlePrompt = container.querySelector(".opacity-40");
-    expect(idlePrompt).not.toBeNull();
+    expect(container.textContent?.trim()).toBe("");
 
     await unmount();
   });

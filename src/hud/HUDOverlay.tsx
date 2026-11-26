@@ -12,7 +12,6 @@ import { HUDStatusOverlay } from "./HUDStatusOverlay";
 import { HUDPlayerStatusCard } from "./HUDPlayerStatusCard";
 import { HUDTopControls } from "./HUDTopControls";
 import { HUDQuickBelt } from "./HUDQuickBelt";
-import { HUDControlsHint } from "./HUDControlsHint";
 import { HUDNarratorBanner } from "./HUDNarratorBanner";
 import type { HUDOverlayProps } from "./types";
 
@@ -21,7 +20,6 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
   onOpenSkillTree,
   onOpenHelp,
   onOpenMenu,
-  onOpenCreation,
   onTogglePause,
   isModalOpen = false,
 }) => {
@@ -145,10 +143,9 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
         <HUDTopControls
           isPaused={isPaused}
           onTogglePause={onTogglePause || togglePause}
-          onOpenHelp={onOpenHelp}
-          onOpenMenu={onOpenMenu}
-          onOpenCreation={onOpenCreation}
           locationName={currentLocationName}
+          isAudioInitialized={isAudioInitialized}
+          onInitializeAudio={initializeAudio}
         />
       }
       topRightSlot={
@@ -159,33 +156,29 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
           />
         ) : null
       }
-      leftFlankSlot={
-        p1QuickBeltVM && (
-          <HUDQuickBelt
-            belt={p1QuickBeltVM}
-            onUsePotion={handleP1Potion}
-            onOpenInventory={onOpenInventory}
-            onOpenSkillTree={onOpenSkillTree}
-            showRpgButtons={hudSettings.showRpgButtons}
-          />
-        )
-      }
-      rightFlankSlot={
-        isTwoPlayer && p2QuickBeltVM ? (
-          <HUDQuickBelt
-            belt={p2QuickBeltVM}
-            onUsePotion={handleP2Potion}
-          />
-        ) : hudSettings.showControlsHint ? (
-          <HUDControlsHint
-            isAudioInitialized={isAudioInitialized}
-            onInitializeAudio={initializeAudio}
-          />
-        ) : null
-      }
       bottomSlot={
         hudSettings.showNarratorSubtitles ? (
           <HUDNarratorBanner narration={narration} isAnimating={subAnim} />
+        ) : null
+      }
+      bottomDockSlot={
+        (p1QuickBeltVM || (isTwoPlayer && p2QuickBeltVM)) ? (
+          <>
+            {p1QuickBeltVM && (
+              <HUDQuickBelt
+                belt={p1QuickBeltVM}
+                onUsePotion={handleP1Potion}
+                showRpgButtons={false}
+              />
+            )}
+            {isTwoPlayer && p2QuickBeltVM && (
+              <HUDQuickBelt
+                belt={p2QuickBeltVM}
+                onUsePotion={handleP2Potion}
+                showRpgButtons={false}
+              />
+            )}
+          </>
         ) : null
       }
     />

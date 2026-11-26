@@ -15,7 +15,7 @@ export interface HUDPotionSlotButtonProps {
 }
 
 /**
- * Renders an interactive quick potion slot button with flask icon, stack counter, and shortcut key.
+ * Renders a compact 36x36 interactive quick potion slot button for the bottom action dock.
  */
 export const HUDPotionSlotButton: React.FC<HUDPotionSlotButtonProps> = React.memo(({
   slot,
@@ -32,8 +32,8 @@ export const HUDPotionSlotButton: React.FC<HUDPotionSlotButtonProps> = React.mem
     : t("potionEmpty");
 
   const defaultBorderColor = playerNumber === 1
-    ? "border-amber-600/70 hover:border-amber-400"
-    : "border-cyan-600/70 hover:border-cyan-400";
+    ? "border-amber-600/60 hover:border-amber-400"
+    : "border-cyan-600/60 hover:border-cyan-400";
   const defaultTextColor = playerNumber === 1 ? "text-amber-200" : "text-cyan-200";
 
   const resolvedBorder = borderColor ?? defaultBorderColor;
@@ -41,7 +41,7 @@ export const HUDPotionSlotButton: React.FC<HUDPotionSlotButtonProps> = React.mem
 
   const iconColor = hasPotion
     ? slot.healHp
-      ? "text-red-400"
+      ? "text-rose-400"
       : slot.healMana
         ? "text-cyan-400"
         : "text-amber-400"
@@ -56,20 +56,28 @@ export const HUDPotionSlotButton: React.FC<HUDPotionSlotButtonProps> = React.mem
       aria-label={potionTitle}
       onClick={() => onUsePotion(slot.slotIndex)}
       className={cn(
-        "relative aspect-square h-auto p-1 rounded-xl flex flex-col items-center justify-center border transition-all cursor-pointer shadow-none",
+        "relative w-9 h-9 p-1 rounded-lg flex flex-col items-center justify-center border transition-all cursor-pointer shadow-none shrink-0",
         hasPotion
           ? `bg-stone-900/80 ${resolvedBorder} hover:scale-105`
-          : "bg-black/30 border-stone-800 text-stone-700 opacity-60",
+          : "bg-black/35 border-stone-800/80 text-stone-700 opacity-55",
         className
       )}
     >
-      <FlaskConical size={14} className={iconColor} />
+      <FlaskConical size={13} className={iconColor} />
       {hasPotion && (
-        <Text weight="bold" size="3xs" className={cn("mt-0.5", resolvedText)}>
+        <Text
+          weight="bold"
+          size="3xs"
+          family="mono"
+          className={cn("leading-none mt-0.5 tabular-nums", resolvedText)}
+        >
           x{slot.count}
         </Text>
       )}
-      <Code size="micro" className="absolute -bottom-1 -right-1 bg-black/80 px-1 rounded text-stone-400">
+      <Code
+        size="micro"
+        className="absolute -bottom-1 -right-1 bg-black/85 px-1 rounded text-stone-400 border-0"
+      >
         {slot.keyLabel}
       </Code>
     </Button>

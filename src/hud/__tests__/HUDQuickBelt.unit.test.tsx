@@ -15,12 +15,15 @@ describe("HUDQuickBelt Component", () => {
 
   const baseBeltVM: QuickBeltVM = {
     playerNumber: 1,
+    characterId: "valen",
+    theme: "crimson",
     primarySpell: {
       id: "fireball",
       nameKey: "skillFireball",
       manaCost: 15,
       keyLabel: "U",
       variant: "cyan",
+      canAfford: true,
     },
     secondarySpell: {
       id: "aegis",
@@ -28,6 +31,7 @@ describe("HUDQuickBelt Component", () => {
       manaCost: 20,
       keyLabel: "O",
       variant: "purple",
+      canAfford: true,
     },
     primarySpellName: "Kula Ognia",
     secondarySpellName: "Egida Cieni",
@@ -81,7 +85,7 @@ describe("HUDQuickBelt Component", () => {
     await unmount();
   });
 
-  it("renders 3 potion slots with counts, key hints, and calls onUsePotion on click", async () => {
+  it("renders 3 compact potion slots with counts, key hints, and calls onUsePotion on click", async () => {
     const onUsePotion = mock((slotIndex: number) => {});
 
     const { container, click, unmount } = await renderIntoDom(
@@ -95,10 +99,11 @@ describe("HUDQuickBelt Component", () => {
 
     expect(container.textContent).toContain("x3");
     expect(container.textContent).toContain("x2");
-    expect(container.textContent).toContain("1-3");
+    expect(container.textContent).toContain("1");
+    expect(container.textContent).toContain("2");
+    expect(container.textContent).toContain("3");
 
-    // Click slot 0
-    const slot0Button = container.querySelector('[aria-label*="potion"]') || container.querySelectorAll("button")[0];
+    const slot0Button = container.querySelectorAll("button")[0];
     expect(slot0Button).not.toBeNull();
     await click(slot0Button!);
     expect(onUsePotion).toHaveBeenCalledWith(0);
@@ -136,7 +141,7 @@ describe("HUDQuickBelt Component", () => {
     await unmount();
   });
 
-  it("hides RPG buttons when showRpgButtons is false", async () => {
+  it("hides RPG buttons by default", async () => {
     const { container, unmount } = await renderIntoDom(
       <TestProviders>
         <HUDQuickBelt
@@ -153,10 +158,12 @@ describe("HUDQuickBelt Component", () => {
     await unmount();
   });
 
-  it("supports Player 2 belt with +7 offset potion keys from ViewModel", async () => {
+  it("supports Player 2 belt with P2 tag and +7 offset potion keys from ViewModel", async () => {
     const p2Belt: QuickBeltVM = {
       ...baseBeltVM,
       playerNumber: 2,
+      characterId: "aurelia",
+      theme: "cyan",
       potionKeyRangeLabel: "7-9",
       potions: [
         { slotIndex: 0, keyLabel: "7", count: 1, isEmpty: false },
@@ -174,7 +181,7 @@ describe("HUDQuickBelt Component", () => {
       </TestProviders>
     );
 
-    expect(container.textContent).toContain("7-9");
+    expect(container.textContent).toContain("P2");
     expect(container.textContent).toContain("7");
     expect(container.textContent).toContain("8");
     expect(container.textContent).toContain("9");

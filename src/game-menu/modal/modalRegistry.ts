@@ -60,7 +60,7 @@ export const MODAL_REGISTRY: readonly ModalDefinition[] = [
       hotkeyLabel: "M",
       labelKey: "menu",
       iconKey: "menu",
-      order: 2,
+      order: 5,
     },
   },
   {
@@ -77,7 +77,7 @@ export const MODAL_REGISTRY: readonly ModalDefinition[] = [
       hotkeyLabel: "H",
       labelKey: "hints",
       iconKey: "help",
-      order: 1,
+      order: 4,
     },
   },
   {
@@ -90,6 +90,12 @@ export const MODAL_REGISTRY: readonly ModalDefinition[] = [
       iconKey: "inventory",
       order: 3,
     },
+    headerShortcut: {
+      hotkeyLabel: "I",
+      labelKey: "inventoryBtn",
+      iconKey: "inventory",
+      order: 1,
+    },
   },
   {
     id: ModalId.SkillTree,
@@ -101,6 +107,12 @@ export const MODAL_REGISTRY: readonly ModalDefinition[] = [
       iconKey: "skillTree",
       order: 4,
     },
+    headerShortcut: {
+      hotkeyLabel: "K",
+      labelKey: "skillTreeBtn",
+      iconKey: "skillTree",
+      order: 2,
+    },
   },
   {
     id: ModalId.Creation,
@@ -111,6 +123,12 @@ export const MODAL_REGISTRY: readonly ModalDefinition[] = [
       keyLabel: "C",
       iconKey: "creation",
       order: 5,
+    },
+    headerShortcut: {
+      hotkeyLabel: "C",
+      labelKey: "tabCreation",
+      iconKey: "creation",
+      order: 3,
     },
   },
 ];

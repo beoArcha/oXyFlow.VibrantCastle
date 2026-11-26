@@ -57,6 +57,9 @@ export interface PlayerThemeTokens {
   readonly cardBorder: string;
   readonly avatarBorder: string;
   readonly nameColor: string;
+  readonly loreTitleColor: string;
+  readonly passiveColor: string;
+  readonly emblemClass: string;
   readonly tagClass: string;
   readonly qualityBadgeColor: string;
   readonly heartIconClass: string;
@@ -71,30 +74,36 @@ export interface PlayerThemeTokens {
 export const PLAYER_THEMES: Record<PlayerTheme, PlayerThemeTokens> = {
   crimson: {
     id: "crimson",
-    cardBorder: "border-red-900/60",
-    avatarBorder: "border-amber-500/50",
-    nameColor: "text-red-400",
-    tagClass: "text-amber-400/80 bg-amber-950/40 border-amber-600/30",
+    cardBorder: "border-amber-700/45",
+    avatarBorder: "border-amber-500/70",
+    nameColor: "text-amber-100",
+    loreTitleColor: "text-amber-400/90",
+    passiveColor: "text-amber-300/80",
+    emblemClass: "text-amber-400",
+    tagClass: "text-amber-300 bg-amber-950/60 border-amber-700/40",
     qualityBadgeColor: "text-amber-300",
-    heartIconClass: "text-red-500 fill-red-500",
-    cardWidth: "w-64 sm:w-76",
+    heartIconClass: "text-rose-400 fill-rose-500",
+    cardWidth: "w-60 sm:w-64",
     progressBarVariant: "health",
-    healthBarClass: "bg-gradient-to-r from-red-700 via-red-600 to-red-400",
+    healthBarClass: "bg-gradient-to-r from-red-700 via-rose-500 to-amber-400",
     helpHeaderBg: "from-red-950/40",
     helpFlankBadge: "bg-red-500/10 text-red-400 border-red-500/20",
-    helpIconColor: "text-red-400",
+    helpIconColor: "text-amber-400",
   },
   cyan: {
     id: "cyan",
-    cardBorder: "border-cyan-900/60",
-    avatarBorder: "border-cyan-500/50",
-    nameColor: "text-cyan-400",
-    tagClass: "text-cyan-400/80 bg-cyan-950/40 border-cyan-600/30",
+    cardBorder: "border-cyan-700/45",
+    avatarBorder: "border-cyan-400/70",
+    nameColor: "text-cyan-50",
+    loreTitleColor: "text-cyan-300/90",
+    passiveColor: "text-violet-300/85",
+    emblemClass: "text-cyan-300",
+    tagClass: "text-cyan-300 bg-cyan-950/60 border-cyan-700/40",
     qualityBadgeColor: "text-cyan-300",
-    heartIconClass: "text-cyan-400 fill-cyan-400",
-    cardWidth: "w-60 sm:w-72",
+    heartIconClass: "text-rose-400 fill-rose-500",
+    cardWidth: "w-60 sm:w-64",
     progressBarVariant: "health",
-    healthBarClass: "bg-gradient-to-r from-cyan-700 via-cyan-500 to-blue-400",
+    healthBarClass: "bg-gradient-to-r from-rose-700 via-rose-500 to-fuchsia-400",
     helpHeaderBg: "from-cyan-950/40",
     helpFlankBadge: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
     helpIconColor: "text-cyan-400",

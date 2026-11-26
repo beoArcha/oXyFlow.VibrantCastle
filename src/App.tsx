@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { Swords, HelpCircle, Menu as MenuIcon, Backpack, BookOpen, Layers } from "lucide-react";
+import { HelpCircle, Menu as MenuIcon, Backpack, BookOpen, Layers } from "lucide-react";
 import { APP_CONFIG } from "@/app/appConfig";
 import { I18nProvider, useI18n } from "@context/I18nContext";
 import { GameProvider, useGameSession } from "@context/GameContext";
@@ -14,7 +14,7 @@ import { GameLayout, GameModalHost, useAppHotkeys } from "@game-menu/layout";
 import { LanguageSelector } from "@game-menu/common";
 import { DeveloperSuite } from "@developer";
 import { HUDOverlay } from "@hud";
-import { Badge, GameErrorBoundary, Toast, useToast } from "@ui";
+import { GameErrorBoundary, Toast, useToast } from "@ui";
 import { formatGameDiagnosticReport } from "@lib/logger";
 
 const HEADER_SHORTCUT_ICONS: Record<ModalIconKey, React.ReactNode> = {
@@ -50,42 +50,49 @@ function GameScreen() {
     isRebinding,
   });
 
-  const headerShortcuts = useMemo(() => getHeaderModalShortcuts(), []);
+  const allHeaderShortcuts = useMemo(() => getHeaderModalShortcuts(), []);
+  const centerShortcuts = useMemo(
+    () => allHeaderShortcuts.filter((def) => def.id !== ModalId.Menu),
+    [allHeaderShortcuts]
+  );
+  const menuShortcut = useMemo(
+    () => allHeaderShortcuts.find((def) => def.id === ModalId.Menu),
+    [allHeaderShortcuts]
+  );
 
   const renderDeveloperSuite = useCallback(() => <DeveloperSuite />, []);
 
   return (
     <GameLayout.Root onInteract={initializeAudio}>
       <GameLayout.Header>
-        <GameLayout.Brand
-          title={t(APP_CONFIG.i18nKeys.title)}
-          subtitle={t(APP_CONFIG.i18nKeys.subtitle)}
-        />
+        <GameLayout.Brand title={t(APP_CONFIG.i18nKeys.title)} />
+
+        <GameLayout.HotkeyGroup>
+          {centerShortcuts.map((def) => {
+            const cfg = def.headerShortcut!;
+            return (
+              <GameLayout.HotkeyHint
+                key={def.id}
+                hotkey={cfg.hotkeyLabel}
+                label={t(cfg.labelKey)}
+                icon={HEADER_SHORTCUT_ICONS[cfg.iconKey]}
+                onClick={() => coordinator.openModal(def.id)}
+              />
+            );
+          })}
+        </GameLayout.HotkeyGroup>
+
         <GameLayout.Actions>
-          <GameLayout.HotkeyGroup>
-            {headerShortcuts.map((def) => {
-              const cfg = def.headerShortcut!;
-              return (
-                <GameLayout.HotkeyHint
-                  key={def.id}
-                  hotkey={cfg.hotkeyLabel}
-                  label={t(cfg.labelKey)}
-                  icon={HEADER_SHORTCUT_ICONS[cfg.iconKey]}
-                  onClick={() => coordinator.openModal(def.id)}
-                />
-              );
-            })}
-          </GameLayout.HotkeyGroup>
-
-          <Badge
-            variant="amber"
-            className="text-[10px] hidden sm:inline-flex"
-            icon={<Swords size={11} />}
-          >
-            {t(APP_CONFIG.i18nKeys.styleBadge)}
-          </Badge>
-
           <LanguageSelector variant="pills" />
+          {menuShortcut?.headerShortcut && (
+            <GameLayout.HotkeyHint
+              hotkey={menuShortcut.headerShortcut.hotkeyLabel}
+              label={t(menuShortcut.headerShortcut.labelKey)}
+              icon={HEADER_SHORTCUT_ICONS[menuShortcut.headerShortcut.iconKey]}
+              emphasized
+              onClick={() => coordinator.openModal(ModalId.Menu)}
+            />
+          )}
         </GameLayout.Actions>
       </GameLayout.Header>
 

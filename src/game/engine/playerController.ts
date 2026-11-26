@@ -1,5 +1,6 @@
 import { Player, InputMap, SoundType } from "../types";
 import { calculatePlayerDerivedStats } from "../logic/inventory";
+import { getCharacterProfile } from "../characters";
 import { ATTACK_DURATION_TICKS } from "./playerAnimationState";
 
 /**
@@ -29,7 +30,6 @@ export interface IPlayerController {
 export class PlayerController implements IPlayerController {
   private readonly slideDuration: number = 13;
   private readonly backstepDuration: number = 10;
-  private readonly dashStaminaCost: number = 18;
 
   public updateResourcesAndActions(
     player: Player,
@@ -40,6 +40,13 @@ export class PlayerController implements IPlayerController {
     if (player.isDead) return;
 
     const stats = calculatePlayerDerivedStats(player);
+    const profile = getCharacterProfile(player.characterId);
+    const {
+      dashStaminaCost,
+      slideCooldownTicks,
+      backstepCooldownTicks,
+      attackCooldownTicks,
+    } = profile.baseStats;
 
     // 1. Natural Resource Regeneration (when not performing intensive maneuvers)
     if (!player.isDashing && !player.isBackstepping) {
@@ -83,8 +90,8 @@ export class PlayerController implements IPlayerController {
 
     // 3. Trigger Slide or Backstep Maneuver (Action 2)
     if (inputs.action2 && player.dashCooldown <= 0 && !player.isDashing && !player.isBackstepping) {
-      if (player.stamina >= this.dashStaminaCost) {
-        player.stamina -= this.dashStaminaCost;
+      if (player.stamina >= dashStaminaCost) {
+        player.stamina -= dashStaminaCost;
 
         // Determine if player is pressing OPPOSITE to facing direction (Backstep) or FORWARD (Slide)
         const pressingOpposite =
@@ -95,7 +102,7 @@ export class PlayerController implements IPlayerController {
           player.isBackstepping = true;
           player.isDashing = false;
           player.dashTime = this.backstepDuration;
-          player.dashCooldown = 32;
+          player.dashCooldown = backstepCooldownTicks;
           player.vy = -2.2; // slight hop
           player.isGrounded = false;
         } else {
@@ -103,7 +110,7 @@ export class PlayerController implements IPlayerController {
           player.isDashing = true;
           player.isBackstepping = false;
           player.dashTime = this.slideDuration;
-          player.dashCooldown = 38;
+          player.dashCooldown = slideCooldownTicks;
           player.vy = 0;
         }
 
@@ -117,7 +124,7 @@ export class PlayerController implements IPlayerController {
     if (inputs.action1 && player.attackCooldown <= 0 && !player.isAttacking) {
       player.isAttacking = true;
       player.attackTime = ATTACK_DURATION_TICKS;
-      player.attackCooldown = 20;
+      player.attackCooldown = attackCooldownTicks;
       if (audio) {
         audio.playSFX(SoundType.SFX_SLASH);
       }

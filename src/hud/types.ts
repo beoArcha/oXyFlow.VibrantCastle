@@ -49,6 +49,7 @@ export interface HUDOverlayLayoutProps {
   readonly leftFlankSlot?: React.ReactNode;
   readonly rightFlankSlot?: React.ReactNode;
   readonly bottomSlot?: React.ReactNode;
+  readonly bottomDockSlot?: React.ReactNode;
   readonly statusOverlaySlot?: React.ReactNode;
 }
 
@@ -66,27 +67,34 @@ export interface HUDPlayerStatusCardProps {
   readonly theme?: PlayerTheme | "red";
   readonly assetQuality?: AssetQuality;
   readonly attackPower?: number;
+  readonly defensePower?: number;
+  readonly spellPowerMultiplier?: number;
   readonly onOpenSkillTree?: () => void;
 }
 
 export interface HUDTopControlsProps {
   readonly isPaused: boolean;
   readonly onTogglePause: () => void;
-  readonly onOpenHelp: () => void;
-  readonly onOpenMenu: () => void;
+  readonly onOpenHelp?: () => void;
+  readonly onOpenMenu?: () => void;
   readonly onOpenCreation?: () => void;
   readonly showCreation?: boolean;
   readonly locationName: string;
+  readonly isAudioInitialized?: boolean;
+  readonly onInitializeAudio?: () => void;
 }
 
 export interface HUDQuickBeltData {
   readonly inventory: InventoryState;
+  readonly characterId?: "valen" | "aurelia";
+  readonly mana?: number;
 }
 
 export interface HUDQuickBeltProps {
   readonly belt?: QuickBeltVM;
   readonly player?: HUDQuickBeltData;
   readonly playerNumber?: 1 | 2;
+  readonly theme?: PlayerTheme;
   readonly primarySpell?: SpellItemVM | MagicSkill | null;
   readonly secondarySpell?: SpellItemVM | MagicSkill | null;
   readonly primarySpellName?: string;

@@ -1,10 +1,15 @@
 import type { PlayerTheme } from "@styles/theme";
+import type { CharacterEmblemType, CharacterProfileId } from "@game/characters";
 
 export interface PlayerIdentityVM {
   readonly characterId: string;
   readonly characterName: string;
   readonly playerNumber: 1 | 2;
   readonly theme: PlayerTheme;
+  readonly loreTitleKey: string;
+  readonly passiveNameKey: string;
+  readonly passiveDescKey: string;
+  readonly emblem: CharacterEmblemType;
 }
 
 export interface PlayerVitalsVM {
@@ -18,6 +23,8 @@ export interface PlayerVitalsVM {
 
 export interface PlayerCombatStatsVM {
   readonly attackPower: number;
+  readonly defensePower: number;
+  readonly spellPowerMultiplier: number;
   readonly skillPoints: number;
 }
 
@@ -29,6 +36,7 @@ export interface SpellItemVM {
   readonly manaCost: number;
   readonly keyLabel: string;
   readonly variant: "cyan" | "purple";
+  readonly canAfford?: boolean;
 }
 
 export interface PotionSlotVM {
@@ -57,4 +65,6 @@ export interface QuickBeltPotionsVM {
 
 export interface QuickBeltVM extends QuickBeltSpellsVM, QuickBeltPotionsVM {
   readonly playerNumber: 1 | 2;
+  readonly characterId?: CharacterProfileId;
+  readonly theme?: PlayerTheme;
 }

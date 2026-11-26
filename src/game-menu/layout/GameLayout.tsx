@@ -37,7 +37,7 @@ const GameLayoutHeader: React.FC<GameLayoutHeaderProps> = ({
 }) => (
   <header
     className={cn(
-      "w-full px-4 py-2 bg-[#1c0b06]/95 border-b border-amber-900/50 flex flex-wrap items-center justify-between gap-3 z-20 shadow-md",
+      "w-full h-11 px-4 bg-[#160804]/95 border-b border-amber-900/35 flex items-center justify-between gap-3 z-20 shrink-0",
       className
     )}
   >
@@ -56,17 +56,17 @@ const GameLayoutBrand: React.FC<GameLayoutBrandProps> = ({
   subtitle,
   className,
 }) => (
-  <div className={cn("flex flex-col", className)}>
+  <div className={cn("flex items-center gap-2 shrink-0 whitespace-nowrap", className)}>
     <Heading
       level={1}
       size="base"
       variant="primary"
-      className="leading-tight tracking-wide text-amber-300"
+      className="leading-none tracking-wide text-amber-300 whitespace-nowrap"
     >
       {title}
     </Heading>
     {subtitle && (
-      <Text size="2xs" variant="muted" className="hidden md:block text-stone-400">
+      <Text size="2xs" variant="muted" className="hidden xl:block text-stone-400 whitespace-nowrap">
         {subtitle}
       </Text>
     )}
@@ -82,7 +82,7 @@ const GameLayoutActions: React.FC<GameLayoutActionsProps> = ({
   children,
   className,
 }) => (
-  <div className={cn("flex items-center gap-2 flex-wrap", className)}>
+  <div className={cn("flex items-center gap-2 shrink-0 whitespace-nowrap", className)}>
     {children}
   </div>
 );
@@ -96,7 +96,12 @@ const GameLayoutHotkeyGroup: React.FC<GameLayoutHotkeyGroupProps> = ({
   children,
   className,
 }) => (
-  <div className={cn("flex items-center gap-1.5", className)}>{children}</div>
+  <nav
+    aria-label="Primary navigation"
+    className={cn("flex items-center gap-1 whitespace-nowrap", className)}
+  >
+    {children}
+  </nav>
 );
 
 export interface GameLayoutHotkeyHintProps {
@@ -104,6 +109,7 @@ export interface GameLayoutHotkeyHintProps {
   readonly label: string;
   readonly icon?: React.ReactNode;
   readonly onClick?: () => void;
+  readonly emphasized?: boolean;
   readonly className?: string;
 }
 
@@ -112,24 +118,29 @@ const GameLayoutHotkeyHint: React.FC<GameLayoutHotkeyHintProps> = ({
   label,
   icon,
   onClick,
+  emphasized = false,
   className,
 }) => (
   <Button
-    variant="secondary"
+    variant="ghost"
     size="sm"
     onClick={onClick}
+    title={`${label} [${hotkey}]`}
     className={cn(
-      "inline-flex items-center gap-1.5 px-2.5 py-1 h-auto rounded-lg bg-[#2a1209] hover:bg-[#3c1b0e] border border-amber-800/50 text-xs font-semibold text-amber-100",
+      "inline-flex items-center gap-1.5 px-2.5 h-8 rounded-lg text-xs font-medium whitespace-nowrap shrink-0 shadow-none transition-colors",
+      emphasized
+        ? "bg-amber-950/55 hover:bg-amber-900/60 border border-amber-700/45 text-amber-200"
+        : "bg-transparent hover:bg-amber-950/45 border border-transparent hover:border-amber-800/35 text-stone-300 hover:text-amber-100",
       className
     )}
   >
-    {icon && <span className="text-amber-400">{icon}</span>}
-    <span>{label}</span>
+    {icon && <span className="text-amber-400/90 shrink-0">{icon}</span>}
+    <span className="hidden md:inline">{label}</span>
     <Code
       size="2xs"
-      className="px-1 py-0.5 rounded bg-black/50 text-amber-300 border-0"
+      className="px-1 py-0 rounded bg-black/40 text-stone-400 border-0 font-mono"
     >
-      [{hotkey}]
+      {hotkey}
     </Code>
   </Button>
 );

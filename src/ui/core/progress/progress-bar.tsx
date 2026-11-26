@@ -78,7 +78,7 @@ export const ProgressBar = React.memo(
               {label}
             </span>
             {showValueText && (
-              <span className="text-stone-300 font-mono tracking-tight">
+              <span className="text-stone-300 font-mono tabular-nums tracking-tight">
                 {formattedValue} / {formattedMax}
               </span>
             )}

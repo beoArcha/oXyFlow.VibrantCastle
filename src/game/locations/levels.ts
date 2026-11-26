@@ -1,6 +1,7 @@
 import { Player, Enemy, Entity, PlayerId, AnimationState, CollisionType } from "../types";
 import { createDefaultInventory } from "../logic/inventory";
 import { getDefaultSkillsForCharacter } from "../logic/skills";
+import { getCharacterProfile } from "../characters";
 import { LocationId, LocationDefinition } from "./types";
 import { getLocation, LOCATION_REGISTRY } from "./registry";
 
@@ -29,13 +30,14 @@ export class LevelDesigner {
     x: number,
     y: number
   ): Player {
-    const isValen = characterId === "valen";
+    const profile = getCharacterProfile(characterId);
     const defaults = getDefaultSkillsForCharacter(characterId);
+    const { maxHp, maxMana, maxStamina } = profile.baseStats;
 
     return {
       id: playerId,
       characterId,
-      characterName: isValen ? "Valen" : "Aurelia",
+      characterName: profile.displayName,
       levelGroup: 1,
       characterTier: 1,
       x,
@@ -56,12 +58,12 @@ export class LevelDesigner {
       standingPlatformId: null,
       platformVelocityX: 0,
       platformVelocityY: 0,
-      health: 100,
-      maxHealth: 100,
-      mana: 100,
-      maxMana: 100,
-      stamina: 100,
-      maxStamina: 100,
+      health: maxHp,
+      maxHealth: maxHp,
+      mana: maxMana,
+      maxMana: maxMana,
+      stamina: maxStamina,
+      maxStamina: maxStamina,
       isDead: false,
       facingLeft: false,
       attackCooldown: 0,

@@ -12,14 +12,12 @@ describe("HUDTopControls Component", () => {
     await cleanupDom();
   });
 
-  it("renders toolbar with role='toolbar' and accessible buttons", async () => {
+  it("renders slim toolbar with location name and pause toggle without duplicated modal buttons", async () => {
     const { container, unmount } = await renderIntoDom(
       <TestProviders>
         <HUDTopControls
           isPaused={false}
           onTogglePause={() => {}}
-          onOpenHelp={() => {}}
-          onOpenMenu={() => {}}
           locationName="Bastion Courtyard"
         />
       </TestProviders>
@@ -27,51 +25,40 @@ describe("HUDTopControls Component", () => {
 
     const toolbar = container.querySelector('[role="toolbar"]');
     expect(toolbar).not.toBeNull();
-    expect(container.querySelector("#top-help-btn")).not.toBeNull();
     expect(container.querySelector("#top-pause-btn")).not.toBeNull();
-    expect(container.querySelector("#top-menu-btn")).not.toBeNull();
     expect(container.textContent).toContain("Bastion Courtyard");
+    expect(container.querySelector("#top-help-btn")).toBeNull();
+    expect(container.querySelector("#top-menu-btn")).toBeNull();
+    expect(container.querySelector("#top-creation-btn")).toBeNull();
 
     await unmount();
   });
 
-  it("dispatches actions when help, menu, and pause buttons are clicked", async () => {
-    const onOpenHelp = mock(() => {});
+  it("dispatches pause action when pause button is clicked", async () => {
     const onTogglePause = mock(() => {});
-    const onOpenMenu = mock(() => {});
 
     const { container, click, unmount } = await renderIntoDom(
       <TestProviders>
         <HUDTopControls
           isPaused={false}
           onTogglePause={onTogglePause}
-          onOpenHelp={onOpenHelp}
-          onOpenMenu={onOpenMenu}
           locationName=""
         />
       </TestProviders>
     );
 
-    await click(container.querySelector("#top-help-btn")!);
-    expect(onOpenHelp).toHaveBeenCalledTimes(1);
-
     await click(container.querySelector("#top-pause-btn")!);
     expect(onTogglePause).toHaveBeenCalledTimes(1);
-
-    await click(container.querySelector("#top-menu-btn")!);
-    expect(onOpenMenu).toHaveBeenCalledTimes(1);
 
     await unmount();
   });
 
-  it("reflects paused state with aria-pressed='true' and resume text", async () => {
+  it("reflects paused state with aria-pressed='true'", async () => {
     const { container, unmount } = await renderIntoDom(
       <TestProviders>
         <HUDTopControls
           isPaused={true}
           onTogglePause={() => {}}
-          onOpenHelp={() => {}}
-          onOpenMenu={() => {}}
           locationName=""
         />
       </TestProviders>
@@ -83,47 +70,43 @@ describe("HUDTopControls Component", () => {
     await unmount();
   });
 
-  it("renders and calls creation suite button when showCreation is true", async () => {
-    const onOpenCreation = mock(() => {});
+  it("renders audio unlock button only when audio is not initialized", async () => {
+    const onInitializeAudio = mock(() => {});
 
     const { container, click, unmount } = await renderIntoDom(
       <TestProviders>
         <HUDTopControls
           isPaused={false}
           onTogglePause={() => {}}
-          onOpenHelp={() => {}}
-          onOpenMenu={() => {}}
-          onOpenCreation={onOpenCreation}
-          showCreation={true}
-          locationName=""
+          locationName="Dziedziniec"
+          isAudioInitialized={false}
+          onInitializeAudio={onInitializeAudio}
         />
       </TestProviders>
     );
 
-    const creationBtn = container.querySelector("#top-creation-btn");
-    expect(creationBtn).not.toBeNull();
-
-    await click(creationBtn!);
-    expect(onOpenCreation).toHaveBeenCalledTimes(1);
+    const audioBtn = container.querySelector("#top-audio-btn");
+    expect(audioBtn).not.toBeNull();
+    await click(audioBtn!);
+    expect(onInitializeAudio).toHaveBeenCalledTimes(1);
 
     await unmount();
   });
 
-  it("hides creation button when showCreation is false", async () => {
+  it("hides audio unlock button once audio is initialized", async () => {
     const { container, unmount } = await renderIntoDom(
       <TestProviders>
         <HUDTopControls
           isPaused={false}
           onTogglePause={() => {}}
-          onOpenHelp={() => {}}
-          onOpenMenu={() => {}}
-          showCreation={false}
-          locationName=""
+          locationName="Dziedziniec"
+          isAudioInitialized={true}
+          onInitializeAudio={() => {}}
         />
       </TestProviders>
     );
 
-    expect(container.querySelector("#top-creation-btn")).toBeNull();
+    expect(container.querySelector("#top-audio-btn")).toBeNull();
 
     await unmount();
   });

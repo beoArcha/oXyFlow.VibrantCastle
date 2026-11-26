@@ -1,5 +1,6 @@
 import React from "react";
 import { getPlayerThemeTokens } from "@styles/theme";
+import { getCharacterProfile } from "@game/characters";
 import { HUDPanel } from "./components/common/HUDPanel";
 import { HUDPlayerHeader } from "./components/player/HUDPlayerHeader";
 import { HUDPlayerVitals } from "./components/player/HUDPlayerVitals";
@@ -15,6 +16,8 @@ export const HUDPlayerStatusCard: React.FC<HUDPlayerStatusCardProps> = React.mem
   theme,
   assetQuality = "mid",
   attackPower,
+  defensePower,
+  spellPowerMultiplier,
   onOpenSkillTree,
 }) => {
   const effectivePlayerNumber = status ? status.playerNumber : (playerNumber ?? 1);
@@ -26,27 +29,43 @@ export const HUDPlayerStatusCard: React.FC<HUDPlayerStatusCardProps> = React.mem
   const effectiveMaxMana = status ? status.maxMana : (player?.maxMana ?? 1);
   const effectiveStamina = status ? status.stamina : (player?.stamina ?? 0);
   const effectiveMaxStamina = status ? status.maxStamina : (player?.maxStamina ?? 1);
-  const effectiveAttackPower = status ? status.attackPower : (attackPower ?? 10);
   const effectiveSkillPoints = status ? status.skillPoints : (player?.skillPoints ?? 0);
 
   const themeTokens = getPlayerThemeTokens(effectiveTheme);
   const fallbackCharacterId = themeTokens.id === "crimson" ? "valen" : "aurelia";
   const effectiveCharacterId = (status ? status.characterId : player?.characterId) || fallbackCharacterId;
+  const profile = getCharacterProfile(effectiveCharacterId);
+
+  const effectiveAttackPower = status
+    ? status.attackPower
+    : (attackPower ?? profile.baseStats.baseAttack);
+  const effectiveDefensePower = status
+    ? status.defensePower
+    : (defensePower ?? profile.baseStats.baseDefense);
+  const effectiveSpellMultiplier = status
+    ? status.spellPowerMultiplier
+    : (spellPowerMultiplier ?? profile.baseStats.spellPowerMultiplier);
 
   return (
     <HUDPanel
-      padding="md"
+      padding="sm"
       className={cn(
-        "flex flex-col gap-2 transition-all",
+        "flex flex-col gap-2 transition-all px-3 py-2.5",
         themeTokens.cardWidth,
         themeTokens.cardBorder
       )}
     >
       <HUDPlayerHeader
         characterId={effectiveCharacterId}
-        characterName={effectiveName}
+        characterName={effectiveName || profile.displayName}
         playerNumber={effectivePlayerNumber}
         attackPower={effectiveAttackPower}
+        defensePower={effectiveDefensePower}
+        spellPowerMultiplier={effectiveSpellMultiplier}
+        loreTitleKey={status?.loreTitleKey ?? profile.titleKey}
+        passiveNameKey={status?.passiveNameKey ?? profile.passiveNameKey}
+        passiveDescKey={status?.passiveDescKey ?? profile.passiveDescKey}
+        emblem={status?.emblem ?? profile.emblem}
         assetQuality={assetQuality}
         skillPoints={effectiveSkillPoints}
         themeTokens={themeTokens}

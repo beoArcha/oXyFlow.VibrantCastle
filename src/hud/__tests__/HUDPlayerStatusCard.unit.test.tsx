@@ -15,20 +15,26 @@ describe("HUDPlayerStatusCard Component", () => {
 
   const baseStatusVM: PlayerStatusVM = {
     characterId: "valen",
-    characterName: "Valen Frost",
+    characterName: "Valen",
     playerNumber: 1,
     theme: "crimson",
+    loreTitleKey: "valenLoreTitle",
+    passiveNameKey: "valenPassiveName",
+    passiveDescKey: "valenPassiveDesc",
+    emblem: "sun",
     health: 80,
-    maxHealth: 100,
+    maxHealth: 115,
     mana: 35,
-    maxMana: 50,
+    maxMana: 90,
     stamina: 90,
-    maxStamina: 100,
-    attackPower: 24,
+    maxStamina: 115,
+    attackPower: 23,
+    defensePower: 7,
+    spellPowerMultiplier: 1.0,
     skillPoints: 0,
   };
 
-  it("renders player vitals, name, and attack power from PlayerStatusVM", async () => {
+  it("renders player vitals, lore title, passive trait, and attack/defense without noisy quality sticker", async () => {
     const { container, unmount } = await renderIntoDom(
       <TestProviders>
         <HUDPlayerStatusCard
@@ -38,18 +44,21 @@ describe("HUDPlayerStatusCard Component", () => {
       </TestProviders>
     );
 
-    expect(container.textContent).toContain("Valen Frost");
+    expect(container.textContent).toContain("Valen");
     expect(container.textContent).toContain("P1");
-    expect(container.textContent).toContain("80 / 100");
-    expect(container.textContent).toContain("35 / 50");
-    expect(container.textContent).toContain("90 / 100");
-    expect(container.textContent).toContain("24");
-    expect(container.textContent).toContain("32b");
+    expect(container.textContent).toContain("Słoneczny Rycerz");
+    expect(container.textContent).toContain("Solarny Hart");
+    expect(container.textContent).toContain("80 / 115");
+    expect(container.textContent).toContain("35 / 90");
+    expect(container.textContent).toContain("90 / 115");
+    expect(container.textContent).toContain("23");
+    expect(container.textContent).toContain("7");
+    expect(container.textContent).not.toContain("32b");
 
     await unmount();
   });
 
-  it("renders crimson theme styling for Player 1", async () => {
+  it("renders Solar Gold-Crimson theme styling for Valen", async () => {
     const { container, unmount } = await renderIntoDom(
       <TestProviders>
         <HUDPlayerStatusCard
@@ -59,22 +68,29 @@ describe("HUDPlayerStatusCard Component", () => {
       </TestProviders>
     );
 
-    expect(container.querySelector(".text-red-400")).not.toBeNull();
-    expect(container.querySelector(".border-red-900\\/60")).not.toBeNull();
-    expect(container.textContent).toContain("16b");
+    expect(container.querySelector(".border-amber-700\\/45")).not.toBeNull();
+    expect(container.querySelector(".text-amber-100")).not.toBeNull();
+    expect(container.textContent).not.toContain("16b");
 
     await unmount();
   });
 
-  it("renders cyan theme styling and Co-op badge for Player 2 without skill points", async () => {
+  it("renders Astral Cyan-Violet theme styling, spell bonus, and lore identity for Aurelia (Player 2)", async () => {
     const p2Status: PlayerStatusVM = {
       ...baseStatusVM,
       characterId: "aurelia",
       characterName: "Aurelia",
       playerNumber: 2,
       theme: "cyan",
+      loreTitleKey: "aureliaLoreTitle",
+      passiveNameKey: "aureliaPassiveName",
+      passiveDescKey: "aureliaPassiveDesc",
+      emblem: "astrolabe",
       health: 60,
-      maxHealth: 80,
+      maxHealth: 90,
+      attackPower: 18,
+      defensePower: 4,
+      spellPowerMultiplier: 1.15,
     };
 
     const { container, unmount } = await renderIntoDom(
@@ -88,10 +104,13 @@ describe("HUDPlayerStatusCard Component", () => {
 
     expect(container.textContent).toContain("Aurelia");
     expect(container.textContent).toContain("P2");
-    expect(container.textContent).toContain("Co-op");
-    expect(container.textContent).toContain("HD");
-    expect(container.querySelector(".text-cyan-400")).not.toBeNull();
-    expect(container.querySelector(".border-cyan-900\\/60")).not.toBeNull();
+    expect(container.textContent).toContain("Uczona Arkanów");
+    expect(container.textContent).toContain("Astralny Przepływ");
+    expect(container.textContent).toContain("+15%");
+    expect(container.textContent).not.toContain("Co-op");
+    expect(container.textContent).not.toContain("HD");
+    expect(container.querySelector(".border-cyan-700\\/45")).not.toBeNull();
+    expect(container.querySelector(".text-cyan-50")).not.toBeNull();
 
     await unmount();
   });

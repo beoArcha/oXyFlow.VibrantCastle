@@ -3,6 +3,10 @@ import { gameAudio } from "@game/engine/audioEngine";
 import spellsData from "@data/skills/spells.json";
 import { Result, ok, err, GameplayError, ErrorCode } from "@lib/errors";
 import { magicLogger } from "@game/logger/gameLogger";
+import {
+  computeEffectiveSpellDamage,
+  computeEffectiveSpellManaCost,
+} from "@game/characters";
 
 interface ISpellsJson {
   spells?: Record<string, MagicSkill>;
@@ -82,13 +86,16 @@ export function attemptCastSpell(
     return err(error);
   }
 
+  const effectiveManaCost = computeEffectiveSpellManaCost(skill.manaCost, player.characterId);
+  const effectiveDamage = computeEffectiveSpellDamage(skill.damage, player.characterId);
+
   // Check mana
-  if (player.mana < skill.manaCost) {
+  if (player.mana < effectiveManaCost) {
     const error = new GameplayError("Insufficient mana to cast spell", ErrorCode.GAMEPLAY_INSUFFICIENT_MANA, {
       details: {
         spellId,
-        required: skill.manaCost,
-        requiredMana: skill.manaCost,
+        required: effectiveManaCost,
+        requiredMana: effectiveManaCost,
         current: player.mana,
         currentMana: player.mana,
         playerId: player.id,
@@ -115,7 +122,7 @@ export function attemptCastSpell(
   }
 
   // Consume resources
-  player.mana -= skill.manaCost;
+  player.mana -= effectiveManaCost;
   player.stamina -= skill.staminaCost;
   player.magicCooldown = skill.cooldownFrames;
   player.isCasting = true;
@@ -129,14 +136,14 @@ export function attemptCastSpell(
       spellId,
       playerId: player.id,
       shieldDurationFrames: skill.shieldDurationFrames,
-      manaCost: skill.manaCost,
+      manaCost: effectiveManaCost,
       staminaCost: skill.staminaCost,
     });
     return ok({
       projectiles: [],
       spellId,
       isDefensive: true,
-      manaConsumed: skill.manaCost,
+      manaConsumed: effectiveManaCost,
       staminaConsumed: skill.staminaCost,
     });
   }
@@ -164,7 +171,7 @@ export function attemptCastSpell(
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
         radius: 7,
-        damage: skill.damage,
+        damage: effectiveDamage,
         color: skill.color,
         life: 0,
         maxLife: 35,
@@ -186,7 +193,7 @@ export function attemptCastSpell(
         vx: Math.cos(finalAngle) * speed,
         vy: Math.sin(finalAngle) * speed,
         radius: 6,
-        damage: Math.round(skill.damage / 2),
+        damage: Math.round(effectiveDamage / 2),
         color: skill.color,
         life: 0,
         maxLife: 60,
@@ -209,7 +216,7 @@ export function attemptCastSpell(
       vx: Math.cos(aim.angleRad) * speed,
       vy: Math.sin(aim.angleRad) * speed,
       radius: isLarge ? 12 : 7,
-      damage: skill.damage,
+      damage: effectiveDamage,
       color: skill.color,
       life: 0,
       maxLife: 70,
@@ -221,7 +228,7 @@ export function attemptCastSpell(
     spellId,
     playerId: player.id,
     projectileCount: projectiles.length,
-    manaCost: skill.manaCost,
+    manaCost: effectiveManaCost,
     staminaCost: skill.staminaCost,
   });
 
@@ -229,7 +236,7 @@ export function attemptCastSpell(
     projectiles,
     spellId,
     isDefensive: false,
-    manaConsumed: skill.manaCost,
+    manaConsumed: effectiveManaCost,
     staminaConsumed: skill.staminaCost,
   });
 }

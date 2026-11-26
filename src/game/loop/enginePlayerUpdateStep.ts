@@ -6,6 +6,7 @@ import { IPlayerCommandController } from "../controllers/playerCommandController
 import { GameAudioEngine } from "@game/engine/audioEngine";
 import { ParticleSystem } from "../engine/particleSystem";
 import { attemptCastSpell } from "../logic/magic";
+import { getCharacterProfile } from "../characters";
 import { statsManager } from "../logic/stats";
 import { debugManager } from "../debug/debugManager";
 
@@ -138,10 +139,11 @@ export class EnginePlayerUpdateStep {
   }
 
   private processMagicInputs(player: Player, inputs: InputMap): void {
+    const profile = getCharacterProfile(player.characterId);
     if (inputs.magic1 && player.magicCooldown === 0) {
-      this.castSpellSlot(player, player.primarySpellId, inputs, "#38bdf8");
+      this.castSpellSlot(player, player.primarySpellId, inputs, profile.castParticleColor);
     } else if (inputs.magic2 && player.magicCooldown === 0) {
-      this.castSpellSlot(player, player.secondarySpellId, inputs, "#a855f7");
+      this.castSpellSlot(player, player.secondarySpellId, inputs, profile.secondaryCastParticleColor);
     }
   }
 

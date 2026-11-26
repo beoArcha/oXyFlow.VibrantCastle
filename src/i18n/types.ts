@@ -178,6 +178,18 @@ export interface SettingsGameplayI18n {
   characterAureliaTitle: string;
   characterAureliaDesc: string;
   characterSwapNotice: string;
+  valenLoreTitle: string;
+  aureliaLoreTitle: string;
+  valenPassiveName: string;
+  aureliaPassiveName: string;
+  valenPassiveDesc: string;
+  aureliaPassiveDesc: string;
+  statAttackShort: string;
+  statDefenseShort: string;
+  statSpellShort: string;
+  statHealthShort: string;
+  statManaShort: string;
+  statStaminaShort: string;
 }
 
 export interface SettingsControlsI18n {

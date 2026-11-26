@@ -1,5 +1,9 @@
 import { SPELL_REGISTRY } from "@game/logic/magic";
 import { calculatePlayerDerivedStats } from "@game/logic/inventory";
+import {
+  computeEffectiveSpellManaCost,
+  getCharacterProfile,
+} from "@game/characters";
 import { type EquipmentState, type InventoryState, type Item, type Player } from "@game/types";
 import { resolvePlayerTheme, type PlayerTheme } from "@styles/theme";
 import { clampPositiveInt } from "@lib/math";
@@ -20,7 +24,10 @@ export type { PlayerDerivedStats, ResolvePlayerStatusOptions, ResolveQuickBeltOp
 const logger = getLogger("hud.mapper");
 
 /** Theme of each duelist, so the HUD follows the hero picked in the menu or swapped in co-op. */
-const HERO_THEMES: Readonly<Record<"valen" | "aurelia", PlayerTheme>> = { valen: "crimson", aurelia: "cyan" };
+const HERO_THEMES: Readonly<Record<"valen" | "aurelia", PlayerTheme>> = {
+  valen: "crimson",
+  aurelia: "cyan",
+};
 
 /**
  * Transforms player snapshot data and derived stats into a clean PlayerStatusVM for HUD display.
@@ -32,23 +39,39 @@ export function resolvePlayerStatusVM(
 ): PlayerStatusVM | null {
   if (!player) return null;
 
-  // The controlled duelist decides name and colour; the HUD settings only cover a snapshot without one.
-  const theme = player.characterId ? HERO_THEMES[player.characterId] : resolvePlayerTheme(options.theme);
+  // The controlled duelist decides name, lore identity, and colour; the HUD settings only cover a snapshot without one.
+  const theme = player.characterId
+    ? HERO_THEMES[player.characterId]
+    : resolvePlayerTheme(options.theme);
   const fallbackCharacterId = theme === "crimson" ? "valen" : "aurelia";
+  const characterId = player.characterId || fallbackCharacterId;
+  const profile = getCharacterProfile(characterId);
 
   return {
-    characterId: player.characterId || fallbackCharacterId,
-    characterName: player.characterName || options.characterName,
+    characterId,
+    characterName: player.characterName || options.characterName || profile.displayName,
     playerNumber: options.playerNumber,
     theme,
+    loreTitleKey: profile.titleKey,
+    passiveNameKey: profile.passiveNameKey,
+    passiveDescKey: profile.passiveDescKey,
+    emblem: profile.emblem,
     health: clampPositiveInt(player.health),
     maxHealth: Math.max(1, clampPositiveInt(player.maxHealth)),
     mana: clampPositiveInt(player.mana),
     maxMana: Math.max(1, clampPositiveInt(player.maxMana)),
     stamina: clampPositiveInt(player.stamina),
     maxStamina: Math.max(1, clampPositiveInt(player.maxStamina)),
-    attackPower: clampPositiveInt(derivedStats?.totalAttack ?? options.attackFallback ?? 10),
-    skillPoints: typeof player.skillPoints === "number" ? clampPositiveInt(player.skillPoints) : 0,
+    attackPower: clampPositiveInt(
+      derivedStats?.totalAttack ?? options.attackFallback ?? profile.baseStats.baseAttack
+    ),
+    defensePower: clampPositiveInt(
+      derivedStats?.totalDefense ?? profile.baseStats.baseDefense
+    ),
+    spellPowerMultiplier:
+      derivedStats?.spellPowerMultiplier ?? profile.baseStats.spellPowerMultiplier,
+    skillPoints:
+      typeof player.skillPoints === "number" ? clampPositiveInt(player.skillPoints) : 0,
   };
 }
 
@@ -58,7 +81,9 @@ export function resolvePlayerStatusVM(
 export function resolveSpellVM(
   spellId: string | null | undefined,
   keyLabel: string,
-  variant: "cyan" | "purple"
+  variant: "cyan" | "purple",
+  characterId?: string,
+  currentMana?: number
 ): SpellItemVM | null {
   if (!spellId) return null;
 
@@ -68,12 +93,17 @@ export function resolveSpellVM(
     return null;
   }
 
+  const effectiveManaCost = characterId
+    ? computeEffectiveSpellManaCost(def.manaCost, characterId)
+    : def.manaCost;
+
   return {
     id: def.id,
     nameKey: def.nameKey,
-    manaCost: def.manaCost,
+    manaCost: effectiveManaCost,
     keyLabel,
     variant,
+    canAfford: typeof currentMana === "number" ? currentMana >= effectiveManaCost : true,
   };
 }
 
@@ -108,24 +138,42 @@ export function resolvePotionSlotsVM(
  * Resolves quick belt action slots (spells and potions) into a QuickBeltVM.
  */
 export function resolveQuickBeltVM(
-  player: { readonly inventory: InventoryState; readonly primarySpellId?: string; readonly secondarySpellId?: string } | null | undefined,
+  player:
+    | {
+        readonly inventory: InventoryState;
+        readonly characterId?: "valen" | "aurelia";
+        readonly mana?: number;
+        readonly primarySpellId?: string;
+        readonly secondarySpellId?: string;
+      }
+    | null
+    | undefined,
   options: ResolveQuickBeltOptions
 ): QuickBeltVM | null {
   if (!player) return null;
 
+  const characterId = player.characterId ?? (options.playerNumber === 1 ? "valen" : "aurelia");
+  const theme = HERO_THEMES[characterId];
+
   const primarySpell = resolveSpellVM(
     options.primarySpellId ?? player.primarySpellId,
     options.primaryKeyLabel,
-    "cyan"
+    "cyan",
+    characterId,
+    player.mana
   );
   const secondarySpell = resolveSpellVM(
     options.secondarySpellId ?? player.secondarySpellId,
     options.secondaryKeyLabel,
-    "purple"
+    "purple",
+    characterId,
+    player.mana
   );
 
   return {
     playerNumber: options.playerNumber,
+    characterId,
+    theme,
     primarySpell,
     secondarySpell,
     primarySpellName: primarySpell ? primarySpell.nameKey : "",
@@ -140,6 +188,7 @@ export function resolveQuickBeltVM(
 export { resolveViewportCameraProjection } from "@context/GameSessionContext";
 
 export interface PlayerStatsSource {
+  readonly characterId?: "valen" | "aurelia";
   readonly inventory?: {
     readonly equipment?: Partial<EquipmentState> | null;
   } | null;

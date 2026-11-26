@@ -16,20 +16,27 @@ describe("<HUDPlayerHeader />", () => {
   const crimsonTheme = getPlayerThemeTokens("crimson");
   const cyanTheme = getPlayerThemeTokens("cyan");
 
-  it("renders player name, rounded attack power, and P1 tag", async () => {
+  it("renders player name, lore title, rounded attack power, passive name, and P1 tag", async () => {
     const { container, unmount } = await renderIntoDom(
       <TestProviders>
         <HUDPlayerHeader
           characterId="valen"
-          characterName="Valen Shadowblade"
+          characterName="Valen"
           playerNumber={1}
           attackPower={24.7}
+          defensePower={7}
+          loreTitleKey="valenLoreTitle"
+          passiveNameKey="valenPassiveName"
+          passiveDescKey="valenPassiveDesc"
+          emblem="sun"
           themeTokens={crimsonTheme}
         />
       </TestProviders>
     );
 
-    expect(container.textContent).toContain("Valen Shadowblade");
+    expect(container.textContent).toContain("Valen");
+    expect(container.textContent).toContain("Słoneczny Rycerz");
+    expect(container.textContent).toContain("Solarny Hart");
     expect(container.textContent).toContain("25");
     expect(container.textContent).toContain("P1");
 
@@ -62,22 +69,29 @@ describe("<HUDPlayerHeader />", () => {
     await unmount();
   });
 
-  it("renders Co-op badge for Player 2 when skill points are 0", async () => {
+  it("renders Aurelia lore identity and spell power bonus for Player 2 without redundant Co-op badge", async () => {
     const { container, unmount } = await renderIntoDom(
       <TestProviders>
         <HUDPlayerHeader
           characterId="aurelia"
-          characterName="Aurelia Sunfire"
+          characterName="Aurelia"
           playerNumber={2}
           attackPower={18}
+          spellPowerMultiplier={1.15}
+          loreTitleKey="aureliaLoreTitle"
+          passiveNameKey="aureliaPassiveName"
+          emblem="astrolabe"
           skillPoints={0}
           themeTokens={cyanTheme}
         />
       </TestProviders>
     );
 
-    expect(container.textContent).toContain("Co-op");
+    expect(container.textContent).toContain("Uczona Arkanów");
+    expect(container.textContent).toContain("Astralny Przepływ");
+    expect(container.textContent).toContain("+15%");
     expect(container.textContent).toContain("P2");
+    expect(container.textContent).not.toContain("Co-op");
 
     await unmount();
   });
