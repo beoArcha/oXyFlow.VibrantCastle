@@ -1,87 +1,75 @@
 import React from "react";
-import { Swords, Skull, Flame, Shield, Sparkles, FlaskConical } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, StatRow, Badge } from "@ui";
+import { User, Swords, Shield, Sparkles } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent, Badge, StatRow } from "@ui";
 import { useI18n } from "@context/I18nContext";
-import type { PlayerStatsVM } from "./stats.mapper";
+import type { PlayerStatsVM } from "./types";
 import { cn } from "@lib/utils";
 
 export interface StatsPlayerCardProps {
   readonly title: string;
-  readonly score: number;
   readonly stats: PlayerStatsVM;
-  readonly variant?: "red" | "cyan";
+  readonly variant?: "amber" | "cyan";
   readonly className?: string;
 }
 
-export const StatsPlayerCard = ({
+export const StatsPlayerCard: React.FC<StatsPlayerCardProps> = ({
   title,
-  score,
   stats,
-  variant = "red",
+  variant = "amber",
   className,
-}: StatsPlayerCardProps): React.ReactElement => {
+}) => {
   const { t } = useI18n();
-  const isRed = variant === "red";
 
   return (
-    <Card
-      variant="subtle"
-      className={cn(isRed ? "border-red-900/50" : "border-cyan-900/50", className)}
-    >
+    <Card variant="subtle" className={cn(className)}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle
             icon={
-              isRed ? (
-                <Swords className="w-4 h-4 text-red-400" />
-              ) : (
-                <Sparkles className="w-4 h-4 text-cyan-400" />
-              )
+              <User
+                className={cn(
+                  "w-4 h-4",
+                  variant === "cyan" ? "text-cyan-400" : "text-amber-400"
+                )}
+              />
             }
           >
             {title}
           </CardTitle>
-          <Badge variant={isRed ? "red" : "cyan"} className="text-[10px]">
-            {score} XP
+          <Badge variant={variant}>
+            {t("xpEarned")}: {Math.round(stats.score)}
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="flex flex-col gap-2">
+      <CardContent className="flex flex-col gap-1.5">
         <StatRow
           label={t("totalKills")}
-          value={stats.kills}
-          icon={<Skull size={13} className={isRed ? "text-red-400" : "text-cyan-400"} />}
-          variant={isRed ? "red" : "cyan"}
+          value={String(stats.kills)}
+          icon={<Swords size={12} className="text-red-400" />}
         />
         <StatRow
           label={t("damageDealt")}
-          value={stats.damageDealt}
-          icon={<Flame size={13} className="text-amber-400" />}
-          variant="amber"
+          value={String(Math.round(stats.damageDealt))}
+          icon={<Swords size={12} className="text-amber-400" />}
         />
         <StatRow
           label={t("damageTaken")}
-          value={stats.damageTaken}
-          icon={<Shield size={13} className="text-stone-400" />}
+          value={String(Math.round(stats.damageTaken))}
+          icon={<Shield size={12} className="text-stone-400" />}
         />
         <StatRow
-          label={t("meleeAttack")}
-          value={stats.swordStrikes}
-          icon={<Swords size={13} className="text-stone-300" />}
-        />
-        <StatRow
-          label={t("magicPrimary")}
-          value={stats.spellsCast}
-          icon={<Sparkles size={13} className="text-cyan-400" />}
-          variant="cyan"
+          label={t("primarySpell")}
+          value={String(stats.spellsCast)}
+          icon={<Sparkles size={12} className="text-purple-400" />}
         />
         <StatRow
           label={t("potionsConsumed")}
-          value={stats.potionsDrunkTotal}
-          icon={<FlaskConical size={13} className={isRed ? "text-amber-300" : "text-cyan-300"} />}
-          variant={isRed ? "amber" : "cyan"}
+          value={String(stats.potionsDrunkTotal)}
         />
       </CardContent>
     </Card>
   );
 };
+
+StatsPlayerCard.displayName = "StatsPlayerCard";
+export default StatsPlayerCard;

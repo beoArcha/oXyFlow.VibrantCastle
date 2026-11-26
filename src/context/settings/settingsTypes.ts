@@ -1,6 +1,22 @@
-import { DisplaySettings, AspectRatioMode, ScalingFilterMode, TargetFps, AssetQuality } from "@game/types";
-export type { DisplaySettings, AspectRatioMode, ScalingFilterMode, TargetFps, AssetQuality };
+import {
+  DisplaySettings,
+  GameSettings,
+  AspectRatioMode,
+  ScalingFilterMode,
+  TargetFps,
+  AssetQuality,
+} from "@game/types";
+import type { PlayerTheme } from "@styles/theme";
 import { IContext } from "../IContext";
+
+export type {
+  AspectRatioMode,
+  ScalingFilterMode,
+  TargetFps,
+  AssetQuality,
+};
+
+export type HudThemeColor = PlayerTheme | "red";
 
 export interface HudQuickKeysSettings {
   primarySpell: string;
@@ -9,37 +25,50 @@ export interface HudQuickKeysSettings {
 }
 
 export interface HudSettings {
+  showRpgButtons: boolean;
+  showControlsHint: boolean;
+  showNarratorSubtitles: boolean;
   p1CharacterName: string;
   p2CharacterName: string;
-  p1ThemeColor: "red" | "cyan";
-  p2ThemeColor: "red" | "cyan";
+  p1ThemeColor: HudThemeColor;
+  p2ThemeColor: HudThemeColor;
   p1AttackFallback: number;
   p2AttackFallback: number;
   p1QuickKeys: HudQuickKeysSettings;
   p2QuickKeys: HudQuickKeysSettings;
-  showRpgButtons: boolean;
-  showControlsHint: boolean;
-  showNarratorSubtitles: boolean;
-  showCreationTab: boolean;
-  hudScale: "compact" | "normal" | "large";
 }
 
-export interface GameSettingsState {
-  version: number;
-  language: "pl" | "en";
-  volumeMusic: number;
-  volumeSFX: number;
-  isTwoPlayer: boolean;
-  primaryCharacter?: "valen" | "aurelia";
-  display: DisplaySettings;
+export interface GameSettingsState extends GameSettings {
+  primaryCharacter: "valen" | "aurelia";
   hud: HudSettings;
 }
 
+export const DEFAULT_HUD_SETTINGS: HudSettings = {
+  showRpgButtons: true,
+  showControlsHint: true,
+  showNarratorSubtitles: true,
+  p1CharacterName: "Valen",
+  p2CharacterName: "Aurelia",
+  p1ThemeColor: "crimson",
+  p2ThemeColor: "cyan",
+  p1AttackFallback: 35,
+  p2AttackFallback: 28,
+  p1QuickKeys: {
+    primarySpell: "U",
+    secondarySpell: "O",
+    potionsRange: "1-3",
+  },
+  p2QuickKeys: {
+    primarySpell: "Num4",
+    secondarySpell: "Num5",
+    potionsRange: "Num7-9",
+  },
+};
+
 export const DEFAULT_SETTINGS: GameSettingsState = {
-  version: 1,
   language: "pl",
-  volumeMusic: 0.45,
-  volumeSFX: 0.65,
+  volumeMusic: 0.4,
+  volumeSFX: 0.6,
   isTwoPlayer: false,
   primaryCharacter: "valen",
   display: {
@@ -50,34 +79,9 @@ export const DEFAULT_SETTINGS: GameSettingsState = {
     showFpsCounter: false,
     hardwareAcceleration: true,
   },
-  hud: {
-    p1CharacterName: "Valen",
-    p2CharacterName: "Aurelia",
-    p1ThemeColor: "red",
-    p2ThemeColor: "cyan",
-    p1AttackFallback: 20,
-    p2AttackFallback: 20,
-    p1QuickKeys: {
-      primarySpell: "U",
-      secondarySpell: "O",
-      potionsRange: "1-3",
-    },
-    p2QuickKeys: {
-      primarySpell: "Num4",
-      secondarySpell: "Num5",
-      potionsRange: "Num7-9",
-    },
-    showRpgButtons: true,
-    showControlsHint: true,
-    showNarratorSubtitles: true,
-    showCreationTab: true,
-    hudScale: "normal",
-  },
+  hud: DEFAULT_HUD_SETTINGS,
 };
 
-/**
- * Settings Context Value interface extending IContext.
- */
 export interface SettingsContextValue extends IContext {
   settings: GameSettingsState;
   displaySettings: DisplaySettings;
@@ -87,16 +91,14 @@ export interface SettingsContextValue extends IContext {
   primaryCharacter: "valen" | "aurelia";
   hudSettings: HudSettings;
 
-  setDisplaySettings: (display: Partial<DisplaySettings>) => void;
+  setDisplaySettings: (displayUpdates: Partial<DisplaySettings>) => void;
   setVolumeMusic: (val: number) => void;
   setVolumeSFX: (val: number) => void;
   setTwoPlayer: (val: boolean) => void;
   setPrimaryCharacter: (charId: "valen" | "aurelia") => void;
-  setHudSettings: (hud: Partial<HudSettings>) => void;
+  setHudSettings: (hudUpdates: Partial<HudSettings>) => void;
   updateSettings: (partial: Partial<GameSettingsState>) => void;
 
-  exportToFile: () => void;
-  importFromFile: (file: File) => Promise<boolean>;
   exportSettingsToFile: () => void;
   importSettingsFromFile: (file: File) => Promise<boolean>;
 }

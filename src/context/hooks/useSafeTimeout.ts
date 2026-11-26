@@ -1,41 +1,42 @@
 import { useCallback, useEffect, useRef } from "react";
 
-export interface SafeTimeoutResult {
+export interface UseSafeTimeoutResult {
   setSafeTimeout: (callback: () => void, delayMs: number) => void;
-  clear: () => void;
+  clearSafeTimeout: () => void;
 }
 
 /**
- * Reusable hook to schedule transient timers with guaranteed cleanup on unmount.
- * Prevents memory leaks and invalid state updates when React components unmount
- * while timers (toasts, notifications, animations) are still ticking.
+ * Manages a single auto-cleaning timeout that cancels pending timers
+ * on reschedule or component unmount.
  */
-export function useSafeTimeout(): SafeTimeoutResult {
-  const timeoutIdRef = useRef<number | null>(null);
+export function useSafeTimeout(): UseSafeTimeoutResult {
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const clear = useCallback(() => {
-    if (timeoutIdRef.current !== null) {
-      window.clearTimeout(timeoutIdRef.current);
-      timeoutIdRef.current = null;
+  const clearSafeTimeout = useCallback(() => {
+    if (timerRef.current !== null) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
     }
   }, []);
 
   const setSafeTimeout = useCallback(
     (callback: () => void, delayMs: number) => {
-      clear();
-      timeoutIdRef.current = window.setTimeout(() => {
-        timeoutIdRef.current = null;
+      clearSafeTimeout();
+      timerRef.current = setTimeout(() => {
+        timerRef.current = null;
         callback();
       }, delayMs);
     },
-    [clear]
+    [clearSafeTimeout]
   );
 
   useEffect(() => {
     return () => {
-      clear();
+      clearSafeTimeout();
     };
-  }, [clear]);
+  }, [clearSafeTimeout]);
 
-  return { setSafeTimeout, clear };
+  return { setSafeTimeout, clearSafeTimeout };
 }
+
+export default useSafeTimeout;

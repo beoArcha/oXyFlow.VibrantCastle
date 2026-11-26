@@ -5,420 +5,258 @@
       "id": "training_dummy",
       "nameKey": "monsterTrainingDummy",
       "defaultName": "Training Dummy",
-      "category": "dummy",
+      "category": "construct",
       "isDummy": true,
       "isAerial": false,
-      "dimensions": {
-        "width": 35,
-        "height": 60
-      },
-      "stats": {
-        "health": 60,
-        "maxHealth": 60,
-        "speed": 0,
-        "attackPower": 0,
-        "scoreReward": 150
-      },
+      "dimensions": { "width": 52, "height": 76 },
+      "stats": { "health": 60, "maxHealth": 60, "speed": 0, "attackPower": 0, "scoreReward": 50, "defense": 2, "xpReward": 15 },
       "abilities": ["dummy_wobble"],
       "soulDrop": {
         "soulId": "soul_training_dummy",
         "type": "enchant",
-        "dropRate": 0.5,
+        "dropRate": 0.25,
         "grantedSkillId": "dummy_wobble",
+        "manaCost": 0,
         "icon": "Shield",
-        "i18n": {
-          "nameKey": "soulTrainingDummyName",
-          "descriptionKey": "soulTrainingDummyDesc"
-        }
+        "i18n": { "nameKey": "soulTrainingDummyName", "descriptionKey": "soulTrainingDummyDesc" }
       },
-      "elementalResistances": {
-        "physical": 0,
-        "fire": -0.5,
-        "frost": 0,
-        "astral": 0,
-        "shadow": 0
-      },
+      "elementalResistances": { "fire": 1.25, "physical": 1.0, "aether": 1.0 },
       "bestiary": {
         "bestiaryKey": "bestiaryTrainingDummyDesc",
         "tacticsKey": "bestiaryTrainingDummyTactics",
         "loreQuoteKey": "bestiaryTrainingDummyLore",
-        "killThresholds": {
-          "basic": 1,
-          "tactics": 3,
-          "lore": 5
-        }
+        "killThresholds": { "basic": 1, "tactics": 3, "lore": 5 }
       },
-      "atlas": {
-        "presetId": "training_dummy",
-        "defaultAnimation": "idle",
-        "hitAnimation": "hit",
-        "deathAnimation": "destroy"
+      "atlas": { "presetId": "training_dummy", "defaultAnimation": "idle", "hitAnimation": "hit", "deathAnimation": "broken" },
+      "proceduralFallback": { "bodyColor": "#92400e", "accentColor": "#f59e0b" }
+    },
+    "training_target": {
+      "id": "training_target",
+      "nameKey": "monsterTrainingDummy",
+      "defaultName": "Training Target",
+      "category": "construct",
+      "isDummy": true,
+      "isAerial": false,
+      "dimensions": { "width": 48, "height": 68 },
+      "stats": { "health": 45, "maxHealth": 45, "speed": 0, "attackPower": 0, "scoreReward": 40, "defense": 1, "xpReward": 12 },
+      "abilities": ["dummy_wobble"],
+      "soulDrop": {
+        "soulId": "soul_training_target",
+        "type": "enchant",
+        "dropRate": 0.2,
+        "grantedSkillId": "dummy_wobble",
+        "manaCost": 0,
+        "icon": "Target",
+        "i18n": { "nameKey": "soulTrainingTargetName", "descriptionKey": "soulTrainingTargetDesc" }
       },
-      "proceduralFallback": {
-        "bodyColor": "#a16207",
-        "accentColor": "#ca8a04",
-        "eyesColor": "#eab308"
-      }
+      "elementalResistances": { "fire": 1.2, "physical": 1.0, "aether": 1.0 },
+      "bestiary": {
+        "bestiaryKey": "bestiaryTrainingDummyDesc",
+        "tacticsKey": "bestiaryTrainingDummyTactics",
+        "loreQuoteKey": "bestiaryTrainingDummyLore",
+        "killThresholds": { "basic": 1, "tactics": 3, "lore": 5 }
+      },
+      "atlas": { "presetId": "training_dummy", "defaultAnimation": "idle", "hitAnimation": "hit", "deathAnimation": "broken" },
+      "proceduralFallback": { "bodyColor": "#b45309", "accentColor": "#fbbf24" }
+    },
+    "grand_dummy": {
+      "id": "grand_dummy",
+      "nameKey": "monsterTrainingDummy",
+      "defaultName": "Grand Training Dummy",
+      "category": "construct",
+      "isDummy": true,
+      "isAerial": false,
+      "dimensions": { "width": 64, "height": 92 },
+      "stats": { "health": 120, "maxHealth": 120, "speed": 0, "attackPower": 0, "scoreReward": 100, "defense": 5, "xpReward": 30 },
+      "abilities": ["dummy_wobble"],
+      "soulDrop": {
+        "soulId": "soul_grand_dummy",
+        "type": "enchant",
+        "dropRate": 0.3,
+        "grantedSkillId": "dummy_wobble",
+        "manaCost": 0,
+        "icon": "ShieldCheck",
+        "i18n": { "nameKey": "soulGrandDummyName", "descriptionKey": "soulGrandDummyDesc" }
+      },
+      "elementalResistances": { "fire": 1.15, "physical": 0.9, "aether": 1.0 },
+      "bestiary": {
+        "bestiaryKey": "bestiaryTrainingDummyDesc",
+        "tacticsKey": "bestiaryTrainingDummyTactics",
+        "loreQuoteKey": "bestiaryTrainingDummyLore",
+        "killThresholds": { "basic": 1, "tactics": 3, "lore": 5 }
+      },
+      "atlas": { "presetId": "training_dummy", "defaultAnimation": "idle", "hitAnimation": "hit", "deathAnimation": "broken" },
+      "proceduralFallback": { "bodyColor": "#78350f", "accentColor": "#fbbf24" }
     },
     "clockwork_owl_gargoyle": {
       "id": "clockwork_owl_gargoyle",
-      "nameKey": "monsterGargoyleScout",
+      "nameKey": "monsterChasmGargoyle",
       "defaultName": "Clockwork Owl Gargoyle",
-      "category": "aerial",
+      "category": "clockwork",
       "isDummy": false,
       "isAerial": true,
-      "dimensions": {
-        "width": 44,
-        "height": 40
-      },
-      "stats": {
-        "health": 45,
-        "maxHealth": 45,
-        "speed": 1.4,
-        "attackPower": 16,
-        "scoreReward": 200
-      },
-      "abilities": ["owl_wind_gust", "gargoyle_dive_strike"],
+      "dimensions": { "width": 62, "height": 58 },
+      "stats": { "health": 75, "maxHealth": 75, "speed": 2.4, "attackPower": 16, "scoreReward": 150, "defense": 4, "xpReward": 45 },
+      "abilities": ["gargoyle_dive", "owl_wind_gust"],
       "soulDrop": {
-        "soulId": "soul_clockwork_owl_gargoyle",
+        "soulId": "soul_clockwork_owl",
         "type": "bullet",
-        "dropRate": 0.15,
+        "dropRate": 0.18,
         "grantedSkillId": "owl_wind_gust",
-        "manaCost": 10,
+        "manaCost": 12,
         "icon": "Wind",
-        "i18n": {
-          "nameKey": "soulClockworkOwlName",
-          "descriptionKey": "soulClockworkOwlDesc"
-        }
+        "i18n": { "nameKey": "soulClockworkOwlName", "descriptionKey": "soulClockworkOwlDesc" }
       },
-      "elementalResistances": {
-        "physical": 0.1,
-        "fire": -0.2,
-        "frost": 0.3,
-        "astral": 0.1,
-        "shadow": 0.2
-      },
+      "elementalResistances": { "lightning": 1.4, "physical": 0.9, "frost": 1.1 },
       "bestiary": {
         "bestiaryKey": "bestiaryClockworkOwlDesc",
         "tacticsKey": "bestiaryClockworkOwlTactics",
         "loreQuoteKey": "bestiaryClockworkOwlLore",
-        "killThresholds": {
-          "basic": 1,
-          "tactics": 5,
-          "lore": 15
-        }
+        "killThresholds": { "basic": 1, "tactics": 3, "lore": 5 }
       },
-      "atlas": {
-        "presetId": "clockwork_owl_gargoyle",
-        "defaultAnimation": "fly",
-        "hitAnimation": "hit",
-        "attackAnimation": "attack",
-        "deathAnimation": "death"
-      },
-      "proceduralFallback": {
-        "bodyColor": "#b45309",
-        "accentColor": "#f59e0b",
-        "eyesColor": "#22d3ee"
-      }
+      "atlas": { "presetId": "clockwork_owl_gargoyle", "defaultAnimation": "fly", "attackAnimation": "dive", "hitAnimation": "hit", "deathAnimation": "death" },
+      "proceduralFallback": { "bodyColor": "#64748b", "accentColor": "#d97706", "eyesColor": "#fbbf24" }
     },
     "court_sentinel": {
       "id": "court_sentinel",
       "nameKey": "monsterCourtSentinel",
       "defaultName": "Courtyard Sentinel",
-      "category": "ground_patrol",
+      "category": "sentinel",
       "isDummy": false,
       "isAerial": false,
-      "dimensions": {
-        "width": 42,
-        "height": 62
-      },
-      "stats": {
-        "health": 80,
-        "maxHealth": 80,
-        "speed": 0.8,
-        "attackPower": 20,
-        "scoreReward": 250
-      },
+      "dimensions": { "width": 56, "height": 84 },
+      "stats": { "health": 80, "maxHealth": 80, "speed": 1.6, "attackPower": 20, "scoreReward": 160, "defense": 8, "xpReward": 50 },
       "abilities": ["sentinel_aether_beam"],
       "soulDrop": {
         "soulId": "soul_court_sentinel",
         "type": "guardian",
-        "dropRate": 0.12,
+        "dropRate": 0.15,
         "grantedSkillId": "sentinel_aether_beam",
-        "manaCost": 15,
+        "manaCost": 18,
         "icon": "Shield",
-        "i18n": {
-          "nameKey": "soulCourtSentinelName",
-          "descriptionKey": "soulCourtSentinelDesc"
-        }
+        "i18n": { "nameKey": "soulCourtSentinelName", "descriptionKey": "soulCourtSentinelDesc" }
       },
-      "elementalResistances": {
-        "physical": 0.3,
-        "fire": 0.2,
-        "frost": -0.2,
-        "astral": 0.2,
-        "shadow": 0.1
-      },
+      "elementalResistances": { "physical": 0.85, "fire": 1.2, "aether": 0.7 },
       "bestiary": {
         "bestiaryKey": "bestiaryCourtSentinelDesc",
         "tacticsKey": "bestiaryCourtSentinelTactics",
         "loreQuoteKey": "bestiaryCourtSentinelLore",
-        "killThresholds": {
-          "basic": 1,
-          "tactics": 5,
-          "lore": 15
-        }
+        "killThresholds": { "basic": 1, "tactics": 3, "lore": 5 }
       },
-      "atlas": {
-        "presetId": "court_sentinel",
-        "defaultAnimation": "idle",
-        "hitAnimation": "hit",
-        "deathAnimation": "death"
-      },
-      "proceduralFallback": {
-        "bodyColor": "#78350f",
-        "accentColor": "#d97706",
-        "eyesColor": "#ea580c"
-      }
+      "proceduralFallback": { "bodyColor": "#475569", "accentColor": "#38bdf8", "eyesColor": "#38bdf8" }
     },
     "chasm_gargoyle": {
       "id": "chasm_gargoyle",
       "nameKey": "monsterChasmGargoyle",
       "defaultName": "Chasm Gargoyle",
-      "category": "aerial",
+      "category": "gargoyle",
       "isDummy": false,
       "isAerial": true,
-      "dimensions": {
-        "width": 46,
-        "height": 42
-      },
-      "stats": {
-        "health": 65,
-        "maxHealth": 65,
-        "speed": 1.6,
-        "attackPower": 22,
-        "scoreReward": 300
-      },
-      "abilities": ["gargoyle_dive_strike"],
+      "dimensions": { "width": 60, "height": 58 },
+      "stats": { "health": 70, "maxHealth": 70, "speed": 2.6, "attackPower": 18, "scoreReward": 140, "defense": 5, "xpReward": 42 },
+      "abilities": ["gargoyle_dive"],
       "soulDrop": {
         "soulId": "soul_chasm_gargoyle",
         "type": "bullet",
-        "dropRate": 0.14,
-        "grantedSkillId": "gargoyle_dive_strike",
-        "manaCost": 12,
-        "icon": "Wing",
-        "i18n": {
-          "nameKey": "soulChasmGargoyleName",
-          "descriptionKey": "soulChasmGargoyleDesc"
-        }
+        "dropRate": 0.15,
+        "grantedSkillId": "gargoyle_dive",
+        "manaCost": 14,
+        "icon": "Feather",
+        "i18n": { "nameKey": "soulChasmGargoyleName", "descriptionKey": "soulChasmGargoyleDesc" }
       },
-      "elementalResistances": {
-        "physical": 0.15,
-        "fire": -0.3,
-        "frost": 0.2,
-        "astral": 0.1,
-        "shadow": 0.4
-      },
+      "elementalResistances": { "holy": 1.35, "shadow": 0.6, "physical": 0.9 },
       "bestiary": {
         "bestiaryKey": "bestiaryChasmGargoyleDesc",
         "tacticsKey": "bestiaryChasmGargoyleTactics",
         "loreQuoteKey": "bestiaryChasmGargoyleLore",
-        "killThresholds": {
-          "basic": 1,
-          "tactics": 5,
-          "lore": 15
-        }
+        "killThresholds": { "basic": 1, "tactics": 3, "lore": 5 }
       },
-      "atlas": {
-        "presetId": "chasm_gargoyle",
-        "defaultAnimation": "fly",
-        "hitAnimation": "hit",
-        "deathAnimation": "death"
-      },
-      "proceduralFallback": {
-        "bodyColor": "#4c1d95",
-        "accentColor": "#7c3aed",
-        "eyesColor": "#a855f7"
-      }
+      "atlas": { "presetId": "clockwork_owl_gargoyle", "defaultAnimation": "fly", "attackAnimation": "dive", "hitAnimation": "hit", "deathAnimation": "death" },
+      "proceduralFallback": { "bodyColor": "#334155", "accentColor": "#a855f7", "eyesColor": "#f43f5e" }
     },
     "clockwork_automaton": {
       "id": "clockwork_automaton",
       "nameKey": "monsterClockworkAutomaton",
       "defaultName": "Clockwork Automaton",
-      "category": "automaton",
+      "category": "clockwork",
       "isDummy": false,
       "isAerial": false,
-      "dimensions": {
-        "width": 48,
-        "height": 65
-      },
-      "stats": {
-        "health": 120,
-        "maxHealth": 120,
-        "speed": 1.1,
-        "attackPower": 24,
-        "scoreReward": 350
-      },
+      "dimensions": { "width": 68, "height": 94 },
+      "stats": { "health": 130, "maxHealth": 130, "speed": 1.2, "attackPower": 28, "scoreReward": 240, "defense": 12, "xpReward": 75 },
       "abilities": ["automaton_hammer_slam"],
       "soulDrop": {
         "soulId": "soul_clockwork_automaton",
         "type": "enchant",
-        "dropRate": 0.1,
+        "dropRate": 0.14,
         "grantedSkillId": "automaton_hammer_slam",
-        "icon": "Cog",
-        "i18n": {
-          "nameKey": "soulClockworkAutomatonName",
-          "descriptionKey": "soulClockworkAutomatonDesc"
-        }
+        "manaCost": 0,
+        "icon": "Hammer",
+        "i18n": { "nameKey": "soulClockworkAutomatonName", "descriptionKey": "soulClockworkAutomatonDesc" }
       },
-      "elementalResistances": {
-        "physical": 0.4,
-        "fire": 0.1,
-        "frost": -0.4,
-        "astral": 0.2,
-        "shadow": 0.1
-      },
+      "elementalResistances": { "lightning": 1.5, "physical": 0.75, "fire": 0.9 },
       "bestiary": {
         "bestiaryKey": "bestiaryClockworkAutomatonDesc",
         "tacticsKey": "bestiaryClockworkAutomatonTactics",
         "loreQuoteKey": "bestiaryClockworkAutomatonLore",
-        "killThresholds": {
-          "basic": 1,
-          "tactics": 5,
-          "lore": 15
-        }
+        "killThresholds": { "basic": 1, "tactics": 3, "lore": 5 }
       },
-      "atlas": {
-        "presetId": "clockwork_automaton",
-        "defaultAnimation": "idle",
-        "hitAnimation": "hit",
-        "deathAnimation": "death"
-      },
-      "proceduralFallback": {
-        "bodyColor": "#92400e",
-        "accentColor": "#f59e0b",
-        "eyesColor": "#fef08a"
-      }
+      "proceduralFallback": { "bodyColor": "#b45309", "accentColor": "#fbbf24", "eyesColor": "#ef4444" }
     },
     "aether_sentinel": {
       "id": "aether_sentinel",
       "nameKey": "monsterAetherSentinel",
       "defaultName": "Aether Sentinel",
-      "category": "construct",
+      "category": "sentinel",
       "isDummy": false,
       "isAerial": false,
-      "dimensions": {
-        "width": 45,
-        "height": 65
-      },
-      "stats": {
-        "health": 110,
-        "maxHealth": 110,
-        "speed": 1.2,
-        "attackPower": 28,
-        "scoreReward": 400
-      },
+      "dimensions": { "width": 60, "height": 88 },
+      "stats": { "health": 110, "maxHealth": 110, "speed": 1.8, "attackPower": 24, "scoreReward": 220, "defense": 9, "xpReward": 68 },
       "abilities": ["sentinel_aether_beam"],
       "soulDrop": {
         "soulId": "soul_aether_sentinel",
         "type": "guardian",
-        "dropRate": 0.12,
+        "dropRate": 0.14,
         "grantedSkillId": "sentinel_aether_beam",
-        "manaCost": 18,
-        "icon": "Zap",
-        "i18n": {
-          "nameKey": "soulAetherSentinelName",
-          "descriptionKey": "soulAetherSentinelDesc"
-        }
+        "manaCost": 20,
+        "icon": "ShieldCheck",
+        "i18n": { "nameKey": "soulAetherSentinelName", "descriptionKey": "soulAetherSentinelDesc" }
       },
-      "elementalResistances": {
-        "physical": 0.25,
-        "fire": 0.1,
-        "frost": 0.1,
-        "astral": 0.5,
-        "shadow": -0.3
-      },
+      "elementalResistances": { "aether": 0.4, "fire": 1.35, "physical": 1.0 },
       "bestiary": {
         "bestiaryKey": "bestiaryAetherSentinelDesc",
         "tacticsKey": "bestiaryAetherSentinelTactics",
         "loreQuoteKey": "bestiaryAetherSentinelLore",
-        "killThresholds": {
-          "basic": 1,
-          "tactics": 5,
-          "lore": 15
-        }
+        "killThresholds": { "basic": 1, "tactics": 3, "lore": 5 }
       },
-      "atlas": {
-        "presetId": "aether_sentinel",
-        "defaultAnimation": "idle",
-        "hitAnimation": "hit",
-        "deathAnimation": "death"
-      },
-      "proceduralFallback": {
-        "bodyColor": "#1e3a8a",
-        "accentColor": "#06b6d4",
-        "eyesColor": "#38bdf8"
-      }
+      "proceduralFallback": { "bodyColor": "#1e3a8a", "accentColor": "#38bdf8", "eyesColor": "#bae6fd" }
     },
     "aether_archon": {
       "id": "aether_archon",
       "nameKey": "monsterAetherArchon",
       "defaultName": "Aether Archon",
-      "category": "elite",
+      "category": "boss",
       "isDummy": false,
       "isAerial": true,
-      "dimensions": {
-        "width": 56,
-        "height": 76
-      },
-      "stats": {
-        "health": 220,
-        "maxHealth": 220,
-        "speed": 1.3,
-        "attackPower": 35,
-        "scoreReward": 750
-      },
+      "dimensions": { "width": 74, "height": 102 },
+      "stats": { "health": 220, "maxHealth": 220, "speed": 2.0, "attackPower": 36, "scoreReward": 500, "defense": 12, "xpReward": 150 },
       "abilities": ["aether_archon_wrath", "sentinel_aether_beam"],
       "soulDrop": {
         "soulId": "soul_aether_archon",
         "type": "bullet",
-        "dropRate": 0.25,
+        "dropRate": 0.35,
         "grantedSkillId": "aether_archon_wrath",
-        "manaCost": 35,
-        "icon": "Sun",
-        "i18n": {
-          "nameKey": "soulAetherArchonName",
-          "descriptionKey": "soulAetherArchonDesc"
-        }
+        "manaCost": 32,
+        "icon": "Sparkles",
+        "i18n": { "nameKey": "soulAetherArchonName", "descriptionKey": "soulAetherArchonDesc" }
       },
-      "elementalResistances": {
-        "physical": 0.3,
-        "fire": 0.2,
-        "frost": 0.2,
-        "astral": 0.7,
-        "shadow": -0.5
-      },
+      "elementalResistances": { "aether": 0.3, "astral": 0.5, "shadow": 1.35, "fire": 1.15 },
       "bestiary": {
         "bestiaryKey": "bestiaryAetherArchonDesc",
         "tacticsKey": "bestiaryAetherArchonTactics",
         "loreQuoteKey": "bestiaryAetherArchonLore",
-        "killThresholds": {
-          "basic": 1,
-          "tactics": 5,
-          "lore": 15
-        }
+        "killThresholds": { "basic": 1, "tactics": 3, "lore": 5 }
       },
-      "atlas": {
-        "presetId": "aether_archon",
-        "defaultAnimation": "fly",
-        "hitAnimation": "hit",
-        "deathAnimation": "death"
-      },
-      "proceduralFallback": {
-        "bodyColor": "#312e81",
-        "accentColor": "#818cf8",
-        "eyesColor": "#c084fc"
-      }
+      "proceduralFallback": { "bodyColor": "#312e81", "accentColor": "#818cf8", "eyesColor": "#e0e7ff" }
     },
     "shadow_knight": {
       "id": "shadow_knight",
@@ -427,716 +265,280 @@
       "category": "elite",
       "isDummy": false,
       "isAerial": false,
-      "dimensions": {
-        "width": 50,
-        "height": 72
-      },
-      "stats": {
-        "health": 260,
-        "maxHealth": 260,
-        "speed": 1.5,
-        "attackPower": 40,
-        "scoreReward": 1000
-      },
+      "dimensions": { "width": 62, "height": 90 },
+      "stats": { "health": 160, "maxHealth": 160, "speed": 2.2, "attackPower": 32, "scoreReward": 320, "defense": 10, "xpReward": 110 },
       "abilities": ["shadow_knight_slash"],
       "soulDrop": {
         "soulId": "soul_shadow_knight",
         "type": "enchant",
         "dropRate": 0.2,
         "grantedSkillId": "shadow_knight_slash",
-        "icon": "Swords",
-        "i18n": {
-          "nameKey": "soulShadowKnightName",
-          "descriptionKey": "soulShadowKnightDesc"
-        }
+        "manaCost": 0,
+        "icon": "Sword",
+        "i18n": { "nameKey": "soulShadowKnightName", "descriptionKey": "soulShadowKnightDesc" }
       },
-      "elementalResistances": {
-        "physical": 0.45,
-        "fire": -0.2,
-        "frost": 0.3,
-        "astral": -0.4,
-        "shadow": 0.8
-      },
+      "elementalResistances": { "shadow": 0.3, "holy": 1.5, "fire": 1.2 },
       "bestiary": {
         "bestiaryKey": "bestiaryShadowKnightDesc",
         "tacticsKey": "bestiaryShadowKnightTactics",
         "loreQuoteKey": "bestiaryShadowKnightLore",
-        "killThresholds": {
-          "basic": 1,
-          "tactics": 5,
-          "lore": 15
-        }
+        "killThresholds": { "basic": 1, "tactics": 3, "lore": 5 }
       },
-      "atlas": {
-        "presetId": "shadow_knight",
-        "defaultAnimation": "idle",
-        "hitAnimation": "hit",
-        "deathAnimation": "death"
-      },
-      "proceduralFallback": {
-        "bodyColor": "#0f172a",
-        "accentColor": "#64748b",
-        "eyesColor": "#ef4444"
-      }
+      "proceduralFallback": { "bodyColor": "#1e1b4b", "accentColor": "#9333ea", "eyesColor": "#e879f9" }
     },
     "aether_wisp": {
       "id": "aether_wisp",
       "nameKey": "monsterAetherWisp",
       "defaultName": "Aether Wisp",
-      "category": "aerial",
+      "category": "spirit",
       "isDummy": false,
       "isAerial": true,
-      "dimensions": {
-        "width": 36,
-        "height": 36
-      },
-      "stats": {
-        "health": 60,
-        "maxHealth": 60,
-        "speed": 1.6,
-        "attackPower": 18,
-        "scoreReward": 500
-      },
+      "dimensions": { "width": 34, "height": 34 },
+      "stats": { "health": 30, "maxHealth": 30, "speed": 2.8, "attackPower": 12, "scoreReward": 90, "defense": 1, "xpReward": 25 },
       "abilities": ["sentinel_aether_beam"],
       "soulDrop": {
         "soulId": "soul_aether_wisp",
-        "type": "guardian",
-        "dropRate": 0.18,
-        "grantedSkillId": "sentinel_aether_beam",
-        "manaCost": 8,
-        "icon": "Sparkles",
-        "i18n": {
-          "nameKey": "soulAetherWispName",
-          "descriptionKey": "soulAetherWispDesc"
-        }
+        "type": "enchant",
+        "dropRate": 0.22,
+        "grantedSkillId": "mana_font",
+        "manaCost": 0,
+        "icon": "Sparkle",
+        "i18n": { "nameKey": "soulAetherWispName", "descriptionKey": "soulAetherWispDesc" }
       },
-      "elementalResistances": {
-        "physical": -0.1,
-        "fire": 0.1,
-        "frost": 0.1,
-        "astral": 0.6,
-        "shadow": -0.2
-      },
+      "elementalResistances": { "aether": 0.5, "physical": 1.25 },
       "bestiary": {
         "bestiaryKey": "bestiaryAetherWispDesc",
         "tacticsKey": "bestiaryAetherWispTactics",
         "loreQuoteKey": "bestiaryAetherWispLore",
-        "killThresholds": {
-          "basic": 1,
-          "tactics": 5,
-          "lore": 15
-        }
+        "killThresholds": { "basic": 1, "tactics": 3, "lore": 5 }
       },
-      "atlas": {
-        "presetId": "aether_wisp",
-        "defaultAnimation": "fly",
-        "hitAnimation": "hit",
-        "deathAnimation": "death"
-      },
-      "proceduralFallback": {
-        "bodyColor": "#0369a1",
-        "accentColor": "#06b6d4",
-        "eyesColor": "#67e8f9"
-      }
+      "proceduralFallback": { "bodyColor": "#0ea5e9", "accentColor": "#e0f2fe" }
     },
     "chasm_crawler": {
       "id": "chasm_crawler",
       "nameKey": "monsterChasmCrawler",
       "defaultName": "Chasm Crawler",
-      "category": "ground_patrol",
+      "category": "beast",
       "isDummy": false,
       "isAerial": false,
-      "dimensions": {
-        "width": 56,
-        "height": 30
-      },
-      "stats": {
-        "health": 80,
-        "maxHealth": 80,
-        "speed": 0.8,
-        "attackPower": 20,
-        "scoreReward": 500
-      },
+      "dimensions": { "width": 52, "height": 38 },
+      "stats": { "health": 55, "maxHealth": 55, "speed": 2.5, "attackPower": 15, "scoreReward": 110, "defense": 3, "xpReward": 32 },
       "abilities": ["chasm_crawler_bite"],
       "soulDrop": {
         "soulId": "soul_chasm_crawler",
         "type": "bullet",
-        "dropRate": 0.15,
+        "dropRate": 0.16,
         "grantedSkillId": "chasm_crawler_bite",
-        "manaCost": 8,
-        "icon": "Scissors",
-        "i18n": {
-          "nameKey": "soulChasmCrawlerName",
-          "descriptionKey": "soulChasmCrawlerDesc"
-        }
+        "manaCost": 10,
+        "icon": "Bug",
+        "i18n": { "nameKey": "soulChasmCrawlerName", "descriptionKey": "soulChasmCrawlerDesc" }
       },
-      "elementalResistances": {
-        "physical": 0.2,
-        "fire": -0.4,
-        "frost": 0.2,
-        "astral": 0,
-        "shadow": 0.3
-      },
+      "elementalResistances": { "fire": 1.4, "frost": 1.2, "shadow": 0.8 },
       "bestiary": {
         "bestiaryKey": "bestiaryChasmCrawlerDesc",
         "tacticsKey": "bestiaryChasmCrawlerTactics",
         "loreQuoteKey": "bestiaryChasmCrawlerLore",
-        "killThresholds": {
-          "basic": 1,
-          "tactics": 5,
-          "lore": 15
-        }
+        "killThresholds": { "basic": 1, "tactics": 3, "lore": 5 }
       },
-      "atlas": {
-        "presetId": "chasm_crawler",
-        "defaultAnimation": "idle",
-        "hitAnimation": "hit",
-        "deathAnimation": "death"
-      },
-      "proceduralFallback": {
-        "bodyColor": "#431407",
-        "accentColor": "#9a3412",
-        "eyesColor": "#fbbf24"
-      }
+      "proceduralFallback": { "bodyColor": "#3f6212", "accentColor": "#a3e635", "eyesColor": "#fde047" }
     },
     "gargoyle_scout": {
       "id": "gargoyle_scout",
       "nameKey": "monsterGargoyleScout",
       "defaultName": "Gargoyle Scout",
-      "category": "aerial",
+      "category": "gargoyle",
       "isDummy": false,
       "isAerial": true,
-      "dimensions": {
-        "width": 36,
-        "height": 38
-      },
-      "stats": {
-        "health": 50,
-        "maxHealth": 50,
-        "speed": 1.5,
-        "attackPower": 12,
-        "scoreReward": 400
-      },
-      "abilities": ["owl_wind_gust", "gargoyle_dive_strike"],
+      "dimensions": { "width": 54, "height": 52 },
+      "stats": { "health": 55, "maxHealth": 55, "speed": 2.9, "attackPower": 14, "scoreReward": 120, "defense": 3, "xpReward": 36 },
+      "abilities": ["gargoyle_dive"],
       "soulDrop": {
         "soulId": "soul_gargoyle_scout",
-        "type": "bullet",
-        "dropRate": 0.16,
-        "grantedSkillId": "owl_wind_gust",
-        "manaCost": 10,
-        "icon": "Wind",
-        "i18n": {
-          "nameKey": "soulGargoyleScoutName",
-          "descriptionKey": "soulGargoyleScoutDesc"
-        }
+        "type": "enchant",
+        "dropRate": 0.18,
+        "grantedSkillId": "gargoyle_dive",
+        "manaCost": 0,
+        "icon": "Eye",
+        "i18n": { "nameKey": "soulGargoyleScoutName", "descriptionKey": "soulGargoyleScoutDesc" }
       },
-      "elementalResistances": {
-        "physical": 0.1,
-        "fire": -0.3,
-        "frost": 0.2,
-        "astral": 0.1,
-        "shadow": 0.3
-      },
+      "elementalResistances": { "holy": 1.3, "physical": 1.0 },
       "bestiary": {
         "bestiaryKey": "bestiaryGargoyleScoutDesc",
         "tacticsKey": "bestiaryGargoyleScoutTactics",
         "loreQuoteKey": "bestiaryGargoyleScoutLore",
-        "killThresholds": {
-          "basic": 1,
-          "tactics": 5,
-          "lore": 15
-        }
+        "killThresholds": { "basic": 1, "tactics": 3, "lore": 5 }
       },
-      "atlas": {
-        "presetId": "clockwork_owl_gargoyle",
-        "defaultAnimation": "fly",
-        "hitAnimation": "hit",
-        "attackAnimation": "attack",
-        "deathAnimation": "death"
-      },
-      "proceduralFallback": {
-        "bodyColor": "#475569",
-        "accentColor": "#0284c7",
-        "eyesColor": "#38bdf8"
-      }
-    },
-    "training_target": {
-      "id": "training_target",
-      "nameKey": "monsterTrainingDummy",
-      "defaultName": "Training Dummy",
-      "category": "dummy",
-      "isDummy": true,
-      "isAerial": false,
-      "dimensions": {
-        "width": 35,
-        "height": 60
-      },
-      "stats": {
-        "health": 70,
-        "maxHealth": 70,
-        "speed": 0,
-        "attackPower": 0,
-        "scoreReward": 150
-      },
-      "abilities": ["dummy_wobble"],
-      "soulDrop": {
-        "soulId": "soul_training_target",
-        "type": "enchant",
-        "dropRate": 0.5,
-        "grantedSkillId": "dummy_wobble",
-        "icon": "Shield",
-        "i18n": {
-          "nameKey": "soulTrainingTargetName",
-          "descriptionKey": "soulTrainingTargetDesc"
-        }
-      },
-      "elementalResistances": {
-        "physical": 0,
-        "fire": -0.5,
-        "frost": 0,
-        "astral": 0,
-        "shadow": 0
-      },
-      "bestiary": {
-        "bestiaryKey": "bestiaryTrainingDummyDesc",
-        "tacticsKey": "bestiaryTrainingDummyTactics",
-        "loreQuoteKey": "bestiaryTrainingDummyLore",
-        "killThresholds": {
-          "basic": 1,
-          "tactics": 3,
-          "lore": 5
-        }
-      },
-      "atlas": {
-        "presetId": "training_dummy",
-        "defaultAnimation": "idle",
-        "hitAnimation": "hit",
-        "deathAnimation": "destroy"
-      },
-      "proceduralFallback": {
-        "bodyColor": "#b45309",
-        "accentColor": "#f59e0b",
-        "eyesColor": "#fef08a"
-      }
-    },
-    "grand_dummy": {
-      "id": "grand_dummy",
-      "nameKey": "monsterTrainingDummy",
-      "defaultName": "Training Dummy",
-      "category": "dummy",
-      "isDummy": true,
-      "isAerial": false,
-      "dimensions": {
-        "width": 35,
-        "height": 60
-      },
-      "stats": {
-        "health": 60,
-        "maxHealth": 60,
-        "speed": 0,
-        "attackPower": 0,
-        "scoreReward": 120
-      },
-      "abilities": ["dummy_wobble"],
-      "soulDrop": {
-        "soulId": "soul_grand_dummy",
-        "type": "enchant",
-        "dropRate": 0.5,
-        "grantedSkillId": "dummy_wobble",
-        "icon": "Shield",
-        "i18n": {
-          "nameKey": "soulGrandDummyName",
-          "descriptionKey": "soulGrandDummyDesc"
-        }
-      },
-      "elementalResistances": {
-        "physical": 0,
-        "fire": -0.5,
-        "frost": 0,
-        "astral": 0,
-        "shadow": 0
-      },
-      "bestiary": {
-        "bestiaryKey": "bestiaryTrainingDummyDesc",
-        "tacticsKey": "bestiaryTrainingDummyTactics",
-        "loreQuoteKey": "bestiaryTrainingDummyLore",
-        "killThresholds": {
-          "basic": 1,
-          "tactics": 3,
-          "lore": 5
-        }
-      },
-      "atlas": {
-        "presetId": "training_dummy",
-        "defaultAnimation": "idle",
-        "hitAnimation": "hit",
-        "deathAnimation": "destroy"
-      },
-      "proceduralFallback": {
-        "bodyColor": "#b45309",
-        "accentColor": "#f59e0b",
-        "eyesColor": "#fef08a"
-      }
+      "atlas": { "presetId": "clockwork_owl_gargoyle", "defaultAnimation": "fly", "attackAnimation": "dive", "hitAnimation": "hit", "deathAnimation": "death" },
+      "proceduralFallback": { "bodyColor": "#475569", "accentColor": "#94a3b8", "eyesColor": "#facc15" }
     },
     "bastion_gargoyle": {
       "id": "bastion_gargoyle",
       "nameKey": "monsterChasmGargoyle",
-      "defaultName": "Chasm Gargoyle",
-      "category": "aerial",
+      "defaultName": "Bastion Gargoyle",
+      "category": "gargoyle",
       "isDummy": false,
       "isAerial": true,
-      "dimensions": {
-        "width": 40,
-        "height": 40
-      },
-      "stats": {
-        "health": 50,
-        "maxHealth": 50,
-        "speed": 1.2,
-        "attackPower": 15,
-        "scoreReward": 450
-      },
-      "abilities": ["gargoyle_dive_strike"],
+      "dimensions": { "width": 66, "height": 64 },
+      "stats": { "health": 105, "maxHealth": 105, "speed": 2.2, "attackPower": 22, "scoreReward": 200, "defense": 8, "xpReward": 60 },
+      "abilities": ["gargoyle_dive", "owl_wind_gust"],
       "soulDrop": {
         "soulId": "soul_bastion_gargoyle",
-        "type": "bullet",
+        "type": "guardian",
         "dropRate": 0.15,
-        "grantedSkillId": "gargoyle_dive_strike",
-        "manaCost": 12,
-        "icon": "Wing",
-        "i18n": {
-          "nameKey": "soulBastionGargoyleName",
-          "descriptionKey": "soulBastionGargoyleDesc"
-        }
+        "grantedSkillId": "owl_wind_gust",
+        "manaCost": 16,
+        "icon": "Shield",
+        "i18n": { "nameKey": "soulBastionGargoyleName", "descriptionKey": "soulBastionGargoyleDesc" }
       },
-      "elementalResistances": {
-        "physical": 0.2,
-        "fire": -0.2,
-        "frost": 0.2,
-        "astral": 0.1,
-        "shadow": 0.3
-      },
+      "elementalResistances": { "physical": 0.8, "holy": 1.3, "lightning": 1.2 },
       "bestiary": {
         "bestiaryKey": "bestiaryBastionGargoyleDesc",
         "tacticsKey": "bestiaryBastionGargoyleTactics",
         "loreQuoteKey": "bestiaryBastionGargoyleLore",
-        "killThresholds": {
-          "basic": 1,
-          "tactics": 5,
-          "lore": 15
-        }
+        "killThresholds": { "basic": 1, "tactics": 3, "lore": 5 }
       },
-      "atlas": {
-        "presetId": "chasm_gargoyle",
-        "defaultAnimation": "fly",
-        "hitAnimation": "hit",
-        "deathAnimation": "death"
-      },
-      "proceduralFallback": {
-        "bodyColor": "#57534e",
-        "accentColor": "#ea580c",
-        "eyesColor": "#f97316"
-      }
+      "atlas": { "presetId": "clockwork_owl_gargoyle", "defaultAnimation": "fly", "attackAnimation": "dive", "hitAnimation": "hit", "deathAnimation": "death" },
+      "proceduralFallback": { "bodyColor": "#334155", "accentColor": "#cbd5e1", "eyesColor": "#f97316" }
     },
     "bastion_sentinel_boss": {
       "id": "bastion_sentinel_boss",
       "nameKey": "monsterCourtSentinel",
-      "defaultName": "Courtyard Sentinel",
-      "category": "elite",
+      "defaultName": "Bastion Sentinel Commander",
+      "category": "boss",
       "isDummy": false,
       "isAerial": false,
-      "dimensions": {
-        "width": 45,
-        "height": 60
-      },
-      "stats": {
-        "health": 100,
-        "maxHealth": 100,
-        "speed": 1,
-        "attackPower": 25,
-        "scoreReward": 800
-      },
-      "abilities": ["sentinel_aether_beam", "automaton_hammer_slam"],
+      "dimensions": { "width": 84, "height": 112 },
+      "stats": { "health": 280, "maxHealth": 280, "speed": 1.5, "attackPower": 38, "scoreReward": 650, "defense": 15, "xpReward": 200 },
+      "abilities": ["automaton_hammer_slam", "sentinel_aether_beam"],
       "soulDrop": {
         "soulId": "soul_bastion_sentinel_boss",
         "type": "guardian",
-        "dropRate": 0.35,
-        "grantedSkillId": "sentinel_aether_beam",
-        "manaCost": 20,
-        "icon": "Shield",
-        "i18n": {
-          "nameKey": "soulBastionSentinelBossName",
-          "descriptionKey": "soulBastionSentinelBossDesc"
-        }
+        "dropRate": 0.4,
+        "grantedSkillId": "automaton_hammer_slam",
+        "manaCost": 28,
+        "icon": "Hammer",
+        "i18n": { "nameKey": "soulBastionSentinelBossName", "descriptionKey": "soulBastionSentinelBossDesc" }
       },
-      "elementalResistances": {
-        "physical": 0.4,
-        "fire": 0.2,
-        "frost": -0.1,
-        "astral": 0.3,
-        "shadow": 0.2
-      },
+      "elementalResistances": { "physical": 0.75, "lightning": 1.4, "fire": 1.15 },
       "bestiary": {
         "bestiaryKey": "bestiaryBastionSentinelBossDesc",
         "tacticsKey": "bestiaryBastionSentinelBossTactics",
         "loreQuoteKey": "bestiaryBastionSentinelBossLore",
-        "killThresholds": {
-          "basic": 1,
-          "tactics": 3,
-          "lore": 10
-        }
+        "killThresholds": { "basic": 1, "tactics": 3, "lore": 5 }
       },
-      "atlas": {
-        "presetId": "court_sentinel",
-        "defaultAnimation": "idle",
-        "hitAnimation": "hit",
-        "deathAnimation": "death"
-      },
-      "proceduralFallback": {
-        "bodyColor": "#431407",
-        "accentColor": "#ea580c",
-        "eyesColor": "#ef4444"
-      }
+      "proceduralFallback": { "bodyColor": "#1e293b", "accentColor": "#f59e0b", "eyesColor": "#ef4444" }
     },
     "gear_mite": {
       "id": "gear_mite",
       "nameKey": "monsterGearMite",
       "defaultName": "Gear Mite",
-      "category": "ground_patrol",
+      "category": "clockwork",
       "isDummy": false,
       "isAerial": false,
-      "dimensions": {
-        "width": 26,
-        "height": 18
-      },
-      "stats": {
-        "health": 20,
-        "maxHealth": 20,
-        "speed": 1.6,
-        "attackPower": 6,
-        "scoreReward": 80
-      },
+      "dimensions": { "width": 36, "height": 28 },
+      "stats": { "health": 35, "maxHealth": 35, "speed": 3.1, "attackPower": 10, "scoreReward": 75, "defense": 2, "xpReward": 20 },
       "abilities": ["chasm_crawler_bite"],
       "soulDrop": {
         "soulId": "soul_gear_mite",
         "type": "bullet",
         "dropRate": 0.2,
         "grantedSkillId": "chasm_crawler_bite",
-        "manaCost": 6,
+        "manaCost": 8,
         "icon": "Cog",
-        "i18n": {
-          "nameKey": "soulGearMiteName",
-          "descriptionKey": "soulGearMiteDesc"
-        }
+        "i18n": { "nameKey": "soulGearMiteName", "descriptionKey": "soulGearMiteDesc" }
       },
-      "elementalResistances": {
-        "physical": 0.1,
-        "fire": -0.2,
-        "frost": 0,
-        "astral": 0,
-        "shadow": 0.1
-      },
+      "elementalResistances": { "lightning": 1.5, "physical": 1.0 },
       "bestiary": {
         "bestiaryKey": "bestiaryGearMiteDesc",
         "tacticsKey": "bestiaryGearMiteTactics",
         "loreQuoteKey": "bestiaryGearMiteLore",
-        "killThresholds": {
-          "basic": 1,
-          "tactics": 5,
-          "lore": 15
-        }
+        "killThresholds": { "basic": 1, "tactics": 3, "lore": 5 }
       },
-      "atlas": {
-        "presetId": "gear_mite",
-        "defaultAnimation": "idle",
-        "hitAnimation": "hit",
-        "deathAnimation": "death"
-      },
-      "proceduralFallback": {
-        "bodyColor": "#92400e",
-        "accentColor": "#d97706",
-        "eyesColor": "#fde68a"
-      }
+      "proceduralFallback": { "bodyColor": "#d97706", "accentColor": "#fef3c7" }
     },
     "thorn_creeper": {
       "id": "thorn_creeper",
       "nameKey": "monsterThornCreeper",
       "defaultName": "Thorn Creeper",
-      "category": "ground_patrol",
+      "category": "flora",
       "isDummy": false,
       "isAerial": false,
-      "dimensions": {
-        "width": 34,
-        "height": 44
-      },
-      "stats": {
-        "health": 50,
-        "maxHealth": 50,
-        "speed": 0,
-        "attackPower": 12,
-        "scoreReward": 150
-      },
-      "abilities": ["emerald_barrage"],
+      "dimensions": { "width": 48, "height": 56 },
+      "stats": { "health": 65, "maxHealth": 65, "speed": 0, "attackPower": 16, "scoreReward": 115, "defense": 4, "xpReward": 34 },
+      "abilities": ["chasm_crawler_bite"],
       "soulDrop": {
         "soulId": "soul_thorn_creeper",
-        "type": "enchant",
-        "dropRate": 0.15,
-        "grantedSkillId": "emerald_barrage",
-        "manaCost": 10,
-        "icon": "Sprout",
-        "i18n": {
-          "nameKey": "soulThornCreeperName",
-          "descriptionKey": "soulThornCreeperDesc"
-        }
+        "type": "bullet",
+        "dropRate": 0.18,
+        "grantedSkillId": "chasm_crawler_bite",
+        "manaCost": 12,
+        "icon": "Flower2",
+        "i18n": { "nameKey": "soulThornCreeperName", "descriptionKey": "soulThornCreeperDesc" }
       },
-      "elementalResistances": {
-        "physical": 0.2,
-        "fire": -0.5,
-        "frost": 0.1,
-        "astral": 0,
-        "shadow": 0.2
-      },
+      "elementalResistances": { "fire": 1.6, "frost": 1.2, "physical": 0.9 },
       "bestiary": {
         "bestiaryKey": "bestiaryThornCreeperDesc",
         "tacticsKey": "bestiaryThornCreeperTactics",
         "loreQuoteKey": "bestiaryThornCreeperLore",
-        "killThresholds": {
-          "basic": 1,
-          "tactics": 5,
-          "lore": 15
-        }
+        "killThresholds": { "basic": 1, "tactics": 3, "lore": 5 }
       },
-      "atlas": {
-        "presetId": "thorn_creeper",
-        "defaultAnimation": "idle",
-        "hitAnimation": "hit",
-        "deathAnimation": "death"
-      },
-      "proceduralFallback": {
-        "bodyColor": "#713f12",
-        "accentColor": "#f59e0b",
-        "eyesColor": "#fcd34d"
-      }
+      "proceduralFallback": { "bodyColor": "#713f12", "accentColor": "#f59e0b" }
     },
     "lantern_warden": {
       "id": "lantern_warden",
       "nameKey": "monsterLanternWarden",
       "defaultName": "Lantern Warden",
-      "category": "aerial",
+      "category": "clockwork",
       "isDummy": false,
       "isAerial": true,
-      "dimensions": {
-        "width": 30,
-        "height": 40
-      },
-      "stats": {
-        "health": 35,
-        "maxHealth": 35,
-        "speed": 0.6,
-        "attackPower": 10,
-        "scoreReward": 180
-      },
+      "dimensions": { "width": 44, "height": 58 },
+      "stats": { "health": 70, "maxHealth": 70, "speed": 1.4, "attackPower": 17, "scoreReward": 135, "defense": 4, "xpReward": 40 },
       "abilities": ["sentinel_aether_beam"],
       "soulDrop": {
         "soulId": "soul_lantern_warden",
         "type": "guardian",
-        "dropRate": 0.14,
+        "dropRate": 0.18,
         "grantedSkillId": "sentinel_aether_beam",
-        "manaCost": 12,
+        "manaCost": 14,
         "icon": "Flame",
-        "i18n": {
-          "nameKey": "soulLanternWardenName",
-          "descriptionKey": "soulLanternWardenDesc"
-        }
+        "i18n": { "nameKey": "soulLanternWardenName", "descriptionKey": "soulLanternWardenDesc" }
       },
-      "elementalResistances": {
-        "physical": 0,
-        "fire": 0.5,
-        "frost": -0.2,
-        "astral": 0.1,
-        "shadow": -0.3
-      },
+      "elementalResistances": { "fire": 0.5, "frost": 1.4, "shadow": 1.2 },
       "bestiary": {
         "bestiaryKey": "bestiaryLanternWardenDesc",
         "tacticsKey": "bestiaryLanternWardenTactics",
         "loreQuoteKey": "bestiaryLanternWardenLore",
-        "killThresholds": {
-          "basic": 1,
-          "tactics": 5,
-          "lore": 15
-        }
+        "killThresholds": { "basic": 1, "tactics": 3, "lore": 5 }
       },
-      "atlas": {
-        "presetId": "lantern_warden",
-        "defaultAnimation": "fly",
-        "hitAnimation": "hit",
-        "deathAnimation": "death"
-      },
-      "proceduralFallback": {
-        "bodyColor": "#a16207",
-        "accentColor": "#fbbf24",
-        "eyesColor": "#fb923c"
-      }
+      "proceduralFallback": { "bodyColor": "#b45309", "accentColor": "#fde047", "eyesColor": "#fef08a" }
     },
     "chrono_hound": {
       "id": "chrono_hound",
       "nameKey": "monsterChronoHound",
       "defaultName": "Chrono Hound",
-      "category": "ground_patrol",
+      "category": "clockwork",
       "isDummy": false,
       "isAerial": false,
-      "dimensions": {
-        "width": 48,
-        "height": 34
-      },
-      "stats": {
-        "health": 60,
-        "maxHealth": 60,
-        "speed": 1.8,
-        "attackPower": 14,
-        "scoreReward": 260
-      },
+      "dimensions": { "width": 58, "height": 42 },
+      "stats": { "health": 85, "maxHealth": 85, "speed": 3.4, "attackPower": 22, "scoreReward": 180, "defense": 5, "xpReward": 55 },
       "abilities": ["shadow_knight_slash"],
       "soulDrop": {
         "soulId": "soul_chrono_hound",
         "type": "bullet",
-        "dropRate": 0.12,
+        "dropRate": 0.16,
         "grantedSkillId": "shadow_knight_slash",
-        "manaCost": 12,
-        "icon": "Dog",
-        "i18n": {
-          "nameKey": "soulChronoHoundName",
-          "descriptionKey": "soulChronoHoundDesc"
-        }
+        "manaCost": 16,
+        "icon": "Clock",
+        "i18n": { "nameKey": "soulChronoHoundName", "descriptionKey": "soulChronoHoundDesc" }
       },
-      "elementalResistances": {
-        "physical": 0.1,
-        "fire": 0,
-        "frost": -0.2,
-        "astral": 0.2,
-        "shadow": 0.2
-      },
+      "elementalResistances": { "chrono": 0.5, "lightning": 1.35, "physical": 1.0 },
       "bestiary": {
         "bestiaryKey": "bestiaryChronoHoundDesc",
         "tacticsKey": "bestiaryChronoHoundTactics",
         "loreQuoteKey": "bestiaryChronoHoundLore",
-        "killThresholds": {
-          "basic": 1,
-          "tactics": 5,
-          "lore": 15
-        }
+        "killThresholds": { "basic": 1, "tactics": 3, "lore": 5 }
       },
-      "atlas": {
-        "presetId": "chrono_hound",
-        "defaultAnimation": "idle",
-        "hitAnimation": "hit",
-        "deathAnimation": "death"
-      },
-      "proceduralFallback": {
-        "bodyColor": "#78350f",
-        "accentColor": "#b45309",
-        "eyesColor": "#fb923c"
-      }
+      "proceduralFallback": { "bodyColor": "#92400e", "accentColor": "#38bdf8", "eyesColor": "#67e8f9" }
     }
   }
 }

@@ -1,471 +1,539 @@
 {
-  "version": "2.0",
+  "version": "1.0",
   "spells": {
     "solar_flare": {
       "id": "solar_flare",
-      "character": "valen",
       "magicDomain": "solar",
       "castType": "instant",
-      "nameKey": "spellSolarFlareName",
-      "descriptionKey": "spellSolarFlareDesc",
-      "restrictionKey": "restrictionValenStarter",
       "category": "offensive",
       "triggerType": "action",
+      "nameKey": "spellSolarFlareName",
+      "descriptionKey": "spellSolarFlareDesc",
       "manaCost": 12,
       "staminaCost": 0,
-      "cooldownFrames": 16,
+      "cooldownFrames": 24,
       "damage": 35,
-      "damageBreakdown": {
-        "primary": { "amount": 25, "type": "physical" },
-        "secondary": { "amount": 10, "type": "fire" }
-      },
-      "color": "#f59e0b",
+      "color": "#fbbf24",
       "iconName": "Sun",
-      "projectileSpeed": 9.5,
-      "projectileConfig": {
-        "trajectory": "straight",
-        "speed": 9.5,
-        "piercing": false
-      },
+      "character": "valen",
+      "ownerType": "hero",
+      "restrictionKey": "restrictionValenStarter",
       "tier": 1,
-      "minLevel": 1
+      "minLevel": 1,
+      "projectileSpeed": 9.5,
+      "damageBreakdown": {
+        "primary": { "type": "fire", "amount": 25, "scalingStat": "attack", "scalingRatio": 0.4 },
+        "secondary": { "type": "holy", "amount": 10 }
+      },
+      "projectileConfig": {
+        "speed": 9.5,
+        "trajectory": "straight",
+        "radius": 10,
+        "pierceCount": 0,
+        "maxRange": 520
+      },
+      "statusEffectsOnHit": [
+        { "type": "burn", "effectId": "solar_burn", "damageType": "fire", "damagePerTick": 4, "durationSeconds": 2 }
+      ]
     },
     "solar_fireball": {
       "id": "solar_fireball",
-      "character": "valen",
       "magicDomain": "solar",
       "castType": "chargeable",
-      "nameKey": "spellSolarFireballName",
-      "descriptionKey": "spellSolarFireballDesc",
-      "restrictionKey": "restrictionValenSolarFireball",
       "category": "offensive",
       "triggerType": "action",
-      "manaCost": 25,
-      "staminaCost": 5,
-      "cooldownFrames": 28,
-      "damage": 65,
-      "damageBreakdown": {
-        "primary": { "amount": 35, "type": "fire" },
-        "secondary": { "amount": 30, "type": "physical" }
-      },
+      "nameKey": "spellSolarFireballName",
+      "descriptionKey": "spellSolarFireballDesc",
+      "manaCost": 24,
+      "staminaCost": 0,
+      "cooldownFrames": 48,
+      "damage": 52,
       "color": "#f97316",
       "iconName": "Flame",
-      "projectileSpeed": 8.0,
-      "projectileConfig": {
-        "trajectory": "straight",
-        "speed": 8.0,
-        "piercing": false
-      },
-      "statusEffects": [
-        {
-          "type": "dot",
-          "effectId": "solar_scorch",
-          "damageType": "fire",
-          "damagePerTick": 6,
-          "durationSeconds": 2.5,
-          "intervalSeconds": 0.5
-        }
-      ],
+      "character": "valen",
+      "ownerType": "hero",
+      "restrictionKey": "restrictionValenSolarFireball",
       "tier": 2,
-      "minLevel": 2
+      "minLevel": 2,
+      "projectileSpeed": 9,
+      "damageBreakdown": {
+        "primary": { "type": "fire", "amount": 42, "scalingStat": "attack", "scalingRatio": 0.6 },
+        "secondary": { "type": "holy", "amount": 10 }
+      },
+      "projectileConfig": {
+        "speed": 9,
+        "trajectory": "arc",
+        "radius": 18,
+        "pierceCount": 0,
+        "maxRange": 480
+      },
+      "statusEffectsOnHit": [
+        { "type": "burn", "effectId": "solar_scorch", "damageType": "fire", "damagePerTick": 7, "durationSeconds": 3 }
+      ]
     },
     "radiant_strike": {
       "id": "radiant_strike",
-      "character": "valen",
       "magicDomain": "solar",
       "castType": "instant",
-      "nameKey": "spellRadiantStrikeName",
-      "descriptionKey": "spellRadiantStrikeDesc",
-      "restrictionKey": "restrictionValenRadiantStrike",
       "category": "offensive",
       "triggerType": "action",
+      "nameKey": "spellRadiantStrikeName",
+      "descriptionKey": "spellRadiantStrikeDesc",
       "manaCost": 35,
-      "staminaCost": 10,
-      "cooldownFrames": 45,
-      "damage": 90,
-      "damageBreakdown": {
-        "primary": { "amount": 55, "type": "physical" },
-        "secondary": { "amount": 35, "type": "fire" }
-      },
-      "color": "#fbbf24",
-      "iconName": "Swords",
-      "projectileSpeed": 11.0,
-      "projectileConfig": {
-        "trajectory": "straight",
-        "speed": 11.0,
-        "piercing": true
-      },
+      "staminaCost": 15,
+      "cooldownFrames": 75,
+      "damage": 78,
+      "color": "#fde047",
+      "iconName": "Sparkles",
+      "character": "valen",
+      "ownerType": "hero",
+      "restrictionKey": "restrictionValenRadiantStrike",
       "tier": 3,
-      "minLevel": 3
+      "minLevel": 3,
+      "projectileSpeed": 13,
+      "damageBreakdown": {
+        "primary": { "type": "holy", "amount": 50, "scalingStat": "attack", "scalingRatio": 0.8 },
+        "secondary": { "type": "fire", "amount": 28 }
+      },
+      "projectileConfig": {
+        "speed": 13,
+        "trajectory": "wave",
+        "radius": 22,
+        "pierceCount": 2,
+        "maxRange": 560
+      }
     },
     "shield_bash": {
       "id": "shield_bash",
-      "character": "valen",
       "magicDomain": "solar",
       "castType": "instant",
-      "nameKey": "spellShieldBashName",
-      "descriptionKey": "spellShieldBashDesc",
-      "restrictionKey": "restrictionValenStarterDef",
       "category": "defensive",
       "triggerType": "action",
-      "manaCost": 15,
-      "staminaCost": 0,
-      "cooldownFrames": 40,
-      "damage": 25,
-      "damageBreakdown": {
-        "primary": { "amount": 25, "type": "physical" }
-      },
-      "color": "#ea580c",
+      "nameKey": "spellShieldBashName",
+      "descriptionKey": "spellShieldBashDesc",
+      "manaCost": 10,
+      "staminaCost": 12,
+      "cooldownFrames": 50,
+      "damage": 18,
+      "color": "#f59e0b",
       "iconName": "Shield",
-      "shieldDurationFrames": 90,
+      "character": "valen",
+      "ownerType": "hero",
+      "restrictionKey": "restrictionValenStarterDef",
       "tier": 1,
-      "minLevel": 1
+      "minLevel": 1,
+      "shieldDurationFrames": 60,
+      "damageBreakdown": {
+        "primary": { "type": "physical", "amount": 18 }
+      }
     },
     "prismatic_shield": {
       "id": "prismatic_shield",
-      "character": "valen",
       "magicDomain": "solar",
       "castType": "aura",
-      "nameKey": "spellPrismaticShieldName",
-      "descriptionKey": "spellPrismaticShieldDesc",
-      "restrictionKey": "restrictionValenPrismaticShield",
       "category": "defensive",
       "triggerType": "action",
-      "manaCost": 30,
+      "nameKey": "spellPrismaticShieldName",
+      "descriptionKey": "spellPrismaticShieldDesc",
+      "manaCost": 22,
       "staminaCost": 0,
-      "cooldownFrames": 65,
+      "cooldownFrames": 180,
       "damage": 0,
-      "color": "#f59e0b",
-      "iconName": "Sparkles",
-      "shieldDurationFrames": 180,
+      "color": "#c084fc",
+      "iconName": "ShieldCheck",
+      "character": "valen",
+      "ownerType": "hero",
+      "restrictionKey": "restrictionValenPrismaticShield",
       "tier": 2,
-      "minLevel": 2
+      "minLevel": 2,
+      "shieldDurationFrames": 180,
+      "statusEffects": [
+        { "type": "invulnerable", "effectId": "prismatic_ward", "durationFrames": 180 }
+      ]
     },
     "sun_sentinel": {
       "id": "sun_sentinel",
-      "character": "valen",
       "magicDomain": "solar",
-      "castType": "sigil_trap",
-      "nameKey": "spellSunSentinelName",
-      "descriptionKey": "spellSunSentinelDesc",
-      "restrictionKey": "restrictionValenSunSentinel",
+      "castType": "aura",
       "category": "defensive",
       "triggerType": "automatic",
-      "manaCost": 5,
+      "nameKey": "spellSunSentinelName",
+      "descriptionKey": "spellSunSentinelDesc",
+      "manaCost": 8,
       "staminaCost": 0,
-      "cooldownFrames": 0,
-      "damage": 25,
-      "damageBreakdown": {
-        "primary": { "amount": 25, "type": "fire" }
-      },
-      "color": "#fef08a",
-      "iconName": "Crosshair",
-      "autoIntervalFrames": 140,
+      "cooldownFrames": 120,
+      "damage": 24,
+      "color": "#fb923c",
+      "iconName": "SunMedium",
+      "character": "valen",
+      "ownerType": "hero",
+      "restrictionKey": "restrictionValenSunSentinel",
       "tier": 3,
-      "minLevel": 3
+      "minLevel": 3,
+      "projectileSpeed": 11,
+      "autoIntervalFrames": 120,
+      "projectileConfig": {
+        "speed": 11,
+        "trajectory": "homing",
+        "radius": 9,
+        "maxRange": 420
+      }
     },
     "blade_infusion": {
       "id": "blade_infusion",
-      "character": "valen",
       "magicDomain": "solar",
       "castType": "aura",
+      "category": "passive",
+      "triggerType": "passive",
       "nameKey": "spellBladeInfusionName",
       "descriptionKey": "spellBladeInfusionDesc",
-      "restrictionKey": "restrictionValenBladeInfusion",
-      "category": "offensive",
-      "triggerType": "passive",
       "manaCost": 0,
       "staminaCost": 0,
       "cooldownFrames": 0,
       "damage": 15,
-      "damageBreakdown": {
-        "primary": { "amount": 15, "type": "fire" }
-      },
-      "color": "#e11d48",
-      "iconName": "Zap",
+      "color": "#fbbf24",
+      "iconName": "Sword",
+      "character": "valen",
+      "ownerType": "hero",
+      "restrictionKey": "restrictionValenBladeInfusion",
       "tier": 1,
       "minLevel": 1
     },
     "stamina_surge": {
       "id": "stamina_surge",
-      "character": "valen",
       "magicDomain": "solar",
       "castType": "aura",
+      "category": "passive",
+      "triggerType": "passive",
       "nameKey": "spellStaminaSurgeName",
       "descriptionKey": "spellStaminaSurgeDesc",
-      "restrictionKey": "restrictionValenStaminaSurge",
-      "category": "defensive",
-      "triggerType": "passive",
       "manaCost": 0,
       "staminaCost": 0,
       "cooldownFrames": 0,
       "damage": 0,
-      "color": "#10b981",
-      "iconName": "Activity",
+      "color": "#34d399",
+      "iconName": "Wind",
+      "character": "valen",
+      "ownerType": "hero",
+      "restrictionKey": "restrictionValenStaminaSurge",
       "tier": 2,
       "minLevel": 2
     },
     "vitality_surge": {
       "id": "vitality_surge",
-      "character": "valen",
       "magicDomain": "solar",
       "castType": "aura",
+      "category": "passive",
+      "triggerType": "passive",
       "nameKey": "spellVitalitySurgeName",
       "descriptionKey": "spellVitalitySurgeDesc",
-      "restrictionKey": "restrictionValenVitalitySurge",
-      "category": "defensive",
-      "triggerType": "passive",
       "manaCost": 0,
       "staminaCost": 0,
       "cooldownFrames": 0,
       "damage": 0,
       "color": "#ef4444",
       "iconName": "Heart",
+      "character": "valen",
+      "ownerType": "hero",
+      "restrictionKey": "restrictionValenVitalitySurge",
       "tier": 3,
       "minLevel": 3
     },
-
     "aether_bolt": {
       "id": "aether_bolt",
-      "character": "aurelia",
       "magicDomain": "astral",
       "castType": "instant",
-      "nameKey": "spellAetherBoltName",
-      "descriptionKey": "spellAetherBoltDesc",
-      "restrictionKey": "restrictionAureliaStarter",
       "category": "offensive",
       "triggerType": "action",
-      "manaCost": 15,
+      "nameKey": "spellAetherBoltName",
+      "descriptionKey": "spellAetherBoltDesc",
+      "manaCost": 10,
       "staminaCost": 0,
-      "cooldownFrames": 18,
-      "damage": 38,
-      "damageBreakdown": {
-        "primary": { "amount": 38, "type": "aether" }
-      },
+      "cooldownFrames": 20,
+      "damage": 26,
       "color": "#38bdf8",
       "iconName": "Zap",
-      "projectileSpeed": 9.0,
-      "projectileConfig": {
-        "trajectory": "straight",
-        "speed": 9.0,
-        "piercing": false
-      },
+      "character": "aurelia",
+      "ownerType": "hero",
+      "restrictionKey": "restrictionAureliaStarter",
       "tier": 1,
-      "minLevel": 1
+      "minLevel": 1,
+      "projectileSpeed": 13,
+      "damageBreakdown": {
+        "primary": { "type": "aether", "amount": 20 },
+        "secondary": { "type": "astral", "amount": 6 }
+      },
+      "projectileConfig": {
+        "speed": 13,
+        "trajectory": "linear",
+        "radius": 9,
+        "pierceCount": 0,
+        "maxRange": 560
+      }
     },
     "frost_nova": {
       "id": "frost_nova",
-      "character": "aurelia",
       "magicDomain": "frost",
       "castType": "chargeable",
-      "nameKey": "spellFrostNovaName",
-      "descriptionKey": "spellFrostNovaDesc",
-      "restrictionKey": "restrictionAureliaFrostNova",
       "category": "offensive",
       "triggerType": "action",
-      "manaCost": 28,
-      "staminaCost": 10,
-      "cooldownFrames": 45,
+      "nameKey": "spellFrostNovaName",
+      "descriptionKey": "spellFrostNovaDesc",
+      "manaCost": 26,
+      "staminaCost": 0,
+      "cooldownFrames": 55,
       "damage": 50,
-      "damageBreakdown": {
-        "primary": { "amount": 50, "type": "frost" }
-      },
-      "color": "#06b6d4",
+      "color": "#67e8f9",
       "iconName": "Snowflake",
-      "projectileSpeed": 5.5,
+      "character": "aurelia",
+      "ownerType": "hero",
+      "restrictionKey": "restrictionAureliaFrostNova",
+      "tier": 2,
+      "minLevel": 2,
+      "projectileSpeed": 10,
+      "damageBreakdown": {
+        "primary": { "type": "frost", "amount": 38 },
+        "secondary": { "type": "chrono", "amount": 12 }
+      },
       "projectileConfig": {
-        "trajectory": "wave",
-        "speed": 5.5,
-        "piercing": true
+        "speed": 10,
+        "trajectory": "nova_radial",
+        "radius": 14,
+        "maxRange": 340
       },
       "statusEffects": [
-        {
-          "type": "slow",
-          "effectId": "frost_chill",
-          "speedMultiplier": 0.65,
-          "durationSeconds": 3.0
-        }
+        { "type": "slow", "effectId": "chrono_chill", "damageType": "frost", "speedMultiplier": 0.5, "durationSeconds": 3 }
       ],
-      "tier": 2,
-      "minLevel": 2
+      "statusEffectsOnHit": [
+        { "type": "slow", "effectId": "chrono_chill", "damageType": "frost", "speedMultiplier": 0.5, "durationSeconds": 3 }
+      ]
     },
     "celestial_comet": {
       "id": "celestial_comet",
-      "character": "aurelia",
       "magicDomain": "astral",
-      "castType": "channeled",
-      "nameKey": "spellCelestialCometName",
-      "descriptionKey": "spellCelestialCometDesc",
-      "restrictionKey": "restrictionAureliaCelestialComet",
+      "castType": "chargeable",
       "category": "offensive",
       "triggerType": "action",
-      "manaCost": 40,
-      "staminaCost": 10,
-      "cooldownFrames": 55,
-      "damage": 95,
-      "damageBreakdown": {
-        "primary": { "amount": 75, "type": "aether" },
-        "secondary": { "amount": 20, "type": "fire" }
-      },
-      "color": "#c084fc",
-      "iconName": "Sparkles",
-      "projectileSpeed": 12.0,
-      "projectileConfig": {
-        "trajectory": "arc_gravity",
-        "speed": 12.0,
-        "piercing": true
-      },
-      "tier": 3,
-      "minLevel": 3
-    },
-    "aether_barrier": {
-      "id": "aether_barrier",
-      "character": "aurelia",
-      "magicDomain": "astral",
-      "castType": "aura",
-      "nameKey": "spellAetherBarrierName",
-      "descriptionKey": "spellAetherBarrierDesc",
-      "restrictionKey": "restrictionAureliaStarterDef",
-      "category": "defensive",
-      "triggerType": "action",
-      "manaCost": 20,
+      "nameKey": "spellCelestialCometName",
+      "descriptionKey": "spellCelestialCometDesc",
+      "manaCost": 38,
       "staminaCost": 0,
-      "cooldownFrames": 50,
-      "damage": 0,
+      "cooldownFrames": 80,
+      "damage": 85,
       "color": "#818cf8",
-      "iconName": "Shield",
-      "shieldDurationFrames": 120,
-      "tier": 1,
-      "minLevel": 1
-    },
-    "chrono_rewind": {
-      "id": "chrono_rewind",
+      "iconName": "Sparkles",
       "character": "aurelia",
-      "magicDomain": "chrono",
-      "castType": "instant",
-      "nameKey": "spellChronoRewindName",
-      "descriptionKey": "spellChronoRewindDesc",
-      "restrictionKey": "restrictionAureliaChronoRewind",
-      "category": "defensive",
-      "triggerType": "action",
-      "manaCost": 35,
-      "staminaCost": 0,
-      "cooldownFrames": 75,
-      "damage": 0,
-      "color": "#a855f7",
-      "iconName": "Hourglass",
-      "shieldDurationFrames": 200,
-      "tier": 2,
-      "minLevel": 2
-    },
-    "sentinel_spark": {
-      "id": "sentinel_spark",
-      "character": "aurelia",
-      "magicDomain": "astral",
-      "castType": "sigil_trap",
-      "nameKey": "spellSentinelSparkName",
-      "descriptionKey": "spellSentinelSparkDesc",
-      "restrictionKey": "restrictionAureliaSentinelSpark",
-      "category": "defensive",
-      "triggerType": "automatic",
-      "manaCost": 5,
-      "staminaCost": 0,
-      "cooldownFrames": 0,
-      "damage": 22,
+      "ownerType": "hero",
+      "restrictionKey": "restrictionAureliaCelestialComet",
+      "tier": 3,
+      "minLevel": 3,
+      "projectileSpeed": 11,
       "damageBreakdown": {
-        "primary": { "amount": 22, "type": "aether" }
+        "primary": { "type": "astral", "amount": 55 },
+        "secondary": { "type": "aether", "amount": 30 }
       },
-      "color": "#38bdf8",
-      "iconName": "Crosshair",
-      "autoIntervalFrames": 130,
-      "tier": 3,
-      "minLevel": 3
-    },
-    "mana_font": {
-      "id": "mana_font",
-      "character": "aurelia",
-      "magicDomain": "astral",
-      "castType": "aura",
-      "nameKey": "spellManaFontName",
-      "descriptionKey": "spellManaFontDesc",
-      "restrictionKey": "restrictionAureliaManaFont",
-      "category": "defensive",
-      "triggerType": "passive",
-      "manaCost": 0,
-      "staminaCost": 0,
-      "cooldownFrames": 0,
-      "damage": 0,
-      "color": "#60a5fa",
-      "iconName": "Droplets",
-      "tier": 1,
-      "minLevel": 1
-    },
-    "scholarly_focus": {
-      "id": "scholarly_focus",
-      "character": "aurelia",
-      "magicDomain": "astral",
-      "castType": "aura",
-      "nameKey": "spellScholarlyFocusName",
-      "descriptionKey": "spellScholarlyFocusDesc",
-      "restrictionKey": "restrictionAureliaScholarlyFocus",
-      "category": "defensive",
-      "triggerType": "passive",
-      "manaCost": 0,
-      "staminaCost": 0,
-      "cooldownFrames": 0,
-      "damage": 0,
-      "color": "#c084fc",
-      "iconName": "BookOpen",
-      "tier": 2,
-      "minLevel": 2
-    },
-    "astral_attunement": {
-      "id": "astral_attunement",
-      "character": "aurelia",
-      "magicDomain": "astral",
-      "castType": "aura",
-      "nameKey": "spellAstralAttunementName",
-      "descriptionKey": "spellAstralAttunementDesc",
-      "restrictionKey": "restrictionAureliaAstralAttunement",
-      "category": "defensive",
-      "triggerType": "passive",
-      "manaCost": 0,
-      "staminaCost": 0,
-      "cooldownFrames": 0,
-      "damage": 0,
-      "color": "#ec4899",
-      "iconName": "Heart",
-      "tier": 3,
-      "minLevel": 3
+      "projectileConfig": {
+        "speed": 11,
+        "trajectory": "arc_gravity",
+        "radius": 24,
+        "pierceCount": 1,
+        "maxRange": 620
+      }
     },
     "emerald_barrage": {
       "id": "emerald_barrage",
       "magicDomain": "astral",
       "castType": "instant",
-      "nameKey": "spellEmeraldBarrageName",
-      "descriptionKey": "spellEmeraldBarrageDesc",
       "category": "offensive",
       "triggerType": "action",
-      "manaCost": 35,
-      "staminaCost": 10,
-      "cooldownFrames": 40,
-      "damage": 80,
-      "damageBreakdown": {
-        "primary": { "amount": 80, "type": "aether" }
-      },
+      "nameKey": "spellEmeraldBarrageName",
+      "descriptionKey": "spellEmeraldBarrageDesc",
+      "manaCost": 20,
+      "staminaCost": 0,
+      "cooldownFrames": 42,
+      "damage": 38,
       "color": "#10b981",
-      "iconName": "Sparkles",
-      "projectileSpeed": 11.0,
-      "projectileConfig": {
-        "trajectory": "straight",
-        "speed": 11.0,
-        "piercing": false
+      "iconName": "Gem",
+      "character": "aurelia",
+      "ownerType": "hero",
+      "tier": 2,
+      "minLevel": 2,
+      "projectileSpeed": 12,
+      "damageBreakdown": {
+        "primary": { "type": "arcane", "amount": 38 }
       },
-      "tier": 3
+      "projectileConfig": {
+        "speed": 12,
+        "trajectory": "wave",
+        "radius": 10,
+        "pierceCount": 1,
+        "maxRange": 500
+      }
     },
-    "gargoyle_dive_strike": {
-      "id": "gargoyle_dive_strike",
-      "ownerType": "enemy",
+    "aether_barrier": {
+      "id": "aether_barrier",
+      "magicDomain": "astral",
+      "castType": "aura",
+      "category": "defensive",
+      "triggerType": "action",
+      "nameKey": "spellAetherBarrierName",
+      "descriptionKey": "spellAetherBarrierDesc",
+      "manaCost": 18,
+      "staminaCost": 0,
+      "cooldownFrames": 140,
+      "damage": 0,
+      "color": "#60a5fa",
+      "iconName": "Shield",
+      "character": "aurelia",
+      "ownerType": "hero",
+      "restrictionKey": "restrictionAureliaStarterDef",
+      "tier": 1,
+      "minLevel": 1,
+      "shieldDurationFrames": 120
+    },
+    "chrono_rewind": {
+      "id": "chrono_rewind",
+      "magicDomain": "chrono",
+      "castType": "instant",
+      "category": "defensive",
+      "triggerType": "action",
+      "nameKey": "spellChronoRewindName",
+      "descriptionKey": "spellChronoRewindDesc",
+      "manaCost": 28,
+      "staminaCost": 0,
+      "cooldownFrames": 210,
+      "damage": 0,
+      "color": "#a78bfa",
+      "iconName": "Clock",
+      "character": "aurelia",
+      "ownerType": "hero",
+      "restrictionKey": "restrictionAureliaChronoRewind",
+      "tier": 2,
+      "minLevel": 2,
+      "shieldDurationFrames": 150,
+      "healAmount": 20
+    },
+    "sentinel_spark": {
+      "id": "sentinel_spark",
+      "magicDomain": "astral",
+      "castType": "aura",
+      "category": "defensive",
+      "triggerType": "automatic",
+      "nameKey": "spellSentinelSparkName",
+      "descriptionKey": "spellSentinelSparkDesc",
+      "manaCost": 6,
+      "staminaCost": 0,
+      "cooldownFrames": 150,
+      "damage": 22,
+      "color": "#38bdf8",
+      "iconName": "Sparkle",
+      "character": "aurelia",
+      "ownerType": "hero",
+      "restrictionKey": "restrictionAureliaSentinelSpark",
+      "tier": 3,
+      "minLevel": 3,
+      "projectileSpeed": 12,
+      "autoIntervalFrames": 150,
+      "projectileConfig": {
+        "speed": 12,
+        "trajectory": "homing",
+        "radius": 8,
+        "maxRange": 460
+      }
+    },
+    "mana_font": {
+      "id": "mana_font",
+      "magicDomain": "astral",
+      "castType": "aura",
+      "category": "passive",
+      "triggerType": "passive",
+      "nameKey": "spellManaFontName",
+      "descriptionKey": "spellManaFontDesc",
+      "manaCost": 0,
+      "staminaCost": 0,
+      "cooldownFrames": 0,
+      "damage": 0,
+      "color": "#3b82f6",
+      "iconName": "Droplets",
+      "character": "aurelia",
+      "ownerType": "hero",
+      "restrictionKey": "restrictionAureliaManaFont",
+      "tier": 1,
+      "minLevel": 1
+    },
+    "scholarly_focus": {
+      "id": "scholarly_focus",
+      "magicDomain": "chrono",
+      "castType": "aura",
+      "category": "passive",
+      "triggerType": "passive",
+      "nameKey": "spellScholarlyFocusName",
+      "descriptionKey": "spellScholarlyFocusDesc",
+      "manaCost": 0,
+      "staminaCost": 0,
+      "cooldownFrames": 0,
+      "damage": 0,
+      "color": "#6366f1",
+      "iconName": "BookOpen",
+      "character": "aurelia",
+      "ownerType": "hero",
+      "restrictionKey": "restrictionAureliaScholarlyFocus",
+      "tier": 2,
+      "minLevel": 2
+    },
+    "astral_attunement": {
+      "id": "astral_attunement",
+      "magicDomain": "astral",
+      "castType": "aura",
+      "category": "passive",
+      "triggerType": "passive",
+      "nameKey": "spellAstralAttunementName",
+      "descriptionKey": "spellAstralAttunementDesc",
+      "manaCost": 0,
+      "staminaCost": 0,
+      "cooldownFrames": 0,
+      "damage": 0,
+      "color": "#c084fc",
+      "iconName": "Star",
+      "character": "aurelia",
+      "ownerType": "hero",
+      "restrictionKey": "restrictionAureliaAstralAttunement",
+      "tier": 3,
+      "minLevel": 3
+    },
+    "unison_supernova_nova": {
+      "id": "unison_supernova_nova",
+      "magicDomain": "solar",
+      "castType": "channeled",
+      "category": "offensive",
+      "triggerType": "action",
+      "nameKey": "skillUnisonSupernovaName",
+      "descriptionKey": "skillUnisonSupernovaDesc",
+      "manaCost": 50,
+      "staminaCost": 30,
+      "cooldownFrames": 360,
+      "damage": 220,
+      "color": "#f59e0b",
+      "iconName": "Sun",
+      "ownerType": "unison",
+      "requiredParticipants": ["valen", "aurelia"],
+      "tier": 3,
+      "minLevel": 3,
+      "projectileSpeed": 14,
+      "damageBreakdown": {
+        "primary": { "type": "fire", "amount": 120, "scalingStat": "attack", "scalingRatio": 1.0 },
+        "secondary": { "type": "astral", "amount": 100, "scalingStat": "mana", "scalingRatio": 0.5 }
+      },
+      "projectileConfig": {
+        "speed": 14,
+        "trajectory": "nova_radial",
+        "radius": 48,
+        "pierceCount": 5,
+        "maxRange": 720
+      }
+    },
+    "gargoyle_dive": {
+      "id": "gargoyle_dive",
       "magicDomain": "shadow",
       "castType": "instant",
       "category": "offensive",
@@ -475,38 +543,43 @@
       "manaCost": 0,
       "staminaCost": 0,
       "cooldownFrames": 90,
-      "damage": 22,
+      "damage": 18,
+      "color": "#94a3b8",
+      "iconName": "Feather",
+      "ownerType": "enemy",
       "damageBreakdown": {
-        "primary": { "amount": 22, "type": "physical" }
-      },
-      "color": "#7c3aed",
-      "iconName": "Wind",
-      "tier": 1
+        "primary": { "type": "physical", "amount": 18 }
+      }
     },
     "sentinel_aether_beam": {
       "id": "sentinel_aether_beam",
-      "ownerType": "enemy",
       "magicDomain": "astral",
-      "castType": "instant",
+      "castType": "channeled",
       "category": "offensive",
       "triggerType": "action",
       "nameKey": "skillSentinelAetherBeamName",
       "descriptionKey": "skillSentinelAetherBeamDesc",
-      "manaCost": 0,
+      "manaCost": 15,
       "staminaCost": 0,
       "cooldownFrames": 120,
-      "damage": 26,
-      "damageBreakdown": {
-        "primary": { "amount": 26, "type": "aether" }
-      },
+      "damage": 24,
       "color": "#38bdf8",
       "iconName": "Zap",
-      "tier": 2
+      "ownerType": "enemy",
+      "projectileSpeed": 10,
+      "damageBreakdown": {
+        "primary": { "type": "aether", "amount": 24 }
+      },
+      "projectileConfig": {
+        "speed": 10,
+        "trajectory": "straight",
+        "radius": 12,
+        "maxRange": 500
+      }
     },
     "automaton_hammer_slam": {
       "id": "automaton_hammer_slam",
-      "ownerType": "enemy",
-      "magicDomain": "solar",
+      "magicDomain": "chrono",
       "castType": "instant",
       "category": "offensive",
       "triggerType": "action",
@@ -514,18 +587,17 @@
       "descriptionKey": "skillAutomatonHammerSlamDesc",
       "manaCost": 0,
       "staminaCost": 0,
-      "cooldownFrames": 150,
-      "damage": 34,
-      "damageBreakdown": {
-        "primary": { "amount": 34, "type": "physical" }
-      },
-      "color": "#f59e0b",
+      "cooldownFrames": 130,
+      "damage": 30,
+      "color": "#d97706",
       "iconName": "Hammer",
-      "tier": 2
+      "ownerType": "enemy",
+      "damageBreakdown": {
+        "primary": { "type": "physical", "amount": 30 }
+      }
     },
     "chasm_crawler_bite": {
       "id": "chasm_crawler_bite",
-      "ownerType": "enemy",
       "magicDomain": "shadow",
       "castType": "instant",
       "category": "offensive",
@@ -534,79 +606,89 @@
       "descriptionKey": "skillChasmCrawlerBiteDesc",
       "manaCost": 0,
       "staminaCost": 0,
-      "cooldownFrames": 80,
-      "damage": 18,
+      "cooldownFrames": 70,
+      "damage": 16,
+      "color": "#65a30d",
+      "iconName": "Bug",
+      "ownerType": "enemy",
       "damageBreakdown": {
-        "primary": { "amount": 18, "type": "physical" }
-      },
-      "color": "#ea580c",
-      "iconName": "Scissors",
-      "tier": 1
+        "primary": { "type": "physical", "amount": 16 }
+      }
     },
     "shadow_knight_slash": {
       "id": "shadow_knight_slash",
-      "ownerType": "boss",
       "magicDomain": "shadow",
       "castType": "instant",
       "category": "offensive",
       "triggerType": "action",
       "nameKey": "skillShadowKnightSlashName",
       "descriptionKey": "skillShadowKnightSlashDesc",
-      "manaCost": 0,
+      "manaCost": 10,
       "staminaCost": 0,
-      "cooldownFrames": 100,
-      "damage": 42,
+      "cooldownFrames": 85,
+      "damage": 34,
+      "color": "#7e22ce",
+      "iconName": "Sword",
+      "ownerType": "boss",
       "damageBreakdown": {
-        "primary": { "amount": 25, "type": "physical" },
-        "secondary": { "amount": 17, "type": "shadow" }
-      },
-      "color": "#475569",
-      "iconName": "Swords",
-      "tier": 3
+        "primary": { "type": "physical", "amount": 22 },
+        "secondary": { "type": "shadow", "amount": 12 }
+      }
     },
     "aether_archon_wrath": {
       "id": "aether_archon_wrath",
-      "ownerType": "boss",
       "magicDomain": "astral",
-      "castType": "instant",
+      "castType": "channeled",
       "category": "offensive",
       "triggerType": "action",
       "nameKey": "skillAetherArchonWrathName",
       "descriptionKey": "skillAetherArchonWrathDesc",
-      "manaCost": 0,
+      "manaCost": 25,
       "staminaCost": 0,
-      "cooldownFrames": 180,
-      "damage": 50,
-      "damageBreakdown": {
-        "primary": { "amount": 50, "type": "astral" }
-      },
+      "cooldownFrames": 160,
+      "damage": 42,
       "color": "#818cf8",
-      "iconName": "Sun",
-      "tier": 3
+      "iconName": "Sparkles",
+      "ownerType": "boss",
+      "projectileSpeed": 9,
+      "damageBreakdown": {
+        "primary": { "type": "astral", "amount": 42 }
+      },
+      "projectileConfig": {
+        "speed": 9,
+        "trajectory": "nova_radial",
+        "radius": 18,
+        "maxRange": 540
+      }
     },
     "owl_wind_gust": {
       "id": "owl_wind_gust",
-      "ownerType": "enemy",
-      "magicDomain": "frost",
+      "magicDomain": "chrono",
       "castType": "instant",
-      "category": "defensive",
+      "category": "offensive",
       "triggerType": "action",
       "nameKey": "skillOwlWindGustName",
       "descriptionKey": "skillOwlWindGustDesc",
       "manaCost": 0,
       "staminaCost": 0,
-      "cooldownFrames": 90,
+      "cooldownFrames": 100,
       "damage": 14,
-      "damageBreakdown": {
-        "primary": { "amount": 14, "type": "frost" }
-      },
-      "color": "#38bdf8",
+      "color": "#cbd5e1",
       "iconName": "Wind",
-      "tier": 1
+      "ownerType": "enemy",
+      "projectileSpeed": 11,
+      "damageBreakdown": {
+        "primary": { "type": "physical", "amount": 14 }
+      },
+      "projectileConfig": {
+        "speed": 11,
+        "trajectory": "wave",
+        "radius": 14,
+        "maxRange": 380
+      }
     },
     "dummy_wobble": {
       "id": "dummy_wobble",
-      "ownerType": "enemy",
       "magicDomain": "solar",
       "castType": "aura",
       "category": "defensive",
@@ -617,31 +699,9 @@
       "staminaCost": 0,
       "cooldownFrames": 0,
       "damage": 0,
-      "color": "#a16207",
+      "color": "#b45309",
       "iconName": "Shield",
-      "tier": 1
-    },
-    "unison_supernova_nova": {
-      "id": "unison_supernova_nova",
-      "ownerType": "unison",
-      "requiredParticipants": ["valen", "aurelia"],
-      "magicDomain": "solar",
-      "castType": "instant",
-      "category": "offensive",
-      "triggerType": "action",
-      "nameKey": "skillUnisonSupernovaName",
-      "descriptionKey": "skillUnisonSupernovaDesc",
-      "manaCost": 50,
-      "staminaCost": 40,
-      "cooldownFrames": 600,
-      "damage": 220,
-      "damageBreakdown": {
-        "primary": { "amount": 120, "type": "fire" },
-        "secondary": { "amount": 100, "type": "aether" }
-      },
-      "color": "#f59e0b",
-      "iconName": "Sparkles",
-      "tier": 4
+      "ownerType": "enemy"
     }
   }
 }

@@ -25,7 +25,7 @@
     "nameKey": "itemFrostRapierName",
     "descriptionKey": "itemFrostRapierDesc",
     "type": "weapon",
-    "icon": "Zap",
+    "icon": "Sword",
     "rarity": "rare",
     "damageType": "frost",
     "attackBonus": 22,
@@ -46,7 +46,7 @@
     "nameKey": "itemAetherStaffName",
     "descriptionKey": "itemAetherStaffDesc",
     "type": "weapon",
-    "icon": "Wand",
+    "icon": "Wand2",
     "rarity": "rare",
     "damageType": "aether",
     "attackBonus": 10,
@@ -110,10 +110,10 @@
     "descriptionKey": "itemCrimsonCoatDesc",
     "type": "armor",
     "icon": "Shirt",
-    "rarity": "rare",
-    "defenseBonus": 18,
-    "maxHpBonus": 40,
-    "staminaRegenBonus": 0.1
+    "rarity": "uncommon",
+    "defenseBonus": 14,
+    "maxHpBonus": 30,
+    "maxStaminaBonus": 10
   },
   "scholar_robe": {
     "id": "scholar_robe",
@@ -121,7 +121,18 @@
     "descriptionKey": "itemScholarRobeDesc",
     "type": "armor",
     "icon": "Shirt",
-    "rarity": "uncommon",
+    "rarity": "rare",
+    "defenseBonus": 8,
+    "maxManaBonus": 50,
+    "manaRegenBonus": 0.25
+  },
+  "aether_robe": {
+    "id": "aether_robe",
+    "nameKey": "itemAetherRobeName",
+    "descriptionKey": "itemAetherRobeDesc",
+    "type": "armor",
+    "icon": "Sparkles",
+    "rarity": "legendary",
     "defenseBonus": 8,
     "maxManaBonus": 50,
     "manaRegenBonus": 0.25
@@ -131,19 +142,18 @@
     "nameKey": "itemAmberAmuletName",
     "descriptionKey": "itemAmberAmuletDesc",
     "type": "amulet",
-    "icon": "Sparkles",
+    "icon": "Gem",
     "rarity": "uncommon",
-    "attackBonus": 5,
-    "defenseBonus": 5,
-    "maxHpBonus": 15
+    "maxHpBonus": 20,
+    "maxManaBonus": 20
   },
   "aether_pendant": {
     "id": "aether_pendant",
     "nameKey": "itemAetherPendantName",
     "descriptionKey": "itemAetherPendantDesc",
     "type": "amulet",
-    "icon": "Sparkles",
-    "rarity": "rare",
+    "icon": "Star",
+    "rarity": "legendary",
     "maxManaBonus": 40,
     "manaRegenBonus": 0.2
   },
@@ -153,7 +163,7 @@
     "descriptionKey": "itemGarnetRingDesc",
     "type": "ring",
     "icon": "CircleDot",
-    "rarity": "common",
+    "rarity": "uncommon",
     "attackBonus": 8
   },
   "swift_ring": {
@@ -161,24 +171,35 @@
     "nameKey": "itemSwiftRingName",
     "descriptionKey": "itemSwiftRingDesc",
     "type": "ring",
-    "icon": "CircleDot",
-    "rarity": "uncommon",
+    "icon": "Wind",
+    "rarity": "rare",
     "speedBonus": 0.5,
     "maxStaminaBonus": 20
+  },
+  "chrono_ring": {
+    "id": "chrono_ring",
+    "nameKey": "itemChronoRingName",
+    "descriptionKey": "itemChronoRingDesc",
+    "type": "ring",
+    "icon": "Clock",
+    "rarity": "legendary",
+    "staminaRegenBonus": 0.2,
+    "manaRegenBonus": 0.1
   },
   "potion_health": {
     "id": "potion_health",
     "nameKey": "itemPotionHealthName",
     "descriptionKey": "itemPotionHealthDesc",
     "type": "potion",
-    "icon": "Heart",
+    "icon": "FlaskConical",
     "rarity": "common",
     "healHp": 45,
+    "count": 2,
     "overTimeEffects": [
       {
         "type": "hot",
         "effectId": "health_regen",
-        "durationSeconds": 4,
+        "durationSeconds": 5,
         "tickRateSeconds": 1,
         "healPerTick": 5
       }
@@ -189,14 +210,15 @@
     "nameKey": "itemPotionManaName",
     "descriptionKey": "itemPotionManaDesc",
     "type": "potion",
-    "icon": "Zap",
+    "icon": "FlaskRound",
     "rarity": "common",
     "healMana": 40,
+    "count": 2,
     "overTimeEffects": [
       {
         "type": "hot",
         "effectId": "mana_regen",
-        "durationSeconds": 4,
+        "durationSeconds": 5,
         "tickRateSeconds": 1,
         "healPerTick": 4
       }
@@ -207,11 +229,12 @@
     "nameKey": "itemPotionElixirName",
     "descriptionKey": "itemPotionElixirDesc",
     "type": "potion",
-    "icon": "Flame",
-    "rarity": "rare",
+    "icon": "Sparkles",
+    "rarity": "legendary",
     "healHp": 50,
     "healMana": 50,
     "healStamina": 50,
+    "count": 2,
     "overTimeEffects": [
       {
         "type": "hot",

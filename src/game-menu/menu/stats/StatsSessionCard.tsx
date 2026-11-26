@@ -1,122 +1,60 @@
 import React from "react";
-import { Clock, Skull, Swords, FlaskConical, BarChart3, RotateCcw, HardDrive } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Button, Badge, Paragraph, Text } from "@ui";
+import { Clock, Skull, Swords, FlaskConical, Cog } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent, MetricTile } from "@ui";
 import { useI18n } from "@context/I18nContext";
-import type { SessionSummaryVM } from "./stats.mapper";
+import type { SessionSummaryVM } from "./types";
 import { cn } from "@lib/utils";
 
 export interface StatsSessionCardProps {
   readonly summary: SessionSummaryVM;
-  readonly resetConfirm: boolean;
-  readonly onRequestReset: () => void;
-  readonly onConfirmReset: () => void;
-  readonly onCancelReset: () => void;
   readonly className?: string;
 }
 
-export const StatsSessionCard = ({
+export const StatsSessionCard: React.FC<StatsSessionCardProps> = ({
   summary,
-  resetConfirm,
-  onRequestReset,
-  onConfirmReset,
-  onCancelReset,
   className,
-}: StatsSessionCardProps): React.ReactElement => {
+}) => {
   const { t } = useI18n();
 
   return (
-    <Card variant="subtle" className={cn("border-amber-500/40 bg-[#1c0c07]/90", className)}>
+    <Card variant="subtle" className={cn(className)}>
       <CardHeader>
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          <CardTitle icon={<BarChart3 className="w-5 h-5 text-amber-400" />}>
-            {t("gameStatsTitle")}
-          </CardTitle>
-          <div className="flex items-center gap-2">
-            <Badge variant="amber" className="text-[10px] flex items-center gap-1">
-              <HardDrive size={10} className="text-amber-400" />
-              localStorage
-            </Badge>
-            {!resetConfirm ? (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onRequestReset}
-                icon={<RotateCcw size={12} />}
-                className="text-xs h-7 px-2.5 border-stone-700 text-stone-300 hover:text-red-300 hover:border-red-700"
-              >
-                {t("resetStatsBtn")}
-              </Button>
-            ) : (
-              <div className="flex items-center gap-1.5">
-                <Button
-                  variant="danger"
-                  size="sm"
-                  onClick={onConfirmReset}
-                  icon={<RotateCcw size={12} />}
-                  className="text-xs h-7 px-2.5"
-                >
-                  {t("resetStatsBtn")}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={onCancelReset}
-                  className="text-xs h-7 px-2"
-                >
-                  ✕
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
+        <CardTitle icon={<Clock className="w-4 h-4 text-amber-400" />}>
+          {t("gameStatsTitle")}
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <Paragraph size="xs" className="text-[#fed7aa] mb-3 leading-relaxed">
-          {t("gameStatsSubtitle")}
-        </Paragraph>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-          <div className="bg-[#140602]/90 border border-amber-500/30 rounded-xl p-2.5 flex flex-col">
-            <span className="text-[11px] text-stone-400 flex items-center gap-1">
-              <Clock size={12} className="text-amber-400" />
-              {t("playTime")}
-            </span>
-            <Text family="mono" weight="bold" size="sm" className="text-amber-200 mt-1">
-              {summary.formattedPlayTime}
-            </Text>
-          </div>
-
-          <div className="bg-[#140602]/90 border border-amber-500/30 rounded-xl p-2.5 flex flex-col">
-            <span className="text-[11px] text-stone-400 flex items-center gap-1">
-              <Skull size={12} className="text-red-400" />
-              {t("totalKills")}
-            </span>
-            <Text family="mono" weight="bold" size="sm" className="text-red-300 mt-1">
-              {summary.totalKills}
-            </Text>
-          </div>
-
-          <div className="bg-[#140602]/90 border border-amber-500/30 rounded-xl p-2.5 flex flex-col">
-            <span className="text-[11px] text-stone-400 flex items-center gap-1">
-              <Swords size={12} className="text-amber-400" />
-              {t("damageDealt")}
-            </span>
-            <Text family="mono" weight="bold" size="sm" className="text-amber-300 mt-1">
-              {summary.totalDamageDealt}
-            </Text>
-          </div>
-
-          <div className="bg-[#140602]/90 border border-amber-500/30 rounded-xl p-2.5 flex flex-col">
-            <span className="text-[11px] text-stone-400 flex items-center gap-1">
-              <FlaskConical size={12} className="text-cyan-400" />
-              {t("potionsConsumed")}
-            </span>
-            <Text family="mono" weight="bold" size="sm" className="text-cyan-300 mt-1">
-              {summary.totalPotionsConsumed}
-            </Text>
-          </div>
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+          <MetricTile
+            label={t("playTime")}
+            value={summary.formattedPlayTime}
+            icon={<Clock size={14} className="text-amber-400" />}
+          />
+          <MetricTile
+            label={t("totalKills")}
+            value={String(summary.totalKills)}
+            icon={<Skull size={14} className="text-red-400" />}
+          />
+          <MetricTile
+            label={t("damageDealt")}
+            value={String(Math.round(summary.totalDamageDealt))}
+            icon={<Swords size={14} className="text-orange-400" />}
+          />
+          <MetricTile
+            label={t("potionsConsumed")}
+            value={String(summary.totalPotionsConsumed)}
+            icon={<FlaskConical size={14} className="text-emerald-400" />}
+          />
+          <MetricTile
+            label={t("leversActivatedCount")}
+            value={String(summary.leversPulled)}
+            icon={<Cog size={14} className="text-cyan-400" />}
+          />
         </div>
       </CardContent>
     </Card>
   );
 };
+
+StatsSessionCard.displayName = "StatsSessionCard";
+export default StatsSessionCard;

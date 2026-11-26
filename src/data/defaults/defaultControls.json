@@ -1,4 +1,5 @@
 {
+  "stickDeadzone": 0.25,
   "keyboard": {
     "player1": {
       "left": ["KeyA", "a"],
@@ -19,14 +20,14 @@
       "right": ["ArrowRight"],
       "up": ["ArrowUp"],
       "down": ["ArrowDown"],
-      "jump": ["Numpad0", "Slash", "/"],
-      "action1": ["Numpad1", "KeyN", "n", "Comma", ","],
-      "action2": ["Numpad2", "KeyM", "m", "Period", "."],
-      "magic1": ["Numpad4", "BracketLeft", "["],
-      "magic2": ["Numpad5", "BracketRight", "]"],
-      "potion1": ["Numpad7", "Digit8", "8"],
-      "potion2": ["Numpad8", "Digit9", "9"],
-      "potion3": ["Numpad9", "Digit0", "0"]
+      "jump": ["Numpad0", "Enter"],
+      "action1": ["Numpad1"],
+      "action2": ["Numpad3"],
+      "magic1": ["Numpad4"],
+      "magic2": ["Numpad5"],
+      "potion1": ["Numpad7"],
+      "potion2": ["Numpad8"],
+      "potion3": ["Numpad9"]
     }
   },
   "gamepad": {
@@ -50,6 +51,5 @@
       "potion2": 6,
       "potion3": 7
     }
-  },
-  "stickDeadzone": 0.25
+  }
 }

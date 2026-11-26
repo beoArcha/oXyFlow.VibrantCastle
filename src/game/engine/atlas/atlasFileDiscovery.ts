@@ -5,10 +5,10 @@ import type { AtlasFileMap } from "./atlasTypes";
 export const REGISTERED_STRUCTURE_IDS: readonly string[] = ["aether_gate", "chrono_lever", "grand_portcullis", "hazard_thorns"];
 
 /**
- * Only grid-clean sheets are bundled: repacked PNG (`*_packed_high.png`) and compiled SVG tiers.
- * Original AI sheets (`*_high.png`) stay on disk as repack inputs and are never shipped.
+ * Discover packed PNG sheets (`*_packed_high.png`), canonical high PNG sheets (`*_high.png`),
+ * and compiled SVG tiers. `buildAtlasCatalog` automatically prefers packed sheets when present.
  */
-const BUNDLED_IMAGE_PATTERN = /(_packed_high\.png|\.svg)$/;
+const BUNDLED_IMAGE_PATTERN = /(_packed_high\.png|_high\.png|\.svg)$/;
 
 interface FsLike {
   readdirSync(path: string): string[];
@@ -24,12 +24,12 @@ interface FsLike {
 function readViteGlobs(): AtlasFileMap | null {
   try {
     const images = {
-      ...import.meta.glob<string>("/src/assets/enemies/*/*{_packed_high.png,.svg}", {
+      ...import.meta.glob<string>("/src/assets/enemies/*/*{_packed_high.png,_high.png,.svg}", {
         eager: true,
         query: "?url",
         import: "default",
       }),
-      ...import.meta.glob<string>("/src/assets/structures/*/*{_packed_high.png,.svg}", {
+      ...import.meta.glob<string>("/src/assets/structures/*/*{_packed_high.png,_high.png,.svg}", {
         eager: true,
         query: "?url",
         import: "default",

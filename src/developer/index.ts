@@ -1,8 +1,9 @@
-export { DeveloperModal } from "./DeveloperModal";
-export { DeveloperTab } from "./DeveloperTab";
-export { DeveloperTabLayout } from "./DeveloperTabLayout";
-export { TesterSubTab } from "./subtabs/TesterSubTab";
-export { DebugSubTab } from "./subtabs/DebugSubTab";
-export { LogsSubTab } from "./subtabs/LogsSubTab";
-export { AtlasMetaSubTab } from "./subtabs/AtlasMetaSubTab";
-export type { DeveloperSubTabId } from "./DeveloperTab";
+export { DeveloperSuite, type DeveloperSuiteProps } from "./DeveloperSuite";
+export {
+  DevToolId,
+  DEV_TOOL_REGISTRY,
+  getDevToolDefinition,
+  type DevToolDefinition,
+  type DevToolRenderContext,
+} from "./registry/devToolRegistry";
+export { ATLAS_PRESETS, type AtlasAssetPreset, type AtlasPresetCategory } from "./subtabs/atlas/assetPresets";

@@ -1,194 +1,46 @@
-import React, { useRef, useEffect, useState } from "react";
-import { User } from "lucide-react";
+import React from "react";
+import { CHARACTER_MANIFESTS } from "@game/engine/characterManifests";
 import { cn } from "@lib/utils";
-import { useCharacterPortrait } from "./hooks/useCharacterPortrait";
-import {
-  CharacterPortraitCrop,
-  CharacterPortraitSize,
-  CharacterPortraitVariant,
-} from "./types";
 
-export type { CharacterPortraitCrop, CharacterPortraitSize, CharacterPortraitVariant };
+export type CharacterPortraitSize = "xs" | "sm" | "md" | "lg";
 
 export interface CharacterPortraitProps {
-  /** Optional explicit image source URL (primitive mode) */
-  readonly src?: string;
-  /** Optional explicit cropping sub-rectangle (primitive mode) */
-  readonly crop?: CharacterPortraitCrop;
-  /** Optional explicit alt text */
-  readonly alt?: string;
-  /** Optional character ID; if omitted, resolved from CharacterContext */
-  readonly characterId?: string;
-  /** Optional mood expression (e.g. 'main', 'neutral', 'serious', 'smile', etc.); if omitted, resolved from CharacterContext */
-  readonly mood?: string;
-  /** Semantic portrait dimension preset */
+  readonly characterId: string;
   readonly size?: CharacterPortraitSize;
-  /** Visual presentation style frame */
-  readonly variant?: CharacterPortraitVariant;
+  readonly alt?: string;
   readonly className?: string;
-  readonly children?: React.ReactNode;
 }
 
 const sizeClasses: Record<CharacterPortraitSize, string> = {
-  xs: "w-8 h-8",
-  sm: "w-12 h-12",
-  md: "w-16 h-16",
-  lg: "w-24 h-24",
-  xl: "w-32 h-32",
-  fill: "w-full h-full",
-};
-
-const variantClasses: Record<CharacterPortraitVariant, string> = {
-  raw: "",
-  framed: "rounded-lg border border-[#8d4325] bg-[#140602] shadow-md shadow-black/50",
-  circle: "rounded-full border-2 border-amber-500/60 bg-[#140602] shadow-md shadow-black/50",
+  xs: "w-8 h-8 rounded-md",
+  sm: "w-10 h-10 rounded-lg",
+  md: "w-14 h-14 rounded-xl",
+  lg: "w-20 h-20 rounded-xl",
 };
 
 /**
- * Generic Character Portrait Presentation Component
+ * Renders the canonical portrait artwork for a playable character from CHARACTER_MANIFESTS.
  */
-export const CharacterPortrait = React.memo(
-  React.forwardRef<HTMLDivElement, CharacterPortraitProps>(
-    (
-      {
-        src: explicitSrc,
-        crop: explicitCrop,
-        alt: explicitAlt,
-        characterId,
-        mood,
-        size = "fill",
-        variant = "raw",
-        className = "",
-        children,
-      },
-      ref
-    ) => {
-      // If not provided explicitly as a pure primitive, resolve data from context/engine hook
-      const contextData = useCharacterPortrait(characterId, mood);
+export const CharacterPortrait: React.FC<CharacterPortraitProps> = React.memo(
+  ({ characterId, size, alt, className }) => {
+    const manifest =
+      CHARACTER_MANIFESTS[characterId] || CHARACTER_MANIFESTS.valen;
+    const src = manifest?.portraitThumbUrl || manifest?.portraitUrl || "";
 
-      const effectiveSrc = explicitSrc !== undefined ? explicitSrc : contextData.src;
-      const effectiveCrop = explicitCrop !== undefined ? explicitCrop : contextData.crop;
-      const effectiveAlt = explicitAlt !== undefined ? explicitAlt : contextData.alt;
-
-      const [hasError, setHasError] = useState(false);
-      const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-      // Reset error state when source or crop changes
-      useEffect(() => {
-        setHasError(false);
-      }, [effectiveSrc, effectiveCrop]);
-
-      // Pure presentation rendering for cropped portrait atlas
-      useEffect(() => {
-        if (!effectiveCrop || !effectiveSrc || hasError) return;
-
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) return;
-
-        let isCancelled = false;
-        const img = new Image();
-        img.crossOrigin = "anonymous";
-
-        img.onload = () => {
-          if (isCancelled) return;
-          const dpr = typeof window !== "undefined" ? Math.min(window.devicePixelRatio || 1, 2) : 1;
-          const targetW = canvas.clientWidth || 256;
-          const targetH = canvas.clientHeight || 256;
-
-          canvas.width = Math.round(targetW * dpr);
-          canvas.height = Math.round(targetH * dpr);
-
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          ctx.imageSmoothingEnabled = true;
-          ctx.imageSmoothingQuality = "high";
-
-          ctx.drawImage(
-            img,
-            effectiveCrop.x,
-            effectiveCrop.y,
-            effectiveCrop.width,
-            effectiveCrop.height,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-          );
-        };
-
-        img.onerror = () => {
-          if (isCancelled) return;
-          setHasError(true);
-        };
-
-        img.src = effectiveSrc;
-
-        return () => {
-          isCancelled = true;
-          img.onload = null;
-          img.onerror = null;
-        };
-      }, [effectiveSrc, effectiveCrop, hasError]);
-
-      const containerClasses = cn(
-        "relative overflow-hidden",
-        sizeClasses[size],
-        variantClasses[variant],
-        className
-      );
-
-      // Fallback state if image load fails or no source provided
-      if (hasError || (!effectiveSrc && !children)) {
-        return (
-          <div
-            ref={ref}
-            className={cn(
-              containerClasses,
-              "flex items-center justify-center bg-stone-950/80 border border-stone-800/80 text-stone-500 select-none"
-            )}
-            role="img"
-            aria-label={effectiveAlt || "Portrait unavailable"}
-          >
-            <User size={size === "xs" || size === "sm" ? 14 : 24} className="opacity-40 text-stone-400" />
-            {children}
-          </div>
-        );
-      }
-
-      if (!effectiveCrop) {
-        // Standard full portrait rendering (*_main.png)
-        return (
-          <div ref={ref} className={containerClasses}>
-            <img
-              src={effectiveSrc}
-              alt={effectiveAlt}
-              className="w-full h-full object-cover object-top select-none"
-              loading="eager"
-              decoding="async"
-              onError={() => setHasError(true)}
-            />
-            {children}
-          </div>
-        );
-      }
-
-      // Cropped mood expression rendering (*_portraits.png)
-      return (
-        <div ref={ref} className={containerClasses}>
-          <canvas
-            ref={canvasRef}
-            className="w-full h-full object-cover block"
-            role="img"
-            aria-label={effectiveAlt}
-          />
-          {children}
-        </div>
-      );
-    }
-  )
+    return (
+      <img
+        src={src}
+        alt={alt ?? manifest?.name ?? characterId}
+        className={cn(
+          "object-cover object-top select-none shrink-0",
+          size ? sizeClasses[size] : "w-full h-full",
+          className
+        )}
+        draggable={false}
+      />
+    );
+  }
 );
 
 CharacterPortrait.displayName = "CharacterPortrait";
-
 export default CharacterPortrait;

@@ -1,51 +1,78 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
+import { ModalId, type ModalType } from "@game-menu/modal/modalRegistry";
 
-export type ActiveModal = "none" | "menu" | "help" | "inventory" | "skillTree" | "creation";
+export type ActiveModalState = ModalType | ModalId;
 
-export interface UseModalManagerResult {
-  activeModal: ActiveModal;
-  isMenuOpen: boolean;
-  isHelpOpen: boolean;
-  isInventoryOpen: boolean;
-  isSkillTreeOpen: boolean;
-  isCreationOpen: boolean;
-  openMenu: () => void;
-  openHelp: () => void;
-  openInventory: () => void;
-  openSkillTree: () => void;
-  openCreation: () => void;
-  closeModal: () => void;
+export interface ModalManager {
+  readonly activeModal: ActiveModalState;
+  readonly isAnyModalOpen: boolean;
+  readonly isMenuOpen: boolean;
+  readonly isHelpOpen: boolean;
+  readonly isInventoryOpen: boolean;
+  readonly isSkillTreeOpen: boolean;
+  readonly isCreationOpen: boolean;
+  readonly openMenu: () => void;
+  readonly openHelp: () => void;
+  readonly openInventory: () => void;
+  readonly openSkillTree: () => void;
+  readonly openCreation: () => void;
+  readonly openModal: (modal: ModalType | ModalId) => void;
+  readonly closeModal: () => void;
+  readonly toggleModal: (modal: ModalType | ModalId) => void;
 }
 
 /**
- * Custom React hook for managing the single active modal overlay in the application UI.
- * Guarantees mutual exclusion (only one modal active at a time) and clean dismissal.
+ * Manages active overlay modal state driven by typed ModalId enum values.
  */
-export function useModalManager(): UseModalManagerResult {
-  const [activeModal, setActiveModal] = useState<ActiveModal>("none");
+export function useModalManager(initial: ActiveModalState = ModalId.None): ModalManager {
+  const [activeModal, setActiveModal] = useState<ActiveModalState>(initial);
 
-  const openMenu = useCallback(() => setActiveModal("menu"), []);
-  const openHelp = useCallback(() => setActiveModal("help"), []);
-  const openInventory = useCallback(() => setActiveModal("inventory"), []);
-  const openSkillTree = useCallback(() => setActiveModal("skillTree"), []);
-  const openCreation = useCallback(() => setActiveModal("creation"), []);
-
-  const closeModal = useCallback(() => {
-    setActiveModal("none");
+  const openModal = useCallback((modal: ModalType | ModalId) => {
+    setActiveModal(modal);
   }, []);
 
-  return {
-    activeModal,
-    isMenuOpen: activeModal === "menu",
-    isHelpOpen: activeModal === "help",
-    isInventoryOpen: activeModal === "inventory",
-    isSkillTreeOpen: activeModal === "skillTree",
-    isCreationOpen: activeModal === "creation",
-    openMenu,
-    openHelp,
-    openInventory,
-    openSkillTree,
-    openCreation,
-    closeModal,
-  };
+  const closeModal = useCallback(() => {
+    setActiveModal(ModalId.None);
+  }, []);
+
+  const toggleModal = useCallback((modal: ModalType | ModalId) => {
+    setActiveModal((prev) => (prev === modal ? ModalId.None : modal));
+  }, []);
+
+  const openMenu = useCallback(() => setActiveModal(ModalId.Menu), []);
+  const openHelp = useCallback(() => setActiveModal(ModalId.Help), []);
+  const openInventory = useCallback(() => setActiveModal(ModalId.Inventory), []);
+  const openSkillTree = useCallback(() => setActiveModal(ModalId.SkillTree), []);
+  const openCreation = useCallback(() => setActiveModal(ModalId.Creation), []);
+
+  return useMemo(
+    () => ({
+      activeModal,
+      isAnyModalOpen: activeModal !== ModalId.None,
+      isMenuOpen: activeModal === ModalId.Menu,
+      isHelpOpen: activeModal === ModalId.Help,
+      isInventoryOpen: activeModal === ModalId.Inventory,
+      isSkillTreeOpen: activeModal === ModalId.SkillTree,
+      isCreationOpen: activeModal === ModalId.Creation,
+      openMenu,
+      openHelp,
+      openInventory,
+      openSkillTree,
+      openCreation,
+      openModal,
+      closeModal,
+      toggleModal,
+    }),
+    [
+      activeModal,
+      openMenu,
+      openHelp,
+      openInventory,
+      openSkillTree,
+      openCreation,
+      openModal,
+      closeModal,
+      toggleModal,
+    ]
+  );
 }

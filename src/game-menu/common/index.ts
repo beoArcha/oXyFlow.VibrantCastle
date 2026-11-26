@@ -1,1 +1,1 @@
-export * from "./ConnectedLanguageSelector";
+export { LanguageSelector, type LanguageSelectorProps } from "./LanguageSelector";

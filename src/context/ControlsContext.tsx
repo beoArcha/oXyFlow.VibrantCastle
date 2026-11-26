@@ -1,213 +1,240 @@
-import React, { createContext, useContext, useMemo } from "react";
-import { PlayerId, InputMap, GamepadBindingMap } from "@game/types";
-import gameInputs from "@game/loop/input";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
+import { InputMap, PlayerId, GamepadBindingMap } from "@game/types";
+import {
+  gameInputs,
+  ConnectedGamepadInfo,
+} from "@game/loop/input";
 import { MissingContextProviderError } from "@lib/errors";
 import { BaseProviderProps } from "./IContext";
-import { startGamepadButtonCapture } from "./controls/gamepadCaptureService";
-
-export { startGamepadButtonCapture };
 
 /**
- * Presentational view model representing a connected hardware controller.
- */
-export interface ConnectedGamepadVM {
-  readonly index: number;
-  readonly id: string;
-  readonly buttonsCount: number;
-  readonly axesCount: number;
-}
-
-/**
- * Presentational view model mapping actions to keyboard keys.
- */
-export type KeyboardBindingsVM = Record<keyof InputMap, readonly string[]>;
-
-/**
- * Presentational view model mapping actions to gamepad button indexes.
- */
-export type GamepadBindingsVM = Readonly<GamepadBindingMap>;
-
-/**
- * System and browser keys reserved from game action remapping.
- */
-export const RESERVED_REBIND_KEYS: ReadonlySet<string> = new Set([
-  "Tab",
-  "CapsLock",
-  "Meta",
-  "MetaLeft",
-  "MetaRight",
-  "ContextMenu",
-  "F1",
-  "F2",
-  "F3",
-  "F4",
-  "F5",
-  "F6",
-  "F7",
-  "F8",
-  "F9",
-  "F10",
-  "F11",
-  "F12",
-]);
-
-/**
- * Checks whether the given key code or character represents a reserved system key.
- */
-export function isReservedSystemKey(code: string, key: string): boolean {
-  return RESERVED_REBIND_KEYS.has(code) || RESERVED_REBIND_KEYS.has(key);
-}
-
-/**
- * Checks whether the key press should cancel active rebinding.
- */
-export function isRebindCancelKey(code: string, key: string): boolean {
-  return code === "Escape" || key === "Escape";
-}
-
-/**
- * Normalizes physical scan code and semantic key string to ensure deterministic mapping.
- */
-export function normalizeKeyScanCodes(code: string, key: string): string[] {
-  return [code, key, key.toLowerCase()].filter(
-    (v, i, arr) => v && arr.indexOf(v) === i
-  );
-}
-
-/**
- * Retrieves the current keyboard bindings view model for a player.
- */
-export function getKeyboardBindingsVM(player: PlayerId): KeyboardBindingsVM {
-  return gameInputs.getKeyboardBindings(player);
-}
-
-/**
- * Subscribes to keyboard and gamepad binding updates from the engine.
- */
-export function subscribeToKeyboardBindings(onChange: () => void): () => void {
-  return gameInputs.onBindingsChange(onChange);
-}
-
-/**
- * Restores keyboard bindings to default configuration for a player.
- */
-export function resetKeyboardBindings(player: PlayerId): void {
-  gameInputs.resetToDefaults(player);
-}
-
-/**
- * Rebinds a keyboard action with key code normalization and safety checks.
- * Returns true if the rebind succeeded, or false if the key was rejected (e.g. reserved or cancel).
+ * Standalone helper to rebind a keyboard action for a player.
  */
 export function rebindKeyboardAction(
-  player: PlayerId,
+  playerId: PlayerId,
   action: keyof InputMap,
   code: string,
-  key: string
-): boolean {
-  if (isRebindCancelKey(code, key) || isReservedSystemKey(code, key)) {
-    return false;
+  key?: string
+): void {
+  const keys: string[] = [code];
+  if (key && key !== code) {
+    keys.push(key);
+    const lower = key.toLowerCase();
+    if (lower !== key && !keys.includes(lower)) {
+      keys.push(lower);
+    }
   }
-
-  const keysToBind = normalizeKeyScanCodes(code, key);
-  gameInputs.setKeyboardBinding(player, action, keysToBind);
-  return true;
+  gameInputs.setKeyboardBinding(playerId, action, keys);
 }
 
 /**
- * Reads list of all currently connected hardware gamepads.
+ * Standalone helper to reset keyboard (and gamepad) bindings to defaults.
  */
-export function getConnectedGamepadsVM(): ConnectedGamepadVM[] {
-  return gameInputs.getConnectedGamepads().map((p) => ({
-    index: p.index,
-    id: p.id,
-    buttonsCount: p.buttons.length,
-    axesCount: p.axes.length,
-  }));
+export function resetKeyboardBindings(playerId?: PlayerId): void {
+  gameInputs.resetToDefaults(playerId);
 }
 
 /**
- * Retrieves the current gamepad button bindings view model for a player.
- */
-export function getGamepadBindingsVM(player: PlayerId): GamepadBindingsVM {
-  return { ...gameInputs.getGamepadBindings(player) };
-}
-
-/**
- * Subscribes to controller connect / disconnect events from the engine.
- */
-export function subscribeToGamepadConnection(
-  onChange: (connected: boolean, pad: { readonly index: number; readonly id: string }) => void
-): () => void {
-  return gameInputs.onGamepadChange((connected, pad) => {
-    onChange(connected, { index: pad.index, id: pad.id });
-  });
-}
-
-/**
- * Subscribes to gamepad binding changes from the engine.
- */
-export function subscribeToGamepadBindings(onChange: () => void): () => void {
-  return gameInputs.onBindingsChange(onChange);
-}
-
-/**
- * Updates a gamepad action binding in the engine.
+ * Standalone helper to rebind a gamepad button for a player.
  */
 export function rebindGamepadAction(
-  player: PlayerId,
+  playerId: PlayerId,
   action: keyof GamepadBindingMap,
   buttonIndex: number
 ): void {
-  gameInputs.setGamepadBinding(player, action, buttonIndex);
+  gameInputs.setGamepadBinding(playerId, action, buttonIndex);
 }
 
 /**
- * Restores gamepad bindings to default configuration for a player.
+ * Standalone helper to reset gamepad bindings to defaults.
  */
-export function resetGamepadBindings(player: PlayerId): void {
-  gameInputs.resetToDefaults(player);
+export function resetGamepadBindings(playerId?: PlayerId): void {
+  gameInputs.resetToDefaults(playerId);
 }
 
-/** Controls context and provider */
+function readConnectedGamepads(): ConnectedGamepadInfo[] {
+  return gameInputs.getConnectedGamepads().map((pad) => ({
+    index: pad.index,
+    id: pad.id,
+    buttonsCount: pad.buttons.length,
+    axesCount: pad.axes.length,
+  }));
+}
 
 export interface ControlsContextValue {
-  getKeyboardBindings: (player: PlayerId) => KeyboardBindingsVM;
-  rebindKeyboardAction: (player: PlayerId, action: keyof InputMap, code: string, key: string) => boolean;
-  resetKeyboardBindings: (player: PlayerId) => void;
-  getConnectedGamepads: () => ConnectedGamepadVM[];
-  getGamepadBindings: (player: PlayerId) => GamepadBindingsVM;
-  rebindGamepadAction: (player: PlayerId, action: keyof GamepadBindingMap, buttonIndex: number) => void;
-  resetGamepadBindings: (player: PlayerId) => void;
-  startGamepadCapture: (
-    padIndex: number,
-    onDetected: (buttonIndex: number) => void,
-    onDisconnected?: () => void
-  ) => () => void;
+  p1Keyboard: Record<keyof InputMap, string[]>;
+  p2Keyboard: Record<keyof InputMap, string[]>;
+  p1Gamepad: GamepadBindingMap;
+  p2Gamepad: GamepadBindingMap;
+  connectedGamepads: ConnectedGamepadInfo[];
+  getKeyboardBindings: (playerId: PlayerId) => Record<keyof InputMap, string[]>;
+  getGamepadBindings: (playerId: PlayerId) => GamepadBindingMap;
+  setKeyboardBinding: (
+    playerId: PlayerId,
+    action: keyof InputMap,
+    keys: string[]
+  ) => void;
+  setGamepadBinding: (
+    playerId: PlayerId,
+    action: keyof GamepadBindingMap,
+    buttonIndex: number
+  ) => void;
+  rebindKeyboard: (
+    playerId: PlayerId,
+    action: keyof InputMap,
+    code: string,
+    key?: string
+  ) => void;
+  rebindGamepad: (
+    playerId: PlayerId,
+    action: keyof GamepadBindingMap,
+    buttonIndex: number
+  ) => void;
+  resetBindings: (playerId?: PlayerId) => void;
+  resetControlsToDefaults: (playerId?: PlayerId) => void;
 }
 
 const ControlsContext = createContext<ControlsContextValue | null>(null);
 
-export interface ControlsProviderProps extends BaseProviderProps { }
+export type ControlsProviderProps = BaseProviderProps;
 
-export const ControlsProvider: React.FC<ControlsProviderProps> = ({ children }) => {
-  const value = useMemo<ControlsContextValue>(
-    () => ({
-      getKeyboardBindings: getKeyboardBindingsVM,
-      rebindKeyboardAction,
-      resetKeyboardBindings,
-      getConnectedGamepads: getConnectedGamepadsVM,
-      getGamepadBindings: getGamepadBindingsVM,
-      rebindGamepadAction,
-      resetGamepadBindings,
-      startGamepadCapture: startGamepadButtonCapture,
-    }),
+/**
+ * Context provider managing live keyboard/gamepad bindings and connected controllers.
+ */
+export const ControlsProvider: React.FC<ControlsProviderProps> = ({
+  children,
+}) => {
+  const [bindingsRevision, setBindingsRevision] = useState(0);
+  const [connectedGamepads, setConnectedGamepads] = useState<
+    ConnectedGamepadInfo[]
+  >(() => readConnectedGamepads());
+
+  useEffect(() => {
+    const unsubBindings = gameInputs.onBindingsChange(() => {
+      setBindingsRevision((prev) => prev + 1);
+    });
+    const unsubGamepad = gameInputs.onGamepadChange((connected, pad) => {
+      setConnectedGamepads((prev) => {
+        const filtered = prev.filter((p) => p.index !== pad.index);
+        return connected ? [...filtered, pad] : filtered;
+      });
+    });
+
+    return () => {
+      unsubBindings();
+      unsubGamepad();
+    };
+  }, []);
+
+  const getKeyboardBindings = useCallback(
+    (playerId: PlayerId) => ({ ...gameInputs.getKeyboardBindings(playerId) }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [bindingsRevision]
+  );
+
+  const getGamepadBindings = useCallback(
+    (playerId: PlayerId) => ({ ...gameInputs.getGamepadBindings(playerId) }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [bindingsRevision]
+  );
+
+  const setKeyboardBinding = useCallback(
+    (playerId: PlayerId, action: keyof InputMap, keys: string[]) => {
+      gameInputs.setKeyboardBinding(playerId, action, keys);
+    },
     []
   );
 
-  return <ControlsContext.Provider value={value}>{children}</ControlsContext.Provider>;
+  const setGamepadBinding = useCallback(
+    (
+      playerId: PlayerId,
+      action: keyof GamepadBindingMap,
+      buttonIndex: number
+    ) => {
+      gameInputs.setGamepadBinding(playerId, action, buttonIndex);
+    },
+    []
+  );
+
+  const rebindKeyboard = useCallback(
+    (
+      playerId: PlayerId,
+      action: keyof InputMap,
+      code: string,
+      key?: string
+    ) => {
+      rebindKeyboardAction(playerId, action, code, key);
+    },
+    []
+  );
+
+  const rebindGamepad = useCallback(
+    (
+      playerId: PlayerId,
+      action: keyof GamepadBindingMap,
+      buttonIndex: number
+    ) => {
+      rebindGamepadAction(playerId, action, buttonIndex);
+    },
+    []
+  );
+
+  const resetBindings = useCallback((playerId?: PlayerId) => {
+    gameInputs.resetToDefaults(playerId);
+  }, []);
+
+  const value = useMemo<ControlsContextValue>(() => {
+    const p1Keyboard = { ...gameInputs.getKeyboardBindings(PlayerId.Player1) };
+    const p2Keyboard = { ...gameInputs.getKeyboardBindings(PlayerId.Player2) };
+    const p1Gamepad = { ...gameInputs.getGamepadBindings(PlayerId.Player1) };
+    const p2Gamepad = { ...gameInputs.getGamepadBindings(PlayerId.Player2) };
+
+    return {
+      p1Keyboard,
+      p2Keyboard,
+      p1Gamepad,
+      p2Gamepad,
+      connectedGamepads,
+      getKeyboardBindings,
+      getGamepadBindings,
+      setKeyboardBinding,
+      setGamepadBinding,
+      rebindKeyboard,
+      rebindGamepad,
+      resetBindings,
+      resetControlsToDefaults: resetBindings,
+    };
+  }, [
+    bindingsRevision,
+    connectedGamepads,
+    getKeyboardBindings,
+    getGamepadBindings,
+    setKeyboardBinding,
+    setGamepadBinding,
+    rebindKeyboard,
+    rebindGamepad,
+    resetBindings,
+  ]);
+
+  return (
+    <ControlsContext.Provider value={value}>
+      {children}
+    </ControlsContext.Provider>
+  );
 };
 
+/**
+ * Hook providing access to keyboard/gamepad bindings and controller status.
+ *
+ * @throws {MissingContextProviderError} when used outside a ControlsProvider.
+ */
 export function useControls(): ControlsContextValue {
   const context = useContext(ControlsContext);
   if (!context) {

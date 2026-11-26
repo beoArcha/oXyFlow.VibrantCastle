@@ -1,36 +1,23 @@
 import { useEffect, useRef } from "react";
-import gameEngine from "@game/loop/engine";
-
-export interface EngineSubscribable {
-  registerStateListener: (cb: () => void) => () => void;
-}
+import defaultGameEngine, { GameEngine } from "@game/loop/engine";
 
 /**
- * Reusable composition hook to subscribe to game engine lifecycle and state notifications.
- *
- * Guarantees proper unbinding on unmount, handles engine instance updates,
- * and maintains a stable callback reference across renders to prevent unnecessary re-subscription cycles.
+ * Subscribes a React component to GameEngine state listener notifications
+ * while keeping the callback reference stable across renders.
  */
 export function useEngineSubscription(
-  onUpdate: () => void,
-  engine: EngineSubscribable = gameEngine
+  callback: () => void,
+  engine: GameEngine = defaultGameEngine
 ): void {
-  const onUpdateRef = useRef(onUpdate);
-  onUpdateRef.current = onUpdate;
+  const callbackRef = useRef(callback);
+  callbackRef.current = callback;
 
   useEffect(() => {
-    let isMounted = true;
-    if (!engine || typeof engine.registerStateListener !== "function") return;
-
     const unsubscribe = engine.registerStateListener(() => {
-      if (isMounted) {
-        onUpdateRef.current();
-      }
+      callbackRef.current();
     });
-
-    return () => {
-      isMounted = false;
-      unsubscribe();
-    };
+    return unsubscribe;
   }, [engine]);
 }
+
+export default useEngineSubscription;

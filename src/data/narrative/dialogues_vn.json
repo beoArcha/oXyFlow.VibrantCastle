@@ -6,7 +6,7 @@
       "titleKey": "vnSceneClocktowerTitle",
       "initialNodeId": "node_start",
       "backgroundId": "bg_clocktower",
-      "musicCue": "bgm_clocktower_theme",
+      "musicCue": "clocktower_theme",
       "metadata": {
         "characters": ["valen", "aurelia"],
         "locationId": "clocktower",
@@ -16,6 +16,7 @@
         "node_start": {
           "id": "node_start",
           "speaker": "narrator",
+          "position": "center",
           "dialogueKey": "vnDialogueClocktowerIntro",
           "nextNodeId": "node_valen_arrival"
         },
@@ -42,7 +43,7 @@
           "speaker": "valen",
           "speakerNameKey": "charValenName",
           "position": "left",
-          "emotion": "curious",
+          "emotion": "serious",
           "dialogueKey": "vnDialogueValenInquire",
           "choices": [
             {
@@ -71,7 +72,7 @@
           "speaker": "aurelia",
           "speakerNameKey": "charAureliaName",
           "position": "right",
-          "emotion": "determined",
+          "emotion": "resolute",
           "dialogueKey": "vnDialogueAureliaCaution",
           "nextNodeId": "node_pact_formed"
         },
@@ -87,6 +88,7 @@
         "node_conclusion": {
           "id": "node_conclusion",
           "speaker": "narrator",
+          "position": "center",
           "dialogueKey": "vnDialogueClocktowerConclusion",
           "nextNodeId": null
         }

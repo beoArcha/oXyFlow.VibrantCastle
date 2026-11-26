@@ -1,9 +1,108 @@
 import React, { createContext, useContext, useCallback, useMemo } from "react";
-import { ScalingFilterMode, PlayerId } from "@game/types";
+import { PlayerId, ScalingFilterMode } from "@game/types";
 import defaultGameEngine, { GameEngine } from "@game/loop/engine";
 import { debugManager } from "@game/debug/debugManager";
-import { BaseProviderProps } from "./IContext";
 import { MissingContextProviderError } from "@lib/errors";
+import { BaseProviderProps } from "./IContext";
+
+/**
+ * Attaches a canvas element to the game engine, starts the loop, and returns a cleanup callback.
+ */
+export function attachViewportCanvas(
+  canvas: HTMLCanvasElement,
+  engine: GameEngine = defaultGameEngine
+): () => void {
+  engine.attachCanvas(canvas);
+  engine.start();
+  return () => {
+    engine.stop();
+  };
+}
+
+/**
+ * Updates renderer logical dimensions, device pixel ratio, and scaling filter.
+ */
+export function resizeViewportCanvas(
+  width: number,
+  height: number,
+  dpr: number,
+  scalingFilter: ScalingFilterMode,
+  engine: GameEngine = defaultGameEngine
+): void {
+  engine.setCanvasDimensions(width, height, dpr, scalingFilter);
+}
+
+export interface ViewportCanvasLike {
+  width: number;
+  height: number;
+  getBoundingClientRect: () => {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  };
+}
+
+/**
+ * Projects a client pointer coordinate on the canvas into world-space coordinates
+ * taking into account canvas backing scale, renderer zoom factor, and active camera offset.
+ */
+export function resolveViewportCameraProjection(
+  canvas: ViewportCanvasLike,
+  clientX: number,
+  clientY: number,
+  camera: { x: number; y: number } = defaultGameEngine.cameraManager ?? {
+    x: 0,
+    y: 0,
+  },
+  scaleFactor: number = 1
+): { worldX: number; worldY: number } {
+  const rect = canvas.getBoundingClientRect();
+  if (rect.width <= 0 || rect.height <= 0) {
+    return { worldX: 0, worldY: 0 };
+  }
+
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const canvasX = (clientX - rect.left) * scaleX;
+  const canvasY = (clientY - rect.top) * scaleY;
+  const safeScale = scaleFactor > 0 ? scaleFactor : 1;
+
+  return {
+    worldX: Math.round(camera.x + canvasX / safeScale - 16),
+    worldY: Math.round(camera.y + canvasY / safeScale - 24),
+  };
+}
+
+/**
+ * Executes debug click-to-teleport on the game canvas if debug clickToTeleport is active.
+ */
+export function executeCanvasClickTeleport(
+  canvas: HTMLCanvasElement,
+  clientX: number,
+  clientY: number,
+  engine: GameEngine = defaultGameEngine
+): boolean {
+  if (!debugManager.state.clickToTeleport) {
+    return false;
+  }
+
+  const rect = canvas.getBoundingClientRect();
+  if (rect.width <= 0 || rect.height <= 0) {
+    return false;
+  }
+
+  const projected = resolveViewportCameraProjection(
+    canvas,
+    clientX,
+    clientY,
+    engine.cameraManager ?? { x: 0, y: 0 },
+    engine.getRendererScaleFactor() || 1
+  );
+
+  engine.teleportPlayer(PlayerId.Player1, projected.worldX, projected.worldY);
+  return true;
+}
 
 export interface ViewportContextValue {
   attachCanvas: (canvas: HTMLCanvasElement) => () => void;
@@ -20,93 +119,6 @@ export interface ViewportContextValue {
   ) => boolean;
 }
 
-/**
- * Attaches the HTMLCanvasElement to the game engine renderer and starts the loop.
- * Returns a cleanup function that stops the engine on unmount.
- */
-export function attachViewportCanvas(
-  canvas: HTMLCanvasElement,
-  engine: GameEngine = defaultGameEngine
-): () => void {
-  engine.attachCanvas(canvas);
-  engine.start();
-  return () => {
-    engine.stop();
-  };
-}
-
-/**
- * Relays canvas dimension updates to the game engine renderer.
- */
-export function resizeViewportCanvas(
-  width: number,
-  height: number,
-  dpr: number,
-  scalingFilter: ScalingFilterMode,
-  engine: GameEngine = defaultGameEngine
-): void {
-  engine.setCanvasDimensions(width, height, dpr, scalingFilter);
-}
-
-/**
- * Pure projection of canvas viewport clicks to in-game world coordinates.
- */
-export function resolveViewportCameraProjection(
-  canvas: {
-    readonly width: number;
-    readonly height: number;
-    readonly getBoundingClientRect: () => {
-      readonly left: number;
-      readonly top: number;
-      readonly width: number;
-      readonly height: number;
-    };
-  },
-  clientX: number,
-  clientY: number,
-  camera: { readonly x: number; readonly y: number },
-  scaleFactor: number
-): { readonly worldX: number; readonly worldY: number } {
-  const rect = canvas.getBoundingClientRect();
-  const scaleX = rect.width > 0 ? canvas.width / rect.width : 1;
-  const scaleY = rect.height > 0 ? canvas.height / rect.height : 1;
-  const canvasPxX = (clientX - rect.left) * scaleX;
-  const canvasPxY = (clientY - rect.top) * scaleY;
-  const safeScale = scaleFactor > 0 ? scaleFactor : 1;
-
-  return {
-    worldX: Math.round(camera.x + canvasPxX / safeScale - 16),
-    worldY: Math.round(camera.y + canvasPxY / safeScale - 24),
-  };
-}
-
-/**
- * Handles canvas clicks for debug click-to-teleport, isolating debugManager and gameEngine from UI.
- */
-export function executeCanvasClickTeleport(
-  canvas: HTMLCanvasElement,
-  clientX: number,
-  clientY: number,
-  engine: GameEngine = defaultGameEngine
-): boolean {
-  if (!debugManager.state.clickToTeleport) return false;
-
-  const projection = resolveViewportCameraProjection(
-    canvas,
-    clientX,
-    clientY,
-    engine.cameraManager,
-    engine.getRendererScaleFactor()
-  );
-
-  engine.teleportPlayer(
-    PlayerId.Player1,
-    projection.worldX,
-    projection.worldY
-  );
-  return true;
-}
-
 const ViewportContext = createContext<ViewportContextValue | null>(null);
 
 export interface ViewportProviderProps extends BaseProviderProps {
@@ -114,16 +126,14 @@ export interface ViewportProviderProps extends BaseProviderProps {
 }
 
 /**
- * Context provider managing viewport canvas lifecycle, dimension adaptation, and click coordinates.
+ * Context provider binding canvas lifecycle, responsive resizing, and pointer projection to the engine.
  */
 export const ViewportProvider: React.FC<ViewportProviderProps> = ({
   children,
   engine = defaultGameEngine,
 }) => {
   const attachCanvas = useCallback(
-    (canvas: HTMLCanvasElement) => {
-      return attachViewportCanvas(canvas, engine);
-    },
+    (canvas: HTMLCanvasElement) => attachViewportCanvas(canvas, engine),
     [engine]
   );
 
@@ -140,9 +150,8 @@ export const ViewportProvider: React.FC<ViewportProviderProps> = ({
   );
 
   const teleportPlayerAtViewport = useCallback(
-    (canvas: HTMLCanvasElement, clientX: number, clientY: number): boolean => {
-      return executeCanvasClickTeleport(canvas, clientX, clientY, engine);
-    },
+    (canvas: HTMLCanvasElement, clientX: number, clientY: number) =>
+      executeCanvasClickTeleport(canvas, clientX, clientY, engine),
     [engine]
   );
 
@@ -163,7 +172,7 @@ export const ViewportProvider: React.FC<ViewportProviderProps> = ({
 };
 
 /**
- * Hook providing access to canvas attachment, resizing, and viewport projection.
+ * Hook providing access to canvas attachment, resizing, and pointer projection actions.
  *
  * @throws {MissingContextProviderError} when used outside a ViewportProvider.
  */

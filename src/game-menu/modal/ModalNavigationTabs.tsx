@@ -2,8 +2,14 @@ import React from "react";
 import { Menu as MenuIcon, HelpCircle, Backpack, BookOpen, Play, Layers } from "lucide-react";
 import { useI18n } from "@context/I18nContext";
 import { Tabs, TabItem, Button, Text, Code } from "@ui";
+import {
+  ModalId,
+  getNavigationModalDefinitions,
+  type ModalIconKey,
+  type ModalType,
+} from "./modalRegistry";
 
-export type ModalType = "menu" | "help" | "inventory" | "skillTree" | "creation";
+export type { ModalType };
 
 export interface ModalNavigationTabsProps {
   currentModal: ModalType;
@@ -13,9 +19,17 @@ export interface ModalNavigationTabsProps {
   className?: string;
 }
 
+const MODAL_NAV_ICONS: Record<ModalIconKey, React.ReactNode> = {
+  menu: <MenuIcon size={14} className="text-amber-400 shrink-0" />,
+  help: <HelpCircle size={14} className="text-amber-400 shrink-0" />,
+  inventory: <Backpack size={14} className="text-amber-400 shrink-0" />,
+  skillTree: <BookOpen size={14} className="text-purple-400 shrink-0" />,
+  creation: <Layers size={14} className="text-emerald-400 shrink-0" />,
+};
+
 /**
- * Specialized game modal navigation bar delegating layout, tablist semantics,
- * and shortcut badges to KeyedTabs.
+ * Registry-driven modal navigation bar delegating layout, tablist semantics,
+ * and shortcut badges to Tabs.
  */
 export const ModalNavigationTabs: React.FC<ModalNavigationTabsProps> = React.memo(
   function ModalNavigationTabs({
@@ -27,52 +41,25 @@ export const ModalNavigationTabs: React.FC<ModalNavigationTabsProps> = React.mem
   }) {
     const { t } = useI18n();
 
-    const items: TabItem<ModalType>[] = React.useMemo(() => {
-      const list: TabItem<ModalType>[] = [
-        {
-          id: "menu",
-          label: t("menu"),
-          keyLabel: "M",
-          icon: <MenuIcon size={14} className="text-amber-400 shrink-0" />,
-        },
-        {
-          id: "help",
-          label: t("hints"),
-          keyLabel: "H",
-          icon: <HelpCircle size={14} className="text-amber-400 shrink-0" />,
-        },
-        {
-          id: "inventory",
-          label: t("inventoryBtn"),
-          keyLabel: "I",
-          icon: <Backpack size={14} className="text-amber-400 shrink-0" />,
-        },
-        {
-          id: "skillTree",
-          label: t("skillTreeBtn"),
-          keyLabel: "K",
-          icon: <BookOpen size={14} className="text-purple-400 shrink-0" />,
-        },
-      ];
-
-      if (showCreation) {
-        list.push({
-          id: "creation",
-          label: t("tabCreation"),
-          keyLabel: "C",
-          icon: <Layers size={14} className="text-emerald-400 shrink-0" />,
-        });
-      }
-
-      return list;
-    }, [t, showCreation]);
+    const items: TabItem<ModalType>[] = React.useMemo(
+      () =>
+        getNavigationModalDefinitions()
+          .filter((def) => showCreation || def.id !== ModalId.Creation)
+          .map((def) => ({
+            id: def.id,
+            label: t(def.navigationTab.labelKey),
+            keyLabel: def.navigationTab.keyLabel,
+            icon: MODAL_NAV_ICONS[def.navigationTab.iconKey],
+          })),
+      [t, showCreation]
+    );
 
     const resumeAction = (
       <Button
         variant="ghost"
         size="sm"
         onClick={onResume}
-        className="gap-1.5 px-3.5 py-1.5 bg-emerald-950/80 hover:bg-emerald-900 text-emerald-200 hover:text-white border border-emerald-600/60 transition-all shadow-md hover:shadow-emerald-900/40 ml-auto focus-visible:ring-emerald-400"
+        className="gap-1.5 px-3.5 py-1.5 bg-emerald-950/80 hover:bg-emerald-900 text-emerald-200 hover:text-white border border-emerald-600/60 transition-all shadow-md hover:shadow-emerald-900/40 ml-auto focus-visible:ring-emerald-400 whitespace-nowrap shrink-0"
         title={`${t("resume")} [P]`}
         aria-label={`${t("resume")} [P]`}
       >

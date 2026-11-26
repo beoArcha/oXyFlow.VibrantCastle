@@ -28,6 +28,30 @@ function resolveViteEnvironment(): LogEnvironmentMode | null {
   return null;
 }
 
+function isActiveTestRunner(): boolean {
+  if (typeof import.meta !== "undefined" && import.meta.env?.MODE === "test") {
+    return true;
+  }
+  if (typeof process !== "undefined" && process.env) {
+    const nodeEnv = (process.env.NODE_ENV || "").toLowerCase();
+    if (nodeEnv.includes("test")) return true;
+    if (process.env.VITEST || process.env.JEST_WORKER_ID || process.env.BUN_TEST) {
+      return true;
+    }
+  }
+  const runtimeGlobals = globalThis as unknown as RuntimeGlobalEnvironment;
+  const isBun = typeof runtimeGlobals.Bun !== "undefined";
+  const hasTestArg =
+    typeof process !== "undefined" &&
+    Array.isArray(process.argv) &&
+    process.argv.some((arg) => typeof arg === "string" && arg.includes("test"));
+
+  if (isBun && (hasTestArg || Boolean(runtimeGlobals.IS_REACT_ACT_ENVIRONMENT))) {
+    return true;
+  }
+  return false;
+}
+
 /**
  * Resolves mode from Node / Bun process environment variables and runtime arguments.
  */
@@ -41,17 +65,6 @@ function resolveProcessEnvironment(): LogEnvironmentMode | null {
   if (nodeEnv.includes("prod")) return "production";
   if (nodeEnv.includes("dev")) return "development";
 
-  // Check for Bun test runner or React test harness execution
-  const runtimeGlobals = globalThis as unknown as RuntimeGlobalEnvironment;
-  const isBun = typeof runtimeGlobals.Bun !== "undefined";
-  const hasTestArg =
-    Array.isArray(process.argv) &&
-    process.argv.some((arg) => typeof arg === "string" && arg.includes("test"));
-
-  if (isBun && (hasTestArg || Boolean(runtimeGlobals.IS_REACT_ACT_ENVIRONMENT))) {
-    return "test";
-  }
-
   return null;
 }
 
@@ -60,6 +73,7 @@ function resolveProcessEnvironment(): LogEnvironmentMode | null {
  * Uses strict property guards without silent catch blocks.
  */
 export function detectEnvironmentMode(): LogEnvironmentMode {
+  if (isActiveTestRunner()) return "test";
   return resolveViteEnvironment() ?? resolveProcessEnvironment() ?? "development";
 }
 

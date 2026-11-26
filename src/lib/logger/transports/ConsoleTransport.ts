@@ -1,5 +1,6 @@
 import { ILogFormatter, ILogTransport, LogLevel, LogRecord } from "../types";
 import { DefaultFormatter } from "../formatters/DefaultFormatter";
+import { detectEnvironmentMode } from "../loggerEnv";
 
 export interface ConsoleTransportOptions {
   formatter?: ILogFormatter;
@@ -26,8 +27,10 @@ export class ConsoleTransport implements ILogTransport {
 
     // In test environment, suppress console noise by default so test reports remain clean.
     // Can be opted into via options.forceEnable or DEBUG_TEST_LOGS=true.
-    const isTest = typeof process !== "undefined" && process.env?.NODE_ENV === "test";
-    if (isTest && !this.forceEnable && process.env.DEBUG_TEST_LOGS !== "true") {
+    const isTest = detectEnvironmentMode() === "test";
+    const debugTestLogs =
+      typeof process !== "undefined" && process.env?.DEBUG_TEST_LOGS === "true";
+    if (isTest && !this.forceEnable && !debugTestLogs) {
       return;
     }
 

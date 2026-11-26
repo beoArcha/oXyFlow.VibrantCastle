@@ -15,17 +15,17 @@ import { buildHeroPixelSpriteMaps, composeHeroSpriteMaps, discoverHeroPixelFiles
 // Import Vite-bundled character assets from src/assets/characters (strictly immutable source)
 import valenMainPng from "@assets/characters/valen/valen_main.png";
 import valenPortraitsPng from "@assets/characters/valen/valen_portraits.png";
-import valenLowPng from "@assets/characters/valen/valen_level_1_low_packed.png";
-import valenMidPng from "@assets/characters/valen/valen_level_1_mid_packed.png";
-import valenHighPng from "@assets/characters/valen/valen_level_1_high_packed.png";
-import valenMetaJson from "@assets/characters/valen/valen_packed_meta.json";
+import valenLowPng from "@assets/characters/valen/valen_level_1_low.png";
+import valenMidPng from "@assets/characters/valen/valen_level_1_mid.png";
+import valenHighPng from "@assets/characters/valen/valen_level_1_high.png";
+import valenMetaJson from "@assets/characters/valen/valen_meta.json";
 
 import aureliaMainPng from "@assets/characters/aurelia/aurelia_main.png";
 import aureliaPortraitsPng from "@assets/characters/aurelia/aurelia_portraits.png";
-import aureliaLowPng from "@assets/characters/aurelia/aurelia_level_1_low_packed.png";
-import aureliaMidPng from "@assets/characters/aurelia/aurelia_level_1_mid_packed.png";
-import aureliaHighPng from "@assets/characters/aurelia/aurelia_level_1_high_packed.png";
-import aureliaMetaJson from "@assets/characters/aurelia/aurelia_packed_meta.json";
+import aureliaLowPng from "@assets/characters/aurelia/aurelia_level_1_low.png";
+import aureliaMidPng from "@assets/characters/aurelia/aurelia_level_1_mid.png";
+import aureliaHighPng from "@assets/characters/aurelia/aurelia_level_1_high.png";
+import aureliaMetaJson from "@assets/characters/aurelia/aurelia_meta.json";
 
 interface ICharacterVariantLike {
   scale?: number;

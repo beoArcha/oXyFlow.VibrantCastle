@@ -1,14 +1,15 @@
 {
   "language": "pl",
-  "volumeMusic": 0.45,
-  "volumeSFX": 0.65,
+  "volumeMusic": 0.4,
+  "volumeSFX": 0.6,
   "isTwoPlayer": false,
+  "primaryCharacter": "valen",
   "display": {
     "aspectRatio": "16:10",
     "scalingFilter": "pixel",
     "assetQuality": "high",
-    "hardwareAcceleration": true,
     "targetFps": 60,
-    "showFpsCounter": false
+    "showFpsCounter": false,
+    "hardwareAcceleration": true
   }
 }
