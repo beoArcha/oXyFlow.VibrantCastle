@@ -8,11 +8,12 @@ import {
   type MapDprMeasurement,
   type PerfReport,
   type ProfileName,
+  type ProfileSelection,
   type RunBudgetComparison,
 } from "./parallaxTypes";
 
 export interface BudgetCheckOptions {
-  readonly profile: ProfileName;
+  readonly profile: ProfileSelection;
   readonly strict: boolean;
 }
 
@@ -20,7 +21,7 @@ function buildBaselineLookup(baseline: PerfReport | null): Map<string, MapDprMea
   const map = new Map<string, MapDprMeasurement>();
   if (!baseline) return map;
   for (const run of baseline.runs) {
-    map.set(`${run.locationId}@${run.dpr}`, run);
+    map.set(`${run.profile}:${run.locationId}@${run.dpr}`, run);
   }
   return map;
 }
@@ -31,34 +32,46 @@ function compareSingleRun(
   maxP95Ms: number
 ): RunBudgetComparison {
   const hasError = Boolean(run.error);
-  const hasSamples = run.frameTime.sampleCount > 0;
-  const p95WithinBudget = run.frameTime.p95Ms <= maxP95Ms;
+  const hasSamples = run.work.sampleCount > 0;
+  const p95WithinBudget = run.work.p95Ms <= maxP95Ms;
   const withinBudget = !hasError && hasSamples && p95WithinBudget;
 
   let reason: string | null = null;
   if (hasError) {
     reason = run.error ?? "run error";
   } else if (!hasSamples) {
-    reason = "no frame samples recorded";
+    reason = "no work samples recorded";
   } else if (!p95WithinBudget) {
-    reason = `p95 ${run.frameTime.p95Ms.toFixed(2)} ms > ${maxP95Ms.toFixed(2)} ms`;
+    reason = `work p95 ${run.work.p95Ms.toFixed(2)} ms > ${maxP95Ms.toFixed(2)} ms`;
   }
 
   return {
+    profile: run.profile,
     locationId: run.locationId,
     dpr: run.dpr,
-    p50Ms: run.frameTime.p50Ms,
-    p95Ms: run.frameTime.p95Ms,
-    droppedFrames: run.frameTime.droppedFrames,
+    workP50Ms: run.work.p50Ms,
+    workP95Ms: run.work.p95Ms,
+    workP99Ms: run.work.p99Ms,
+    workMaxMs: run.work.maxMs,
+    overBudgetPct: run.work.overBudgetPct,
+    droppedFrames: run.cadence.droppedFrames,
+    longFrameCount: run.longFrames.count,
+    totalBlockingTimeMs: run.longFrames.totalBlockingTimeMs,
     decodedParallaxMB: run.memory.decodedParallaxMB,
     jsHeapUsedMB: run.memory.jsHeapUsedMB,
     timeToFirstParallaxFrameMs: run.timeToFirstParallaxFrameMs,
-    baselineP50Ms: baselineRun ? baselineRun.frameTime.p50Ms : null,
-    baselineP95Ms: baselineRun ? baselineRun.frameTime.p95Ms : null,
-    deltaP50Ms: baselineRun ? roundMetric(run.frameTime.p50Ms - baselineRun.frameTime.p50Ms, 3) : null,
-    deltaP95Ms: baselineRun ? roundMetric(run.frameTime.p95Ms - baselineRun.frameTime.p95Ms, 3) : null,
+    baselineWorkP50Ms: baselineRun ? baselineRun.work.p50Ms : null,
+    baselineWorkP95Ms: baselineRun ? baselineRun.work.p95Ms : null,
+    deltaWorkP50Ms: baselineRun ? roundMetric(run.work.p50Ms - baselineRun.work.p50Ms, 3) : null,
+    deltaWorkP95Ms: baselineRun ? roundMetric(run.work.p95Ms - baselineRun.work.p95Ms, 3) : null,
+    deltaOverBudgetPct: baselineRun
+      ? roundMetric(run.work.overBudgetPct - baselineRun.work.overBudgetPct, 2)
+      : null,
     deltaDroppedFrames: baselineRun
-      ? run.frameTime.droppedFrames - baselineRun.frameTime.droppedFrames
+      ? run.cadence.droppedFrames - baselineRun.cadence.droppedFrames
+      : null,
+    deltaLongFrameCount: baselineRun
+      ? run.longFrames.count - baselineRun.longFrames.count
       : null,
     deltaDecodedParallaxMB: baselineRun
       ? roundMetric(run.memory.decodedParallaxMB - baselineRun.memory.decodedParallaxMB, 3)
@@ -68,8 +81,18 @@ function compareSingleRun(
   };
 }
 
+function selectTargetRuns(
+  runs: readonly MapDprMeasurement[],
+  selection: ProfileSelection
+): readonly MapDprMeasurement[] {
+  if (selection === "all") return runs;
+  const distinctProfiles = new Set(runs.map((run) => run.profile));
+  if (distinctProfiles.size <= 1) return runs;
+  return runs.filter((run) => run.profile === selection);
+}
+
 /**
- * Evaluates every measured (location, DPR) run against the profile p95 budget and baseline report.
+ * Evaluates every measured (profile, location, DPR) run against the profile work p95 budget and baseline.
  * Defaults to report-only (exitCode 0); strict mode returns exitCode 1 when any run exceeds budget.
  */
 export function evaluateParallaxBudgets(
@@ -77,12 +100,15 @@ export function evaluateParallaxBudgets(
   baseline: PerfReport | null,
   options: BudgetCheckOptions
 ): BudgetCheckResult {
-  const budget = PARALLAX_BUDGET_PROFILES[options.profile];
   const baselineByKey = buildBaselineLookup(baseline);
+  const targetRuns = selectTargetRuns(report.runs, options.profile);
 
-  const comparisons = report.runs.map((run) =>
-    compareSingleRun(run, baselineByKey.get(`${run.locationId}@${run.dpr}`), budget.maxP95Ms)
-  );
+  const comparisons = targetRuns.map((run) => {
+    const budgetProfile: ProfileName = options.profile === "all" ? run.profile : options.profile;
+    const budget = PARALLAX_BUDGET_PROFILES[budgetProfile];
+    const baselineRun = baselineByKey.get(`${run.profile}:${run.locationId}@${run.dpr}`);
+    return compareSingleRun(run, baselineRun, budget.maxP95Ms);
+  });
 
   const passedCount = comparisons.filter((item) => item.withinBudget).length;
   const failedCount = comparisons.length - passedCount;
@@ -91,7 +117,6 @@ export function evaluateParallaxBudgets(
   return {
     profile: options.profile,
     strict: options.strict,
-    budget,
     baselineGeneratedAt: baseline?.generatedAt ?? null,
     comparisons,
     passedCount,
@@ -109,22 +134,32 @@ function formatDelta(delta: number | null): string {
 
 export function formatBudgetReport(result: BudgetCheckResult): string {
   const modeLabel = result.strict ? "strict" : "report-only";
+  const budgetDesc =
+    result.profile === "all"
+      ? "desktop<=8.3ms, tablet<=16.6ms"
+      : `${PARALLAX_BUDGET_PROFILES[result.profile].targetHz} Hz, work p95 <= ${PARALLAX_BUDGET_PROFILES[result.profile].maxP95Ms.toFixed(1)} ms`;
+
   const lines: string[] = [
-    `[perf:parallax] Budget Check (${result.profile}, ${result.budget.targetHz} Hz, p95 <= ${result.budget.maxP95Ms.toFixed(1)} ms, mode=${modeLabel})`,
+    `[perf:parallax] Budget Check (profile=${result.profile}, ${budgetDesc}, mode=${modeLabel})`,
     result.baselineGeneratedAt
       ? `[perf:parallax] Baseline: ${result.baselineGeneratedAt}`
       : "[perf:parallax] Baseline: none",
     "",
     [
-      "location".padEnd(19),
+      "profile".padEnd(8),
+      "location".padEnd(18),
       "dpr".padStart(3),
-      "p50(ms)".padStart(8),
-      "p95(ms)".padStart(8),
-      "d_p95".padStart(8),
+      "w_p50".padStart(7),
+      "w_p95".padStart(7),
+      "w_p99".padStart(7),
+      "w_max".padStart(7),
+      "over%".padStart(6),
+      "d_p95".padStart(7),
       "drop".padStart(5),
-      "pxMB".padStart(7),
-      "heapMB".padStart(7),
-      "1stPx(ms)".padStart(10),
+      "loaf".padStart(5),
+      "tbt".padStart(7),
+      "pxMB".padStart(6),
+      "1stPx".padStart(7),
       "status",
     ].join(" "),
   ];
@@ -133,18 +168,23 @@ export function formatBudgetReport(result: BudgetCheckResult): string {
     const status = row.withinBudget ? "PASS" : `OVER (${row.reason ?? "failed"})`;
     lines.push(
       [
-        row.locationId.padEnd(19),
+        row.profile.padEnd(8),
+        row.locationId.padEnd(18),
         `${row.dpr}x`.padStart(3),
-        row.p50Ms.toFixed(2).padStart(8),
-        row.p95Ms.toFixed(2).padStart(8),
-        formatDelta(row.deltaP95Ms).padStart(8),
+        row.workP50Ms.toFixed(2).padStart(7),
+        row.workP95Ms.toFixed(2).padStart(7),
+        row.workP99Ms.toFixed(2).padStart(7),
+        row.workMaxMs.toFixed(2).padStart(7),
+        `${row.overBudgetPct.toFixed(1)}%`.padStart(6),
+        formatDelta(row.deltaWorkP95Ms).padStart(7),
         String(row.droppedFrames).padStart(5),
-        row.decodedParallaxMB.toFixed(1).padStart(7),
-        (row.jsHeapUsedMB === null ? "n/a" : row.jsHeapUsedMB.toFixed(1)).padStart(7),
+        String(row.longFrameCount).padStart(5),
+        row.totalBlockingTimeMs.toFixed(1).padStart(7),
+        row.decodedParallaxMB.toFixed(1).padStart(6),
         (row.timeToFirstParallaxFrameMs === null
           ? "n/a"
-          : row.timeToFirstParallaxFrameMs.toFixed(1)
-        ).padStart(10),
+          : row.timeToFirstParallaxFrameMs.toFixed(0)
+        ).padStart(7),
         status,
       ].join(" ")
     );
@@ -170,7 +210,7 @@ function readJsonReport(filePath: string): PerfReport | null {
 export interface BudgetCliArgs {
   readonly reportPath: string;
   readonly baselinePath: string;
-  readonly profile: ProfileName;
+  readonly profile: ProfileSelection;
   readonly strict: boolean;
 }
 
@@ -180,7 +220,7 @@ export function parseBudgetCliArgs(
 ): BudgetCliArgs {
   let reportPath = resolve(cwd, "scripts/perf/out/latest.json");
   let baselinePath = resolve(cwd, "docs/perf/baseline.json");
-  let profile: ProfileName = "desktop";
+  let profile: ProfileSelection = "all";
   let strict = false;
 
   for (let i = 0; i < argv.length; i++) {
@@ -189,7 +229,7 @@ export function parseBudgetCliArgs(
       strict = true;
     } else if (arg === "--profile" && argv[i + 1]) {
       const next = argv[++i];
-      if (next === "desktop" || next === "tablet") profile = next;
+      if (next === "desktop" || next === "tablet" || next === "all") profile = next;
     } else if (arg === "--baseline" && argv[i + 1]) {
       baselinePath = resolve(cwd, argv[++i]);
     } else if (arg === "--report" && argv[i + 1]) {

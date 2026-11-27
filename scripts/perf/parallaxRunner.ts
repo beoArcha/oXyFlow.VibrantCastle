@@ -12,18 +12,27 @@ import {
   type InPagePerfSnapshot,
 } from "./parallaxBrowserProbe";
 import { evaluateParallaxBudgets, formatBudgetReport } from "./parallaxBudget";
-import { aggregatePerfReport, bytesToMB, roundMetric, summarizeFrameDeltas } from "./parallaxMetrics";
+import {
+  aggregatePerfReport,
+  bytesToMB,
+  roundMetric,
+  summarizeFrameDeltas,
+  summarizeLongFrames,
+  summarizeWorkDurations,
+} from "./parallaxMetrics";
 import {
   ALL_WORLD_LOCATION_IDS,
-  DEFAULT_DPRS,
   DEFAULT_HOLD_RIGHT_MS,
   DEFAULT_JUMP_AT_MS,
+  DEFAULT_PROFILES,
   DEFAULT_WARMUP_MS,
   PARALLAX_BUDGET_PROFILES,
   type MapDprMeasurement,
   type PerfEnvironmentInfo,
   type PerfReport,
+  type PerfRunProfileConfig,
   type ProfileName,
+  type ProfileSelection,
   type ServerMode,
 } from "./parallaxTypes";
 
@@ -38,7 +47,7 @@ export interface RunnerCliOptions {
   readonly serverMode: ServerMode;
   readonly url: string | null;
   readonly skipBuild: boolean;
-  readonly profile: ProfileName;
+  readonly profile: ProfileSelection;
   readonly strict: boolean;
   readonly writeBaseline: boolean;
   readonly outPath: string | null;
@@ -46,7 +55,7 @@ export interface RunnerCliOptions {
   readonly holdRightMs: number;
   readonly jumpAtMs: number;
   readonly warmupMs: number;
-  readonly dprs: readonly number[];
+  readonly dprsOverride: readonly number[] | null;
   readonly locations: readonly string[];
 }
 
@@ -60,7 +69,7 @@ export function parseRunnerArgs(argv: readonly string[]): RunnerCliOptions {
   let serverMode: ServerMode = "build";
   let url: string | null = null;
   let skipBuild = false;
-  let profile: ProfileName = "desktop";
+  let profile: ProfileSelection = "all";
   let strict = false;
   let writeBaseline = false;
   let outPath: string | null = null;
@@ -68,7 +77,7 @@ export function parseRunnerArgs(argv: readonly string[]): RunnerCliOptions {
   let holdRightMs = DEFAULT_HOLD_RIGHT_MS;
   let jumpAtMs = DEFAULT_JUMP_AT_MS;
   let warmupMs = DEFAULT_WARMUP_MS;
-  let dprs: number[] = [...DEFAULT_DPRS];
+  let dprsOverride: number[] | null = null;
   let locations: string[] = [...ALL_WORLD_LOCATION_IDS];
 
   for (let i = 0; i < argv.length; i++) {
@@ -82,7 +91,7 @@ export function parseRunnerArgs(argv: readonly string[]): RunnerCliOptions {
       url = argv[++i];
     } else if (arg === "--profile" && argv[i + 1]) {
       const next = argv[++i];
-      if (next === "desktop" || next === "tablet") profile = next;
+      if (next === "desktop" || next === "tablet" || next === "all") profile = next;
     } else if (arg === "--out" && argv[i + 1]) outPath = resolve(process.cwd(), argv[++i]);
     else if (arg === "--baseline" && argv[i + 1]) baselinePath = resolve(process.cwd(), argv[++i]);
     else if (arg === "--duration-ms" && argv[i + 1]) holdRightMs = parsePositiveInt(argv[++i], DEFAULT_HOLD_RIGHT_MS);
@@ -90,7 +99,7 @@ export function parseRunnerArgs(argv: readonly string[]): RunnerCliOptions {
     else if (arg === "--warmup-ms" && argv[i + 1]) warmupMs = parsePositiveInt(argv[++i], DEFAULT_WARMUP_MS);
     else if (arg === "--dprs" && argv[i + 1]) {
       const parsed = argv[++i].split(",").map((s) => Number(s.trim())).filter((n) => n === 1 || n === 2);
-      if (parsed.length > 0) dprs = parsed;
+      if (parsed.length > 0) dprsOverride = parsed;
     } else if (arg === "--locations" && argv[i + 1]) {
       const parsed = argv[++i].split(",").map((s) => s.trim()).filter(Boolean);
       if (parsed.length > 0) locations = parsed;
@@ -109,7 +118,7 @@ export function parseRunnerArgs(argv: readonly string[]): RunnerCliOptions {
     holdRightMs,
     jumpAtMs: Math.min(jumpAtMs, holdRightMs),
     warmupMs,
-    dprs,
+    dprsOverride,
     locations,
   };
 }
@@ -162,31 +171,40 @@ async function startServerForMode(
   return { baseUrl, stop: async () => { child.kill(); } };
 }
 
-async function measureLocationDpr(
+async function measureLocationDprOnce(
   browser: Browser,
   baseUrl: string,
+  profile: ProfileName,
   locationId: string,
   dpr: number,
   options: RunnerCliOptions
 ): Promise<{ measurement: MapDprMeasurement; userAgent: string }> {
-  const budgetSpec = PARALLAX_BUDGET_PROFILES[options.profile];
-  const viewport = options.profile === "tablet" ? { width: 1024, height: 768 } : { width: 1280, height: 720 };
-  const context = await browser.newContext({ viewport, deviceScaleFactor: dpr });
+  const budgetSpec = PARALLAX_BUDGET_PROFILES[profile];
+  const context = await browser.newContext({
+    viewport: budgetSpec.viewport,
+    deviceScaleFactor: dpr,
+  });
 
   try {
     const page = await context.newPage();
     await page.addInitScript(buildInPagePerfInitScript());
+
+    // Apply CDP CPU throttling before navigation so map-entry decode hitches are throttled too.
+    if (budgetSpec.cpuThrottlingRate > 1) {
+      const cdp = await context.newCDPSession(page);
+      await cdp.send("Emulation.setCPUThrottlingRate", { rate: budgetSpec.cpuThrottlingRate });
+    }
 
     const sep = baseUrl.includes("?") ? "&" : "?";
     await page.goto(`${baseUrl}${sep}location=${encodeURIComponent(locationId)}`, {
       waitUntil: "domcontentloaded",
       timeout: 30000,
     });
-    await page.waitForSelector("#game-viewport-canvas", { timeout: 15000 });
+    await page.waitForSelector("#game-viewport-canvas", { timeout: 30000 });
     await page.waitForFunction(
       () => Boolean((window as PerfWindow).__vcParallaxPerf?.hasFirstParallaxFrame()),
       undefined,
-      { timeout: 15000 }
+      { timeout: 30000 }
     );
 
     if (options.warmupMs > 0) await page.waitForTimeout(options.warmupMs);
@@ -212,10 +230,19 @@ async function measureLocationDpr(
     return {
       userAgent: ua,
       measurement: {
+        profile,
         locationId,
         dpr,
-        viewport,
-        frameTime: summarizeFrameDeltas(snapshot.deltasMs, budgetSpec.targetFrameMs, budgetSpec.droppedMultiplier),
+        viewport: budgetSpec.viewport,
+        cpuThrottlingRate: budgetSpec.cpuThrottlingRate,
+        work: summarizeWorkDurations(snapshot.workDurationsMs, budgetSpec.frameBudgetMs),
+        cadence: summarizeFrameDeltas(snapshot.deltasMs, budgetSpec.targetFrameMs, budgetSpec.droppedMultiplier),
+        longFrames: summarizeLongFrames(
+          snapshot.longFrameObserverType,
+          snapshot.longFrameCount,
+          snapshot.longFrameTotalBlockingTimeMs,
+          snapshot.longFrameMaxDurationMs
+        ),
         memory: {
           jsHeapUsedMB: snapshot.jsHeapUsedBytes === null ? null : bytesToMB(snapshot.jsHeapUsedBytes),
           jsHeapTotalMB: snapshot.jsHeapTotalBytes === null ? null : bytesToMB(snapshot.jsHeapTotalBytes),
@@ -232,10 +259,14 @@ async function measureLocationDpr(
     return {
       userAgent: "",
       measurement: {
+        profile,
         locationId,
         dpr,
-        viewport,
-        frameTime: summarizeFrameDeltas([], budgetSpec.targetFrameMs, budgetSpec.droppedMultiplier),
+        viewport: budgetSpec.viewport,
+        cpuThrottlingRate: budgetSpec.cpuThrottlingRate,
+        work: summarizeWorkDurations([], budgetSpec.frameBudgetMs),
+        cadence: summarizeFrameDeltas([], budgetSpec.targetFrameMs, budgetSpec.droppedMultiplier),
+        longFrames: summarizeLongFrames("none", 0, 0, 0),
         memory: {
           jsHeapUsedMB: null,
           jsHeapTotalMB: null,
@@ -253,6 +284,23 @@ async function measureLocationDpr(
   }
 }
 
+async function measureLocationDpr(
+  browser: Browser,
+  baseUrl: string,
+  profile: ProfileName,
+  locationId: string,
+  dpr: number,
+  options: RunnerCliOptions
+): Promise<{ measurement: MapDprMeasurement; userAgent: string }> {
+  const first = await measureLocationDprOnce(browser, baseUrl, profile, locationId, dpr, options);
+  if (!first.measurement.error) return first;
+
+  console.warn(
+    `[perf:parallax] Retrying [${profile}] ${locationId} @ DPR ${dpr} after transient failure: ${first.measurement.error}`
+  );
+  return measureLocationDprOnce(browser, baseUrl, profile, locationId, dpr, options);
+}
+
 function readExistingBaseline(path: string): PerfReport | null {
   if (!existsSync(path)) return null;
   try {
@@ -260,6 +308,25 @@ function readExistingBaseline(path: string): PerfReport | null {
   } catch {
     return null;
   }
+}
+
+function resolveProfileConfigs(options: RunnerCliOptions): readonly PerfRunProfileConfig[] {
+  const names: readonly ProfileName[] =
+    options.profile === "all" ? DEFAULT_PROFILES : [options.profile];
+
+  return names.map((name) => {
+    const spec = PARALLAX_BUDGET_PROFILES[name];
+    return {
+      profile: name,
+      viewport: spec.viewport,
+      dprs: options.dprsOverride ?? spec.dprs,
+      cpuThrottlingRate: spec.cpuThrottlingRate,
+      targetHz: spec.targetHz,
+      targetFrameMs: roundMetric(spec.targetFrameMs, 3),
+      frameBudgetMs: spec.frameBudgetMs,
+      droppedMultiplier: spec.droppedMultiplier,
+    };
+  });
 }
 
 async function main(): Promise<void> {
@@ -278,16 +345,28 @@ async function main(): Promise<void> {
     ...(executablePath ? { executablePath } : {}),
   });
 
+  const profileConfigs = resolveProfileConfigs(options);
   const measurements: MapDprMeasurement[] = [];
   let userAgent = "";
 
   try {
-    for (const locationId of options.locations) {
-      for (const dpr of options.dprs) {
-        console.log(`[perf:parallax] Measuring ${locationId} @ DPR ${dpr}...`);
-        const result = await measureLocationDpr(browser, serverHandle.baseUrl, locationId, dpr, options);
-        if (!userAgent && result.userAgent) userAgent = result.userAgent;
-        measurements.push(result.measurement);
+    for (const profileCfg of profileConfigs) {
+      for (const locationId of options.locations) {
+        for (const dpr of profileCfg.dprs) {
+          console.log(
+            `[perf:parallax] Measuring [${profileCfg.profile}] ${locationId} @ DPR ${dpr} (CPU ${profileCfg.cpuThrottlingRate}x)...`
+          );
+          const result = await measureLocationDpr(
+            browser,
+            serverHandle.baseUrl,
+            profileCfg.profile,
+            locationId,
+            dpr,
+            options
+          );
+          if (!userAgent && result.userAgent) userAgent = result.userAgent;
+          measurements.push(result.measurement);
+        }
       }
     }
   } finally {
@@ -306,16 +385,12 @@ async function main(): Promise<void> {
     bunVersion: process.versions.bun ?? "unknown",
   };
 
-  const budgetSpec = PARALLAX_BUDGET_PROFILES[options.profile];
   const report = aggregatePerfReport(measurements, environment, {
     serverMode: options.serverMode,
     holdRightMs: options.holdRightMs,
     jumpAtMs: options.jumpAtMs,
     warmupMs: options.warmupMs,
-    targetHz: budgetSpec.targetHz,
-    targetFrameMs: roundMetric(budgetSpec.targetFrameMs, 3),
-    droppedMultiplier: budgetSpec.droppedMultiplier,
-    dprs: options.dprs,
+    profiles: profileConfigs,
     locations: options.locations,
   });
 

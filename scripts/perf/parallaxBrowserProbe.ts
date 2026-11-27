@@ -2,6 +2,7 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import type { AddressInfo } from "node:net";
 import { extname, join, normalize, resolve } from "node:path";
+import type { LongFrameObserverType } from "./parallaxTypes";
 
 const MIME_TYPES: Readonly<Record<string, string>> = {
   ".html": "text/html; charset=utf-8",
@@ -89,7 +90,12 @@ export async function startStaticBuildServer(rootDir: string): Promise<StaticSer
 }
 
 export interface InPagePerfSnapshot {
+  readonly workDurationsMs: readonly number[];
   readonly deltasMs: readonly number[];
+  readonly longFrameObserverType: LongFrameObserverType;
+  readonly longFrameCount: number;
+  readonly longFrameTotalBlockingTimeMs: number;
+  readonly longFrameMaxDurationMs: number;
   readonly firstParallaxFrameMs: number | null;
   readonly jsHeapUsedBytes: number | null;
   readonly jsHeapTotalBytes: number | null;
@@ -108,8 +114,9 @@ export interface InPagePerfProbeHandle {
 
 /**
  * Returns the self-contained browser init script injected before app code executes.
- * Captures time-to-first-parallax-frame, rAF frame deltas, and decoded image byte totals
- * without modifying rendering source files.
+ * Wraps requestAnimationFrame to measure per-frame JS/canvas work duration, observes
+ * long-animation-frame / longtask entries from page entry, records rAF cadence intervals,
+ * and captures time-to-first-parallax-frame and decoded image byte totals.
  */
 export function buildInPagePerfInitScript(): string {
   return `(() => {
@@ -161,10 +168,71 @@ export function buildInPagePerfInitScript(): string {
       return origDrawImage.call(this, source, ...rest);
     };
 
+    let longFrameObserverType = "none";
+    let longFrameCount = 0;
+    let longFrameTotalBlockingTimeMs = 0;
+    let longFrameMaxDurationMs = 0;
+    let longFrameObserver = null;
+
+    function recordLongEntries(entries) {
+      for (const entry of entries) {
+        const duration = typeof entry.duration === "number" ? entry.duration : 0;
+        const blocking =
+          typeof entry.blockingDuration === "number"
+            ? entry.blockingDuration
+            : Math.max(0, duration - 50);
+        longFrameCount++;
+        longFrameTotalBlockingTimeMs += blocking;
+        if (duration > longFrameMaxDurationMs) {
+          longFrameMaxDurationMs = duration;
+        }
+      }
+    }
+
+    if (typeof PerformanceObserver !== "undefined") {
+      const supported = Array.isArray(PerformanceObserver.supportedEntryTypes)
+        ? PerformanceObserver.supportedEntryTypes
+        : [];
+      const candidateType = supported.includes("long-animation-frame")
+        ? "long-animation-frame"
+        : supported.includes("longtask")
+          ? "longtask"
+          : null;
+      if (candidateType) {
+        try {
+          longFrameObserverType = candidateType;
+          longFrameObserver = new PerformanceObserver((list) => {
+            recordLongEntries(list.getEntries());
+          });
+          longFrameObserver.observe({ type: candidateType, buffered: true });
+        } catch {
+          longFrameObserverType = "none";
+          longFrameObserver = null;
+        }
+      }
+    }
+
     let sampling = false;
     let rafId = 0;
     let lastTs = 0;
     let deltasMs = [];
+    let workDurationsMs = [];
+
+    // Keep the native rAF reference so the cadence sampler does not record itself as app work.
+    const origRaf = window.requestAnimationFrame.bind(window);
+    window.requestAnimationFrame = function (callback) {
+      return origRaf(function (timestamp) {
+        if (!sampling) {
+          return callback(timestamp);
+        }
+        const start = performance.now();
+        try {
+          return callback(timestamp);
+        } finally {
+          workDurationsMs.push(performance.now() - start);
+        }
+      });
+    };
 
     function onFrame(now) {
       if (!sampling) return;
@@ -172,7 +240,7 @@ export function buildInPagePerfInitScript(): string {
         deltasMs.push(now - lastTs);
       }
       lastTs = now;
-      rafId = requestAnimationFrame(onFrame);
+      rafId = origRaf(onFrame);
     }
 
     window.__vcParallaxPerf = {
@@ -180,10 +248,11 @@ export function buildInPagePerfInitScript(): string {
         return firstParallaxFrameMs !== null;
       },
       startSampling() {
+        workDurationsMs = [];
         deltasMs = [];
         lastTs = 0;
         sampling = true;
-        rafId = requestAnimationFrame(onFrame);
+        rafId = origRaf(onFrame);
       },
       stopSampling() {
         sampling = false;
@@ -191,6 +260,10 @@ export function buildInPagePerfInitScript(): string {
         rafId = 0;
       },
       getSnapshot() {
+        if (longFrameObserver && typeof longFrameObserver.takeRecords === "function") {
+          recordLongEntries(longFrameObserver.takeRecords());
+        }
+
         const seenUrls = new Set();
         let decodedImagesCount = 0;
         let decodedImagesTotalBytes = 0;
@@ -225,7 +298,12 @@ export function buildInPagePerfInitScript(): string {
 
         const mem = performance && performance.memory ? performance.memory : null;
         return {
+          workDurationsMs: workDurationsMs.slice(),
           deltasMs: deltasMs.slice(),
+          longFrameObserverType,
+          longFrameCount,
+          longFrameTotalBlockingTimeMs,
+          longFrameMaxDurationMs,
           firstParallaxFrameMs,
           jsHeapUsedBytes: mem ? mem.usedJSHeapSize : null,
           jsHeapTotalBytes: mem ? mem.totalJSHeapSize : null,
