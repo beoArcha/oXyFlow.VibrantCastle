@@ -1,16 +1,30 @@
+import {
+  computeParallaxPreScaleDimensions,
+  type ParallaxLoadResizeSpec,
+  type ParallaxSurfaceMetrics,
+} from "@game/renderer/background/parallaxGeometry";
 import type { ParallaxQualityTier } from "../meta";
-import { browserParallaxBitmapDecoder } from "./browserBitmapDecoder";
-import type {
-  IParallaxTextureDecoder,
-  ParallaxDecodeResult,
-  ParallaxDrawableTexture,
-  ParallaxLoadQueueDeps,
-  ParallaxLoadQueueStats,
-  ParallaxLoadTaskDescriptor,
-  ParallaxQueuePriority,
+import {
+  browserParallaxBitmapDecoder,
+  createBrowserIdleScheduler,
+  resolveBrowserSurfaceMetrics,
+} from "./browserBitmapDecoder";
+import {
+  PARALLAX_LOAD_PRIORITY,
+  type IParallaxTextureDecoder,
+  type ParallaxDecodeResult,
+  type ParallaxDrawableTexture,
+  type ParallaxIdleDeadline,
+  type ParallaxIdleScheduler,
+  type ParallaxLoadQueueDeps,
+  type ParallaxLoadQueueStats,
+  type ParallaxLoadTaskDescriptor,
+  type ParallaxQueuePriority,
+  type ParallaxResizeResolver,
 } from "./types";
 
 export const DEFAULT_PARALLAX_FADE_DURATION_MS = 200;
+export const DEFAULT_PARALLAX_IDLE_FRAME_BUDGET_MS = 2.5;
 
 const TIER_RANK: Readonly<Record<ParallaxQualityTier, number>> = {
   low: 1,
@@ -37,6 +51,7 @@ interface QueuedLoadTask {
   readonly seq: number;
   readonly generation: number;
   fadeInOnReady: boolean;
+  surfaceSpec?: ParallaxLoadResizeSpec;
   readonly promise: Promise<ParallaxDrawableTexture | null>;
   resolve: (texture: ParallaxDrawableTexture | null) => void;
 }
@@ -70,13 +85,21 @@ export class ParallaxLoadQueue {
   private readonly concurrency: number;
   private readonly now: () => number;
   private readonly fadeDurationMs: number;
+  private readonly resolveDefaultSurfaceMetrics?: () => ParallaxSurfaceMetrics;
+  private readonly scheduleIdle?: ParallaxIdleScheduler;
+  private readonly idleFrameBudgetMs: number;
+  private readonly maxStartsPerIdleSlice: number;
 
+  private surfaceMetrics: ParallaxSurfaceMetrics | null;
+  private idleScheduled = false;
   private generation = 0;
   private nextSeq = 0;
   private readonly cacheByKey = new Map<string, CachedParallaxEntry>();
   private readonly cacheByUrl = new Map<string, CachedParallaxEntry>();
   private readonly pending: QueuedLoadTask[] = [];
   private readonly inFlight = new Set<QueuedLoadTask>();
+  private readonly cancelledInFlight = new WeakSet<QueuedLoadTask>();
+  private readonly releaseListeners = new Set<(texture: ParallaxDrawableTexture) => void>();
 
   constructor(deps: ParallaxLoadQueueDeps = {}) {
     this.decoder = deps.decoder ?? browserParallaxBitmapDecoder;
@@ -84,6 +107,30 @@ export class ParallaxLoadQueue {
     this.concurrency = Math.max(1, Math.min(2, Math.floor(requestedConcurrency)));
     this.now = deps.now ?? defaultNow;
     this.fadeDurationMs = deps.fadeDurationMs ?? DEFAULT_PARALLAX_FADE_DURATION_MS;
+    this.surfaceMetrics = deps.surfaceMetrics ?? null;
+    this.resolveDefaultSurfaceMetrics = deps.resolveDefaultSurfaceMetrics;
+    this.scheduleIdle =
+      deps.scheduleIdle ??
+      (deps.idleFrameBudgetMs !== undefined
+        ? createBrowserIdleScheduler(deps.idleFrameBudgetMs)
+        : undefined);
+    this.idleFrameBudgetMs = Math.max(0.25, deps.idleFrameBudgetMs ?? DEFAULT_PARALLAX_IDLE_FRAME_BUDGET_MS);
+    this.maxStartsPerIdleSlice = Math.max(1, Math.floor(deps.maxStartsPerIdleSlice ?? 1));
+  }
+
+  public setSurfaceMetrics(metrics: ParallaxSurfaceMetrics): void {
+    this.surfaceMetrics = metrics;
+  }
+
+  public getSurfaceMetrics(): ParallaxSurfaceMetrics | null {
+    return this.surfaceMetrics ?? this.resolveDefaultSurfaceMetrics?.() ?? null;
+  }
+
+  public subscribeRelease(listener: (texture: ParallaxDrawableTexture) => void): () => void {
+    this.releaseListeners.add(listener);
+    return () => {
+      this.releaseListeners.delete(listener);
+    };
   }
 
   public get currentGeneration(): number {
@@ -169,7 +216,7 @@ export class ParallaxLoadQueue {
     if (entry) {
       this.cacheByKey.delete(entry.cacheKey);
       this.cacheByUrl.delete(entry.url);
-      this.decoder.release?.(entry.texture);
+      this.releaseTexture(entry.texture);
       removed = true;
     }
 
@@ -181,13 +228,20 @@ export class ParallaxLoadQueue {
         removed = true;
       }
     }
+
+    for (const task of this.inFlight) {
+      if (task.cacheKey === keyOrUrl || task.url === keyOrUrl) {
+        this.cancelledInFlight.add(task);
+        removed = true;
+      }
+    }
     return removed;
   }
 
   public clear(): void {
     this.beginGeneration();
     for (const entry of this.cacheByKey.values()) {
-      this.decoder.release?.(entry.texture);
+      this.releaseTexture(entry.texture);
     }
     this.cacheByKey.clear();
     this.cacheByUrl.clear();
@@ -219,7 +273,7 @@ export class ParallaxLoadQueue {
 
     const existing = this.findActiveTask(descriptor.cacheKey, tier, descriptor.url);
     if (existing) {
-      this.promoteTask(existing, descriptor.priority, subOrder, fadeInOnReady);
+      this.promoteTask(existing, descriptor.priority, subOrder, fadeInOnReady, descriptor.surfaceSpec);
       return existing.promise;
     }
 
@@ -237,6 +291,7 @@ export class ParallaxLoadQueue {
       seq: this.nextSeq++,
       generation: this.generation,
       fadeInOnReady,
+      surfaceSpec: descriptor.surfaceSpec,
       promise,
       resolve: resolveFn,
     });
@@ -263,7 +318,8 @@ export class ParallaxLoadQueue {
     task: QueuedLoadTask,
     priority: ParallaxQueuePriority,
     subOrder: number,
-    fadeInOnReady: boolean
+    fadeInOnReady: boolean,
+    surfaceSpec?: ParallaxLoadResizeSpec
   ): void {
     const higherPriority = priority < task.priority || (priority === task.priority && subOrder < task.subOrder);
     if (higherPriority) {
@@ -274,25 +330,82 @@ export class ParallaxLoadQueue {
     if (fadeInOnReady) {
       task.fadeInOnReady = true;
     }
+    if (surfaceSpec && !task.surfaceSpec) {
+      task.surfaceSpec = surfaceSpec;
+    }
   }
 
   private pump(): void {
     while (this.inFlight.size < this.concurrency && this.pending.length > 0) {
+      const next = this.pending[0];
+      if (next.generation !== this.generation) {
+        this.pending.shift();
+        next.resolve(null);
+        continue;
+      }
+      if (this.scheduleIdle && next.priority > PARALLAX_LOAD_PRIORITY.FAR) {
+        this.ensureIdleScheduled();
+        break;
+      }
+      this.pending.shift();
+      this.startTask(next);
+    }
+  }
+
+  private ensureIdleScheduled(): void {
+    if (!this.scheduleIdle || this.idleScheduled) return;
+    if (this.pending.length === 0 || this.inFlight.size >= this.concurrency) return;
+    this.idleScheduled = true;
+    this.scheduleIdle((deadline) => this.runIdleSlice(deadline));
+  }
+
+  private runIdleSlice(deadline: ParallaxIdleDeadline): void {
+    this.idleScheduled = false;
+    if (this.pending.length === 0 || this.inFlight.size >= this.concurrency) return;
+
+    const remaining = Math.max(0, deadline.timeRemaining());
+    if (!deadline.didTimeout && remaining <= 0.25) {
+      this.ensureIdleScheduled();
+      return;
+    }
+
+    const sliceStart = this.now();
+    const budgetMs = Math.min(this.idleFrameBudgetMs, remaining > 0 ? remaining : this.idleFrameBudgetMs);
+    let started = 0;
+
+    while (this.inFlight.size < this.concurrency && this.pending.length > 0) {
+      if (started > 0) {
+        if (started >= this.maxStartsPerIdleSlice) break;
+        if (this.now() - sliceStart >= budgetMs) break;
+      }
       const next = this.pending.shift()!;
       if (next.generation !== this.generation) {
         next.resolve(null);
         continue;
       }
       this.startTask(next);
+      started++;
+    }
+
+    if (this.inFlight.size < this.concurrency && this.pending.length > 0) {
+      this.ensureIdleScheduled();
     }
   }
 
   private startTask(task: QueuedLoadTask): void {
     this.inFlight.add(task);
-    const isCancelled = () => task.generation !== this.generation;
+    const isCancelled = () => task.generation !== this.generation || this.cancelledInFlight.has(task);
+    const surfaceSpec = task.surfaceSpec;
+    const resolveResize: ParallaxResizeResolver | undefined = surfaceSpec
+      ? (srcWidth, srcHeight) => {
+          const metrics = this.getSurfaceMetrics();
+          if (!metrics) return null;
+          return computeParallaxPreScaleDimensions(srcWidth, srcHeight, surfaceSpec, metrics);
+        }
+      : undefined;
 
     this.decoder
-      .loadAndDecode(task.url, isCancelled)
+      .loadAndDecode(task.url, isCancelled, resolveResize)
       .then((result) => this.handleTaskResult(task, result))
       .catch(() => {
         this.inFlight.delete(task);
@@ -304,9 +417,9 @@ export class ParallaxLoadQueue {
   private handleTaskResult(task: QueuedLoadTask, result: ParallaxDecodeResult | null): void {
     this.inFlight.delete(task);
 
-    if (!result || task.generation !== this.generation) {
+    if (!result || task.generation !== this.generation || this.cancelledInFlight.has(task)) {
       if (result) {
-        this.decoder.release?.(result.texture);
+        this.releaseTexture(result.texture);
       }
       task.resolve(null);
       this.pump();
@@ -318,11 +431,18 @@ export class ParallaxLoadQueue {
     this.pump();
   }
 
+  private releaseTexture(texture: ParallaxDrawableTexture): void {
+    this.decoder.release?.(texture);
+    for (const listener of this.releaseListeners) {
+      listener(texture);
+    }
+  }
+
   private commitDecodedEntry(task: QueuedLoadTask, result: ParallaxDecodeResult): ParallaxDrawableTexture {
     const previous = this.cacheByKey.get(task.cacheKey);
     if (previous && TIER_RANK[previous.tier] > TIER_RANK[task.tier]) {
       if (result.texture !== previous.texture) {
-        this.decoder.release?.(result.texture);
+        this.releaseTexture(result.texture);
       }
       return previous.texture;
     }
@@ -337,7 +457,7 @@ export class ParallaxLoadQueue {
     if (previous) {
       this.cacheByUrl.delete(previous.url);
       if (previous.texture !== result.texture) {
-        this.decoder.release?.(previous.texture);
+        this.releaseTexture(previous.texture);
       }
     }
 
@@ -355,4 +475,11 @@ export class ParallaxLoadQueue {
   }
 }
 
-export const defaultParallaxLoadQueue = new ParallaxLoadQueue();
+const IS_TEST_RUNTIME = typeof process !== "undefined" && process.env?.NODE_ENV === "test";
+
+export const defaultParallaxLoadQueue = new ParallaxLoadQueue({
+  resolveDefaultSurfaceMetrics: resolveBrowserSurfaceMetrics,
+  scheduleIdle: !IS_TEST_RUNTIME && typeof Image !== "undefined" ? createBrowserIdleScheduler() : undefined,
+  idleFrameBudgetMs: DEFAULT_PARALLAX_IDLE_FRAME_BUDGET_MS,
+  maxStartsPerIdleSlice: 1,
+});

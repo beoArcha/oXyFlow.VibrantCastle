@@ -9,7 +9,12 @@ import {
   resetLinearGradientSpec,
   type LinearGradientStop,
 } from "./gradientCache";
-import { createResolvedParallaxSurface, type ParallaxSurfaceCache } from "./ParallaxSurfaceCache";
+import {
+  createResolvedParallaxSurface,
+  resolveSourcePixelHeight,
+  resolveSourcePixelWidth,
+  type ParallaxSurfaceCache,
+} from "./ParallaxSurfaceCache";
 
 /**
  * Renders full-viewport parallax backdrops (far vista, fallback gradient, and boss arena overlays)
@@ -71,22 +76,24 @@ export class ParallaxBackdropRenderer {
 
       // Overscan slightly by 6% horizontally so the far horizon glides subtly without exposing viewport edges.
       resolveFarBackdropRect(this.farRect, img.naturalWidth, img.naturalHeight, viewportWidth * 1.06, viewportHeight * 1.03);
+      const srcPixelW = resolveSourcePixelWidth(img);
+      const srcPixelH = resolveSourcePixelHeight(img);
       const pixelScale = ctx.canvas ? ctx.canvas.width / Math.max(1, viewportWidth) : 1;
       const surface = this.surfaceCache
         ? this.surfaceCache.resolve(
             img,
-            img.naturalWidth,
-            img.naturalHeight,
+            srcPixelW,
+            srcPixelH,
             this.farRect.width * pixelScale,
             this.farRect.height * pixelScale,
-            layer.blendMode !== "screen",
+            false,
             ctx.imageSmoothingEnabled,
             this.resolvedSurface
           )
         : null;
       const drawSource = surface ? surface.source : img;
-      const drawSrcW = surface ? surface.width : img.naturalWidth;
-      const drawSrcH = surface ? surface.height : img.naturalHeight;
+      const drawSrcW = surface ? surface.width : srcPixelW;
+      const drawSrcH = surface ? surface.height : srcPixelH;
 
       const maxPanX = Math.max(0, this.farRect.width - viewportWidth);
       const maxPanY = Math.max(0, this.farRect.height - viewportHeight);
@@ -155,22 +162,24 @@ export class ParallaxBackdropRenderer {
       }
 
       resolveFarBackdropRect(this.farRect, img.naturalWidth, img.naturalHeight, viewportWidth * 1.06, viewportHeight * 1.04);
+      const srcPixelW = resolveSourcePixelWidth(img);
+      const srcPixelH = resolveSourcePixelHeight(img);
       const pixelScale = ctx.canvas ? ctx.canvas.width / Math.max(1, viewportWidth) : 1;
       const surface = this.surfaceCache
         ? this.surfaceCache.resolve(
             img,
-            img.naturalWidth,
-            img.naturalHeight,
+            srcPixelW,
+            srcPixelH,
             this.farRect.width * pixelScale,
             this.farRect.height * pixelScale,
-            layer.blendMode !== "screen",
+            false,
             ctx.imageSmoothingEnabled,
             this.resolvedSurface
           )
         : null;
       const drawSource = surface ? surface.source : img;
-      const drawSrcW = surface ? surface.width : img.naturalWidth;
-      const drawSrcH = surface ? surface.height : img.naturalHeight;
+      const drawSrcW = surface ? surface.width : srcPixelW;
+      const drawSrcH = surface ? surface.height : srcPixelH;
 
       const shiftX = (0.5 - progressX) * viewportWidth * 0.04;
       const shiftY = (0.5 - progressY) * viewportHeight * 0.02;

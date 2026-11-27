@@ -3,6 +3,7 @@ import type { IParallaxRegistry } from "@game/parallax/render/types";
 import type { ResolvedParallaxQuality } from "@game/types";
 import { assetsLogger } from "../logger/gameLogger";
 import { resolveBackgroundTier } from "../renderer/background/parallaxTiling";
+import type { ParallaxLoadResizeSpec } from "../renderer/background/parallaxGeometry";
 import {
   PARALLAX_LOAD_PRIORITY,
   ParallaxLoadQueue,
@@ -50,9 +51,14 @@ export interface LocationAssetStats {
 }
 
 function defaultScheduleIdle(task: () => void): void {
-  const g = globalThis as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number };
+  const g = globalThis as {
+    requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number;
+    requestAnimationFrame?: (cb: () => void) => number;
+  };
   if (typeof g.requestIdleCallback === "function") {
-    g.requestIdleCallback(task, { timeout: 2000 });
+    g.requestIdleCallback(task, { timeout: 1000 });
+  } else if (typeof g.requestAnimationFrame === "function") {
+    g.requestAnimationFrame(() => setTimeout(task, 0));
   } else {
     setTimeout(task, 0);
   }
@@ -156,6 +162,25 @@ function resolveLayerTargetForTier(
   return undefined;
 }
 
+function buildSurfaceSpec(
+  layer: ParallaxLayerSchema,
+  boxHeight: number
+): ParallaxLoadResizeSpec {
+  const tier = resolveBackgroundTier(layer);
+  const kind =
+    tier === "far"
+      ? "far"
+      : tier === "boss_stage" || tier === "boss_world"
+        ? "boss"
+        : "dynamic";
+  return {
+    kind,
+    boxHeight,
+    // Downscale oversized sources only; upscaling pixel art wastes VRAM and causes texture-upload spikes.
+    allowUpscale: false,
+  };
+}
+
 function buildLocationLoadTasks(
   def: LocationDefinition,
   quality: ResolvedParallaxQuality,
@@ -165,6 +190,7 @@ function buildLocationLoadTasks(
   if (quality === "off") return [];
   const layers = def.parallaxBackground?.layers;
   if (!layers || layers.length === 0) return [];
+  const boxHeight = Math.max(def.parallaxBackground?.boxHeight || 0, def.height + 200);
 
   if (quality === "simplified") {
     for (let i = 0; i < layers.length; i++) {
@@ -180,6 +206,7 @@ function buildLocationLoadTasks(
           priority: PARALLAX_LOAD_PRIORITY.FAR,
           subOrder: 0,
           fadeInOnReady: false,
+          surfaceSpec: buildSurfaceSpec(layer, boxHeight),
         },
       ];
     }
@@ -194,6 +221,7 @@ function buildLocationLoadTasks(
 
     const cacheKey = layer.layerKey || target.url;
     const tier = resolveBackgroundTier(layer);
+    const surfaceSpec = buildSurfaceSpec(layer, boxHeight);
 
     if (tier === "far") {
       tasks.push({
@@ -203,6 +231,7 @@ function buildLocationLoadTasks(
         priority: PARALLAX_LOAD_PRIORITY.FAR,
         subOrder: 0,
         fadeInOnReady: false,
+        surfaceSpec,
       });
       continue;
     }
@@ -215,6 +244,7 @@ function buildLocationLoadTasks(
         priority: PARALLAX_LOAD_PRIORITY.ZONE_VARIANT,
         subOrder: resolveZoneDistanceSq(def, layer),
         fadeInOnReady: true,
+        surfaceSpec,
       });
       continue;
     }
@@ -227,6 +257,7 @@ function buildLocationLoadTasks(
         priority: PARALLAX_LOAD_PRIORITY.EFFECT,
         subOrder: layer.depth ?? 0.72,
         fadeInOnReady: true,
+        surfaceSpec,
       });
       continue;
     }
@@ -238,6 +269,7 @@ function buildLocationLoadTasks(
       priority: PARALLAX_LOAD_PRIORITY.LAYER,
       subOrder: layer.depth ?? i * 0.1,
       fadeInOnReady: true,
+      surfaceSpec,
     });
   }
   return tasks;
@@ -252,6 +284,7 @@ function buildNeighbourLoadTasks(
   if (quality === "off") return [];
   const layers = def.parallaxBackground?.layers;
   if (!layers || layers.length === 0) return [];
+  const boxHeight = Math.max(def.parallaxBackground?.boxHeight || 0, def.height + 200);
 
   let farLayer: ParallaxLayerSchema | undefined;
   let closestLayer: ParallaxLayerSchema | undefined;
@@ -291,6 +324,7 @@ function buildNeighbourLoadTasks(
       priority: PARALLAX_LOAD_PRIORITY.NEIGHBOUR,
       subOrder,
       fadeInOnReady: false,
+      surfaceSpec: buildSurfaceSpec(layer, boxHeight),
     });
   };
 

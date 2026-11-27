@@ -19,8 +19,103 @@ export interface LayerRect {
   height: number;
 }
 
+export type ParallaxSurfaceKind = "far" | "boss" | "dynamic";
+export type ParallaxResizeQuality = "pixelated" | "medium";
+
+export interface ParallaxSurfaceMetrics {
+  readonly viewportWidth: number;
+  readonly viewportHeight: number;
+  readonly pixelScale: number;
+  readonly smoothing: boolean;
+  readonly maxDimension?: number;
+}
+
+export interface ParallaxLoadResizeSpec {
+  readonly kind: ParallaxSurfaceKind;
+  readonly boxHeight: number;
+  readonly allowUpscale: boolean;
+}
+
+export interface ParallaxTargetDimensions {
+  readonly width: number;
+  readonly height: number;
+  readonly resizeQuality: ParallaxResizeQuality;
+}
+
+export const DEFAULT_PARALLAX_SURFACE_MAX_DIMENSION = 2560;
+
 export function createLayerRect(): LayerRect {
   return { x: 0, y: 0, width: 0, height: 0 };
+}
+
+const PRE_SCALE_RECT = createLayerRect();
+
+/**
+ * Computes the pre-scaled pixel dimensions for a parallax layer matching
+ * ParallaxBackdropRenderer / renderTiledDynamicLayer and ParallaxSurfaceCache clamping.
+ */
+export function computeParallaxPreScaleDimensions(
+  srcWidth: number,
+  srcHeight: number,
+  spec: ParallaxLoadResizeSpec,
+  metrics: ParallaxSurfaceMetrics
+): ParallaxTargetDimensions | null {
+  if (srcWidth <= 0 || srcHeight <= 0 || metrics.viewportWidth <= 0 || metrics.viewportHeight <= 0) {
+    return null;
+  }
+
+  const pixelScale = metrics.pixelScale > 0 ? metrics.pixelScale : 1;
+  let desiredWidth = srcWidth;
+  let desiredHeight = srcHeight;
+
+  if (spec.kind === "far") {
+    resolveFarBackdropRect(
+      PRE_SCALE_RECT,
+      srcWidth,
+      srcHeight,
+      metrics.viewportWidth * 1.06,
+      metrics.viewportHeight * 1.03
+    );
+    desiredWidth = PRE_SCALE_RECT.width * pixelScale;
+    desiredHeight = PRE_SCALE_RECT.height * pixelScale;
+  } else if (spec.kind === "boss") {
+    resolveFarBackdropRect(
+      PRE_SCALE_RECT,
+      srcWidth,
+      srcHeight,
+      metrics.viewportWidth * 1.06,
+      metrics.viewportHeight * 1.04
+    );
+    desiredWidth = PRE_SCALE_RECT.width * pixelScale;
+    desiredHeight = PRE_SCALE_RECT.height * pixelScale;
+  } else {
+    const drawH = resolveLayerDrawHeight(srcHeight, spec.boxHeight, metrics.viewportHeight);
+    const drawW = srcWidth * (drawH / srcHeight);
+    desiredWidth = drawW * pixelScale;
+    desiredHeight = drawH * pixelScale;
+  }
+
+  const maxDim = Math.max(64, metrics.maxDimension ?? DEFAULT_PARALLAX_SURFACE_MAX_DIMENSION);
+  let targetW = Math.max(1, Math.round(desiredWidth));
+  let targetH = Math.max(1, Math.round(desiredHeight));
+
+  if (!spec.allowUpscale && (targetW > srcWidth || targetH > srcHeight)) {
+    const shrink = Math.min(1, srcWidth / targetW, srcHeight / targetH);
+    targetW = Math.max(1, Math.round(targetW * shrink));
+    targetH = Math.max(1, Math.round(targetH * shrink));
+  }
+
+  if (targetW > maxDim || targetH > maxDim) {
+    const cap = Math.min(maxDim / targetW, maxDim / targetH);
+    targetW = Math.max(1, Math.round(targetW * cap));
+    targetH = Math.max(1, Math.round(targetH * cap));
+  }
+
+  return {
+    width: targetW,
+    height: targetH,
+    resizeQuality: metrics.smoothing ? "medium" : "pixelated",
+  };
 }
 
 /**

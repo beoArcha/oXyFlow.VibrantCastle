@@ -1,8 +1,10 @@
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import type { AddressInfo } from "node:net";
 import { extname, join, normalize, resolve } from "node:path";
 import type { LongFrameObserverType } from "./parallaxTypes";
+
+export type PerfBrowserKind = "chromium" | "firefox" | "webkit";
 
 const MIME_TYPES: Readonly<Record<string, string>> = {
   ".html": "text/html; charset=utf-8",
@@ -19,6 +21,57 @@ const MIME_TYPES: Readonly<Record<string, string>> = {
   ".woff2": "font/woff2",
 };
 
+function findMsPlaywrightExecutable(
+  msPlaywrightDir: string,
+  dirPrefix: string,
+  relativeExeSegments: readonly string[]
+): string | undefined {
+  if (!existsSync(msPlaywrightDir)) return undefined;
+  const entries = readdirSync(msPlaywrightDir)
+    .filter((entry) => entry.startsWith(dirPrefix))
+    .sort()
+    .reverse();
+  for (const entry of entries) {
+    const candidate = join(msPlaywrightDir, entry, ...relativeExeSegments);
+    if (existsSync(candidate)) return candidate;
+  }
+  return undefined;
+}
+
+/**
+ * Resolves the Playwright browser executable path from explicit env overrides
+ * (`PLAYWRIGHT_<BROWSER>_PATH`), falling back to local Windows `ms-playwright`
+ * directories when present, or undefined to let playwright-core use its default.
+ */
+export function resolveBrowserExecutablePath(
+  browserKind: PerfBrowserKind = "chromium",
+  env: Record<string, string | undefined> = process.env
+): string | undefined {
+  const envKey =
+    browserKind === "firefox"
+      ? "PLAYWRIGHT_FIREFOX_PATH"
+      : browserKind === "webkit"
+        ? "PLAYWRIGHT_WEBKIT_PATH"
+        : "PLAYWRIGHT_CHROMIUM_PATH";
+  const configured = env[envKey]?.trim();
+  if (configured) return configured;
+
+  if (env.LOCALAPPDATA) {
+    const msPlaywrightDir = join(env.LOCALAPPDATA, "ms-playwright");
+    if (browserKind === "chromium") {
+      return findMsPlaywrightExecutable(msPlaywrightDir, "chromium-", ["chrome-win64", "chrome.exe"]);
+    }
+    if (browserKind === "firefox") {
+      return findMsPlaywrightExecutable(msPlaywrightDir, "firefox-", ["firefox", "firefox.exe"]);
+    }
+    if (browserKind === "webkit") {
+      return findMsPlaywrightExecutable(msPlaywrightDir, "webkit-", ["Playwright.exe"]);
+    }
+  }
+
+  return undefined;
+}
+
 /**
  * Resolves the Chromium executable path from PLAYWRIGHT_CHROMIUM_PATH,
  * falling back to the local Windows ms-playwright binary when present,
@@ -27,21 +80,7 @@ const MIME_TYPES: Readonly<Record<string, string>> = {
 export function resolveChromiumExecutablePath(
   env: Record<string, string | undefined> = process.env
 ): string | undefined {
-  const configured = env.PLAYWRIGHT_CHROMIUM_PATH?.trim();
-  if (configured) return configured;
-
-  if (env.LOCALAPPDATA) {
-    const localWinChrome = join(
-      env.LOCALAPPDATA,
-      "ms-playwright",
-      "chromium-1248",
-      "chrome-win64",
-      "chrome.exe"
-    );
-    if (existsSync(localWinChrome)) return localWinChrome;
-  }
-
-  return undefined;
+  return resolveBrowserExecutablePath("chromium", env);
 }
 
 export interface StaticServerHandle {

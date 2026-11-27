@@ -3,13 +3,14 @@ import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import { join, resolve } from "node:path";
-import { chromium, type Browser } from "playwright-core";
+import { chromium, firefox, webkit, type Browser } from "playwright-core";
 import {
   buildInPagePerfInitScript,
-  resolveChromiumExecutablePath,
+  resolveBrowserExecutablePath,
   startStaticBuildServer,
   type InPagePerfProbeHandle,
   type InPagePerfSnapshot,
+  type PerfBrowserKind,
 } from "./parallaxBrowserProbe";
 import { evaluateParallaxBudgets, formatBudgetReport } from "./parallaxBudget";
 import {
@@ -45,6 +46,7 @@ const DEFAULT_BASELINE_PATH = join(ROOT_DIR, "docs", "perf", "baseline.json");
 
 export interface RunnerCliOptions {
   readonly serverMode: ServerMode;
+  readonly browser: PerfBrowserKind;
   readonly url: string | null;
   readonly skipBuild: boolean;
   readonly profile: ProfileSelection;
@@ -67,6 +69,7 @@ function parsePositiveInt(raw: string | undefined, fallback: number): number {
 
 export function parseRunnerArgs(argv: readonly string[]): RunnerCliOptions {
   let serverMode: ServerMode = "build";
+  let browser: PerfBrowserKind = "chromium";
   let url: string | null = null;
   let skipBuild = false;
   let profile: ProfileSelection = "all";
@@ -86,7 +89,10 @@ export function parseRunnerArgs(argv: readonly string[]): RunnerCliOptions {
     else if (arg === "--skip-build") skipBuild = true;
     else if (arg === "--strict") strict = true;
     else if (arg === "--write-baseline") writeBaseline = true;
-    else if (arg === "--url" && argv[i + 1]) {
+    else if (arg === "--browser" && argv[i + 1]) {
+      const next = argv[++i];
+      if (next === "chromium" || next === "firefox" || next === "webkit") browser = next;
+    } else if (arg === "--url" && argv[i + 1]) {
       serverMode = "external";
       url = argv[++i];
     } else if (arg === "--profile" && argv[i + 1]) {
@@ -108,6 +114,7 @@ export function parseRunnerArgs(argv: readonly string[]): RunnerCliOptions {
 
   return {
     serverMode,
+    browser,
     url,
     skipBuild,
     profile,
@@ -189,8 +196,8 @@ async function measureLocationDprOnce(
     const page = await context.newPage();
     await page.addInitScript(buildInPagePerfInitScript());
 
-    // Apply CDP CPU throttling before navigation so map-entry decode hitches are throttled too.
-    if (budgetSpec.cpuThrottlingRate > 1) {
+    // Apply CDP CPU throttling before navigation on Chromium so map-entry decode hitches are throttled too.
+    if (options.browser === "chromium" && budgetSpec.cpuThrottlingRate > 1) {
       const cdp = await context.newCDPSession(page);
       await cdp.send("Emulation.setCPUThrottlingRate", { rate: budgetSpec.cpuThrottlingRate });
     }
@@ -339,11 +346,15 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const executablePath = resolveChromiumExecutablePath();
-  const browser = await chromium.launch({
+  const launcher =
+    options.browser === "firefox" ? firefox : options.browser === "webkit" ? webkit : chromium;
+  const executablePath = resolveBrowserExecutablePath(options.browser);
+  const browser = await launcher.launch({
     headless: true,
     ...(executablePath ? { executablePath } : {}),
   });
+  const browserLabel =
+    options.browser === "firefox" ? "Firefox" : options.browser === "webkit" ? "WebKit" : "Chromium";
 
   const profileConfigs = resolveProfileConfigs(options);
   const measurements: MapDprMeasurement[] = [];
@@ -380,7 +391,7 @@ async function main(): Promise<void> {
     os: `${os.type()} ${os.release()} (${os.arch()})`,
     cpu: cpus[0]?.model ?? "unknown",
     cpuCores: cpus.length,
-    browser: `Chromium ${browser.version()}`,
+    browser: `${browserLabel} ${browser.version()}`,
     userAgent,
     bunVersion: process.versions.bun ?? "unknown",
   };

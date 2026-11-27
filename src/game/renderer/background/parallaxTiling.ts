@@ -2,6 +2,10 @@ import {
   BackgroundLayerTier,
   ParallaxLayerSchema,
 } from "@game/locations/schema/locationSchema";
+import {
+  resolveSourcePixelHeight,
+  resolveSourcePixelWidth,
+} from "@game/parallax/render/ParallaxSurfaceCache";
 import { MirrorableLayer, resolveLayerDrawHeight, resolveLayerScreenY } from "./parallaxGeometry";
 
 export const TIER_ORDER: readonly BackgroundLayerTier[] = [
@@ -236,17 +240,17 @@ export function renderTiledDynamicLayer(
   const screenY = resolveLayerScreenY(drawH, viewportHeight, progressY, scrollSpeedY, driftY);
 
   let drawSource: CanvasImageSource = img;
-  let drawSrcW = srcNatW;
-  let drawSrcH = srcNatH;
+  let drawSrcW = resolveSourcePixelWidth(img);
+  let drawSrcH = resolveSourcePixelHeight(img);
   if (surfaceResolver) {
     const pixelScale = ctx.canvas ? ctx.canvas.width / Math.max(1, viewportWidth) : 1;
     const resolved = surfaceResolver.resolve(
       img,
-      srcNatW,
-      srcNatH,
+      drawSrcW,
+      drawSrcH,
       drawW * pixelScale,
       drawH * pixelScale,
-      layer.blendMode !== "screen",
+      false,
       ctx.imageSmoothingEnabled,
       TILED_SURFACE_BUFFER
     );

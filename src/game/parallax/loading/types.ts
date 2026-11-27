@@ -1,4 +1,9 @@
 import type { ParallaxQualityTier } from "../meta";
+import type {
+  ParallaxLoadResizeSpec,
+  ParallaxSurfaceMetrics,
+  ParallaxTargetDimensions,
+} from "@game/renderer/background/parallaxGeometry";
 
 /**
  * Progressive parallax loading priorities matching docs/design/parallax.md §3.7.
@@ -16,6 +21,18 @@ export type ParallaxQueuePriority = 1 | 2 | 3 | 4 | 5;
 
 export type ParallaxDrawableTexture = HTMLImageElement | ImageBitmap;
 
+export interface ParallaxIdleDeadline {
+  timeRemaining(): number;
+  readonly didTimeout?: boolean;
+}
+
+export type ParallaxIdleScheduler = (callback: (deadline: ParallaxIdleDeadline) => void) => void;
+
+export type ParallaxResizeResolver = (
+  srcWidth: number,
+  srcHeight: number
+) => ParallaxTargetDimensions | null;
+
 export interface ParallaxLoadTaskDescriptor {
   /** Logical cache key (e.g. `world:courtyard:far` or URL) shared across quality tiers. */
   readonly cacheKey: string;
@@ -27,6 +44,8 @@ export interface ParallaxLoadTaskDescriptor {
   readonly tier?: ParallaxQualityTier;
   /** Enables the 200 ms fade-in transition once the layer becomes drawable. */
   readonly fadeInOnReady?: boolean;
+  /** Optional target sizing descriptor for off-thread decode-time pre-scaling. */
+  readonly surfaceSpec?: ParallaxLoadResizeSpec;
 }
 
 export interface ParallaxDecodeResult {
@@ -37,7 +56,11 @@ export interface ParallaxDecodeResult {
 }
 
 export interface IParallaxTextureDecoder {
-  loadAndDecode(url: string, isCancelled: () => boolean): Promise<ParallaxDecodeResult | null>;
+  loadAndDecode(
+    url: string,
+    isCancelled: () => boolean,
+    resolveResize?: ParallaxResizeResolver
+  ): Promise<ParallaxDecodeResult | null>;
   release?(texture: ParallaxDrawableTexture): void;
 }
 
@@ -47,6 +70,11 @@ export interface ParallaxLoadQueueDeps {
   concurrency?: number;
   now?: () => number;
   fadeDurationMs?: number;
+  surfaceMetrics?: ParallaxSurfaceMetrics;
+  resolveDefaultSurfaceMetrics?: () => ParallaxSurfaceMetrics;
+  scheduleIdle?: ParallaxIdleScheduler;
+  idleFrameBudgetMs?: number;
+  maxStartsPerIdleSlice?: number;
 }
 
 export interface ParallaxLoadQueueStats {

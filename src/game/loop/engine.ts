@@ -37,6 +37,7 @@ import { createDiscoveredTilesetManager } from "../engine/tiles";
 import { createDiscoveredPropManager } from "../engine/props";
 import { DecorRenderer } from "../renderer/decorRenderer";
 import { defaultLocationAssetLifecycle } from "../locations/locationAssetLifecycle";
+import { defaultParallaxLoadQueue } from "../parallax/loading";
 import { defaultParallaxRegistry } from "../parallax/registry";
 
 export type { IGameDependencies };
@@ -182,6 +183,15 @@ export class GameEngine implements IEngineSubsystemHost {
   }
 
   public setCanvasDimensions(width: number, height: number, dpr: number, filterMode: ScalingFilterMode = "pixel"): void {
+    const canvasW = Math.max(320, Math.floor(width * dpr));
+    const canvasH = Math.max(200, Math.floor(height * dpr));
+    const scaleFactor = Math.max(0.2, canvasW / 1000);
+    defaultParallaxLoadQueue.setSurfaceMetrics({
+      viewportWidth: canvasW / scaleFactor,
+      viewportHeight: canvasH / scaleFactor,
+      pixelScale: scaleFactor,
+      smoothing: filterMode === "smooth",
+    });
     this.renderer?.setDimensions(width, height, dpr, filterMode);
   }
 
