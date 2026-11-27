@@ -20,6 +20,7 @@
         "test:arch": "bun test src/tests/arch",
         "test:e2e": "bun test src/tests/e2e",
         "test:scripts": "bun test scripts",
+        "review:parallax": "bun ./scripts/review/parallaxSheet.ts",
         "test:watch": "bun test --watch",
         "coverage:gate": "bun ./scripts/coverage-gate.ts",
         "perf:parallax": "bun ./scripts/perf/parallaxRunner.ts",

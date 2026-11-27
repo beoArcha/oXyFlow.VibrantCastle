@@ -5,6 +5,7 @@ import './index.css';
 import { initGlobalErrorHandlers } from './lib/logger';
 import { LOCATION_REGISTRY, type LocationId } from './game/locations';
 import defaultGameEngine from './game/loop/engine';
+import { installParallaxReviewHook } from './app/reviewHook';
 
 initGlobalErrorHandlers();
 
@@ -18,6 +19,10 @@ if (import.meta.env.DEV || isLoopbackHost) {
   if (requestedLocation && Object.prototype.hasOwnProperty.call(LOCATION_REGISTRY, requestedLocation)) {
     defaultGameEngine.resetLevel(requestedLocation as LocationId, undefined, false);
   }
+}
+
+if (import.meta.env.DEV) {
+  installParallaxReviewHook(window, defaultGameEngine, window.location.search);
 }
 
 createRoot(document.getElementById('root')!).render(
