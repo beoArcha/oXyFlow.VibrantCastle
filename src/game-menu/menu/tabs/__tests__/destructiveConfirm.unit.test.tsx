@@ -263,13 +263,11 @@ describe("Destructive actions require confirmation (PR-4)", () => {
         </IntegrationTestProviders>
       );
 
-      const label = Array.from(container.querySelectorAll("*")).find(
-        (el) => el.children.length === 0 && el.textContent?.trim() === "Prawa Ręka (Broń)"
-      );
-      const row = label?.parentElement;
+      const mainHandSlot = container.querySelector('[data-inv-slot="equipment:mainHand"]');
 
-      expect(row).toBeDefined();
-      expect(row?.className).toContain("border-dashed");
+      expect(mainHandSlot).not.toBeNull();
+      expect(mainHandSlot?.textContent).toContain("Prawa Ręka (Broń)");
+      expect(mainHandSlot?.className).toContain("border-dashed");
       expect(container.textContent).not.toContain("Pusty Slot");
 
       await unmount();
@@ -303,12 +301,13 @@ describe("Destructive actions require confirmation (PR-4)", () => {
       (gameEngine as { discardPlayerItem: unknown }).discardPlayerItem = discardSpy;
 
       try {
-        const { unmount, click } = await renderIntoDom(
+        const { container, unmount, click } = await renderIntoDom(
           <IntegrationTestProviders defaultLanguage="pl">
             <InventoryModalView />
           </IntegrationTestProviders>
         );
 
+        await click(container.querySelector('[data-inv-slot="backpack:0"]') as Element);
         await click(document.querySelector('button[aria-label="Wyrzuć Przedmiot"]') as Element);
         expect(document.body.textContent).toContain("Wyrzucić przedmiot?");
         expect(discardSpy).not.toHaveBeenCalled();
@@ -330,12 +329,13 @@ describe("Destructive actions require confirmation (PR-4)", () => {
       (gameEngine as { discardPlayerItem: unknown }).discardPlayerItem = discardSpy;
 
       try {
-        const { unmount, click } = await renderIntoDom(
+        const { container, unmount, click } = await renderIntoDom(
           <IntegrationTestProviders defaultLanguage="pl">
             <InventoryModalView />
           </IntegrationTestProviders>
         );
 
+        await click(container.querySelector('[data-inv-slot="backpack:0"]') as Element);
         await click(document.querySelector('button[aria-label="Wyrzuć Przedmiot"]') as Element);
         await pressEscape(document.activeElement ?? document.body);
 
