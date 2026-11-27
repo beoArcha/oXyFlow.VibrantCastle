@@ -68,7 +68,7 @@ function readCommitSha(): string {
 
 /** Opens the game on a fresh page and waits until the engine loop is running. */
 async function openGame(page: Page, baseUrl: string): Promise<void> {
-  await page.goto(`${baseUrl}/?vcReview=1`, { waitUntil: "load", timeout: LOAD_TIMEOUT_MS });
+  await page.goto(`${baseUrl}/?vcReview=1&god=1`, { waitUntil: "load", timeout: LOAD_TIMEOUT_MS });
   await page.waitForFunction(
     () => Boolean((window as unknown as ReviewWindow).__vcReview?.engine.isRunning),
     undefined,
@@ -92,7 +92,20 @@ async function loadMap(page: Page, mapId: LocationId): Promise<void> {
   await page.waitForTimeout(SETTLE_MS);
 }
 
+async function assertNoDefeatOverlay(
+  page: Page,
+  mapId: string,
+  viewportId: string,
+  position: string,
+): Promise<void> {
+  const defeatCount = await page.locator("#defeat-restart-btn, #defeat-menu-btn").count();
+  if (defeatCount > 0) {
+    throw new Error(`Defeat overlay detected at ${mapId} (${viewportId}/${position})`);
+  }
+}
+
 async function shoot(page: Page, outDir: string, mapId: string, viewport: ReviewViewport, position: string): Promise<void> {
+  await assertNoDefeatOverlay(page, mapId, viewport.id, position);
   const target = join(outDir, reviewShotPath(mapId, viewport.id, position));
   await mkdir(join(target, ".."), { recursive: true });
   await page.screenshot({ path: target, animations: "disabled" });
@@ -117,15 +130,20 @@ async function captureViewport(
   try {
     await openGame(page, baseUrl);
     await loadMap(page, mapId);
+
+    await page.evaluate(() => (window as unknown as ReviewWindow).__vcReview?.placeHeroAt(0.05));
+    await page.waitForTimeout(SETTLE_MS);
     await shoot(page, outDir, mapId, viewport, "start");
 
     await page.keyboard.down("ArrowRight");
     await page.waitForTimeout(HOLD_RIGHT_MS);
     await page.keyboard.up("ArrowRight");
+
+    await page.evaluate(() => (window as unknown as ReviewWindow).__vcReview?.placeHeroAt(0.5));
     await page.waitForTimeout(SETTLE_MS);
     await shoot(page, outDir, mapId, viewport, "middle");
 
-    await page.evaluate(() => (window as unknown as ReviewWindow).__vcReview?.moveNearGoal());
+    await page.evaluate(() => (window as unknown as ReviewWindow).__vcReview?.placeHeroAt(0.92));
     await page.waitForTimeout(SETTLE_MS);
     await shoot(page, outDir, mapId, viewport, "goal");
   } finally {

@@ -1,4 +1,5 @@
 import type { GameEngine } from "@game/loop/engine";
+import { debugManager } from "@game/debug/debugManager";
 import { ALL_LOCATIONS, type LocationId } from "@game/locations";
 import { PlayerId } from "@game/types";
 
@@ -9,12 +10,21 @@ export const REVIEW_QUERY_FLAG = "vcReview";
 export interface ParallaxReviewHandle {
   readonly engine: GameEngine;
   readonly locationIds: readonly LocationId[];
+  /** Enables or disables god mode via the engine debug manager. */
+  setGodMode(enabled: boolean): void;
+  /** Places player one at `xOrFraction` (0..1 of levelWidth, or absolute px) on safe ground. */
+  placeHeroAt(xOrFraction: number): { x: number; y: number };
   /** Moves player one to the right-hand end of the current map. Returns the x used. */
   moveNearGoal(): number;
 }
 
 interface ReviewWindow {
   __vcReview?: ParallaxReviewHandle;
+}
+
+function resolveTargetX(levelWidth: number, xOrFraction: number): number {
+  const rawX = xOrFraction >= 0 && xOrFraction <= 1 ? xOrFraction * levelWidth : xOrFraction;
+  return Math.max(0, Math.min(rawX, Math.max(0, levelWidth)));
 }
 
 /**
@@ -26,15 +36,39 @@ export function installParallaxReviewHook(
   engine: GameEngine,
   search: string,
 ): boolean {
-  if (!new URLSearchParams(search).has(REVIEW_QUERY_FLAG)) return false;
+  const params = new URLSearchParams(search);
+  if (!params.has(REVIEW_QUERY_FLAG)) return false;
+
+  const setGodMode = (enabled: boolean): void => {
+    if (debugManager.state.godMode !== enabled) {
+      debugManager.toggleGodMode();
+    }
+  };
+
+  if (params.get("god") === "1") {
+    setGodMode(true);
+  }
+
+  const placeHeroAt = (xOrFraction: number): { x: number; y: number } => {
+    const x = resolveTargetX(engine.levelWidth, xOrFraction);
+    const y = engine.spawnPoint.y;
+    engine.teleportPlayer(PlayerId.Player1, x, y);
+    return { x, y };
+  };
+
+  if (params.has("x")) {
+    const parsedX = Number(params.get("x"));
+    if (Number.isFinite(parsedX)) {
+      placeHeroAt(parsedX);
+    }
+  }
+
   const handle: ParallaxReviewHandle = {
     engine,
     locationIds: ALL_LOCATIONS.map((location) => location.id),
-    moveNearGoal: () => {
-      const x = Math.max(0, engine.levelWidth - 400);
-      engine.teleportPlayer(PlayerId.Player1, x, engine.spawnPoint.y);
-      return x;
-    },
+    setGodMode,
+    placeHeroAt,
+    moveNearGoal: () => placeHeroAt(0.92).x,
   };
   (win as Window & ReviewWindow).__vcReview = handle;
   return true;
