@@ -57,7 +57,8 @@ export class CastleSilhouetteRenderer implements ICastleSilhouetteRenderer {
     const verticalShift = (progressY - 0.5) * extraHeight * layer.scrollSpeedY;
 
     // Window light color: amber warm candle glow or aether blue glow
-    const windowColor = location.id === "aether_sanctuary" ? "rgba(56, 189, 248, 0.45)" : "rgba(251, 191, 36, 0.45)";
+    const worldId = location.worldId || location.id;
+    const windowColor = worldId === "aether_sanctuary" ? "rgba(56, 189, 248, 0.45)" : "rgba(251, 191, 36, 0.45)";
 
     for (let boxX = 0; boxX < boxWidth + step; boxX += step) {
       const baseRatioX = boxX / boxWidth;

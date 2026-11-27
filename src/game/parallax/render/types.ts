@@ -52,6 +52,7 @@ export interface IPlaceholderRenderer {
 
 export interface IParallaxSystem {
   isSupported(locationOrId: string | LocationDefinition): boolean;
+  hasOpaqueFarBackdrop?(location: LocationDefinition, options?: ParallaxRenderOptions): boolean;
   preload(layers?: readonly ParallaxLayerSchema[]): void;
   render(
     ctx: CanvasRenderingContext2D,

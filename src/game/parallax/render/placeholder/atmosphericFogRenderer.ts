@@ -81,15 +81,16 @@ export class AtmosphericFogRenderer implements IAtmosphericFogRenderer {
     ctx.fillRect(0, 0, viewportWidth, viewportHeight);
 
     // If sky is dark or twilight, render subtle twinkling stars
+    const worldId = location.worldId || location.id;
     const isNightOrAether =
-      location.id === "aether_sanctuary" ||
-      location.id === "clocktower" ||
-      location.id === "thorn_chasm" ||
+      worldId === "aether_sanctuary" ||
+      worldId === "clocktower" ||
+      worldId === "thorn_chasm" ||
       layer.depth < 0.05;
 
     if (isNightOrAether) {
       ctx.save();
-      const starTint = location.id === "aether_sanctuary" ? "#38bdf8" : "#fef08a";
+      const starTint = worldId === "aether_sanctuary" ? "#38bdf8" : "#fef08a";
       for (let i = 0; i < this.cachedStars.length; i++) {
         const star = this.cachedStars[i];
         const starX = star.xRatio * viewportWidth;

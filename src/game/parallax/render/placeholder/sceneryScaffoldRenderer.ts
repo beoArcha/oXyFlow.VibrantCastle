@@ -75,12 +75,13 @@ export class SceneryScaffoldRenderer implements ISceneryScaffoldRenderer {
       if (screenX + 200 < 0 || screenX > viewportWidth + 100) continue;
 
       const drawY = baseHorizonY - verticalShift;
+      const worldId = location.worldId || location.id;
 
-      if (location.id === "clocktower") {
+      if (worldId === "clocktower") {
         this.drawClockworkShaft(ctx, screenX, drawY - 60, sceneryColor, tickCount, boxX);
-      } else if (location.id === "aether_sanctuary") {
+      } else if (worldId === "aether_sanctuary") {
         this.drawAetherAqueduct(ctx, screenX, drawY - 40, sceneryColor);
-      } else if (location.id === "thorn_chasm") {
+      } else if (worldId === "thorn_chasm") {
         this.drawThornBramble(ctx, screenX, drawY + 10, sceneryColor);
       } else {
         this.drawParallaxTree(ctx, screenX, drawY, sceneryColor);
