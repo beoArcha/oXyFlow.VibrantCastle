@@ -35,7 +35,8 @@ describe("E2E Distribution Package Smoke Tests", () => {
     expect(htmlContent).toContain('<link rel="icon"');
     expect(htmlContent).toContain('allow="fullscreen"');
     expect(htmlContent).not.toContain('allow="fullscreen; autoplay"');
-    expect(htmlContent).toContain('href="./game/"');
+    expect(htmlContent).toContain('href="./game/index.html"');
+    expect(htmlContent).not.toContain('href="./game/"');
     expect(htmlContent).toContain("docs/README.md");
   });
 
@@ -47,6 +48,10 @@ describe("E2E Distribution Package Smoke Tests", () => {
     expect(existsSync(jsPath)).toBe(true);
     expect(statSync(cssPath).size).toBeGreaterThan(50);
     expect(statSync(jsPath).size).toBeGreaterThan(500);
+
+    const jsContent = readFileSync(jsPath, "utf8");
+    expect(jsContent).toContain('GAME_ENTRY_URL = "./game/index.html"');
+    expect(jsContent).toContain("window.self !== window.top");
   });
 
   it("verifies i18n dictionaries are deployed", () => {
