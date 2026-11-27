@@ -146,6 +146,38 @@ describe("Architectural Rule: Atlas Meta & Image Consistency", () => {
         return;
       }
 
+      // Tileset metadata (top-level columns/rows, per-variant square tile size, and tiles map)
+      if (!raw.atlas && !raw.grid && raw.tilesetId && raw.tiles) {
+        const columns = Number(raw.columns);
+        const rows = Number(raw.rows);
+        expect(columns).toBeGreaterThan(0);
+        expect(rows).toBeGreaterThan(0);
+
+        const variantEntries = Object.entries(variants);
+        expect(variantEntries.length).toBeGreaterThan(0);
+        for (const [tier, v] of variantEntries) {
+          expect(typeof v.file).toBe("string");
+          const tile = Number(v.tile);
+          expect(tile).toBeGreaterThan(0);
+          const imgPath = path.join(dir, v.file);
+          expect(fs.existsSync(imgPath)).toBe(true);
+          const size = readImageSize(imgPath);
+          assertSizeMatches(relMeta, tier, columns, rows, tile, tile, size);
+        }
+
+        const tiles = raw.tiles as Record<string, { col?: number; row?: number }>;
+        expect(Object.keys(tiles).length).toBeGreaterThan(0);
+        for (const tile of Object.values(tiles)) {
+          const col = Number(tile.col);
+          const row = Number(tile.row);
+          expect(col).toBeGreaterThanOrEqual(0);
+          expect(col).toBeLessThan(columns);
+          expect(row).toBeGreaterThanOrEqual(0);
+          expect(row).toBeLessThan(rows);
+        }
+        return;
+      }
+
       const atlas = raw.atlas ?? raw.grid ?? {};
       const columns = Number(atlas.columns);
       const rows = Number(atlas.rows);

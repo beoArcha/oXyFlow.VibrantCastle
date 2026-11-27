@@ -1,43 +1,81 @@
 {
   "characterId": "thorn_creeper",
   "entityType": "creature",
-  "version": "4.1",
-  "description": "Thorny emerald briar stalker SVG placeholder",
+  "version": "1.0",
+  "description": "A rooted bark bulb bristling with amber crystal thorns and a glowing vertical slit.",
   "atlas": {
     "columns": 4,
     "rows": 3,
-    "cellWidth": 64,
-    "cellHeight": 64,
+    "cellWidth": 96,
+    "cellHeight": 96,
     "spacing": 0,
-    "background": "transparent"
+    "background": "transparent",
+    "safeMargin": 1
   },
   "naturalFacing": "right",
   "variants": {
+    "low": {
+      "cellWidth": 48,
+      "cellHeight": 48,
+      "scale": 0.5,
+      "file": "thorn_creeper_hi8bit.svg"
+    },
     "mid": {
-      "file": "thorn_creeper_hi16bit.svg",
-      "cellWidth": 64,
-      "cellHeight": 64,
-      "scale": 1
+      "cellWidth": 96,
+      "cellHeight": 96,
+      "scale": 1,
+      "file": "thorn_creeper_hi16bit.svg"
     }
   },
   "animations": {
     "idle": {
       "row": 0,
-      "frames": 4,
-      "fps": 5,
-      "loop": true
+      "frames": 2,
+      "fps": 3,
+      "loop": true,
+      "wide": false,
+      "slotSpan": [
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1
+      ]
     },
     "move": {
       "row": 1,
       "frames": 4,
-      "fps": 8,
-      "loop": true
+      "fps": 5,
+      "loop": true,
+      "wide": false,
+      "slotSpan": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1,
+        1,
+        1
+      ]
     },
-    "attack": {
+    "hit": {
       "row": 2,
-      "frames": 4,
+      "frames": 2,
       "fps": 10,
-      "loop": false
+      "loop": false,
+      "wide": false,
+      "slotSpan": [
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1
+      ]
     }
   },
   "states": {
@@ -47,40 +85,31 @@
     "move": {
       "animation": "move"
     },
-    "patrol": {
+    "walk": {
       "animation": "move"
-    },
-    "chase": {
-      "animation": "move"
-    },
-    "attack": {
-      "animation": "attack"
     },
     "hit": {
-      "animation": "idle"
-    },
-    "fly": {
-      "animation": "move"
+      "animation": "hit"
     }
   },
   "layout": {
     "ordering": [
       "idle",
       "move",
-      "attack"
+      "hit"
     ],
     "origin": {
       "type": "feet",
       "normalized": {
-        "x": 0.5,
+        "x": 0.4948,
         "y": 1
       }
     },
     "bodyBox": {
-      "x": 0.25,
-      "y": 0.16,
-      "w": 0.5,
-      "h": 0.82
+      "x": 0.1771,
+      "y": 0.1771,
+      "w": 0.6354,
+      "h": 0.8229
     }
   }
 }

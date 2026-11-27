@@ -1,0 +1,27 @@
+{
+  "propId": "war_brazier",
+  "worldWidth": 48,
+  "worldHeight": 64,
+  "anchor": "bottom",
+  "frames": 5,
+  "fps": 8,
+  "variants": {
+    "low": {
+      "file": "war_brazier_hi8bit.png",
+      "frameWidth": 24,
+      "frameHeight": 32
+    },
+    "mid": {
+      "file": "war_brazier_hi16bit.png",
+      "frameWidth": 48,
+      "frameHeight": 64
+    }
+  },
+  "glow": {
+    "color": "#ff9933",
+    "radius": 96,
+    "x": 24,
+    "y": 17,
+    "flicker": true
+  }
+}
