@@ -16,6 +16,6 @@ describe("parallax meta sync", () => {
 
       // Assert
       expect(committed).toEqual(rebuilt);
-    }, { timeout: 20000 });
+    }, 20000);
   }
 });
