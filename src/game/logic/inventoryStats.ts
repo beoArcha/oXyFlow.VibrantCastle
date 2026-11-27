@@ -116,3 +116,20 @@ export function calculatePlayerDerivedStats(player: Player): PlayerDerivedStats 
     manaCostMultiplier,
   };
 }
+
+/**
+ * Recomputes effective max HP/mana/stamina (profile + equipment + skills) and writes them onto the player.
+ * Current values are only clamped down (min(current, max)); they are never raised when max grows.
+ * Every path that can change max stats (equip, unequip, skill unlock, hero switch, swap, reset, save load)
+ * goes through this helper so current never exceeds max.
+ */
+export function syncPlayerMaxStats(player: Player): PlayerDerivedStats {
+  const stats = calculatePlayerDerivedStats(player);
+  player.maxHealth = stats.maxHp;
+  player.maxMana = stats.maxMana;
+  player.maxStamina = stats.maxStamina;
+  player.health = Math.min(player.health, player.maxHealth);
+  player.mana = Math.min(player.mana, player.maxMana);
+  player.stamina = Math.min(player.stamina, player.maxStamina);
+  return stats;
+}

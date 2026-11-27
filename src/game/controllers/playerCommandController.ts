@@ -4,7 +4,7 @@ import {
   equipItemFromBackpack,
   unequipSlotToBackpack,
   discardItemFromBackpack,
-  calculatePlayerDerivedStats,
+  syncPlayerMaxStats,
   createDefaultInventory,
 } from "../logic/inventory";
 import {
@@ -104,10 +104,7 @@ export class PlayerCommandController implements IPlayerCommandController {
     const players = this.context.getPlayers();
     if (players[0]) {
       players[0].inventory = createDefaultInventory();
-      const stats = calculatePlayerDerivedStats(players[0]);
-      players[0].maxHealth = stats.maxHp;
-      players[0].maxMana = stats.maxMana;
-      players[0].maxStamina = stats.maxStamina;
+      syncPlayerMaxStats(players[0]);
       const p1Char = players[0].characterId || "valen";
       if (players[0].characterProfiles?.[p1Char]) {
         players[0].characterProfiles[p1Char]!.inventory = cloneInventoryState(players[0].inventory);
@@ -115,10 +112,7 @@ export class PlayerCommandController implements IPlayerCommandController {
     }
     if (players[1]) {
       players[1].inventory = createDefaultInventory();
-      const stats = calculatePlayerDerivedStats(players[1]);
-      players[1].maxHealth = stats.maxHp;
-      players[1].maxMana = stats.maxMana;
-      players[1].maxStamina = stats.maxStamina;
+      syncPlayerMaxStats(players[1]);
       const p2Char = players[1].characterId || "aurelia";
       if (players[1].characterProfiles?.[p2Char]) {
         players[1].characterProfiles[p2Char]!.inventory = cloneInventoryState(players[1].inventory);

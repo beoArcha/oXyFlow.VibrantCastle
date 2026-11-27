@@ -1,6 +1,6 @@
 import { SaveState, Player, Enemy, Entity } from "@game/types";
 import { statsManager } from "../stats";
-import { calculatePlayerDerivedStats } from "../inventory";
+import { syncPlayerMaxStats } from "../inventory";
 import { saveLogger } from "@game/logger/gameLogger";
 import { Result, ok, err, SaveError, ErrorCode } from "@lib/errors";
 import { ISaveApplicator } from "./saveTypes";
@@ -72,11 +72,9 @@ export class SaveApplicator implements ISaveApplicator {
       if (state.p1SecondarySpellId) p1.secondarySpellId = state.p1SecondarySpellId;
       if (state.p1Inventory && typeof state.p1Inventory === "object") {
         p1.inventory = this.safeClone(state.p1Inventory) || p1.inventory;
-        const stats = calculatePlayerDerivedStats(p1);
-        p1.maxHealth = stats.maxHp;
-        p1.maxMana = stats.maxMana;
-        p1.maxStamina = stats.maxStamina;
       }
+      // Recompute effective max stats and clamp restored current values to them
+      syncPlayerMaxStats(p1);
       p1.isDead = p1.health <= 0;
       p1.vx = 0;
       p1.vy = 0;
@@ -104,11 +102,8 @@ export class SaveApplicator implements ISaveApplicator {
         if (state.p2SecondarySpellId) p2.secondarySpellId = state.p2SecondarySpellId;
         if (state.p2Inventory && typeof state.p2Inventory === "object") {
           p2.inventory = this.safeClone(state.p2Inventory) || p2.inventory;
-          const stats = calculatePlayerDerivedStats(p2);
-          p2.maxHealth = stats.maxHp;
-          p2.maxMana = stats.maxMana;
-          p2.maxStamina = stats.maxStamina;
         }
+        syncPlayerMaxStats(p2);
         p2.isDead = p2.health <= 0;
         p2.vx = 0;
         p2.vy = 0;
