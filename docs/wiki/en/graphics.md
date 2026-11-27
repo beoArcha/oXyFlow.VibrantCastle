@@ -1,41 +1,51 @@
 # Graphics Quality
 
-The graphics quality setting, in the game menu under the display settings, changes how heroes, enemies, platforms and decor are drawn. Gameplay, collisions and the level layout are identical on every setting. The change applies immediately, with no restart.
+The display settings, under **Settings > Display** in the game menu, control the graphics quality tier, the aspect ratio, the scaling filter and the frame rate. The quality tier changes how heroes, enemies, platforms and decor are drawn. Gameplay, collisions and the level layout are the same on every tier. A change takes effect at once, with no restart.
 
 ## The three tiers
 
-The menu shows these names. The settings store them as `low`, `mid` and `high`, and the art files use the suffixes `hi8bit` and `hi16bit`.
+The menu shows these names. The settings store them as `low`, `mid` and `high`, and the art files use the suffixes `hi8bit`, `hi16bit` and `high`.
 
-| Menu name | Heroes | Enemies | Platforms and decor | What it looks like |
+| Menu name | Heroes (Valen, Aurelia) | Enemies | Platforms and decor | What it looks like |
 | :--- | :--- | :--- | :--- | :--- |
-| **hi-8bit** | Small pixel sprites | Chunky sprites in the style of 8-bit games | Pixel tiles | Flat colours from a small palette, hard outlines and blocky shapes. The lightest option. |
-| **hi-16bit** | Richer pixel sprites | Richer sprites in the style of 16-bit games | Pixel tiles at full resolution | More colours, simple shading and highlights, crisp pixel edges. |
-| **high** (default) | Painted animation sheets | Vector art in the hi-16bit style until painted sheets exist | Uses the hi-16bit look | Full-colour painted frames with the most detail. |
+| **hi-8bit** | Small pixel sprite sheets | Simple SVG placeholders in a chunky, 8-bit style | Pixel tiles and props | Flat colours from a small palette, hard outlines and blocky shapes. The lightest option. |
+| **hi-16bit** | Richer pixel sprite sheets | Vector sprites with more colour and detail | Pixel tiles and props at full resolution | More colours, simple shading and highlights, crisp pixel edges. |
+| **high** (default) | Painted animation sheets | Vector sprites in the hi-16bit style | Pixel tiles and props in the hi-16bit style | Full-colour painted frames where they exist, with the most detail. |
 
-Enemies without a painted sheet use the hi-16bit art on **high**. Nothing is ever left without a sprite.
+Where a tier has no art for an element, the game uses the next tier down the list: from **high** it falls back to hi-16bit and then hi-8bit, and from **hi-8bit** it falls back to hi-16bit and then **high**. So every element gets a sprite on every tier.
 
-## Why the game stays light
+Painted **high** sheets exist today for the two heroes, the Clockwork Owl Gargoyle, the Training Dummy and four structures (gates, levers and thorns). Most enemies, platforms and decor do not have one yet.
 
-The tiers only change the look. Sprite sheets load the first time they are needed, so the game starts quickly on any tier. If the game feels slow on your device, lower the quality first. The level layout and the gameplay stay the same.
+## Display settings
+
+These options are in **Settings > Display** (Obraz), in the game menu.
+
+- **Aspect ratio.** Auto (fills the window, the default), 16:9, 16:10 or 4:3. A fullscreen button sits beside them.
+- **Scaling filter.** Pixelated (sharp, nearest-neighbour, the default) or Smooth (bilinear, softer edges).
+- **Asset quality.** The three tiers above, switched live.
+- **Target frame rate.** 30, 60 (the default), 90 or 120 FPS. The simulation runs at the chosen rate, and the multiplier shown in the menu tells you how each step scales the time.
+- **FPS counter.** A toggle that shows the frame rate on screen.
+- **GPU acceleration.** On by default. The toggle is in the same tab.
+- **Reset display.** Restores the display defaults. It does not touch the other settings.
 
 ## How the pixel art is made
 
-The art is made with the Bun sprite tools in `scripts/sprites/`. Everything the game uses is either authored as code or painted and then converted, so it can be rebuilt and checked.
+The sprite tools live in `scripts/sprites/`. Every sprite is either a script or painted and then converted, so it can be rebuilt and checked.
 
 - **Heroes from painted frames.** Valen and Aurelia are painted first. A palette quantizer reads the frames and builds the hi-8bit and hi-16bit sheets.
-- **Platform tilesets.** Each tileset is a small script that describes its tiles. The compiler writes a hi-8bit and a hi-16bit sheet with a tile map, and rejects empty or see-through solid tiles.
-- **Decor props.** Lanterns, braziers, banners and crystals are scripts too. The compiler checks each prop's anchor point, so that the prop stands on its base or hangs from its top edge as designed.
-- **Enemies.** Enemy sprites are drawn pixel by pixel and compiled to vector files for the tiers. The compiler rejects frames with empty cells or floating feet.
+- **Platform tilesets.** Each tileset is a small script that describes its tiles. The compiler writes hi-8bit and hi-16bit sheets with a tile map.
+- **Decor props.** Lanterns, braziers, banners and crystals are scripts too, with an anchor point for placement.
+- **Enemies.** Enemy sprites are described in code and compiled into the SVG tier files.
 
-To check the art before committing, add `--preview <dir>`:
+To look at the output before committing, add `--preview <dir>`:
 
 ```bash
 bun scripts/sprites/cli.ts <id> --preview tmp/preview
 ```
 
-The preview folder gets the tier sheets, enlarged for easy viewing. `--check` confirms that the committed files still match their scripts. See `scripts/sprites/README.md` for the authoring contract of each kind of sprite.
+The preview folder gets the tier sheets, enlarged for easy viewing. `--check` confirms that the committed files still match their scripts.
 
 ## Planned
 
-- Painted `high` sheets for the enemies that have only vector art today (phase 6).
-- A tier completeness test and build-time baking of the hi-16bit art (phase 5).
+- Painted `high` sheets for the enemies, platforms and decor that have only vector or pixel art today (phase 6).
+- Build-time baking of the hi-16bit art (phase 5).
