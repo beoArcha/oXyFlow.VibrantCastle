@@ -130,7 +130,8 @@ describe("CI & Distribution Scripts", () => {
       expect(mainYaml).toContain("build:pages");
 
       const releaseYaml = readFileSync(join(ROOT_DIR, ".github/workflows/release-promote.yml"), "utf8");
-      expect(releaseYaml).toContain("schedule:");
+      expect(releaseYaml).not.toContain("schedule:"); // releases only at a phase gate (manual)
+      expect(releaseYaml).toContain("workflow_dispatch:");
       expect(releaseYaml).toContain("workflow_dispatch:");
       expect(releaseYaml).toContain("cancel-in-progress: false");
       expect(releaseYaml).toContain("uses: ./.github/workflows/deploy-pages.yml");
