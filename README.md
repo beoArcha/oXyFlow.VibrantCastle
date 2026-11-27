@@ -65,11 +65,12 @@ bun run build:game                     # Production game client
 
 ## Documentation
 
-* [Vision](docs/tasks/VISION.md): what we are building.
-* [Roadmap](docs/tasks/ROADMAP.md): phases, quality gates, and planned / done tasks.
-* [Task board](docs/tasks/task-board.md): the task cards.
+* [Documentation Index](docs/README.md): central map of planning, design, lore, and specifications.
+* [Vision](docs/tasks/VISION.md), [Roadmap](docs/tasks/ROADMAP.md), and [Task board](docs/tasks/task-board.md): what we are building, phases, and `VC-xxx` cards.
+* [Lore](docs/lore/): characters, locations, bestiary, artifacts, NPCs, and scenario.
+* [System Specifications (Manifesto)](docs/manifesto/): engineering, gameplay, content pipeline, rendering, UI, and CI/CD.
+* [Design docs](docs/design/), e.g. the [menu UX plan](docs/design/menu-ux-plan.md).
 * [AGENTS.md](AGENTS.md) and [`.agents/rules/`](.agents/rules): engineering and orchestration rules.
-* [Design docs](docs/design/), e.g. the menu UX plan.
 
 ## License
 
