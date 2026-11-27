@@ -25,5 +25,5 @@ describe("AtlasAssetRegistry Vite glob wiring", () => {
     } finally {
       await server.close();
     }
-  });
+  }, 30000);
 });

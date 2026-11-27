@@ -324,6 +324,34 @@ describe("Collision Geometry & Strategy Resolution", () => {
       expect(narratedTriggers).toContain("narration_lever");
     });
 
+    it("LeverCollisionStrategy opens gates for levers without triggerId", () => {
+      const strategy = new LeverCollisionStrategy();
+      const lever: Entity = {
+        id: "lever_no_trigger",
+        x: 100,
+        y: 100,
+        width: 30,
+        height: 30,
+        type: CollisionType.Lever,
+        targetGateId: "gate_2",
+        isActivated: false,
+      };
+      const received: Array<{ id: string; lever: Entity }> = [];
+      const ctx: ICollisionContext = {
+        ...mockContext,
+        onLeverActivated: (id: string, l: Entity) => {
+          received.push({ id, lever: l });
+        },
+      };
+
+      player.isAttacking = true;
+      strategy.handle(player, lever, ctx);
+      expect(lever.isActivated).toBe(true);
+      expect(received.length).toBe(1);
+      expect(received[0].lever.targetGateId).toBe("gate_2");
+      expect(received[0].id).toBe("lever_no_trigger");
+    });
+
     it("GoalCollisionStrategy marks goal reached and notifies context", () => {
       const strategy = new GoalCollisionStrategy();
       const goal: Entity = {
