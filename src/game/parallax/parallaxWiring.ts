@@ -1,6 +1,6 @@
 import { assetLoader } from "@game/engine/assetLoader";
 import { debugManager } from "@game/debug/debugManager";
-import { resolveParallaxLayerAsset } from "@game/locations/parallaxLayerRegistry";
+import { defaultParallaxRegistry as parallaxRegistry } from "./registry";
 import {
   ParallaxSystem,
   type IParallaxFlags,
@@ -9,9 +9,7 @@ import {
   type IParallaxSystem,
 } from "./render";
 
-export const defaultParallaxRegistry: IParallaxRegistry = {
-  resolve: resolveParallaxLayerAsset,
-};
+export const defaultParallaxRegistry: IParallaxRegistry = parallaxRegistry;
 
 export const defaultParallaxLoader: IParallaxLoader = {
   getTexture: (url) => assetLoader.getTexture(url),

@@ -39,93 +39,26 @@
     "fogColor": "rgba(245, 158, 11, 0.1)",
     "musicIntensity": 0.92
   },
-  "parallaxBackground": {
-    "boxWidth": 5440,
-    "boxHeight": 1260,
-    "layers": [
-      {
-        "id": "bg_bastion_far",
-        "name": "Bastion Sky",
-        "tier": "far",
-        "layerKey": "world:grand_bastion:far",
-        "type": "image",
-        "depth": 0.08,
-        "scrollSpeedX": 0.04,
-        "scrollSpeedY": 0.02,
-        "opaque": true,
-        "imageUrl": "world:grand_bastion:far"
-      },
-      {
-        "id": "bg_bastion_mid_far",
-        "name": "Outer Walls",
-        "tier": "mid_far",
-        "layerKey": "shared:mid_far:bastion_walls_a",
-        "type": "image",
-        "depth": 0.24,
-        "scrollSpeedX": 0.18,
-        "scrollSpeedY": 0.07,
-        "imageUrl": "shared:mid_far:bastion_walls_a"
-      },
-      {
-        "id": "bg_bastion_mid",
-        "name": "Great Ramparts",
-        "tier": "mid",
-        "layerKey": "shared:mid:bastion_ramparts_a",
-        "type": "image",
-        "depth": 0.45,
-        "scrollSpeedX": 0.36,
-        "scrollSpeedY": 0.12,
-        "imageUrl": "shared:mid:bastion_ramparts_a"
-      },
-      {
-        "id": "bg_bastion_mid_close",
-        "name": "Iron Battlements",
-        "tier": "mid_close",
-        "layerKey": "shared:mid_close:iron_battlements_a",
-        "type": "image",
-        "depth": 0.65,
-        "scrollSpeedX": 0.56,
-        "scrollSpeedY": 0.18,
-        "imageUrl": "shared:mid_close:iron_battlements_a"
-      },
-      {
-        "id": "bg_bastion_boss_stage",
-        "name": "Commander Arena Sigil",
-        "tier": "boss_stage",
-        "bossScope": "stage",
-        "layerKey": "boss:stage:arcane_sigil_arena",
-        "type": "image",
-        "depth": 0.72,
-        "scrollSpeedX": 0.44,
-        "scrollSpeedY": 0.14,
-        "opacity": 0.75,
-        "blendMode": "screen",
-        "imageUrl": "boss:stage:arcane_sigil_arena"
-      },
-      {
-        "id": "bg_bastion_close",
-        "name": "Foreground Towers",
-        "tier": "close",
-        "layerKey": "shared:close:foreground_towers_a",
-        "type": "image",
-        "depth": 0.86,
-        "scrollSpeedX": 0.78,
-        "scrollSpeedY": 0.24,
-        "imageUrl": "shared:close:foreground_towers_a"
-      }
-    ]
+  "parallax": {
+    "layers": ["var_a", "var_b", "var_c", "var_d"],
+    "box": {
+      "width": 5440,
+      "height": 1260
+    }
   },
-  "bossZones": [
+  "zones": [
     {
       "id": "bastion_commander_arena",
+      "kind": "boss",
       "scope": "stage",
       "x": 1820,
       "y": 180,
       "width": 780,
       "height": 560,
-      "layerKey": "boss:stage:arcane_sigil_arena",
       "bossEnemyId": "bastion_boss",
       "ambientColor": "rgba(245, 158, 11, 0.28)",
+      "effects": ["sigil"],
+      "featherPx": 260,
       "defaultLabel": "Bastion Commander Arena"
     }
   ],

@@ -28,11 +28,11 @@ import { useI18n } from "@context/I18nContext";
 import { useGameEngine } from "@context/GameEngineContext";
 import {
   WORLD_CAMPAIGN_REGISTRY,
-  PARALLAX_LAYER_CATALOG,
   getLocation,
   StageBlueprint,
   WorldId,
 } from "@game/locations";
+import { defaultParallaxRegistry } from "@game/parallax/registry";
 import { BackgroundLayerTier } from "@game/locations/schema/locationSchema";
 import {
   buildAssetReadinessAudit,
@@ -157,10 +157,22 @@ export const LevelsSubtab: React.FC = () => {
     return auditReport.items.filter((item) => item.category === auditFilter);
   }, [auditFilter, auditReport.items]);
 
+  const parallaxCatalog = useMemo(
+    () =>
+      defaultParallaxRegistry
+        .entries()
+        .filter((l) => !l.borrowedFrom && !l.zoneKind)
+        .map((l) => ({
+          ...l,
+          namespace: l.isFx ? ("boss" as const) : l.slot === "far" ? ("world" as const) : ("shared" as const),
+        })),
+    []
+  );
+
   const filteredLayers = useMemo(() => {
-    if (layerFilter === "all") return PARALLAX_LAYER_CATALOG;
-    return PARALLAX_LAYER_CATALOG.filter((l) => l.namespace === layerFilter);
-  }, [layerFilter]);
+    if (layerFilter === "all") return parallaxCatalog;
+    return parallaxCatalog.filter((l) => l.namespace === layerFilter);
+  }, [layerFilter, parallaxCatalog]);
 
   return (
     <div id="subtab-content-levels" className="flex flex-col gap-4">
@@ -742,23 +754,23 @@ export const LevelsSubtab: React.FC = () => {
             <div className="flex flex-wrap gap-2">
               {(
                 [
-                  ["all", t("levelsLayerFilterAll", { count: PARALLAX_LAYER_CATALOG.length })],
+                  ["all", t("levelsLayerFilterAll", { count: parallaxCatalog.length })],
                   [
                     "world",
                     t("levelsLayerFilterWorld", {
-                      count: PARALLAX_LAYER_CATALOG.filter((l) => l.namespace === "world").length,
+                      count: parallaxCatalog.filter((l) => l.namespace === "world").length,
                     }),
                   ],
                   [
                     "shared",
                     t("levelsLayerFilterShared", {
-                      count: PARALLAX_LAYER_CATALOG.filter((l) => l.namespace === "shared").length,
+                      count: parallaxCatalog.filter((l) => l.namespace === "shared").length,
                     }),
                   ],
                   [
                     "boss",
                     t("levelsLayerFilterBoss", {
-                      count: PARALLAX_LAYER_CATALOG.filter((l) => l.namespace === "boss").length,
+                      count: parallaxCatalog.filter((l) => l.namespace === "boss").length,
                     }),
                   ],
                 ] as const

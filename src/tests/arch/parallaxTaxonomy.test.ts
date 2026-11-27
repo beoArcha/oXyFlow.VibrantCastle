@@ -140,4 +140,31 @@ describe("Architectural Rule: Parallax Taxonomy (§3.1 / §3.2)", () => {
     }
     expect(existsSync(join(PARALLAX_ROOT, "_shared", "fx_sigil_high.jpg"))).toBe(true);
   });
+
+  it("ensures every location JSON selects only slots declared in its world meta", () => {
+    const locationsDir = join(process.cwd(), "src", "data", "locations");
+    const files = readdirSync(locationsDir).filter((f) => f.endsWith(".json") && !f.endsWith(".schema.json"));
+
+    for (const file of files) {
+      const json = JSON.parse(readFileSync(join(locationsDir, file), "utf-8")) as {
+        id: string;
+        worldId?: string;
+        parallax?: { layers?: string[] };
+        parallaxBackground?: unknown;
+        bossZones?: unknown;
+      };
+      const worldId = json.worldId ?? json.id;
+      const meta = JSON.parse(
+        readFileSync(join(PARALLAX_ROOT, worldId, `${worldId}_parallax_meta.json`), "utf-8")
+      ) as WorldParallaxMeta;
+
+      expect(json.parallax).toBeDefined();
+      expect(json.parallaxBackground).toBeUndefined();
+      expect(json.bossZones).toBeUndefined();
+      for (const slot of json.parallax?.layers ?? []) {
+        expect(slot).not.toBe("far");
+        expect(meta.layers[slot]).toBeDefined();
+      }
+    }
+  });
 });
