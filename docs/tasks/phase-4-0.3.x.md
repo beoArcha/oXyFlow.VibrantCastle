@@ -1,29 +1,56 @@
-# Vibrant Castle: task board
+# Phase 4: stabilise and set direction (0.3.x, current)
 
-Updated: 2026-11-27. Source: the regression audit of 2784276..c4758f3 against 8121dad, plus the owner's roadmap decisions.
+Updated: 2026-11-27. Part of the [task folder](./README.md). Phases, gates and the card format are described in the [README](./README.md) and the [roadmap](./ROADMAP.md).
 
-**Roadmap:** [ROADMAP.md](./ROADMAP.md) lists the phases, their quality gates and the planned / done cards per phase. [VISION.md](./VISION.md) says what we are building.
+## About this phase
 
-**Phase:** the roadmap phase the card belongs to. Phase 4 = `0.3.x` (current), phase 5 = `0.4.x`. An unfinished card moves to the next phase only at the gate.
+**Goal:** recover from the post-0.3.0 cleanup (2784276), which deleted tilesets, props, the sprite pipeline, tests and docs. Rebuild the menu to the two-level design. Restore the docs, the tests and the CI gates. Write the design contracts that phase 5 builds on: maps and characters.
 
-**Model class** (the class only, not a model name):
-- `tiny`: small local or open models.
-- `small`: cheap, well-specified edits.
-- `medium`: engine and cross-cutting code, larger features.
-- `large`: design, plans, hard refactors.
-- `huge`: whole-system work.
+**Exit criteria:**
+- all suites are green and the coverage gate is restored;
+- assets render at every tier;
+- the menu is one game dialog, and the dev dialog appears in dev builds only;
+- the docs match the code;
+- the map and character contracts are approved.
 
-**Status:** `todo` · `ready` (dependencies met) · `in-progress` · `review` · `done` · `blocked`
+**Quality gate checklist** (card VC-090, run in this order; detail in [ROADMAP.md](./ROADMAP.md#quality-gate-end-of-every-phase-in-this-order)):
+- [ ] 1. Docs quality and conformance check: docs match the code (paths, commands, test names, counts, behaviour).
+- [ ] 2. Docs update: vision, roadmap, task files, `AGENTS.md`, `.agents/rules/`, README, lore and wiki at the phase's final state.
+- [ ] 3. General review against `.agents/rules/`: regressions, dead code, open risks; full suite and a headless browser pass.
+- [ ] 4. Release: promote `main` through the release workflow and publish the release artifacts.
+- [ ] 5. Version bump to `0.4.0`, approved by the owner. Unfinished cards move to [phase 5](./phase-5-0.4.x.md).
 
-**Type:** `feat` · `fix` · `refactor` · `test` · `plan` · `review` · `doc` · `chore` · `workflow` · `art`
+## Phase 4 so far
 
-**Rules for every task:**
-- One small PR per card.
-- The orchestrator reviews and merges.
-- No console brand or trademark names anywhere in the repo (enforced by the trademark-free arch test).
-- Tiers are `hi8bit` / `hi16bit` / high.
-- Commit trailer as in the repo convention.
-- Only the 6 E2E dist smoke tests may fail locally (they need `build:pages`).
+**The regression (2026-11-26/27).** Right after the `0.3.0` release (8121dad), six direct commits on `main`, 2784276..c4758f3, rewrote the project:
+- 2784276 "cleanup project dependencies and asset paths" touched 686 files and deleted about 78,000 lines: the platform tilesets, the decor props, the `scripts/sprites` and `scripts/atlas` pipelines, the hero pixel and packed sheets, the enemy hi8bit/hi16bit SVGs, about 775 tests, `bunfig.toml` (the test preload), lore and the manifesto specs.
+- 1e331f1, 422aec1, 48ae45d and 7593c8c centralised parallax resolution and character stats, replaced the CI workflows and moved the HUD controls into the header.
+- c4758f3 added freeform slicing data and rewrote the owl gargoyle meta.
+
+The result: red tests and CI, levers that no longer opened gates, broken hero and owl slicing, floors drawn by the procedural fallback, HP above maximum, a jumpy vertical camera, a dev dialog mixed into the game menu, and docs that no longer matched the code.
+
+**The audit.** The regression range was audited against 8121dad. Every finding became a card on the board (VC-001..VC-090). The owner added the direction decisions at the same time: phases tied to versions, a quality gate per phase, the two-level menu, the map contract and the character system ([VISION.md](./VISION.md), [ROADMAP.md](./ROADMAP.md)).
+
+**Recovery PRs #62-#88 (all merged except #77 and #78):**
+- Stabilisation: #62 test preload, lockfile and levers; #65 hero and owl slicing; #71 tilesets, props, art pipeline and enemy sprites; #85 platform tilesets back on the prefabs; #69 HP clamp; #70 vertical camera.
+- Menu: #63 separate dev dialog and labels; #68 single game dialog shell; #74 game tab layout with Settings sub-tabs; #81 confirmations, HUD toggles, empty states; #80 dev dialog in dev builds only; #84 gamepad and keyboard tab navigation.
+- Settings and UI: #66 saved language; #67 reserved-key rebind guard; #73 settings persistence tests; #75 scroll on narrow screens.
+- Dev tools: #76 asset readiness audit reads real files; #82 real names instead of raw ids; #87 atlas studio split.
+- CI and tests: #79 parallax files arch test; #83 per-suite coverage gate and integration tests on PRs; #86 character and error-boundary tests (VC-062 part 1).
+- Docs: #64 task board and menu UX plan; #72 roadmap, phases and orchestration rules; #88 lore and system specifications restored. In review: #77 map contract, #78 character system spec.
+
+**Learned so far:** direct pushes to `main` bypassed every gate, so all work now goes through one small PR per card with CI and review. Restoring from the last good commit (8121dad) and adapting is faster than rewriting. Arch tests (`locationLinks`, `atlasMetaConsistency`, `parallaxFiles`, `platformTilesets`) now catch the classes of breakage seen in the regression.
+
+## Status
+
+| Status | Cards |
+| :--- | :--- |
+| done | VC-001, VC-002, VC-003, VC-004, VC-005, VC-006, VC-007, VC-040, VC-041, VC-042, VC-043, VC-044, VC-046, VC-050, VC-052, VC-053, VC-054, VC-055, VC-057, VC-060, VC-063, VC-071, VC-072 |
+| review | VC-020 (#77), VC-030 (#78) |
+| in-progress | VC-051, VC-062 |
+| ready | VC-010, VC-035, VC-045, VC-056 |
+| todo | VC-012, VC-047, VC-061, VC-070, VC-073, VC-074, VC-081 |
+| blocked | VC-090 (the gate) |
 
 ---
 
@@ -52,7 +79,7 @@ Updated: 2026-11-27. Source: the regression audit of 2784276..c4758f3 against 81
 - **How (AI):** rebase after VC-002 merges. All hero-grid tests must pass with the restored packed metas.
 
 ### VC-004 · Asset readiness audit reads real files
-- **Phase:** 4 · **Type:** fix · **Class:** small · **Status:** todo (after VC-003)
+- **Phase:** 4 · **Type:** fix · **Class:** small · **Status:** done (#76)
 - **Goal:** the Poziomy 8x8 tab shows the true asset status.
 - **Description:** `assetReadinessAudit.ts` hard-codes the tileset row as missing (0/4).
 - **How (AI):** feed it from `discoverTilesetFiles` / `propDiscovery`, and add a unit test with a fake file map.
@@ -72,26 +99,23 @@ Updated: 2026-11-27. Source: the regression audit of 2784276..c4758f3 against 81
 - **Description:** 2784276 changed the vertical lerp to a fixed 0.14 when the distance exceeds 90 px.
 - **How (AI):** use the shared `lerpFactor` or a configurable curve in `cameraManager.ts`, and add a unit test.
 
+### VC-007 · Platform tilesets on floor and platform prefabs
+- **Phase:** 4 · **Type:** fix · **Class:** small · **Status:** done (#85)
+- **Goal:** floors and platforms render with tileset art again, not the procedural fallback.
+- **Description:** follow-up to VC-003. The restored tilesets were not referenced by the floor and platform prefabs, so maps still drew the fallback.
+- **How (AI):** done. Keep `platformTilesets.test.ts` passing when editing prefabs.
+
 ---
 
 ## B. Assets and rendering
 
 ### VC-010 · Three-tier asset policy and completeness test
-- **Phase:** 4 · **Type:** test · **Class:** small · **Status:** todo (after VC-003)
+- **Phase:** 4 · **Type:** test · **Class:** small · **Status:** ready (VC-003 done)
 - **Goal:** every entity (hero, enemy, structure, prop, tile) has `hi8bit` SVG + `hi16bit` + high PNG.
 - **Description:** the policy is that hi8bit is a simple SVG placeholder for every element, PNG ones included.
 - **How (AI):**
   1. Add an arch test listing missing tiers per entity (report only, with an allowlist).
   2. Document the rule in the content-pipeline doc (VC-050).
-
-### VC-011 · hi16bit build step: SVG to PNG atlas
-- **Phase:** 5 · **Type:** feat · **Class:** medium · **Status:** todo (after VC-010)
-- **Goal:** no runtime SVG rasterisation, crisp pixels, faster frames.
-- **Description:** SVG stays the editable source. The build bakes PNG atlases at integer scale, and the runtime decodes them once to `ImageBitmap`.
-- **How (AI):**
-  1. Add a script in `scripts/atlas` (playwright or resvg) plus a Vite hook or a pre-build step.
-  2. Make the loader prefer the baked PNG.
-  3. Add a benchmark note and tests.
 
 ### VC-012 · Generate missing hi8bit placeholders
 - **Phase:** 4 · **Type:** art · **Class:** small · **Status:** todo (after VC-010)
@@ -106,7 +130,7 @@ Updated: 2026-11-27. Source: the regression audit of 2784276..c4758f3 against 81
 ## C. World and maps (8 worlds x 8 maps; today map 1 of each world)
 
 ### VC-020 · Map contract for the 8x8 campaign
-- **Phase:** 4 · **Type:** plan · **Class:** large · **Status:** todo
+- **Phase:** 4 · **Type:** plan · **Class:** large · **Status:** review (#77, draft)
 - **Goal:** one set of rules before the eight map tasks start.
 - **Description:** covers world and map slots, scale (baseline maps were larger and more coherent), and lever and gate pairs. Also covers entries and portals, parallax tiers, enemy density, and the Mario-like stage flow with Aria of Sorrow exploration and Bastion narration beats.
 - **How (AI):**
@@ -114,27 +138,12 @@ Updated: 2026-11-27. Source: the regression audit of 2784276..c4758f3 against 81
   2. Write `docs/design/maps-contract.md` (at most 2 pages).
   3. Extend `validate-level.ts` checks to enforce it.
 
-### VC-021 … VC-025 · Hybrid maps: courtyard, thorn_chasm, clocktower, aether_sanctuary, grand_bastion
-- **Phase:** 5 · **Type:** feat · **Class:** medium · **Status:** todo (after VC-020). One card per map.
-- **Goal:** combine the baseline map's size and coherence with the newer map's interesting sections.
-- **Description:** 8121dad has the bigger maps. HEAD has the smaller, more varied ones. Restore the lost levers (thorn_chasm, aether_sanctuary, the grand_bastion ward gate).
-- **How (AI):**
-  1. Diff both versions.
-  2. Merge the layouts per the contract.
-  3. Keep `locationLinks` and `validate-level` green.
-  4. Attach a headless screenshot strip of the walk-through.
-
-### VC-026 … VC-028 · Fix new maps: ashen_catacombs, alchemist_library, eclipse_crown
-- **Phase:** 5 · **Type:** fix · **Class:** medium · **Status:** todo (after VC-020). One card per map.
-- **Goal:** bring the three new maps up to the contract (scale, flow, lever and gate, entries).
-- **How (AI):** same as VC-021, against the contract only.
-
 ---
 
 ## D. Characters, stats and equipment
 
 ### VC-030 · Character system design doc
-- **Phase:** 4 · **Type:** plan · **Class:** large · **Status:** todo
+- **Phase:** 4 · **Type:** plan · **Class:** large · **Status:** review (#78, draft)
 - **Goal:** one approved spec before code.
 - **Description:** six D&D-like attributes stored as D20 x10, any integer allowed. The level-1 average is fixed at 151. Player start values are 110-180; 180 is the starting maximum, not a cap. The player picks priorities 1/2/3, growth is automatic, and the rest grow slower than P3. HP/MP/Stamina derive from attributes and level. Monsters use the same scale.
 - **Approved level 1** (STR/DEX/CON/INT/WIS/CHA):
@@ -142,41 +151,12 @@ Updated: 2026-11-27. Source: the regression audit of 2784276..c4758f3 against 81
   - Aurelia: 131/152/136/176/162/149
 - **How (AI):** write `docs/design/character-system.md`. Cover formulas, per-level growth table (e.g. P1 +6, P2 +4, P3 +3, others +1-2), level 1-30 curves, and the monster template. The owner approves it.
 
-### VC-031 · Attributes and automatic growth (engine)
-- **Phase:** 5 · **Type:** feat · **Class:** medium · **Status:** blocked (VC-030)
-- **Goal:** the attribute model drives HP/MP/Stamina and combat.
-- **How (AI):**
-  1. Extend `characterProfiles.ts` and `inventoryStats.ts`.
-  2. Add a pure growth function with unit tests (curves from VC-030).
-  3. Migrate saves.
-
-### VC-032 · Monsters on the attribute scale
-- **Phase:** 5 · **Type:** feat · **Class:** medium · **Status:** blocked (VC-030)
-- **Goal:** enemies use the same 30-180 attribute scale.
-- **How (AI):** convert `enemies.json` with a script and keep the time-to-kill per enemy within ±15%. Add a balance table to the PR.
-
-### VC-033 · Valen and Aurelia progression trees
-- **Phase:** 5 · **Type:** plan · **Class:** large · **Status:** blocked (VC-030)
-- **Goal:** distinct, lore-true growth paths with smaller stat gaps.
-- **How (AI):** map skills and spells to tiers and attribute priorities, then update `skill_trees.json` in a follow-up `feat` card.
-
-### VC-034 · Rational equipment model
-- **Phase:** 5 · **Type:** plan · **Class:** large · **Status:** blocked (VC-030)
-- **Goal:** clear slots and item rules.
-- **Description:** slots, attribute bonuses, rarity, set rules, and a comparison stat.
-- **How (AI):** write `docs/design/equipment.md` with the item schema and a migration of `items.json`.
-
 ### VC-035 · Inventory UX, rebuilt from the baseline
-- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** todo (after menu PR-2)
+- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** ready (menu PR-2 done)
 - **Goal:** better UX than both versions, built on the 8121dad inventory (paper doll).
 - **How (AI):**
   1. Restore `inventory/*` from 8121dad into the current modal views.
   2. Add a stat comparison before equipping, a discard confirmation, and keyboard/pad grid navigation.
-
-### VC-036 · Inventory visuals
-- **Phase:** 5 · **Type:** art · **Class:** medium · **Status:** blocked (VC-035)
-- **Goal:** autumn and Aria-of-Sorrow look for slots, frames and icons.
-- **How (AI):** start from a mock-up and reuse the theme tokens. Visual changes only.
 
 ---
 
@@ -193,17 +173,17 @@ Updated: 2026-11-27. Source: the regression audit of 2784276..c4758f3 against 81
 - **How (AI):** new `GameMenuDialog`, `SkillTreeView` extracted, `Tabs wrap={false}`, Esc reopens the last tab. Tests per the plan.
 
 ### VC-042 · Menu PR-3: new tab layout and leaner Help
-- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** in-progress
+- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** done (#74)
 - **Goal:** tabs Gra · Mapa · Postać · Ekwipunek · Magia · Ustawienia(Obraz/Dźwięk/Sterowanie/Interfejs) · Pomoc.
 - **How (AI):** new registries, `InterfaceTab`, Help deep link to Sterowanie, coordinator `openModal(id, subTab)`.
 
 ### VC-043 · Menu PR-4: confirmations, HUD toggles, empty states
-- **Phase:** 4 · **Type:** feat · **Class:** small · **Status:** blocked (VC-042)
+- **Phase:** 4 · **Type:** feat · **Class:** small · **Status:** done (#81)
 - **Goal:** confirm destructive actions (Anuluj focused by default); toggles work.
 - **How (AI):** use `ConfirmDialog` for stats reset, discard, reset, restart, load and import. Wire `showControlsHint` and `showRpgButtons`.
 
 ### VC-044 · Menu PR-5: gamepad and keyboard navigation
-- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** blocked (VC-043)
+- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** done (#84)
 - **Goal:** full menu use with the restricted pad.
 - **How (AI):**
   1. Add `useMenuGamepad`: LB/RB = L1, LT/RT = L2, A/B/X/Y; holding LB+RB for 0.5 s opens the menu on pads without Start.
@@ -211,21 +191,26 @@ Updated: 2026-11-27. Source: the regression audit of 2784276..c4758f3 against 81
   3. Add a legend footer and menu input capture.
 
 ### VC-045 · Menu PR-6: gamepad mapping screen
-- **Phase:** 4 · **Type:** feat · **Class:** small · **Status:** blocked (VC-044)
+- **Phase:** 4 · **Type:** feat · **Class:** small · **Status:** ready (VC-044 done)
 - **Goal:** rebind the pad within the 2-trigger / 4-face / bumper layout.
 - **How (AI):** restore `GamepadMapper` and `useGamepad` from 8121dad into Ustawienia > Sterowanie, with their tests.
 
 ### VC-046 · "Tworzenie" only in dev builds
-- **Phase:** 4 · **Type:** chore · **Class:** small · **Status:** ready
+- **Phase:** 4 · **Type:** chore · **Class:** small · **Status:** done (#80)
 - **Goal:** release builds hide the dev dialog.
 - **How (AI):** gate the header button and the C hotkey on `import.meta.env.DEV` (or an app flag), and add a test for both modes.
+
+### VC-047 · Reserved "Wkrótce" cards in the menu
+- **Phase:** 4 · **Type:** feat · **Class:** small · **Status:** todo
+- **Goal:** tabs whose content is not built yet (for example Mapa) show a clear, translated "Wkrótce" / "Coming soon" card instead of an empty view.
+- **How (AI):** add one shared reserved-card component with i18n keys (PL/EN), use it in every placeholder tab, and add a unit test per tab.
 
 ---
 
 ## F. Docs, settings and controls
 
 ### VC-050 · Docs restore and update to the new direction
-- **Phase:** 4 · **Type:** doc · **Class:** medium · **Status:** in-progress (`AGENTS.md`, rules and README links done in VC-057)
+- **Phase:** 4 · **Type:** doc · **Class:** medium · **Status:** done (#88)
 - **Goal:** lore and the system specs (old manifesto, except MASTERMAP) are back and current.
 - **Description:** the vision and gaps already live in `VISION.md` and `ROADMAP.md`. Do not restore MASTERMAP.
 - **How (AI):**
@@ -233,13 +218,8 @@ Updated: 2026-11-27. Source: the regression audit of 2784276..c4758f3 against 81
   2. Rewrite the parts the code no longer matches.
   3. Re-link them from `AGENTS.md` and the README.
 
-### VC-057 · Roadmap, phases and orchestration rules
-- **Phase:** 4 · **Type:** doc · **Class:** medium · **Status:** review
-- **Goal:** phases tied to versions, a quality gate per phase, and written orchestration and merge rules.
-- **How (AI):** done in `docs/roadmap-phases`. Covers `ROADMAP.md`, `VISION.md`, the restored `AGENTS.md` and `.agents/`, and the new `orchestration_and_phases.md`.
-
 ### VC-051 · Wiki from Markdown with all articles
-- **Phase:** 4 · **Type:** doc · **Class:** medium · **Status:** todo (after VC-050)
+- **Phase:** 4 · **Type:** doc · **Class:** medium · **Status:** in-progress
 - **Goal:** `build:pages` builds the wiki from `docs/wiki/*.md` (PL/EN), with architecture, bestiary, graphics and news back.
 - **How (AI):** make `scripts/wiki/wikiContent.ts` read the Markdown files, and update the smoke test.
 
@@ -254,26 +234,31 @@ Updated: 2026-11-27. Source: the regression audit of 2784276..c4758f3 against 81
 - **How (AI):** restore the reserved-key list from 8121dad `ControlsContext`, use i18n keys in `KeyRebindDialog`, and add tests.
 
 ### VC-054 · Settings persistence tests
-- **Phase:** 4 · **Type:** test · **Class:** small · **Status:** todo
+- **Phase:** 4 · **Type:** test · **Class:** small · **Status:** done (#73)
 - **Goal:** cover legacy migration, corrupt JSON, quota failure, and import/export.
 - **How (AI):** restore and adapt `settingsStorage.unit.test.ts` from 8121dad.
 
 ### VC-055 · Scroll on narrow screens
-- **Phase:** 4 · **Type:** fix · **Class:** tiny · **Status:** todo
+- **Phase:** 4 · **Type:** fix · **Class:** tiny · **Status:** done (#75)
 - **Goal:** long menus scroll at 1024 px and phone width.
 - **How (AI):** limit `overflow:hidden` in `index.css` to the game viewport, and check with a headless screenshot.
 
 ### VC-056 · HUD dead code cleanup
-- **Phase:** 4 · **Type:** chore · **Class:** tiny · **Status:** todo (after VC-043)
+- **Phase:** 4 · **Type:** chore · **Class:** tiny · **Status:** ready (VC-043 done)
 - **Goal:** no unused HUD components or props.
 - **How (AI):** remove or wire `HUDTopControls`, `potionKeyRangeLabel` and the unused `onOpenCreation` prop.
+
+### VC-057 · Roadmap, phases and orchestration rules
+- **Phase:** 4 · **Type:** doc · **Class:** medium · **Status:** done (#72)
+- **Goal:** phases tied to versions, a quality gate per phase, and written orchestration and merge rules.
+- **How (AI):** done in `docs/roadmap-phases`. Covers `ROADMAP.md`, `VISION.md`, the restored `AGENTS.md` and `.agents/`, and the new `orchestration_and_phases.md`.
 
 ---
 
 ## G. CI and tests
 
 ### VC-060 · Coverage gate per suite, integration tests on PRs
-- **Phase:** 4 · **Type:** workflow · **Class:** small · **Status:** todo
+- **Phase:** 4 · **Type:** workflow · **Class:** small · **Status:** done (#83)
 - **Goal:** restore thresholds of unit 60 / integration 40 / combined 80.
 - **How (AI):** set `COVERAGE_MIN_*` or per-suite config in `coverage-gate.ts`, add integration tests and the gate to `ci-pr.yml`, and restore the gate test.
 
@@ -283,13 +268,13 @@ Updated: 2026-11-27. Source: the regression audit of 2784276..c4758f3 against 81
 - **How (AI):** port the release job from 8121dad `release.yml` into `release-promote.yml`.
 
 ### VC-062 · Restore the key deleted tests
-- **Phase:** 4 · **Type:** test · **Class:** medium · **Status:** todo
+- **Phase:** 4 · **Type:** test · **Class:** medium · **Status:** in-progress (part 1: character and error-boundary tests, #86)
 - **Goal:** cover menu, controls, character stage, dev tools and the error boundary again.
 - **Description:** about 775 tests were removed in 2784276.
 - **How (AI):** one area per PR. Restore from 8121dad and adapt to the current API. Do not restore tests for code that no longer exists.
 
 ### VC-063 · Parallax files exist (arch test)
-- **Phase:** 4 · **Type:** test · **Class:** tiny · **Status:** todo
+- **Phase:** 4 · **Type:** test · **Class:** tiny · **Status:** done (#79)
 - **Goal:** a layer registered without its image fails CI.
 - **How (AI):** in `locationBlueprints.test.ts`, resolve the registry entries to files on disk.
 
@@ -303,19 +288,26 @@ Updated: 2026-11-27. Source: the regression audit of 2784276..c4758f3 against 81
 - **How (AI):** take headless screenshots of every dev tool against 8121dad. List the gaps, then open one `feat` card per gap.
 
 ### VC-071 · Split the atlas studio
-- **Phase:** 4 · **Type:** refactor · **Class:** medium · **Status:** todo (after VC-002)
+- **Phase:** 4 · **Type:** refactor · **Class:** medium · **Status:** done (#87)
 - **Goal:** `AtlasSlicerSubtab.tsx` (1860 lines) becomes viewer, inspector, preview and export components, with tests.
 - **How (AI):** a behaviour-preserving split, guided by the 8121dad component layout.
 
 ### VC-072 · Dev labels and placeholders
-- **Phase:** 4 · **Type:** fix · **Class:** small · **Status:** todo
+- **Phase:** 4 · **Type:** fix · **Class:** small · **Status:** done (#82)
 - **Goal:** no raw ids (`valen`, `aurelia`) or unfilled `world:<świat>:far` placeholders in Data Studio and Poziomy.
 - **How (AI):** resolve display names through i18n or the registries, and add a unit test.
 
-### VC-080 · Balance review after c4758f3
-- **Phase:** 5 · **Type:** review · **Class:** medium · **Status:** blocked (VC-030)
-- **Goal:** check the rewritten enemy, skill, item and structure values.
-- **How (AI):** produce a diff table against 8121dad, flag the outliers, and feed them into VC-032/VC-033.
+### VC-073 · Lazy import of the developer suite
+- **Phase:** 4 · **Type:** chore · **Class:** small · **Status:** todo
+- **Goal:** release bundles do not ship the developer suite code.
+- **Description:** VC-046 hides the dev dialog in release builds, but the suite is still imported statically.
+- **How (AI):** load the dev dialog through `React.lazy` behind the dev-build flag, check the release bundle has no developer chunks, and add a test for both modes.
+
+### VC-074 · Readiness audit: recommended ids match real folder names
+- **Phase:** 4 · **Type:** fix · **Class:** small · **Status:** todo
+- **Goal:** the Poziomy 8x8 audit counts the recommended starter sets correctly.
+- **Description:** follow-up to VC-004. `RECOMMENDED_TILESETS` / `RECOMMENDED_DECOR_PROPS` in `assetReadinessAudit.ts` use ids that do not match the tileset and prop folder names on disk.
+- **How (AI):** derive or align the recommended ids with the discovered folder names, and add a unit test that fails when a recommended id has no folder.
 
 ### VC-081 · Narrative catalogs
 - **Phase:** 4 · **Type:** chore · **Class:** small · **Status:** todo
