@@ -68,4 +68,34 @@ describe("Tabs Primitive Unit Tests (AAA)", () => {
     expect(panel).not.toBeNull();
     expect(panel?.textContent).toBe("Overview Panel Content");
   });
+
+  it("renders flex-nowrap and overflow-x-auto when wrap={false}", async () => {
+    const { container } = await renderIntoDom(
+      <Tabs items={tabItems} activeId="spells" onChange={() => {}} wrap={false} />,
+      { mode: "none" }
+    );
+    const tablist = container.querySelector("[role='tablist']") as HTMLElement;
+
+    expect(tablist).not.toBeNull();
+    expect(tablist.className).toContain("flex-nowrap");
+    expect(tablist.className).toContain("overflow-x-auto");
+    expect(tablist.className).not.toContain("flex-wrap");
+  });
+
+  it("renders flex-nowrap in compound mode when wrap={false}", async () => {
+    const { container } = await renderIntoDom(
+      <Tabs defaultValue="overview" wrap={false}>
+        <Tabs.List>
+          <Tabs.Trigger value="overview">Overview</Tabs.Trigger>
+          <Tabs.Trigger value="details">Details</Tabs.Trigger>
+        </Tabs.List>
+        <Tabs.Content value="overview">Overview</Tabs.Content>
+      </Tabs>,
+      { mode: "none" }
+    );
+    const tablist = container.querySelector("[role='tablist']") as HTMLElement;
+
+    expect(tablist.className).toContain("flex-nowrap");
+    expect(tablist.className).toContain("overflow-x-auto");
+  });
 });

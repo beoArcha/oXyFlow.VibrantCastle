@@ -7,6 +7,7 @@ export interface TabsContextValue {
   activeValue: string;
   setActiveValue: (value: string) => void;
   orientation: TabsOrientation;
+  wrap?: boolean;
 }
 
 export const TabsContext = createContext<TabsContextValue | null>(null);

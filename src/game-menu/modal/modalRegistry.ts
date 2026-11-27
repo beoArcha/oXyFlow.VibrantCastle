@@ -40,8 +40,11 @@ export interface ModalNavigationTabConfig {
   readonly order: number;
 }
 
+export type ModalDialogKind = "game" | "dev";
+
 export interface ModalDefinition {
   readonly id: OpenModalId;
+  readonly dialog: ModalDialogKind;
   readonly pausesGame: boolean;
   readonly hotkeys: readonly string[];
   readonly navigationTab: ModalNavigationTabConfig;
@@ -51,6 +54,7 @@ export interface ModalDefinition {
 export const MODAL_REGISTRY: readonly ModalDefinition[] = [
   {
     id: ModalId.Menu,
+    dialog: "game",
     pausesGame: true,
     hotkeys: ["m"],
     navigationTab: {
@@ -68,6 +72,7 @@ export const MODAL_REGISTRY: readonly ModalDefinition[] = [
   },
   {
     id: ModalId.Help,
+    dialog: "game",
     pausesGame: true,
     hotkeys: ["h", "?", "F1"],
     navigationTab: {
@@ -85,6 +90,7 @@ export const MODAL_REGISTRY: readonly ModalDefinition[] = [
   },
   {
     id: ModalId.Inventory,
+    dialog: "game",
     pausesGame: false,
     hotkeys: ["i"],
     navigationTab: {
@@ -102,6 +108,7 @@ export const MODAL_REGISTRY: readonly ModalDefinition[] = [
   },
   {
     id: ModalId.SkillTree,
+    dialog: "game",
     pausesGame: false,
     hotkeys: ["k"],
     navigationTab: {
@@ -119,6 +126,7 @@ export const MODAL_REGISTRY: readonly ModalDefinition[] = [
   },
   {
     id: ModalId.Creation,
+    dialog: "dev",
     pausesGame: true,
     hotkeys: ["c"],
     navigationTab: {
@@ -142,6 +150,10 @@ const MODAL_BY_ID = new Map<string, ModalDefinition>(
 
 export function getModalDefinition(modal: ModalId | ModalType): ModalDefinition | undefined {
   return MODAL_BY_ID.get(modal);
+}
+
+export function isGameModal(modal: ModalId | ModalType): boolean {
+  return MODAL_BY_ID.get(modal)?.dialog === "game";
 }
 
 export function doesModalPauseGame(modal: ModalId | ModalType): boolean {

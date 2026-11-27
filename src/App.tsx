@@ -52,16 +52,11 @@ function GameScreen() {
 
   const coordinator = useModalCoordinator({ setPaused, togglePause });
 
-  const openDefaultEscapeModal = useCallback(
-    () => coordinator.openModal(ModalId.Menu),
-    [coordinator]
-  );
-
   useAppHotkeys({
     modalManager: coordinator.modalManager,
     onToggleModal: coordinator.toggleModal,
     onCloseModal: coordinator.closeModal,
-    onOpenDefaultEscapeModal: openDefaultEscapeModal,
+    onOpenDefaultEscapeModal: coordinator.openLastGameModal,
     onTogglePause: coordinator.togglePause,
     isRebinding,
   });

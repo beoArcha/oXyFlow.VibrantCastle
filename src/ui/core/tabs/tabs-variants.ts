@@ -8,9 +8,21 @@ export const tabsListVariants = cva(
         horizontal: "flex-wrap",
         vertical: "flex-col items-stretch",
       },
+      wrap: {
+        true: "",
+        false: "",
+      },
     },
+    compoundVariants: [
+      {
+        orientation: "horizontal",
+        wrap: false,
+        className: "flex-nowrap overflow-x-auto",
+      },
+    ],
     defaultVariants: {
       orientation: "horizontal",
+      wrap: true,
     },
   }
 );

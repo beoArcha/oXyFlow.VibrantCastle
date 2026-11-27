@@ -262,15 +262,13 @@ describe("Domain UI Components (ItemIcon, ItemSlot, KeyedTabs, ModalNavigationTa
   });
 
   describe("ModalNavigationTabs Component", () => {
-    it("renders standard modal navigation tabs and handles navigation", async () => {
+    it("renders standard modal navigation tabs without a resume button in the tablist", async () => {
       const handleNavigate = mock((_m: ModalType) => {});
-      const handleResume = mock(() => {});
 
       const { container, click } = await renderIntoDom(
         <ModalNavigationTabs
           currentModal="menu"
           onNavigate={handleNavigate}
-          onResume={handleResume}
           showCreation={true}
         />
       );
@@ -284,17 +282,12 @@ describe("Domain UI Components (ItemIcon, ItemSlot, KeyedTabs, ModalNavigationTa
       expect(container.textContent).toContain("[I]");
       expect(container.textContent).toContain("[K]");
       expect(container.textContent).toContain("[C]");
+      expect(container.querySelector("button[title*='[P]']")).toBeNull();
 
       // Click inventory tab
       const inventoryTab = tabs[2];
       await click(inventoryTab);
       expect(handleNavigate).toHaveBeenCalledWith("inventory");
-
-      // Click resume button
-      const resumeBtn = container.querySelector("button[title*='[P]']") as HTMLButtonElement;
-      expect(resumeBtn).not.toBeNull();
-      await click(resumeBtn);
-      expect(handleResume).toHaveBeenCalledTimes(1);
     });
 
     it("hides creation tab when showCreation is false", async () => {
@@ -302,7 +295,6 @@ describe("Domain UI Components (ItemIcon, ItemSlot, KeyedTabs, ModalNavigationTa
         <ModalNavigationTabs
           currentModal="inventory"
           onNavigate={() => {}}
-          onResume={() => {}}
           showCreation={false}
         />
       );

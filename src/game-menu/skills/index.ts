@@ -8,5 +8,6 @@ export * from "./SkillPropertyMatrix";
 export * from "./SkillNodeItem";
 export * from "./SkillTreeConstellation";
 export * from "./SkillDetailsCard";
+export * from "./SkillTreeView";
 export * from "./SkillTreePanel";
 export { default } from "./SkillTreePanel";
