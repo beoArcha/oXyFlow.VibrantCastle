@@ -9,7 +9,7 @@ import { readAssetsFromDisk } from "../atlas/atlasFileDiscovery";
  */
 function readViteGlobs(): AtlasFileMap | null {
   try {
-    const images = import.meta.glob<string>("/src/assets/props/*/*_hi{8,16}bit.png", {
+    const images = import.meta.glob<string>("/src/assets/props/*/*_hi{8,16}bit.{png,svg}", {
       eager: true,
       query: "?url",
       import: "default",
@@ -25,7 +25,7 @@ function readViteGlobs(): AtlasFileMap | null {
   }
 }
 
-/** Collects the compiled prop sheets (`*_hi8bit.png`, `*_hi16bit.png`) and metas (`*_prop_meta.json`) of `src/assets/props`. */
+/** Collects the compiled prop sheets (`*_hi8bit.{png,svg}`, `*_hi16bit.{png,svg}`) and metas (`*_prop_meta.json`) of `src/assets/props`. */
 export function discoverPropFiles(): AtlasFileMap {
-  return readViteGlobs() ?? readAssetsFromDisk(["props"], /_hi(?:8|16)bit\.png$/, /_prop_meta\.json$/);
+  return readViteGlobs() ?? readAssetsFromDisk(["props"], /_hi(?:8|16)bit\.(?:png|svg)$/, /_prop_meta\.json$/);
 }

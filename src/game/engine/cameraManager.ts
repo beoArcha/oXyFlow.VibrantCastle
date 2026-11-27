@@ -46,9 +46,11 @@ export class CameraManager {
       this.targetY = avgY - viewportHeight / 2 - 40;
     }
 
-    // Smooth lerp
+    // Smooth lerp (slightly more responsive on Y when traversing tall vertical shafts)
+    const verticalDelta = Math.abs(this.targetY - this.y);
+    const verticalLerp = verticalDelta > 90 ? 0.14 : 0.1;
     this.x += (this.targetX - this.x) * this.lerpFactor;
-    this.y += (this.targetY - this.y) * this.lerpFactor;
+    this.y += (this.targetY - this.y) * verticalLerp;
 
     // Clamp within world boundaries
     this.x = Math.max(0, Math.min(this.x, Math.max(0, levelWidth - viewportWidth)));

@@ -211,10 +211,21 @@ export function buildLocationEnemies(
     const resolvedHealth = ep.healthOverride ?? health;
     const resolvedMaxHealth = Math.max(maxHealth, resolvedHealth);
 
+    const category = canonicalTemplate?.category;
+    const fallbackColors = canonicalTemplate?.proceduralFallback
+      ? {
+          body: canonicalTemplate.proceduralFallback.bodyColor,
+          accent: canonicalTemplate.proceduralFallback.accentColor ?? "#a1a1aa",
+          eyes: canonicalTemplate.proceduralFallback.eyesColor ?? "#fef08a",
+        }
+      : undefined;
+
     enemies.push({
       id: ep.id,
       templateId: ep.monsterKey,
       atlasId,
+      category,
+      fallbackColors,
       nameKey,
       defaultName,
       x: ep.x,

@@ -1,0 +1,86 @@
+{
+  "characterId": "shadow_knight",
+  "entityType": "creature",
+  "version": "4.1",
+  "description": "Elite horned shadow knight SVG placeholder",
+  "atlas": {
+    "columns": 4,
+    "rows": 3,
+    "cellWidth": 64,
+    "cellHeight": 64,
+    "spacing": 0,
+    "background": "transparent"
+  },
+  "naturalFacing": "right",
+  "variants": {
+    "mid": {
+      "file": "shadow_knight_hi16bit.svg",
+      "cellWidth": 64,
+      "cellHeight": 64,
+      "scale": 1
+    }
+  },
+  "animations": {
+    "idle": {
+      "row": 0,
+      "frames": 4,
+      "fps": 5,
+      "loop": true
+    },
+    "move": {
+      "row": 1,
+      "frames": 4,
+      "fps": 8,
+      "loop": true
+    },
+    "attack": {
+      "row": 2,
+      "frames": 4,
+      "fps": 10,
+      "loop": false
+    }
+  },
+  "states": {
+    "idle": {
+      "animation": "idle"
+    },
+    "move": {
+      "animation": "move"
+    },
+    "patrol": {
+      "animation": "move"
+    },
+    "chase": {
+      "animation": "move"
+    },
+    "attack": {
+      "animation": "attack"
+    },
+    "hit": {
+      "animation": "idle"
+    },
+    "fly": {
+      "animation": "move"
+    }
+  },
+  "layout": {
+    "ordering": [
+      "idle",
+      "move",
+      "attack"
+    ],
+    "origin": {
+      "type": "feet",
+      "normalized": {
+        "x": 0.5,
+        "y": 1
+      }
+    },
+    "bodyBox": {
+      "x": 0.24,
+      "y": 0.1,
+      "w": 0.52,
+      "h": 0.88
+    }
+  }
+}

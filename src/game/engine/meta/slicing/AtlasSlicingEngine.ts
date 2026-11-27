@@ -102,7 +102,7 @@ export class AtlasSlicingEngine {
       if (method === "by_cell_size") {
         result = strategy.slice(context, metaDoc.slicing.cellSize);
       } else if (method === "freeform_rects") {
-        result = strategy.slice(context, metaDoc.slicing.frames);
+        result = strategy.slice(context, metaDoc.slicing.frames ?? metaDoc.slicing);
       } else if (method === "by_count") {
         result = strategy.slice(context, metaDoc.slicing.grid || metaDoc.atlas);
       } else if (method === "auto_islands") {

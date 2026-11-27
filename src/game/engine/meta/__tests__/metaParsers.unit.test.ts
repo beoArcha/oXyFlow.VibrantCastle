@@ -76,14 +76,14 @@ describe("MetaParser & Section Parsers", () => {
       expect(doc.info.entityType).toBe("creature");
 
       // Atlas & Margin
-      expect(doc.atlas.columns).toBe(6);
+      expect(doc.atlas.columns).toBe(7);
       expect(doc.atlas.rows).toBe(5);
       expect(doc.atlas.safeMargin).toBe(10);
 
       // Aerial Center Anchor
       expect(doc.layout.origin.type).toBe("center");
       expect(doc.layout.origin.normalized.x).toBe(0.5);
-      expect(doc.layout.origin.normalized.y).toBe(0.55);
+      expect(doc.layout.origin.normalized.y).toBe(0.5);
       expect(doc.layout.naturalFacing).toBe("right");
 
       // State Machine Mapping

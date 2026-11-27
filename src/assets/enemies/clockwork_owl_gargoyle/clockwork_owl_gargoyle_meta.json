@@ -1,12 +1,12 @@
 {
   "characterId": "clockwork_owl_gargoyle",
   "entityType": "creature",
-  "version": "4.0",
+  "version": "4.1",
   "description": "Clockwork Owl Gargoyle. Flying brass sentinel with articulated wings and glowing cyan optics. Patrols airspace and performs precise strike attacks.",
   "atlas": {
-    "columns": 6,
+    "columns": 7,
     "rows": 5,
-    "cellWidth": 229,
+    "cellWidth": 196,
     "cellHeight": 229,
     "spacing": 0,
     "background": "transparent",
@@ -16,91 +16,84 @@
   },
   "naturalFacing": "right",
   "variants": {
-    "low": {
-      "cellWidth": 114,
-      "cellHeight": 114,
-      "scale": 0.5
-    },
-    "mid": {
-      "cellWidth": 172,
-      "cellHeight": 172,
-      "scale": 0.75
-    },
-    "high": {
-      "cellWidth": 229,
-      "cellHeight": 229,
-      "scale": 1.0
+    "low": { "cellWidth": 114, "cellHeight": 114, "scale": 0.5 },
+    "mid": { "cellWidth": 172, "cellHeight": 172, "scale": 0.75 },
+    "high": { "cellWidth": 196, "cellHeight": 229, "scale": 1.0 }
+  },
+  "slicing": {
+    "method": "freeform_rects",
+    "referenceHeight": 212,
+    "tracks": {
+      "fly": [
+        { "x": 19, "y": 10, "w": 183, "h": 234 },
+        { "x": 224, "y": 22, "w": 195, "h": 222 },
+        { "x": 427, "y": 21, "w": 188, "h": 223 },
+        { "x": 614, "y": 32, "w": 165, "h": 212 },
+        { "x": 779, "y": 32, "w": 200, "h": 212 },
+        { "x": 979, "y": 32, "w": 175, "h": 212 },
+        { "x": 1159, "y": 52, "w": 200, "h": 188 }
+      ],
+      "attack": [
+        { "x": 18, "y": 269, "w": 190, "h": 218 },
+        { "x": 224, "y": 276, "w": 196, "h": 188 },
+        { "x": 419, "y": 267, "w": 228, "h": 197 },
+        { "x": 647, "y": 264, "w": 222, "h": 222 },
+        { "x": 869, "y": 264, "w": 178, "h": 222 },
+        { "x": 1047, "y": 264, "w": 178, "h": 222 },
+        { "x": 1225, "y": 264, "w": 135, "h": 222 }
+      ],
+      "hit": [
+        { "x": 14, "y": 486, "w": 190, "h": 187 },
+        { "x": 222, "y": 504, "w": 203, "h": 168 },
+        { "x": 448, "y": 508, "w": 172, "h": 171 },
+        { "x": 633, "y": 523, "w": 233, "h": 164 }
+      ],
+      "death": [
+        { "x": 10, "y": 703, "w": 251, "h": 191 },
+        { "x": 260, "y": 709, "w": 269, "h": 189 },
+        { "x": 531, "y": 715, "w": 219, "h": 186 },
+        { "x": 760, "y": 719, "w": 190, "h": 183 },
+        { "x": 960, "y": 723, "w": 141, "h": 179 },
+        { "x": 1100, "y": 790, "w": 263, "h": 115 }
+      ],
+      "bestiary": [
+        { "x": 15, "y": 912, "w": 213, "h": 201 },
+        { "x": 242, "y": 917, "w": 121, "h": 194 },
+        { "x": 364, "y": 930, "w": 161, "h": 183 },
+        { "x": 543, "y": 917, "w": 216, "h": 201 },
+        { "x": 758, "y": 922, "w": 189, "h": 199 },
+        { "x": 965, "y": 918, "w": 176, "h": 205 },
+        { "x": 1154, "y": 918, "w": 167, "h": 209 }
+      ]
     }
   },
   "animations": {
     "fly": {
       "row": 0,
-      "frames": 6,
-      "fps": 8,
+      "frames": 7,
+      "fps": 9,
       "loop": true,
       "wide": false,
-      "slotSpan": [
-        1,
-        1,
-        1,
-        1,
-        1,
-        1
-      ],
-      "cells": [
-        1,
-        1,
-        1,
-        1,
-        1,
-        1
-      ]
+      "slotSpan": [1, 1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1, 1]
     },
     "attack": {
       "row": 1,
-      "frames": 6,
-      "fps": 10,
+      "frames": 7,
+      "fps": 11,
       "loop": true,
       "wide": false,
-      "slotSpan": [
-        1,
-        1,
-        1,
-        1,
-        1,
-        1
-      ],
-      "cells": [
-        1,
-        1,
-        1,
-        1,
-        1,
-        1
-      ]
+      "slotSpan": [1, 1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1, 1]
     },
     "hit": {
       "row": 2,
-      "frames": 6,
+      "frames": 4,
       "fps": 12,
       "loop": false,
       "wide": false,
-      "slotSpan": [
-        1,
-        1,
-        1,
-        1,
-        0,
-        0
-      ],
-      "cells": [
-        1,
-        1,
-        1,
-        1,
-        0,
-        0
-      ]
+      "slotSpan": [1, 1, 1, 1],
+      "cells": [1, 1, 1, 1]
     },
     "death": {
       "row": 3,
@@ -108,78 +101,31 @@
       "fps": 8,
       "loop": false,
       "wide": false,
-      "slotSpan": [
-        1,
-        1,
-        1,
-        1,
-        1,
-        1
-      ],
-      "cells": [
-        1,
-        1,
-        1,
-        1,
-        1,
-        1
-      ]
+      "slotSpan": [1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1]
     },
     "bestiary": {
       "row": 4,
-      "frames": 6,
+      "frames": 7,
       "fps": 1,
       "loop": false,
       "wide": false,
-      "slotSpan": [
-        1,
-        1,
-        1,
-        1,
-        1,
-        1
-      ],
-      "cells": [
-        1,
-        1,
-        1,
-        1,
-        1,
-        1
-      ]
+      "slotSpan": [1, 1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1, 1]
     }
   },
   "states": {
-    "idle": {
-      "animation": "fly"
-    },
-    "fly": {
-      "animation": "fly"
-    },
-    "hit": {
-      "animation": "hit"
-    },
-    "attack": {
-      "animation": "attack"
-    },
-    "death": {
-      "animation": "death"
-    }
+    "idle": { "animation": "fly" },
+    "fly": { "animation": "fly" },
+    "hit": { "animation": "hit" },
+    "attack": { "animation": "attack" },
+    "death": { "animation": "death" }
   },
   "layout": {
-    "ordering": [
-      "fly",
-      "attack",
-      "hit",
-      "death",
-      "bestiary"
-    ],
+    "ordering": ["fly", "attack", "hit", "death", "bestiary"],
     "origin": {
       "type": "center",
-      "normalized": {
-        "x": 0.5,
-        "y": 0.55
-      }
+      "normalized": { "x": 0.5, "y": 0.5 }
     }
   }
 }

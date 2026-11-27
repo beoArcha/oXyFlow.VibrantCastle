@@ -9,15 +9,27 @@
   "sceneType": "action_platformer",
   "nextLocationId": "aether_sanctuary",
   "dimensions": {
-    "width": 3200,
-    "height": 900
+    "width": 3840,
+    "height": 1380
   },
   "spawnPoints": {
-    "default": { "x": 110, "y": 540 },
-    "p2Offset": { "x": 60, "y": 0 },
+    "default": {
+      "x": 240,
+      "y": 1140
+    },
+    "p2Offset": {
+      "x": 46,
+      "y": 0
+    },
     "entries": {
-      "from_clocktower": { "x": 110, "y": 540 },
-      "from_sanctuary": { "x": 2960, "y": 420 }
+      "from_clocktower": {
+        "x": 240,
+        "y": 1140
+      },
+      "from_sanctuary": {
+        "x": 3480,
+        "y": 780
+      }
     }
   },
   "theme": {
@@ -28,15 +40,85 @@
     "musicIntensity": 0.68
   },
   "parallaxBackground": {
-    "boxWidth": 3600,
-    "boxHeight": 900,
+    "boxWidth": 4440,
+    "boxHeight": 1500,
     "layers": [
-      { "id": "bg_library_far", "name": "Alchemist Cathedral Dome", "tier": "far", "layerKey": "world:alchemist_library:far", "type": "image", "depth": 0.08, "scrollSpeedX": 0.04, "scrollSpeedY": 0.02, "opaque": true, "imageUrl": "world:alchemist_library:far" },
-      { "id": "bg_library_mid_far", "name": "Distant Aether Arches", "tier": "mid_far", "layerKey": "shared:mid_far:aether_aqueduct_a", "type": "image", "depth": 0.24, "scrollSpeedX": 0.18, "scrollSpeedY": 0.07, "opacity": 0.65, "imageUrl": "shared:mid_far:aether_aqueduct_a" },
-      { "id": "bg_library_mid", "name": "Emerald Bookshelf Galleries", "tier": "mid", "layerKey": "shared:mid:alchemy_shelves_a", "type": "image", "depth": 0.45, "scrollSpeedX": 0.36, "scrollSpeedY": 0.13, "opacity": 0.54, "blendMode": "screen", "mirrorTile": true, "imageUrl": "shared:mid:alchemy_shelves_a" },
-      { "id": "bg_library_mid_close", "name": "Brass Astrolabe Galleries", "tier": "mid_close", "layerKey": "shared:mid_close:brass_galleries_a", "type": "image", "depth": 0.65, "scrollSpeedX": 0.56, "scrollSpeedY": 0.19, "opacity": 0.8, "imageUrl": "shared:mid_close:brass_galleries_a" },
-      { "id": "bg_library_boss_stage", "name": "Astrolabe Sigil Rotunda", "tier": "boss_stage", "bossScope": "stage", "layerKey": "boss:stage:arcane_sigil_arena", "type": "image", "depth": 0.72, "scrollSpeedX": 0.44, "scrollSpeedY": 0.14, "opacity": 0.72, "blendMode": "screen", "imageUrl": "boss:stage:arcane_sigil_arena" },
-      { "id": "bg_library_close", "name": "Foreground Arcane Runes", "tier": "close", "layerKey": "shared:close:foreground_runes_a", "type": "image", "depth": 0.86, "scrollSpeedX": 0.78, "scrollSpeedY": 0.24, "opacity": 0.88, "imageUrl": "shared:close:foreground_runes_a" }
+      {
+        "id": "bg_library_far",
+        "name": "Alchemist Cathedral Dome",
+        "tier": "far",
+        "layerKey": "world:alchemist_library:far",
+        "type": "image",
+        "depth": 0.08,
+        "scrollSpeedX": 0.04,
+        "scrollSpeedY": 0.02,
+        "opaque": true,
+        "imageUrl": "world:alchemist_library:far"
+      },
+      {
+        "id": "bg_library_mid_far",
+        "name": "Distant Aether Arches",
+        "tier": "mid_far",
+        "layerKey": "shared:mid_far:aether_aqueduct_a",
+        "type": "image",
+        "depth": 0.24,
+        "scrollSpeedX": 0.18,
+        "scrollSpeedY": 0.07,
+        "opacity": 0.65,
+        "imageUrl": "shared:mid_far:aether_aqueduct_a"
+      },
+      {
+        "id": "bg_library_mid",
+        "name": "Emerald Bookshelf Galleries",
+        "tier": "mid",
+        "layerKey": "shared:mid:alchemy_shelves_a",
+        "type": "image",
+        "depth": 0.45,
+        "scrollSpeedX": 0.36,
+        "scrollSpeedY": 0.13,
+        "opacity": 0.54,
+        "blendMode": "screen",
+        "mirrorTile": true,
+        "imageUrl": "shared:mid:alchemy_shelves_a"
+      },
+      {
+        "id": "bg_library_mid_close",
+        "name": "Brass Astrolabe Galleries",
+        "tier": "mid_close",
+        "layerKey": "shared:mid_close:brass_galleries_a",
+        "type": "image",
+        "depth": 0.65,
+        "scrollSpeedX": 0.56,
+        "scrollSpeedY": 0.19,
+        "opacity": 0.8,
+        "imageUrl": "shared:mid_close:brass_galleries_a"
+      },
+      {
+        "id": "bg_library_boss_stage",
+        "name": "Astrolabe Sigil Rotunda",
+        "tier": "boss_stage",
+        "bossScope": "stage",
+        "layerKey": "boss:stage:arcane_sigil_arena",
+        "type": "image",
+        "depth": 0.72,
+        "scrollSpeedX": 0.44,
+        "scrollSpeedY": 0.14,
+        "opacity": 0.72,
+        "blendMode": "screen",
+        "imageUrl": "boss:stage:arcane_sigil_arena"
+      },
+      {
+        "id": "bg_library_close",
+        "name": "Foreground Arcane Runes",
+        "tier": "close",
+        "layerKey": "shared:close:foreground_runes_a",
+        "type": "image",
+        "depth": 0.86,
+        "scrollSpeedX": 0.78,
+        "scrollSpeedY": 0.24,
+        "opacity": 0.88,
+        "imageUrl": "shared:close:foreground_runes_a"
+      }
     ]
   },
   "bossZones": [
@@ -55,11 +137,46 @@
   ],
   "dictionaries": {
     "entities": {
-      "stone_floor": { "prefabId": "stone_floor", "type": "solid", "color": "#1e3a34", "borderColor": "#10b981", "labelKey": "labelStoneFloor", "defaultLabel": "Stone Floor" },
-      "library_gallery": { "prefabId": "library_gallery", "type": "oneway", "color": "#3b2f26", "borderColor": "#d97706", "labelKey": "labelLibraryGallery", "defaultLabel": "Library Gallery" },
-      "vertical_lift": { "prefabId": "vertical_lift", "type": "solid", "color": "#92400e", "borderColor": "#34d399", "labelKey": "labelVerticalLift", "defaultLabel": "Clockwork Elevator" },
-      "alchemical_barrier": { "prefabId": "alchemical_barrier", "type": "solid", "color": "#065f46", "borderColor": "#34d399", "labelKey": "labelAlchemicalBarrier", "defaultLabel": "Alchemical Seal", "structureId": "grand_portcullis" },
-      "aether_void": { "prefabId": "aether_void", "type": "hazard", "color": "#064e3b", "borderColor": "#10b981", "labelKey": "labelAetherVoid", "defaultLabel": "Aether Void" }
+      "stone_floor": {
+        "prefabId": "stone_floor",
+        "type": "solid",
+        "color": "#1e3a34",
+        "borderColor": "#10b981",
+        "labelKey": "labelStoneFloor",
+        "defaultLabel": "Stone Floor"
+      },
+      "library_gallery": {
+        "prefabId": "library_gallery",
+        "type": "oneway",
+        "color": "#3b2f26",
+        "borderColor": "#d97706",
+        "labelKey": "labelLibraryGallery",
+        "defaultLabel": "Library Gallery"
+      },
+      "vertical_lift": {
+        "prefabId": "vertical_lift",
+        "type": "solid",
+        "color": "#92400e",
+        "borderColor": "#34d399",
+        "labelKey": "labelVerticalLift",
+        "defaultLabel": "Clockwork Elevator"
+      },
+      "alchemical_barrier": {
+        "type": "solid",
+        "structureId": "grand_portcullis",
+        "defaultWidth": 56,
+        "defaultHeight": 860,
+        "color": "#065f46",
+        "label": "Alchemical Portcullis"
+      },
+      "aether_void": {
+        "prefabId": "aether_void",
+        "type": "hazard",
+        "color": "#064e3b",
+        "borderColor": "#10b981",
+        "labelKey": "labelAetherVoid",
+        "defaultLabel": "Aether Void"
+      }
     },
     "portals": {
       "back_to_clocktower": {
@@ -70,7 +187,15 @@
         "targetEntryKey": "from_library",
         "activation": "interact",
         "particleEffect": "spark",
-        "colors": { "inner": "#fbbf24", "outer": "#92400e", "border": "#fef3c7" }
+        "colors": {
+          "inner": "#fbbf24",
+          "outer": "#92400e",
+          "border": "#fef3c7"
+        },
+        "targetSpawnPoint": {
+          "x": 2060,
+          "y": 180
+        }
       },
       "to_sanctuary": {
         "id": "to_sanctuary",
@@ -80,46 +205,348 @@
         "targetEntryKey": "from_library",
         "activation": "interact",
         "particleEffect": "magic",
-        "colors": { "inner": "#38bdf8", "outer": "#1e3a8a", "border": "#bae6fd" }
+        "colors": {
+          "inner": "#38bdf8",
+          "outer": "#1e3a8a",
+          "border": "#bae6fd"
+        },
+        "targetSpawnPoint": {
+          "x": 240,
+          "y": 1100
+        }
       }
     }
   },
   "layout": {
     "solids": [
-      { "id": "reading_hall_floor", "prefabId": "stone_floor", "x": 0, "y": 620, "width": 640, "height": 280 },
-      { "id": "gallery_west_mid", "prefabId": "library_gallery", "x": 380, "y": 460, "width": 260, "height": 26 },
-      { "id": "gallery_west_high", "prefabId": "library_gallery", "x": 180, "y": 368, "width": 260, "height": 24 },
-      { "id": "manuscript_span", "prefabId": "library_gallery", "x": 740, "y": 540, "width": 280, "height": 26 },
-      { "id": "central_stacks_floor", "prefabId": "stone_floor", "x": 1060, "y": 600, "width": 540, "height": 300 },
-      { "id": "stacks_tier_2", "prefabId": "library_gallery", "x": 1120, "y": 440, "width": 420, "height": 26 },
-      { "id": "stacks_secret_tier_3", "prefabId": "library_gallery", "x": 1180, "y": 280, "width": 300, "height": 24 },
-      { "id": "distillery_lift", "prefabId": "vertical_lift", "x": 1660, "y": 500, "width": 160, "height": 26, "vy": -1.5, "minY": 310, "maxY": 580 },
-      { "id": "distillery_deck", "prefabId": "stone_floor", "x": 1860, "y": 540, "width": 380, "height": 360 },
-      { "id": "astrolabe_bridge", "prefabId": "library_gallery", "x": 1920, "y": 370, "width": 240, "height": 24 },
-      { "id": "rotunda_arena", "prefabId": "stone_floor", "x": 2240, "y": 520, "width": 960, "height": 380 },
-      { "id": "rotunda_upper_ring", "prefabId": "library_gallery", "x": 2400, "y": 360, "width": 300, "height": 24 },
-      { "id": "alchemical_exit_gate", "prefabId": "alchemical_barrier", "x": 2820, "y": 40, "width": 38, "height": 480 }
+      {
+        "id": "reading_hall_west",
+        "prefabId": "stone_floor",
+        "x": 0,
+        "y": 1220,
+        "width": 1580,
+        "height": 160
+      },
+      {
+        "id": "reading_hall_east",
+        "prefabId": "stone_floor",
+        "x": 2220,
+        "y": 1220,
+        "width": 1620,
+        "height": 160
+      },
+      {
+        "id": "shelf_step_1",
+        "prefabId": "library_gallery",
+        "x": 560,
+        "y": 1136,
+        "width": 220,
+        "height": 22
+      },
+      {
+        "id": "shelf_step_2",
+        "prefabId": "library_gallery",
+        "x": 860,
+        "y": 1052,
+        "width": 240,
+        "height": 22
+      },
+      {
+        "id": "shelf_step_3",
+        "prefabId": "library_gallery",
+        "x": 560,
+        "y": 968,
+        "width": 240,
+        "height": 22
+      },
+      {
+        "id": "manuscript_west",
+        "prefabId": "library_gallery",
+        "x": 180,
+        "y": 884,
+        "width": 720,
+        "height": 24
+      },
+      {
+        "id": "manuscript_span",
+        "prefabId": "library_gallery",
+        "x": 1000,
+        "y": 884,
+        "width": 520,
+        "height": 24
+      },
+      {
+        "id": "distillery_lift",
+        "prefabId": "vertical_lift",
+        "x": 1660,
+        "y": 1120,
+        "width": 150,
+        "height": 22,
+        "vy": -1.8,
+        "minY": 540,
+        "maxY": 1160
+      },
+      {
+        "id": "lift_step_low",
+        "prefabId": "library_gallery",
+        "x": 1920,
+        "y": 1136,
+        "width": 220,
+        "height": 22
+      },
+      {
+        "id": "lift_step_mid",
+        "prefabId": "library_gallery",
+        "x": 1920,
+        "y": 968,
+        "width": 240,
+        "height": 22
+      },
+      {
+        "id": "stacks_step_1",
+        "prefabId": "library_gallery",
+        "x": 1180,
+        "y": 800,
+        "width": 220,
+        "height": 22
+      },
+      {
+        "id": "stacks_step_2",
+        "prefabId": "library_gallery",
+        "x": 900,
+        "y": 716,
+        "width": 220,
+        "height": 22
+      },
+      {
+        "id": "stacks_step_3",
+        "prefabId": "library_gallery",
+        "x": 1180,
+        "y": 632,
+        "width": 240,
+        "height": 22
+      },
+      {
+        "id": "forbidden_stacks",
+        "prefabId": "library_gallery",
+        "x": 760,
+        "y": 548,
+        "width": 780,
+        "height": 24
+      },
+      {
+        "id": "archive_secret",
+        "prefabId": "library_gallery",
+        "x": 220,
+        "y": 464,
+        "width": 460,
+        "height": 24
+      },
+      {
+        "id": "rotunda_step_1",
+        "prefabId": "library_gallery",
+        "x": 2340,
+        "y": 1136,
+        "width": 200,
+        "height": 22
+      },
+      {
+        "id": "rotunda_step_2",
+        "prefabId": "library_gallery",
+        "x": 2620,
+        "y": 1052,
+        "width": 220,
+        "height": 22
+      },
+      {
+        "id": "rotunda_step_3",
+        "prefabId": "library_gallery",
+        "x": 2340,
+        "y": 968,
+        "width": 220,
+        "height": 22
+      },
+      {
+        "id": "rotunda_floor",
+        "prefabId": "stone_floor",
+        "x": 2260,
+        "y": 860,
+        "width": 1580,
+        "height": 28
+      },
+      {
+        "id": "rotunda_upper_ring",
+        "prefabId": "library_gallery",
+        "x": 2560,
+        "y": 776,
+        "width": 420,
+        "height": 22
+      },
+      {
+        "id": "library_portcullis",
+        "prefabId": "alchemical_barrier",
+        "x": 3176,
+        "y": 0,
+        "width": 56,
+        "height": 860
+      }
     ],
     "hazards": [
-      { "id": "library_void_west", "prefabId": "aether_void", "x": 640, "y": 820, "width": 420, "height": 40 },
-      { "id": "library_void_east", "prefabId": "aether_void", "x": 1600, "y": 820, "width": 260, "height": 40 }
-    ],
-    "levers": [
-      { "id": "astrolabe_seal_lever", "x": 2010, "y": 316, "width": 44, "height": 54, "targetGateId": "alchemical_exit_gate", "labelKey": "labelAlchemicalLever", "defaultLabel": "Astrolabe Lever" }
+      {
+        "id": "library_void_1",
+        "prefabId": "aether_void",
+        "x": 1600,
+        "y": 1260,
+        "width": 600,
+        "height": 40
+      }
     ],
     "triggers": [
-      { "id": "trig_library_magic", "x": 1080, "y": 380, "width": 160, "height": 220, "triggerId": "trainingMagicPrompt", "oneShot": true }
+      {
+        "id": "trig_library_magic",
+        "x": 1080,
+        "y": 740,
+        "width": 160,
+        "height": 144,
+        "triggerId": "trainingMagicPrompt"
+      }
+    ],
+    "levers": [
+      {
+        "id": "lever_archive_gate",
+        "x": 360,
+        "y": 419,
+        "width": 25,
+        "height": 45,
+        "targetGateId": "library_portcullis",
+        "label": "Archive Seal Lever"
+      }
     ],
     "portals": [
-      { "id": "portal_back_clocktower", "portalKey": "back_to_clocktower", "x": 30, "y": 480, "width": 90, "height": 140 },
-      { "id": "portal_to_sanctuary", "portalKey": "to_sanctuary", "x": 3010, "y": 380, "width": 100, "height": 140 }
+      {
+        "id": "portal_back_clocktower",
+        "portalKey": "back_to_clocktower",
+        "x": 60,
+        "y": 1092,
+        "width": 84,
+        "height": 128
+      },
+      {
+        "id": "portal_to_sanctuary",
+        "portalKey": "to_sanctuary",
+        "x": 3660,
+        "y": 732,
+        "width": 84,
+        "height": 128
+      }
     ],
     "enemies": [
-      { "id": "lib_wisp_1", "monsterKey": "aether_wisp", "x": 820, "y": 400, "patrolMinX": 680, "patrolMaxX": 1020 },
-      { "id": "lib_lantern_1", "monsterKey": "lantern_warden", "x": 1340, "y": 340, "patrolMinX": 1120, "patrolMaxX": 1520 },
-      { "id": "lib_sentinel_1", "monsterKey": "aether_sentinel", "x": 1300, "y": 512, "patrolMinX": 1100, "patrolMaxX": 1520 },
-      { "id": "lib_owl_1", "monsterKey": "clockwork_owl_gargoyle", "x": 1960, "y": 240, "patrolMinX": 1760, "patrolMaxX": 2200 },
-      { "id": "library_archon_warden", "monsterKey": "aether_archon", "x": 2580, "y": 310, "patrolMinX": 2300, "patrolMaxX": 2760, "healthOverride": 240 }
+      {
+        "id": "lib_sentinel_ground",
+        "monsterKey": "aether_sentinel",
+        "x": 960,
+        "y": 1132,
+        "patrolMinX": 740,
+        "patrolMaxX": 1380
+      },
+      {
+        "id": "lib_wisp_west",
+        "monsterKey": "aether_wisp",
+        "x": 520,
+        "y": 770,
+        "patrolMinX": 240,
+        "patrolMaxX": 840
+      },
+      {
+        "id": "lib_sentinel_mid",
+        "monsterKey": "aether_sentinel",
+        "x": 1240,
+        "y": 796,
+        "patrolMinX": 1040,
+        "patrolMaxX": 1440
+      },
+      {
+        "id": "lib_warden_stacks",
+        "monsterKey": "lantern_warden",
+        "x": 1040,
+        "y": 440,
+        "patrolMinX": 780,
+        "patrolMaxX": 1460
+      },
+      {
+        "id": "lib_auto_stacks",
+        "monsterKey": "clockwork_automaton",
+        "x": 1120,
+        "y": 454,
+        "patrolMinX": 820,
+        "patrolMaxX": 1420
+      },
+      {
+        "id": "lib_wisp_east",
+        "monsterKey": "aether_wisp",
+        "x": 2740,
+        "y": 660,
+        "patrolMinX": 2420,
+        "patrolMaxX": 3060
+      },
+      {
+        "id": "lib_knight_rotunda",
+        "monsterKey": "shadow_knight",
+        "x": 2780,
+        "y": 770,
+        "patrolMinX": 2460,
+        "patrolMaxX": 3060
+      }
+    ],
+    "decor": [
+      {
+        "id": "lan_al1",
+        "propId": "hanging_lantern",
+        "x": 460,
+        "y": 908,
+        "layer": "back",
+        "phase": 0
+      },
+      {
+        "id": "lan_al2",
+        "propId": "hanging_lantern",
+        "x": 1260,
+        "y": 908,
+        "layer": "back",
+        "phase": 1
+      },
+      {
+        "id": "lan_al3",
+        "propId": "hanging_lantern",
+        "x": 1080,
+        "y": 572,
+        "layer": "back",
+        "phase": 2
+      },
+      {
+        "id": "lan_al4",
+        "propId": "hanging_lantern",
+        "x": 440,
+        "y": 488,
+        "layer": "back",
+        "phase": 3
+      },
+      {
+        "id": "lan_al5",
+        "propId": "hanging_lantern",
+        "x": 2760,
+        "y": 798,
+        "layer": "back",
+        "phase": 1
+      },
+      {
+        "id": "lan_al6",
+        "propId": "hanging_lantern",
+        "x": 3420,
+        "y": 888,
+        "layer": "back",
+        "phase": 2
+      }
     ]
   }
 }

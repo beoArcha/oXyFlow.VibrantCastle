@@ -86,6 +86,32 @@ export class FreeformRectSlicingStrategy implements ISlicingStrategy {
       if ("frames" in record && record.frames) {
         return { frames: record.frames as IFreeformFrameRect[] | Record<string, IFreeformFrameRect> };
       }
+      if ("tracks" in record && typeof record.tracks === "object" && record.tracks !== null) {
+        const flattened: IFreeformFrameRect[] = [];
+        for (const [trackName, list] of Object.entries(record.tracks as Record<string, unknown>)) {
+          if (!Array.isArray(list)) continue;
+          list.forEach((rawRect, idx) => {
+            if (!rawRect || typeof rawRect !== "object") return;
+            const r = rawRect as Record<string, unknown>;
+            const x = typeof r.x === "number" ? r.x : 0;
+            const y = typeof r.y === "number" ? r.y : 0;
+            const width = typeof r.width === "number" ? r.width : typeof r.w === "number" ? r.w : 0;
+            const height = typeof r.height === "number" ? r.height : typeof r.h === "number" ? r.h : 0;
+            if (width <= 0 || height <= 0) return;
+            flattened.push({
+              id: `${trackName}_${idx}`,
+              trackName,
+              frameIndex: idx,
+              x,
+              y,
+              width,
+              height,
+              pivot: r.pivot as IFreeformFrameRect["pivot"],
+            });
+          });
+        }
+        return { frames: flattened };
+      }
       return { frames: rawConfig as Record<string, IFreeformFrameRect> };
     }
 

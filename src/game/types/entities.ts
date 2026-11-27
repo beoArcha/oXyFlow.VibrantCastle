@@ -115,6 +115,12 @@ export interface Enemy {
   defaultName?: string;
   templateId?: string;
   atlasId?: string;
+  category?: string;
+  fallbackColors?: {
+    body: string;
+    accent: string;
+    eyes: string;
+  };
   /** Written by the simulation: "hit" | "fly" | "move" | "idle". */
   animationState?: string;
   /** Animation clock in 60-per-second units, reset to 0 whenever animationState changes. */

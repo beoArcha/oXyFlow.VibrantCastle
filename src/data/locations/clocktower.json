@@ -10,17 +10,31 @@
   "linkedSceneId": "scene_clocktower_meeting",
   "nextLocationId": "alchemist_library",
   "dimensions": {
-    "width": 2760,
-    "height": 920
+    "width": 2440,
+    "height": 1740
   },
   "spawnPoints": {
-    "default": { "x": 100, "y": 560 },
-    "p2Offset": { "x": 60, "y": 0 },
+    "default": {
+      "x": 240,
+      "y": 1500
+    },
+    "p2Offset": {
+      "x": 46,
+      "y": 0
+    },
     "entries": {
-      "from_chasm": { "x": 100, "y": 560 },
-      "from_catacombs": { "x": 100, "y": 560 },
-      "from_library": { "x": 2480, "y": 280 },
-      "from_sanctuary": { "x": 2480, "y": 280 }
+      "from_catacombs": {
+        "x": 240,
+        "y": 1500
+      },
+      "from_courtyard": {
+        "x": 1180,
+        "y": 1500
+      },
+      "from_library": {
+        "x": 2060,
+        "y": 180
+      }
     }
   },
   "theme": {
@@ -31,15 +45,79 @@
     "musicIntensity": 0.65
   },
   "parallaxBackground": {
-    "boxWidth": 3160,
-    "boxHeight": 920,
+    "boxWidth": 3040,
+    "boxHeight": 1860,
     "layers": [
-      { "id": "bg_clocktower_far", "name": "Tower Distant Gears", "tier": "far", "layerKey": "world:clocktower:far", "type": "image", "depth": 0.08, "scrollSpeedX": 0.04, "scrollSpeedY": 0.02, "opaque": true, "imageUrl": "world:clocktower:far" },
-      { "id": "bg_clocktower_mid_far", "name": "Outer Pendulums", "tier": "mid_far", "layerKey": "shared:mid_far:clockwork_pendulums_a", "type": "image", "depth": 0.24, "scrollSpeedX": 0.18, "scrollSpeedY": 0.08, "imageUrl": "shared:mid_far:clockwork_pendulums_a" },
-      { "id": "bg_clocktower_mid", "name": "Great Clockface", "tier": "mid", "layerKey": "shared:mid:clockface_hall_a", "type": "image", "depth": 0.45, "scrollSpeedX": 0.36, "scrollSpeedY": 0.14, "imageUrl": "shared:mid:clockface_hall_a" },
-      { "id": "bg_clocktower_mid_close", "name": "Brass Galleries", "tier": "mid_close", "layerKey": "shared:mid_close:brass_galleries_a", "type": "image", "depth": 0.65, "scrollSpeedX": 0.56, "scrollSpeedY": 0.2, "imageUrl": "shared:mid_close:brass_galleries_a" },
-      { "id": "bg_clocktower_boss_stage", "name": "Automaton Chamber Sigil", "tier": "boss_stage", "bossScope": "stage", "layerKey": "boss:stage:arcane_sigil_arena", "type": "image", "depth": 0.72, "scrollSpeedX": 0.44, "scrollSpeedY": 0.14, "opacity": 0.72, "blendMode": "screen", "imageUrl": "boss:stage:arcane_sigil_arena" },
-      { "id": "bg_clocktower_close", "name": "Foreground Cogs", "tier": "close", "layerKey": "shared:close:foreground_cogs_a", "type": "image", "depth": 0.86, "scrollSpeedX": 0.78, "scrollSpeedY": 0.25, "imageUrl": "shared:close:foreground_cogs_a" }
+      {
+        "id": "bg_clocktower_far",
+        "name": "Tower Distant Gears",
+        "tier": "far",
+        "layerKey": "world:clocktower:far",
+        "type": "image",
+        "depth": 0.08,
+        "scrollSpeedX": 0.04,
+        "scrollSpeedY": 0.02,
+        "opaque": true,
+        "imageUrl": "world:clocktower:far"
+      },
+      {
+        "id": "bg_clocktower_mid_far",
+        "name": "Outer Pendulums",
+        "tier": "mid_far",
+        "layerKey": "shared:mid_far:clockwork_pendulums_a",
+        "type": "image",
+        "depth": 0.24,
+        "scrollSpeedX": 0.18,
+        "scrollSpeedY": 0.08,
+        "imageUrl": "shared:mid_far:clockwork_pendulums_a"
+      },
+      {
+        "id": "bg_clocktower_mid",
+        "name": "Great Clockface",
+        "tier": "mid",
+        "layerKey": "shared:mid:clockface_hall_a",
+        "type": "image",
+        "depth": 0.45,
+        "scrollSpeedX": 0.36,
+        "scrollSpeedY": 0.14,
+        "imageUrl": "shared:mid:clockface_hall_a"
+      },
+      {
+        "id": "bg_clocktower_mid_close",
+        "name": "Brass Galleries",
+        "tier": "mid_close",
+        "layerKey": "shared:mid_close:brass_galleries_a",
+        "type": "image",
+        "depth": 0.65,
+        "scrollSpeedX": 0.56,
+        "scrollSpeedY": 0.2,
+        "imageUrl": "shared:mid_close:brass_galleries_a"
+      },
+      {
+        "id": "bg_clocktower_boss_stage",
+        "name": "Automaton Chamber Sigil",
+        "tier": "boss_stage",
+        "bossScope": "stage",
+        "layerKey": "boss:stage:arcane_sigil_arena",
+        "type": "image",
+        "depth": 0.72,
+        "scrollSpeedX": 0.44,
+        "scrollSpeedY": 0.14,
+        "opacity": 0.72,
+        "blendMode": "screen",
+        "imageUrl": "boss:stage:arcane_sigil_arena"
+      },
+      {
+        "id": "bg_clocktower_close",
+        "name": "Foreground Cogs",
+        "tier": "close",
+        "layerKey": "shared:close:foreground_cogs_a",
+        "type": "image",
+        "depth": 0.86,
+        "scrollSpeedX": 0.78,
+        "scrollSpeedY": 0.25,
+        "imageUrl": "shared:close:foreground_cogs_a"
+      }
     ]
   },
   "bossZones": [
@@ -58,10 +136,38 @@
   ],
   "dictionaries": {
     "entities": {
-      "stone_floor": { "prefabId": "stone_floor", "type": "solid", "color": "#57534e", "borderColor": "#292524", "labelKey": "labelStoneFloor", "defaultLabel": "Stone Floor" },
-      "stone_platform": { "prefabId": "stone_platform", "type": "oneway", "color": "#78716c", "borderColor": "#44403c", "labelKey": "labelStonePlatform", "defaultLabel": "Stone Platform" },
-      "vertical_lift": { "prefabId": "vertical_lift", "type": "solid", "color": "#92400e", "borderColor": "#fbbf24", "labelKey": "labelVerticalLift", "defaultLabel": "Clockwork Elevator" },
-      "spire_gate": { "prefabId": "spire_gate", "type": "solid", "color": "#475569", "borderColor": "#fbbf24", "labelKey": "labelSpireGate", "defaultLabel": "Spire Gate", "structureId": "grand_portcullis" }
+      "stone_floor": {
+        "prefabId": "stone_floor",
+        "type": "solid",
+        "color": "#57534e",
+        "borderColor": "#292524",
+        "labelKey": "labelStoneFloor",
+        "defaultLabel": "Stone Floor"
+      },
+      "stone_platform": {
+        "prefabId": "stone_platform",
+        "type": "oneway",
+        "color": "#78716c",
+        "borderColor": "#44403c",
+        "labelKey": "labelStonePlatform",
+        "defaultLabel": "Stone Platform"
+      },
+      "vertical_lift": {
+        "prefabId": "vertical_lift",
+        "type": "solid",
+        "color": "#92400e",
+        "borderColor": "#fbbf24",
+        "labelKey": "labelVerticalLift",
+        "defaultLabel": "Clockwork Elevator"
+      },
+      "spire_gate": {
+        "type": "solid",
+        "structureId": "grand_portcullis",
+        "defaultWidth": 56,
+        "defaultHeight": 260,
+        "color": "#92400e",
+        "label": "Belfry Portcullis"
+      }
     },
     "portals": {
       "back_to_catacombs": {
@@ -72,7 +178,15 @@
         "targetEntryKey": "from_clocktower",
         "activation": "interact",
         "particleEffect": "dust",
-        "colors": { "inner": "#f97316", "outer": "#7c2d12", "border": "#fed7aa" }
+        "colors": {
+          "inner": "#f97316",
+          "outer": "#7c2d12",
+          "border": "#fed7aa"
+        },
+        "targetSpawnPoint": {
+          "x": 2260,
+          "y": 1330
+        }
       },
       "to_alchemist_library": {
         "id": "to_alchemist_library",
@@ -82,40 +196,367 @@
         "targetEntryKey": "from_clocktower",
         "activation": "interact",
         "particleEffect": "magic",
-        "colors": { "inner": "#10b981", "outer": "#065f46", "border": "#a7f3d0" }
+        "colors": {
+          "inner": "#10b981",
+          "outer": "#065f46",
+          "border": "#a7f3d0"
+        },
+        "targetSpawnPoint": {
+          "x": 240,
+          "y": 1140
+        }
       }
     }
   },
   "layout": {
     "solids": [
-      { "id": "tower_base", "prefabId": "stone_floor", "x": 0, "y": 640, "width": 720, "height": 280 },
-      { "id": "horologist_secret_nook", "prefabId": "stone_platform", "x": 280, "y": 460, "width": 240, "height": 24 },
-      { "id": "lift_west", "prefabId": "vertical_lift", "x": 760, "y": 540, "width": 150, "height": 26, "vy": -1.4, "minY": 380, "maxY": 620 },
-      { "id": "gears_deck", "prefabId": "stone_floor", "x": 960, "y": 500, "width": 520, "height": 420 },
-      { "id": "angled_ledge_low", "prefabId": "stone_platform", "x": 1120, "y": 350, "width": 220, "height": 26 },
-      { "id": "angled_ledge_high", "prefabId": "stone_platform", "x": 1060, "y": 210, "width": 240, "height": 24 },
-      { "id": "lift_east", "prefabId": "vertical_lift", "x": 1520, "y": 420, "width": 150, "height": 26, "vy": -1.6, "minY": 280, "maxY": 520 },
-      { "id": "gargoyle_roost", "prefabId": "stone_platform", "x": 1700, "y": 420, "width": 280, "height": 28 },
-      { "id": "spire_summit", "prefabId": "stone_floor", "x": 1960, "y": 360, "width": 800, "height": 560 },
-      { "id": "summit_bell_rafter", "prefabId": "stone_platform", "x": 2140, "y": 268, "width": 260, "height": 24 },
-      { "id": "spire_gate", "prefabId": "spire_gate", "x": 2440, "y": 40, "width": 38, "height": 320 }
+      {
+        "id": "tower_base",
+        "prefabId": "stone_floor",
+        "x": 0,
+        "y": 1580,
+        "width": 2440,
+        "height": 160
+      },
+      {
+        "id": "cog_step_1",
+        "prefabId": "stone_platform",
+        "x": 460,
+        "y": 1496,
+        "width": 260,
+        "height": 24
+      },
+      {
+        "id": "cog_step_2",
+        "prefabId": "stone_platform",
+        "x": 820,
+        "y": 1412,
+        "width": 280,
+        "height": 24
+      },
+      {
+        "id": "cog_step_3",
+        "prefabId": "stone_platform",
+        "x": 1200,
+        "y": 1328,
+        "width": 320,
+        "height": 24
+      },
+      {
+        "id": "cog_gallery_east",
+        "prefabId": "stone_platform",
+        "x": 1620,
+        "y": 1244,
+        "width": 580,
+        "height": 24
+      },
+      {
+        "id": "lift_west",
+        "prefabId": "vertical_lift",
+        "x": 160,
+        "y": 1240,
+        "width": 150,
+        "height": 22,
+        "vy": -1.8,
+        "minY": 920,
+        "maxY": 1496
+      },
+      {
+        "id": "shaft_west_1",
+        "prefabId": "stone_platform",
+        "x": 1260,
+        "y": 1160,
+        "width": 280,
+        "height": 24
+      },
+      {
+        "id": "shaft_west_2",
+        "prefabId": "stone_platform",
+        "x": 860,
+        "y": 1076,
+        "width": 320,
+        "height": 24
+      },
+      {
+        "id": "shaft_west_3",
+        "prefabId": "stone_platform",
+        "x": 460,
+        "y": 992,
+        "width": 320,
+        "height": 24
+      },
+      {
+        "id": "horologist_gallery",
+        "prefabId": "stone_platform",
+        "x": 340,
+        "y": 908,
+        "width": 540,
+        "height": 24
+      },
+      {
+        "id": "pendulum_mover",
+        "prefabId": "stone_platform",
+        "x": 960,
+        "y": 824,
+        "width": 160,
+        "height": 22,
+        "vx": 1.9,
+        "minX": 920,
+        "maxX": 1280
+      },
+      {
+        "id": "mainspring_gallery",
+        "prefabId": "stone_platform",
+        "x": 1460,
+        "y": 760,
+        "width": 620,
+        "height": 24
+      },
+      {
+        "id": "horologist_nook",
+        "prefabId": "stone_platform",
+        "x": 100,
+        "y": 740,
+        "width": 260,
+        "height": 24
+      },
+      {
+        "id": "nook_step",
+        "prefabId": "stone_platform",
+        "x": 420,
+        "y": 824,
+        "width": 160,
+        "height": 22
+      },
+      {
+        "id": "lift_east",
+        "prefabId": "vertical_lift",
+        "x": 2140,
+        "y": 740,
+        "width": 150,
+        "height": 22,
+        "vy": -1.8,
+        "minY": 360,
+        "maxY": 760
+      },
+      {
+        "id": "spiral_1",
+        "prefabId": "stone_platform",
+        "x": 1160,
+        "y": 676,
+        "width": 240,
+        "height": 24
+      },
+      {
+        "id": "spiral_2",
+        "prefabId": "stone_platform",
+        "x": 820,
+        "y": 592,
+        "width": 260,
+        "height": 24
+      },
+      {
+        "id": "spiral_3",
+        "prefabId": "stone_platform",
+        "x": 460,
+        "y": 508,
+        "width": 300,
+        "height": 24
+      },
+      {
+        "id": "lever_belfry",
+        "prefabId": "stone_platform",
+        "x": 120,
+        "y": 424,
+        "width": 340,
+        "height": 24
+      },
+      {
+        "id": "spiral_4",
+        "prefabId": "stone_platform",
+        "x": 540,
+        "y": 340,
+        "width": 280,
+        "height": 24
+      },
+      {
+        "id": "spiral_5",
+        "prefabId": "stone_platform",
+        "x": 920,
+        "y": 260,
+        "width": 320,
+        "height": 24
+      },
+      {
+        "id": "summit_bridge",
+        "prefabId": "stone_floor",
+        "x": 1340,
+        "y": 260,
+        "width": 1100,
+        "height": 32
+      },
+      {
+        "id": "spire_portcullis",
+        "prefabId": "spire_gate",
+        "x": 1676,
+        "y": 0,
+        "width": 56,
+        "height": 260
+      }
+    ],
+    "hazards": [],
+    "triggers": [
+      {
+        "id": "trig_range",
+        "x": 1500,
+        "y": 620,
+        "width": 160,
+        "height": 140,
+        "triggerId": "trainingRangePrompt"
+      }
     ],
     "levers": [
-      { "id": "clockwork_gear_lever", "x": 1790, "y": 366, "width": 44, "height": 54, "targetGateId": "spire_gate", "labelKey": "labelClockworkGear", "defaultLabel": "Clockwork Gear" }
-    ],
-    "triggers": [
-      { "id": "trig_range", "x": 980, "y": 320, "width": 160, "height": 180, "triggerId": "trainingRangePrompt", "oneShot": true }
+      {
+        "id": "lever_spire_gate",
+        "x": 200,
+        "y": 379,
+        "width": 25,
+        "height": 45,
+        "targetGateId": "spire_portcullis",
+        "label": "Belfry Spire Lever"
+      }
     ],
     "portals": [
-      { "id": "portal_back_catacombs", "portalKey": "back_to_catacombs", "x": 30, "y": 500, "width": 90, "height": 140 },
-      { "id": "portal_to_library", "portalKey": "to_alchemist_library", "x": 2580, "y": 220, "width": 100, "height": 140 }
+      {
+        "id": "portal_back_catacombs",
+        "portalKey": "back_to_catacombs",
+        "x": 60,
+        "y": 1452,
+        "width": 84,
+        "height": 128
+      },
+      {
+        "id": "portal_to_library",
+        "portalKey": "to_alchemist_library",
+        "x": 2240,
+        "y": 132,
+        "width": 84,
+        "height": 128
+      }
     ],
     "enemies": [
-      { "id": "tower_mite_1", "monsterKey": "gear_mite", "x": 420, "y": 612, "patrolMinX": 220, "patrolMaxX": 640 },
-      { "id": "tower_automaton_1", "monsterKey": "clockwork_automaton", "x": 1220, "y": 406, "patrolMinX": 1000, "patrolMaxX": 1380 },
-      { "id": "tower_lantern_1", "monsterKey": "lantern_warden", "x": 1340, "y": 240, "patrolMinX": 1080, "patrolMaxX": 1520 },
-      { "id": "tower_owl_1", "monsterKey": "clockwork_owl_gargoyle", "x": 1840, "y": 240, "patrolMinX": 1660, "patrolMaxX": 2040 },
-      { "id": "tower_summit_automaton", "monsterKey": "clockwork_automaton", "x": 2220, "y": 266, "patrolMinX": 2020, "patrolMaxX": 2380, "healthOverride": 200 }
+      {
+        "id": "tower_mite_base",
+        "monsterKey": "gear_mite",
+        "x": 760,
+        "y": 1552,
+        "patrolMinX": 520,
+        "patrolMaxX": 1080
+      },
+      {
+        "id": "tower_hound_base",
+        "monsterKey": "chrono_hound",
+        "x": 1680,
+        "y": 1538,
+        "patrolMinX": 1420,
+        "patrolMaxX": 2180
+      },
+      {
+        "id": "tower_auto_1",
+        "monsterKey": "clockwork_automaton",
+        "x": 1860,
+        "y": 1150,
+        "patrolMinX": 1660,
+        "patrolMaxX": 2080
+      },
+      {
+        "id": "tower_owl_mid",
+        "monsterKey": "clockwork_owl_gargoyle",
+        "x": 1020,
+        "y": 960,
+        "patrolMinX": 660,
+        "patrolMaxX": 1420
+      },
+      {
+        "id": "tower_target_nook",
+        "monsterKey": "training_target",
+        "x": 180,
+        "y": 672
+      },
+      {
+        "id": "tower_auto_2",
+        "monsterKey": "clockwork_automaton",
+        "x": 1720,
+        "y": 666,
+        "patrolMinX": 1520,
+        "patrolMaxX": 1980
+      },
+      {
+        "id": "tower_owl_upper",
+        "monsterKey": "clockwork_owl_gargoyle",
+        "x": 960,
+        "y": 460,
+        "patrolMinX": 540,
+        "patrolMaxX": 1380
+      },
+      {
+        "id": "tower_scout_summit",
+        "monsterKey": "gargoyle_scout",
+        "x": 1460,
+        "y": 140,
+        "patrolMinX": 1120,
+        "patrolMaxX": 1600
+      }
+    ],
+    "decor": [
+      {
+        "id": "lan_ct1",
+        "propId": "hanging_lantern",
+        "x": 600,
+        "y": 1520,
+        "layer": "back",
+        "phase": 0
+      },
+      {
+        "id": "lan_ct2",
+        "propId": "hanging_lantern",
+        "x": 1880,
+        "y": 1268,
+        "layer": "back",
+        "phase": 1
+      },
+      {
+        "id": "lan_ct3",
+        "propId": "hanging_lantern",
+        "x": 620,
+        "y": 932,
+        "layer": "back",
+        "phase": 2
+      },
+      {
+        "id": "lan_ct4",
+        "propId": "hanging_lantern",
+        "x": 1740,
+        "y": 784,
+        "layer": "back",
+        "phase": 3
+      },
+      {
+        "id": "lan_ct5",
+        "propId": "hanging_lantern",
+        "x": 260,
+        "y": 448,
+        "layer": "back",
+        "phase": 1
+      },
+      {
+        "id": "lan_ct6",
+        "propId": "hanging_lantern",
+        "x": 1900,
+        "y": 292,
+        "layer": "back",
+        "phase": 0
+      }
     ]
   }
 }

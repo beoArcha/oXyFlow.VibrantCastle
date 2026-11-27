@@ -1,7 +1,7 @@
 {
   "entityId": "grand_portcullis",
   "entityType": "structure",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Heavy Gilded Iron Portcullis. Impassable barrier operated by distant clockwork levers.",
   "atlas": {
     "image": "grand_portcullis_high.png",
@@ -18,46 +18,22 @@
     "y": 1.0
   },
   "layout": {
-    "closed": { "row": 0, "startCol": 0, "frames": 4, "widthCells": 1 },
+    "bodyBox": { "x": 0.0625, "y": 0.03125, "w": 0.875, "h": 0.9583 },
+    "closed": { "row": 0, "startCol": 0, "frames": 6, "widthCells": 1 },
     "opening": { "row": 1, "startCol": 0, "frames": 6, "widthCells": 1 },
-    "open": { "row": 2, "startCol": 0, "frames": 4, "widthCells": 1 }
+    "open": { "row": 2, "startCol": 0, "frames": 6, "widthCells": 1 }
   },
   "animations": {
-    "closed": {
-      "row": 0,
-      "frames": 4,
-      "fps": 4,
-      "loop": true
-    },
-    "opening": {
-      "row": 1,
-      "frames": 6,
-      "fps": 10,
-      "loop": false
-    },
-    "open": {
-      "row": 2,
-      "frames": 4,
-      "fps": 4,
-      "loop": true
-    }
+    "closed": { "row": 0, "frames": 6, "fps": 4, "loop": true },
+    "opening": { "row": 1, "frames": 6, "fps": 10, "loop": false },
+    "open": { "row": 2, "frames": 6, "fps": 4, "loop": true }
   },
   "states": {
-    "active": {
-      "animation": "closed"
-    },
-    "closed": {
-      "animation": "closed"
-    },
-    "opening": {
-      "animation": "opening"
-    },
-    "inactive": {
-      "animation": "open"
-    },
-    "open": {
-      "animation": "open"
-    }
+    "active": { "animation": "closed" },
+    "closed": { "animation": "closed" },
+    "opening": { "animation": "opening" },
+    "inactive": { "animation": "open" },
+    "open": { "animation": "open" }
   },
   "infoFrames": {
     "default": 0,

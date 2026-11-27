@@ -11,7 +11,7 @@ const META = JSON.stringify({
   layout: { origin: { type: "feet", normalized: { x: 0.5, y: 1 } } },
 });
 
-describe("unrepacked AI sheets (only <id>_high.png + <id>_meta.json)", () => {
+describe("canonical high PNG sheets (<id>_high.png + <id>_meta.json)", () => {
   const originalCwd = process.cwd();
   let root = "";
 
@@ -29,17 +29,17 @@ describe("unrepacked AI sheets (only <id>_high.png + <id>_meta.json)", () => {
     rmSync(root, { recursive: true, force: true });
   });
 
-  it("registers no atlas through the filesystem fallback", () => {
+  it("registers the canonical high PNG atlas through the filesystem fallback", () => {
     // Act
     const files = discoverAtlasFiles();
     const catalog = buildAtlasCatalog(files, { structureAllowList: [] });
 
     // Assert
-    expect(Object.keys(files.images)).toEqual([]);
-    expect(catalog.find((entry) => entry.id === "raw_ghoul")).toBeUndefined();
+    expect(Object.keys(files.images).some((p) => p.endsWith("raw_ghoul_high.png"))).toBe(true);
+    expect(catalog.find((entry) => entry.id === "raw_ghoul")?.variants.high?.format).toBe("png");
   });
 
-  it("is also excluded by the Vite glob patterns", () => {
+  it("is included alongside packed PNGs and SVGs in the Vite glob patterns", () => {
     // Arrange
     const source = readFileSync(join(originalCwd, "src/game/engine/atlas/atlasFileDiscovery.ts"), "utf-8");
 
@@ -49,8 +49,7 @@ describe("unrepacked AI sheets (only <id>_high.png + <id>_meta.json)", () => {
     // Assert
     expect(imageGlobs.length).toBe(2);
     for (const glob of imageGlobs) {
-      expect(glob).toContain("{_packed_high.png,.svg}");
-      expect(glob).not.toMatch(/\*_high\.png/);
+      expect(glob).toContain("{_packed_high.png,_high.png,.svg}");
     }
   });
 });

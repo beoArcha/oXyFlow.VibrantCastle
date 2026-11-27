@@ -179,12 +179,31 @@ describe("buildAtlasCatalog", () => {
 });
 
 describe("discoverAtlasFiles (filesystem fallback)", () => {
-  it("registers the packed enemy and structure atlases", () => {
+  it("registers canonical high PNG atlases and restored SVG placeholder enemy atlases", () => {
     const catalog = buildAtlasCatalog(discoverAtlasFiles(), { structureAllowList: REGISTERED_STRUCTURE_IDS });
     const byId = new Map(catalog.map((entry) => [entry.id, entry]));
 
     for (const id of ["training_dummy", "clockwork_owl_gargoyle", "aether_gate", "chrono_lever", "grand_portcullis", "hazard_thorns"]) {
-      expect(byId.get(id)?.variants.high?.src).toContain(`${id}_packed_high.png`);
+      expect(byId.get(id)?.variants.high?.format).toBe("png");
+      expect(byId.get(id)?.variants.high?.src).toMatch(new RegExp(`${id}(_packed)?_high\\.png$`));
+    }
+
+    for (const id of [
+      "gear_mite",
+      "aether_sentinel",
+      "court_sentinel",
+      "clockwork_automaton",
+      "aether_wisp",
+      "chasm_crawler",
+      "thorn_creeper",
+      "chrono_hound",
+      "lantern_warden",
+      "shadow_knight",
+      "aether_archon",
+      "bastion_sentinel_boss",
+    ]) {
+      expect(byId.get(id)?.variants.mid?.format).toBe("svg");
+      expect(byId.get(id)?.variants.mid?.src).toContain(`${id}_hi16bit.svg`);
     }
   });
 });

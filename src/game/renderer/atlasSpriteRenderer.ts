@@ -5,6 +5,7 @@ import { BackgroundProcessor } from "@game/engine/meta/slicing/BackgroundProcess
 import type { AtlasTexture } from "@game/engine/atlas";
 import {
   IAtlasMetaLike,
+  IAtlasFrameRect,
   AtlasRenderInfo,
   getAtlasRenderInfo,
   resolveAnimationKeyFromStates,
@@ -12,6 +13,7 @@ import {
   resolveEffectiveFrameCount,
   resolveFrameColumn,
   resolveFrameSpan,
+  resolveTrackFrameRects,
   hasAnimationTrack,
   resolveVariantScale,
 } from "./atlasMetadataResolver";
@@ -63,12 +65,12 @@ export interface IAtlasSpriteRenderer {
 
 /**
  * Renders sliced frames from registered atlas variants (PNG or pre-rasterised SVG sheets) with
+ * exact per-frame bounding rects (`slicing.tracks`), runtime alpha-island fallback (`auto_islands`),
  * normalized origin anchoring, multi-cell frames, directional mirroring and cached chroma-keying.
- * Sheets whose meta carries `layout.bodyBox` are scaled and anchored by their body; other sheets
- * keep the legacy visible-ratio heuristic.
  */
 export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
   private chromaCache: WeakMap<AtlasTexture, CanvasImageSource> = new WeakMap();
+  private autoIslandCache: WeakMap<AtlasTexture, Map<number, readonly IAtlasFrameRect[]>> = new WeakMap();
   private drawX = 0;
   private drawY = 0;
   private drawW = 0;
@@ -77,6 +79,11 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
   private selSx = 0;
   private selSy = 0;
   private selSw = 0;
+  private selSh = 0;
+  private selRefH = 0;
+  private selAnchorX = 0.5;
+  private selAnchorY = 1.0;
+  private selHasCustomRect = false;
 
   public hasAtlas(atlasId: string): boolean {
     return !!assetLoader.getAtlas(atlasId);
@@ -90,6 +97,7 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
 
   public clearChromaCache(): void {
     this.chromaCache = new WeakMap();
+    this.autoIslandCache = new WeakMap();
   }
 
   private getEffectiveSource(texture: AtlasTexture, meta: IAtlasMetaLike): CanvasImageSource {
@@ -131,9 +139,86 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
   }
 
   /**
-   * Fills the draw rectangle and mirror pivot for one frame spanning `span` cells.
-   * Body-box sheets: the body inside the first cell is scaled to the hitbox height and placed
-   * on the hitbox (feet or centre); extra cells extend to the right of the first one.
+   * Runtime fallback when a sheet declares `slicing.method === "auto_islands"` without
+   * precomputed `slicing.tracks`. Computes per-row tight alpha bounding rects once per texture.
+   */
+  private detectRowIslands(
+    texture: AtlasTexture,
+    source: CanvasImageSource,
+    rowIndex: number,
+    totalRows: number
+  ): readonly IAtlasFrameRect[] | null {
+    if (typeof document === "undefined" || totalRows <= 0) return null;
+    let rowMap = this.autoIslandCache.get(texture);
+    if (rowMap?.has(rowIndex)) return rowMap.get(rowIndex) ?? null;
+
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = texture.width;
+      canvas.height = texture.height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return null;
+      ctx.drawImage(source, 0, 0);
+      const { data, width, height } = ctx.getImageData(0, 0, widthOr(texture.width), widthOr(texture.height));
+
+      const bandH = height / totalRows;
+      const y0 = Math.max(0, Math.floor(rowIndex * bandH));
+      const y1 = Math.min(height - 1, Math.ceil((rowIndex + 1) * bandH) - 1);
+
+      const rects: IAtlasFrameRect[] = [];
+      let inSpan = false;
+      let spanStart = 0;
+
+      for (let x = 0; x <= width; x++) {
+        let opaque = false;
+        if (x < width) {
+          for (let y = y0; y <= y1; y++) {
+            if (data[(y * width + x) * 4 + 3] > 20) {
+              opaque = true;
+              break;
+            }
+          }
+        }
+        if (opaque && !inSpan) {
+          inSpan = true;
+          spanStart = x;
+        } else if (!opaque && inSpan) {
+          inSpan = false;
+          const x1 = x - 1;
+          if (x1 - spanStart >= 8) {
+            let minY = y1;
+            let maxY = y0;
+            for (let y = y0; y <= y1; y++) {
+              for (let ix = spanStart; ix <= x1; ix++) {
+                if (data[(y * width + ix) * 4 + 3] > 20) {
+                  if (y < minY) minY = y;
+                  if (y > maxY) maxY = y;
+                  break;
+                }
+              }
+            }
+            if (maxY >= minY) {
+              rects.push({ x: spanStart, y: minY, w: x1 - spanStart + 1, h: maxY - minY + 1 });
+            }
+          }
+        }
+      }
+
+      if (!rowMap) {
+        rowMap = new Map();
+        this.autoIslandCache.set(texture, rowMap);
+      }
+      rowMap.set(rowIndex, rects);
+      return rects.length > 0 ? rects : null;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Fills the draw rectangle and mirror pivot for one frame spanning `span` cells or a custom rect.
+   * Custom-rect sheets scale uniformly against `selRefH` and anchor on the hitbox baseline/centre
+   * so frames with variable widths (spread wings, glowing portals) never jitter or stretch.
    */
   private placeFrame(
     info: AtlasRenderInfo,
@@ -145,10 +230,27 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
     span: number
   ): void {
     const extraMultiplier = options.scaleMultiplier ?? 1.0;
-    const body = info.body;
-    const sw = span * cellW;
     const anchorX = Math.round(options.x + options.width / 2);
     this.pivotX = anchorX;
+
+    if (this.selHasCustomRect) {
+      const refH = this.selRefH > 0 ? this.selRefH : Math.max(1, this.selSh);
+      const scale =
+        options.height > 0
+          ? (options.height / refH) * extraMultiplier
+          : resolveVariantScale(meta, quality) * extraMultiplier;
+      this.drawW = Math.round(this.selSw * scale);
+      this.drawH = Math.round(this.selSh * scale);
+      const anchorY = Math.round(
+        info.groundAnchored ? options.y + options.height : options.y + options.height / 2
+      );
+      this.drawX = Math.round(anchorX - this.selAnchorX * this.drawW);
+      this.drawY = Math.round(anchorY - this.selAnchorY * this.drawH);
+      return;
+    }
+
+    const body = info.body;
+    const sw = span * cellW;
 
     if (body && options.height > 0) {
       const scale = (options.height / (body.height * cellH)) * extraMultiplier;
@@ -179,20 +281,30 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
 
   /**
    * Picks the animation frame for `ticks` (or an explicit `frameIndex`) and stores its source rect in
-   * `selSx` / `selSy` / `selSw`. Returns the frame span in cells, or 0 when the animation has no frames.
+   * `selSx` / `selSy` / `selSw` / `selSh`. Returns the frame span in cells (1 for custom rects),
+   * or 0 when the animation has no frames.
    */
   private selectFrame(
     meta: IAtlasMetaLike,
+    info: AtlasRenderInfo,
     cellW: number,
     cellH: number,
     animationName: string,
     frameIndex: number | undefined,
-    ticks: number | undefined
+    ticks: number | undefined,
+    texture?: AtlasTexture,
+    source?: CanvasImageSource
   ): number {
+    this.selHasCustomRect = false;
     const animKey = resolveAnimationKeyFromStates(meta, animationName);
     const animTrack = resolveAnimationTrack(meta, animKey);
 
-    const trackFrames: number = resolveEffectiveFrameCount(animTrack);
+    let explicitRects = resolveTrackFrameRects(meta, animKey, animTrack);
+    if (!explicitRects && meta.slicing?.method === "auto_islands" && texture && source) {
+      explicitRects = this.detectRowIslands(texture, source, animTrack?.row ?? 0, info.rows);
+    }
+
+    const trackFrames: number = resolveEffectiveFrameCount(animTrack, explicitRects);
     if (trackFrames <= 0) return 0;
     const trackFps: number = animTrack?.fps ?? 8;
     const trackLoop: boolean = animTrack?.loop !== undefined ? animTrack.loop : true;
@@ -206,10 +318,24 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
       currentFrame = trackLoop ? step % trackFrames : Math.min(step, trackFrames - 1);
     }
 
+    if (explicitRects && explicitRects.length > 0) {
+      const rect = explicitRects[Math.min(currentFrame, explicitRects.length - 1)];
+      this.selSx = rect.x;
+      this.selSy = rect.y;
+      this.selSw = rect.w;
+      this.selSh = rect.h;
+      this.selRefH = rect.refH ?? meta.slicing?.referenceHeight ?? rect.h;
+      this.selAnchorX = rect.anchorX ?? info.anchorX;
+      this.selAnchorY = rect.anchorY ?? (info.groundAnchored ? 1.0 : info.anchorY);
+      this.selHasCustomRect = true;
+      return 1;
+    }
+
     const span = resolveFrameSpan(animTrack, currentFrame);
     this.selSx = resolveFrameColumn(animTrack, currentFrame) * cellW;
     this.selSy = (animTrack?.row ?? 0) * cellH;
     this.selSw = span * cellW;
+    this.selSh = cellH;
     return span;
   }
 
@@ -233,7 +359,7 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
     const info = getAtlasRenderInfo(meta);
     const cellW = texture.width / info.cols;
     const cellH = texture.height / info.rows;
-    if (this.selectFrame(meta, cellW, cellH, options.animationName, undefined, options.ticks) <= 0) return false;
+    if (this.selectFrame(meta, info, cellW, cellH, options.animationName, undefined, options.ticks) <= 0) return false;
 
     const body = info.body;
     const originX = body ? body.x : 0;
@@ -241,10 +367,12 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
     const spanW = body ? body.width : 1;
     const spanH = body ? body.height : 1;
     const column = this.selSx;
-    const srcX = column + (originX + options.regionX * spanW) * cellW;
-    const srcY = this.selSy + (originY + options.regionY * spanH) * cellH;
-    const srcW = options.regionW * spanW * cellW;
-    const srcH = options.regionH * spanH * cellH;
+    const frameW = this.selHasCustomRect ? this.selSw : cellW;
+    const frameH = this.selHasCustomRect ? this.selSh : cellH;
+    const srcX = column + (originX + options.regionX * spanW) * frameW;
+    const srcY = this.selSy + (originY + options.regionY * spanH) * frameH;
+    const srcW = options.regionW * spanW * frameW;
+    const srcH = options.regionH * spanH * frameH;
     if (srcW <= 0 || srcH <= 0 || options.width <= 0 || options.height <= 0) return false;
 
     const smoothing = ctx.imageSmoothingEnabled;
@@ -269,11 +397,22 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
     const cellW = texture.width / info.cols;
     const cellH = texture.height / info.rows;
 
-    const span = this.selectFrame(meta, cellW, cellH, options.animationName, options.frameIndex, options.ticks);
+    const span = this.selectFrame(
+      meta,
+      info,
+      cellW,
+      cellH,
+      options.animationName,
+      options.frameIndex,
+      options.ticks,
+      texture,
+      source
+    );
     if (span <= 0) return false;
     const sx = this.selSx;
     const sy = this.selSy;
     const sw = this.selSw;
+    const sh = this.selSh;
 
     this.placeFrame(info, options, quality, meta, cellW, cellH, span);
     const { drawX, drawY, drawW: dw, drawH: dh, pivotX } = this;
@@ -296,7 +435,7 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
       ctx.translate(-pivotX, 0);
     }
 
-    ctx.drawImage(source, sx, sy, sw, cellH, drawX, drawY, dw, dh);
+    ctx.drawImage(source, sx, sy, sw, sh, drawX, drawY, dw, dh);
 
     if (options.tintColor) {
       ctx.save();
@@ -309,6 +448,10 @@ export class AtlasSpriteRenderer implements IAtlasSpriteRenderer {
     ctx.restore();
     return true;
   }
+}
+
+function widthOr(v: number): number {
+  return Math.max(1, Math.round(v));
 }
 
 export const defaultAtlasSpriteRenderer = new AtlasSpriteRenderer();

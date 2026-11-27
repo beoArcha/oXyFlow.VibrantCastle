@@ -1,0 +1,86 @@
+{
+  "characterId": "aether_archon",
+  "entityType": "creature",
+  "version": "4.1",
+  "description": "Radiant astral archon boss SVG placeholder",
+  "atlas": {
+    "columns": 4,
+    "rows": 3,
+    "cellWidth": 64,
+    "cellHeight": 64,
+    "spacing": 0,
+    "background": "transparent"
+  },
+  "naturalFacing": "right",
+  "variants": {
+    "mid": {
+      "file": "aether_archon_hi16bit.svg",
+      "cellWidth": 64,
+      "cellHeight": 64,
+      "scale": 1
+    }
+  },
+  "animations": {
+    "idle": {
+      "row": 0,
+      "frames": 4,
+      "fps": 5,
+      "loop": true
+    },
+    "move": {
+      "row": 1,
+      "frames": 4,
+      "fps": 8,
+      "loop": true
+    },
+    "attack": {
+      "row": 2,
+      "frames": 4,
+      "fps": 10,
+      "loop": false
+    }
+  },
+  "states": {
+    "idle": {
+      "animation": "idle"
+    },
+    "move": {
+      "animation": "move"
+    },
+    "patrol": {
+      "animation": "move"
+    },
+    "chase": {
+      "animation": "move"
+    },
+    "attack": {
+      "animation": "attack"
+    },
+    "hit": {
+      "animation": "idle"
+    },
+    "fly": {
+      "animation": "move"
+    }
+  },
+  "layout": {
+    "ordering": [
+      "idle",
+      "move",
+      "attack"
+    ],
+    "origin": {
+      "type": "center",
+      "normalized": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "bodyBox": {
+      "x": 0.22,
+      "y": 0.08,
+      "w": 0.56,
+      "h": 0.82
+    }
+  }
+}

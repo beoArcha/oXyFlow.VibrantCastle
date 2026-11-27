@@ -9,16 +9,27 @@
   "sceneType": "action_platformer",
   "nextLocationId": "thorn_chasm",
   "dimensions": {
-    "width": 3600,
-    "height": 840
+    "width": 4800,
+    "height": 1040
   },
   "spawnPoints": {
-    "default": { "x": 140, "y": 640 },
-    "p2Offset": { "x": 64, "y": 0 },
+    "default": {
+      "x": 140,
+      "y": 780
+    },
+    "p2Offset": {
+      "x": 46,
+      "y": 0
+    },
     "entries": {
-      "from_chasm": { "x": 3320, "y": 640 },
-      "from_bastion": { "x": 180, "y": 640 },
-      "from_eclipse": { "x": 180, "y": 640 }
+      "from_chasm": {
+        "x": 4440,
+        "y": 780
+      },
+      "from_eclipse": {
+        "x": 260,
+        "y": 780
+      }
     }
   },
   "theme": {
@@ -29,15 +40,79 @@
     "musicIntensity": 0.25
   },
   "parallaxBackground": {
-    "boxWidth": 4000,
-    "boxHeight": 840,
+    "boxWidth": 5400,
+    "boxHeight": 1160,
     "layers": [
-      { "id": "bg_far", "name": "Far Sky & Citadel", "tier": "far", "layerKey": "world:courtyard:far", "type": "image", "depth": 0.08, "scrollSpeedX": 0.04, "scrollSpeedY": 0.02, "opaque": true, "imageUrl": "world:courtyard:far" },
-      { "id": "bg_mid_far", "name": "Distant Ramparts", "tier": "mid_far", "layerKey": "shared:mid_far:courtyard_ramparts_a", "type": "image", "depth": 0.24, "scrollSpeedX": 0.18, "scrollSpeedY": 0.07, "imageUrl": "shared:mid_far:courtyard_ramparts_a" },
-      { "id": "bg_mid", "name": "Courtyard Arches", "tier": "mid", "layerKey": "shared:mid:courtyard_arches_a", "type": "image", "depth": 0.45, "scrollSpeedX": 0.36, "scrollSpeedY": 0.12, "imageUrl": "shared:mid:courtyard_arches_a" },
-      { "id": "bg_mid_close", "name": "Autumn Trees", "tier": "mid_close", "layerKey": "shared:mid_close:autumn_trees_a", "type": "image", "depth": 0.65, "scrollSpeedX": 0.56, "scrollSpeedY": 0.18, "imageUrl": "shared:mid_close:autumn_trees_a" },
-      { "id": "bg_courtyard_boss_stage", "name": "Trial Square Sigil", "tier": "boss_stage", "bossScope": "stage", "layerKey": "boss:stage:arcane_sigil_arena", "type": "image", "depth": 0.72, "scrollSpeedX": 0.44, "scrollSpeedY": 0.14, "opacity": 0.68, "blendMode": "screen", "imageUrl": "boss:stage:arcane_sigil_arena" },
-      { "id": "bg_close", "name": "Foreground Battlements", "tier": "close", "layerKey": "shared:close:stone_battlements_a", "type": "image", "depth": 0.86, "scrollSpeedX": 0.78, "scrollSpeedY": 0.24, "imageUrl": "shared:close:stone_battlements_a" }
+      {
+        "id": "bg_far",
+        "name": "Far Sky & Citadel",
+        "tier": "far",
+        "layerKey": "world:courtyard:far",
+        "type": "image",
+        "depth": 0.08,
+        "scrollSpeedX": 0.04,
+        "scrollSpeedY": 0.02,
+        "opaque": true,
+        "imageUrl": "world:courtyard:far"
+      },
+      {
+        "id": "bg_mid_far",
+        "name": "Distant Ramparts",
+        "tier": "mid_far",
+        "layerKey": "shared:mid_far:courtyard_ramparts_a",
+        "type": "image",
+        "depth": 0.24,
+        "scrollSpeedX": 0.18,
+        "scrollSpeedY": 0.07,
+        "imageUrl": "shared:mid_far:courtyard_ramparts_a"
+      },
+      {
+        "id": "bg_mid",
+        "name": "Courtyard Arches",
+        "tier": "mid",
+        "layerKey": "shared:mid:courtyard_arches_a",
+        "type": "image",
+        "depth": 0.45,
+        "scrollSpeedX": 0.36,
+        "scrollSpeedY": 0.12,
+        "imageUrl": "shared:mid:courtyard_arches_a"
+      },
+      {
+        "id": "bg_mid_close",
+        "name": "Autumn Trees",
+        "tier": "mid_close",
+        "layerKey": "shared:mid_close:autumn_trees_a",
+        "type": "image",
+        "depth": 0.65,
+        "scrollSpeedX": 0.56,
+        "scrollSpeedY": 0.18,
+        "imageUrl": "shared:mid_close:autumn_trees_a"
+      },
+      {
+        "id": "bg_courtyard_boss_stage",
+        "name": "Trial Square Sigil",
+        "tier": "boss_stage",
+        "bossScope": "stage",
+        "layerKey": "boss:stage:arcane_sigil_arena",
+        "type": "image",
+        "depth": 0.72,
+        "scrollSpeedX": 0.44,
+        "scrollSpeedY": 0.14,
+        "opacity": 0.68,
+        "blendMode": "screen",
+        "imageUrl": "boss:stage:arcane_sigil_arena"
+      },
+      {
+        "id": "bg_close",
+        "name": "Foreground Battlements",
+        "tier": "close",
+        "layerKey": "shared:close:stone_battlements_a",
+        "type": "image",
+        "depth": 0.86,
+        "scrollSpeedX": 0.78,
+        "scrollSpeedY": 0.24,
+        "imageUrl": "shared:close:stone_battlements_a"
+      }
     ]
   },
   "bossZones": [
@@ -56,12 +131,55 @@
   ],
   "dictionaries": {
     "entities": {
-      "stone_floor": { "prefabId": "stone_floor", "type": "solid", "color": "#57534e", "borderColor": "#292524", "labelKey": "labelStoneFloor", "defaultLabel": "Stone Floor" },
-      "stone_platform": { "prefabId": "stone_platform", "type": "oneway", "color": "#78716c", "borderColor": "#44403c", "labelKey": "labelStonePlatform", "defaultLabel": "Stone Platform" },
-      "high_arcade": { "prefabId": "high_arcade", "type": "solid", "color": "#64748b", "borderColor": "#334155", "labelKey": "labelHighArcade", "defaultLabel": "High Arcade" },
-      "moving_platform": { "prefabId": "moving_platform", "type": "solid", "color": "#78716c", "borderColor": "#fbbf24", "labelKey": "labelMovingPlatform", "defaultLabel": "Moving Platform" },
-      "castle_gate": { "prefabId": "castle_gate", "type": "solid", "color": "#475569", "borderColor": "#1e293b", "labelKey": "labelCastleGate", "defaultLabel": "Courtyard Gate", "structureId": "grand_portcullis" },
-      "amber_thorns": { "prefabId": "amber_thorns", "type": "hazard", "color": "#991b1b", "borderColor": "#f59e0b", "labelKey": "labelAmberThorns", "defaultLabel": "Amber Thorns", "structureId": "hazard_thorns" }
+      "stone_floor": {
+        "prefabId": "stone_floor",
+        "type": "solid",
+        "color": "#57534e",
+        "borderColor": "#292524",
+        "labelKey": "labelStoneFloor",
+        "defaultLabel": "Stone Floor"
+      },
+      "stone_platform": {
+        "prefabId": "stone_platform",
+        "type": "oneway",
+        "color": "#78716c",
+        "borderColor": "#44403c",
+        "labelKey": "labelStonePlatform",
+        "defaultLabel": "Stone Platform"
+      },
+      "high_arcade": {
+        "prefabId": "high_arcade",
+        "type": "solid",
+        "color": "#64748b",
+        "borderColor": "#334155",
+        "labelKey": "labelHighArcade",
+        "defaultLabel": "High Arcade"
+      },
+      "moving_platform": {
+        "prefabId": "moving_platform",
+        "type": "solid",
+        "color": "#78716c",
+        "borderColor": "#fbbf24",
+        "labelKey": "labelMovingPlatform",
+        "defaultLabel": "Moving Platform"
+      },
+      "castle_gate": {
+        "type": "solid",
+        "structureId": "grand_portcullis",
+        "defaultWidth": 56,
+        "defaultHeight": 860,
+        "color": "#78350f",
+        "label": "Courtyard Portcullis"
+      },
+      "amber_thorns": {
+        "prefabId": "amber_thorns",
+        "type": "hazard",
+        "color": "#991b1b",
+        "borderColor": "#f59e0b",
+        "labelKey": "labelAmberThorns",
+        "defaultLabel": "Amber Thorns",
+        "structureId": "hazard_thorns"
+      }
     },
     "portals": {
       "to_thorn_chasm": {
@@ -72,7 +190,15 @@
         "targetEntryKey": "from_courtyard",
         "activation": "interact",
         "particleEffect": "magic",
-        "colors": { "inner": "#38bdf8", "outer": "#1d4ed8", "border": "#bae6fd" }
+        "colors": {
+          "inner": "#38bdf8",
+          "outer": "#1d4ed8",
+          "border": "#bae6fd"
+        },
+        "targetSpawnPoint": {
+          "x": 240,
+          "y": 740
+        }
       },
       "to_clocktower": {
         "id": "to_clocktower",
@@ -81,48 +207,376 @@
         "targetLocationId": "clocktower",
         "activation": "interact",
         "particleEffect": "spark",
-        "colors": { "inner": "#fbbf24", "outer": "#b45309", "border": "#fef3c7" }
+        "colors": {
+          "inner": "#fbbf24",
+          "outer": "#b45309",
+          "border": "#fef3c7"
+        },
+        "targetEntryKey": "from_courtyard",
+        "targetSpawnPoint": {
+          "x": 1180,
+          "y": 1500
+        }
       }
     }
   },
   "layout": {
     "solids": [
-      { "id": "floor_west", "prefabId": "stone_floor", "x": 0, "y": 720, "width": 1650, "height": 120 },
-      { "id": "floor_east", "prefabId": "stone_floor", "x": 1820, "y": 720, "width": 1780, "height": 120 },
-      { "id": "practice_terrace", "prefabId": "stone_platform", "x": 620, "y": 540, "width": 360, "height": 28 },
-      { "id": "ivy_upper_balcony", "prefabId": "stone_platform", "x": 860, "y": 448, "width": 260, "height": 24 },
-      { "id": "arcade_ledge", "prefabId": "stone_platform", "x": 1220, "y": 560, "width": 300, "height": 28 },
-      { "id": "arcade_upper_bridge", "prefabId": "moving_platform", "x": 1520, "y": 468, "width": 150, "height": 24, "vx": 1.2, "minX": 1460, "maxX": 1860 },
-      { "id": "chasm_bridge", "prefabId": "stone_platform", "x": 1650, "y": 650, "width": 170, "height": 24 },
-      { "id": "lever_balcony", "prefabId": "stone_platform", "x": 2220, "y": 620, "width": 280, "height": 28 },
-      { "id": "vault_step_1", "prefabId": "stone_platform", "x": 2580, "y": 510, "width": 220, "height": 24 },
-      { "id": "vault_ledge", "prefabId": "high_arcade", "x": 2840, "y": 410, "width": 380, "height": 32 },
-      { "id": "secret_skylight_perch", "prefabId": "stone_platform", "x": 2880, "y": 318, "width": 220, "height": 22 },
-      { "id": "courtyard_gate", "prefabId": "castle_gate", "x": 3250, "y": 40, "width": 38, "height": 680 }
+      {
+        "id": "ground_west",
+        "prefabId": "stone_floor",
+        "x": 0,
+        "y": 860,
+        "width": 1220,
+        "height": 180
+      },
+      {
+        "id": "crypt_floor",
+        "prefabId": "stone_floor",
+        "x": 1220,
+        "y": 940,
+        "width": 700,
+        "height": 100
+      },
+      {
+        "id": "ground_mid",
+        "prefabId": "stone_floor",
+        "x": 1920,
+        "y": 860,
+        "width": 980,
+        "height": 180
+      },
+      {
+        "id": "ground_east",
+        "prefabId": "stone_floor",
+        "x": 3360,
+        "y": 860,
+        "width": 1440,
+        "height": 180
+      },
+      {
+        "id": "practice_step_1",
+        "prefabId": "stone_platform",
+        "x": 520,
+        "y": 780,
+        "width": 200,
+        "height": 22
+      },
+      {
+        "id": "practice_terrace",
+        "prefabId": "high_arcade",
+        "x": 760,
+        "y": 700,
+        "width": 340,
+        "height": 24
+      },
+      {
+        "id": "arcade_bridge_1",
+        "prefabId": "high_arcade",
+        "x": 1180,
+        "y": 700,
+        "width": 320,
+        "height": 24
+      },
+      {
+        "id": "arcade_bridge_2",
+        "prefabId": "high_arcade",
+        "x": 1580,
+        "y": 700,
+        "width": 320,
+        "height": 24
+      },
+      {
+        "id": "arcade_step_down",
+        "prefabId": "stone_platform",
+        "x": 1980,
+        "y": 780,
+        "width": 180,
+        "height": 22
+      },
+      {
+        "id": "tower_step_1",
+        "prefabId": "stone_platform",
+        "x": 1920,
+        "y": 616,
+        "width": 170,
+        "height": 22
+      },
+      {
+        "id": "tower_step_2",
+        "prefabId": "stone_platform",
+        "x": 2130,
+        "y": 532,
+        "width": 170,
+        "height": 22
+      },
+      {
+        "id": "tower_step_3",
+        "prefabId": "stone_platform",
+        "x": 1920,
+        "y": 448,
+        "width": 170,
+        "height": 22
+      },
+      {
+        "id": "tower_step_4",
+        "prefabId": "stone_platform",
+        "x": 2130,
+        "y": 364,
+        "width": 170,
+        "height": 22
+      },
+      {
+        "id": "tower_summit",
+        "prefabId": "stone_platform",
+        "x": 2340,
+        "y": 280,
+        "width": 360,
+        "height": 24
+      },
+      {
+        "id": "moat_drawbridge",
+        "prefabId": "moving_platform",
+        "x": 2940,
+        "y": 836,
+        "width": 140,
+        "height": 22,
+        "vx": 1.8,
+        "minX": 2920,
+        "maxX": 3200
+      },
+      {
+        "id": "moat_high_1",
+        "prefabId": "stone_platform",
+        "x": 2740,
+        "y": 776,
+        "width": 150,
+        "height": 22
+      },
+      {
+        "id": "moat_high_2",
+        "prefabId": "stone_platform",
+        "x": 2980,
+        "y": 700,
+        "width": 170,
+        "height": 22
+      },
+      {
+        "id": "moat_high_3",
+        "prefabId": "stone_platform",
+        "x": 3240,
+        "y": 760,
+        "width": 170,
+        "height": 22
+      },
+      {
+        "id": "battlement_step",
+        "prefabId": "stone_platform",
+        "x": 3480,
+        "y": 776,
+        "width": 150,
+        "height": 22
+      },
+      {
+        "id": "battlement_ledge",
+        "prefabId": "high_arcade",
+        "x": 3670,
+        "y": 696,
+        "width": 280,
+        "height": 24
+      },
+      {
+        "id": "courtyard_portcullis",
+        "prefabId": "castle_gate",
+        "x": 4020,
+        "y": 0,
+        "width": 56,
+        "height": 860
+      }
     ],
     "hazards": [
-      { "id": "pit_thorns_1", "prefabId": "amber_thorns", "x": 1660, "y": 760, "width": 150, "height": 32 }
-    ],
-    "levers": [
-      { "id": "courtyard_gate_lever", "x": 2350, "y": 566, "width": 44, "height": 54, "targetGateId": "courtyard_gate", "labelKey": "labelGateLever", "defaultLabel": "Gate Lever" }
+      {
+        "id": "moat_thorns",
+        "prefabId": "amber_thorns",
+        "x": 2920,
+        "y": 940,
+        "width": 420,
+        "height": 40
+      }
     ],
     "triggers": [
-      { "id": "trig_movement", "x": 380, "y": 560, "width": 120, "height": 160, "triggerId": "trainingMovementSuccess", "oneShot": true },
-      { "id": "trig_combat", "x": 720, "y": 420, "width": 160, "height": 300, "triggerId": "trainingCombatPrompt", "oneShot": true },
-      { "id": "trig_lever", "x": 2200, "y": 500, "width": 160, "height": 220, "triggerId": "trainingLeverPrompt", "oneShot": true }
+      {
+        "id": "trig_movement",
+        "x": 360,
+        "y": 720,
+        "width": 120,
+        "height": 140,
+        "triggerId": "trainingMovementSuccess"
+      },
+      {
+        "id": "trig_combat",
+        "x": 640,
+        "y": 720,
+        "width": 120,
+        "height": 140,
+        "triggerId": "trainingCombatPrompt"
+      },
+      {
+        "id": "trig_lever",
+        "x": 3680,
+        "y": 580,
+        "width": 140,
+        "height": 116,
+        "triggerId": "trainingLeverPrompt"
+      }
+    ],
+    "levers": [
+      {
+        "id": "lever_courtyard_gate",
+        "x": 3860,
+        "y": 651,
+        "width": 25,
+        "height": 45,
+        "targetGateId": "courtyard_portcullis",
+        "label": "Courtyard Gate Lever"
+      }
     ],
     "portals": [
-      { "id": "portal_exit_chasm", "portalKey": "to_thorn_chasm", "x": 3360, "y": 580, "width": 100, "height": 140 },
-      { "id": "portal_vault_tower", "portalKey": "to_clocktower", "x": 3060, "y": 270, "width": 96, "height": 140 }
+      {
+        "id": "portal_exit_chasm",
+        "portalKey": "to_thorn_chasm",
+        "x": 4610,
+        "y": 732,
+        "width": 84,
+        "height": 128
+      },
+      {
+        "id": "portal_vault_tower",
+        "portalKey": "to_clocktower",
+        "x": 2560,
+        "y": 152,
+        "width": 84,
+        "height": 128,
+        "activation": "interact"
+      }
     ],
     "enemies": [
-      { "id": "dummy_1", "monsterKey": "training_dummy", "x": 820, "y": 464 },
-      { "id": "dummy_2", "monsterKey": "training_target", "x": 1050, "y": 652 },
-      { "id": "sentinel_1", "monsterKey": "court_sentinel", "x": 1440, "y": 636, "patrolMinX": 1240, "patrolMaxX": 1580 },
-      { "id": "mite_1", "monsterKey": "gear_mite", "x": 2020, "y": 692, "patrolMinX": 1880, "patrolMaxX": 2260 },
-      { "id": "scout_1", "monsterKey": "gargoyle_scout", "x": 2840, "y": 440, "patrolMinX": 2680, "patrolMaxX": 3180 },
-      { "id": "grand_dummy_1", "monsterKey": "grand_dummy", "x": 2940, "y": 318 },
-      { "id": "courtyard_captain_1", "monsterKey": "court_sentinel", "x": 2960, "y": 636, "patrolMinX": 2720, "patrolMaxX": 3180, "healthOverride": 140 }
+      {
+        "id": "dummy_1",
+        "monsterKey": "training_dummy",
+        "x": 840,
+        "y": 784
+      },
+      {
+        "id": "dummy_terrace",
+        "monsterKey": "training_target",
+        "x": 960,
+        "y": 632
+      },
+      {
+        "id": "mite_crypt",
+        "monsterKey": "gear_mite",
+        "x": 1500,
+        "y": 912,
+        "patrolMinX": 1280,
+        "patrolMaxX": 1840
+      },
+      {
+        "id": "sentinel_arcade",
+        "monsterKey": "court_sentinel",
+        "x": 1680,
+        "y": 616,
+        "patrolMinX": 1600,
+        "patrolMaxX": 1820
+      },
+      {
+        "id": "mite_mid",
+        "monsterKey": "gear_mite",
+        "x": 2260,
+        "y": 832,
+        "patrolMinX": 2020,
+        "patrolMaxX": 2560
+      },
+      {
+        "id": "owl_courtyard",
+        "monsterKey": "clockwork_owl_gargoyle",
+        "x": 2520,
+        "y": 640,
+        "patrolMinX": 2280,
+        "patrolMaxX": 2820
+      },
+      {
+        "id": "grand_dummy_tower",
+        "monsterKey": "grand_dummy",
+        "x": 2400,
+        "y": 188
+      },
+      {
+        "id": "sentinel_gate",
+        "monsterKey": "aether_sentinel",
+        "x": 3640,
+        "y": 772,
+        "patrolMinX": 3420,
+        "patrolMaxX": 3920
+      },
+      {
+        "id": "sentinel_final",
+        "monsterKey": "court_sentinel",
+        "x": 4220,
+        "y": 776,
+        "patrolMinX": 4120,
+        "patrolMaxX": 4380
+      }
+    ],
+    "decor": [
+      {
+        "id": "lan_c1",
+        "propId": "hanging_lantern",
+        "x": 820,
+        "y": 724,
+        "layer": "back",
+        "phase": 0
+      },
+      {
+        "id": "lan_c2",
+        "propId": "hanging_lantern",
+        "x": 1040,
+        "y": 724,
+        "layer": "back",
+        "phase": 1
+      },
+      {
+        "id": "lan_c3",
+        "propId": "hanging_lantern",
+        "x": 1340,
+        "y": 724,
+        "layer": "back",
+        "phase": 2
+      },
+      {
+        "id": "lan_c4",
+        "propId": "hanging_lantern",
+        "x": 1740,
+        "y": 724,
+        "layer": "back",
+        "phase": 3
+      },
+      {
+        "id": "lan_c5",
+        "propId": "hanging_lantern",
+        "x": 2480,
+        "y": 304,
+        "layer": "back",
+        "phase": 1
+      },
+      {
+        "id": "lan_c6",
+        "propId": "hanging_lantern",
+        "x": 3800,
+        "y": 720,
+        "layer": "back",
+        "phase": 2
+      }
     ]
   }
 }

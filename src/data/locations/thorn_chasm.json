@@ -9,16 +9,27 @@
   "sceneType": "action_platformer",
   "nextLocationId": "ashen_catacombs",
   "dimensions": {
-    "width": 2960,
-    "height": 860
+    "width": 4560,
+    "height": 1120
   },
   "spawnPoints": {
-    "default": { "x": 100, "y": 480 },
-    "p2Offset": { "x": 60, "y": 0 },
+    "default": {
+      "x": 240,
+      "y": 740
+    },
+    "p2Offset": {
+      "x": 46,
+      "y": 0
+    },
     "entries": {
-      "from_courtyard": { "x": 100, "y": 480 },
-      "from_catacombs": { "x": 2660, "y": 420 },
-      "from_clocktower": { "x": 2660, "y": 420 }
+      "from_courtyard": {
+        "x": 240,
+        "y": 740
+      },
+      "from_catacombs": {
+        "x": 4200,
+        "y": 660
+      }
     }
   },
   "theme": {
@@ -29,15 +40,79 @@
     "musicIntensity": 0.48
   },
   "parallaxBackground": {
-    "boxWidth": 3360,
-    "boxHeight": 860,
+    "boxWidth": 5160,
+    "boxHeight": 1240,
     "layers": [
-      { "id": "bg_chasm_far", "name": "Chasm Far Depths", "tier": "far", "layerKey": "world:thorn_chasm:far", "type": "image", "depth": 0.08, "scrollSpeedX": 0.04, "scrollSpeedY": 0.02, "opaque": true, "imageUrl": "world:thorn_chasm:far" },
-      { "id": "bg_chasm_mid_far", "name": "Distant Cliffs", "tier": "mid_far", "layerKey": "shared:mid_far:chasm_cliffs_a", "type": "image", "depth": 0.24, "scrollSpeedX": 0.18, "scrollSpeedY": 0.07, "imageUrl": "shared:mid_far:chasm_cliffs_a" },
-      { "id": "bg_chasm_mid", "name": "Thorn Arches", "tier": "mid", "layerKey": "shared:mid:thorn_arches_a", "type": "image", "depth": 0.45, "scrollSpeedX": 0.36, "scrollSpeedY": 0.12, "imageUrl": "shared:mid:thorn_arches_a" },
-      { "id": "bg_chasm_mid_close", "name": "Bramble Pillars", "tier": "mid_close", "layerKey": "shared:mid_close:bramble_pillars_a", "type": "image", "depth": 0.65, "scrollSpeedX": 0.56, "scrollSpeedY": 0.18, "imageUrl": "shared:mid_close:bramble_pillars_a" },
-      { "id": "bg_chasm_boss_stage", "name": "Thorn Warden Shrine", "tier": "boss_stage", "bossScope": "stage", "layerKey": "boss:stage:arcane_sigil_arena", "type": "image", "depth": 0.72, "scrollSpeedX": 0.44, "scrollSpeedY": 0.14, "opacity": 0.7, "blendMode": "screen", "imageUrl": "boss:stage:arcane_sigil_arena" },
-      { "id": "bg_chasm_close", "name": "Foreground Thorns", "tier": "close", "layerKey": "shared:close:foreground_thorns_a", "type": "image", "depth": 0.86, "scrollSpeedX": 0.78, "scrollSpeedY": 0.24, "imageUrl": "shared:close:foreground_thorns_a" }
+      {
+        "id": "bg_chasm_far",
+        "name": "Chasm Far Depths",
+        "tier": "far",
+        "layerKey": "world:thorn_chasm:far",
+        "type": "image",
+        "depth": 0.08,
+        "scrollSpeedX": 0.04,
+        "scrollSpeedY": 0.02,
+        "opaque": true,
+        "imageUrl": "world:thorn_chasm:far"
+      },
+      {
+        "id": "bg_chasm_mid_far",
+        "name": "Distant Cliffs",
+        "tier": "mid_far",
+        "layerKey": "shared:mid_far:chasm_cliffs_a",
+        "type": "image",
+        "depth": 0.24,
+        "scrollSpeedX": 0.18,
+        "scrollSpeedY": 0.07,
+        "imageUrl": "shared:mid_far:chasm_cliffs_a"
+      },
+      {
+        "id": "bg_chasm_mid",
+        "name": "Thorn Arches",
+        "tier": "mid",
+        "layerKey": "shared:mid:thorn_arches_a",
+        "type": "image",
+        "depth": 0.45,
+        "scrollSpeedX": 0.36,
+        "scrollSpeedY": 0.12,
+        "imageUrl": "shared:mid:thorn_arches_a"
+      },
+      {
+        "id": "bg_chasm_mid_close",
+        "name": "Bramble Pillars",
+        "tier": "mid_close",
+        "layerKey": "shared:mid_close:bramble_pillars_a",
+        "type": "image",
+        "depth": 0.65,
+        "scrollSpeedX": 0.56,
+        "scrollSpeedY": 0.18,
+        "imageUrl": "shared:mid_close:bramble_pillars_a"
+      },
+      {
+        "id": "bg_chasm_boss_stage",
+        "name": "Thorn Warden Shrine",
+        "tier": "boss_stage",
+        "bossScope": "stage",
+        "layerKey": "boss:stage:arcane_sigil_arena",
+        "type": "image",
+        "depth": 0.72,
+        "scrollSpeedX": 0.44,
+        "scrollSpeedY": 0.14,
+        "opacity": 0.7,
+        "blendMode": "screen",
+        "imageUrl": "boss:stage:arcane_sigil_arena"
+      },
+      {
+        "id": "bg_chasm_close",
+        "name": "Foreground Thorns",
+        "tier": "close",
+        "layerKey": "shared:close:foreground_thorns_a",
+        "type": "image",
+        "depth": 0.86,
+        "scrollSpeedX": 0.78,
+        "scrollSpeedY": 0.24,
+        "imageUrl": "shared:close:foreground_thorns_a"
+      }
     ]
   },
   "bossZones": [
@@ -56,11 +131,47 @@
   ],
   "dictionaries": {
     "entities": {
-      "stone_floor": { "prefabId": "stone_floor", "type": "solid", "color": "#44403c", "borderColor": "#1c1917", "labelKey": "labelStoneFloor", "defaultLabel": "Stone Floor" },
-      "stone_step": { "prefabId": "stone_step", "type": "oneway", "color": "#57534e", "borderColor": "#292524", "labelKey": "labelStoneStep", "defaultLabel": "Stone Step" },
-      "low_archway": { "prefabId": "low_archway", "type": "solid", "color": "#3f3f46", "borderColor": "#18181b", "labelKey": "labelLowArchway", "defaultLabel": "Low Archway" },
-      "moving_platform": { "prefabId": "moving_platform", "type": "solid", "color": "#78716c", "borderColor": "#d6d3d1", "labelKey": "labelMovingPlatform", "defaultLabel": "Moving Platform" },
-      "amber_thorns": { "prefabId": "amber_thorns", "type": "hazard", "color": "#991b1b", "borderColor": "#f59e0b", "labelKey": "labelAmberThorns", "defaultLabel": "Amber Thorns", "structureId": "hazard_thorns" }
+      "stone_floor": {
+        "prefabId": "stone_floor",
+        "type": "solid",
+        "color": "#44403c",
+        "borderColor": "#1c1917",
+        "labelKey": "labelStoneFloor",
+        "defaultLabel": "Stone Floor"
+      },
+      "stone_step": {
+        "prefabId": "stone_step",
+        "type": "oneway",
+        "color": "#57534e",
+        "borderColor": "#292524",
+        "labelKey": "labelStoneStep",
+        "defaultLabel": "Stone Step"
+      },
+      "low_archway": {
+        "prefabId": "low_archway",
+        "type": "solid",
+        "color": "#3f3f46",
+        "borderColor": "#18181b",
+        "labelKey": "labelLowArchway",
+        "defaultLabel": "Low Archway"
+      },
+      "moving_platform": {
+        "prefabId": "moving_platform",
+        "type": "solid",
+        "color": "#78716c",
+        "borderColor": "#d6d3d1",
+        "labelKey": "labelMovingPlatform",
+        "defaultLabel": "Moving Platform"
+      },
+      "amber_thorns": {
+        "prefabId": "amber_thorns",
+        "type": "hazard",
+        "color": "#991b1b",
+        "borderColor": "#f59e0b",
+        "labelKey": "labelAmberThorns",
+        "defaultLabel": "Amber Thorns",
+        "structureId": "hazard_thorns"
+      }
     },
     "portals": {
       "back_to_courtyard": {
@@ -71,7 +182,15 @@
         "targetEntryKey": "from_chasm",
         "activation": "interact",
         "particleEffect": "leaf",
-        "colors": { "inner": "#fbbf24", "outer": "#92400e", "border": "#fef3c7" }
+        "colors": {
+          "inner": "#fbbf24",
+          "outer": "#92400e",
+          "border": "#fef3c7"
+        },
+        "targetSpawnPoint": {
+          "x": 4440,
+          "y": 780
+        }
       },
       "to_ashen_catacombs": {
         "id": "to_ashen_catacombs",
@@ -81,39 +200,279 @@
         "targetEntryKey": "from_chasm",
         "activation": "interact",
         "particleEffect": "spark",
-        "colors": { "inner": "#f97316", "outer": "#7c2d12", "border": "#fed7aa" }
+        "colors": {
+          "inner": "#f97316",
+          "outer": "#7c2d12",
+          "border": "#fed7aa"
+        },
+        "targetSpawnPoint": {
+          "x": 240,
+          "y": 180
+        }
       }
     }
   },
   "layout": {
     "solids": [
-      { "id": "chasm_entry", "prefabId": "stone_floor", "x": 0, "y": 560, "width": 440, "height": 300 },
-      { "id": "step_1", "prefabId": "stone_step", "x": 540, "y": 540, "width": 160, "height": 26 },
-      { "id": "step_2", "prefabId": "stone_step", "x": 790, "y": 500, "width": 160, "height": 26 },
-      { "id": "canopy_bypass_1", "prefabId": "stone_step", "x": 740, "y": 340, "width": 190, "height": 24 },
-      { "id": "canopy_bypass_2", "prefabId": "stone_step", "x": 1120, "y": 290, "width": 260, "height": 24 },
-      { "id": "bramble_bridge", "prefabId": "stone_floor", "x": 1020, "y": 520, "width": 440, "height": 340 },
-      { "id": "crouch_archway", "prefabId": "low_archway", "x": 1160, "y": 380, "width": 180, "height": 90 },
-      { "id": "chasm_mover", "prefabId": "moving_platform", "x": 1540, "y": 490, "width": 160, "height": 28, "vx": 1.6, "minX": 1500, "maxX": 1760 },
-      { "id": "jagged_pillar_1", "prefabId": "stone_step", "x": 1820, "y": 480, "width": 200, "height": 30 },
-      { "id": "upper_resin_perch", "prefabId": "stone_step", "x": 1840, "y": 388, "width": 190, "height": 24 },
-      { "id": "chasm_exit", "prefabId": "stone_floor", "x": 2120, "y": 500, "width": 840, "height": 360 },
-      { "id": "warden_arena_balcony", "prefabId": "stone_step", "x": 2300, "y": 408, "width": 260, "height": 24 }
+      {
+        "id": "cliff_west",
+        "prefabId": "stone_floor",
+        "x": 0,
+        "y": 820,
+        "width": 780,
+        "height": 300
+      },
+      {
+        "id": "gorge_step_1",
+        "prefabId": "stone_step",
+        "x": 870,
+        "y": 780,
+        "width": 170,
+        "height": 24
+      },
+      {
+        "id": "gorge_step_2",
+        "prefabId": "stone_step",
+        "x": 1120,
+        "y": 710,
+        "width": 190,
+        "height": 24
+      },
+      {
+        "id": "gorge_step_3",
+        "prefabId": "stone_step",
+        "x": 1390,
+        "y": 770,
+        "width": 170,
+        "height": 24
+      },
+      {
+        "id": "mesa_mid",
+        "prefabId": "stone_floor",
+        "x": 1580,
+        "y": 820,
+        "width": 740,
+        "height": 300
+      },
+      {
+        "id": "canopy_step_1",
+        "prefabId": "stone_step",
+        "x": 1640,
+        "y": 736,
+        "width": 150,
+        "height": 22
+      },
+      {
+        "id": "canopy_step_2",
+        "prefabId": "stone_step",
+        "x": 1850,
+        "y": 652,
+        "width": 170,
+        "height": 22
+      },
+      {
+        "id": "canopy_bridge",
+        "prefabId": "stone_step",
+        "x": 2080,
+        "y": 568,
+        "width": 340,
+        "height": 22
+      },
+      {
+        "id": "abyss_low_1",
+        "prefabId": "stone_step",
+        "x": 2420,
+        "y": 810,
+        "width": 190,
+        "height": 24
+      },
+      {
+        "id": "chasm_ferry",
+        "prefabId": "moving_platform",
+        "x": 2710,
+        "y": 790,
+        "width": 150,
+        "height": 22,
+        "vx": 1.9,
+        "minX": 2680,
+        "maxX": 3060
+      },
+      {
+        "id": "abyss_low_2",
+        "prefabId": "stone_step",
+        "x": 3260,
+        "y": 770,
+        "width": 220,
+        "height": 24
+      },
+      {
+        "id": "canopy_island_1",
+        "prefabId": "stone_step",
+        "x": 2540,
+        "y": 550,
+        "width": 210,
+        "height": 22
+      },
+      {
+        "id": "canopy_island_2",
+        "prefabId": "stone_step",
+        "x": 2880,
+        "y": 520,
+        "width": 240,
+        "height": 22
+      },
+      {
+        "id": "canopy_island_3",
+        "prefabId": "stone_step",
+        "x": 3250,
+        "y": 590,
+        "width": 220,
+        "height": 22
+      },
+      {
+        "id": "cliff_east",
+        "prefabId": "stone_floor",
+        "x": 3560,
+        "y": 740,
+        "width": 1000,
+        "height": 380
+      },
+      {
+        "id": "warden_balcony",
+        "prefabId": "stone_step",
+        "x": 3760,
+        "y": 656,
+        "width": 260,
+        "height": 22
+      }
     ],
     "hazards": [
-      { "id": "thorns_pit_1", "prefabId": "amber_thorns", "x": 440, "y": 740, "width": 580, "height": 40 },
-      { "id": "thorns_pit_2", "prefabId": "amber_thorns", "x": 1460, "y": 740, "width": 660, "height": 40 }
+      {
+        "id": "thorns_gorge_1",
+        "prefabId": "amber_thorns",
+        "x": 800,
+        "y": 980,
+        "width": 760,
+        "height": 40
+      },
+      {
+        "id": "thorns_gorge_2",
+        "prefabId": "amber_thorns",
+        "x": 2340,
+        "y": 1000,
+        "width": 1200,
+        "height": 40
+      }
     ],
+    "triggers": [],
+    "levers": [],
     "portals": [
-      { "id": "portal_back_courtyard", "portalKey": "back_to_courtyard", "x": 30, "y": 420, "width": 90, "height": 140 },
-      { "id": "portal_forward_catacombs", "portalKey": "to_ashen_catacombs", "x": 2780, "y": 360, "width": 100, "height": 140 }
+      {
+        "id": "portal_back_courtyard",
+        "portalKey": "back_to_courtyard",
+        "x": 56,
+        "y": 692,
+        "width": 84,
+        "height": 128
+      },
+      {
+        "id": "portal_forward_catacombs",
+        "portalKey": "to_ashen_catacombs",
+        "x": 4370,
+        "y": 612,
+        "width": 84,
+        "height": 128
+      }
     ],
     "enemies": [
-      { "id": "creeper_1", "monsterKey": "thorn_creeper", "x": 1080, "y": 464 },
-      { "id": "crawler_1", "monsterKey": "chasm_crawler", "x": 1300, "y": 482, "patrolMinX": 1180, "patrolMaxX": 1380 },
-      { "id": "gargoyle_1", "monsterKey": "chasm_gargoyle", "x": 880, "y": 320, "patrolMinX": 640, "patrolMaxX": 1040 },
-      { "id": "owl_1", "monsterKey": "clockwork_owl_gargoyle", "x": 1900, "y": 290, "patrolMinX": 1720, "patrolMaxX": 2150 },
-      { "id": "chasm_warden_gargoyle", "monsterKey": "bastion_gargoyle", "x": 2440, "y": 290, "patrolMinX": 2180, "patrolMaxX": 2680, "healthOverride": 170 }
+      {
+        "id": "crawler_west",
+        "monsterKey": "chasm_crawler",
+        "x": 540,
+        "y": 782,
+        "patrolMinX": 400,
+        "patrolMaxX": 700
+      },
+      {
+        "id": "gargoyle_gorge_1",
+        "monsterKey": "chasm_gargoyle",
+        "x": 1180,
+        "y": 590,
+        "patrolMinX": 920,
+        "patrolMaxX": 1460
+      },
+      {
+        "id": "creeper_mesa",
+        "monsterKey": "thorn_creeper",
+        "x": 1840,
+        "y": 764
+      },
+      {
+        "id": "crawler_mesa",
+        "monsterKey": "chasm_crawler",
+        "x": 2040,
+        "y": 782,
+        "patrolMinX": 1920,
+        "patrolMaxX": 2240
+      },
+      {
+        "id": "scout_canopy",
+        "monsterKey": "gargoyle_scout",
+        "x": 2940,
+        "y": 420,
+        "patrolMinX": 2560,
+        "patrolMaxX": 3340
+      },
+      {
+        "id": "mite_abyss",
+        "monsterKey": "gear_mite",
+        "x": 3320,
+        "y": 742,
+        "patrolMinX": 3270,
+        "patrolMaxX": 3430
+      },
+      {
+        "id": "gargoyle_east",
+        "monsterKey": "chasm_gargoyle",
+        "x": 3820,
+        "y": 520,
+        "patrolMinX": 3600,
+        "patrolMaxX": 4160
+      },
+      {
+        "id": "warden_east",
+        "monsterKey": "aether_sentinel",
+        "x": 3920,
+        "y": 652,
+        "patrolMinX": 3640,
+        "patrolMaxX": 4140
+      }
+    ],
+    "decor": [
+      {
+        "id": "lan_tc1",
+        "propId": "hanging_lantern",
+        "x": 1210,
+        "y": 734,
+        "layer": "back",
+        "phase": 0
+      },
+      {
+        "id": "lan_tc2",
+        "propId": "hanging_lantern",
+        "x": 2240,
+        "y": 590,
+        "layer": "back",
+        "phase": 2
+      },
+      {
+        "id": "lan_tc3",
+        "propId": "hanging_lantern",
+        "x": 3880,
+        "y": 678,
+        "layer": "back",
+        "phase": 1
+      }
     ]
   }
 }

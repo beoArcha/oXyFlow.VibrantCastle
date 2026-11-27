@@ -1,5 +1,21 @@
 import { AssetQuality } from "@game/types";
 
+export interface IAtlasFrameRect {
+  readonly x: number;
+  readonly y: number;
+  readonly w: number;
+  readonly h: number;
+  readonly refH?: number;
+  readonly anchorX?: number;
+  readonly anchorY?: number;
+}
+
+export interface IAtlasSlicingConfig {
+  readonly method?: string;
+  readonly referenceHeight?: number;
+  readonly tracks?: Readonly<Record<string, readonly IAtlasFrameRect[]>>;
+}
+
 export interface IAtlasAnimationTrack {
   frames?: number;
   fps?: number;
@@ -7,6 +23,7 @@ export interface IAtlasAnimationTrack {
   frameIndices?: readonly number[] | number[];
   slotSpan?: readonly number[] | number[];
   cells?: readonly number[] | number[];
+  frameRects?: readonly IAtlasFrameRect[];
   startCol?: number;
   widthCells?: number;
   row?: number;
@@ -22,6 +39,7 @@ export interface IAtlasMetaLike {
     defaultFacing?: "left" | "right";
     [key: string]: unknown;
   };
+  slicing?: IAtlasSlicingConfig;
   backgroundConfig?: {
     removeAtRuntime?: boolean;
     colorHex?: string;
@@ -63,10 +81,30 @@ function readAnimationsRecord(meta: IAtlasMetaLike): Record<string, unknown> | n
 }
 
 /**
- * Number of leading frames that actually exist: zero entries in slotSpan/cells mean "no frame".
- * frameIndices-driven tracks keep their declared frame count.
+ * Returns explicit pixel-space frame rects for `animKey` when configured on either the track
+ * (`track.frameRects`) or sheet-level `meta.slicing.tracks[animKey]`.
  */
-export function resolveEffectiveFrameCount(track: IAtlasAnimationTrack | null): number {
+export function resolveTrackFrameRects(
+  meta: IAtlasMetaLike,
+  animKey: string,
+  track: IAtlasAnimationTrack | null
+): readonly IAtlasFrameRect[] | null {
+  if (track?.frameRects && track.frameRects.length > 0) return track.frameRects;
+  const slicingTrack = meta.slicing?.tracks?.[animKey];
+  if (slicingTrack && slicingTrack.length > 0) return slicingTrack;
+  return null;
+}
+
+/**
+ * Number of leading frames that actually exist: zero entries in slotSpan/cells mean "no frame".
+ * Explicit frameRects or frameIndices-driven tracks keep their real frame count.
+ */
+export function resolveEffectiveFrameCount(
+  track: IAtlasAnimationTrack | null,
+  explicitRects?: readonly IAtlasFrameRect[] | null
+): number {
+  if (explicitRects && explicitRects.length > 0) return explicitRects.length;
+  if (track?.frameRects && track.frameRects.length > 0) return track.frameRects.length;
   const declared = track?.frames ?? 1;
   if (!track || track.frameIndices) return declared;
   const spans = track.slotSpan && track.slotSpan.length > 0 ? track.slotSpan : track.cells;
@@ -88,42 +126,48 @@ export function hasAnimationTrack(meta: IAtlasMetaLike, animationName: string): 
   if (!track || typeof track !== "object") {
     track = meta.layout && typeof meta.layout === "object" ? meta.layout[animKey] : undefined;
   }
-  if (!track || typeof track !== "object") return false;
-  return resolveEffectiveFrameCount(track as IAtlasAnimationTrack) > 0;
+  const explicitRects = meta.slicing?.tracks?.[animKey] ?? null;
+  if (!track || typeof track !== "object") {
+    return !!(explicitRects && explicitRects.length > 0);
+  }
+  return resolveEffectiveFrameCount(track as IAtlasAnimationTrack, explicitRects) > 0;
 }
 
 /**
- * Resolves an animation track from either animations dictionary or layout animations.
+ * Resolves an animation track from either animations dictionary or layout animations,
+ * merging layout timing/row fields when both sections exist on unparsed meta documents.
  */
 export function resolveAnimationTrack(meta: IAtlasMetaLike, animKey: string): IAtlasAnimationTrack | null {
-  if (!meta.animations || typeof meta.animations !== "object") return null;
-  const animsContainer = meta.animations as Record<string, unknown>;
-  const rawAnims = "animations" in animsContainer && typeof animsContainer.animations === "object" && animsContainer.animations !== null
-    ? (animsContainer.animations as Record<string, unknown>)
-    : animsContainer;
+  const rawAnims = readAnimationsRecord(meta);
+  const layoutAnim =
+    meta.layout && typeof meta.layout === "object" && meta.layout[animKey] && typeof meta.layout[animKey] === "object"
+      ? (meta.layout[animKey] as IAtlasAnimationTrack)
+      : null;
 
-  let firstAnim: IAtlasAnimationTrack | null = null;
-  for (const k in rawAnims) {
-    const val = rawAnims[k];
-    if (val && typeof val === "object") {
-      firstAnim = val as IAtlasAnimationTrack;
-      break;
+  if (rawAnims) {
+    const selected = rawAnims[animKey];
+    if (selected && typeof selected === "object") {
+      if (layoutAnim) {
+        return { ...layoutAnim, ...(selected as IAtlasAnimationTrack) };
+      }
+      return selected as IAtlasAnimationTrack;
     }
   }
 
-  const selected = rawAnims[animKey];
-  if (selected && typeof selected === "object") {
-    return selected as IAtlasAnimationTrack;
+  if (layoutAnim) {
+    return layoutAnim;
   }
 
-  if (meta.layout && typeof meta.layout === "object") {
-    const layoutAnim = meta.layout[animKey];
-    if (layoutAnim && typeof layoutAnim === "object") {
-      return layoutAnim as IAtlasAnimationTrack;
+  if (rawAnims) {
+    for (const k in rawAnims) {
+      const val = rawAnims[k];
+      if (val && typeof val === "object") {
+        return val as IAtlasAnimationTrack;
+      }
     }
   }
 
-  return firstAnim;
+  return null;
 }
 
 /**

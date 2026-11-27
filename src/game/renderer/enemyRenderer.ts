@@ -138,19 +138,51 @@ export class EnemyRenderer implements IEnemyRenderer {
         4
       );
     } else {
-      // Generic Heavy Sentinel / Automaton / Knight
-      ctx.fillStyle = isFlashing ? "#ef4444" : "#334155";
-      ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
-
-      // Armor trim
-      ctx.fillStyle = "#f59e0b";
-      ctx.fillRect(enemy.x, enemy.y, enemy.width, 4);
-      ctx.fillRect(enemy.x, enemy.y + enemy.height - 6, enemy.width, 6);
-
-      // Glowing optics
-      ctx.fillStyle = isFlashing ? "#fca5a5" : "#38bdf8";
+      const bodyColor = isFlashing ? "#ef4444" : enemy.fallbackColors?.body || "#334155";
+      const accentColor = enemy.fallbackColors?.accent || "#f59e0b";
+      const eyeColor = isFlashing ? "#fca5a5" : enemy.fallbackColors?.eyes || "#38bdf8";
+      const cx = enemy.x + enemy.width / 2;
       const eyeX = enemy.facingLeft ? enemy.x + 6 : enemy.x + enemy.width - 14;
-      ctx.fillRect(eyeX, enemy.y + 10, 8, 4);
+      const cat = enemy.category;
+
+      if (cat === "spirit") {
+        const hover = Math.sin((tickCount + enemy.x) * 0.08) * 4;
+        const cy = enemy.y + enemy.height / 2 + hover;
+        ctx.fillStyle = bodyColor;
+        ctx.beginPath();
+        ctx.moveTo(cx, enemy.y + hover);
+        ctx.lineTo(enemy.x + enemy.width, cy);
+        ctx.lineTo(cx, enemy.y + enemy.height + hover);
+        ctx.lineTo(enemy.x, cy);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = eyeColor;
+        ctx.fillRect(cx - 3, cy - 3, 6, 6);
+      } else if (cat === "beast" || enemy.height <= 32) {
+        // Low skittering silhouette (gear_mite, chasm_crawler, chrono_hound)
+        ctx.fillStyle = bodyColor;
+        ctx.fillRect(enemy.x + 2, enemy.y + 4, enemy.width - 4, enemy.height - 8);
+        ctx.fillStyle = accentColor;
+        ctx.fillRect(enemy.x + 6, enemy.y, enemy.width - 12, 4);
+        ctx.fillRect(enemy.x + 4, enemy.y + enemy.height - 4, 4, 4);
+        ctx.fillRect(enemy.x + enemy.width - 8, enemy.y + enemy.height - 4, 4, 4);
+        ctx.fillStyle = eyeColor;
+        ctx.fillRect(eyeX, enemy.y + Math.max(4, Math.floor(enemy.height * 0.35)), 6, 4);
+      } else {
+        // Upright armored / boss / flora silhouette
+        ctx.fillStyle = bodyColor;
+        ctx.fillRect(enemy.x + 2, enemy.y + 4, enemy.width - 4, enemy.height - 4);
+        ctx.fillStyle = accentColor;
+        ctx.fillRect(enemy.x, enemy.y + 4, enemy.width, 5);
+        ctx.fillRect(enemy.x + 2, enemy.y + enemy.height - 6, enemy.width - 4, 6);
+        if (cat === "boss" || cat === "elite") {
+          ctx.fillRect(cx - 8, enemy.y - 2, 4, 6);
+          ctx.fillRect(cx - 2, enemy.y - 4, 4, 8);
+          ctx.fillRect(cx + 4, enemy.y - 2, 4, 6);
+        }
+        ctx.fillStyle = eyeColor;
+        ctx.fillRect(eyeX, enemy.y + 12, 8, 4);
+      }
     }
   }
 

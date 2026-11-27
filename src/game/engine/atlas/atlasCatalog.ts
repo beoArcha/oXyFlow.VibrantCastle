@@ -61,17 +61,30 @@ function readBodyBox(raw: unknown): { x: number; y: number; w: number; h: number
   return w > 0 && h > 0 ? { x, y, w, h } : null;
 }
 
+function readSlicing(raw: unknown): Record<string, unknown> | null {
+  if (!isRecord(raw) || !isRecord(raw.slicing)) return null;
+  return raw.slicing;
+}
+
 /**
- * Parses a raw meta and carries `layout.bodyBox` over: the shared layout parser drops it,
- * yet the renderer needs it for scale and anchoring.
+ * Parses a raw meta and carries `layout.bodyBox` and `slicing` over: the shared layout parser
+ * drops them, yet the renderer needs bodyBox for scale/anchoring and slicing for irregular sheets.
  */
 export function parseAtlasMeta(raw: unknown, category: AtlasCategory): AtlasMeta {
   const parsed: AtlasMeta =
     category === "enemy" ? defaultMetaParser.parseCreature(raw) : defaultMetaParser.parseStructure(raw);
   const bodyBox = readBodyBox(raw);
-  if (!bodyBox) return parsed;
-  const layout = (parsed as { layout?: object }).layout ?? {};
-  return { ...parsed, layout: { ...layout, bodyBox } } as unknown as AtlasMeta;
+  const slicing = readSlicing(raw);
+  if (!bodyBox && !slicing) return parsed;
+  const next: Record<string, unknown> = { ...(parsed as unknown as Record<string, unknown>) };
+  if (bodyBox) {
+    const layout = (parsed as { layout?: object }).layout ?? {};
+    next.layout = { ...layout, bodyBox };
+  }
+  if (slicing) {
+    next.slicing = slicing;
+  }
+  return next as unknown as AtlasMeta;
 }
 
 function declaredSvgFile(raw: unknown, tier: AssetQuality): string | null {

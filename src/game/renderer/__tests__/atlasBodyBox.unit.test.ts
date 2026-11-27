@@ -205,21 +205,83 @@ describe("AtlasSpriteRenderer with real metas", () => {
     }
   }
 
-  const packed: Array<{ id: string; category: AtlasCategory; dir: string; animations: string[] }> = [
-    { id: "training_dummy", category: "enemy", dir: "enemies", animations: ["idle", "hit"] },
-    { id: "clockwork_owl_gargoyle", category: "enemy", dir: "enemies", animations: ["idle", "fly", "hit"] },
-    { id: "aether_gate", category: "structure", dir: "structures", animations: ["inactive", "charging", "activating", "active"] },
+  const sheets: Array<{
+    id: string;
+    category: AtlasCategory;
+    dir: string;
+    animations: string[];
+    expectBodyBox?: boolean;
+    expectFreeformTracks?: boolean;
+  }> = [
+    {
+      id: "training_dummy",
+      category: "enemy",
+      dir: "enemies",
+      animations: ["idle", "hit", "destroy"],
+      expectFreeformTracks: true,
+    },
+    {
+      id: "clockwork_owl_gargoyle",
+      category: "enemy",
+      dir: "enemies",
+      animations: ["idle", "fly", "attack", "hit", "death"],
+      expectFreeformTracks: true,
+    },
+    {
+      id: "aether_gate",
+      category: "structure",
+      dir: "structures",
+      animations: ["inactive", "charging", "activating", "active"],
+      expectFreeformTracks: true,
+    },
+    {
+      id: "grand_portcullis",
+      category: "structure",
+      dir: "structures",
+      animations: ["closed", "opening", "open"],
+      expectBodyBox: true,
+    },
+    {
+      id: "hazard_thorns",
+      category: "structure",
+      dir: "structures",
+      animations: ["idle", "active"],
+      expectBodyBox: true,
+    },
+    {
+      id: "chrono_lever",
+      category: "structure",
+      dir: "structures",
+      animations: ["idle", "activating", "active"],
+      expectBodyBox: true,
+    },
   ];
 
-  for (const item of packed) {
-    it(`draws every animation the game requests for packed ${item.id} inside the sheet`, () => {
-      const base = `src/assets/${item.dir}/${item.id}/${item.id}_packed`;
+  for (const item of sheets) {
+    it(`draws every animation the game requests for ${item.id} inside the sheet`, () => {
+      const base = `src/assets/${item.dir}/${item.id}/${item.id}`;
       const { width, height } = pngSize(`${base}_high.png`);
       const raw = JSON.parse(readFileSync(`${base}_meta.json`, "utf-8")) as Record<string, unknown>;
       const id = registerSheet(raw, width, height, item.category);
 
       drawEveryFrame(id, item.animations, width, height);
-      expect(getAtlasRenderInfo(assetLoader.getAtlasSource(id)!.meta as unknown as IAtlasMetaLike).body).not.toBeNull();
+
+      const renderer = new AtlasSpriteRenderer();
+      if (item.expectBodyBox) {
+        expect(getAtlasRenderInfo(assetLoader.getAtlasSource(id)!.meta as unknown as IAtlasMetaLike).body).not.toBeNull();
+        expect(renderer.getBodyAspect(id)).toBeGreaterThan(0);
+      }
+      if (item.expectFreeformTracks) {
+        // Verify exact custom pixel rects from slicing.tracks are used instead of uniform grid cells
+        const slicing = raw.slicing as { tracks: Record<string, Array<{ x: number; y: number; w: number; h: number }>> };
+        const [trackName, rects] = Object.entries(slicing.tracks)[0];
+        const { ctx, draws } = createRecordingContext();
+        expect(renderer.render(ctx, { atlasId: id, animationName: trackName, frameIndex: 0, ...HITBOX })).toBe(true);
+        expect(draws[0].sx).toBe(rects[0].x);
+        expect(draws[0].sy).toBe(rects[0].y);
+        expect(draws[0].sw).toBe(rects[0].w);
+        expect(draws[0].sh).toBe(rects[0].h);
+      }
     });
   }
 

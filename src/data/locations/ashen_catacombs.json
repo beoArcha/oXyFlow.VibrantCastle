@@ -9,15 +9,27 @@
   "sceneType": "action_platformer",
   "nextLocationId": "clocktower",
   "dimensions": {
-    "width": 3100,
-    "height": 880
+    "width": 2640,
+    "height": 1560
   },
   "spawnPoints": {
-    "default": { "x": 110, "y": 440 },
-    "p2Offset": { "x": 60, "y": 0 },
+    "default": {
+      "x": 240,
+      "y": 180
+    },
+    "p2Offset": {
+      "x": 46,
+      "y": 0
+    },
     "entries": {
-      "from_chasm": { "x": 110, "y": 440 },
-      "from_clocktower": { "x": 2860, "y": 440 }
+      "from_chasm": {
+        "x": 240,
+        "y": 180
+      },
+      "from_clocktower": {
+        "x": 2260,
+        "y": 1330
+      }
     }
   },
   "theme": {
@@ -28,15 +40,85 @@
     "musicIntensity": 0.58
   },
   "parallaxBackground": {
-    "boxWidth": 3500,
-    "boxHeight": 880,
+    "boxWidth": 3240,
+    "boxHeight": 1680,
     "layers": [
-      { "id": "bg_catacombs_far", "name": "Ashen Basilica Far", "tier": "far", "layerKey": "world:ashen_catacombs:far", "type": "image", "depth": 0.08, "scrollSpeedX": 0.04, "scrollSpeedY": 0.02, "opaque": true, "imageUrl": "world:ashen_catacombs:far" },
-      { "id": "bg_catacombs_mid_far", "name": "Distant Chasm Cliffs", "tier": "mid_far", "layerKey": "shared:mid_far:chasm_cliffs_a", "type": "image", "depth": 0.24, "scrollSpeedX": 0.18, "scrollSpeedY": 0.07, "opacity": 0.72, "imageUrl": "shared:mid_far:chasm_cliffs_a" },
-      { "id": "bg_catacombs_mid", "name": "Ossuary Arches & Chains", "tier": "mid", "layerKey": "shared:mid:catacomb_arches_a", "type": "image", "depth": 0.45, "scrollSpeedX": 0.36, "scrollSpeedY": 0.12, "opacity": 0.56, "blendMode": "screen", "mirrorTile": true, "imageUrl": "shared:mid:catacomb_arches_a" },
-      { "id": "bg_catacombs_mid_close", "name": "Iron Crypt Pillars", "tier": "mid_close", "layerKey": "shared:mid_close:iron_battlements_a", "type": "image", "depth": 0.65, "scrollSpeedX": 0.56, "scrollSpeedY": 0.18, "opacity": 0.85, "imageUrl": "shared:mid_close:iron_battlements_a" },
-      { "id": "bg_catacombs_boss_stage", "name": "Chapel of Embers Sigil", "tier": "boss_stage", "bossScope": "stage", "layerKey": "boss:stage:arcane_sigil_arena", "type": "image", "depth": 0.72, "scrollSpeedX": 0.44, "scrollSpeedY": 0.14, "opacity": 0.74, "blendMode": "screen", "imageUrl": "boss:stage:arcane_sigil_arena" },
-      { "id": "bg_catacombs_close", "name": "Foreground Stone Vaults", "tier": "close", "layerKey": "shared:close:stone_battlements_a", "type": "image", "depth": 0.86, "scrollSpeedX": 0.78, "scrollSpeedY": 0.24, "opacity": 0.9, "imageUrl": "shared:close:stone_battlements_a" }
+      {
+        "id": "bg_catacombs_far",
+        "name": "Ashen Basilica Far",
+        "tier": "far",
+        "layerKey": "world:ashen_catacombs:far",
+        "type": "image",
+        "depth": 0.08,
+        "scrollSpeedX": 0.04,
+        "scrollSpeedY": 0.02,
+        "opaque": true,
+        "imageUrl": "world:ashen_catacombs:far"
+      },
+      {
+        "id": "bg_catacombs_mid_far",
+        "name": "Distant Chasm Cliffs",
+        "tier": "mid_far",
+        "layerKey": "shared:mid_far:chasm_cliffs_a",
+        "type": "image",
+        "depth": 0.24,
+        "scrollSpeedX": 0.18,
+        "scrollSpeedY": 0.07,
+        "opacity": 0.72,
+        "imageUrl": "shared:mid_far:chasm_cliffs_a"
+      },
+      {
+        "id": "bg_catacombs_mid",
+        "name": "Ossuary Arches & Chains",
+        "tier": "mid",
+        "layerKey": "shared:mid:catacomb_arches_a",
+        "type": "image",
+        "depth": 0.45,
+        "scrollSpeedX": 0.36,
+        "scrollSpeedY": 0.12,
+        "opacity": 0.56,
+        "blendMode": "screen",
+        "mirrorTile": true,
+        "imageUrl": "shared:mid:catacomb_arches_a"
+      },
+      {
+        "id": "bg_catacombs_mid_close",
+        "name": "Iron Crypt Pillars",
+        "tier": "mid_close",
+        "layerKey": "shared:mid_close:iron_battlements_a",
+        "type": "image",
+        "depth": 0.65,
+        "scrollSpeedX": 0.56,
+        "scrollSpeedY": 0.18,
+        "opacity": 0.85,
+        "imageUrl": "shared:mid_close:iron_battlements_a"
+      },
+      {
+        "id": "bg_catacombs_boss_stage",
+        "name": "Chapel of Embers Sigil",
+        "tier": "boss_stage",
+        "bossScope": "stage",
+        "layerKey": "boss:stage:arcane_sigil_arena",
+        "type": "image",
+        "depth": 0.72,
+        "scrollSpeedX": 0.44,
+        "scrollSpeedY": 0.14,
+        "opacity": 0.74,
+        "blendMode": "screen",
+        "imageUrl": "boss:stage:arcane_sigil_arena"
+      },
+      {
+        "id": "bg_catacombs_close",
+        "name": "Foreground Stone Vaults",
+        "tier": "close",
+        "layerKey": "shared:close:stone_battlements_a",
+        "type": "image",
+        "depth": 0.86,
+        "scrollSpeedX": 0.78,
+        "scrollSpeedY": 0.24,
+        "opacity": 0.9,
+        "imageUrl": "shared:close:stone_battlements_a"
+      }
     ]
   },
   "bossZones": [
@@ -55,12 +137,55 @@
   ],
   "dictionaries": {
     "entities": {
-      "stone_floor": { "prefabId": "stone_floor", "type": "solid", "color": "#3f3834", "borderColor": "#1c1917", "labelKey": "labelStoneFloor", "defaultLabel": "Stone Floor" },
-      "stone_platform": { "prefabId": "stone_platform", "type": "oneway", "color": "#574c45", "borderColor": "#292524", "labelKey": "labelStonePlatform", "defaultLabel": "Stone Platform" },
-      "low_archway": { "prefabId": "low_archway", "type": "solid", "color": "#292524", "borderColor": "#f97316", "labelKey": "labelLowArchway", "defaultLabel": "Low Archway" },
-      "moving_platform": { "prefabId": "moving_platform", "type": "solid", "color": "#78716c", "borderColor": "#fb923c", "labelKey": "labelMovingPlatform", "defaultLabel": "Moving Platform" },
-      "ossuary_gate": { "prefabId": "ossuary_gate", "type": "solid", "color": "#44403c", "borderColor": "#f97316", "labelKey": "labelAshenCryptGate", "defaultLabel": "Ossuary Grate", "structureId": "grand_portcullis" },
-      "ember_pit": { "prefabId": "ember_pit", "type": "hazard", "color": "#9a3412", "borderColor": "#fb923c", "labelKey": "labelEmberPit", "defaultLabel": "Ember Fissure", "structureId": "hazard_thorns" }
+      "stone_floor": {
+        "prefabId": "stone_floor",
+        "type": "solid",
+        "color": "#3f3834",
+        "borderColor": "#1c1917",
+        "labelKey": "labelStoneFloor",
+        "defaultLabel": "Stone Floor"
+      },
+      "stone_platform": {
+        "prefabId": "stone_platform",
+        "type": "oneway",
+        "color": "#574c45",
+        "borderColor": "#292524",
+        "labelKey": "labelStonePlatform",
+        "defaultLabel": "Stone Platform"
+      },
+      "low_archway": {
+        "prefabId": "low_archway",
+        "type": "solid",
+        "color": "#292524",
+        "borderColor": "#f97316",
+        "labelKey": "labelLowArchway",
+        "defaultLabel": "Low Archway"
+      },
+      "moving_platform": {
+        "prefabId": "moving_platform",
+        "type": "solid",
+        "color": "#78716c",
+        "borderColor": "#fb923c",
+        "labelKey": "labelMovingPlatform",
+        "defaultLabel": "Moving Platform"
+      },
+      "ossuary_gate": {
+        "type": "solid",
+        "structureId": "grand_portcullis",
+        "defaultWidth": 56,
+        "defaultHeight": 310,
+        "color": "#7c2d12",
+        "label": "Ossuary Portcullis"
+      },
+      "ember_pit": {
+        "prefabId": "ember_pit",
+        "type": "hazard",
+        "color": "#9a3412",
+        "borderColor": "#fb923c",
+        "labelKey": "labelEmberPit",
+        "defaultLabel": "Ember Fissure",
+        "structureId": "hazard_thorns"
+      }
     },
     "portals": {
       "back_to_chasm": {
@@ -71,7 +196,15 @@
         "targetEntryKey": "from_catacombs",
         "activation": "interact",
         "particleEffect": "dust",
-        "colors": { "inner": "#f97316", "outer": "#7c2d12", "border": "#fed7aa" }
+        "colors": {
+          "inner": "#f97316",
+          "outer": "#7c2d12",
+          "border": "#fed7aa"
+        },
+        "targetSpawnPoint": {
+          "x": 4200,
+          "y": 660
+        }
       },
       "to_clocktower": {
         "id": "to_clocktower",
@@ -81,46 +214,332 @@
         "targetEntryKey": "from_catacombs",
         "activation": "interact",
         "particleEffect": "spark",
-        "colors": { "inner": "#fbbf24", "outer": "#92400e", "border": "#fef3c7" }
+        "colors": {
+          "inner": "#fbbf24",
+          "outer": "#92400e",
+          "border": "#fef3c7"
+        },
+        "targetSpawnPoint": {
+          "x": 240,
+          "y": 1500
+        }
       }
     }
   },
   "layout": {
     "solids": [
-      { "id": "catacomb_entry", "prefabId": "stone_floor", "x": 0, "y": 520, "width": 520, "height": 360 },
-      { "id": "descent_step_1", "prefabId": "stone_platform", "x": 580, "y": 580, "width": 200, "height": 26 },
-      { "id": "secret_ossuary_shelf", "prefabId": "stone_platform", "x": 420, "y": 428, "width": 220, "height": 24 },
-      { "id": "chains_hall_floor", "prefabId": "stone_floor", "x": 840, "y": 640, "width": 660, "height": 240 },
-      { "id": "chains_mid_step", "prefabId": "stone_platform", "x": 860, "y": 548, "width": 160, "height": 24 },
-      { "id": "chains_low_vault", "prefabId": "low_archway", "x": 1060, "y": 495, "width": 210, "height": 95 },
-      { "id": "upper_chain_catwalk", "prefabId": "stone_platform", "x": 960, "y": 405, "width": 360, "height": 26 },
-      { "id": "ember_mover_1", "prefabId": "moving_platform", "x": 1560, "y": 580, "width": 160, "height": 28, "vx": 1.7, "minX": 1520, "maxX": 1780 },
-      { "id": "crypt_balcony", "prefabId": "stone_floor", "x": 1820, "y": 580, "width": 360, "height": 300 },
-      { "id": "crypt_lever_ledge", "prefabId": "stone_platform", "x": 1880, "y": 488, "width": 220, "height": 26 },
-      { "id": "ember_chapel_arena", "prefabId": "stone_floor", "x": 2180, "y": 540, "width": 920, "height": 340 },
-      { "id": "chapel_side_perch", "prefabId": "stone_platform", "x": 2360, "y": 448, "width": 240, "height": 24 },
-      { "id": "ossuary_exit_gate", "prefabId": "ossuary_gate", "x": 2740, "y": 120, "width": 38, "height": 420 }
+      {
+        "id": "crypt_entry",
+        "prefabId": "stone_floor",
+        "x": 0,
+        "y": 260,
+        "width": 780,
+        "height": 32
+      },
+      {
+        "id": "shaft_1",
+        "prefabId": "stone_platform",
+        "x": 860,
+        "y": 344,
+        "width": 320,
+        "height": 24
+      },
+      {
+        "id": "shaft_2",
+        "prefabId": "stone_platform",
+        "x": 1280,
+        "y": 428,
+        "width": 340,
+        "height": 24
+      },
+      {
+        "id": "shaft_3",
+        "prefabId": "stone_platform",
+        "x": 1720,
+        "y": 512,
+        "width": 380,
+        "height": 24
+      },
+      {
+        "id": "relic_alcove",
+        "prefabId": "stone_platform",
+        "x": 2180,
+        "y": 428,
+        "width": 380,
+        "height": 24
+      },
+      {
+        "id": "chain_step_1",
+        "prefabId": "stone_platform",
+        "x": 1360,
+        "y": 596,
+        "width": 300,
+        "height": 24
+      },
+      {
+        "id": "chain_step_2",
+        "prefabId": "stone_platform",
+        "x": 960,
+        "y": 680,
+        "width": 320,
+        "height": 24
+      },
+      {
+        "id": "chain_hall",
+        "prefabId": "stone_floor",
+        "x": 120,
+        "y": 764,
+        "width": 760,
+        "height": 28
+      },
+      {
+        "id": "chain_step_3",
+        "prefabId": "stone_platform",
+        "x": 160,
+        "y": 848,
+        "width": 280,
+        "height": 24
+      },
+      {
+        "id": "well_ledge_1",
+        "prefabId": "stone_platform",
+        "x": 520,
+        "y": 932,
+        "width": 300,
+        "height": 24
+      },
+      {
+        "id": "furnace_mover",
+        "prefabId": "moving_platform",
+        "x": 900,
+        "y": 1016,
+        "width": 160,
+        "height": 22,
+        "vx": 1.8,
+        "minX": 880,
+        "maxX": 1260
+      },
+      {
+        "id": "well_ledge_2",
+        "prefabId": "stone_platform",
+        "x": 1460,
+        "y": 1016,
+        "width": 360,
+        "height": 24
+      },
+      {
+        "id": "chapel_vault_roof",
+        "prefabId": "stone_floor",
+        "x": 1872,
+        "y": 1100,
+        "width": 768,
+        "height": 32
+      },
+      {
+        "id": "chapel_step_1",
+        "prefabId": "stone_platform",
+        "x": 1120,
+        "y": 1100,
+        "width": 260,
+        "height": 24
+      },
+      {
+        "id": "chapel_step_2",
+        "prefabId": "stone_platform",
+        "x": 760,
+        "y": 1184,
+        "width": 280,
+        "height": 24
+      },
+      {
+        "id": "chapel_step_3",
+        "prefabId": "stone_platform",
+        "x": 420,
+        "y": 1268,
+        "width": 260,
+        "height": 24
+      },
+      {
+        "id": "chapel_step_4",
+        "prefabId": "stone_platform",
+        "x": 740,
+        "y": 1340,
+        "width": 220,
+        "height": 22
+      },
+      {
+        "id": "chapel_floor",
+        "prefabId": "stone_floor",
+        "x": 560,
+        "y": 1410,
+        "width": 2080,
+        "height": 150
+      },
+      {
+        "id": "ossuary_portcullis",
+        "prefabId": "ossuary_gate",
+        "x": 1816,
+        "y": 1100,
+        "width": 56,
+        "height": 310
+      }
     ],
     "hazards": [
-      { "id": "ember_pit_west", "prefabId": "ember_pit", "x": 520, "y": 780, "width": 320, "height": 42 },
-      { "id": "ember_pit_east", "prefabId": "ember_pit", "x": 1500, "y": 780, "width": 320, "height": 42 }
-    ],
-    "levers": [
-      { "id": "ashen_crypt_lever", "x": 1960, "y": 434, "width": 44, "height": 54, "targetGateId": "ossuary_exit_gate", "labelKey": "labelAshenLever", "defaultLabel": "Crypt Lever" }
+      {
+        "id": "ember_pit_west",
+        "prefabId": "ember_pit",
+        "x": 48,
+        "y": 1420,
+        "width": 480,
+        "height": 40
+      }
     ],
     "triggers": [
-      { "id": "trig_catacombs_chapel", "x": 2200, "y": 340, "width": 160, "height": 200, "triggerId": "trainingCombatPrompt", "oneShot": true }
+      {
+        "id": "trig_catacombs_chapel",
+        "x": 1080,
+        "y": 1260,
+        "width": 160,
+        "height": 150,
+        "triggerId": "trainingCombatPrompt"
+      }
+    ],
+    "levers": [
+      {
+        "id": "lever_ossuary_gate",
+        "x": 2360,
+        "y": 1055,
+        "width": 25,
+        "height": 45,
+        "targetGateId": "ossuary_portcullis",
+        "label": "Ossuary Gate Lever"
+      }
     ],
     "portals": [
-      { "id": "portal_back_chasm", "portalKey": "back_to_chasm", "x": 30, "y": 380, "width": 90, "height": 140 },
-      { "id": "portal_forward_clocktower", "portalKey": "to_clocktower", "x": 2920, "y": 400, "width": 100, "height": 140 }
+      {
+        "id": "portal_back_chasm",
+        "portalKey": "back_to_chasm",
+        "x": 60,
+        "y": 132,
+        "width": 84,
+        "height": 128
+      },
+      {
+        "id": "portal_forward_clocktower",
+        "portalKey": "to_clocktower",
+        "x": 2450,
+        "y": 1282,
+        "width": 84,
+        "height": 128
+      }
     ],
     "enemies": [
-      { "id": "catacomb_crawler_1", "monsterKey": "chasm_crawler", "x": 960, "y": 602, "patrolMinX": 880, "patrolMaxX": 1120 },
-      { "id": "catacomb_lantern_1", "monsterKey": "lantern_warden", "x": 1140, "y": 290, "patrolMinX": 940, "patrolMaxX": 1360 },
-      { "id": "catacomb_hound_1", "monsterKey": "chrono_hound", "x": 1340, "y": 598, "patrolMinX": 1220, "patrolMaxX": 1420 },
-      { "id": "catacomb_gargoyle_1", "monsterKey": "chasm_gargoyle", "x": 1680, "y": 340, "patrolMinX": 1520, "patrolMaxX": 1900 },
-      { "id": "catacombs_warden_elite", "monsterKey": "shadow_knight", "x": 2520, "y": 450, "patrolMinX": 2240, "patrolMaxX": 2680, "healthOverride": 210 }
+      {
+        "id": "cat_crawler_1",
+        "monsterKey": "chasm_crawler",
+        "x": 540,
+        "y": 222,
+        "patrolMinX": 400,
+        "patrolMaxX": 700
+      },
+      {
+        "id": "cat_warden_1",
+        "monsterKey": "lantern_warden",
+        "x": 1420,
+        "y": 310,
+        "patrolMinX": 1120,
+        "patrolMaxX": 1760
+      },
+      {
+        "id": "cat_mite_alcove",
+        "monsterKey": "gear_mite",
+        "x": 2320,
+        "y": 400,
+        "patrolMinX": 2200,
+        "patrolMaxX": 2500
+      },
+      {
+        "id": "cat_hound_hall",
+        "monsterKey": "chrono_hound",
+        "x": 420,
+        "y": 722,
+        "patrolMinX": 180,
+        "patrolMaxX": 780
+      },
+      {
+        "id": "cat_wisp_well",
+        "monsterKey": "aether_wisp",
+        "x": 1120,
+        "y": 890,
+        "patrolMinX": 840,
+        "patrolMaxX": 1520
+      },
+      {
+        "id": "cat_sentinel_lever",
+        "monsterKey": "aether_sentinel",
+        "x": 2060,
+        "y": 1012,
+        "patrolMinX": 1920,
+        "patrolMaxX": 2300
+      },
+      {
+        "id": "cat_knight_chapel",
+        "monsterKey": "shadow_knight",
+        "x": 1420,
+        "y": 1320,
+        "patrolMinX": 1160,
+        "patrolMaxX": 1720
+      }
+    ],
+    "decor": [
+      {
+        "id": "lan_ac1",
+        "propId": "hanging_lantern",
+        "x": 340,
+        "y": 292,
+        "layer": "back",
+        "phase": 0
+      },
+      {
+        "id": "lan_ac2",
+        "propId": "hanging_lantern",
+        "x": 1440,
+        "y": 452,
+        "layer": "back",
+        "phase": 1
+      },
+      {
+        "id": "lan_ac3",
+        "propId": "hanging_lantern",
+        "x": 480,
+        "y": 792,
+        "layer": "back",
+        "phase": 2
+      },
+      {
+        "id": "lan_ac4",
+        "propId": "hanging_lantern",
+        "x": 1620,
+        "y": 1040,
+        "layer": "back",
+        "phase": 3
+      },
+      {
+        "id": "lan_ac5",
+        "propId": "hanging_lantern",
+        "x": 2160,
+        "y": 1132,
+        "layer": "back",
+        "phase": 1
+      },
+      {
+        "id": "lan_ac6",
+        "propId": "hanging_lantern",
+        "x": 1240,
+        "y": 1124,
+        "layer": "back",
+        "phase": 2
+      }
     ]
   }
 }

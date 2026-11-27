@@ -1,7 +1,7 @@
 {
   "entityId": "chrono_lever",
   "entityType": "structure",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Gilded Clockwork Gate Lever. Actuates portcullises and castle mechanisms upon player interaction.",
   "atlas": {
     "image": "chrono_lever_high.png",
@@ -18,40 +18,20 @@
     "y": 1.0
   },
   "layout": {
-    "idle": { "row": 0, "startCol": 0, "frames": 4, "widthCells": 1 },
+    "bodyBox": { "x": 0.1458, "y": 0.28125, "w": 0.6458, "h": 0.59375 },
+    "idle": { "row": 0, "startCol": 0, "frames": 6, "widthCells": 1 },
     "activating": { "row": 1, "startCol": 0, "frames": 6, "widthCells": 1 },
-    "active": { "row": 2, "startCol": 0, "frames": 4, "widthCells": 1 }
+    "active": { "row": 2, "startCol": 0, "frames": 6, "widthCells": 1 }
   },
   "animations": {
-    "idle": {
-      "row": 0,
-      "frames": 4,
-      "fps": 6,
-      "loop": true
-    },
-    "activating": {
-      "row": 1,
-      "frames": 6,
-      "fps": 12,
-      "loop": false
-    },
-    "active": {
-      "row": 2,
-      "frames": 4,
-      "fps": 6,
-      "loop": true
-    }
+    "idle": { "row": 0, "frames": 6, "fps": 6, "loop": true },
+    "activating": { "row": 1, "frames": 6, "fps": 12, "loop": false },
+    "active": { "row": 2, "frames": 6, "fps": 6, "loop": true }
   },
   "states": {
-    "inactive": {
-      "animation": "idle"
-    },
-    "activating": {
-      "animation": "activating"
-    },
-    "active": {
-      "animation": "active"
-    }
+    "inactive": { "animation": "idle" },
+    "activating": { "animation": "activating" },
+    "active": { "animation": "active" }
   },
   "infoFrames": {
     "default": 0,
@@ -60,13 +40,8 @@
   },
   "interaction": {
     "type": "switch",
-    "trigger": {
-      "onPlayerInteract": true,
-      "radius": 50
-    },
-    "effects": {
-      "openGate": true
-    }
+    "trigger": { "onPlayerInteract": true, "radius": 50 },
+    "effects": { "openGate": true }
   },
   "render": {
     "layer": "interactive",

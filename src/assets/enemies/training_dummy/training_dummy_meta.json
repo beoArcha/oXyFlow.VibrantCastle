@@ -1,10 +1,8 @@
 {
   "characterId": "training_dummy",
   "entityType": "object",
-  "version": "4.0",
-
+  "version": "4.1",
   "description": "Straw training dummy with wooden cross base, leather bindings and iron helmet. Used as a passive training target. Includes gameplay animations and bestiary presentation row.",
-
   "atlas": {
     "columns": 6,
     "rows": 4,
@@ -16,27 +14,51 @@
     "noOverflow": true,
     "noOverlap": true
   },
-
   "naturalFacing": "left",
-
   "variants": {
-    "low": {
-      "cellWidth": 128,
-      "cellHeight": 128,
-      "scale": 0.5
-    },
-    "mid": {
-      "cellWidth": 192,
-      "cellHeight": 192,
-      "scale": 0.75
-    },
-    "high": {
-      "cellWidth": 256,
-      "cellHeight": 256,
-      "scale": 1.0
+    "low": { "cellWidth": 128, "cellHeight": 128, "scale": 0.5 },
+    "mid": { "cellWidth": 192, "cellHeight": 192, "scale": 0.75 },
+    "high": { "cellWidth": 256, "cellHeight": 256, "scale": 1.0 }
+  },
+  "slicing": {
+    "method": "freeform_rects",
+    "referenceHeight": 260,
+    "tracks": {
+      "idle": [
+        { "x": 41, "y": 12, "w": 209, "h": 261 },
+        { "x": 296, "y": 12, "w": 213, "h": 261 },
+        { "x": 559, "y": 15, "w": 207, "h": 259 },
+        { "x": 803, "y": 14, "w": 211, "h": 259 },
+        { "x": 1069, "y": 12, "w": 215, "h": 264 },
+        { "x": 1312, "y": 14, "w": 206, "h": 260 }
+      ],
+      "hit": [
+        { "x": 31, "y": 292, "w": 214, "h": 252 },
+        { "x": 290, "y": 290, "w": 231, "h": 254 },
+        { "x": 539, "y": 298, "w": 258, "h": 246 },
+        { "x": 826, "y": 299, "w": 229, "h": 245 },
+        { "x": 1077, "y": 297, "w": 280, "h": 246 }
+      ],
+      "destroy": [
+        { "x": 34, "y": 559, "w": 229, "h": 240 },
+        { "x": 284, "y": 561, "w": 243, "h": 234 },
+        { "x": 541, "y": 558, "w": 240, "h": 237 },
+        { "x": 784, "y": 558, "w": 240, "h": 237 },
+        { "x": 1029, "y": 558, "w": 255, "h": 237 },
+        { "x": 1289, "y": 558, "w": 229, "h": 237 }
+      ],
+      "bestiary": [
+        { "x": 26, "y": 806, "w": 172, "h": 202 },
+        { "x": 239, "y": 807, "w": 126, "h": 201 },
+        { "x": 426, "y": 806, "w": 127, "h": 203 },
+        { "x": 580, "y": 807, "w": 129, "h": 201 },
+        { "x": 747, "y": 810, "w": 160, "h": 199 },
+        { "x": 922, "y": 809, "w": 174, "h": 202 },
+        { "x": 1107, "y": 805, "w": 198, "h": 206 },
+        { "x": 1335, "y": 804, "w": 155, "h": 205 }
+      ]
     }
   },
-
   "animations": {
     "idle": {
       "row": 0,
@@ -44,54 +66,42 @@
       "fps": 6,
       "loop": true,
       "wide": false,
-      "slotSpan": [1,1,1,1,1,1],
-      "cells":    [1,1,1,1,1,1]
+      "slotSpan": [1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1]
     },
-
     "hit": {
       "row": 1,
-      "frames": 4,
+      "frames": 5,
       "fps": 10,
       "loop": false,
       "wide": false,
-      "slotSpan": [1,1,1,1],
-      "cells":    [1,1,1,1]
+      "slotSpan": [1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1]
     },
-
     "destroy": {
       "row": 2,
       "frames": 6,
       "fps": 8,
       "loop": false,
       "wide": false,
-      "slotSpan": [1,1,1,1,1,1],
-      "cells":    [1,1,1,1,1,1]
+      "slotSpan": [1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1]
     },
-
     "bestiary": {
       "row": 3,
-      "frames": 6,
+      "frames": 8,
       "fps": 1,
       "loop": false,
       "wide": false,
-      "slotSpan": [1,1,1,1,1,1],
-      "cells":    [1,1,1,1,1,1]
+      "slotSpan": [1, 1, 1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1, 1, 1]
     }
   },
-
   "layout": {
-    "ordering": [
-      "idle",
-      "hit",
-      "destroy",
-      "bestiary"
-    ],
+    "ordering": ["idle", "hit", "destroy", "bestiary"],
     "origin": {
       "type": "feet",
-      "normalized": {
-        "x": 0.5,
-        "y": 1.0
-      }
+      "normalized": { "x": 0.5, "y": 1.0 }
     }
   }
 }
