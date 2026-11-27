@@ -32,7 +32,7 @@
     },
     "training_target": {
       "id": "training_target",
-      "nameKey": "monsterTrainingDummy",
+      "nameKey": "monsterTrainingTarget",
       "defaultName": "Training Target",
       "category": "construct",
       "isDummy": true,
@@ -61,7 +61,7 @@
     },
     "grand_dummy": {
       "id": "grand_dummy",
-      "nameKey": "monsterTrainingDummy",
+      "nameKey": "monsterGrandDummy",
       "defaultName": "Grand Training Dummy",
       "category": "construct",
       "isDummy": true,
@@ -90,7 +90,7 @@
     },
     "clockwork_owl_gargoyle": {
       "id": "clockwork_owl_gargoyle",
-      "nameKey": "monsterChasmGargoyle",
+      "nameKey": "monsterClockworkOwlGargoyle",
       "defaultName": "Clockwork Owl Gargoyle",
       "category": "clockwork",
       "isDummy": false,
@@ -373,7 +373,7 @@
     },
     "bastion_gargoyle": {
       "id": "bastion_gargoyle",
-      "nameKey": "monsterChasmGargoyle",
+      "nameKey": "monsterBastionGargoyle",
       "defaultName": "Bastion Gargoyle",
       "category": "gargoyle",
       "isDummy": false,
@@ -402,7 +402,7 @@
     },
     "bastion_sentinel_boss": {
       "id": "bastion_sentinel_boss",
-      "nameKey": "monsterCourtSentinel",
+      "nameKey": "monsterBastionSentinelCommander",
       "defaultName": "Bastion Sentinel Commander",
       "category": "boss",
       "isDummy": false,

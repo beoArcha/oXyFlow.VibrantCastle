@@ -1187,6 +1187,11 @@ export interface LocationsI18n {
   labelEclipseSealLever: string;
   // Monsters & Dummies
   monsterTrainingDummy: string;
+  monsterTrainingTarget: string;
+  monsterGrandDummy: string;
+  monsterClockworkOwlGargoyle: string;
+  monsterBastionGargoyle: string;
+  monsterBastionSentinelCommander: string;
   monsterCourtSentinel: string;
   monsterGargoyleScout: string;
   monsterChasmGargoyle: string;

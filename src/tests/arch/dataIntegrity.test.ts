@@ -29,6 +29,16 @@ describe("Data Integrity & Single Source of Truth Contracts", () => {
       expect(uniqueIds.size).toBe(ids.length);
     });
 
+    it("gives every enemy a unique nameKey with distinct PL and EN display names", () => {
+      const nameKeys = enemies.map((e) => e.nameKey);
+      expect(new Set(nameKeys).size).toBe(nameKeys.length);
+
+      const plNames = enemies.map((e) => plDict[e.nameKey]);
+      const enNames = enemies.map((e) => enDict[e.nameKey]);
+      expect(new Set(plNames).size).toBe(plNames.length);
+      expect(new Set(enNames).size).toBe(enNames.length);
+    });
+
     it("verifies all enemy translation keys exist in both PL and EN dictionaries", () => {
       const missingKeys: string[] = [];
 
