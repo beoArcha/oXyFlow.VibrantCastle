@@ -1,4 +1,12 @@
-import type { IParallaxTextureDecoder, ParallaxDecodeResult, ParallaxDrawableTexture } from "./types";
+import { assetsLogger } from "@game/logger/gameLogger";
+import type { ParallaxSurfaceMetrics } from "@game/renderer/background/parallaxGeometry";
+import type {
+  IParallaxTextureDecoder,
+  ParallaxDecodeResult,
+  ParallaxDrawableTexture,
+  ParallaxIdleScheduler,
+  ParallaxResizeResolver,
+} from "./types";
 
 function clearHtmlImage(img: HTMLImageElement): void {
   img.onload = null;
@@ -39,38 +47,77 @@ function isBitmapTexture(texture: ParallaxDrawableTexture): texture is ImageBitm
 
 /**
  * Exposes `complete`, `naturalWidth`, and `naturalHeight` on decoded ImageBitmaps so existing
- * Canvas2D backdrop and tiling helpers treat them uniformly with HTMLImageElement.
+ * Canvas2D backdrop and tiling helpers preserve original world-space metrics while drawing the
+ * pre-scaled `bitmap.width x bitmap.height` backing surface.
  */
-function attachBitmapImageMetrics(bitmap: ImageBitmap): void {
+function attachBitmapImageMetrics(
+  bitmap: ImageBitmap,
+  naturalWidth: number,
+  naturalHeight: number
+): void {
   if (!Object.isExtensible(bitmap)) return;
   Object.defineProperties(bitmap, {
     complete: { value: true, configurable: true },
-    naturalWidth: { value: bitmap.width, configurable: true },
-    naturalHeight: { value: bitmap.height, configurable: true },
+    naturalWidth: { value: naturalWidth, configurable: true },
+    naturalHeight: { value: naturalHeight, configurable: true },
   });
+}
+
+async function createScaledBitmap(
+  img: HTMLImageElement,
+  srcW: number,
+  srcH: number,
+  resolveResize?: ParallaxResizeResolver
+): Promise<ImageBitmap> {
+  const target = resolveResize && srcW > 0 && srcH > 0 ? resolveResize(srcW, srcH) : null;
+  if (
+    target &&
+    target.width > 0 &&
+    target.height > 0 &&
+    (target.width !== srcW || target.height !== srcH)
+  ) {
+    try {
+      return await createImageBitmap(img, {
+        resizeWidth: target.width,
+        resizeHeight: target.height,
+        resizeQuality: target.resizeQuality,
+      });
+    } catch (err: unknown) {
+      assetsLogger.debug(
+        "createImageBitmap resize options unsupported, falling back to native bitmap decode",
+        { targetWidth: target.width, targetHeight: target.height },
+        err
+      );
+    }
+  }
+  return createImageBitmap(img);
 }
 
 async function tryDecodeWithBitmap(
   img: HTMLImageElement,
-  isCancelled: () => boolean
+  isCancelled: () => boolean,
+  resolveResize?: ParallaxResizeResolver
 ): Promise<ParallaxDecodeResult | null> {
   if (typeof createImageBitmap !== "function") return null;
   try {
-    const bitmap = await createImageBitmap(img);
+    const srcW = img.naturalWidth || img.width || 0;
+    const srcH = img.naturalHeight || img.height || 0;
+    const bitmap = await createScaledBitmap(img, srcW, srcH, resolveResize);
     if (isCancelled()) {
       bitmap.close();
       return null;
     }
-    attachBitmapImageMetrics(bitmap);
     const width = bitmap.width;
     const height = bitmap.height;
+    attachBitmapImageMetrics(bitmap, srcW > 0 ? srcW : width, srcH > 0 ? srcH : height);
     return {
       texture: bitmap,
       width,
       height,
       decodedBytes: width * height * 4,
     };
-  } catch {
+  } catch (err: unknown) {
+    assetsLogger.debug("createImageBitmap decode failed, falling back to element decode", undefined, err);
     return null;
   }
 }
@@ -117,11 +164,77 @@ export function releaseDecodedParallaxTexture(texture: ParallaxDrawableTexture):
 }
 
 /**
+ * Resolves viewport/canvas metrics from the browser environment before the renderer
+ * pushes explicit canvas dimensions.
+ */
+export function resolveBrowserSurfaceMetrics(): ParallaxSurfaceMetrics {
+  const g = globalThis as {
+    innerWidth?: number;
+    innerHeight?: number;
+    devicePixelRatio?: number;
+  };
+  const displayW = typeof g.innerWidth === "number" && g.innerWidth > 0 ? g.innerWidth : 1280;
+  const displayH = typeof g.innerHeight === "number" && g.innerHeight > 0 ? g.innerHeight : 720;
+  const dpr = typeof g.devicePixelRatio === "number" && g.devicePixelRatio > 0 ? g.devicePixelRatio : 1;
+  const canvasW = Math.max(320, Math.floor(displayW * dpr));
+  const canvasH = Math.max(200, Math.floor(displayH * dpr));
+  const scaleFactor = Math.max(0.2, canvasW / 1000);
+  return {
+    viewportWidth: canvasW / scaleFactor,
+    viewportHeight: canvasH / scaleFactor,
+    pixelScale: scaleFactor,
+    smoothing: false,
+  };
+}
+
+/**
+ * Schedules background parallax queue work in idle callbacks (or after rAF on engines without
+ * requestIdleCallback) so progressive loading never crowds active frame rendering.
+ */
+export function createBrowserIdleScheduler(defaultBudgetMs = 2.5): ParallaxIdleScheduler {
+  return (callback) => {
+    const g = globalThis as {
+      requestIdleCallback?: (
+        cb: (deadline: { timeRemaining(): number; didTimeout: boolean }) => void,
+        opts?: { timeout: number }
+      ) => number;
+      requestAnimationFrame?: (cb: () => void) => number;
+    };
+    if (typeof g.requestIdleCallback === "function") {
+      g.requestIdleCallback((deadline) => callback(deadline), { timeout: 300 });
+      return;
+    }
+    if (typeof g.requestAnimationFrame === "function") {
+      g.requestAnimationFrame(() => {
+        setTimeout(() => {
+          callback({
+            timeRemaining: () => defaultBudgetMs,
+            didTimeout: false,
+          });
+        }, 0);
+      });
+      return;
+    }
+    setTimeout(() => {
+      callback({
+        timeRemaining: () => defaultBudgetMs,
+        didTimeout: false,
+      });
+    }, 0);
+  };
+}
+
+/**
  * Loads and decodes parallax images off the main thread via `createImageBitmap`,
- * falling back to `HTMLImageElement.decode()` when `createImageBitmap` is unavailable.
+ * pre-scaling to target canvas size when resize options are supported and falling back
+ * to `HTMLImageElement.decode()` when `createImageBitmap` is unavailable.
  */
 export const browserParallaxBitmapDecoder: IParallaxTextureDecoder = {
-  async loadAndDecode(url: string, isCancelled: () => boolean): Promise<ParallaxDecodeResult | null> {
+  async loadAndDecode(
+    url: string,
+    isCancelled: () => boolean,
+    resolveResize?: ParallaxResizeResolver
+  ): Promise<ParallaxDecodeResult | null> {
     if (isCancelled()) return null;
     const img = await loadHtmlImage(url);
     if (!img) return null;
@@ -130,7 +243,7 @@ export const browserParallaxBitmapDecoder: IParallaxTextureDecoder = {
       return null;
     }
 
-    const bitmapResult = await tryDecodeWithBitmap(img, isCancelled);
+    const bitmapResult = await tryDecodeWithBitmap(img, isCancelled, resolveResize);
     if (bitmapResult) {
       // Drop the transient HTMLImageElement reference once pixel data lives in the ImageBitmap.
       clearHtmlImage(img);

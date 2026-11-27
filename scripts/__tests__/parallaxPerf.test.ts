@@ -12,6 +12,8 @@ import {
   formatBudgetReport,
   parseBudgetCliArgs,
 } from "../perf/parallaxBudget";
+import { parseRunnerArgs } from "../perf/parallaxRunner";
+import { resolveBrowserExecutablePath } from "../perf/parallaxBrowserProbe";
 import type {
   MapDprMeasurement,
   PerfEnvironmentInfo,
@@ -327,5 +329,24 @@ describe("parallax perf budget evaluation", () => {
     expect(parsed.strict).toBe(true);
     expect(parsed.reportPath.endsWith("report.json")).toBe(true);
     expect(parsed.baselinePath.endsWith("baseline.json")).toBe(true);
+  });
+
+  it("should parse runner --browser option and resolve browser executable overrides", () => {
+    // Arrange & Act
+    const webkitArgs = parseRunnerArgs(["--browser", "webkit", "--profile", "desktop"]);
+    const firefoxArgs = parseRunnerArgs(["--browser", "firefox"]);
+    const defaultArgs = parseRunnerArgs([]);
+
+    // Assert
+    expect(webkitArgs.browser).toBe("webkit");
+    expect(webkitArgs.profile).toBe("desktop");
+    expect(firefoxArgs.browser).toBe("firefox");
+    expect(defaultArgs.browser).toBe("chromium");
+    expect(
+      resolveBrowserExecutablePath("webkit", { PLAYWRIGHT_WEBKIT_PATH: "/custom/webkit" })
+    ).toBe("/custom/webkit");
+    expect(
+      resolveBrowserExecutablePath("firefox", { PLAYWRIGHT_FIREFOX_PATH: "/custom/firefox" })
+    ).toBe("/custom/firefox");
   });
 });

@@ -13,6 +13,7 @@ import {
   resolveBackgroundTier,
   renderTiledDynamicLayer,
 } from "@game/renderer/background/parallaxTiling";
+import type { ParallaxLoadResizeSpec } from "@game/renderer/background/parallaxGeometry";
 import {
   defaultParallaxLoadQueue,
   getWorldPlaceholderColors,
@@ -77,6 +78,7 @@ export interface IParallaxFadeQueue {
   getFadeAlpha(keyOrUrl: string, nowMs?: number): number;
   beginGeneration?(): number;
   clear?(): void;
+  subscribeRelease?(listener: (texture: ParallaxDrawableTexture) => void): () => void;
   enqueue?(descriptor: {
     readonly cacheKey: string;
     readonly url: string;
@@ -84,6 +86,7 @@ export interface IParallaxFadeQueue {
     readonly subOrder?: number;
     readonly tier?: ParallaxQualityTier;
     readonly fadeInOnReady?: boolean;
+    readonly surfaceSpec?: ParallaxLoadResizeSpec;
   }): Promise<unknown>;
 }
 
@@ -95,6 +98,7 @@ export interface ParallaxSystemDeps {
   placeholderRenderer?: IPlaceholderRenderer;
   loadQueue?: IParallaxFadeQueue;
   surfaceFactory?: ParallaxSurfaceFactory;
+  maxSurfaceCreationsPerFrame?: number;
   parallaxQuality?: ResolvedParallaxQuality;
   now?: () => number;
   zoneCrossfadeDurationMs?: number;
@@ -194,6 +198,7 @@ export class ParallaxSystem implements IParallaxSystem {
   private lastZoneNowMs = Number.NaN;
   private lastTargetKind: ParallaxZoneKind | null = null;
   private lastTargetWeight = 0;
+  private currentBoxHeight = 1200;
 
   private readonly tierBuckets: Record<BackgroundLayerTier, ParallaxLayerSchema[]> = {
     far: [],
@@ -226,7 +231,13 @@ export class ParallaxSystem implements IParallaxSystem {
       deps.zonePreloadMarginPx !== undefined
         ? Math.max(0, deps.zonePreloadMarginPx)
         : DEFAULT_ZONE_PRELOAD_MARGIN_PX;
-    this.surfaceCache = new ParallaxSurfaceCache({ factory: deps.surfaceFactory });
+    this.surfaceCache = new ParallaxSurfaceCache({
+      factory: deps.surfaceFactory,
+      maxCreationsPerFrame: deps.maxSurfaceCreationsPerFrame,
+    });
+    this.loadQueue.subscribeRelease?.((texture) => {
+      this.surfaceCache.evict(texture);
+    });
     this.backdropRenderer = new ParallaxBackdropRenderer(
       (layer) => this.getImage(layer),
       this.atmosphericRenderer,
@@ -245,6 +256,7 @@ export class ParallaxSystem implements IParallaxSystem {
     this.zoneStateLayers = null;
     this.cachedClosestLayer = null;
     this.pendingVariantUrls.clear();
+    this.surfaceCache.clear();
     this.resetZoneCrossfadeState();
   }
 
@@ -366,6 +378,8 @@ export class ParallaxSystem implements IParallaxSystem {
 
     const boxWidth = Math.max(pb.boxWidth || 0, levelWidth + 400);
     const boxHeight = Math.max(pb.boxHeight || 0, levelHeight + 200);
+    this.currentBoxHeight = boxHeight;
+    this.surfaceCache.beginFrame();
     const extraWidth = Math.max(0, boxWidth - viewportWidth);
     const maxCamX = Math.max(1, levelWidth - viewportWidth);
     const maxCamY = Math.max(1, levelHeight - viewportHeight);
@@ -551,6 +565,12 @@ export class ParallaxSystem implements IParallaxSystem {
           : PARALLAX_LOAD_PRIORITY.LAYER;
     const resolvedTier: ParallaxQualityTier =
       entry?.resolvedTier ?? (this.parallaxQuality === "simplified" ? "low" : (this.parallaxQuality as ParallaxQualityTier));
+    const kind =
+      tier === "far"
+        ? "far"
+        : tier === "boss_stage" || tier === "boss_world"
+          ? "boss"
+          : "dynamic";
     this.loadQueue
       .enqueue!({
         cacheKey: layer.layerKey || url,
@@ -559,6 +579,11 @@ export class ParallaxSystem implements IParallaxSystem {
         priority,
         subOrder: layer.depth ?? index * 0.1,
         fadeInOnReady: priority !== PARALLAX_LOAD_PRIORITY.FAR,
+        surfaceSpec: {
+          kind,
+          boxHeight: this.currentBoxHeight,
+          allowUpscale: false,
+        },
       })
       .catch(() => {});
   }
@@ -941,6 +966,11 @@ export class ParallaxSystem implements IParallaxSystem {
             priority: PARALLAX_LOAD_PRIORITY.ZONE_VARIANT,
             subOrder: this.zoneResolution.nearDistanceSq,
             fadeInOnReady: false,
+            surfaceSpec: {
+              kind: "dynamic",
+              boxHeight: this.currentBoxHeight,
+              allowUpscale: false,
+            },
           })
           .catch(() => {});
       }

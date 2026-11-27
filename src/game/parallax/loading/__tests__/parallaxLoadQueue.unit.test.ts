@@ -7,6 +7,7 @@ import {
   type IParallaxTextureDecoder,
   type ParallaxDecodeResult,
   type ParallaxDrawableTexture,
+  type ParallaxIdleDeadline,
 } from "../index";
 
 interface Deferred<T> {
@@ -337,5 +338,251 @@ describe("ParallaxLoadQueue", () => {
       (globalThis as { Image?: unknown }).Image = origImage;
       (globalThis as { createImageBitmap?: unknown }).createImageBitmap = origCreateImageBitmap;
     }
+  });
+
+  it("should pre-scale at decode time via createImageBitmap resize options, preserve natural metrics, and close bitmaps on evict", async () => {
+    // Arrange
+    const origImage = (globalThis as { Image?: unknown }).Image;
+    const origCreateImageBitmap = (globalThis as { createImageBitmap?: unknown }).createImageBitmap;
+    const resizeCalls: Array<{ w: number; h: number; q?: string }> = [];
+    let closedCount = 0;
+
+    class MockImage {
+      public crossOrigin = "";
+      public onload: (() => void) | null = null;
+      public onerror: (() => void) | null = null;
+      public naturalWidth = 2048;
+      public naturalHeight = 768;
+      public width = 2048;
+      public height = 768;
+      public complete = true;
+      private _src = "";
+      public get src() {
+        return this._src;
+      }
+      public set src(value: string) {
+        this._src = value;
+        if (value) queueMicrotask(() => this.onload?.());
+      }
+    }
+
+    (globalThis as { Image?: unknown }).Image = MockImage;
+    (globalThis as { createImageBitmap?: unknown }).createImageBitmap = async (
+      _src: unknown,
+      opts?: { resizeWidth?: number; resizeHeight?: number; resizeQuality?: string }
+    ) => {
+      const w = opts?.resizeWidth ?? 2048;
+      const h = opts?.resizeHeight ?? 768;
+      if (opts?.resizeWidth && opts?.resizeHeight) {
+        resizeCalls.push({ w, h, q: opts.resizeQuality });
+      }
+      return {
+        width: w,
+        height: h,
+        close() {
+          closedCount++;
+        },
+      };
+    };
+
+    try {
+      const queue = new ParallaxLoadQueue({
+        decoder: browserParallaxBitmapDecoder,
+        concurrency: 1,
+        surfaceMetrics: {
+          viewportWidth: 1000,
+          viewportHeight: 562.5,
+          pixelScale: 1.28,
+          smoothing: false,
+        },
+      });
+
+      // Act
+      const tex = await queue.enqueue({
+        cacheKey: "courtyard:far",
+        url: "courtyard_far_high.png",
+        priority: PARALLAX_LOAD_PRIORITY.FAR,
+        fadeInOnReady: false,
+        surfaceSpec: {
+          kind: "far",
+          boxHeight: 1150,
+          allowUpscale: false,
+        },
+      });
+      const statsBeforeEvict = queue.getStats();
+      const evicted = queue.evict("courtyard:far");
+
+      // Assert
+      expect(tex).not.toBeNull();
+      expect(resizeCalls).toEqual([{ w: 1979, h: 742, q: "pixelated" }]);
+      expect((tex as { width: number }).width).toBe(1979);
+      expect((tex as { height: number }).height).toBe(742);
+      expect((tex as { naturalWidth: number }).naturalWidth).toBe(2048);
+      expect((tex as { naturalHeight: number }).naturalHeight).toBe(768);
+      expect(statsBeforeEvict.decodedBytes).toBe(1979 * 742 * 4);
+      expect(evicted).toBe(true);
+      expect(closedCount).toBe(1);
+    } finally {
+      (globalThis as { Image?: unknown }).Image = origImage;
+      (globalThis as { createImageBitmap?: unknown }).createImageBitmap = origCreateImageBitmap;
+    }
+  });
+
+  it("should fall back to unresized createImageBitmap when resize options are unsupported and close in-flight evicted bitmaps", async () => {
+    // Arrange
+    const origImage = (globalThis as { Image?: unknown }).Image;
+    const origCreateImageBitmap = (globalThis as { createImageBitmap?: unknown }).createImageBitmap;
+    let unresizedCalls = 0;
+    let closedCount = 0;
+
+    class MockImage {
+      public crossOrigin = "";
+      public onload: (() => void) | null = null;
+      public onerror: (() => void) | null = null;
+      public naturalWidth = 2048;
+      public naturalHeight = 768;
+      public width = 2048;
+      public height = 768;
+      public complete = true;
+      private _src = "";
+      public get src() {
+        return this._src;
+      }
+      public set src(value: string) {
+        this._src = value;
+        if (value) queueMicrotask(() => this.onload?.());
+      }
+    }
+
+    (globalThis as { Image?: unknown }).Image = MockImage;
+    (globalThis as { createImageBitmap?: unknown }).createImageBitmap = async (
+      _src: unknown,
+      opts?: { resizeWidth?: number }
+    ) => {
+      if (opts?.resizeWidth) {
+        throw new TypeError("resizeWidth unsupported");
+      }
+      unresizedCalls++;
+      return {
+        width: 2048,
+        height: 768,
+        close() {
+          closedCount++;
+        },
+      };
+    };
+
+    try {
+      const queue = new ParallaxLoadQueue({
+        decoder: browserParallaxBitmapDecoder,
+        concurrency: 1,
+        surfaceMetrics: {
+          viewportWidth: 1000,
+          viewportHeight: 562.5,
+          pixelScale: 1.28,
+          smoothing: true,
+        },
+      });
+
+      // Act
+      const tex = await queue.enqueue({
+        cacheKey: "courtyard:far",
+        url: "courtyard_far.png",
+        priority: PARALLAX_LOAD_PRIORITY.FAR,
+        surfaceSpec: { kind: "far", boxHeight: 1150, allowUpscale: false },
+      });
+
+      // Assert fallback decode succeeded
+      expect(tex).not.toBeNull();
+      expect(unresizedCalls).toBe(1);
+      expect((tex as { width: number }).width).toBe(2048);
+
+      // Arrange in-flight eviction test on an isolated queue
+      const inFlightGate = createDeferred<ParallaxDecodeResult | null>();
+      let customReleased = 0;
+      const customQueue = new ParallaxLoadQueue({
+        decoder: {
+          loadAndDecode: () => inFlightGate.promise,
+          release: () => {
+            customReleased++;
+          },
+        },
+      });
+      const pendingPromise = customQueue.enqueue({
+        cacheKey: "old_loc:far",
+        url: "old_far.png",
+        priority: PARALLAX_LOAD_PRIORITY.FAR,
+      });
+      expect(customQueue.evict("old_loc:far")).toBe(true);
+      inFlightGate.resolve(makeDecodeResult("old_far", 1024, 512));
+      const evictedResult = await pendingPromise;
+
+      expect(evictedResult).toBeNull();
+      expect(customReleased).toBe(1);
+      expect(closedCount).toBe(0);
+    } finally {
+      (globalThis as { Image?: unknown }).Image = origImage;
+      (globalThis as { createImageBitmap?: unknown }).createImageBitmap = origCreateImageBitmap;
+    }
+  });
+
+  it("should start FAR immediately and spread background tasks across idle slices within the per-frame budget", async () => {
+    // Arrange
+    let fakeNow = 100;
+    const started: string[] = [];
+    const idleCallbacks: Array<(deadline: ParallaxIdleDeadline) => void> = [];
+    const decoder: IParallaxTextureDecoder = {
+      async loadAndDecode(url) {
+        started.push(url);
+        // Simulate 1.8 ms of main-thread work per task start to exercise time budgeting.
+        fakeNow += 1.8;
+        return makeDecodeResult(url);
+      },
+    };
+    const queue = new ParallaxLoadQueue({
+      decoder,
+      concurrency: 2,
+      now: () => fakeNow,
+      idleFrameBudgetMs: 2.5,
+      maxStartsPerIdleSlice: 3,
+      scheduleIdle: (cb) => {
+        idleCallbacks.push(cb);
+      },
+    });
+
+    // Act: enqueue FAR + 3 background tasks atomically
+    const batch = queue.enqueueBatch([
+      { cacheKey: "k:far", url: "far.png", priority: PARALLAX_LOAD_PRIORITY.FAR },
+      { cacheKey: "k:a", url: "var_a.png", priority: PARALLAX_LOAD_PRIORITY.LAYER, subOrder: 0.2 },
+      { cacheKey: "k:b", url: "var_b.png", priority: PARALLAX_LOAD_PRIORITY.LAYER, subOrder: 0.4 },
+      { cacheKey: "k:c", url: "var_c.png", priority: PARALLAX_LOAD_PRIORITY.LAYER, subOrder: 0.6 },
+    ]);
+
+    // FAR must start immediately without waiting for idle
+    expect(started).toEqual(["far.png"]);
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(idleCallbacks.length).toBe(1);
+
+    // Busy frame (timeRemaining <= 0.25, didTimeout false) must defer without starting any task
+    idleCallbacks.shift()!({ timeRemaining: () => 0.1, didTimeout: false });
+    expect(started).toEqual(["far.png"]);
+    expect(idleCallbacks.length).toBe(1);
+
+    // Slice 1 with 5ms remaining: budgetMs = min(2.5, 5) = 2.5ms.
+    // First task advances fakeNow by 1.8ms (< 2.5ms), second task advances to 3.6ms (>= 2.5ms),
+    // stopping before third task so var_c is deferred to next idle slice.
+    idleCallbacks.shift()!({ timeRemaining: () => 5.0, didTimeout: false });
+    expect(started).toEqual(["far.png", "var_a.png", "var_b.png"]);
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(idleCallbacks.length).toBe(1);
+
+    // Slice 2 starts remaining var_c
+    idleCallbacks.shift()!({ timeRemaining: () => 5.0, didTimeout: false });
+    await batch;
+
+    // Assert
+    expect(started).toEqual(["far.png", "var_a.png", "var_b.png", "var_c.png"]);
   });
 });

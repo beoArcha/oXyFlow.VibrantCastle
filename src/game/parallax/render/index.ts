@@ -3,6 +3,9 @@ export { ParallaxBackdropRenderer } from "./ParallaxBackdropRenderer";
 export {
   ParallaxSurfaceCache,
   createResolvedParallaxSurface,
+  isPreScaledBitmapSource,
+  resolveSourcePixelWidth,
+  resolveSourcePixelHeight,
   type ParallaxSurfaceDrawContext,
   type ParallaxSurfaceFactory,
   type ParallaxSurfaceTarget,

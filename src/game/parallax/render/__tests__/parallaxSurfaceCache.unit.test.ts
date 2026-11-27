@@ -328,4 +328,119 @@ describe("ParallaxSystem + Isolated Queue + Pre-scaled Surface Integration", () 
     }
     expect(ctx.getSaveBalance()).toBe(0);
   });
+
+  it("should skip surfaceFactory when source is already a pre-scaled ImageBitmap at target size", () => {
+    // Arrange
+    const { factory, created } = createFakeSurfaceFactory();
+    const cache = new ParallaxSurfaceCache({ factory, maxDimension: 2560 });
+    const preScaledBitmap = {
+      width: 1850,
+      height: 694,
+      naturalWidth: 2048,
+      naturalHeight: 768,
+      complete: true,
+      close() {},
+    } as unknown as CanvasImageSource;
+    const out = createResolvedParallaxSurface();
+
+    // Act
+    cache.resolve(preScaledBitmap, 1850, 694, 1850, 694, false, false, out);
+
+    // Assert
+    expect(created.length).toBe(0);
+    expect(out.source).toBe(preScaledBitmap);
+    expect(out.width).toBe(1850);
+    expect(out.height).toBe(694);
+  });
+
+  it("should spread fallback surface creation across frames when maxCreationsPerFrame is 1", () => {
+    // Arrange
+    const { factory, created } = createFakeSurfaceFactory();
+    const cache = new ParallaxSurfaceCache({ factory, maxCreationsPerFrame: 1 });
+    const img1 = makeFakeImage("layer1", 2048, 768);
+    const img2 = makeFakeImage("layer2", 2048, 768);
+    const out = createResolvedParallaxSurface();
+
+    // Act: frame 1 creates only 1 surface; frame 2 creates the second
+    cache.beginFrame();
+    cache.resolve(img1, 2048, 768, 1360, 510, false, false, out);
+    const firstSurface = out.source;
+    cache.resolve(img2, 2048, 768, 1360, 510, false, false, out);
+    const secondOnFrame1 = out.source;
+
+    cache.beginFrame();
+    cache.resolve(img2, 2048, 768, 1360, 510, false, false, out);
+    const secondOnFrame2 = out.source;
+
+    // Assert
+    expect(created.length).toBe(2);
+    expect(firstSurface).not.toBe(img1);
+    expect(secondOnFrame1).toBe(img2);
+    expect(secondOnFrame2).not.toBe(img2);
+  });
+
+  it("should release both queue bitmap and fallback surface when loadQueue evicts a texture", async () => {
+    // Arrange
+    let closedCount = 0;
+    const bitmapLike = {
+      width: 2048,
+      height: 768,
+      naturalWidth: 2048,
+      naturalHeight: 768,
+      complete: true,
+      close() {
+        closedCount++;
+      },
+    } as unknown as HTMLImageElement;
+
+    const queue = new ParallaxLoadQueue({
+      decoder: {
+        async loadAndDecode() {
+          return { texture: bitmapLike, width: 2048, height: 768, decodedBytes: 2048 * 768 * 4 };
+        },
+        release(tex) {
+          (tex as { close?: () => void }).close?.();
+        },
+      },
+      fadeDurationMs: 0,
+    });
+    await queue.enqueue({
+      cacheKey: "grand_bastion:far",
+      url: "fake://far.png",
+      priority: PARALLAX_LOAD_PRIORITY.FAR,
+      fadeInOnReady: false,
+    });
+
+    const registry: IParallaxRegistry = {
+      resolve: (key) => (key === "grand_bastion:far" ? { key, tier: "far", url: "fake://far.png" } : undefined),
+    };
+    const { factory, created } = createFakeSurfaceFactory();
+    const system = new ParallaxSystem({ registry, loadQueue: queue, surfaceFactory: factory });
+    const location = makeLocationFixture([
+      {
+        id: "grand_bastion:far",
+        name: "Far",
+        tier: "far",
+        layerKey: "grand_bastion:far",
+        type: "image",
+        depth: 0.08,
+        scrollSpeedX: 0.04,
+        scrollSpeedY: 0.02,
+        opaque: true,
+      },
+    ]);
+    const ctx = createMockContext2D(1280, 672);
+
+    // Render at a mismatched size so a fallback surface is created
+    system.render(ctx, location, 4800, 1200, 1000, 525, 0, 0, 1);
+    expect(created.length).toBe(1);
+    expect(created[0].released).toBe(false);
+
+    // Act: evict from queue (simulating location unload)
+    queue.evict("grand_bastion:far");
+
+    // Assert: both the queue bitmap and fallback surface are closed/released
+    expect(closedCount).toBe(1);
+    expect(created[0].released).toBe(true);
+  });
 });

@@ -25,8 +25,10 @@ export const defaultParallaxFlags: IParallaxFlags = {
 };
 
 /**
- * Creates an OffscreenCanvas-backed surface factory for pre-scaling parallax bitmaps once
- * instead of resampling oversized sources on every frame.
+ * Creates a surface factory for fallback pre-scaling when load-time `createImageBitmap`
+ * resize options are unavailable or canvas dimensions change after load.
+ * Uses `OffscreenCanvas` + `transferToImageBitmap()` when supported, falling back to an
+ * off-DOM `<canvas>` element on browsers without `OffscreenCanvas`.
  */
 export const createBrowserParallaxSurfaceFactory: () => ParallaxSurfaceFactory = () => {
   return (width, height) => {
@@ -54,6 +56,23 @@ export const createBrowserParallaxSurfaceFactory: () => ParallaxSurfaceFactory =
         },
       };
     }
+    if (typeof document !== "undefined") {
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return null;
+      return {
+        source: canvas,
+        width,
+        height,
+        ctx,
+        release: () => {
+          canvas.width = 0;
+          canvas.height = 0;
+        },
+      };
+    }
     return null;
   };
 };
@@ -67,5 +86,6 @@ export function createDefaultParallaxSystem(): IParallaxSystem {
     loader: defaultParallaxLoader,
     flags: defaultParallaxFlags,
     surfaceFactory: createBrowserParallaxSurfaceFactory(),
+    maxSurfaceCreationsPerFrame: 1,
   });
 }
