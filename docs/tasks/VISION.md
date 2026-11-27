@@ -1,6 +1,6 @@
 # Vibrant Castle: vision
 
-What we are building. The [roadmap](./ROADMAP.md) says when each part lands, and the [phase files](./README.md#phases) hold the cards.
+What we are building. The [roadmap](./ROADMAP.md) says when each part lands, and the [task board](./task-board.md) holds the cards.
 
 ## Identity
 

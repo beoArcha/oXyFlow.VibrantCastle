@@ -3,6 +3,8 @@
  * Handles PL/EN localization, lazy game iframe mounting, fullscreen control,
  * and zero-dependency Markdown chronicle rendering.
  */
+import { WIKI_MARKDOWN_JS } from "./wikiMarkdown";
+
 export const WIKI_APP_SCRIPT_JS = `(function () {
   "use strict";
 
@@ -10,9 +12,13 @@ export const WIKI_APP_SCRIPT_JS = `(function () {
   const GAME_ENTRY_URL = "./game/index.html";
   const SECTION_TO_DOC = {
     intro: "intro.md",
-    heroes: "heroes.md",
-    worlds: "worlds.md",
+    characters: "characters.md",
+    world: "world.md",
+    bestiary: "bestiary.md",
     controls: "controls.md",
+    graphics: "graphics.md",
+    architecture: "architecture.md",
+    news: "news.md",
   };
 
   let currentLang = readSavedLanguage();
@@ -47,111 +53,7 @@ export const WIKI_APP_SCRIPT_JS = `(function () {
       .replace(/"/g, "&quot;");
   }
 
-  function renderInline(raw) {
-    let out = escapeHtml(raw);
-    out = out.replace(/\`([^\`]+)\`/g, "<code>$1</code>");
-    out = out.replace(/\\*\\*([^*]+)\\*\\*/g, "<strong>$1</strong>");
-    out = out.replace(/\\*([^*]+)\\*/g, "<em>$1</em>");
-    return out;
-  }
-
-  function renderMarkdown(md) {
-    const lines = md.replace(/\\r\\n/g, "\\n").split("\\n");
-    const html = [];
-    let i = 0;
-
-    while (i < lines.length) {
-      const line = lines[i].trim();
-      if (!line) {
-        i += 1;
-        continue;
-      }
-
-      if (line === "---") {
-        html.push("<hr />");
-        i += 1;
-        continue;
-      }
-
-      if (line.startsWith("# ")) {
-        html.push("<h1>" + renderInline(line.slice(2)) + "</h1>");
-        i += 1;
-        continue;
-      }
-
-      if (line.startsWith("## ")) {
-        html.push("<h2>" + renderInline(line.slice(3)) + "</h2>");
-        i += 1;
-        continue;
-      }
-
-      if (line.startsWith("> ")) {
-        const quoteLines = [];
-        while (i < lines.length && lines[i].trim().startsWith("> ")) {
-          quoteLines.push(renderInline(lines[i].trim().slice(2)));
-          i += 1;
-        }
-        html.push("<blockquote>" + quoteLines.join("<br />") + "</blockquote>");
-        continue;
-      }
-
-      if (line.startsWith("|")) {
-        const tableLines = [];
-        while (i < lines.length && lines[i].trim().startsWith("|")) {
-          tableLines.push(lines[i].trim());
-          i += 1;
-        }
-        if (tableLines.length >= 2) {
-          const splitCells = (row) =>
-            row
-              .replace(/^\\|/, "")
-              .replace(/\\|$/, "")
-              .split("|")
-              .map((c) => c.trim());
-
-          const headers = splitCells(tableLines[0]);
-          const bodyRows = tableLines.slice(2).map(splitCells);
-          html.push("<table><thead><tr>");
-          headers.forEach((h) => html.push("<th>" + renderInline(h) + "</th>"));
-          html.push("</tr></thead><tbody>");
-          bodyRows.forEach((cells) => {
-            html.push("<tr>");
-            cells.forEach((cell) => html.push("<td>" + renderInline(cell) + "</td>"));
-            html.push("</tr>");
-          });
-          html.push("</tbody></table>");
-          continue;
-        }
-      }
-
-      if (line.startsWith("- ")) {
-        html.push("<ul>");
-        while (i < lines.length && lines[i].trim().startsWith("- ")) {
-          html.push("<li>" + renderInline(lines[i].trim().slice(2)) + "</li>");
-          i += 1;
-        }
-        html.push("</ul>");
-        continue;
-      }
-
-      const paraLines = [];
-      while (
-        i < lines.length &&
-        lines[i].trim() &&
-        !lines[i].trim().startsWith("#") &&
-        !lines[i].trim().startsWith("- ") &&
-        !lines[i].trim().startsWith("> ") &&
-        !lines[i].trim().startsWith("|") &&
-        lines[i].trim() !== "---"
-      ) {
-        paraLines.push(renderInline(lines[i].trim()));
-        i += 1;
-      }
-      html.push("<p>" + paraLines.join(" ") + "</p>");
-    }
-
-    return html.join("\\n");
-  }
+  ${WIKI_MARKDOWN_JS}
 
   async function loadDictionary(lang) {
     if (dictCache[lang]) return dictCache[lang];
