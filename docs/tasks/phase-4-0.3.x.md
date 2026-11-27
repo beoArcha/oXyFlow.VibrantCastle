@@ -47,7 +47,7 @@ The result: red tests and CI, levers that no longer opened gates, broken hero an
 
 | Status | Cards |
 | :--- | :--- |
-| done | VC-001, VC-002, VC-003, VC-004, VC-005, VC-006, VC-007, VC-010, VC-012, VC-020, VC-030, VC-035, VC-040, VC-041, VC-042, VC-043, VC-044, VC-045, VC-046, VC-047, VC-050, VC-051, VC-052, VC-053, VC-054, VC-055, VC-056, VC-057, VC-058 (#120), VC-060, VC-061 (#129), VC-063, VC-071, VC-072, VC-073, VC-070 (#132), VC-074, VC-075 (#126), VC-081 (#131), VC-082 (#102, #128), VC-083, VC-100, VC-101 (#109, #114, #123), VC-102, VC-103 (#130), VC-104 (#125), VC-106, VC-107, VC-121 (#124), VC-124 (#127) |
+| done | VC-001, VC-002, VC-003, VC-004, VC-005, VC-006, VC-007, VC-010, VC-012, VC-020, VC-030, VC-035, VC-040, VC-041, VC-042, VC-043, VC-044, VC-045, VC-046, VC-047, VC-050, VC-051, VC-052, VC-053, VC-054, VC-055, VC-056, VC-057, VC-058 (#120), VC-060, VC-061 (#129), VC-063, VC-071, VC-072, VC-073, VC-070 (#132), VC-074, VC-075 (#126), VC-081 (#131), VC-082 (#102, #128), VC-083, VC-084, VC-100, VC-101 (#109, #114, #123), VC-102, VC-103 (#130), VC-104 (#125), VC-106, VC-107, VC-121 (#124), VC-124 (#127) |
 | in-progress | VC-062 (parts 1-3 #86, #97, #100), VC-076, VC-105 (105a #113, 105b todo), VC-120 |
 | ready | VC-108 |
 | todo | VC-122, VC-123, VC-089 (last card before the gate) |
@@ -352,6 +352,12 @@ The result: red tests and CI, levers that no longer opened gates, broken hero an
 - **Phase:** 4 · **Type:** chore · **Class:** small · **Status:** done
 - **Goal:** decide where `scenario_act1.json` and `triggers.json` (deleted, unused at runtime) live.
 - **Note:** restored both under `docs/lore/source/` as archived source material; they remain unused by the game.
+
+### VC-084 · Gameplay playtest and fun assessment
+- **Phase:** 4 · **Type:** review · **Class:** large · **Status:** done
+- **Goal:** play all 8 locations in headless Chromium, measure platforming/combat feel, evaluate narration and mood, and file top-10 Phase-5 improvement cards.
+- **Description:** report written in [docs/design/gameplay-playtest.md](../design/gameplay-playtest.md); follow-up cards VC-150..VC-159 added to [phase-5-0.4.x.md](./phase-5-0.4.x.md).
+- **How (AI):** run `bun dev` + Playwright across all 8 maps, capture screenshot/WebM strips to `%TEMP%\vc084-playtest\`, measure feel numbers, and document ranked findings.
 
 ---
 

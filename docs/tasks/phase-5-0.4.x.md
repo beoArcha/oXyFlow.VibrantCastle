@@ -356,3 +356,61 @@ The cards are in sections B2 to I below.
   2. Add a license check, `CONTRIBUTING.md`, `SECURITY.md`, issue and PR templates, a `CODEOWNERS`, topics and description, and labels.
   3. Make the release notes template match VC-061.
   4. Clean up stale branches and worktrees, and keep only gate releases.
+
+---
+
+## J. Gameplay feel, combat, narration & HUD (from VC-084 playtest)
+
+### VC-150 · Fix lever activation from sword reach and spell projectiles
+- **Phase:** 5 · **Type:** fix · **Class:** small · **Status:** todo
+- **Goal:** slashing a lever within `40 px` sword reach or hitting it with a spell projectile flips the lever reliably without requiring player body overlap.
+- **Description:** `CombatSystem.processMeleeAttacks` and `CombatSystem.updateProjectiles` delegate lever hits to `CollisionEngine.resolve`, which re-checks the player's body AABB instead of the sword `attackBox` or projectile (`src/game/physics/collisions.ts:242`).
+- **How (AI):** extract a direct lever activation helper on `LeverCollisionStrategy` (or call `onLeverActivated` directly from `CombatSystem` when `isHit` is true), preserve `isActivated` idempotency + SFX/narration, and add AAA unit + integration tests for ranged sword and spell lever hits.
+
+### VC-151 · Add player post-hit invulnerability frames (i-frames)
+- **Phase:** 5 · **Type:** fix · **Class:** small · **Status:** todo
+- **Goal:** players gain `~60 ticks` (`1.0 s`) of invulnerability after taking hazard or enemy damage instead of losing `60+ HP` in `3 ticks` (`50 ms`).
+- **How (AI):** add `invulnTimer` on `Player`, guard `HazardCollisionStrategy` and incoming enemy damage while `invulnTimer > 0`, decrement in `PlayerController`, blink/tint the player sprite during i-frames, and add unit tests.
+
+### VC-152 · Implement enemy contact damage, knockback, and telegraphed attacks
+- **Phase:** 5 · **Type:** feat · **Class:** medium · **Status:** todo
+- **Goal:** active enemies deal contact damage with knockback and execute 1–2 readable, telegraphed 8-bit castle-action attacks per archetype.
+- **Description:** today `EnemyAISystem` only patrols `patrolMinX..patrolMaxX`; enemies and bosses deal `0` damage even on full body overlap.
+- **How (AI):** resolve player-enemy contact damage in the simulation step (respecting `invulnTimer` and `shieldActiveTime`), add simple wind-up -> active -> recovery attack states in `EnemyAISystem` (melee lunge, aerial dive, or single orb shot), and add unit + integration tests.
+
+### VC-153 · Fix coyote/buffer 1-tick pre-decrement and tune windows to 117–133 ms
+- **Phase:** 5 · **Type:** tune · **Class:** tiny · **Status:** todo
+- **Goal:** increase effective coyote time and jump buffer from `5 ticks` (`83.3 ms`) to `7–8 ticks` (`117–133 ms`), matching classic 2D platformer forgiveness.
+- **Description:** `PlayerKinematics.update` decrements `coyoteTimer` and `jumpBufferTimer` before `processJumpTrigger` checks them, losing 1 tick of the configured `6`-tick window.
+- **How (AI):** check `processJumpTrigger` before decrementing timers (or bump `maxCoyoteFrames` to `7` and `maxJumpBufferFrames` to `8`) in `src/game/physics/playerKinematics.ts`, update `playerKinematics.unit.test.ts`, and verify across 30/60/90/120 Hz.
+
+### VC-154 · Add enemy hitstun/knockback and subtle melee hitstop
+- **Phase:** 5 · **Type:** feat · **Class:** small · **Status:** todo
+- **Goal:** sword hits feel weighty with brief hitstop (`2–3 ticks`), enemy patrol pause during hitstun, and directional knockback on non-boss enemies.
+- **How (AI):** pause enemy patrol movement while `enemy.damageTimer > 8`, nudge non-boss enemies away from the attacker while clamping to `patrolMinX..patrolMaxX`, add optional micro-hitstop in `CombatSystem`, and cover with unit tests.
+
+### VC-155 · Wire `ReactiveNarratorManager` to `GameEngine` and replace legacy narration keys
+- **Phase:** 5 · **Type:** feat · **Class:** medium · **Status:** todo (after VC-083)
+- **Goal:** live *Bastion*-style reactive commentary fires from `GameEventBus` events (`HAZARD_DAMAGE`, `LOW_HEALTH`, `LEVER_ACTIVATED`, `SECRET_FOUND`, `ENEMY_DEFEATED`) and legacy pronoun/training lines are replaced.
+- **Description:** `ReactiveNarratorManager` and `narrator_reactive.json` are currently unwired; Aurelia triggers `"between his fingers"`, Worlds 7–8 open with `trainingIntro`, and every defeat says `"training automaton"`.
+- **How (AI):** wire `ReactiveNarratorManager` into `GameEngine` via `GameEventBus`, replace `"VOICE FROM THE BEYOND"`, `narrationMagicUsed`, `trainingIntro`, and defeat copy per `docs/lore/narrator.md` and `docs/design/demo-scenes/*.md`, and add integration tests.
+
+### VC-156 · Reposition HUD narrator banner, expand control hints, and fix brand title
+- **Phase:** 5 · **Type:** tune · **Class:** small · **Status:** todo
+- **Goal:** narrator subtitles no longer occlude ground-level enemies/portals, on-screen control hints include Jump and Spells, and the header displays `"Vibrant Castle"`.
+- **How (AI):** move `HUDNarratorBanner` to an unobtrusive upper band below the header, add Jump (`Space`) and Magic (`U`/`O`) to `HUDControlsHint`, update the app brand i18n key to `"Vibrant Castle"`, and verify with headless screenshots.
+
+### VC-157 · Honor portal `activation: "interact"` and implement `checkpoint_mid` respawn
+- **Phase:** 5 · **Type:** fix · **Class:** small · **Status:** todo
+- **Goal:** portals require explicit interact input (preventing accidental back-portal exits) and players respawn at `checkpoint_mid` instead of restarting the whole map on a single pit fall.
+- **How (AI):** require `up` / interact input when `portal.activation === "interact"` (with a clear on-screen prompt badge), add runtime activation + respawn for `checkpoint_mid` entries (`VC-020`), and add integration tests.
+
+### VC-158 · Harmonize `aether_sanctuary` / `sanctuary_crystal` autumn palette and upgrade boss placeholders
+- **Phase:** 5 · **Type:** tune · **Class:** small · **Status:** todo (coordinates with VC-122 / VC-131)
+- **Goal:** replace neon cerulean/cyan in `aether_sanctuary` and `sanctuary_crystal` with twilight-autumn hues and prioritize `bastion_sentinel_boss` / `aether_sentinel` sprite upgrades.
+- **How (AI):** tune `aether_sanctuary.json` theme gradient/fog and `sanctuary_crystal` tileset accents toward twilight indigo and warm amber/gold, and flag `bastion_sentinel_boss`, `shadow_knight`, and `aether_sentinel` in the `VC-122` / `VC-131` art queue.
+
+### VC-159 · Smooth variable jump hold curve and add directional camera lookahead
+- **Phase:** 5 · **Type:** tune · **Class:** small · **Status:** todo
+- **Goal:** smoother mid-height hop modulation (`jumpHoldAcceleration`) and subtle camera lookahead so gaps and drops (`thorn_chasm`, `aether_sanctuary`) are visible before jumping.
+- **How (AI):** refine `jumpHoldAcceleration` / `maxJumpHoldDuration` in `PlayerKinematics` for linear short-to-medium hop control, add velocity/facing lookahead + subtle downward peek in `CameraManager`, and verify with unit tests and `validate-level.ts`.
