@@ -961,6 +961,16 @@ export interface InventoryI18n {
   itemHealMana: string;
   itemHealStamina: string;
   switchCharacter: string;
+  equipToBelt: string;
+  inspectorEmptyTitle: string;
+  inspectorEmptyHint: string;
+  compareWithEquipped: string;
+  compareEmptySlot: string;
+  compareNoStatChange: string;
+  toggleDetails: string;
+  quickBeltSlotLabel: string;
+  backpackSlotLabel: string;
+  inventoryControlsHint: string;
 }
 
 export interface SkillsProgressionI18n {
