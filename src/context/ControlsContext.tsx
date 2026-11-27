@@ -112,6 +112,7 @@ export interface ControlsContextValue {
   ) => void;
   resetBindings: (playerId?: PlayerId) => void;
   resetControlsToDefaults: (playerId?: PlayerId) => void;
+  setMenuCapture: (captured: boolean) => void;
 }
 
 const ControlsContext = createContext<ControlsContextValue | null>(null);
@@ -201,6 +202,10 @@ export const ControlsProvider: React.FC<ControlsProviderProps> = ({
     gameInputs.resetToDefaults(playerId);
   }, []);
 
+  const setMenuCapture = useCallback((captured: boolean) => {
+    gameInputs.setMenuCapture(captured);
+  }, []);
+
   const value = useMemo<ControlsContextValue>(() => {
     const p1Keyboard = { ...gameInputs.getKeyboardBindings(PlayerId.Player1) };
     const p2Keyboard = { ...gameInputs.getKeyboardBindings(PlayerId.Player2) };
@@ -221,6 +226,7 @@ export const ControlsProvider: React.FC<ControlsProviderProps> = ({
       rebindGamepad,
       resetBindings,
       resetControlsToDefaults: resetBindings,
+      setMenuCapture,
     };
   }, [
     bindingsRevision,
@@ -232,6 +238,7 @@ export const ControlsProvider: React.FC<ControlsProviderProps> = ({
     rebindKeyboard,
     rebindGamepad,
     resetBindings,
+    setMenuCapture,
   ]);
 
   return (

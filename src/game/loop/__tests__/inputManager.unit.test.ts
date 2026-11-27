@@ -299,4 +299,39 @@ describe("GameInputEngine & Controller Mapping", () => {
       expect(combined.left).toBe(false);
     });
   });
+
+  describe("Menu Input Capture", () => {
+    it("should suppress gameplay actions while menu capture is enabled and restore them when disabled", () => {
+      // Arrange
+      emitKeyDown("Space", " ");
+      emitKeyDown("KeyJ", "j");
+      emitKeyDown("KeyU", "u");
+      emitKeyDown("Digit1", "1");
+      const buttons = new Array(16).fill({ pressed: false, value: 0 });
+      buttons[0] = { pressed: true, value: 1.0 };
+      buttons[2] = { pressed: true, value: 1.0 };
+      buttons[4] = { pressed: true, value: 1.0 };
+      (globalThis as any).navigator = {
+        getGamepads: () => [{ connected: true, axes: [0, 0], buttons }],
+      };
+
+      // Act
+      inputEngine.setMenuCapture(true);
+      const captured = inputEngine.getInputs(PlayerId.Player1);
+      const capturedPad = inputEngine.getGamepadInputs(PlayerId.Player1);
+      inputEngine.setMenuCapture(false);
+      const restored = inputEngine.getInputs(PlayerId.Player1);
+
+      // Assert
+      expect(captured.jump).toBe(false);
+      expect(captured.action1).toBe(false);
+      expect(captured.magic1).toBe(false);
+      expect(captured.potion1).toBe(false);
+      expect(capturedPad).toEqual({});
+      expect(restored.jump).toBe(true);
+      expect(restored.action1).toBe(true);
+      expect(restored.magic1).toBe(true);
+      expect(restored.potion1).toBe(true);
+    });
+  });
 });

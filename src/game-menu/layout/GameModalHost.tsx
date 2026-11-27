@@ -27,6 +27,8 @@ export interface GameModalHostProps {
   ) => void;
   readonly activeSubTabs?: SubTabMap;
   readonly onSubTabChange?: (modal: OpenModalId, subTab: string) => void;
+  readonly showLegend?: boolean;
+  readonly isPadConnected?: boolean;
   /**
    * Injected Creation & Developer Suite renderer (DIP — keeps src/game-menu decoupled from src/developer).
    */
@@ -45,6 +47,8 @@ export const GameModalHost: React.FC<GameModalHostProps> = ({
   onStartRebind,
   activeSubTabs,
   onSubTabChange,
+  showLegend,
+  isPadConnected,
   renderDeveloperSuite,
 }) => {
   const { t } = useI18n();
@@ -77,6 +81,8 @@ export const GameModalHost: React.FC<GameModalHostProps> = ({
       onNavigateModal={onNavigateModal}
       onResume={onResume}
       onStartRebind={onStartRebind}
+      showLegend={showLegend}
+      isPadConnected={isPadConnected}
     />
   );
 };

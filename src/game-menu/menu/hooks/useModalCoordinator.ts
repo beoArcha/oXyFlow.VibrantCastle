@@ -2,11 +2,12 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import {
   ModalId,
   doesModalPauseGame,
+  getNavigationModalDefinitions,
   isGameModal,
   type ModalType,
   type OpenModalId,
 } from "@game-menu/modal/modalRegistry";
-import { SettingsTabId } from "@game-menu/menu/menuTabRegistry";
+import { SETTINGS_TAB_REGISTRY, SettingsTabId } from "@game-menu/menu/menuTabRegistry";
 import { useModalManager, type ModalManager } from "./useModalManager";
 
 export type SubTabMap = Partial<Record<OpenModalId, string>>;
@@ -27,6 +28,8 @@ export interface ModalCoordinator {
   readonly closeModal: () => void;
   readonly resumeGame: () => void;
   readonly togglePause: () => void;
+  readonly stepGameTab: (delta: -1 | 1) => void;
+  readonly stepSubTab: (delta: -1 | 1) => void;
 }
 
 /**
@@ -120,6 +123,34 @@ export function useModalCoordinator({
     }
   }, [modalManager.isAnyModalOpen, resumeGame, engineTogglePause]);
 
+  const stepGameTab = useCallback(
+    (delta: -1 | 1) => {
+      if (!isGameModal(modalManager.activeModal)) return;
+      const gameDefs = getNavigationModalDefinitions().filter((d) => d.dialog === "game");
+      if (gameDefs.length === 0) return;
+
+      const currentIdx = gameDefs.findIndex((d) => d.id === modalManager.activeModal);
+      const baseIdx = currentIdx === -1 ? 0 : currentIdx;
+      const nextIdx = (baseIdx + delta + gameDefs.length) % gameDefs.length;
+      openModal(gameDefs[nextIdx].id);
+    },
+    [modalManager.activeModal, openModal]
+  );
+
+  const stepSubTab = useCallback(
+    (delta: -1 | 1) => {
+      if (modalManager.activeModal !== ModalId.Settings) return;
+      if (SETTINGS_TAB_REGISTRY.length === 0) return;
+
+      const currentSub = activeSubTabs[ModalId.Settings] ?? SettingsTabId.Display;
+      const currentIdx = SETTINGS_TAB_REGISTRY.findIndex((s) => s.id === currentSub);
+      const baseIdx = currentIdx === -1 ? 0 : currentIdx;
+      const nextIdx = (baseIdx + delta + SETTINGS_TAB_REGISTRY.length) % SETTINGS_TAB_REGISTRY.length;
+      setActiveSubTab(ModalId.Settings, SETTINGS_TAB_REGISTRY[nextIdx].id);
+    },
+    [modalManager.activeModal, activeSubTabs, setActiveSubTab]
+  );
+
   return useMemo(
     () => ({
       modalManager,
@@ -132,6 +163,8 @@ export function useModalCoordinator({
       closeModal,
       resumeGame,
       togglePause,
+      stepGameTab,
+      stepSubTab,
     }),
     [
       modalManager,
@@ -144,6 +177,8 @@ export function useModalCoordinator({
       closeModal,
       resumeGame,
       togglePause,
+      stepGameTab,
+      stepSubTab,
     ]
   );
 }

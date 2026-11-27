@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   HelpCircle,
   Menu as MenuIcon,
@@ -14,14 +14,15 @@ import {
 } from "lucide-react";
 import { APP_CONFIG } from "@/app/appConfig";
 import { I18nProvider, useI18n } from "@context/I18nContext";
-import { GameProvider, useGameSession } from "@context/GameContext";
+import { GameProvider, useControls, useGameSession } from "@context/GameContext";
 import { useModalCoordinator } from "@game-menu/menu/hooks/useModalCoordinator";
 import {
   ModalId,
   getHeaderModalShortcuts,
+  isGameModal,
   type ModalIconKey,
 } from "@game-menu/modal";
-import { KeyRebindDialog, useKeyRebind } from "@game-menu/controls";
+import { KeyRebindDialog, useKeyRebind, useMenuGamepad } from "@game-menu/controls";
 import { GameLayout, GameModalHost, useAppHotkeys } from "@game-menu/layout";
 import { LanguageSelector } from "@game-menu/common";
 import { DeveloperSuite } from "@developer";
@@ -57,6 +58,14 @@ function GameScreen() {
   });
 
   const coordinator = useModalCoordinator({ setPaused, togglePause });
+  const { setMenuCapture, connectedGamepads } = useControls();
+  const [showLegend, setShowLegend] = useState(true);
+  const isGameDialogOpen = isGameModal(coordinator.modalManager.activeModal);
+
+  useEffect(() => {
+    setMenuCapture(isGameDialogOpen);
+    return () => setMenuCapture(false);
+  }, [isGameDialogOpen, setMenuCapture]);
 
   useAppHotkeys({
     modalManager: coordinator.modalManager,
@@ -64,7 +73,21 @@ function GameScreen() {
     onCloseModal: coordinator.closeModal,
     onOpenDefaultEscapeModal: coordinator.openLastGameModal,
     onTogglePause: coordinator.togglePause,
+    onStepL1Tab: coordinator.stepGameTab,
+    onStepL2Tab: coordinator.stepSubTab,
     isRebinding,
+  });
+
+  useMenuGamepad({
+    isGameDialogOpen,
+    isAnyDialogOpen: coordinator.modalManager.isAnyModalOpen,
+    isRebinding,
+    onOpenGameDialog: coordinator.openLastGameModal,
+    onClose: coordinator.closeModal,
+    onStepL1Tab: coordinator.stepGameTab,
+    onStepL2Tab: coordinator.stepSubTab,
+    onToggleLegend: () => setShowLegend((prev) => !prev),
+    onCancelRebind: cancelRebind,
   });
 
   const allHeaderShortcuts = useMemo(() => getHeaderModalShortcuts(), []);
@@ -170,6 +193,8 @@ function GameScreen() {
         onStartRebind={(action, player, label) =>
           startRebind({ action, player, label })
         }
+        showLegend={showLegend}
+        isPadConnected={connectedGamepads.length > 0 ? true : undefined}
         renderDeveloperSuite={renderDeveloperSuite}
       />
 
