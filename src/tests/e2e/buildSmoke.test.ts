@@ -35,6 +35,8 @@ describe("E2E Distribution Package Smoke Tests", () => {
     expect(htmlContent).toContain('<link rel="icon"');
     expect(htmlContent).toContain('allow="fullscreen"');
     expect(htmlContent).not.toContain('allow="fullscreen; autoplay"');
+    expect(htmlContent).toContain('href="./game/"');
+    expect(htmlContent).toContain("docs/README.md");
   });
 
   it("verifies wiki styles and scripts are properly assembled", () => {
@@ -47,21 +49,38 @@ describe("E2E Distribution Package Smoke Tests", () => {
     expect(statSync(jsPath).size).toBeGreaterThan(500);
   });
 
-  it("verifies i18n dictionaries and markdown articles are deployed", () => {
+  it("verifies i18n dictionaries are deployed", () => {
     const plJsonPath = join(DIST_DIR, "i18n", "pl.json");
     const enJsonPath = join(DIST_DIR, "i18n", "en.json");
-    const plIntroPath = join(DIST_DIR, "pl", "intro.md");
-    const enIntroPath = join(DIST_DIR, "en", "intro.md");
 
     expect(existsSync(plJsonPath)).toBe(true);
     expect(existsSync(enJsonPath)).toBe(true);
-    expect(existsSync(plIntroPath)).toBe(true);
-    expect(existsSync(enIntroPath)).toBe(true);
 
     const plData = JSON.parse(readFileSync(plJsonPath, "utf8"));
     const enData = JSON.parse(readFileSync(enJsonPath, "utf8"));
     expect(plData.wikiNavGame).toBeDefined();
     expect(enData.wikiNavGame).toBeDefined();
+  });
+
+  it.each(["pl", "en"] as const)("verifies all 8 %s wiki articles are deployed", (lang) => {
+    const articles = [
+      "intro",
+      "characters",
+      "world",
+      "bestiary",
+      "controls",
+      "graphics",
+      "architecture",
+      "news",
+    ];
+    expect(articles).toHaveLength(8);
+
+    for (const name of articles) {
+      const articlePath = join(DIST_DIR, lang, `${name}.md`);
+      expect(existsSync(articlePath)).toBe(true);
+      expect(statSync(articlePath).size).toBeGreaterThan(100);
+      expect(readFileSync(articlePath, "utf8").startsWith("# ")).toBe(true);
+    }
   });
 
   it("verifies game client is compiled in dist/game/ with production assets", () => {

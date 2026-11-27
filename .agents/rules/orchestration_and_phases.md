@@ -11,7 +11,7 @@ How work is delegated, reviewed, merged and released in **Vibrant Castle**. When
 ## 1. ROLES
 
 - **Owner**: sets direction. Approves decisions that shape future direction or carry great weight, such as a design contract, a new pillar, deleting a system, or a version bump. Everything else is delegated.
-- **Orchestrator**: a Claude agent. It picks cards from the current phase file in [`docs/tasks/`](../../docs/tasks/README.md) and delegates each one to a delegate of the card's model class. It reviews every result and merges the PR itself once review and CI pass. It asks the owner only for the decisions listed above.
+- **Orchestrator**: a Claude agent. It picks cards from [`docs/tasks/task-board.md`](../../docs/tasks/task-board.md) and delegates each one to a delegate of the card's model class. It reviews every result and merges the PR itself once review and CI pass. It asks the owner only for the decisions listed above.
 - **Delegate**: works on exactly one card in its own branch or worktree. It commits locally and reports back. A delegate **never pushes and never merges**.
 
 ## 2. MODEL CLASSES
@@ -53,6 +53,6 @@ Each card names a class, never a specific model. The orchestrator maps classes t
 
 When sources disagree:
 
-$$\text{Code \& arch tests} \longrightarrow \text{.agents/rules/} \longrightarrow \text{docs/tasks/ (roadmap, vision, phase files)} \longrightarrow \text{other docs}$$
+$$\text{Code \& arch tests} \longrightarrow \text{.agents/rules/} \longrightarrow \text{docs/tasks/ (roadmap, vision, board)} \longrightarrow \text{other docs}$$
 
 A mismatch found anywhere is a defect: fix it in the same PR if the PR touches it, otherwise file a card.

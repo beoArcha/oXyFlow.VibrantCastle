@@ -1,5 +1,9 @@
 import { WIKI_DICTIONARIES } from "./wikiContent";
 
+const REPO_URL = "https://github.com/beoArcha/oXyFlow.VibrantCastle";
+const REPO_DOCS_URL = `${REPO_URL}/blob/main/docs/README.md`;
+const REPO_ISSUES_URL = `${REPO_URL}/issues`;
+
 /**
  * Generates the lifted GitHub Pages Gothic Wiki landing HTML.
  * Satisfies all E2E buildSmoke.test.ts invariants:
@@ -34,10 +38,14 @@ export function renderWikiIndexHtml(): string {
 
         <nav class="wiki-nav" aria-label="Wiki sections">
           <button type="button" class="wiki-nav-link" data-section-btn="game" aria-current="page" data-i18n="wikiNavGame">${pl.wikiNavGame}</button>
-          <button type="button" class="wiki-nav-link" data-section-btn="intro" data-i18n="wikiNavIntro">${pl.wikiNavIntro}</button>
-          <button type="button" class="wiki-nav-link" data-section-btn="heroes" data-i18n="wikiNavHeroes">${pl.wikiNavHeroes}</button>
-          <button type="button" class="wiki-nav-link" data-section-btn="worlds" data-i18n="wikiNavWorlds">${pl.wikiNavWorlds}</button>
-          <button type="button" class="wiki-nav-link" data-section-btn="controls" data-i18n="wikiNavControls">${pl.wikiNavControls}</button>
+          <button type="button" class="wiki-nav-link" data-section-btn="intro" data-i18n="wikiTabIntro">${pl.wikiTabIntro}</button>
+          <button type="button" class="wiki-nav-link" data-section-btn="characters" data-i18n="wikiTabCharacters">${pl.wikiTabCharacters}</button>
+          <button type="button" class="wiki-nav-link" data-section-btn="world" data-i18n="wikiTabWorld">${pl.wikiTabWorld}</button>
+          <button type="button" class="wiki-nav-link" data-section-btn="bestiary" data-i18n="wikiTabBestiary">${pl.wikiTabBestiary}</button>
+          <button type="button" class="wiki-nav-link" data-section-btn="controls" data-i18n="wikiTabControls">${pl.wikiTabControls}</button>
+          <button type="button" class="wiki-nav-link" data-section-btn="graphics" data-i18n="wikiTabGraphics">${pl.wikiTabGraphics}</button>
+          <button type="button" class="wiki-nav-link" data-section-btn="architecture" data-i18n="wikiTabArchitecture">${pl.wikiTabArchitecture}</button>
+          <button type="button" class="wiki-nav-link" data-section-btn="news" data-i18n="wikiTabNews">${pl.wikiTabNews}</button>
         </nav>
 
         <div class="wiki-header-actions">
@@ -105,8 +113,13 @@ export function renderWikiIndexHtml(): string {
     </main>
 
     <footer class="wiki-footer">
-      <span data-i18n="wikiFooterRepo">${pl.wikiFooterRepo}</span>
-      <span data-i18n="wikiFooterLicense">${pl.wikiFooterLicense}</span>
+      <nav class="wiki-footer-links" aria-label="Links">
+        <a href="./game/" data-i18n="wikiPlayGameLink">${pl.wikiPlayGameLink}</a>
+        <a href="${REPO_DOCS_URL}" target="_blank" rel="noopener noreferrer" data-i18n="wikiRepoDocsLink">${pl.wikiRepoDocsLink}</a>
+        <a href="${REPO_URL}" target="_blank" rel="noopener noreferrer" data-i18n="wikiFooterRepo">${pl.wikiFooterRepo}</a>
+        <a href="${REPO_ISSUES_URL}" target="_blank" rel="noopener noreferrer" data-i18n="wikiFooterIssues">${pl.wikiFooterIssues}</a>
+      </nav>
+      <span data-i18n="wikiFooterCopyright">${pl.wikiFooterCopyright}</span>
     </footer>
 
     <script src="scripts/wiki-app.js" defer></script>
