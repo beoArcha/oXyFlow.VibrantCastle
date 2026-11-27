@@ -133,6 +133,7 @@ describe("CI & Distribution Scripts", () => {
       expect(releaseYaml).not.toContain("schedule:"); // releases only at a phase gate (manual)
       expect(releaseYaml).toContain("workflow_dispatch:");
       expect(releaseYaml).toContain("workflow_dispatch:");
+      expect(releaseYaml).toContain("gh release create");
       expect(releaseYaml).toContain("cancel-in-progress: false");
       expect(releaseYaml).toContain("uses: ./.github/workflows/deploy-pages.yml");
 
