@@ -13,6 +13,7 @@ import {
   Volume2,
 } from "lucide-react";
 import { APP_CONFIG } from "@/app/appConfig";
+import { DeveloperSuiteSlot } from "@/app/developerSuiteSlot";
 import { I18nProvider, useI18n } from "@context/I18nContext";
 import { GameProvider, useControls, useGameSession } from "@context/GameContext";
 import { useModalCoordinator } from "@game-menu/menu/hooks/useModalCoordinator";
@@ -25,7 +26,6 @@ import {
 import { KeyRebindDialog, useKeyRebind, useMenuGamepad } from "@game-menu/controls";
 import { GameLayout, GameModalHost, useAppHotkeys } from "@game-menu/layout";
 import { LanguageSelector } from "@game-menu/common";
-import { DeveloperSuite } from "@developer";
 import { HUDOverlay } from "@hud";
 import { GameErrorBoundary, Toast, useToast } from "@ui";
 import { formatGameDiagnosticReport } from "@lib/logger";
@@ -102,7 +102,7 @@ function GameScreen() {
 
   const currentLocationName = currentLocation ? t(currentLocation.nameKey) : "";
 
-  const renderDeveloperSuite = useCallback(() => <DeveloperSuite />, []);
+  const renderDeveloperSuite = useCallback(() => <DeveloperSuiteSlot />, []);
 
   return (
     <GameLayout.Root onInteract={initializeAudio}>
