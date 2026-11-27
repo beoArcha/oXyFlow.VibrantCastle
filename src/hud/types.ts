@@ -26,7 +26,6 @@ export interface ResolveQuickBeltOptions {
   readonly playerNumber: 1 | 2;
   readonly primaryKeyLabel: string;
   readonly secondaryKeyLabel: string;
-  readonly potionKeyRangeLabel: string;
   readonly primarySpellId?: string;
   readonly secondarySpellId?: string;
 }
@@ -36,7 +35,6 @@ export interface HUDOverlayProps {
   readonly onOpenSkillTree: () => void;
   readonly onOpenHelp: () => void;
   readonly onOpenMenu: () => void;
-  readonly onOpenCreation?: () => void;
   readonly onTogglePause?: () => void;
   readonly isModalOpen?: boolean;
 }
@@ -72,18 +70,6 @@ export interface HUDPlayerStatusCardProps {
   readonly onOpenSkillTree?: () => void;
 }
 
-export interface HUDTopControlsProps {
-  readonly isPaused: boolean;
-  readonly onTogglePause: () => void;
-  readonly onOpenHelp?: () => void;
-  readonly onOpenMenu?: () => void;
-  readonly onOpenCreation?: () => void;
-  readonly showCreation?: boolean;
-  readonly locationName: string;
-  readonly isAudioInitialized?: boolean;
-  readonly onInitializeAudio?: () => void;
-}
-
 export interface HUDQuickBeltData {
   readonly inventory: InventoryState;
   readonly characterId?: "valen" | "aurelia";
@@ -101,7 +87,6 @@ export interface HUDQuickBeltProps {
   readonly secondarySpellName?: string;
   readonly primaryKeyLabel?: string;
   readonly secondaryKeyLabel?: string;
-  readonly potionKeyRangeLabel?: string;
   readonly onUsePotion: (slotIndex: number) => void;
   readonly onOpenInventory?: () => void;
   readonly onOpenSkillTree?: () => void;

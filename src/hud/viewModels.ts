@@ -59,7 +59,6 @@ export interface QuickBeltSpellsVM {
 }
 
 export interface QuickBeltPotionsVM {
-  readonly potionKeyRangeLabel: string;
   readonly potions: readonly PotionSlotVM[];
 }
 

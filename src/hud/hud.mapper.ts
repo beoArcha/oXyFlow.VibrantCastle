@@ -180,7 +180,6 @@ export function resolveQuickBeltVM(
     secondarySpellName: secondarySpell ? secondarySpell.nameKey : "",
     primaryKeyLabel: options.primaryKeyLabel,
     secondaryKeyLabel: options.secondaryKeyLabel,
-    potionKeyRangeLabel: options.potionKeyRangeLabel,
     potions: resolvePotionSlotsVM(player.inventory?.quickPotions, options.playerNumber === 1),
   };
 }

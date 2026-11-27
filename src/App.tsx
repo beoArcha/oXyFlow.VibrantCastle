@@ -178,7 +178,6 @@ function GameScreen() {
           onOpenSkillTree={() => coordinator.openModal(ModalId.SkillTree)}
           onOpenHelp={() => coordinator.openModal(ModalId.Help)}
           onOpenMenu={() => coordinator.openModal(ModalId.Menu)}
-          onOpenCreation={() => coordinator.openModal(ModalId.Creation)}
           onTogglePause={coordinator.togglePause}
         />
       </GameLayout.Main>

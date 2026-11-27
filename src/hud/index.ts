@@ -2,7 +2,6 @@ export { HUDOverlay } from "./HUDOverlay";
 export { HUDOverlayLayout } from "./HUDOverlayLayout";
 export { HUDViewportCanvas } from "./HUDViewportCanvas";
 export { HUDPlayerStatusCard } from "./HUDPlayerStatusCard";
-export { HUDTopControls } from "./HUDTopControls";
 export { HUDQuickBelt } from "./HUDQuickBelt";
 export { HUDControlsHint } from "./HUDControlsHint";
 export { HUDNarratorBanner } from "./HUDNarratorBanner";
