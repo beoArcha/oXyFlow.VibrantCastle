@@ -105,3 +105,10 @@ Audit of every **used** enemy, structure, and prop referenced in `src/data/locat
 | `hanging_lantern` | prop | `hi8bit` | `frames: 4`, `fps: 6` | Fallback | `variants.low` missing from `_prop_meta.json`, so `hanging_lantern_hi8bit.svg` (`64x32`) is never loaded; falls back to `mid`. | `VC-123 hi8bit` (add `variants.low`) |
 | `hanging_lantern` | prop | `hi16bit` | `frames: 4`, `fps: 6` | Yes | `hanging_lantern_hi16bit.svg` (`128x64`, `32x64` frames) declared as `variants.mid`. | — |
 | `hanging_lantern` | prop | `high` | `frames: 4`, `fps: 6` | Fallback | No `hanging_lantern_high.png`; falls back to `mid` (`hi16bit.svg`). | `new` (high PNG) |
+
+## Status after review (orchestrator note)
+
+- **Issue 1, `freeform_rects` box flicker on hi8bit:** fixed for enemies and props by VC-121 (#124). The `aether_gate` part is superseded by VC-124 (#127), which gives the new gate a shared `bodyBox` grid and all 3 tiers.
+- **Issues 2–4 (missing hi16bit, missing `variants.low`, crude placeholders without hit/death/attack):** carried by VC-122 (hi16bit) and VC-123 (hi8bit).
+- **The `training_dummy` `destroy` vs `broken` mismatch and the unused `chasm_gargoyle` folder:** folded into VC-123.
+- **Missing `high` PNGs for 13 enemies and `hanging_lantern` (issue 5):** moved to the phase-5 bestiary work (VC-130).
