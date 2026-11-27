@@ -14,12 +14,16 @@ Central navigation for project vision, roadmap, approved designs, world lore, an
 
 ## World & Lore (`docs/lore/`)
 
-* [Characters](lore/characters.md) — Valen (*Solar Knight*) and Aurelia (*Scholar of Arcanum*), base stats, magic, and level-1 attributes.
-* [Locations](lore/locations.md) — The 8 current worlds (map 1 of each) and the 8 × 8 campaign layout.
-* [Enemies](lore/enemies.md) — Complete 17-entry bestiary, elemental multipliers, and planned attack behaviors.
+* [Lore Canon & Glossary](lore/README.md) — Round-1 2034 canon summary, PL/EN glossary, N1–N12 tracking, and Open Questions.
+* [World Setting](lore/world.md) — Earth 2034, the cataclysm, buffer zone, emerging magical science, and demon reinterpretations across all 8 worlds.
+* [Scenario](lore/scenario.md) — 8-world campaign arc, temporal loop, and leaning climax (*the Possessed*).
+* [Characters](lore/characters.md) — Valen (*Sun Knight*) and Aurelia (*Arcane Scholar*), Brazilian zouk partnership, VC-030 L1 attributes, and kits.
+* [Narrator](lore/narrator.md) — In-world deadpan-classy voice rules, humour boundaries, and 10 bilingual example lines.
+* World Dossiers (`lore/worlds/`): [Courtyard](lore/worlds/courtyard.md) · [Thorn Chasm](lore/worlds/thorn_chasm.md) · [Ashen Catacombs](lore/worlds/ashen_catacombs.md) · [Clockwork Tower](lore/worlds/clocktower.md) · [Alchemist's Library](lore/worlds/alchemist_library.md) · [Aether Sanctuary](lore/worlds/aether_sanctuary.md) · [Sunlit Bastion](lore/worlds/grand_bastion.md) · [Eclipse Crown](lore/worlds/eclipse_crown.md)
+* [Locations (Technical Atlas)](lore/locations.md) — Map-1 dimensions, spawns, portals, parallax, and entity counts synced to `src/data/locations/*.json`.
+* [Enemies](lore/enemies.md) — Zone factions (demons, devils, constructs, cyborgs), soul origins, and 19-template bestiary.
 * [Artifacts](lore/artifacts.md) — Environmental mechanisms, 18 armory items, and Constellation Grimoire spells.
-* [NPCs & Guides](lore/npcs.md) — The Bastion Narrator and planned companions (Corvus, Amber, Bastion Sage, Master Oakhaven).
-* [Scenario](lore/scenario.md) — Citadel setting, 8-world circuit narrative, and future campaign outline.
+* [NPCs & Figures](lore/npcs.md) — The Narrator, Corvus, Pip/Amber, the Zone Sage, and Master Oakhaven's château legacy.
 
 ## System Specifications (`docs/manifesto/`)
 
