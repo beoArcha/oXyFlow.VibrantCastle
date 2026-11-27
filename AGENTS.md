@@ -79,6 +79,7 @@ bun test              # Full suite
 bun run coverage:gate # Coverage quality gate
 bun run build:game    # Production game client
 bun run build:pages   # Full distribution (dist/), game plus wiki
+bun scripts/version.ts # Build version: major.minor (package.json) + patch (first-parent commits since the minor bump)
 
 bun scripts/validate-level.ts <id>     # Level-logic validator for one location (exit 1 on ERROR)
 bun scripts/sprites/compile.ts <id>    # Compile hi8bit / hi16bit sprite sheets
