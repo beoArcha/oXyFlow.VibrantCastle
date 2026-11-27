@@ -121,7 +121,8 @@ function GameScreen() {
                 hotkey={cfg.hotkeyLabel}
                 label={t(cfg.labelKey)}
                 icon={HEADER_SHORTCUT_ICONS[cfg.iconKey]}
-                labelVisibility="lg"
+                labelVisibility="xl"
+                hotkeyVisibility="xl"
                 onClick={() => coordinator.openModal(def.id)}
               />
             );
@@ -138,6 +139,7 @@ function GameScreen() {
             active={isPaused}
             ariaPressed={isPaused}
             labelVisibility="md"
+            hotkeyVisibility="lg"
             onClick={coordinator.togglePause}
           />
 

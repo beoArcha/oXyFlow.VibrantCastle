@@ -124,7 +124,10 @@ const GameLayoutHotkeyGroup: React.FC<GameLayoutHotkeyGroupProps> = ({
 }) => (
   <nav
     aria-label={ariaLabel}
-    className={cn("flex items-center gap-1 min-w-0 whitespace-nowrap", className)}
+    className={cn(
+      "flex items-center gap-1 min-w-0 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden whitespace-nowrap",
+      className
+    )}
   >
     {children}
   </nav>
@@ -151,6 +154,7 @@ export interface GameLayoutHotkeyHintProps {
   readonly active?: boolean;
   readonly ariaPressed?: boolean;
   readonly labelVisibility?: LabelVisibility;
+  readonly hotkeyVisibility?: LabelVisibility;
   readonly className?: string;
 }
 
@@ -165,6 +169,7 @@ const GameLayoutHotkeyHint: React.FC<GameLayoutHotkeyHintProps> = ({
   active = false,
   ariaPressed,
   labelVisibility = "lg",
+  hotkeyVisibility = "lg",
   className,
 }) => {
   const titleText = tooltip ?? (hotkey ? `${label} [${hotkey}]` : label);
@@ -194,6 +199,7 @@ const GameLayoutHotkeyHint: React.FC<GameLayoutHotkeyHintProps> = ({
           <Code
             size="2xs"
             className={cn(
+              LABEL_VISIBILITY_CLASS[hotkeyVisibility],
               "px-1 py-0 leading-tight rounded border-0 font-mono tabular-nums",
               active
                 ? "bg-black/30 text-amber-100"
