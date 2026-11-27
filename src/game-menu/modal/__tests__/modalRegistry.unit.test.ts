@@ -1,8 +1,14 @@
 import { describe, it, expect } from "bun:test";
 import { translations } from "@i18n";
 import { SUPPORTED_LANGUAGES } from "@i18n/types";
-import { MODAL_REGISTRY, ModalId, findModalByHotkey, GAME_MODAL_WIDTH_CLASS } from "../modalRegistry";
-import { MENU_TAB_REGISTRY } from "@game-menu/menu/menuTabRegistry";
+import {
+  MODAL_REGISTRY,
+  ModalId,
+  findModalByHotkey,
+  getNavigationModalDefinitions,
+  GAME_MODAL_WIDTH_CLASS,
+} from "../modalRegistry";
+import { SETTINGS_TAB_REGISTRY, SettingsTabId } from "@game-menu/menu/menuTabRegistry";
 import { DEV_TOOL_REGISTRY } from "@developer/registry/devToolRegistry";
 
 const expectResolvedLabel = (key: string) => {
@@ -22,8 +28,8 @@ describe("modal, menu and developer registry labels", () => {
     }
   });
 
-  it("resolves every menu tab labelKey to a non-key string in PL and EN", () => {
-    for (const entry of MENU_TAB_REGISTRY) {
+  it("resolves every settings sub-tab labelKey to a non-key string in PL and EN", () => {
+    for (const entry of SETTINGS_TAB_REGISTRY) {
       expectResolvedLabel(entry.labelKey);
     }
   });
@@ -33,14 +39,59 @@ describe("modal, menu and developer registry labels", () => {
       expectResolvedLabel(entry.labelKey);
     }
   });
+
+  it("orders game L1 tabs as Gra, Mapa, Postać, Ekwipunek, Magia, Ustawienia, Pomoc", () => {
+    const gameDefs = getNavigationModalDefinitions().filter((d) => d.dialog === "game");
+    expect(gameDefs.map((d) => d.id)).toEqual([
+      ModalId.Menu,
+      ModalId.Locations,
+      ModalId.Character,
+      ModalId.Inventory,
+      ModalId.SkillTree,
+      ModalId.Settings,
+      ModalId.Help,
+    ]);
+
+    expect(gameDefs.map((d) => translations.pl[d.navigationTab.labelKey as keyof typeof translations.pl])).toEqual([
+      "Gra",
+      "Mapa",
+      "Postać",
+      "Ekwipunek",
+      "Magia",
+      "Ustawienia",
+      "Pomoc",
+    ]);
+
+    expect(gameDefs.map((d) => translations.en[d.navigationTab.labelKey as keyof typeof translations.en])).toEqual([
+      "Game",
+      "Map",
+      "Character",
+      "Inventory",
+      "Magic",
+      "Settings",
+      "Help",
+    ]);
+  });
+
+  it("registers the 4 settings L2 tabs in order", () => {
+    expect(SETTINGS_TAB_REGISTRY.map((s) => s.id)).toEqual([
+      SettingsTabId.Display,
+      SettingsTabId.Audio,
+      SettingsTabId.Controls,
+      SettingsTabId.Interface,
+    ]);
+    expect(
+      SETTINGS_TAB_REGISTRY.map(
+        (s) => translations.pl[s.labelKey as keyof typeof translations.pl]
+      )
+    ).toEqual(["Obraz", "Dźwięk", "Sterowanie", "Interfejs"]);
+  });
 });
 
 describe("modal hotkeys and sizing", () => {
-  it("maps F1 to the Help modal", () => {
+  it("maps M to ModalId.Menu (Gra) and F1/H/? to Help", () => {
+    expect(findModalByHotkey("m")?.id).toBe(ModalId.Menu);
     expect(findModalByHotkey("F1")?.id).toBe(ModalId.Help);
-  });
-
-  it("keeps H and ? as Help hotkeys", () => {
     expect(findModalByHotkey("h")?.id).toBe(ModalId.Help);
     expect(findModalByHotkey("?")?.id).toBe(ModalId.Help);
   });

@@ -1,14 +1,11 @@
 import React, { useCallback } from "react";
+import { RotateCcw } from "lucide-react";
+import { Button } from "@ui";
+import { useI18n } from "@context/I18nContext";
 import { useSettings } from "@context/SettingsContext";
 import { useGameEngine } from "@context/GameEngineContext";
 import { useSaveGame } from "@context/SaveGameContext";
-import {
-  GameModeSection,
-  GameSaveSection,
-  GameHudSection,
-  GameCombatTipsSection,
-  GameConfigBarSection,
-} from "./gameplay";
+import { GameModeSection, GameSaveSection } from "./gameplay";
 import { cn } from "@lib/utils";
 
 export interface GameplayTabProps {
@@ -16,16 +13,12 @@ export interface GameplayTabProps {
 }
 
 export const GameplayTab = ({ className }: GameplayTabProps = {}): React.ReactElement => {
+  const { t } = useI18n();
   const {
     isTwoPlayer,
     setTwoPlayer,
     primaryCharacter,
     setPrimaryCharacter,
-    hudSettings,
-    setHudSettings,
-    exportSettingsToFile,
-    importSettingsFromFile,
-    resetToDefaults: resetSettingsToDefaults,
   } = useSettings();
 
   const { restart, setPlayerCharacter } = useGameEngine();
@@ -39,11 +32,6 @@ export const GameplayTab = ({ className }: GameplayTabProps = {}): React.ReactEl
     },
     [setPrimaryCharacter, setPlayerCharacter]
   );
-
-  const handleResetDefaults = useCallback(() => {
-    resetSettingsToDefaults();
-    setPlayerCharacter(0, "valen");
-  }, [resetSettingsToDefaults, setPlayerCharacter]);
 
   const {
     saveGame,
@@ -71,27 +59,18 @@ export const GameplayTab = ({ className }: GameplayTabProps = {}): React.ReactEl
         onLoadGame={loadGame}
       />
 
-      <GameHudSection
-        hudSettings={hudSettings}
-        onToggleRpgButtons={() =>
-          setHudSettings({ showRpgButtons: !hudSettings.showRpgButtons })
-        }
-        onToggleControlsHint={() =>
-          setHudSettings({ showControlsHint: !hudSettings.showControlsHint })
-        }
-        onToggleNarratorSubtitles={() =>
-          setHudSettings({ showNarratorSubtitles: !hudSettings.showNarratorSubtitles })
-        }
-      />
-
-      <GameCombatTipsSection />
-
-      <GameConfigBarSection
-        onExportSettings={exportSettingsToFile}
-        onImportSettings={importSettingsFromFile}
-        onResetDefaults={handleResetDefaults}
-        onRestartLocation={restart}
-      />
+      <div className="flex justify-end">
+        <Button
+          id="restart-level-btn"
+          variant="secondary"
+          size="sm"
+          icon={<RotateCcw size={13} />}
+          onClick={restart}
+          className="border-amber-700/60 hover:border-amber-500"
+        >
+          {t("restartLocation")}
+        </Button>
+      </div>
     </div>
   );
 };

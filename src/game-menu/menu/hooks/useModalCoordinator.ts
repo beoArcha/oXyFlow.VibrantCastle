@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
   ModalId,
   doesModalPauseGame,
@@ -6,7 +6,10 @@ import {
   type ModalType,
   type OpenModalId,
 } from "@game-menu/modal/modalRegistry";
+import { SettingsTabId } from "@game-menu/menu/menuTabRegistry";
 import { useModalManager, type ModalManager } from "./useModalManager";
+
+export type SubTabMap = Partial<Record<OpenModalId, string>>;
 
 export interface UseModalCoordinatorOptions {
   readonly setPaused: (paused: boolean) => void;
@@ -15,7 +18,10 @@ export interface UseModalCoordinatorOptions {
 
 export interface ModalCoordinator {
   readonly modalManager: ModalManager;
-  readonly openModal: (modal: OpenModalId | ModalType) => void;
+  readonly activeSubTabs: SubTabMap;
+  readonly getActiveSubTab: (modal: OpenModalId | ModalType) => string | undefined;
+  readonly setActiveSubTab: (modal: OpenModalId | ModalType, subTab: string) => void;
+  readonly openModal: (modal: OpenModalId | ModalType, subTab?: string) => void;
   readonly openLastGameModal: () => void;
   readonly toggleModal: (modal: OpenModalId | ModalType) => void;
   readonly closeModal: () => void;
@@ -26,7 +32,7 @@ export interface ModalCoordinator {
 /**
  * Single-responsibility coordinator synchronizing modal transitions with engine pause state
  * strictly via MODAL_REGISTRY metadata (OCP — zero hardcoded modal conditionals).
- * Tracks the last-used player-facing L1 tab in session memory so Esc reopens it.
+ * Tracks the last-used player-facing L1 tab and per-L1 activeSubTab in session memory.
  */
 export function useModalCoordinator({
   setPaused,
@@ -34,11 +40,35 @@ export function useModalCoordinator({
 }: UseModalCoordinatorOptions): ModalCoordinator {
   const modalManager = useModalManager(ModalId.None);
   const lastGameModalRef = useRef<OpenModalId | ModalType>(ModalId.Menu);
+  const [activeSubTabs, setActiveSubTabs] = useState<SubTabMap>({
+    [ModalId.Settings]: SettingsTabId.Display,
+  });
+
+  const getActiveSubTab = useCallback(
+    (modal: OpenModalId | ModalType): string | undefined => activeSubTabs[modal as OpenModalId],
+    [activeSubTabs]
+  );
+
+  const setActiveSubTab = useCallback(
+    (modal: OpenModalId | ModalType, subTab: string) => {
+      setActiveSubTabs((prev) => ({
+        ...prev,
+        [modal as OpenModalId]: subTab,
+      }));
+    },
+    []
+  );
 
   const openModal = useCallback(
-    (targetModal: OpenModalId | ModalType) => {
+    (targetModal: OpenModalId | ModalType, subTab?: string) => {
       if (isGameModal(targetModal)) {
         lastGameModalRef.current = targetModal;
+      }
+      if (subTab !== undefined) {
+        setActiveSubTabs((prev) => ({
+          ...prev,
+          [targetModal as OpenModalId]: subTab,
+        }));
       }
 
       const shouldPause = doesModalPauseGame(targetModal);
@@ -93,6 +123,9 @@ export function useModalCoordinator({
   return useMemo(
     () => ({
       modalManager,
+      activeSubTabs,
+      getActiveSubTab,
+      setActiveSubTab,
       openModal,
       openLastGameModal,
       toggleModal,
@@ -102,6 +135,9 @@ export function useModalCoordinator({
     }),
     [
       modalManager,
+      activeSubTabs,
+      getActiveSubTab,
+      setActiveSubTab,
       openModal,
       openLastGameModal,
       toggleModal,

@@ -1,24 +1,31 @@
-import React, { useState } from "react";
+import React from "react";
 import { Layers } from "lucide-react";
 import { Modal } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { InputMap, PlayerId } from "@game/types";
-import { ModalId, isGameModal, type ModalType } from "@game-menu/modal";
+import {
+  ModalId,
+  isGameModal,
+  type ModalType,
+  type OpenModalId,
+} from "@game-menu/modal";
 import { LanguageSelector } from "@game-menu/common";
 import type { ModalManager } from "@game-menu/menu/hooks/useModalManager";
-import { MenuTabId } from "@game-menu/menu/menuTabRegistry";
+import type { SubTabMap } from "@game-menu/menu/hooks/useModalCoordinator";
 import { GameMenuDialog } from "./GameMenuDialog";
 
 export interface GameModalHostProps {
   readonly modalManager: ModalManager;
   readonly onClose: () => void;
-  readonly onNavigateModal: (modal: ModalType) => void;
+  readonly onNavigateModal: (modal: ModalType, subTab?: string) => void;
   readonly onResume: () => void;
   readonly onStartRebind: (
     action: keyof InputMap,
     player: PlayerId,
     label: string
   ) => void;
+  readonly activeSubTabs?: SubTabMap;
+  readonly onSubTabChange?: (modal: OpenModalId, subTab: string) => void;
   /**
    * Injected Creation & Developer Suite renderer (DIP — keeps src/game-menu decoupled from src/developer).
    */
@@ -35,10 +42,11 @@ export const GameModalHost: React.FC<GameModalHostProps> = ({
   onNavigateModal,
   onResume,
   onStartRebind,
+  activeSubTabs,
+  onSubTabChange,
   renderDeveloperSuite,
 }) => {
   const { t } = useI18n();
-  const [menuTab, setMenuTab] = useState<MenuTabId>(MenuTabId.Gameplay);
   const isGameOpen = isGameModal(modalManager.activeModal);
 
   if (modalManager.activeModal === ModalId.Creation) {
@@ -61,8 +69,8 @@ export const GameModalHost: React.FC<GameModalHostProps> = ({
     <GameMenuDialog
       isOpen={isGameOpen}
       activeModal={modalManager.activeModal}
-      menuTab={menuTab}
-      onMenuTabChange={setMenuTab}
+      activeSubTabs={activeSubTabs}
+      onSubTabChange={onSubTabChange}
       onClose={onClose}
       onNavigateModal={onNavigateModal}
       onResume={onResume}
