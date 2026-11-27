@@ -31,6 +31,7 @@ export interface TabsProps<T extends string = string>
   activeId?: T;
   onChange?: (id: T) => void;
   trailingAction?: React.ReactNode;
+  wrap?: boolean;
 }
 
 export type KeyedTabsProps<T extends string = string> = TabsProps<T>;
@@ -53,6 +54,7 @@ const TabsRoot = React.memo(
       activeId,
       onChange,
       trailingAction,
+      wrap = true,
       children,
       className,
       ...props
@@ -68,11 +70,12 @@ const TabsRoot = React.memo(
           onValueChange?.(newVal as T);
         },
         orientation,
+        wrap,
       };
 
       return (
         <TabsContext.Provider value={legacyContextValue}>
-          <TabsList ref={ref} trailingAction={trailingAction} className={className} {...props}>
+          <TabsList ref={ref} trailingAction={trailingAction} wrap={wrap} className={className} {...props}>
             {items.map((tab) => (
               <TabsTrigger
                 key={String(tab.id)}
@@ -109,8 +112,9 @@ const TabsRoot = React.memo(
         activeValue: String(activeValue),
         setActiveValue,
         orientation,
+        wrap,
       }),
-      [activeValue, setActiveValue, orientation]
+      [activeValue, setActiveValue, orientation, wrap]
     );
 
     return (

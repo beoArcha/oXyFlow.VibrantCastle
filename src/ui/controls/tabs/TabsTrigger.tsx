@@ -44,7 +44,7 @@ export const TabsTrigger = React.memo(
         disabled={disabled}
         onClick={handleClick}
         className={cn(
-          "flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer select-none whitespace-nowrap",
+          "shrink-0 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer select-none whitespace-nowrap",
           isActive
             ? "bg-gradient-to-r from-amber-600 to-amber-700 text-white shadow-md shadow-amber-950/60 border border-primary-400 font-black"
             : "bg-black/40 text-stone-300 hover:text-amber-200 hover:bg-surface-card border border-stone-800/80 hover:border-amber-700/50",

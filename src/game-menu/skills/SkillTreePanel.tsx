@@ -2,13 +2,15 @@ import React from "react";
 import { BookOpen } from "lucide-react";
 import { Modal } from "@ui";
 import { LanguageSelector } from "@game-menu/common";
-import { ModalNavigationTabs, ModalType, GAME_MODAL_WIDTH_CLASS } from "@game-menu/modal";
+import {
+  ModalNavigationTabs,
+  ResumeButton,
+  ModalType,
+  GAME_MODAL_WIDTH_CLASS,
+} from "@game-menu/modal";
 import { useI18n } from "@context/I18nContext";
 import { useSkills } from "@context/GameContext";
-import { useSettings } from "@context/SettingsContext";
-import { SkillPlayerTabs } from "./SkillPlayerTabs";
-import { SkillTreeConstellation } from "./SkillTreeConstellation";
-import { SkillDetailsCard } from "./SkillDetailsCard";
+import { SkillTreeView } from "./SkillTreeView";
 
 export interface SkillTreePanelProps {
   readonly onClose: () => void;
@@ -22,14 +24,9 @@ export const SkillTreePanel = ({
   onResume,
 }: SkillTreePanelProps): React.ReactElement | null => {
   const { t } = useI18n();
-  const { activePlayer, activePlayerIndex } = useSkills();
-  const { settings } = useSettings();
+  const { activePlayer } = useSkills();
 
   if (!activePlayer) return null;
-
-  const quickKeys = activePlayerIndex === 1 ? settings.hud.p2QuickKeys : settings.hud.p1QuickKeys;
-  const primarySpellKey = quickKeys?.primarySpell || "U";
-  const secondarySpellKey = quickKeys?.secondarySpell || "I";
 
   return (
     <Modal
@@ -38,35 +35,18 @@ export const SkillTreePanel = ({
       title={t("skillTreeTitle")}
       subtitle={t("skillTreeSubtitle")}
       icon={<BookOpen className="w-5 h-5 text-purple-400" />}
-      headerRight={<LanguageSelector />}
+      headerRight={onResume ? <ResumeButton onResume={onResume} /> : <LanguageSelector />}
       maxWidthClass={GAME_MODAL_WIDTH_CLASS}
     >
       <div className="flex flex-col gap-4">
-        {onNavigateModal && onResume && (
+        {onNavigateModal && (
           <ModalNavigationTabs
             currentModal="skillTree"
             onNavigate={onNavigateModal}
-            onResume={onResume}
             showCreation={false}
           />
         )}
-        <SkillPlayerTabs />
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-          <div className="lg:col-span-7 flex flex-col">
-            <SkillTreeConstellation
-              primaryKey={primarySpellKey}
-              secondaryKey={secondarySpellKey}
-            />
-          </div>
-
-          <div className="lg:col-span-5 flex flex-col">
-            <SkillDetailsCard
-              primaryKey={primarySpellKey}
-              secondaryKey={secondarySpellKey}
-            />
-          </div>
-        </div>
+        <SkillTreeView />
       </div>
     </Modal>
   );

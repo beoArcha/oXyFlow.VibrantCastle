@@ -7,6 +7,8 @@ export interface TabsListProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   /** Optional trailing action slot aligned to the right (e.g. close/resume button) */
   trailingAction?: React.ReactNode;
+  /** Allow horizontal tabs to wrap onto multiple lines; false keeps a single scrollable row */
+  wrap?: boolean;
 }
 
 /**
@@ -15,10 +17,11 @@ export interface TabsListProps extends React.HTMLAttributes<HTMLDivElement> {
  */
 export const TabsList = React.memo(
   React.forwardRef<HTMLDivElement, TabsListProps>(function TabsList(
-    { className, children, onKeyDown, trailingAction, ...props },
+    { className, children, onKeyDown, trailingAction, wrap: wrapProp, ...props },
     ref
   ) {
-    const { orientation } = useTabsContext("List");
+    const { orientation, wrap: contextWrap } = useTabsContext("List");
+    const shouldWrap = wrapProp ?? contextWrap ?? true;
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
       onKeyDown?.(e);
@@ -73,7 +76,11 @@ export const TabsList = React.memo(
         onKeyDown={handleKeyDown}
         className={cn(
           "shrink-0 flex items-center justify-between gap-1.5 p-1.5 bg-surface-darkest/95 border border-primary-500/30 rounded-xl shadow-inner",
-          orientation === "horizontal" ? "flex-wrap" : "flex-col items-stretch",
+          orientation === "horizontal"
+            ? shouldWrap
+              ? "flex-wrap"
+              : "flex-nowrap overflow-x-auto"
+            : "flex-col items-stretch",
           className
         )}
         {...props}
@@ -81,7 +88,11 @@ export const TabsList = React.memo(
         <div
           className={cn(
             "flex items-center gap-1.5",
-            orientation === "horizontal" ? "flex-wrap" : "flex-col items-stretch"
+            orientation === "horizontal"
+              ? shouldWrap
+                ? "flex-wrap"
+                : "flex-nowrap"
+              : "flex-col items-stretch"
           )}
         >
           {children}
