@@ -26,7 +26,7 @@ Codebase layout:
 | Pillar | Location | Purpose |
 | :--- | :--- | :--- |
 | **Organizer** | [`AGENTS.md`](./AGENTS.md) | This hub: mission, tooling, invariants and where to look. |
-| **Vision, roadmap, tasks** | [`docs/tasks/`](./docs/tasks) | [`VISION.md`](./docs/tasks/VISION.md): what we build. [`ROADMAP.md`](./docs/tasks/ROADMAP.md): phases, quality gates, planned / done cards. [`task-board.md`](./docs/tasks/task-board.md): the VC-xxx task cards. |
+| **Vision, roadmap, tasks** | [`docs/tasks/`](./docs/tasks) | [`VISION.md`](./docs/tasks/VISION.md): what we build. [`ROADMAP.md`](./docs/tasks/ROADMAP.md): phases, quality gates, planned / done cards. [`README.md`](./docs/tasks/README.md): card format and the index of phase files (`phase-N-0.M.x.md`) that hold the VC-xxx cards. |
 | **Engineering rules** | [`.agents/rules/`](./.agents/rules) | Mandatory standards, listed below. |
 | **Design docs** | [`docs/design/`](./docs/design) | Approved designs, e.g. [`menu-ux-plan.md`](./docs/design/menu-ux-plan.md). Map and character contracts land here (VC-020, VC-030). |
 
@@ -93,7 +93,7 @@ Art quality tiers (`hi8bit` = code key `low`, `hi16bit` = `mid`, `high` = `high`
 
 ## 5. Current Phase and Backlog
 
-Current phase: **phase 4, version 0.3.x**. The goals, exit criteria and card table are in [`docs/tasks/ROADMAP.md`](./docs/tasks/ROADMAP.md). The backlog is [`docs/tasks/task-board.md`](./docs/tasks/task-board.md). Gaps against the pillars are listed in [`VISION.md`](./docs/tasks/VISION.md) and planned in the roadmap. Do not keep a second backlog here.
+Current phase: **phase 4, version 0.3.x**. The goals, exit criteria and card table are in [`docs/tasks/ROADMAP.md`](./docs/tasks/ROADMAP.md). The backlog is [`docs/tasks/phase-4-0.3.x.md`](./docs/tasks/phase-4-0.3.x.md), with the next phase in [`phase-5-0.4.x.md`](./docs/tasks/phase-5-0.4.x.md). Gaps against the pillars are listed in [`VISION.md`](./docs/tasks/VISION.md) and planned in the roadmap. Do not keep a second backlog here.
 
 ---
 

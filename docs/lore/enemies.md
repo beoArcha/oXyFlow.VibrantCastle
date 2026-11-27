@@ -2,7 +2,7 @@
 
 The adversaries populating *Vibrant Castle* range from centuries-old mechanical training apparatuses and patrol automata to crystalline horrors reanimated by wild, destabilized Aether.
 
-**Implementation status**: Today enemies patrol between `patrolMinX` and `patrolMaxX`, hover, or remain stationary (`training_dummy`, `training_target`, `grand_dummy`, `thorn_creeper`). Enemy attacks, contact damage against players, ability execution, and active soul drops are **backlog** (Phase 5 in [`docs/tasks/ROADMAP.md`](../tasks/ROADMAP.md)). Converting enemy stats onto the D20x10 attribute scale is tracked in [`VC-032`](../tasks/task-board.md#vc-032--monsters-on-the-attribute-scale) and balance review in [`VC-080`](../tasks/task-board.md#vc-080--balance-review-after-c4758f3). All stats, soul metadata, and placements below match `src/data/enemies/enemies.json` and `src/data/locations/*.json` (17 templates total).
+**Implementation status**: Today enemies patrol between `patrolMinX` and `patrolMaxX`, hover, or remain stationary (`training_dummy`, `training_target`, `grand_dummy`, `thorn_creeper`). Enemy attacks, contact damage against players, ability execution, and active soul drops are **backlog** (Phase 5 in [`docs/tasks/ROADMAP.md`](../tasks/ROADMAP.md)). Converting enemy stats onto the D20x10 attribute scale is tracked in [`VC-032`](../tasks/phase-5-0.4.x.md#vc-032--monsters-on-the-attribute-scale) and balance review in [`VC-080`](../tasks/phase-5-0.4.x.md#vc-080--balance-review-after-c4758f3). All stats, soul metadata, and placements below match `src/data/enemies/enemies.json` and `src/data/locations/*.json` (17 templates total).
 
 ---
 

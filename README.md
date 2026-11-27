@@ -66,7 +66,7 @@ bun run build:game                     # Production game client
 ## Documentation
 
 * [Documentation Index](docs/README.md): central map of planning, design, lore, and specifications.
-* [Vision](docs/tasks/VISION.md), [Roadmap](docs/tasks/ROADMAP.md), and [Task board](docs/tasks/task-board.md): what we are building, phases, and `VC-xxx` cards.
+* [Vision](docs/tasks/VISION.md), [Roadmap](docs/tasks/ROADMAP.md), and [Tasks](docs/tasks/README.md): what we are building, phases, and the `VC-xxx` cards (one file per phase).
 * [Lore](docs/lore/): characters, locations, bestiary, artifacts, NPCs, and scenario.
 * [System Specifications (Manifesto)](docs/manifesto/): engineering, gameplay, content pipeline, rendering, UI, and CI/CD.
 * [Design docs](docs/design/), e.g. the [menu UX plan](docs/design/menu-ux-plan.md).

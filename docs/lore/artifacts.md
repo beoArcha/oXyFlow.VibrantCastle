@@ -12,7 +12,7 @@ In *Vibrant Castle*, artifacts bridge environmental narrative, interactive physi
 * **Visual Form**: A polished brass column topped by an oscillating pendulum escapement and a glowing emerald Aether sphere (`chrono_lever`).
 * **Mechanism & Function**:
   * Striking the lever with a melee attack or spell projectile flips the switch and raises the solid gate named by `targetGateId` (`1.2 s` animation on the structure clock, shrinking collision from the bottom).
-  * Active lever/gate pairs in `src/data/locations/*.json`: `lever_courtyard_gate` → `courtyard_portcullis`, `lever_ossuary_gate` → `ossuary_portcullis`, `lever_spire_gate` → `spire_portcullis`, `lever_archive_gate` → `library_portcullis`, `lever_bastion_keep` → `bastion_portcullis`, `lever_eclipse_seal` → `eclipse_portcullis`. Restoring lost levers in `thorn_chasm` and `aether_sanctuary` (and the second ward gate in `grand_bastion`) is tracked in [`VC-021`…`VC-025`](../tasks/task-board.md#vc-021--vc-025--hybrid-maps-courtyard-thorn_chasm-clocktower-aether_sanctuary-grand_bastion).
+  * Active lever/gate pairs in `src/data/locations/*.json`: `lever_courtyard_gate` → `courtyard_portcullis`, `lever_ossuary_gate` → `ossuary_portcullis`, `lever_spire_gate` → `spire_portcullis`, `lever_archive_gate` → `library_portcullis`, `lever_bastion_keep` → `bastion_portcullis`, `lever_eclipse_seal` → `eclipse_portcullis`. Restoring lost levers in `thorn_chasm` and `aether_sanctuary` (and the second ward gate in `grand_bastion`) is tracked in [`VC-021`…`VC-025`](../tasks/phase-5-0.4.x.md#vc-021--vc-025--hybrid-maps-courtyard-thorn_chasm-clocktower-aether_sanctuary-grand_bastion).
 
 ### Motorized Brass Lifts & Moving Platforms (`labelMovingPlatform`, `labelVerticalLift`)
 
@@ -42,7 +42,7 @@ In *Vibrant Castle*, artifacts bridge environmental narrative, interactive physi
 
 ## 2. Citadel Armory & Equipment (`src/data/items/items.json`)
 
-The equipment screen (`src/game-menu/modal/views/InventoryModalView.tsx`) equips items across **Weapon, Shield, Helmet, Armor, Amulet, Ring, and Quick Belt Potions**. **Backlog**: rebuilding the classical paper-doll inventory UX with stat comparisons and discard confirmations is tracked in [`VC-035`](../tasks/task-board.md#vc-035--inventory-ux-rebuilt-from-the-baseline) / [`VC-036`](../tasks/task-board.md#vc-036--inventory-visuals), and a rationalized equipment schema is tracked in [`VC-034`](../tasks/task-board.md#vc-034--rational-equipment-model).
+The equipment screen (`src/game-menu/modal/views/InventoryModalView.tsx`) equips items across **Weapon, Shield, Helmet, Armor, Amulet, Ring, and Quick Belt Potions**. **Backlog**: rebuilding the classical paper-doll inventory UX with stat comparisons and discard confirmations is tracked in [`VC-035`](../tasks/phase-4-0.3.x.md#vc-035--inventory-ux-rebuilt-from-the-baseline) / [`VC-036`](../tasks/phase-5-0.4.x.md#vc-036--inventory-visuals), and a rationalized equipment schema is tracked in [`VC-034`](../tasks/phase-5-0.4.x.md#vc-034--rational-equipment-model).
 
 ### Weapons (`weapon`)
 

@@ -13,14 +13,14 @@ The castle is suspended in an eternal, golden autumn. Once the illustrious seat 
 * **Autumn of the Citadel**: The castle is caught in an unending golden autumn: warm ochre, amber, bronze, and crimson stone, drifting leaves and sparks, lit by lanterns against the dusk. Note: `aether_sanctuary` and `alchemist_library` currently use cooler cerulean/emerald themes; an autumn palette review is tracked in [`docs/tasks/VISION.md`](../tasks/VISION.md) and Phase 8+ of [`docs/tasks/ROADMAP.md`](../tasks/ROADMAP.md).
 * **Decay and Warmth**: Stone crumbles, leaves fall, and gears rust, yet the lamps remain lit.
 * **Movement**: Springy, forgiving jumps with coyote time, jump buffering, and variable jump height.
-* **Reactive Narrator**: Timed subtitles via `NarrationSystem` today; wiring `ReactiveNarratorManager` (`narrator_reactive.json`) and in-game VN scenes (`dialogues_vn.json`) is on the Phase 5 / Phase 7 backlog ([`docs/tasks/ROADMAP.md`](../tasks/ROADMAP.md)). Disposition of historical narrative catalogs (`scenario_act1.json`, `triggers.json`) is tracked in [`VC-081`](../tasks/task-board.md#vc-081--narrative-catalogs).
+* **Reactive Narrator**: Timed subtitles via `NarrationSystem` today; wiring `ReactiveNarratorManager` (`narrator_reactive.json`) and in-game VN scenes (`dialogues_vn.json`) is on the Phase 5 / Phase 7 backlog ([`docs/tasks/ROADMAP.md`](../tasks/ROADMAP.md)). Disposition of historical narrative catalogs (`scenario_act1.json`, `triggers.json`) is tracked in [`VC-081`](../tasks/phase-4-0.3.x.md#vc-081--narrative-catalogs).
 * **Loop, Not Line**: The current circuit spans 8 worlds (map 1 of each world), looping from the Eclipse Crown back to the Courtyard.
 
 ---
 
 ## Act I: The 8-World Citadel Circuit (Current Shipped Map 1 per World)
 
-The full campaign plans **8 worlds × 8 maps** ([`VC-020`](../tasks/task-board.md#vc-020--map-contract-for-the-8x8-campaign)). Today, map 1 of each world forms a connected 8-world circuit in `src/data/locations/*.json`:
+The full campaign plans **8 worlds × 8 maps** ([`VC-020`](../tasks/phase-4-0.3.x.md#vc-020--map-contract-for-the-8x8-campaign)). Today, map 1 of each world forms a connected 8-world circuit in `src/data/locations/*.json`:
 
 ```text
 [1. courtyard] <==> [2. thorn_chasm] <==> [3. ashen_catacombs] <==> [4. clocktower]
@@ -30,13 +30,13 @@ The full campaign plans **8 worlds × 8 maps** ([`VC-020`](../tasks/task-board.m
 ```
 
 1. **Courtyard of Awakening (`courtyard`)**: Awakening yard, training dummies, first sentinel patrols, golden gate lever (`lever_courtyard_gate`), and portals toward `thorn_chasm` and `clocktower`.
-2. **Chasm of Thorns and Shadows (`thorn_chasm`)**: Precarious stone ledges, thorn creepers, diving gargoyles, and subterranean crawlers above the amber chasm. *(Restoring the chasm lever/gate pair is tracked in [`VC-022`](../tasks/task-board.md#vc-021--vc-025--hybrid-maps-courtyard-thorn_chasm-clocktower-aether_sanctuary-grand_bastion)).*
-3. **Ashen Catacombs (`ashen_catacombs`)**: Soot-stained ossuary halls guarded by a `shadow_knight` and `chrono_hound`, sealed by `lever_ossuary_gate`. *(Map contract alignment: [`VC-026`](../tasks/task-board.md#vc-026--vc-028--fix-new-maps-ashen_catacombs-alchemist_library-eclipse_crown)).*
+2. **Chasm of Thorns and Shadows (`thorn_chasm`)**: Precarious stone ledges, thorn creepers, diving gargoyles, and subterranean crawlers above the amber chasm. *(Restoring the chasm lever/gate pair is tracked in [`VC-022`](../tasks/phase-5-0.4.x.md#vc-021--vc-025--hybrid-maps-courtyard-thorn_chasm-clocktower-aether_sanctuary-grand_bastion)).*
+3. **Ashen Catacombs (`ashen_catacombs`)**: Soot-stained ossuary halls guarded by a `shadow_knight` and `chrono_hound`, sealed by `lever_ossuary_gate`. *(Map contract alignment: [`VC-026`](../tasks/phase-5-0.4.x.md#vc-026--vc-028--fix-new-maps-ashen_catacombs-alchemist_library-eclipse_crown)).*
 4. **Clockwork Tower & Angled Range (`clocktower`)**: Vertical horologium shaft with brass automatons, owls, angled targets, and `lever_spire_gate`.
-5. **Alchemist's Library (`alchemist_library`)**: Emergent arcane archive guarded by `aether_sentinel`, `aether_wisp`, and `shadow_knight`, sealed by `lever_archive_gate`. *(Map contract alignment: [`VC-027`](../tasks/task-board.md#vc-026--vc-028--fix-new-maps-ashen_catacombs-alchemist_library-eclipse_crown)).*
-6. **Aether Sky Sanctuary & Aqueduct (`aether_sanctuary`)**: Floating sky islets patrolled by `aether_wisp`, `aether_sentinel`, and the `aether_archon`. *(Restoring the sanctuary altar lever/gate is tracked in [`VC-024`](../tasks/task-board.md#vc-021--vc-025--hybrid-maps-courtyard-thorn_chasm-clocktower-aether_sanctuary-grand_bastion)).*
-7. **Grand Bastion Training Grounds (`grand_bastion`)**: Royal gold proving gauntlet culminating at `bastion_sentinel_boss` behind `lever_bastion_keep`. *(Restoring the second ward gate lever is tracked in [`VC-025`](../tasks/task-board.md#vc-021--vc-025--hybrid-maps-courtyard-thorn_chasm-clocktower-aether_sanctuary-grand_bastion)).*
-8. **Eclipse Crown (`eclipse_crown`)**: Crimson-rose pinnacle combining elite guardians (`shadow_knight`, `aether_archon`, `bastion_sentinel_boss`) behind `lever_eclipse_seal`, with the Mastery Loop portal back to `courtyard`. *(Map contract alignment: [`VC-028`](../tasks/task-board.md#vc-026--vc-028--fix-new-maps-ashen_catacombs-alchemist_library-eclipse_crown)).*
+5. **Alchemist's Library (`alchemist_library`)**: Emergent arcane archive guarded by `aether_sentinel`, `aether_wisp`, and `shadow_knight`, sealed by `lever_archive_gate`. *(Map contract alignment: [`VC-027`](../tasks/phase-5-0.4.x.md#vc-026--vc-028--fix-new-maps-ashen_catacombs-alchemist_library-eclipse_crown)).*
+6. **Aether Sky Sanctuary & Aqueduct (`aether_sanctuary`)**: Floating sky islets patrolled by `aether_wisp`, `aether_sentinel`, and the `aether_archon`. *(Restoring the sanctuary altar lever/gate is tracked in [`VC-024`](../tasks/phase-5-0.4.x.md#vc-021--vc-025--hybrid-maps-courtyard-thorn_chasm-clocktower-aether_sanctuary-grand_bastion)).*
+7. **Grand Bastion Training Grounds (`grand_bastion`)**: Royal gold proving gauntlet culminating at `bastion_sentinel_boss` behind `lever_bastion_keep`. *(Restoring the second ward gate lever is tracked in [`VC-025`](../tasks/phase-5-0.4.x.md#vc-021--vc-025--hybrid-maps-courtyard-thorn_chasm-clocktower-aether_sanctuary-grand_bastion)).*
+8. **Eclipse Crown (`eclipse_crown`)**: Crimson-rose pinnacle combining elite guardians (`shadow_knight`, `aether_archon`, `bastion_sentinel_boss`) behind `lever_eclipse_seal`, with the Mastery Loop portal back to `courtyard`. *(Map contract alignment: [`VC-028`](../tasks/phase-5-0.4.x.md#vc-026--vc-028--fix-new-maps-ashen_catacombs-alchemist_library-eclipse_crown)).*
 
 In solo play, Aurelia's meeting with Valen is drafted in `src/data/narrative/dialogues_vn.json` (not yet wired to the engine; Phase 7 backlog).
 

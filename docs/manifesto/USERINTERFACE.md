@@ -42,7 +42,7 @@ Approved design: [`docs/design/menu-ux-plan.md`](../design/menu-ux-plan.md). The
   * **D-pad / Left Stick**: move focus (`up`/`down`) and adjust sliders/radios/tabs (`left`/`right` via `ArrowLeft`/`ArrowRight`).
   * **Open / Close**: `Start` (`9`), **`Esc`**, or **holding `LB + RB` for `0.5 s`** (`openChordHoldMs: 500`) opens the game dialog. While open, `input.setMenuCapture(true)` suppresses gameplay actions.
 * **UI Backlog**:
-  * Confirmations, HUD toggles, and empty states ([`VC-043`](../tasks/task-board.md#vc-043--menu-pr-4-confirmations-hud-toggles-empty-states)), gamepad mapper UI in `Ustawienia > Sterowanie` ([`VC-045`](../tasks/task-board.md#vc-045--menu-pr-6-gamepad-mapping-screen)), inventory paper-doll rebuild ([`VC-035`](../tasks/task-board.md#vc-035--inventory-ux-rebuilt-from-the-baseline)), narrow-screen scrolling ([`VC-055`](../tasks/task-board.md#vc-055--scroll-on-narrow-screens)), HUD dead code cleanup ([`VC-056`](../tasks/task-board.md#vc-056--hud-dead-code-cleanup)).
+  * Confirmations, HUD toggles, and empty states ([`VC-043`](../tasks/phase-4-0.3.x.md#vc-043--menu-pr-4-confirmations-hud-toggles-empty-states)), gamepad mapper UI in `Ustawienia > Sterowanie` ([`VC-045`](../tasks/phase-4-0.3.x.md#vc-045--menu-pr-6-gamepad-mapping-screen)), inventory paper-doll rebuild ([`VC-035`](../tasks/phase-4-0.3.x.md#vc-035--inventory-ux-rebuilt-from-the-baseline)), narrow-screen scrolling ([`VC-055`](../tasks/phase-4-0.3.x.md#vc-055--scroll-on-narrow-screens)), HUD dead code cleanup ([`VC-056`](../tasks/phase-4-0.3.x.md#vc-056--hud-dead-code-cleanup)).
 
 ---
 
