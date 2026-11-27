@@ -1,0 +1,27 @@
+{
+  "propId": "candelabra",
+  "worldWidth": 28,
+  "worldHeight": 52,
+  "anchor": "bottom",
+  "frames": 4,
+  "fps": 8,
+  "variants": {
+    "low": {
+      "file": "candelabra_hi8bit.png",
+      "frameWidth": 14,
+      "frameHeight": 26
+    },
+    "mid": {
+      "file": "candelabra_hi16bit.png",
+      "frameWidth": 28,
+      "frameHeight": 52
+    }
+  },
+  "glow": {
+    "color": "#f59e0b",
+    "radius": 72,
+    "x": 14,
+    "y": 12,
+    "flicker": true
+  }
+}

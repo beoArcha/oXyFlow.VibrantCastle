@@ -1,0 +1,20 @@
+{
+  "propId": "leaf_pile",
+  "worldWidth": 48,
+  "worldHeight": 24,
+  "anchor": "bottom",
+  "frames": 2,
+  "fps": 2,
+  "variants": {
+    "low": {
+      "file": "leaf_pile_hi8bit.png",
+      "frameWidth": 24,
+      "frameHeight": 12
+    },
+    "mid": {
+      "file": "leaf_pile_hi16bit.png",
+      "frameWidth": 48,
+      "frameHeight": 24
+    }
+  }
+}
