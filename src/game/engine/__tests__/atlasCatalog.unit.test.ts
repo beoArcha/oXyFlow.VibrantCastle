@@ -206,4 +206,17 @@ describe("discoverAtlasFiles (filesystem fallback)", () => {
       expect(byId.get(id)?.variants.mid?.src).toContain(`${id}_hi16bit.svg`);
     }
   });
+
+  it("strips PNG freeform_rects slicing from undeclared hi8bit SVG variants while keeping it on high PNG", () => {
+    const catalog = buildAtlasCatalog(discoverAtlasFiles(), { structureAllowList: REGISTERED_STRUCTURE_IDS });
+    const byId = new Map(catalog.map((entry) => [entry.id, entry]));
+
+    for (const id of ["clockwork_owl_gargoyle", "training_dummy", "aether_gate"]) {
+      const entry = byId.get(id)!;
+      const lowMeta = entry.variants.low?.meta as unknown as { slicing?: unknown } | undefined;
+      expect(entry.variants.low?.format).toBe("svg");
+      expect(lowMeta?.slicing).toBeUndefined();
+      expect(entry.variants.high?.format).toBe("png");
+    }
+  });
 });

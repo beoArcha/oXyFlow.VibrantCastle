@@ -2,6 +2,7 @@ import type { AssetQuality } from "../../types";
 import { assetsLogger } from "../../logger/gameLogger";
 import type {
   AtlasCatalogEntry,
+  AtlasMeta,
   AtlasTexture,
   AtlasVariant,
   RegisteredAtlasItem,
@@ -35,6 +36,57 @@ interface AtlasSlot {
 function readColumns(variant: AtlasVariant): number {
   const columns = (variant.meta as { atlas?: { columns?: number } }).atlas?.columns;
   return columns && columns > 0 ? columns : 1;
+}
+
+function clampTracksToSingleColumn(rawAnims: Record<string, unknown>): Record<string, unknown> {
+  const next: Record<string, unknown> = {};
+  for (const [key, val] of Object.entries(rawAnims)) {
+    if (typeof val !== "object" || val === null) {
+      next[key] = val;
+      continue;
+    }
+    const track = { ...(val as Record<string, unknown>) };
+    delete track.frameIndices;
+    delete track.frameRects;
+    next[key] = { ...track, frames: 1, startCol: 0, slotSpan: [1], cells: [1] };
+  }
+  return next;
+}
+
+/**
+ * Normalizes a multi-column PNG meta when paired with a 1-column SVG placeholder
+ * (e.g. 48x240 for 5 rows) so the renderer draws the full cell instead of slicing 1/N strips.
+ */
+function resolveEffectiveVariantMeta(variant: AtlasVariant, texture: AtlasTexture): AtlasMeta {
+  if (variant.format !== "svg") return variant.meta;
+  const record = variant.meta as unknown as Record<string, unknown>;
+  const atlas = typeof record.atlas === "object" && record.atlas !== null
+    ? (record.atlas as Record<string, unknown>)
+    : null;
+  const cols = typeof atlas?.columns === "number" ? atlas.columns : 1;
+  const rows = typeof atlas?.rows === "number" ? atlas.rows : 1;
+  if (cols <= 1 || rows <= 0 || texture.width > Math.ceil(texture.height / rows)) {
+    return variant.meta;
+  }
+
+  const next: Record<string, unknown> = {
+    ...record,
+    atlas: { ...atlas, columns: 1 },
+  };
+  delete next.slicing;
+
+  if (typeof record.animations === "object" && record.animations !== null) {
+    const anims = record.animations as Record<string, unknown>;
+    if ("animations" in anims && typeof anims.animations === "object" && anims.animations !== null) {
+      next.animations = {
+        ...anims,
+        animations: clampTracksToSingleColumn(anims.animations as Record<string, unknown>),
+      };
+    } else {
+      next.animations = clampTracksToSingleColumn(anims);
+    }
+  }
+  return next as unknown as AtlasMeta;
 }
 
 /**
@@ -87,12 +139,13 @@ export class AtlasTextureManager {
     const tier = slot.active?.tier ?? slot.desired;
     const variant = slot.entry.variants[tier] ?? slot.entry.variants[slot.desired];
     if (!variant) return undefined;
-    if (slot.view?.imageSrc !== variant.src || slot.view.meta !== variant.meta) {
+    const meta = slot.active && slot.active.tier === tier ? slot.active.meta : variant.meta;
+    if (slot.view?.imageSrc !== variant.src || slot.view.meta !== meta) {
       slot.view = {
         id: slot.entry.id,
         category: slot.entry.category,
         imageSrc: variant.src,
-        meta: variant.meta,
+        meta,
         variants: slot.entry.variants,
       };
     }
@@ -146,7 +199,8 @@ export class AtlasTextureManager {
 
   private promote(slot: AtlasSlot, tier: AssetQuality, variant: AtlasVariant, texture: AtlasTexture): void {
     const previous = slot.active;
-    slot.active = { id: slot.entry.id, tier, texture, meta: variant.meta };
+    const meta = resolveEffectiveVariantMeta(variant, texture);
+    slot.active = { id: slot.entry.id, tier, texture, meta };
     if (previous && previous.tier !== tier) this.releaseTier(slot, previous.tier);
   }
 
