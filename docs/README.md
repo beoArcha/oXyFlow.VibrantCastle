@@ -8,9 +8,13 @@ Central navigation for project vision, roadmap, approved designs, world lore, an
 * [Roadmap](tasks/ROADMAP.md) — Versioned phases, exit criteria, and phase quality gates.
 * [Tasks](tasks/README.md) — phase index and the `VC-xxx` task cards, one file per phase.
 
-## Approved Design Contracts (`docs/design/`)
+## Approved Design Contracts & Reviews (`docs/design/`)
 
 * [Menu UX Plan](design/menu-ux-plan.md) — Two-level menu architecture, restricted pad navigation, and consistency rules.
+* [Maps Contract](design/maps-contract.md) — Campaign `8 × 8` slot rules, archetype size bands, movement limits, and validator checks (`VC-020`).
+* [Character System](design/character-system.md) — Approved D20 ×10 six-attribute model, priority growth, derived stats, and monster scaling (`VC-030`).
+* [Parallax Architecture & Taxonomy](design/parallax.md) — Consolidated parallax pipeline, meta/tier taxonomy, progressive loading, and zone rules (`VC-100`).
+* **Phase 4 Reviews & Playtests**: [Devtools Parity](design/devtools-parity.md) (`VC-070`) · [Asset Animation Review](design/asset-animation-review.md) (`VC-120`) · [Gameplay Playtest](design/gameplay-playtest.md) (`VC-084`) · [Gameplay Feel Metrics](design/gameplay-feel-metrics.md) (`VC-085`) · [Final Playtest](design/final-playtest-phase4.md) (`VC-089`) · [Demo Scenes](design/demo-scenes/README.md) (`VC-083`) · [Phase 4 Gate Conformance](design/gate-phase4-conformance.md) (`VC-090`).
 
 ## World & Lore (`docs/lore/`)
 

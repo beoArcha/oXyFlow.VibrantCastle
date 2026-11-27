@@ -18,12 +18,12 @@ Vibrant Castle keeps the rules of the game apart from what you see on screen. Th
 
 ## Parallax
 
-Backgrounds use five depth tiers: `FAR` (an opaque sky), `MID_FAR` (distant architecture), `MID` (ramparts behind the gameplay plane), `MID_CLOSE` (near stonework) and `CLOSE` (foreground flora). They scroll at different speeds, and layers that are too small are mirrored so that they tile without seams.
+Backgrounds use five depth bands (`far`, `mid_far`, `mid`, `mid_close`, `close`) declared in per-world meta files under `src/assets/parallax/`: an opaque `far` horizon plus variations that load progressively (`far` first, then layers, zone variants, effects and neighbour preloads) and crossfade in `boss` and `rest` zones. Display settings expose `auto`, `high`, `mid`, `low`, `simplified` and `off` parallax modes, with automatic frame-time downgrade when needed.
 
 ## Build and checks
 
 - **Bun only.** No npm, npx, yarn or pnpm.
-- **`bun run build:pages`** builds the distribution in `dist/`: the wiki at the root and the game under `/game/`.
+- **`bun run build:pages`** builds the distribution in `dist/`: the wiki at the root and the game under `/game/`. **`bun run preview:pages`** serves it locally for testing.
 - **Test suites.** `bun test:unit`, `bun test:integration`, `bun test:arch`, `bun test:scripts` and `bun test:e2e`. The end-to-end suite checks the built distribution.
 - **Coverage gate.** `bun run coverage:gate` enforces line-coverage minimums for each suite: unit 74%, integration 58%, and 73% for the combined view.
 - **Level checks.** `bun scripts/validate-level.ts <id>` checks one map, and `--all` checks all eight worlds.
@@ -31,7 +31,7 @@ Backgrounds use five depth tiers: `FAR` (an opaque sky), `MID_FAR` (distant arch
 ## Continuous integration
 
 - Every push to `main` runs the full verification: typecheck, unit and integration tests with coverage, architecture and level checks, the coverage gate, the distribution build and the end-to-end smoke test.
-- The release workflow runs every Sunday at 03:00 UTC. It checks `main` again and moves the `release` branch to the verified commit.
+- The release workflow runs manually at phase quality gates (`workflow_dispatch`). It checks `main` again, moves the `release` branch to the verified commit, and creates a versioned GitHub Release with the game archive.
 - Pushing `release` deploys the wiki and the game to GitHub Pages.
 
 ## Phases and quality gates

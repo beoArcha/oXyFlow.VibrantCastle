@@ -41,8 +41,8 @@ Approved design: [`docs/design/menu-ux-plan.md`](../design/menu-ux-plan.md). The
   * **`A` / `B` / `X` / `Y`** (buttons `0` / `1` / `2` / `3`): confirm focused element, back/close top layer, context action, toggle control-legend footer.
   * **D-pad / Left Stick**: move focus (`up`/`down`) and adjust sliders/radios/tabs (`left`/`right` via `ArrowLeft`/`ArrowRight`).
   * **Open / Close**: `Start` (`9`), **`Esc`**, or **holding `LB + RB` for `0.5 s`** (`openChordHoldMs: 500`) opens the game dialog. While open, `input.setMenuCapture(true)` suppresses gameplay actions.
-* **UI Backlog**:
-  * Confirmations, HUD toggles, and empty states ([`VC-043`](../tasks/phase-4-0.3.x.md#vc-043--menu-pr-4-confirmations-hud-toggles-empty-states)), gamepad mapper UI in `Ustawienia > Sterowanie` ([`VC-045`](../tasks/phase-4-0.3.x.md#vc-045--menu-pr-6-gamepad-mapping-screen)), inventory paper-doll rebuild ([`VC-035`](../tasks/phase-4-0.3.x.md#vc-035--inventory-ux-rebuilt-from-the-baseline)), narrow-screen scrolling ([`VC-055`](../tasks/phase-4-0.3.x.md#vc-055--scroll-on-narrow-screens)), HUD dead code cleanup ([`VC-056`](../tasks/phase-4-0.3.x.md#vc-056--hud-dead-code-cleanup)).
+* **Implemented Menu Features (Phase 4)**:
+  * Confirmations, HUD toggles, and empty/reserved states (`VC-043` #81, `VC-047` #99), gamepad mapper in `Ustawienia > Sterowanie` (`VC-045` #94), inventory paper-doll rebuild (`VC-035` #117), narrow-screen scrolling & tablet header fix (`VC-055` #75, `VC-076` #121), and HUD dead-code cleanup (`VC-056` #93). Remaining menu polish lands in Phase 5 (`VC-168`, `VC-191`, `VC-192`, `VC-194`).
 
 ---
 
@@ -97,7 +97,7 @@ Visual styling follows the autumn palette (`THEME.colors`: amber primaries `#f59
 
 ## 6. Accessibility, Settings & Localization
 
-* **Display (`Ustawienia > Obraz`, `DisplayTab.tsx`)**: `assetQuality` (`low` = `hi-8bit`, `mid` = `hi-16bit`, `high` = `high`), `aspectRatio` (`16:10`, `16:9`, `4:3`, `auto`), `scalingFilter` (`pixel` / `smooth`), `targetFps` (`30 | 60 | 90 | 120`), `showFpsCounter`.
+* **Display (`Ustawienia > Obraz`, `DisplayTab.tsx`)**: `assetQuality` (`low` = `hi-8bit`, `mid` = `hi-16bit`, `high` = `high`), `parallaxQuality` (`auto`, `high`, `mid`, `low`, `simplified`, `off`), `aspectRatio` (`16:10`, `16:9`, `4:3`, `auto`), `scalingFilter` (`pixel` / `smooth`), `targetFps` (`30 | 60 | 90 | 120`), `showFpsCounter`, `hardwareAcceleration`, and `CharacterStudioSection` hero selection.
 * **Interface (`Ustawienia > Interfejs`, `InterfaceTab.tsx`)**: `LanguageSelector`, HUD toggles, settings export/import/reset.
 * **Controls (`Ustawienia > Sterowanie`, `ControlsMenuTab.tsx`)**: P1/P2 keyboard rebinding with reserved-key guards (`F1–F12`, `Tab`, `Meta`, `ContextMenu`) and localized `KeyRebindDialog`. Gameplay restricted-pad defaults (bumpers as selectors) are Phase 5 backlog.
 * **Localization (`src/i18n/`)**: Zero hardcoded UI text; 100% EN/PL key parity enforced by `src/tests/arch/i18nParity.test.ts`.

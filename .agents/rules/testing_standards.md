@@ -117,6 +117,12 @@ Architecture tests act as executable linters guarding the codebase:
 | `gateSentinel.test.ts` | Gates use the explicit opening state, never the old `-1000` y sentinel. |
 | `atlasMetaConsistency.test.ts` | Atlas metas match the size of their PNG / SVG sheets. |
 | `spriteQualityResolution.test.ts` | Only the resolver files pick or set sprite quality tiers. |
+| `assetTierCompleteness.test.ts` | Scans entity folders under `src/assets/` for `hi8bit`, `hi16bit`, and `high` tiers against `assetTierAllowlist.json`. |
+| `platformTilesets.test.ts` | Ensures every non-gate solid and one-way prefab binds a valid tileset. |
+| `parallaxFiles.test.ts` | Verifies every `ParallaxRegistry` entry and location parallax/effect reference resolves on disk. |
+| `parallaxTaxonomy.test.ts` | Enforces parallax folder/file naming, alpha-free `far` PNGs, zone variant files, and the shrinking JPG allow-list. |
+| `parallaxRenderBoundaries.test.ts` | Ensures `src/game/parallax/render` injects dependencies without importing global singletons. |
+| `controlHints.test.ts` | Verifies HUD/menu control hint tokens match the active default bindings. |
 | `trademarkNames.test.ts` | No console brand names in tracked file names or text. |
 
 ---

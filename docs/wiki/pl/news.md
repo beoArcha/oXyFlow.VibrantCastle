@@ -1,21 +1,17 @@
 # Nowości
 
-## 0.3.x (faza 4, w toku): stabilizacja i odbudowa
+## 0.3.x (faza 4, bramka jakości): stabilizacja, paralaksa i uzupełnienie grafik
 
-Faza 4 odbudowuje to, co zniknęło przy porządkach w 0.3.0, które usunęły tilesety, dekoracje, potok sprite'ów, testy i dokumentację. Przywraca utracone elementy i wyznacza kierunek kolejnej fazy. Najnowsze zmiany są na początku listy.
+Faza 4 odbudowała elementy utracone po porządkach 0.3.0 (tilesety, dekoracje, potok sprite'ów, testy i dokumentację), przebudowała dwupoziomowe menu, ujednoliciła potok paralaksy i domknęła wszystkie braki na poziomach `hi8bit` oraz `hi16bit` przed bramką jakości. Najnowsze zmiany są na początku listy.
 
-- **Grafika zastępcza.** Dodano brakującą grafikę hi-8bit dla kilku sprite'ów. Test śledzi kilka konstrukcji i wrogów, które wciąż nie mają jednego z poziomów.
-- **Kontrakty postaci i mapy.** System postaci i kontrakt mapy są spisane jako dokumenty projektowe, tak by kolejna faza mogła na nich bazować.
-- **Karty planowania.** Karty zadań fazy 4 dotyczące dyskusji o lore, scenariuszy demo oraz narzędzia Tworzenie do map i tekstów są na tablicy zadań.
-- **Mapper pada.** W Ustawienia > Sterowanie jest mapper pada dla ograniczonego układu. Można przypisać tylko <kbd>A</kbd> / <kbd>B</kbd> / <kbd>X</kbd> / <kbd>Y</kbd>, <kbd>LB</kbd> / <kbd>RB</kbd> i <kbd>LT</kbd> / <kbd>RT</kbd>. Przywrócenie sterowania najpierw pyta o potwierdzenie.
-- **Menu przebudowane do jednego okna gry.** Menu gry to jedno dwupoziomowe okno z rejestrem kart: Gra, Mapa, Postać, Ekwipunek, Magia, Ustawienia i Pomoc. Okno deweloperskie („Tworzenie”) pojawia się tylko w buildach deweloperskich.
-- **Nawigacja padem.** Menu obsługuje się padem: <kbd>LB</kbd> / <kbd>RB</kbd> dla kart górnych, <kbd>LT</kbd> / <kbd>RT</kbd> dla kart drugiego poziomu, a menu otwiera <kbd>Start</kbd> albo przytrzymanie <kbd>LB</kbd> + <kbd>RB</kbd> przez 0,5 s. Zobacz *Sterowanie*.
-- **Potwierdzenia.** Niebezpieczne akcje najpierw pytają: restart lokacji, wczytanie zapisu, import lub reset ustawień, reset sterowania i wyrzucenie przedmiotu.
-- **Testy przywrócone.** Wróciły testy postaci, granic błędów, menu, sterowania i układu. Bramka pokrycia działa dla każdego zestawu, z minimami: 74% dla testów jednostkowych, 58% dla integracyjnych i 73% łącznie.
-- **Dokumentacja, lore i wiki przywrócone.** Wróciły lore, manifest i pliki zadań dla poszczególnych faz. Ta wiki jest napisana w Markdownie i budowana razem z grą.
-- **Tilesety i dekoracje z powrotem.** Tilesety platform są przywrócone na prefabrykatach podłogi i platform, a dekoracje i narzędzia sprite'ów wróciły do potoku.
-- **Ponownie poprawne cięcie arkuszy.** Arkusze pikselowe bohaterów i arkusz sowy-gargulca są znów cięte poprawnie.
-- **Mapa drogowa z fazami.** Plan wyznacza każdą fazę aż do wersji 1.0, z celami i bramkami jakości.
+- **Testy końcowe fazy 4 i metryki odczucia gry.** Wszystkie 8 map pierwszych, przebudowane menu, nawigacja padem i każde narzędzie w „Tworzeniu” przeszły końcowy playtest (`24/24` sprawdzonych pozycji, 0 błędów konsoli), a testy integracyjne 60 Hz zmierzyły parametry ruchu i walki.
+- **Potok paralaksy, strefy i wydajność.** Ujednolicono renderowanie tła w jednym systemie opartym na plikach meta z progresywnym ładowaniem poza wątkiem głównym, płynnym przejściem stref `boss` i `rest`, pochodnymi poziomami `hi8bit` / `hi16bit` dla 5 światów PNG oraz trybami jakości `auto` / `high` / `mid` / `low` / `simplified` / `off` w Ustawienia > Obraz.
+- **Poziomy grafik i nowa brama Aetheru.** Naprawiono migotanie ramek `hi8bit`, dodano brakujące pliki `hi16bit` SVG dla wrogów i konstrukcji, ulepszono grafiki `hi8bit` oraz zastąpiono `aether_gate` nową animowaną konstrukcją w trzech poziomach. Każdy wróg, konstrukcja, dekoracja, tileset i bohater ma teraz pełne zestawy `hi8bit` i `hi16bit`.
+- **Przeglądarka map i edytor tekstów w Tworzeniu.** W Poziomach 8×8 dodano przeglądarkę mapy z przesuwaniem/przybliżaniem oraz narzędzie do umieszczania wyzwalaczy narracji i eksportu łatek JSON, a także lokalny podgląd `preview:pages`.
+- **Kanon lore 2034 i scenariusze demo.** Domknięto dwie rundy kanonu lore, dwujęzyczne akta światów, archiwalne katalogi źródłowe oraz scenariusze narracji dla mapy 1 każdego z 8 światów.
+- **Utwardzenie wydań i CI.** Promocja wydania działa wyłącznie na bramkach faz i publikuje wersjonowane wydanie GitHub z paczką gry obok strony Pages.
+- **Przebudowa ekwipunku i menu.** Przywrócono ekwipunek z sylwetką postaci, porównaniem statystyk i potwierdzeniami, oddzielono jedno okno gry od deweloperskiego „Tworzenia”, dodano obsługę ograniczonego pada (`LB`/`RB`, `LT`/`RT`, `Start` lub 0,5 s przytrzymania `LB+RB`) i karty „Wkrótce”.
+- **Kontrakty, testy i potok narzędzi.** Zatwierdzono kontrakt mapy i model sześciu atrybutów D20×10, przywrócono tilesety, dekoracje, kompilator sprite'ów (`scripts/sprites/compile.ts`) oraz bramkę pokrycia (74% unit / 58% integracja / 73% łącznie).
 
 ### Plan fazowy
 

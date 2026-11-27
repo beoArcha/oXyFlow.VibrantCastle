@@ -32,11 +32,11 @@ graph LR
 | Subdirectory | Canonical Files | Data Domain & Operational Purpose |
 | :--- | :--- | :--- |
 | **`locations/`** | `courtyard.json`, `thorn_chasm.json`, `ashen_catacombs.json`, `clocktower.json`, `alchemist_library.json`, `aether_sanctuary.json`, `grand_bastion.json`, `eclipse_crown.json` | **Level Blueprints** (map 1 of each of the 8 worlds): dimensions, spawn points and named entries, theme, parallax layers, prefab dictionaries, and `layout` (solids, triggers, levers, portals, enemies, decor). |
-| **`enemies/`** | `enemies.json` | **Monster Bestiary**: Canonical template registry for 17 enemy types: dimensions, stats, elemental multipliers, soul drop metadata, atlas binding, procedural fallback, and bestiary keys. |
+| **`enemies/`** | `enemies.json` | **Monster Bestiary**: Canonical template registry for 19 enemy types: dimensions, stats, elemental multipliers, soul drop metadata, atlas binding, procedural fallback, and bestiary keys. |
 | **`items/`** | `items.json` | **Item & Equipment Registry**: 18 items (weapons, shields, helmets, armor, amulets, rings, potions). |
 | **`skills/`** | `skills.json`, `spells.json` | **Skill Constellations**: Active spells, wards, passives, and enemy ability definitions. |
 | **`structures/`** | `structures.json` | **Interactive Map Objects**: Levers, gates, hazards, and structure definitions. |
-| **`narrative/`** | `dialogues_vn.json`, `narrator_reactive.json` | **Narrative Manifests**: Visual novel character dialogue sequences and reactive narrator quotes (not yet wired to the live engine). *(Historical `scenario_act1.json` and `triggers.json` were removed in 2784276; disposition tracked in [`VC-081`](../tasks/phase-4-0.3.x.md#vc-081--narrative-catalogs)).* |
+| **`narrative/`** | `dialogues_vn.json`, `narrator_reactive.json` | **Narrative Manifests**: Visual novel character dialogue sequences and reactive narrator quotes (not yet wired to the live engine). *(Historical `scenario_act1.json` and `triggers.json` are archived under [`docs/lore/source/`](../lore/source/), `VC-081` #131).* |
 | **`progression/`** | `skill_trees.json` | **Skill tree layout** for Valen and Aurelia. |
 | **`defaults/`** | `defaultControls.json`, `defaultSettings.json` | **System Defaults**: Baseline keyboard/gamepad bindings, audio, display, and HUD settings. |
 
@@ -67,7 +67,7 @@ Every portal targets an existing location and valid entry (`src/tests/arch/locat
 
 ### 3.2. Decor (`layout.decor`)
 
-`layout.decor` places non-colliding visual props (`hanging_lantern`, etc.) using `{ id, propId, x, y, layer, flipX, phase }`, referencing compiled prop folders under `src/assets/props/<propId>/` (`<propId>_prop_meta.json`, `<propId>_hi8bit.png`, `<propId>_hi16bit.png`). Shipped props (12): `aether_crystal_cluster`, `candelabra`, `ember_skull_lantern`, `garden_lamp_post`, `hanging_lantern`, `iron_chain`, `leaf_pile`, `tattered_banner`, `thorn_bramble`, `wall_gear`, `wall_torch`, `war_brazier`.
+`layout.decor` places non-colliding visual props (`hanging_lantern`, etc.) using `{ id, propId, x, y, layer, flipX, phase }`, referencing compiled prop folders under `src/assets/props/<propId>/` (`<propId>_prop_meta.json`, `<propId>_hi8bit.svg`, `<propId>_hi16bit.svg`). Shipped props (12): `aether_crystal_cluster`, `candelabra`, `ember_skull_lantern`, `garden_lamp_post`, `hanging_lantern`, `iron_chain`, `leaf_pile`, `tattered_banner`, `thorn_bramble`, `wall_gear`, `wall_torch`, `war_brazier`.
 
 ---
 
@@ -91,35 +91,35 @@ Policy: **every element** (hero, enemy, structure, prop, tile) is defined across
 
 | Code Key | Tier Name | Policy Role | Current Implementation Status |
 | :--- | :--- | :--- | :--- |
-| `low` | `hi8bit` | **Simple SVG placeholder for every element**, including elements whose high-tier art is painted PNG. 12-bit `#rgb` palette, 48 px base cell for enemies. | Implemented for 11 enemies (SVG), heroes (quantized PNG), tilesets (16 px PNG), and props (PNG). **Backlog**: [`VC-010`](../tasks/phase-4-0.3.x.md#vc-010--three-tier-asset-policy-and-completeness-test) completeness test & [`VC-012`](../tasks/phase-4-0.3.x.md#vc-012--generate-missing-hi8bit-placeholders) missing placeholders (e.g. `shadow_knight`, `bastion_sentinel_boss`, `training_dummy`, `clockwork_owl_gargoyle`, structures). |
-| `mid` | `hi16bit` | **SVG source baked to PNG at build time**. RGB565 palette, 96 px base cell for enemies. | Enemy `hi16bit` SVGs exist for 13 enemies and are rasterised once at runtime (`svgRaster.ts`). **Backlog**: [`VC-011`](../tasks/phase-5-0.4.x.md#vc-011--hi16bit-build-step-svg-to-png-atlas) build-time bake to PNG atlas. Heroes, tilesets (32 px), and props ship PNGs. |
-| `high` | `high` | **Painted PNG** (`<id>_packed_high.png` / `<hero>_level_1_high_packed.png`). | Implemented for heroes, 4 structures (`aether_gate`, `chrono_lever`, `grand_portcullis`, `hazard_thorns`), and `clockwork_owl_gargoyle` (`training_dummy` has `training_dummy_high.png`). Remaining enemies fall back to `hi16bit` until painted `high` sheets are added (Phase 6+ backlog). |
+| `low` | `hi8bit` | **Simple SVG placeholder for every element**, including elements whose high-tier art is painted PNG. 12-bit `#rgb` palette, 48 px base cell for enemies. | Complete across all 19 enemies (SVG), 4 structures (SVG), 12 props (SVG), 8 tilesets (16 px PNG), and 2 heroes (quantized PNG). Zero `low` gaps in `assetTierAllowlist.json`. |
+| `mid` | `hi16bit` | **SVG source baked to PNG at build time**. RGB565 palette, 96 px base cell for enemies. | Complete across all 19 enemies (SVG, rasterised once at runtime via `svgRaster.ts`), 4 structures (SVG), 12 props (SVG), 8 tilesets (32 px PNG), and 2 heroes (PNG). **Backlog**: [`VC-011`](../tasks/phase-5-0.4.x.md#vc-011--hi16bit-build-step-svg-to-png-atlas) build-time bake to PNG atlas. |
+| `high` | `high` | **Painted PNG** (`<id>_packed_high.png` / `<hero>_level_1_high_packed.png`). | Implemented for heroes, 4 structures (`aether_gate`, `chrono_lever`, `grand_portcullis`, `hazard_thorns`), `clockwork_owl_gargoyle`, and `training_dummy`. Remaining 13 enemy folders, 12 props, and 8 tilesets fall back to `hi16bit` and are tracked in `assetTierAllowlist.json` (Phase 5/6+ backlog). |
 
 **Completeness test (VC-010).** `src/tests/arch/assetTierCompleteness.test.ts` scans every entity folder under `src/assets/{characters,enemies,structures,props,tiles}/<id>/` and checks for `<id>_hi8bit.{svg,png}`, `<id>_hi16bit.{svg,png}` and a painted `*_high.png`. Known gaps are listed in `src/tests/arch/assetTierAllowlist.json` as `<category>/<id>` mapped to their missing tiers. The test fails when a new entity misses a tier that is not allowlisted, and when an allowlisted tier has been filled or its entity removed, so the allowlist only shrinks. The test also prints the gap count per category (`bun test src/tests/arch`). Filling a gap means deleting its tier from the allowlist in the same change.
 
-* **True Alpha & FAR Invariant**: All sprites and non-`FAR` parallax layers require true alpha transparency (`alpha < 255`); the `FAR` layer must be 100% opaque (`opaque: true`).
-* **Note on AI Backdrops**: The three newer worlds (`ashen_catacombs`, `alchemist_library`, `eclipse_crown`) and shared boss/mid layers currently load `.jpg` images from `src/assets/images/` via `src/game/locations/parallaxLayerRegistry.ts`.
+* **True Alpha & FAR Invariant**: All sprites and non-`FAR` parallax layers require true alpha transparency (`alpha < 255`); the `FAR` layer must be 100% opaque (`opaque: true` in `<worldId>_parallax_meta.json`, alpha-free PNG).
+* **Parallax Assets (`src/assets/parallax/`)**: The 5 PNG worlds (`courtyard`, `thorn_chasm`, `clocktower`, `aether_sanctuary`, `grand_bastion`) ship `hi8bit` / `hi16bit` / `high` PNGs for `far`, `var_a..d`, and `var_d_zone_{boss,rest}`. The three newer worlds (`ashen_catacombs`, `alchemist_library`, `eclipse_crown`) plus `_shared/fx_sigil_high.jpg` still carry 8 legacy `.jpg` files under `LEGACY_PARALLAX_JPG_ALLOWLIST` in `parallaxTaxonomy.test.ts` until `VC-109b`.
 
 ### 5.2. Restored Sprite & Atlas Pipeline (`scripts/sprites/`, `scripts/atlas/`, `scripts/repack-atlas.ts`)
 
-The sprite compiler, atlas repacker, and parallax seam tools (restored in VC-003) operate via Bun:
+The sprite compiler, atlas repacker, and parallax seam tools operate via Bun:
 
 | Tool | Purpose |
 | :--- | :--- |
-| `bun scripts/sprites/compile.ts <id>` (`--all`, `--check`, `--preview <dir>`) | **Unified Sprite Compiler** (`defineEnemySprite`, `defineHeroSprite`, `defineTileset`, `defineProp`). Searches `scripts/sprites/{enemies,heroes,tilesets,props}/` and emits deterministic SVGs/PNGs + meta JSONs. Validated by `bun test:scripts` (`scripts/__tests__/`). |
+| `bun scripts/sprites/compile.ts <id>` (`--all`, `--check`, `--preview <dir>`) | **Unified Sprite Compiler** (`defineEnemySprite`, `defineHeroSprite`, `defineTileset`, `defineProp`, `defineStructureSprite`). Searches `scripts/sprites/{enemies,heroes,tilesets,props,structures}/` and emits deterministic SVGs/PNGs + meta JSONs. Validated by `bun test:scripts` (`scripts/__tests__/`). |
 | `bun scripts/repack-atlas.ts <id>` (`--all`, `--dry-run`, `--overlay <dir>`) | **Atlas Repack** (`scripts/atlas/` + `scripts/atlas/repack.config.json`). Cuts original painted AI sheets (`*_high.png`) into islands and repacks them onto clean grids (`*_packed_high.png` + `*_packed_meta.json` with `layout.bodyBox`). |
-| `bun scripts/check-parallax-seams.ts` | Checks horizontal seam continuity on `src/assets/bg/` PNGs; warns where `mirrorTile: true` is needed. |
+| `bun scripts/check-parallax-seams.ts` | Checks horizontal seam continuity on `src/assets/parallax/` PNGs; warns where `tiling: "mirror"` is needed in `*_parallax_meta.json`. |
 | `bun scripts/validate-level.ts <id>` (`--all`, `--json`) | **Level-Logic Validator** (mirrors `src/tests/arch/levelLogic.test.ts` + `src/tests/arch/helpers/levelLogic/`). |
 
-See `scripts/sprites/README.md` for full authoring APIs (`PixelCanvas`, hero quantization, tileset and prop rules).
+See `scripts/sprites/README.md` for full authoring APIs (`PixelCanvas`, hero quantization, tileset, prop, and structure rules).
 
 ---
 
 ## 6. Developer Workbench Integration (`src/developer/`)
 
-The Developer Workbench (`DeveloperSuite.tsx` + `src/developer/registry/devToolRegistry.tsx`) is accessible in dev builds only (`[C]`):
+The Developer Workbench (`DeveloperSuite.tsx` + `src/developer/registry/devToolRegistry.tsx`) is lazy-loaded in dev builds only (`[C]`):
 
-* **Atlas Studio (`AtlasSlicerSubtab.tsx`)**: Inspects spritesheets, grids, `bodyBox`, hero quality tiers, and animation tracks. *(Splitting into focused subcomponents is tracked in [`VC-071`](../tasks/phase-4-0.3.x.md#vc-071--split-the-atlas-studio)).*
-* **Levels 8x8 (`LevelsSubtab.tsx`)**: Previews locations and audits asset readiness (`assetReadinessAudit.ts`; wiring real tileset/prop discovery is tracked in [`VC-004`](../tasks/phase-4-0.3.x.md#vc-004--asset-readiness-audit-reads-real-files)).
+* **Atlas Studio (`AtlasSlicerSubtab.tsx`)**: Modular viewer, inspector, preview, and JSON export subcomponents for spritesheets, grids, `bodyBox`, hero quality tiers, and animation tracks.
+* **Levels 8x8 (`LevelsSubtab.tsx`)**: Previews locations, audits asset readiness from real files (`assetReadinessAudit.ts`), and provides the pan/zoom Map Browser and narration Text Placement patch tool (`VC-075`).
 * **Data Studio (`DataStudioSubtab.tsx`)**: Inspects `src/data/` blueprints and bestiary/spell schemas.
-* **Testing / Debug / Logs (`TestingSubtab.tsx`, `DebugSubtab.tsx`, `LogsSubtab.tsx`)**: Live scenario triggers, telemetry, and `RingBufferTransport` log inspection. *(Parity audit with 8121dad tools is tracked in [`VC-070`](../tasks/phase-4-0.3.x.md#vc-070--dev-tools-parity-check)).*
+* **Testing / Debug / Logs (`TestingSubtab.tsx`, `DebugSubtab.tsx`, `LogsSubtab.tsx`)**: Live scenario triggers, telemetry, and `RingBufferTransport` log inspection. *(Remaining parity follow-ups with `8121dad` are tracked in `VC-140`..`VC-145` in Phase 5).*

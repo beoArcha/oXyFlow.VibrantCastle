@@ -1,6 +1,6 @@
 # Vibrant Castle: character system (VC-030)
 
-Status: draft for owner approval. Nothing here is implemented yet. Code changes come after sign-off, in small PRs.
+Status: approved by the owner (`VC-030` #78; see §8). Not yet implemented in `src/game/`; code changes land in Phase 5 (`VC-031`..`VC-034`).
 
 Anchored on: `src/game/characters/characterProfiles.ts` (flat `baseStats`), `src/game/logic/inventoryStats.ts` (`calculatePlayerDerivedStats`), `src/game/logic/magic.ts` (spell damage/cost), `src/game/engine/combatSystem.ts` (melee = `totalAttack`, no enemy defense), `src/game/physics/collisions.ts` (flat 20 hazard damage), `src/data/enemies/enemies.json`, `src/data/items/items.json`, `src/data/skills/*`, `src/data/progression/skill_trees.json`, baseline `8121dad:src/data/defaults/defaultPlayerStats.json`.
 

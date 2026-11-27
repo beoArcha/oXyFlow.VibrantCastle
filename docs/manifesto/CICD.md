@@ -53,11 +53,11 @@ graph TD
     end
 
     subgraph Promote["3. Release Promotion (release-promote.yml)"]
-        P_In["Weekly cron (Sun 03:00 UTC) / workflow_dispatch"]
+        P_In["Manual workflow_dispatch (dry_run, create_tag)"]
         P_Diff["check-diff (origin/release..origin/main)"]
         P_Ver["verify-main (typecheck, coverage, arch, validate-level, scripts, build:pages, e2e)"]
         P_Push["promote (push SHA to refs/heads/release, optional tag)"]
-        P_Dep["deploy-pages.yml (GitHub Pages)"]
+        P_Dep["deploy-pages.yml (GitHub Pages) + create-release (zip + vTag)"]
 
         P_In --> P_Diff --> P_Ver --> P_Push --> P_Dep
     end
@@ -90,13 +90,13 @@ graph TD
 
 ### 3.3. `release-promote.yml` — Promote Verified Main
 
-- **Trigger**: Weekly schedule (`cron: "0 3 * * 0"`, Sundays 03:00 UTC) and manual `workflow_dispatch` (`dry_run`, `create_tag`).
+- **Trigger**: Manual `workflow_dispatch` (`dry_run`, `create_tag`) at phase quality gates only (scheduled cron removed in #119).
 - **Jobs**:
   1. `check-diff`: Compares `origin/release..origin/main` to detect pending commits.
   2. `verify-main`: Checks out `target_sha` and runs `typecheck`, `test:unit:coverage`, `test:integration:coverage`, `test:arch`, `validate-level.ts --all`, `test:scripts`, `coverage:gate`, `build:pages`, and `test:e2e`.
   3. `promote`: Unless `dry_run=true`, pushes `target_sha` to `refs/heads/release` and optionally tags `release-YYYY.MM.DD-<sha7>`.
   4. `deploy-release`: Calls `./.github/workflows/deploy-pages.yml` with `ref: release`.
-- **Backlog**: Porting dedicated GitHub Release artifact packaging (`vibrant-castle-game.zip`) and SemVer bumping into `release-promote.yml` is tracked in [`VC-061`](../tasks/phase-4-0.3.x.md#vc-061--release-artifacts).
+  5. `create-release`: Builds `dist/game`, packages `vibrant-castle-<version>.zip`, creates annotated tag `v<version>`, and publishes the GitHub Release (`VC-061` #129).
 
 ### 3.4. `deploy-pages.yml` — GitHub Pages Deployment
 

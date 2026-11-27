@@ -14,9 +14,7 @@ The menu shows these names. The settings store them as `low`, `mid` and `high`, 
 
 Where a tier has no art for an element, the game uses the next tier down the list: from **high** it falls back to hi-16bit and then hi-8bit, and from **hi-8bit** it falls back to hi-16bit and then **high**. So every element gets a sprite on every tier.
 
-Every enemy, platform, prop and structure now has a hi-8bit file. Painted **high** sheets exist today for the two heroes, the Clockwork Owl Gargoyle, the Training Dummy and four structures (gates, levers and thorns). Most other enemies, platforms and decor have no painted sheet yet, so on **high** they show their hi-16bit art.
-
-The only remaining hi-16bit gaps are the Clockwork Owl Gargoyle, the Training Dummy and the four structures. On hi-16bit they show their painted sheet instead, and on hi-8bit their own hi-8bit file.
+Every enemy, structure, prop, tileset and hero now has both `hi8bit` and `hi16bit` files. Painted **high** sheets exist today for the two heroes, the Clockwork Owl Gargoyle, the Training Dummy and four structures (`aether_gate`, `chrono_lever`, `grand_portcullis`, `hazard_thorns`). The remaining 13 enemy folders, 12 props and 8 tilesets have no painted `high` sheet yet, so on **high** they show their hi-16bit art.
 
 ## Display settings
 
@@ -24,7 +22,8 @@ These options are in **Settings > Display** (Obraz), in the game menu.
 
 - **Aspect ratio.** Auto (fills the window, the default), 16:9, 16:10 or 4:3. A fullscreen button sits beside them.
 - **Scaling filter.** Pixelated (sharp, nearest-neighbour, the default) or Smooth (bilinear, softer edges).
-- **Asset quality.** The three tiers above, switched live.
+- **Asset quality.** The three sprite tiers above (`hi-8bit`, `hi-16bit`, `high`), switched live.
+- **Parallax quality.** **Auto** (detects device capability and steps down if frame times exceed budget), **High**, **Mid**, **Low** (`hi8bit` layers without heavy atmosphere/fx overlays), **Simplified** (loads only the `far` horizon at `hi8bit` resolution), or **Off** (gradient backdrop only, zero parallax images).
 - **Target frame rate.** 30, 60 (the default), 90 or 120 FPS. The simulation runs at the chosen rate, and the multiplier shown in the menu tells you how each step scales the time.
 - **FPS counter.** A toggle that shows the frame rate on screen.
 - **GPU acceleration.** On by default. The toggle is in the same tab.
@@ -37,12 +36,12 @@ The sprite tools live in `scripts/sprites/`. Every sprite is either a script or 
 - **Heroes from painted frames.** Valen and Aurelia are painted first. A palette quantizer reads the frames and builds the hi-8bit and hi-16bit sheets.
 - **Platform tilesets.** Each tileset is a small script that describes its tiles. The compiler writes hi-8bit and hi-16bit sheets with a tile map.
 - **Decor props.** Lanterns, braziers, banners and crystals are scripts too, with an anchor point for placement.
-- **Enemies.** Enemy sprites are described in code and compiled into the SVG tier files.
+- **Enemies & structures.** Enemy and structure sprites are described in code and compiled into the tier files (`hi8bit`, `hi16bit`, and `high` for compiled structures like `aether_gate`).
 
 To look at the output before committing, add `--preview <dir>`:
 
 ```bash
-bun scripts/sprites/cli.ts <id> --preview tmp/preview
+bun scripts/sprites/compile.ts <id> --preview tmp/preview
 ```
 
 The preview folder gets the tier sheets, enlarged for easy viewing. `--check` confirms that the committed files still match their scripts.

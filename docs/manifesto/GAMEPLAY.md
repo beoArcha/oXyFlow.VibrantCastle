@@ -60,7 +60,7 @@ graph TD
 * **`Hazard`**: Inflicts `20` damage with knockback (`vx = ±6, vy = -5`) unless shielded by `Prismatic Barrier` or `Aether Barrier`.
 * **`Lever`**: Activated once by melee or projectile; opens the solid named by `targetGateId` (`1.2 s` / `GATE_OPEN_TICKS = 72` shrinking collision from bottom; `src/game/physics/gateState.ts`).
 * **`Trigger`**: One-shot narration volume.
-* **`Goal`**: Portal transitioning to `targetLocationId` and `targetSpawnPoint`.
+* **`Goal`**: Portal transitioning to `targetLocationId` and `targetEntryKey` (falling back to `targetSpawnPoint` when present).
 
 ### 3.2. Current Worlds (Map 1 of 8 × 8 Campaign)
 
@@ -93,7 +93,7 @@ graph TD
 
 ### 4.3. Enemy Behaviour (Implemented vs Backlog)
 
-* **Today**: 17 templates in `src/data/enemies/enemies.json`. Non-dummy enemies patrol horizontally between `patrolMinX` and `patrolMaxX`; dummies stay still. There is no enemy chase, attack, contact damage, or live soul drop.
+* **Today**: 19 templates in `src/data/enemies/enemies.json`. Non-dummy enemies patrol horizontally between `patrolMinX` and `patrolMaxX`; dummies stay still. There is no enemy chase, attack, contact damage, or live soul drop.
 * **Backlog**: Enemy attacks and contact damage (Phase 5), monster D20x10 attribute scaling ([`VC-032`](../tasks/phase-5-0.4.x.md#vc-032--monsters-on-the-attribute-scale)), and balance audit ([`VC-080`](../tasks/phase-5-0.4.x.md#vc-080--balance-review-after-c4758f3)).
 
 ---

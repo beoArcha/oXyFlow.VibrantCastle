@@ -1,21 +1,17 @@
 # What's New
 
-## 0.3.x (phase 4, in progress): stabilisation and recovery
+## 0.3.x (phase 4, gate review): stabilisation, parallax & art completion
 
-Phase 4 recovers from the clean-up of 0.3.0, which removed tilesets, props, the sprite pipeline, tests and docs. It rebuilds what was lost and sets the direction for the next phase. The most recent work is listed first.
+Phase 4 recovered from the post-0.3.0 cleanup (which removed tilesets, props, the sprite pipeline, tests and docs), rebuilt the two-level menu, unified the parallax pipeline, and closed every `hi8bit` and `hi16bit` sprite gap ahead of the Phase 4 quality gate. The most recent work is listed first.
 
-- **Placeholder art.** Missing hi-8bit placeholder art was added for several sprites. A test tracks the few structures and enemies that still lack a tier.
-- **Character and map contracts.** The character system and the map contract are written down as design documents, so the next phase can build against them.
-- **Planning cards.** The phase-4 task cards for the lore discussion, the demo scenarios and the Tworzenie map and text tool are on the task board.
-- **Gamepad mapper.** Settings > Controls has a pad mapper for the restricted layout. Only <kbd>A</kbd> / <kbd>B</kbd> / <kbd>X</kbd> / <kbd>Y</kbd>, <kbd>LB</kbd> / <kbd>RB</kbd> and <kbd>LT</kbd> / <kbd>RT</kbd> can be bound. Resetting the controls asks first.
-- **Menu rebuilt as one game dialog.** The game menu is a single two-level dialog with a registry of tabs: Game, Map, Character, Inventory, Magic, Settings and Help. The developer dialog ("Tworzenie") appears only in development builds.
-- **Pad navigation.** Menus can be driven with the pad: <kbd>LB</kbd> / <kbd>RB</kbd> for top tabs, <kbd>LT</kbd> / <kbd>RT</kbd> for second-level tabs, and <kbd>Start</kbd> or a 0.5 s hold of <kbd>LB</kbd> + <kbd>RB</kbd> to open the menu. See *Controls*.
-- **Confirmations.** Dangerous actions ask first: restarting a location, loading a save, importing or resetting settings, resetting controls and discarding an item.
-- **Tests restored.** Character, error-boundary, menu, controls and layout tests are back. The coverage gate runs per suite, with minimums of 74% for unit, 58% for integration and 73% combined.
-- **Docs, lore and wiki restored.** The lore, the manifesto and the per-phase task files are back. This wiki is written in Markdown and built with the game.
-- **Tilesets and props back.** Platform tilesets are restored on the floor and platform prefabs, and the decor props and the sprite tools are back in the pipeline.
-- **Hero and owl sheets sliced again.** The hero pixel sheets and the Clockwork Owl sprite sheet are cut correctly again.
-- **Roadmap with phases.** The roadmap lists every phase up to 1.0, with its goals and quality gates.
+- **Phase 4 playtests & feel metrics.** All 8 Map-1 stages, the rebuilt menu, gamepad navigation, and every "Tworzenie" dev tool passed the end-to-end gate playtest (`24/24` checks, 0 console errors), alongside a deterministic 60 Hz gameplay-feel test suite.
+- **Parallax pipeline, zones & performance.** Consolidated background rendering into one meta-driven system with progressive off-thread loading, smooth `boss` and `rest` zone crossfades, derived `hi8bit` / `hi16bit` tiers for the 5 PNG worlds, and `auto` / `high` / `mid` / `low` / `simplified` / `off` quality modes in Settings > Display.
+- **Art tiers & new Aether gate.** Fixed `hi8bit` box flicker, added missing `hi16bit` SVGs for PNG-backed enemies and structures, upgraded `hi8bit` art, and replaced `aether_gate` with a three-tier animated sprite. Every enemy, structure, prop, tileset and hero now ships both `hi8bit` and `hi16bit` assets.
+- **Tworzenie map browser & text tool.** Added a pan/zoom Map Browser and narration trigger Text Placement patch builder inside Poziomy 8x8, plus a full dev-tools parity review and local `preview:pages` static preview.
+- **2034 lore canon & demo scenes.** Finalized Round 1–2 lore canon, bilingual world dossiers, archived source catalogs, and Map-1 demo narration scenes across all 8 worlds.
+- **Release & CI hardening.** Release promotion runs at phase gates only and publishes a versioned GitHub Release with the game zip alongside the Pages site.
+- **Inventory & menu rebuild.** Restored the paper-doll Inventory with stat comparison and discard confirmations, split the single game dialog from dev-only "Tworzenie", wired restricted gamepad navigation (`LB`/`RB`, `LT`/`RT`, `Start` or 0.5 s `LB+RB` hold), and added "Coming soon" reserved cards.
+- **Contracts, tests & pipeline restored.** Approved the Map Contract and D20×10 Character System specs, restored tilesets, decor props, the sprite compiler (`scripts/sprites/compile.ts`), and the per-suite coverage gate (74% unit / 58% integration / 73% combined).
 
 ### Roadmap
 
