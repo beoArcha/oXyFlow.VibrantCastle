@@ -201,7 +201,7 @@ export function createBrowserIdleScheduler(defaultBudgetMs = 2.5): ParallaxIdleS
       requestAnimationFrame?: (cb: () => void) => number;
     };
     if (typeof g.requestIdleCallback === "function") {
-      g.requestIdleCallback((deadline) => callback(deadline), { timeout: 300 });
+      g.requestIdleCallback((deadline) => callback(deadline), { timeout: 1200 });
       return;
     }
     if (typeof g.requestAnimationFrame === "function") {
@@ -211,7 +211,7 @@ export function createBrowserIdleScheduler(defaultBudgetMs = 2.5): ParallaxIdleS
             timeRemaining: () => defaultBudgetMs,
             didTimeout: false,
           });
-        }, 0);
+        }, 4);
       });
       return;
     }

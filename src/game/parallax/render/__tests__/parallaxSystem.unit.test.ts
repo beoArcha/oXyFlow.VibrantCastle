@@ -349,4 +349,58 @@ describe("ParallaxSystem", () => {
     expect(recordedAlphas[1]).toBe(1);
     expect(ctx.getSaveBalance()).toBe(0);
   });
+
+  it("should skip atmosphere, fx layers, and boss overlays when parallaxQuality is low", () => {
+    // Arrange
+    let atmosphereCalls = 0;
+    const farImg = makeFakeImage(1024, 512);
+    const midImg = makeFakeImage(1024, 512);
+    const fxImg = makeFakeImage(1024, 512);
+    const bossImg = makeFakeImage(1024, 512);
+    const fakeLoader: IParallaxLoader = {
+      getTexture: (url) => {
+        if (url === "fake://far.png") return farImg;
+        if (url === "fake://mid.png") return midImg;
+        if (url === "fake://fx.png") return fxImg;
+        if (url === "fake://boss.png") return bossImg;
+        return null;
+      },
+      loadTexture: async () => null,
+    };
+    const fakeAtmospheric: ISectorAtmosphericRenderer = {
+      renderSectorAtmosphere: () => {
+        atmosphereCalls++;
+      },
+      renderProceduralFarBackdrop: () => {},
+      clearCaches: () => {},
+    };
+    const system = new ParallaxSystem({
+      loader: fakeLoader,
+      atmosphericRenderer: fakeAtmospheric,
+      parallaxQuality: "low",
+    });
+    const location = makeLocation({
+      id: "eclipse_crown",
+      worldId: "eclipse_crown",
+      parallaxBackground: {
+        boxWidth: 3400,
+        boxHeight: 1200,
+        layers: [
+          makeImageLayer({ id: "far", tier: "far", imageUrl: "fake://far.png", opaque: true }),
+          makeImageLayer({ id: "var_b", tier: "mid", imageUrl: "fake://mid.png" }),
+          makeImageLayer({ id: "eclipse_crown:fx_throne", tier: "mid", layerKey: "eclipse_crown:fx_throne", imageUrl: "fake://fx.png" }),
+          makeImageLayer({ id: "boss_stage", tier: "boss_stage", imageUrl: "fake://boss.png" }),
+        ],
+      },
+    });
+    const ctx = createMockContext2D();
+
+    // Act
+    system.render(ctx, location, 3000, 1000, 1000, 625, 0, 0, 1, { forceBossScope: "stage" });
+
+    // Assert: only far + var_b drawn (2 draws); fx_throne, boss_stage, and atmosphere skipped
+    expect(atmosphereCalls).toBe(0);
+    expect(ctx.getDrawImageCalls().length).toBe(2);
+    expect(ctx.getSaveBalance()).toBe(0);
+  });
 });

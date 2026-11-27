@@ -11,8 +11,13 @@ export interface IEngineLoopContext {
   fixedUpdate(stepMultiplier: number): void;
   renderFrame(alpha: number): void;
   executeProtected(operationName: string, action: () => void): boolean;
+  onFrameWorkMeasured?(workMs: number, nowMs: number): void;
   notifyStateChanged(): void;
   logger: ILogger;
+}
+
+function defaultLoopNow(): number {
+  return typeof performance !== "undefined" ? performance.now() : Date.now();
 }
 
 /**
@@ -117,6 +122,8 @@ export class EngineLoopRunner {
       return;
     }
 
+    const workStart = this.context.onFrameWorkMeasured ? defaultLoopNow() : 0;
+
     fpsManager.pushDelta(elapsed);
     const timeScale = debugManager.state.timeScale || 1.0;
     const stepMultiplier = fpsManager.getStepMultiplier() * timeScale;
@@ -134,5 +141,10 @@ export class EngineLoopRunner {
 
     const alpha = fpsManager.getInterpolationAlpha();
     this.context.executeProtected("renderFrame", () => this.context.renderFrame(alpha));
+
+    if (this.context.onFrameWorkMeasured) {
+      const workEnd = defaultLoopNow();
+      this.context.onFrameWorkMeasured(workEnd - workStart, workEnd);
+    }
   }
 }

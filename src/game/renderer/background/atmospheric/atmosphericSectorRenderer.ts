@@ -50,6 +50,33 @@ interface SectorAtmosphereSpec {
 }
 
 const MAX_GRADIENT_CACHE_SIZE = 32;
+const MAX_SURFACE_CACHE_SIZE = 16;
+const MAX_ATMOS_SURFACE_WIDTH = 256;
+
+export interface AtmosphereSurfaceTarget {
+  readonly source: CanvasImageSource;
+  readonly ctx: {
+    createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient;
+    createRadialGradient(
+      x0: number,
+      y0: number,
+      r0: number,
+      x1: number,
+      y1: number,
+      r1: number
+    ): CanvasGradient;
+    fillStyle: string | CanvasGradient | CanvasPattern;
+    fillRect(x: number, y: number, w: number, h: number): void;
+  } | null;
+  readonly release?: () => void;
+}
+
+export type AtmosphereSurfaceFactory = (width: number, height: number) => AtmosphereSurfaceTarget | null;
+
+interface CachedAtmosSurface {
+  readonly source: CanvasImageSource;
+  readonly release?: () => void;
+}
 
 const DEFAULT_PROCEDURAL_FAR_THEME: ProceduralFarTheme = {
   mountain: "#2a150b",
@@ -172,6 +199,9 @@ const SECTOR_ATMOSPHERE_SPECS: Readonly<Record<string, SectorAtmosphereSpec>> = 
  */
 export class AtmosphericSectorRenderer implements ISectorAtmosphericRenderer {
   private readonly gradientCache: Map<string, CanvasGradient> = new Map();
+  private readonly surfaceCache: Map<string, CachedAtmosSurface | null> = new Map();
+
+  constructor(private readonly surfaceFactory?: AtmosphereSurfaceFactory) {}
 
   private lastSectorWorldId = "";
   private lastSectorWidth = -1;
@@ -187,6 +217,10 @@ export class AtmosphericSectorRenderer implements ISectorAtmosphericRenderer {
 
   public clearCaches(): void {
     this.gradientCache.clear();
+    for (const entry of this.surfaceCache.values()) {
+      entry?.release?.();
+    }
+    this.surfaceCache.clear();
     this.lastSectorWorldId = "";
     this.lastSectorWidth = -1;
     this.lastSectorHeight = -1;
@@ -259,13 +293,38 @@ export class AtmosphericSectorRenderer implements ISectorAtmosphericRenderer {
     const spec = this.lastSectorSpec;
     if (!spec) return;
 
+    const rectY = viewportHeight * spec.rectYRatio;
+    const rectH = viewportHeight * spec.rectHRatio;
+    const alpha =
+      spec.alphaAmp !== 0
+        ? spec.baseAlpha + Math.sin(tickCount * spec.alphaFreq) * spec.alphaAmp
+        : spec.baseAlpha;
+    const waveOffsetY = spec.waveAmp !== 0 ? Math.sin(tickCount * spec.waveFreq) * spec.waveAmp : 0;
+
+    const cachedSurface = this.getOrCreateAtmosSurface(
+      this.lastSectorKey,
+      spec,
+      viewportWidth,
+      viewportHeight,
+      rectY,
+      rectH
+    );
+
+    if (cachedSurface) {
+      const prevAlpha = ctx.globalAlpha;
+      ctx.globalAlpha = alpha;
+      ctx.drawImage(cachedSurface.source, 0, rectY + waveOffsetY, viewportWidth, rectH);
+      ctx.globalAlpha = prevAlpha;
+      return;
+    }
+
     const grad =
       spec.kind === "linear"
         ? this.getOrCreateLinearGradient(
             ctx,
             this.lastSectorKey,
             0,
-            viewportHeight * spec.gradY0Ratio,
+            rectY,
             spec.gradX1FullWidth ? viewportWidth : 0,
             viewportHeight * spec.gradY1Ratio,
             spec.stops
@@ -283,16 +342,77 @@ export class AtmosphericSectorRenderer implements ISectorAtmosphericRenderer {
           );
 
     ctx.save();
-    ctx.globalAlpha =
-      spec.alphaAmp !== 0
-        ? spec.baseAlpha + Math.sin(tickCount * spec.alphaFreq) * spec.alphaAmp
-        : spec.baseAlpha;
-    if (spec.waveAmp !== 0) {
-      ctx.translate(0, Math.sin(tickCount * spec.waveFreq) * spec.waveAmp);
+    ctx.globalAlpha = alpha;
+    if (waveOffsetY !== 0) {
+      ctx.translate(0, waveOffsetY);
     }
     ctx.fillStyle = grad;
-    ctx.fillRect(0, viewportHeight * spec.rectYRatio, viewportWidth, viewportHeight * spec.rectHRatio);
+    ctx.fillRect(0, rectY, viewportWidth, rectH);
     ctx.restore();
+  }
+
+  private getOrCreateAtmosSurface(
+    key: string,
+    spec: SectorAtmosphereSpec,
+    viewportWidth: number,
+    viewportHeight: number,
+    rectY: number,
+    rectH: number
+  ): CachedAtmosSurface | null {
+    if (this.surfaceCache.has(key)) {
+      return this.surfaceCache.get(key) ?? null;
+    }
+    if (!this.surfaceFactory || viewportWidth <= 0 || viewportHeight <= 0 || rectH <= 0) {
+      return null;
+    }
+
+    const scale = Math.min(1, MAX_ATMOS_SURFACE_WIDTH / viewportWidth);
+    const surfW = Math.max(16, Math.round(viewportWidth * scale));
+    const surfH = Math.max(16, Math.round(rectH * scale));
+    const created = this.surfaceFactory(surfW, surfH);
+    if (!created || !created.ctx) {
+      this.storeSurface(key, null);
+      return null;
+    }
+
+    const sctx = created.ctx;
+    const grad =
+      spec.kind === "linear"
+        ? sctx.createLinearGradient(
+            0,
+            0,
+            spec.gradX1FullWidth ? surfW : 0,
+            (viewportHeight * spec.gradY1Ratio - rectY) * scale
+          )
+        : sctx.createRadialGradient(
+            viewportWidth * spec.radialCenterXRatio * scale,
+            (viewportHeight * spec.radialCenterYRatio - rectY) * scale,
+            spec.radialInnerRadius * scale,
+            viewportWidth * spec.radialCenterXRatio * scale,
+            (viewportHeight * spec.radialCenterYRatio - rectY) * scale,
+            viewportWidth * spec.radialOuterRadiusRatio * scale
+          );
+
+    for (let i = 0; i < spec.stops.length; i++) {
+      grad.addColorStop(spec.stops[i][0], spec.stops[i][1]);
+    }
+    sctx.fillStyle = grad;
+    sctx.fillRect(0, 0, surfW, surfH);
+
+    const entry: CachedAtmosSurface = { source: created.source, release: created.release };
+    this.storeSurface(key, entry);
+    return entry;
+  }
+
+  private storeSurface(key: string, entry: CachedAtmosSurface | null): void {
+    if (this.surfaceCache.size >= MAX_SURFACE_CACHE_SIZE && !this.surfaceCache.has(key)) {
+      const oldestKey = this.surfaceCache.keys().next().value;
+      if (oldestKey !== undefined) {
+        this.surfaceCache.get(oldestKey)?.release?.();
+        this.surfaceCache.delete(oldestKey);
+      }
+    }
+    this.surfaceCache.set(key, entry);
   }
 
   public renderProceduralFarBackdrop(

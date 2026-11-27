@@ -277,12 +277,13 @@ describe("parallax perf budget evaluation", () => {
     expect(formatBudgetReport(result)).toContain("OVER");
   });
 
-  it("should evaluate desktop and tablet runs against their respective budgets when profile is all", () => {
+  it("should evaluate desktop, tablet, and low-power-laptop runs against their respective budgets when profile is all", () => {
     // Arrange
     const current = aggregatePerfReport(
       [
         makeRun({ profile: "desktop", locationId: "courtyard", dpr: 2, workP95Ms: 6.2 }),
         makeRun({ profile: "tablet", locationId: "courtyard", dpr: 2, workP95Ms: 15.8 }),
+        makeRun({ profile: "low-power-laptop", locationId: "courtyard", dpr: 1, workP95Ms: 14.9 }),
       ],
       TEST_ENV,
       TEST_CONFIG
@@ -293,7 +294,7 @@ describe("parallax perf budget evaluation", () => {
 
     // Assert
     expect(result.passed).toBe(true);
-    expect(result.passedCount).toBe(2);
+    expect(result.passedCount).toBe(3);
     expect(result.exitCode).toBe(0);
   });
 
@@ -331,17 +332,21 @@ describe("parallax perf budget evaluation", () => {
     expect(parsed.baselinePath.endsWith("baseline.json")).toBe(true);
   });
 
-  it("should parse runner --browser option and resolve browser executable overrides", () => {
+  it("should parse runner --browser, --profile laptop, and --quality options and resolve browser executable overrides", () => {
     // Arrange & Act
     const webkitArgs = parseRunnerArgs(["--browser", "webkit", "--profile", "desktop"]);
     const firefoxArgs = parseRunnerArgs(["--browser", "firefox"]);
+    const laptopArgs = parseRunnerArgs(["--profile", "laptop", "--quality", "low"]);
     const defaultArgs = parseRunnerArgs([]);
 
     // Assert
     expect(webkitArgs.browser).toBe("webkit");
     expect(webkitArgs.profile).toBe("desktop");
     expect(firefoxArgs.browser).toBe("firefox");
+    expect(laptopArgs.profile).toBe("low-power-laptop");
+    expect(laptopArgs.quality).toBe("low");
     expect(defaultArgs.browser).toBe("chromium");
+    expect(defaultArgs.quality).toBeNull();
     expect(
       resolveBrowserExecutablePath("webkit", { PLAYWRIGHT_WEBKIT_PATH: "/custom/webkit" })
     ).toBe("/custom/webkit");

@@ -37,8 +37,9 @@ import { createDiscoveredTilesetManager } from "../engine/tiles";
 import { createDiscoveredPropManager } from "../engine/props";
 import { DecorRenderer } from "../renderer/decorRenderer";
 import { defaultLocationAssetLifecycle } from "../locations/locationAssetLifecycle";
-import { defaultParallaxLoadQueue } from "../parallax/loading";
+import { defaultParallaxLoadQueue, resolveDefaultParallaxConcurrency } from "../parallax/loading";
 import { defaultParallaxRegistry } from "../parallax/registry";
+import type { DeviceParallaxSignals } from "../parallax/parallaxQualityHeuristic";
 
 export type { IGameDependencies };
 
@@ -167,6 +168,17 @@ export class GameEngine implements IEngineSubsystemHost {
     defaultParallaxRegistry.setParallaxQuality(quality);
     void defaultLocationAssetLifecycle.setParallaxQuality(quality);
     this.renderer?.setParallaxQuality(quality);
+  }
+  public setDeviceParallaxSignals(signals: DeviceParallaxSignals): void {
+    if (signals.hardwareConcurrency !== undefined) {
+      defaultParallaxLoadQueue.setConcurrency(
+        resolveDefaultParallaxConcurrency(signals.hardwareConcurrency)
+      );
+    }
+    this.c.settingsController.setDeviceParallaxSignals(signals);
+  }
+  public onFrameWorkMeasured(workMs: number, nowMs: number): void {
+    this.c.settingsController.recordAutoProbeFrame(workMs, nowMs);
   }
 
   public attachCanvas(canvas: HTMLCanvasElement): void {

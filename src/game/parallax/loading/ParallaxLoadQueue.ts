@@ -57,11 +57,10 @@ interface QueuedLoadTask {
 }
 
 /**
- * Selects queue concurrency (1-2) based on host CPU core count so decode work never starves rendering.
+ * Selects queue concurrency (1-2) based on injected CPU core count so decode work never starves rendering.
  */
-export function resolveDefaultParallaxConcurrency(): number {
-  const nav = typeof navigator !== "undefined" ? navigator : undefined;
-  const cores = typeof nav?.hardwareConcurrency === "number" ? nav.hardwareConcurrency : 4;
+export function resolveDefaultParallaxConcurrency(hardwareConcurrency: number = 4): number {
+  const cores = Number.isFinite(hardwareConcurrency) && hardwareConcurrency > 0 ? hardwareConcurrency : 4;
   return cores >= 8 ? 2 : 1;
 }
 
@@ -82,7 +81,7 @@ function compareQueuedTasks(a: QueuedLoadTask, b: QueuedLoadTask): number {
  */
 export class ParallaxLoadQueue {
   private readonly decoder: IParallaxTextureDecoder;
-  private readonly concurrency: number;
+  private concurrency: number;
   private readonly now: () => number;
   private readonly fadeDurationMs: number;
   private readonly resolveDefaultSurfaceMetrics?: () => ParallaxSurfaceMetrics;
@@ -116,6 +115,10 @@ export class ParallaxLoadQueue {
         : undefined);
     this.idleFrameBudgetMs = Math.max(0.25, deps.idleFrameBudgetMs ?? DEFAULT_PARALLAX_IDLE_FRAME_BUDGET_MS);
     this.maxStartsPerIdleSlice = Math.max(1, Math.floor(deps.maxStartsPerIdleSlice ?? 1));
+  }
+
+  public setConcurrency(concurrency: number): void {
+    this.concurrency = Math.max(1, Math.min(2, Math.floor(concurrency)));
   }
 
   public setSurfaceMetrics(metrics: ParallaxSurfaceMetrics): void {
@@ -364,7 +367,7 @@ export class ParallaxLoadQueue {
     if (this.pending.length === 0 || this.inFlight.size >= this.concurrency) return;
 
     const remaining = Math.max(0, deadline.timeRemaining());
-    if (!deadline.didTimeout && remaining <= 0.25) {
+    if (!deadline.didTimeout && remaining < 0.8) {
       this.ensureIdleScheduled();
       return;
     }

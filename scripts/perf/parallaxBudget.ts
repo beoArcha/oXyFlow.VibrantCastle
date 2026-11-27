@@ -136,7 +136,7 @@ export function formatBudgetReport(result: BudgetCheckResult): string {
   const modeLabel = result.strict ? "strict" : "report-only";
   const budgetDesc =
     result.profile === "all"
-      ? "desktop<=8.3ms, tablet<=16.6ms"
+      ? "desktop<=8.3ms, tablet<=16.6ms, low-power-laptop<=16.6ms"
       : `${PARALLAX_BUDGET_PROFILES[result.profile].targetHz} Hz, work p95 <= ${PARALLAX_BUDGET_PROFILES[result.profile].maxP95Ms.toFixed(1)} ms`;
 
   const lines: string[] = [
@@ -146,7 +146,7 @@ export function formatBudgetReport(result: BudgetCheckResult): string {
       : "[perf:parallax] Baseline: none",
     "",
     [
-      "profile".padEnd(8),
+      "profile".padEnd(17),
       "location".padEnd(18),
       "dpr".padStart(3),
       "w_p50".padStart(7),
@@ -168,7 +168,7 @@ export function formatBudgetReport(result: BudgetCheckResult): string {
     const status = row.withinBudget ? "PASS" : `OVER (${row.reason ?? "failed"})`;
     lines.push(
       [
-        row.profile.padEnd(8),
+        row.profile.padEnd(17),
         row.locationId.padEnd(18),
         `${row.dpr}x`.padStart(3),
         row.workP50Ms.toFixed(2).padStart(7),
@@ -229,7 +229,11 @@ export function parseBudgetCliArgs(
       strict = true;
     } else if (arg === "--profile" && argv[i + 1]) {
       const next = argv[++i];
-      if (next === "desktop" || next === "tablet" || next === "all") profile = next;
+      if (next === "desktop" || next === "tablet" || next === "low-power-laptop" || next === "all") {
+        profile = next;
+      } else if (next === "laptop") {
+        profile = "low-power-laptop";
+      }
     } else if (arg === "--baseline" && argv[i + 1]) {
       baselinePath = resolve(cwd, argv[++i]);
     } else if (arg === "--report" && argv[i + 1]) {

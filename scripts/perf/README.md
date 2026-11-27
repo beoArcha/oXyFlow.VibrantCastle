@@ -1,6 +1,6 @@
 # Parallax Performance Harness (VC-106)
 
-Headless Playwright benchmark and budget checker for Vibrant Castle's 8 world maps across `desktop` and `tablet` profiles.
+Headless Playwright benchmark and budget checker for Vibrant Castle's 8 world maps across `desktop`, `tablet`, and `low-power-laptop` profiles.
 
 ## Profiles
 
@@ -8,16 +8,18 @@ Headless Playwright benchmark and budget checker for Vibrant Castle's 8 world ma
 |---|---|---|---|---|---|
 | `desktop` | `1280x720` | `1`, `2` | `1x` (none) | `<= 8.3 ms` | 120 Hz (`8.33 ms`) |
 | `tablet` | `1024x768` | `2` | `4x` (`Emulation.setCPUThrottlingRate`) | `<= 16.6 ms` | 60 Hz (`16.67 ms`) |
+| `low-power-laptop` | `1280x720` | `1` | `6x` (`Emulation.setCPUThrottlingRate`) | `<= 16.6 ms` | 60 Hz (`16.67 ms`) |
 
 ## Commands
 
 ```bash
-# Build production client, run desktop (DPR 1 & 2) + tablet (DPR 2, 4x CPU) across all 8 maps
+# Build production client, run desktop (DPR 1 & 2) + tablet (DPR 2, 4x CPU) + low-power-laptop (DPR 1, 6x CPU) across all 8 maps
 bun run perf:parallax
 
-# Run a single profile
+# Run a single profile or quality mode
 bun run perf:parallax -- --profile desktop
 bun run perf:parallax -- --profile tablet
+bun run perf:parallax -- --profile low-power-laptop --quality low
 
 # Fail (exit 1) if any run exceeds its profile work p95 budget
 bun run perf:parallax -- --strict

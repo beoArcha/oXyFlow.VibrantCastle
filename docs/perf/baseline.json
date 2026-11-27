@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-27T16:21:49.870Z",
+  "generatedAt": "2026-11-27T23:07:06.997Z",
   "environment": {
     "machine": "DESKTOP-2GMPAJB",
     "os": "Windows_NT 10.0.19045 (x64)",
@@ -46,6 +46,21 @@
         "targetFrameMs": 16.667,
         "frameBudgetMs": 16.6,
         "droppedMultiplier": 1.5
+      },
+      {
+        "profile": "low-power-laptop",
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "dprs": [
+          1
+        ],
+        "cpuThrottlingRate": 6,
+        "targetHz": 60,
+        "targetFrameMs": 16.667,
+        "frameBudgetMs": 16.6,
+        "droppedMultiplier": 1.5
       }
     ],
     "locations": [
@@ -70,42 +85,42 @@
       },
       "cpuThrottlingRate": 1,
       "work": {
-        "sampleCount": 316,
-        "p50Ms": 1.7,
-        "p95Ms": 2.325,
-        "p99Ms": 3.285,
-        "maxMs": 13.2,
-        "meanMs": 1.77,
-        "overBudgetFrames": 1,
-        "overBudgetPct": 0.32,
+        "sampleCount": 305,
+        "p50Ms": 1,
+        "p95Ms": 2.2,
+        "p99Ms": 2.896,
+        "maxMs": 4.1,
+        "meanMs": 1.146,
+        "overBudgetFrames": 0,
+        "overBudgetPct": 0,
         "frameBudgetMs": 8.3
       },
       "cadence": {
-        "sampleCount": 315,
+        "sampleCount": 304,
         "p50Ms": 8.3,
         "p95Ms": 8.4,
-        "maxMs": 16.7,
-        "meanMs": 8.36,
-        "droppedFrames": 1,
-        "droppedPct": 0.32,
+        "maxMs": 8.7,
+        "meanMs": 8.334,
+        "droppedFrames": 0,
+        "droppedPct": 0,
         "targetFrameMs": 8.333,
         "droppedThresholdMs": 12.5
       },
       "longFrames": {
         "observerType": "long-animation-frame",
-        "count": 8,
-        "totalBlockingTimeMs": 1005.1,
-        "maxDurationMs": 658.5
+        "count": 5,
+        "totalBlockingTimeMs": 261.2,
+        "maxDurationMs": 409.9
       },
       "memory": {
-        "jsHeapUsedMB": 8.203,
-        "jsHeapTotalMB": 14.94,
-        "decodedImagesCount": 26,
-        "decodedImagesTotalMB": 124.739,
-        "decodedParallaxCount": 16,
-        "decodedParallaxMB": 94.016
+        "jsHeapUsedMB": 12.084,
+        "jsHeapTotalMB": 15.539,
+        "decodedImagesCount": 21,
+        "decodedImagesTotalMB": 51.565,
+        "decodedParallaxCount": 11,
+        "decodedParallaxMB": 14.343
       },
-      "timeToFirstParallaxFrameMs": 2081.8
+      "timeToFirstParallaxFrameMs": 1430.2
     },
     {
       "profile": "desktop",
@@ -117,676 +132,18 @@
       },
       "cpuThrottlingRate": 1,
       "work": {
-        "sampleCount": 313,
-        "p50Ms": 1.6,
-        "p95Ms": 2.24,
-        "p99Ms": 2.7,
-        "maxMs": 5.5,
-        "meanMs": 1.696,
-        "overBudgetFrames": 0,
-        "overBudgetPct": 0,
-        "frameBudgetMs": 8.3
-      },
-      "cadence": {
-        "sampleCount": 312,
-        "p50Ms": 8.3,
-        "p95Ms": 8.4,
-        "maxMs": 8.5,
-        "meanMs": 8.334,
-        "droppedFrames": 0,
-        "droppedPct": 0,
-        "targetFrameMs": 8.333,
-        "droppedThresholdMs": 12.5
-      },
-      "longFrames": {
-        "observerType": "long-animation-frame",
-        "count": 5,
-        "totalBlockingTimeMs": 157.3,
-        "maxDurationMs": 142.9
-      },
-      "memory": {
-        "jsHeapUsedMB": 10.176,
-        "jsHeapTotalMB": 13.19,
-        "decodedImagesCount": 26,
-        "decodedImagesTotalMB": 124.739,
-        "decodedParallaxCount": 16,
-        "decodedParallaxMB": 94.016
-      },
-      "timeToFirstParallaxFrameMs": 614.5
-    },
-    {
-      "profile": "desktop",
-      "locationId": "thorn_chasm",
-      "dpr": 1,
-      "viewport": {
-        "width": 1280,
-        "height": 720
-      },
-      "cpuThrottlingRate": 1,
-      "work": {
-        "sampleCount": 191,
-        "p50Ms": 1.5,
-        "p95Ms": 2.2,
-        "p99Ms": 4.26,
-        "maxMs": 5.5,
-        "meanMs": 1.563,
-        "overBudgetFrames": 0,
-        "overBudgetPct": 0,
-        "frameBudgetMs": 8.3
-      },
-      "cadence": {
-        "sampleCount": 190,
-        "p50Ms": 8.3,
-        "p95Ms": 8.5,
-        "maxMs": 508.4,
-        "meanMs": 12.413,
-        "droppedFrames": 6,
-        "droppedPct": 3.16,
-        "targetFrameMs": 8.333,
-        "droppedThresholdMs": 12.5
-      },
-      "longFrames": {
-        "observerType": "long-animation-frame",
-        "count": 10,
-        "totalBlockingTimeMs": 567.5,
-        "maxDurationMs": 513.6
-      },
-      "memory": {
-        "jsHeapUsedMB": 10.222,
-        "jsHeapTotalMB": 13.452,
-        "decodedImagesCount": 23,
-        "decodedImagesTotalMB": 108.788,
-        "decodedParallaxCount": 14,
-        "decodedParallaxMB": 78.083
-      },
-      "timeToFirstParallaxFrameMs": 951.4
-    },
-    {
-      "profile": "desktop",
-      "locationId": "thorn_chasm",
-      "dpr": 2,
-      "viewport": {
-        "width": 1280,
-        "height": 720
-      },
-      "cpuThrottlingRate": 1,
-      "work": {
-        "sampleCount": 247,
-        "p50Ms": 1.6,
-        "p95Ms": 2.37,
-        "p99Ms": 3.694,
-        "maxMs": 6.1,
-        "meanMs": 1.67,
-        "overBudgetFrames": 0,
-        "overBudgetPct": 0,
-        "frameBudgetMs": 8.3
-      },
-      "cadence": {
-        "sampleCount": 246,
-        "p50Ms": 8.3,
-        "p95Ms": 8.4,
-        "maxMs": 1033.4,
-        "meanMs": 12.636,
-        "droppedFrames": 3,
-        "droppedPct": 1.22,
-        "targetFrameMs": 8.333,
-        "droppedThresholdMs": 12.5
-      },
-      "longFrames": {
-        "observerType": "long-animation-frame",
-        "count": 6,
-        "totalBlockingTimeMs": 197.7,
-        "maxDurationMs": 1040.8
-      },
-      "memory": {
-        "jsHeapUsedMB": 10.729,
-        "jsHeapTotalMB": 14.459,
-        "decodedImagesCount": 23,
-        "decodedImagesTotalMB": 108.788,
-        "decodedParallaxCount": 14,
-        "decodedParallaxMB": 78.083
-      },
-      "timeToFirstParallaxFrameMs": 730.5
-    },
-    {
-      "profile": "desktop",
-      "locationId": "ashen_catacombs",
-      "dpr": 1,
-      "viewport": {
-        "width": 1280,
-        "height": 720
-      },
-      "cpuThrottlingRate": 1,
-      "work": {
-        "sampleCount": 309,
-        "p50Ms": 1,
-        "p95Ms": 1.5,
-        "p99Ms": 1.8,
-        "maxMs": 3.9,
-        "meanMs": 1.053,
-        "overBudgetFrames": 0,
-        "overBudgetPct": 0,
-        "frameBudgetMs": 8.3
-      },
-      "cadence": {
-        "sampleCount": 308,
-        "p50Ms": 8.3,
-        "p95Ms": 8.4,
-        "maxMs": 8.5,
-        "meanMs": 8.334,
-        "droppedFrames": 0,
-        "droppedPct": 0,
-        "targetFrameMs": 8.333,
-        "droppedThresholdMs": 12.5
-      },
-      "longFrames": {
-        "observerType": "long-animation-frame",
-        "count": 5,
-        "totalBlockingTimeMs": 196.5,
-        "maxDurationMs": 332.5
-      },
-      "memory": {
-        "jsHeapUsedMB": 11.105,
-        "jsHeapTotalMB": 15.18,
-        "decodedImagesCount": 24,
-        "decodedImagesTotalMB": 114.781,
-        "decodedParallaxCount": 15,
-        "decodedParallaxMB": 84.077
-      },
-      "timeToFirstParallaxFrameMs": 1026
-    },
-    {
-      "profile": "desktop",
-      "locationId": "ashen_catacombs",
-      "dpr": 2,
-      "viewport": {
-        "width": 1280,
-        "height": 720
-      },
-      "cpuThrottlingRate": 1,
-      "work": {
-        "sampleCount": 303,
-        "p50Ms": 1,
-        "p95Ms": 1.7,
-        "p99Ms": 2.098,
-        "maxMs": 3.3,
-        "meanMs": 1.083,
-        "overBudgetFrames": 0,
-        "overBudgetPct": 0,
-        "frameBudgetMs": 8.3
-      },
-      "cadence": {
-        "sampleCount": 302,
-        "p50Ms": 8.3,
-        "p95Ms": 8.4,
-        "maxMs": 8.5,
-        "meanMs": 8.333,
-        "droppedFrames": 0,
-        "droppedPct": 0,
-        "targetFrameMs": 8.333,
-        "droppedThresholdMs": 12.5
-      },
-      "longFrames": {
-        "observerType": "long-animation-frame",
-        "count": 5,
-        "totalBlockingTimeMs": 204.1,
-        "maxDurationMs": 202.3
-      },
-      "memory": {
-        "jsHeapUsedMB": 8.767,
-        "jsHeapTotalMB": 14.43,
-        "decodedImagesCount": 24,
-        "decodedImagesTotalMB": 114.781,
-        "decodedParallaxCount": 15,
-        "decodedParallaxMB": 84.077
-      },
-      "timeToFirstParallaxFrameMs": 727.9
-    },
-    {
-      "profile": "desktop",
-      "locationId": "clocktower",
-      "dpr": 1,
-      "viewport": {
-        "width": 1280,
-        "height": 720
-      },
-      "cpuThrottlingRate": 1,
-      "work": {
-        "sampleCount": 312,
-        "p50Ms": 1.7,
-        "p95Ms": 2.445,
-        "p99Ms": 2.789,
-        "maxMs": 4.4,
-        "meanMs": 1.802,
-        "overBudgetFrames": 0,
-        "overBudgetPct": 0,
-        "frameBudgetMs": 8.3
-      },
-      "cadence": {
-        "sampleCount": 311,
-        "p50Ms": 8.3,
-        "p95Ms": 8.4,
-        "maxMs": 33.8,
-        "meanMs": 8.414,
-        "droppedFrames": 1,
-        "droppedPct": 0.32,
-        "targetFrameMs": 8.333,
-        "droppedThresholdMs": 12.5
-      },
-      "longFrames": {
-        "observerType": "long-animation-frame",
-        "count": 5,
-        "totalBlockingTimeMs": 402.1,
-        "maxDurationMs": 261.4
-      },
-      "memory": {
-        "jsHeapUsedMB": 9.93,
-        "jsHeapTotalMB": 15.693,
-        "decodedImagesCount": 24,
-        "decodedImagesTotalMB": 110.849,
-        "decodedParallaxCount": 15,
-        "decodedParallaxMB": 80.145
-      },
-      "timeToFirstParallaxFrameMs": 1436.2
-    },
-    {
-      "profile": "desktop",
-      "locationId": "clocktower",
-      "dpr": 2,
-      "viewport": {
-        "width": 1280,
-        "height": 720
-      },
-      "cpuThrottlingRate": 1,
-      "work": {
-        "sampleCount": 309,
-        "p50Ms": 1.6,
-        "p95Ms": 2.26,
-        "p99Ms": 3.292,
-        "maxMs": 7.9,
-        "meanMs": 1.724,
-        "overBudgetFrames": 0,
-        "overBudgetPct": 0,
-        "frameBudgetMs": 8.3
-      },
-      "cadence": {
-        "sampleCount": 308,
-        "p50Ms": 8.3,
-        "p95Ms": 8.4,
-        "maxMs": 8.6,
-        "meanMs": 8.334,
-        "droppedFrames": 0,
-        "droppedPct": 0,
-        "targetFrameMs": 8.333,
-        "droppedThresholdMs": 12.5
-      },
-      "longFrames": {
-        "observerType": "long-animation-frame",
-        "count": 7,
-        "totalBlockingTimeMs": 234,
-        "maxDurationMs": 740.7
-      },
-      "memory": {
-        "jsHeapUsedMB": 11.169,
-        "jsHeapTotalMB": 14.443,
-        "decodedImagesCount": 24,
-        "decodedImagesTotalMB": 110.849,
-        "decodedParallaxCount": 15,
-        "decodedParallaxMB": 80.145
-      },
-      "timeToFirstParallaxFrameMs": 522.4
-    },
-    {
-      "profile": "desktop",
-      "locationId": "alchemist_library",
-      "dpr": 1,
-      "viewport": {
-        "width": 1280,
-        "height": 720
-      },
-      "cpuThrottlingRate": 1,
-      "work": {
-        "sampleCount": 303,
-        "p50Ms": 1.8,
-        "p95Ms": 2.3,
-        "p99Ms": 2.5,
-        "maxMs": 4.2,
-        "meanMs": 1.811,
-        "overBudgetFrames": 0,
-        "overBudgetPct": 0,
-        "frameBudgetMs": 8.3
-      },
-      "cadence": {
-        "sampleCount": 302,
-        "p50Ms": 8.3,
-        "p95Ms": 8.4,
-        "maxMs": 8.6,
-        "meanMs": 8.333,
-        "droppedFrames": 0,
-        "droppedPct": 0,
-        "targetFrameMs": 8.333,
-        "droppedThresholdMs": 12.5
-      },
-      "longFrames": {
-        "observerType": "long-animation-frame",
-        "count": 6,
-        "totalBlockingTimeMs": 238.1,
-        "maxDurationMs": 146.6
-      },
-      "memory": {
-        "jsHeapUsedMB": 9.541,
-        "jsHeapTotalMB": 15.439,
-        "decodedImagesCount": 22,
-        "decodedImagesTotalMB": 102.786,
-        "decodedParallaxCount": 13,
-        "decodedParallaxMB": 72.082
-      },
-      "timeToFirstParallaxFrameMs": 1252.3
-    },
-    {
-      "profile": "desktop",
-      "locationId": "alchemist_library",
-      "dpr": 2,
-      "viewport": {
-        "width": 1280,
-        "height": 720
-      },
-      "cpuThrottlingRate": 1,
-      "work": {
-        "sampleCount": 292,
-        "p50Ms": 1.9,
-        "p95Ms": 2.4,
-        "p99Ms": 2.618,
-        "maxMs": 5.1,
-        "meanMs": 1.933,
-        "overBudgetFrames": 0,
-        "overBudgetPct": 0,
-        "frameBudgetMs": 8.3
-      },
-      "cadence": {
-        "sampleCount": 291,
-        "p50Ms": 8.3,
-        "p95Ms": 8.4,
-        "maxMs": 133.4,
-        "meanMs": 8.82,
-        "droppedFrames": 3,
-        "droppedPct": 1.03,
-        "targetFrameMs": 8.333,
-        "droppedThresholdMs": 12.5
-      },
-      "longFrames": {
-        "observerType": "long-animation-frame",
-        "count": 6,
-        "totalBlockingTimeMs": 130.4,
-        "maxDurationMs": 134.4
-      },
-      "memory": {
-        "jsHeapUsedMB": 8.222,
-        "jsHeapTotalMB": 14.189,
-        "decodedImagesCount": 22,
-        "decodedImagesTotalMB": 102.786,
-        "decodedParallaxCount": 13,
-        "decodedParallaxMB": 72.082
-      },
-      "timeToFirstParallaxFrameMs": 547.6
-    },
-    {
-      "profile": "desktop",
-      "locationId": "aether_sanctuary",
-      "dpr": 1,
-      "viewport": {
-        "width": 1280,
-        "height": 720
-      },
-      "cpuThrottlingRate": 1,
-      "work": {
-        "sampleCount": 269,
-        "p50Ms": 1.3,
-        "p95Ms": 2,
-        "p99Ms": 2.4,
-        "maxMs": 14.8,
-        "meanMs": 1.416,
-        "overBudgetFrames": 1,
-        "overBudgetPct": 0.37,
-        "frameBudgetMs": 8.3
-      },
-      "cadence": {
-        "sampleCount": 266,
-        "p50Ms": 8.3,
-        "p95Ms": 8.4,
-        "maxMs": 175,
-        "meanMs": 9.493,
-        "droppedFrames": 4,
-        "droppedPct": 1.5,
-        "targetFrameMs": 8.333,
-        "droppedThresholdMs": 12.5
-      },
-      "longFrames": {
-        "observerType": "long-animation-frame",
-        "count": 8,
-        "totalBlockingTimeMs": 114.3,
-        "maxDurationMs": 196.4
-      },
-      "memory": {
-        "jsHeapUsedMB": 10.567,
-        "jsHeapTotalMB": 15.684,
-        "decodedImagesCount": 22,
-        "decodedImagesTotalMB": 102.786,
-        "decodedParallaxCount": 13,
-        "decodedParallaxMB": 72.082
-      },
-      "timeToFirstParallaxFrameMs": 645.3
-    },
-    {
-      "profile": "desktop",
-      "locationId": "aether_sanctuary",
-      "dpr": 2,
-      "viewport": {
-        "width": 1280,
-        "height": 720
-      },
-      "cpuThrottlingRate": 1,
-      "work": {
-        "sampleCount": 276,
-        "p50Ms": 1.4,
+        "sampleCount": 304,
+        "p50Ms": 0.9,
         "p95Ms": 1.8,
-        "p99Ms": 3.15,
-        "maxMs": 10.9,
-        "meanMs": 1.429,
-        "overBudgetFrames": 1,
-        "overBudgetPct": 0.36,
-        "frameBudgetMs": 8.3
-      },
-      "cadence": {
-        "sampleCount": 273,
-        "p50Ms": 8.3,
-        "p95Ms": 8.4,
-        "maxMs": 200,
-        "meanMs": 9.768,
-        "droppedFrames": 4,
-        "droppedPct": 1.47,
-        "targetFrameMs": 8.333,
-        "droppedThresholdMs": 12.5
-      },
-      "longFrames": {
-        "observerType": "long-animation-frame",
-        "count": 6,
-        "totalBlockingTimeMs": 157,
-        "maxDurationMs": 202.2
-      },
-      "memory": {
-        "jsHeapUsedMB": 11.437,
-        "jsHeapTotalMB": 14.184,
-        "decodedImagesCount": 22,
-        "decodedImagesTotalMB": 102.786,
-        "decodedParallaxCount": 13,
-        "decodedParallaxMB": 72.082
-      },
-      "timeToFirstParallaxFrameMs": 677.1
-    },
-    {
-      "profile": "desktop",
-      "locationId": "grand_bastion",
-      "dpr": 1,
-      "viewport": {
-        "width": 1280,
-        "height": 720
-      },
-      "cpuThrottlingRate": 1,
-      "work": {
-        "sampleCount": 221,
-        "p50Ms": 1.7,
-        "p95Ms": 2.6,
-        "p99Ms": 4.34,
-        "maxMs": 30.6,
-        "meanMs": 1.909,
-        "overBudgetFrames": 1,
-        "overBudgetPct": 0.45,
-        "frameBudgetMs": 8.3
-      },
-      "cadence": {
-        "sampleCount": 220,
-        "p50Ms": 8.3,
-        "p95Ms": 8.4,
-        "maxMs": 525.3,
-        "meanMs": 12.121,
-        "droppedFrames": 6,
-        "droppedPct": 2.73,
-        "targetFrameMs": 8.333,
-        "droppedThresholdMs": 12.5
-      },
-      "longFrames": {
-        "observerType": "long-animation-frame",
-        "count": 9,
-        "totalBlockingTimeMs": 115.1,
-        "maxDurationMs": 533
-      },
-      "memory": {
-        "jsHeapUsedMB": 10.317,
-        "jsHeapTotalMB": 12.937,
-        "decodedImagesCount": 22,
-        "decodedImagesTotalMB": 100.818,
-        "decodedParallaxCount": 13,
-        "decodedParallaxMB": 70.114
-      },
-      "timeToFirstParallaxFrameMs": 646.9
-    },
-    {
-      "profile": "desktop",
-      "locationId": "grand_bastion",
-      "dpr": 2,
-      "viewport": {
-        "width": 1280,
-        "height": 720
-      },
-      "cpuThrottlingRate": 1,
-      "work": {
-        "sampleCount": 309,
-        "p50Ms": 1.6,
-        "p95Ms": 2.56,
-        "p99Ms": 8.352,
-        "maxMs": 43.6,
-        "meanMs": 1.945,
-        "overBudgetFrames": 4,
-        "overBudgetPct": 1.29,
-        "frameBudgetMs": 8.3
-      },
-      "cadence": {
-        "sampleCount": 308,
-        "p50Ms": 8.3,
-        "p95Ms": 8.4,
-        "maxMs": 58.3,
-        "meanMs": 8.712,
-        "droppedFrames": 5,
-        "droppedPct": 1.62,
-        "targetFrameMs": 8.333,
-        "droppedThresholdMs": 12.5
-      },
-      "longFrames": {
-        "observerType": "long-animation-frame",
-        "count": 7,
-        "totalBlockingTimeMs": 138.3,
-        "maxDurationMs": 286.9
-      },
-      "memory": {
-        "jsHeapUsedMB": 8.811,
-        "jsHeapTotalMB": 14.187,
-        "decodedImagesCount": 22,
-        "decodedImagesTotalMB": 100.818,
-        "decodedParallaxCount": 13,
-        "decodedParallaxMB": 70.114
-      },
-      "timeToFirstParallaxFrameMs": 1034.3
-    },
-    {
-      "profile": "desktop",
-      "locationId": "eclipse_crown",
-      "dpr": 1,
-      "viewport": {
-        "width": 1280,
-        "height": 720
-      },
-      "cpuThrottlingRate": 1,
-      "work": {
-        "sampleCount": 321,
-        "p50Ms": 1.3,
-        "p95Ms": 2,
-        "p99Ms": 5.32,
-        "maxMs": 68.2,
-        "meanMs": 1.65,
-        "overBudgetFrames": 1,
-        "overBudgetPct": 0.31,
-        "frameBudgetMs": 8.3
-      },
-      "cadence": {
-        "sampleCount": 320,
-        "p50Ms": 8.3,
-        "p95Ms": 8.4,
-        "maxMs": 75,
-        "meanMs": 8.594,
-        "droppedFrames": 2,
-        "droppedPct": 0.63,
-        "targetFrameMs": 8.333,
-        "droppedThresholdMs": 12.5
-      },
-      "longFrames": {
-        "observerType": "long-animation-frame",
-        "count": 7,
-        "totalBlockingTimeMs": 380.5,
-        "maxDurationMs": 359.8
-      },
-      "memory": {
-        "jsHeapUsedMB": 10.185,
-        "jsHeapTotalMB": 15.247,
-        "decodedImagesCount": 24,
-        "decodedImagesTotalMB": 106.885,
-        "decodedParallaxCount": 14,
-        "decodedParallaxMB": 76.118
-      },
-      "timeToFirstParallaxFrameMs": 905.7
-    },
-    {
-      "profile": "desktop",
-      "locationId": "eclipse_crown",
-      "dpr": 2,
-      "viewport": {
-        "width": 1280,
-        "height": 720
-      },
-      "cpuThrottlingRate": 1,
-      "work": {
-        "sampleCount": 266,
-        "p50Ms": 1.4,
-        "p95Ms": 2.2,
-        "p99Ms": 2.6,
-        "maxMs": 4.4,
-        "meanMs": 1.467,
+        "p99Ms": 2.988,
+        "maxMs": 3.1,
+        "meanMs": 1.054,
         "overBudgetFrames": 0,
         "overBudgetPct": 0,
         "frameBudgetMs": 8.3
       },
       "cadence": {
-        "sampleCount": 265,
+        "sampleCount": 303,
         "p50Ms": 8.3,
         "p95Ms": 8.4,
         "maxMs": 8.5,
@@ -799,18 +156,676 @@
       "longFrames": {
         "observerType": "long-animation-frame",
         "count": 4,
-        "totalBlockingTimeMs": 118.3,
-        "maxDurationMs": 121.7
+        "totalBlockingTimeMs": 119.5,
+        "maxDurationMs": 231.6
       },
       "memory": {
-        "jsHeapUsedMB": 9.597,
-        "jsHeapTotalMB": 13.453,
-        "decodedImagesCount": 24,
-        "decodedImagesTotalMB": 106.885,
-        "decodedParallaxCount": 14,
-        "decodedParallaxMB": 76.118
+        "jsHeapUsedMB": 11.381,
+        "jsHeapTotalMB": 15.04,
+        "decodedImagesCount": 19,
+        "decodedImagesTotalMB": 40.516,
+        "decodedParallaxCount": 9,
+        "decodedParallaxMB": 3.294
       },
-      "timeToFirstParallaxFrameMs": 535.7
+      "timeToFirstParallaxFrameMs": 762.3
+    },
+    {
+      "profile": "desktop",
+      "locationId": "thorn_chasm",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 1,
+      "work": {
+        "sampleCount": 305,
+        "p50Ms": 1.5,
+        "p95Ms": 2.9,
+        "p99Ms": 3.3,
+        "maxMs": 4.3,
+        "meanMs": 1.585,
+        "overBudgetFrames": 0,
+        "overBudgetPct": 0,
+        "frameBudgetMs": 8.3
+      },
+      "cadence": {
+        "sampleCount": 304,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 8.5,
+        "meanMs": 8.333,
+        "droppedFrames": 0,
+        "droppedPct": 0,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 4,
+        "totalBlockingTimeMs": 179.5,
+        "maxDurationMs": 235.5
+      },
+      "memory": {
+        "jsHeapUsedMB": 9.972,
+        "jsHeapTotalMB": 13.808,
+        "decodedImagesCount": 19,
+        "decodedImagesTotalMB": 53.534,
+        "decodedParallaxCount": 10,
+        "decodedParallaxMB": 16.331
+      },
+      "timeToFirstParallaxFrameMs": 808.2
+    },
+    {
+      "profile": "desktop",
+      "locationId": "thorn_chasm",
+      "dpr": 2,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 1,
+      "work": {
+        "sampleCount": 300,
+        "p50Ms": 0.8,
+        "p95Ms": 1.805,
+        "p99Ms": 2.302,
+        "maxMs": 3.9,
+        "meanMs": 0.95,
+        "overBudgetFrames": 0,
+        "overBudgetPct": 0,
+        "frameBudgetMs": 8.3
+      },
+      "cadence": {
+        "sampleCount": 299,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 25,
+        "meanMs": 8.389,
+        "droppedFrames": 1,
+        "droppedPct": 0.33,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 4,
+        "totalBlockingTimeMs": 151.7,
+        "maxDurationMs": 257.2
+      },
+      "memory": {
+        "jsHeapUsedMB": 9.934,
+        "jsHeapTotalMB": 14.559,
+        "decodedImagesCount": 18,
+        "decodedImagesTotalMB": 44.192,
+        "decodedParallaxCount": 9,
+        "decodedParallaxMB": 6.99
+      },
+      "timeToFirstParallaxFrameMs": 793.6
+    },
+    {
+      "profile": "desktop",
+      "locationId": "ashen_catacombs",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 1,
+      "work": {
+        "sampleCount": 303,
+        "p50Ms": 1.1,
+        "p95Ms": 2.4,
+        "p99Ms": 2.798,
+        "maxMs": 4.8,
+        "meanMs": 1.237,
+        "overBudgetFrames": 0,
+        "overBudgetPct": 0,
+        "frameBudgetMs": 8.3
+      },
+      "cadence": {
+        "sampleCount": 302,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 8.5,
+        "meanMs": 8.333,
+        "droppedFrames": 0,
+        "droppedPct": 0,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 4,
+        "totalBlockingTimeMs": 148.7,
+        "maxDurationMs": 235
+      },
+      "memory": {
+        "jsHeapUsedMB": 9.36,
+        "jsHeapTotalMB": 15.53,
+        "decodedImagesCount": 19,
+        "decodedImagesTotalMB": 55.014,
+        "decodedParallaxCount": 10,
+        "decodedParallaxMB": 17.811
+      },
+      "timeToFirstParallaxFrameMs": 819.8
+    },
+    {
+      "profile": "desktop",
+      "locationId": "ashen_catacombs",
+      "dpr": 2,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 1,
+      "work": {
+        "sampleCount": 304,
+        "p50Ms": 0.9,
+        "p95Ms": 2.185,
+        "p99Ms": 2.794,
+        "maxMs": 3.2,
+        "meanMs": 1.042,
+        "overBudgetFrames": 0,
+        "overBudgetPct": 0,
+        "frameBudgetMs": 8.3
+      },
+      "cadence": {
+        "sampleCount": 303,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 8.5,
+        "meanMs": 8.334,
+        "droppedFrames": 0,
+        "droppedPct": 0,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 4,
+        "totalBlockingTimeMs": 152,
+        "maxDurationMs": 250.2
+      },
+      "memory": {
+        "jsHeapUsedMB": 11.405,
+        "jsHeapTotalMB": 14.78,
+        "decodedImagesCount": 18,
+        "decodedImagesTotalMB": 47.808,
+        "decodedParallaxCount": 9,
+        "decodedParallaxMB": 10.605
+      },
+      "timeToFirstParallaxFrameMs": 766.3
+    },
+    {
+      "profile": "desktop",
+      "locationId": "clocktower",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 1,
+      "work": {
+        "sampleCount": 304,
+        "p50Ms": 1,
+        "p95Ms": 1.6,
+        "p99Ms": 2.297,
+        "maxMs": 3.4,
+        "meanMs": 1.024,
+        "overBudgetFrames": 0,
+        "overBudgetPct": 0,
+        "frameBudgetMs": 8.3
+      },
+      "cadence": {
+        "sampleCount": 303,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 16.6,
+        "meanMs": 8.361,
+        "droppedFrames": 1,
+        "droppedPct": 0.33,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 5,
+        "totalBlockingTimeMs": 190.2,
+        "maxDurationMs": 239
+      },
+      "memory": {
+        "jsHeapUsedMB": 9.845,
+        "jsHeapTotalMB": 15.542,
+        "decodedImagesCount": 19,
+        "decodedImagesTotalMB": 57.083,
+        "decodedParallaxCount": 10,
+        "decodedParallaxMB": 19.88
+      },
+      "timeToFirstParallaxFrameMs": 797
+    },
+    {
+      "profile": "desktop",
+      "locationId": "clocktower",
+      "dpr": 2,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 1,
+      "work": {
+        "sampleCount": 312,
+        "p50Ms": 1,
+        "p95Ms": 2.545,
+        "p99Ms": 3.389,
+        "maxMs": 18.3,
+        "meanMs": 1.275,
+        "overBudgetFrames": 1,
+        "overBudgetPct": 0.32,
+        "frameBudgetMs": 8.3
+      },
+      "cadence": {
+        "sampleCount": 311,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 16.7,
+        "meanMs": 8.468,
+        "droppedFrames": 5,
+        "droppedPct": 1.61,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 4,
+        "totalBlockingTimeMs": 140.1,
+        "maxDurationMs": 236.8
+      },
+      "memory": {
+        "jsHeapUsedMB": 9.857,
+        "jsHeapTotalMB": 14.293,
+        "decodedImagesCount": 18,
+        "decodedImagesTotalMB": 47.846,
+        "decodedParallaxCount": 9,
+        "decodedParallaxMB": 10.644
+      },
+      "timeToFirstParallaxFrameMs": 765.3
+    },
+    {
+      "profile": "desktop",
+      "locationId": "alchemist_library",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 1,
+      "work": {
+        "sampleCount": 311,
+        "p50Ms": 1.4,
+        "p95Ms": 3,
+        "p99Ms": 4.39,
+        "maxMs": 6.1,
+        "meanMs": 1.58,
+        "overBudgetFrames": 0,
+        "overBudgetPct": 0,
+        "frameBudgetMs": 8.3
+      },
+      "cadence": {
+        "sampleCount": 310,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 26.7,
+        "meanMs": 8.387,
+        "droppedFrames": 1,
+        "droppedPct": 0.32,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 6,
+        "totalBlockingTimeMs": 372.9,
+        "maxDurationMs": 284
+      },
+      "memory": {
+        "jsHeapUsedMB": 10.497,
+        "jsHeapTotalMB": 13.539,
+        "decodedImagesCount": 19,
+        "decodedImagesTotalMB": 55.061,
+        "decodedParallaxCount": 10,
+        "decodedParallaxMB": 17.859
+      },
+      "timeToFirstParallaxFrameMs": 902.5
+    },
+    {
+      "profile": "desktop",
+      "locationId": "alchemist_library",
+      "dpr": 2,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 1,
+      "work": {
+        "sampleCount": 302,
+        "p50Ms": 1.2,
+        "p95Ms": 2.3,
+        "p99Ms": 2.6,
+        "maxMs": 3.7,
+        "meanMs": 1.357,
+        "overBudgetFrames": 0,
+        "overBudgetPct": 0,
+        "frameBudgetMs": 8.3
+      },
+      "cadence": {
+        "sampleCount": 301,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 8.5,
+        "meanMs": 8.334,
+        "droppedFrames": 0,
+        "droppedPct": 0,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 5,
+        "totalBlockingTimeMs": 167.5,
+        "maxDurationMs": 157.7
+      },
+      "memory": {
+        "jsHeapUsedMB": 9.609,
+        "jsHeapTotalMB": 13.539,
+        "decodedImagesCount": 17,
+        "decodedImagesTotalMB": 47.474,
+        "decodedParallaxCount": 8,
+        "decodedParallaxMB": 10.271
+      },
+      "timeToFirstParallaxFrameMs": 791.3
+    },
+    {
+      "profile": "desktop",
+      "locationId": "aether_sanctuary",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 1,
+      "work": {
+        "sampleCount": 292,
+        "p50Ms": 0.85,
+        "p95Ms": 2.045,
+        "p99Ms": 2.509,
+        "maxMs": 8.7,
+        "meanMs": 1.038,
+        "overBudgetFrames": 1,
+        "overBudgetPct": 0.34,
+        "frameBudgetMs": 8.3
+      },
+      "cadence": {
+        "sampleCount": 289,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 108.3,
+        "meanMs": 8.737,
+        "droppedFrames": 3,
+        "droppedPct": 1.04,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 5,
+        "totalBlockingTimeMs": 150.7,
+        "maxDurationMs": 241.3
+      },
+      "memory": {
+        "jsHeapUsedMB": 11.651,
+        "jsHeapTotalMB": 17.034,
+        "decodedImagesCount": 19,
+        "decodedImagesTotalMB": 53.703,
+        "decodedParallaxCount": 10,
+        "decodedParallaxMB": 16.5
+      },
+      "timeToFirstParallaxFrameMs": 820
+    },
+    {
+      "profile": "desktop",
+      "locationId": "aether_sanctuary",
+      "dpr": 2,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 1,
+      "work": {
+        "sampleCount": 304,
+        "p50Ms": 0.7,
+        "p95Ms": 2.2,
+        "p99Ms": 3.097,
+        "maxMs": 11.7,
+        "meanMs": 1.01,
+        "overBudgetFrames": 1,
+        "overBudgetPct": 0.33,
+        "frameBudgetMs": 8.3
+      },
+      "cadence": {
+        "sampleCount": 301,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 25,
+        "meanMs": 8.445,
+        "droppedFrames": 2,
+        "droppedPct": 0.66,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 4,
+        "totalBlockingTimeMs": 134.6,
+        "maxDurationMs": 224.7
+      },
+      "memory": {
+        "jsHeapUsedMB": 11.397,
+        "jsHeapTotalMB": 15.784,
+        "decodedImagesCount": 17,
+        "decodedImagesTotalMB": 43.859,
+        "decodedParallaxCount": 8,
+        "decodedParallaxMB": 6.656
+      },
+      "timeToFirstParallaxFrameMs": 756
+    },
+    {
+      "profile": "desktop",
+      "locationId": "grand_bastion",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 1,
+      "work": {
+        "sampleCount": 300,
+        "p50Ms": 1.05,
+        "p95Ms": 3,
+        "p99Ms": 4,
+        "maxMs": 4.5,
+        "meanMs": 1.361,
+        "overBudgetFrames": 0,
+        "overBudgetPct": 0,
+        "frameBudgetMs": 8.3
+      },
+      "cadence": {
+        "sampleCount": 299,
+        "p50Ms": 8.3,
+        "p95Ms": 8.5,
+        "maxMs": 33.3,
+        "meanMs": 8.445,
+        "droppedFrames": 2,
+        "droppedPct": 0.67,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 4,
+        "totalBlockingTimeMs": 134.8,
+        "maxDurationMs": 246.5
+      },
+      "memory": {
+        "jsHeapUsedMB": 11.33,
+        "jsHeapTotalMB": 15.286,
+        "decodedImagesCount": 19,
+        "decodedImagesTotalMB": 53.699,
+        "decodedParallaxCount": 10,
+        "decodedParallaxMB": 16.496
+      },
+      "timeToFirstParallaxFrameMs": 756.7
+    },
+    {
+      "profile": "desktop",
+      "locationId": "grand_bastion",
+      "dpr": 2,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 1,
+      "work": {
+        "sampleCount": 303,
+        "p50Ms": 0.8,
+        "p95Ms": 1.69,
+        "p99Ms": 2.2,
+        "maxMs": 4.2,
+        "meanMs": 0.942,
+        "overBudgetFrames": 0,
+        "overBudgetPct": 0,
+        "frameBudgetMs": 8.3
+      },
+      "cadence": {
+        "sampleCount": 302,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 16.6,
+        "meanMs": 8.361,
+        "droppedFrames": 1,
+        "droppedPct": 0.33,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 4,
+        "totalBlockingTimeMs": 157.8,
+        "maxDurationMs": 247
+      },
+      "memory": {
+        "jsHeapUsedMB": 8.433,
+        "jsHeapTotalMB": 14.036,
+        "decodedImagesCount": 17,
+        "decodedImagesTotalMB": 43.859,
+        "decodedParallaxCount": 8,
+        "decodedParallaxMB": 6.656
+      },
+      "timeToFirstParallaxFrameMs": 784.6
+    },
+    {
+      "profile": "desktop",
+      "locationId": "eclipse_crown",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 1,
+      "work": {
+        "sampleCount": 302,
+        "p50Ms": 1.2,
+        "p95Ms": 2.395,
+        "p99Ms": 2.899,
+        "maxMs": 5.3,
+        "meanMs": 1.26,
+        "overBudgetFrames": 0,
+        "overBudgetPct": 0,
+        "frameBudgetMs": 8.3
+      },
+      "cadence": {
+        "sampleCount": 301,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 16.7,
+        "meanMs": 8.361,
+        "droppedFrames": 1,
+        "droppedPct": 0.33,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 4,
+        "totalBlockingTimeMs": 180.9,
+        "maxDurationMs": 264.7
+      },
+      "memory": {
+        "jsHeapUsedMB": 10.761,
+        "jsHeapTotalMB": 13.052,
+        "decodedImagesCount": 22,
+        "decodedImagesTotalMB": 60.595,
+        "decodedParallaxCount": 12,
+        "decodedParallaxMB": 23.33
+      },
+      "timeToFirstParallaxFrameMs": 834.6
+    },
+    {
+      "profile": "desktop",
+      "locationId": "eclipse_crown",
+      "dpr": 2,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 1,
+      "work": {
+        "sampleCount": 302,
+        "p50Ms": 0.9,
+        "p95Ms": 2.195,
+        "p99Ms": 2.899,
+        "maxMs": 5.6,
+        "meanMs": 1.12,
+        "overBudgetFrames": 0,
+        "overBudgetPct": 0,
+        "frameBudgetMs": 8.3
+      },
+      "cadence": {
+        "sampleCount": 301,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 8.5,
+        "meanMs": 8.334,
+        "droppedFrames": 0,
+        "droppedPct": 0,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 6,
+        "totalBlockingTimeMs": 149.4,
+        "maxDurationMs": 151.5
+      },
+      "memory": {
+        "jsHeapUsedMB": 9.609,
+        "jsHeapTotalMB": 14.302,
+        "decodedImagesCount": 18,
+        "decodedImagesTotalMB": 47.576,
+        "decodedParallaxCount": 8,
+        "decodedParallaxMB": 10.311
+      },
+      "timeToFirstParallaxFrameMs": 677.9
     },
     {
       "profile": "tablet",
@@ -822,42 +837,42 @@
       },
       "cpuThrottlingRate": 4,
       "work": {
-        "sampleCount": 391,
-        "p50Ms": 1.7,
-        "p95Ms": 4,
-        "p99Ms": 6.75,
-        "maxMs": 31.1,
-        "meanMs": 2.157,
-        "overBudgetFrames": 1,
-        "overBudgetPct": 0.26,
+        "sampleCount": 299,
+        "p50Ms": 0.9,
+        "p95Ms": 2.9,
+        "p99Ms": 3.502,
+        "maxMs": 11.6,
+        "meanMs": 1.265,
+        "overBudgetFrames": 0,
+        "overBudgetPct": 0,
         "frameBudgetMs": 16.6
       },
       "cadence": {
-        "sampleCount": 390,
+        "sampleCount": 298,
         "p50Ms": 8.3,
-        "p95Ms": 8.5,
+        "p95Ms": 8.615,
         "maxMs": 41.7,
-        "meanMs": 8.932,
-        "droppedFrames": 6,
-        "droppedPct": 1.54,
+        "meanMs": 8.893,
+        "droppedFrames": 2,
+        "droppedPct": 0.67,
         "targetFrameMs": 16.667,
         "droppedThresholdMs": 25
       },
       "longFrames": {
         "observerType": "long-animation-frame",
-        "count": 9,
-        "totalBlockingTimeMs": 1374.8,
-        "maxDurationMs": 912.2
+        "count": 5,
+        "totalBlockingTimeMs": 415.6,
+        "maxDurationMs": 569.9
       },
       "memory": {
-        "jsHeapUsedMB": 8.663,
-        "jsHeapTotalMB": 14.44,
-        "decodedImagesCount": 26,
-        "decodedImagesTotalMB": 124.739,
-        "decodedParallaxCount": 16,
-        "decodedParallaxMB": 94.016
+        "jsHeapUsedMB": 9.908,
+        "jsHeapTotalMB": 14.29,
+        "decodedImagesCount": 19,
+        "decodedImagesTotalMB": 40.516,
+        "decodedParallaxCount": 9,
+        "decodedParallaxMB": 3.294
       },
-      "timeToFirstParallaxFrameMs": 1964.5
+      "timeToFirstParallaxFrameMs": 1305.4
     },
     {
       "profile": "tablet",
@@ -869,42 +884,42 @@
       },
       "cpuThrottlingRate": 4,
       "work": {
-        "sampleCount": 451,
-        "p50Ms": 1.4,
-        "p95Ms": 3.2,
-        "p99Ms": 6.05,
-        "maxMs": 24.7,
-        "meanMs": 1.738,
+        "sampleCount": 300,
+        "p50Ms": 1.2,
+        "p95Ms": 3.205,
+        "p99Ms": 4.738,
+        "maxMs": 17.4,
+        "meanMs": 1.549,
         "overBudgetFrames": 1,
-        "overBudgetPct": 0.22,
+        "overBudgetPct": 0.33,
         "frameBudgetMs": 16.6
       },
       "cadence": {
-        "sampleCount": 450,
+        "sampleCount": 299,
         "p50Ms": 8.3,
-        "p95Ms": 16.7,
-        "maxMs": 133.3,
-        "meanMs": 10.815,
-        "droppedFrames": 14,
-        "droppedPct": 3.11,
+        "p95Ms": 8.4,
+        "maxMs": 25,
+        "meanMs": 8.501,
+        "droppedFrames": 0,
+        "droppedPct": 0,
         "targetFrameMs": 16.667,
         "droppedThresholdMs": 25
       },
       "longFrames": {
         "observerType": "long-animation-frame",
-        "count": 20,
-        "totalBlockingTimeMs": 870.7,
+        "count": 6,
+        "totalBlockingTimeMs": 477.9,
         "maxDurationMs": 290.5
       },
       "memory": {
-        "jsHeapUsedMB": 8.756,
-        "jsHeapTotalMB": 13.709,
-        "decodedImagesCount": 23,
-        "decodedImagesTotalMB": 108.788,
-        "decodedParallaxCount": 14,
-        "decodedParallaxMB": 78.083
+        "jsHeapUsedMB": 9.664,
+        "jsHeapTotalMB": 14.558,
+        "decodedImagesCount": 18,
+        "decodedImagesTotalMB": 44.192,
+        "decodedParallaxCount": 9,
+        "decodedParallaxMB": 6.99
       },
-      "timeToFirstParallaxFrameMs": 1069.5
+      "timeToFirstParallaxFrameMs": 1247.3
     },
     {
       "profile": "tablet",
@@ -916,42 +931,42 @@
       },
       "cpuThrottlingRate": 4,
       "work": {
-        "sampleCount": 446,
-        "p50Ms": 1,
-        "p95Ms": 2.775,
-        "p99Ms": 5.87,
-        "maxMs": 11.2,
-        "meanMs": 1.271,
+        "sampleCount": 303,
+        "p50Ms": 1.8,
+        "p95Ms": 4,
+        "p99Ms": 4.798,
+        "maxMs": 11.9,
+        "meanMs": 2.006,
         "overBudgetFrames": 0,
         "overBudgetPct": 0,
         "frameBudgetMs": 16.6
       },
       "cadence": {
-        "sampleCount": 445,
+        "sampleCount": 302,
         "p50Ms": 8.3,
-        "p95Ms": 8.58,
-        "maxMs": 66.7,
-        "meanMs": 9.139,
-        "droppedFrames": 6,
-        "droppedPct": 1.35,
+        "p95Ms": 8.4,
+        "maxMs": 16.6,
+        "meanMs": 8.361,
+        "droppedFrames": 0,
+        "droppedPct": 0,
         "targetFrameMs": 16.667,
         "droppedThresholdMs": 25
       },
       "longFrames": {
         "observerType": "long-animation-frame",
-        "count": 13,
-        "totalBlockingTimeMs": 648.8,
-        "maxDurationMs": 745
+        "count": 4,
+        "totalBlockingTimeMs": 399.2,
+        "maxDurationMs": 522.9
       },
       "memory": {
-        "jsHeapUsedMB": 8.784,
-        "jsHeapTotalMB": 15.181,
-        "decodedImagesCount": 24,
-        "decodedImagesTotalMB": 114.781,
-        "decodedParallaxCount": 15,
-        "decodedParallaxMB": 84.077
+        "jsHeapUsedMB": 11.326,
+        "jsHeapTotalMB": 14.78,
+        "decodedImagesCount": 18,
+        "decodedImagesTotalMB": 47.808,
+        "decodedParallaxCount": 9,
+        "decodedParallaxMB": 10.605
       },
-      "timeToFirstParallaxFrameMs": 1070.8
+      "timeToFirstParallaxFrameMs": 1200.2
     },
     {
       "profile": "tablet",
@@ -963,22 +978,22 @@
       },
       "cpuThrottlingRate": 4,
       "work": {
-        "sampleCount": 357,
-        "p50Ms": 2.2,
-        "p95Ms": 5.32,
-        "p99Ms": 7.1,
-        "maxMs": 8.3,
-        "meanMs": 2.648,
+        "sampleCount": 302,
+        "p50Ms": 1.95,
+        "p95Ms": 3.7,
+        "p99Ms": 4.396,
+        "maxMs": 4.8,
+        "meanMs": 2.056,
         "overBudgetFrames": 0,
         "overBudgetPct": 0,
         "frameBudgetMs": 16.6
       },
       "cadence": {
-        "sampleCount": 356,
+        "sampleCount": 301,
         "p50Ms": 8.3,
         "p95Ms": 8.4,
-        "maxMs": 24.9,
-        "meanMs": 8.38,
+        "maxMs": 16.7,
+        "meanMs": 8.416,
         "droppedFrames": 0,
         "droppedPct": 0,
         "targetFrameMs": 16.667,
@@ -986,19 +1001,19 @@
       },
       "longFrames": {
         "observerType": "long-animation-frame",
-        "count": 10,
-        "totalBlockingTimeMs": 1029.8,
-        "maxDurationMs": 434.9
+        "count": 6,
+        "totalBlockingTimeMs": 382.9,
+        "maxDurationMs": 572.7
       },
       "memory": {
-        "jsHeapUsedMB": 8.68,
-        "jsHeapTotalMB": 14.943,
-        "decodedImagesCount": 24,
-        "decodedImagesTotalMB": 110.849,
-        "decodedParallaxCount": 15,
-        "decodedParallaxMB": 80.145
+        "jsHeapUsedMB": 9.714,
+        "jsHeapTotalMB": 14.793,
+        "decodedImagesCount": 18,
+        "decodedImagesTotalMB": 47.846,
+        "decodedParallaxCount": 9,
+        "decodedParallaxMB": 10.644
       },
-      "timeToFirstParallaxFrameMs": 1025.8
+      "timeToFirstParallaxFrameMs": 1056.8
     },
     {
       "profile": "tablet",
@@ -1010,42 +1025,42 @@
       },
       "cpuThrottlingRate": 4,
       "work": {
-        "sampleCount": 251,
-        "p50Ms": 4.2,
-        "p95Ms": 7.15,
-        "p99Ms": 8.05,
-        "maxMs": 15.3,
-        "meanMs": 4.146,
+        "sampleCount": 304,
+        "p50Ms": 2.9,
+        "p95Ms": 6.685,
+        "p99Ms": 9.076,
+        "maxMs": 12,
+        "meanMs": 3.287,
         "overBudgetFrames": 0,
         "overBudgetPct": 0,
         "frameBudgetMs": 16.6
       },
       "cadence": {
-        "sampleCount": 250,
+        "sampleCount": 303,
         "p50Ms": 8.3,
-        "p95Ms": 8.4,
-        "maxMs": 511.1,
-        "meanMs": 10.534,
-        "droppedFrames": 2,
-        "droppedPct": 0.8,
+        "p95Ms": 8.5,
+        "maxMs": 16.7,
+        "meanMs": 8.499,
+        "droppedFrames": 0,
+        "droppedPct": 0,
         "targetFrameMs": 16.667,
         "droppedThresholdMs": 25
       },
       "longFrames": {
         "observerType": "long-animation-frame",
-        "count": 7,
-        "totalBlockingTimeMs": 861.1,
-        "maxDurationMs": 528.3
+        "count": 6,
+        "totalBlockingTimeMs": 290.8,
+        "maxDurationMs": 258.3
       },
       "memory": {
-        "jsHeapUsedMB": 8.521,
-        "jsHeapTotalMB": 13.689,
-        "decodedImagesCount": 22,
-        "decodedImagesTotalMB": 102.786,
-        "decodedParallaxCount": 13,
-        "decodedParallaxMB": 72.082
+        "jsHeapUsedMB": 9.826,
+        "jsHeapTotalMB": 13.289,
+        "decodedImagesCount": 17,
+        "decodedImagesTotalMB": 47.474,
+        "decodedParallaxCount": 8,
+        "decodedParallaxMB": 10.271
       },
-      "timeToFirstParallaxFrameMs": 1052
+      "timeToFirstParallaxFrameMs": 1064.8
     },
     {
       "profile": "tablet",
@@ -1057,42 +1072,42 @@
       },
       "cpuThrottlingRate": 4,
       "work": {
-        "sampleCount": 285,
-        "p50Ms": 2.2,
-        "p95Ms": 5.38,
-        "p99Ms": 7.04,
-        "maxMs": 51,
-        "meanMs": 2.756,
-        "overBudgetFrames": 1,
-        "overBudgetPct": 0.35,
+        "sampleCount": 291,
+        "p50Ms": 0.7,
+        "p95Ms": 2.55,
+        "p99Ms": 4.31,
+        "maxMs": 11.7,
+        "meanMs": 1.045,
+        "overBudgetFrames": 0,
+        "overBudgetPct": 0,
         "frameBudgetMs": 16.6
       },
       "cadence": {
-        "sampleCount": 282,
+        "sampleCount": 288,
         "p50Ms": 8.3,
-        "p95Ms": 8.5,
-        "maxMs": 175,
-        "meanMs": 9.131,
-        "droppedFrames": 1,
-        "droppedPct": 0.35,
+        "p95Ms": 11.865,
+        "maxMs": 42.1,
+        "meanMs": 9.052,
+        "droppedFrames": 4,
+        "droppedPct": 1.39,
         "targetFrameMs": 16.667,
         "droppedThresholdMs": 25
       },
       "longFrames": {
         "observerType": "long-animation-frame",
-        "count": 14,
-        "totalBlockingTimeMs": 1423.3,
-        "maxDurationMs": 786.4
+        "count": 9,
+        "totalBlockingTimeMs": 918.1,
+        "maxDurationMs": 708.8
       },
       "memory": {
-        "jsHeapUsedMB": 12.377,
-        "jsHeapTotalMB": 15.685,
-        "decodedImagesCount": 22,
-        "decodedImagesTotalMB": 102.786,
-        "decodedParallaxCount": 13,
-        "decodedParallaxMB": 72.082
+        "jsHeapUsedMB": 10.826,
+        "jsHeapTotalMB": 13.784,
+        "decodedImagesCount": 17,
+        "decodedImagesTotalMB": 43.859,
+        "decodedParallaxCount": 8,
+        "decodedParallaxMB": 6.656
       },
-      "timeToFirstParallaxFrameMs": 2504.1
+      "timeToFirstParallaxFrameMs": 1597.3
     },
     {
       "profile": "tablet",
@@ -1104,42 +1119,42 @@
       },
       "cpuThrottlingRate": 4,
       "work": {
-        "sampleCount": 284,
-        "p50Ms": 3.4,
-        "p95Ms": 6.7,
-        "p99Ms": 8.517,
-        "maxMs": 9.6,
-        "meanMs": 3.671,
+        "sampleCount": 302,
+        "p50Ms": 1.1,
+        "p95Ms": 2.8,
+        "p99Ms": 3.499,
+        "maxMs": 4.7,
+        "meanMs": 1.326,
         "overBudgetFrames": 0,
         "overBudgetPct": 0,
         "frameBudgetMs": 16.6
       },
       "cadence": {
-        "sampleCount": 283,
+        "sampleCount": 301,
         "p50Ms": 8.3,
         "p95Ms": 8.4,
-        "maxMs": 100,
-        "meanMs": 8.981,
-        "droppedFrames": 3,
-        "droppedPct": 1.06,
+        "maxMs": 25,
+        "meanMs": 8.417,
+        "droppedFrames": 0,
+        "droppedPct": 0,
         "targetFrameMs": 16.667,
         "droppedThresholdMs": 25
       },
       "longFrames": {
         "observerType": "long-animation-frame",
-        "count": 8,
-        "totalBlockingTimeMs": 697,
-        "maxDurationMs": 411.3
+        "count": 4,
+        "totalBlockingTimeMs": 222.9,
+        "maxDurationMs": 267.4
       },
       "memory": {
-        "jsHeapUsedMB": 11.069,
-        "jsHeapTotalMB": 14.687,
-        "decodedImagesCount": 22,
-        "decodedImagesTotalMB": 100.818,
-        "decodedParallaxCount": 13,
-        "decodedParallaxMB": 70.114
+        "jsHeapUsedMB": 9.168,
+        "jsHeapTotalMB": 14.536,
+        "decodedImagesCount": 17,
+        "decodedImagesTotalMB": 43.859,
+        "decodedParallaxCount": 8,
+        "decodedParallaxMB": 6.656
       },
-      "timeToFirstParallaxFrameMs": 1216.2
+      "timeToFirstParallaxFrameMs": 819.4
     },
     {
       "profile": "tablet",
@@ -1151,59 +1166,435 @@
       },
       "cpuThrottlingRate": 4,
       "work": {
-        "sampleCount": 312,
-        "p50Ms": 4,
-        "p95Ms": 6.545,
-        "p99Ms": 7.8,
-        "maxMs": 10.9,
-        "meanMs": 3.84,
+        "sampleCount": 323,
+        "p50Ms": 0.9,
+        "p95Ms": 2.9,
+        "p99Ms": 3.656,
+        "maxMs": 14.6,
+        "meanMs": 1.346,
         "overBudgetFrames": 0,
         "overBudgetPct": 0,
         "frameBudgetMs": 16.6
       },
       "cadence": {
-        "sampleCount": 311,
+        "sampleCount": 320,
         "p50Ms": 8.3,
-        "p95Ms": 8.4,
-        "maxMs": 33.4,
-        "meanMs": 8.468,
-        "droppedFrames": 2,
-        "droppedPct": 0.64,
+        "p95Ms": 8.7,
+        "maxMs": 24.9,
+        "meanMs": 8.491,
+        "droppedFrames": 0,
+        "droppedPct": 0,
+        "targetFrameMs": 16.667,
+        "droppedThresholdMs": 25
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 7,
+        "totalBlockingTimeMs": 221.8,
+        "maxDurationMs": 273.3
+      },
+      "memory": {
+        "jsHeapUsedMB": 11.42,
+        "jsHeapTotalMB": 15.804,
+        "decodedImagesCount": 18,
+        "decodedImagesTotalMB": 47.576,
+        "decodedParallaxCount": 8,
+        "decodedParallaxMB": 10.311
+      },
+      "timeToFirstParallaxFrameMs": 795.8
+    },
+    {
+      "profile": "low-power-laptop",
+      "locationId": "courtyard",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 6,
+      "work": {
+        "sampleCount": 306,
+        "p50Ms": 0.8,
+        "p95Ms": 2.7,
+        "p99Ms": 3.7,
+        "maxMs": 5.2,
+        "meanMs": 1.129,
+        "overBudgetFrames": 0,
+        "overBudgetPct": 0,
+        "frameBudgetMs": 16.6
+      },
+      "cadence": {
+        "sampleCount": 305,
+        "p50Ms": 8.3,
+        "p95Ms": 8.7,
+        "maxMs": 25,
+        "meanMs": 8.634,
+        "droppedFrames": 0,
+        "droppedPct": 0,
         "targetFrameMs": 16.667,
         "droppedThresholdMs": 25
       },
       "longFrames": {
         "observerType": "long-animation-frame",
         "count": 5,
-        "totalBlockingTimeMs": 878.8,
-        "maxDurationMs": 524.8
+        "totalBlockingTimeMs": 447.6,
+        "maxDurationMs": 376.3
       },
       "memory": {
-        "jsHeapUsedMB": 9.164,
-        "jsHeapTotalMB": 14.761,
-        "decodedImagesCount": 24,
-        "decodedImagesTotalMB": 106.885,
-        "decodedParallaxCount": 14,
-        "decodedParallaxMB": 76.118
+        "jsHeapUsedMB": 11.028,
+        "jsHeapTotalMB": 15.79,
+        "decodedImagesCount": 21,
+        "decodedImagesTotalMB": 51.565,
+        "decodedParallaxCount": 11,
+        "decodedParallaxMB": 14.343
       },
-      "timeToFirstParallaxFrameMs": 1346.1
+      "timeToFirstParallaxFrameMs": 1293.1
+    },
+    {
+      "profile": "low-power-laptop",
+      "locationId": "thorn_chasm",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 6,
+      "work": {
+        "sampleCount": 274,
+        "p50Ms": 1.9,
+        "p95Ms": 5.3,
+        "p99Ms": 10.197,
+        "maxMs": 14.4,
+        "meanMs": 2.389,
+        "overBudgetFrames": 0,
+        "overBudgetPct": 0,
+        "frameBudgetMs": 16.6
+      },
+      "cadence": {
+        "sampleCount": 273,
+        "p50Ms": 8.3,
+        "p95Ms": 13.6,
+        "maxMs": 75.3,
+        "meanMs": 9.463,
+        "droppedFrames": 5,
+        "droppedPct": 1.83,
+        "targetFrameMs": 16.667,
+        "droppedThresholdMs": 25
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 9,
+        "totalBlockingTimeMs": 280.6,
+        "maxDurationMs": 201.3
+      },
+      "memory": {
+        "jsHeapUsedMB": 10.527,
+        "jsHeapTotalMB": 14.808,
+        "decodedImagesCount": 19,
+        "decodedImagesTotalMB": 53.534,
+        "decodedParallaxCount": 10,
+        "decodedParallaxMB": 16.331
+      },
+      "timeToFirstParallaxFrameMs": 933.2
+    },
+    {
+      "profile": "low-power-laptop",
+      "locationId": "ashen_catacombs",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 6,
+      "work": {
+        "sampleCount": 295,
+        "p50Ms": 1.5,
+        "p95Ms": 4.8,
+        "p99Ms": 7.4,
+        "maxMs": 10.5,
+        "meanMs": 2.003,
+        "overBudgetFrames": 0,
+        "overBudgetPct": 0,
+        "frameBudgetMs": 16.6
+      },
+      "cadence": {
+        "sampleCount": 294,
+        "p50Ms": 8.3,
+        "p95Ms": 8.7,
+        "maxMs": 50,
+        "meanMs": 8.617,
+        "droppedFrames": 1,
+        "droppedPct": 0.34,
+        "targetFrameMs": 16.667,
+        "droppedThresholdMs": 25
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 7,
+        "totalBlockingTimeMs": 343.2,
+        "maxDurationMs": 229.1
+      },
+      "memory": {
+        "jsHeapUsedMB": 9.794,
+        "jsHeapTotalMB": 13.03,
+        "decodedImagesCount": 19,
+        "decodedImagesTotalMB": 55.014,
+        "decodedParallaxCount": 10,
+        "decodedParallaxMB": 17.811
+      },
+      "timeToFirstParallaxFrameMs": 1213.4
+    },
+    {
+      "profile": "low-power-laptop",
+      "locationId": "clocktower",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 6,
+      "work": {
+        "sampleCount": 284,
+        "p50Ms": 1.95,
+        "p95Ms": 5.4,
+        "p99Ms": 6.555,
+        "maxMs": 9.2,
+        "meanMs": 2.379,
+        "overBudgetFrames": 0,
+        "overBudgetPct": 0,
+        "frameBudgetMs": 16.6
+      },
+      "cadence": {
+        "sampleCount": 283,
+        "p50Ms": 8.3,
+        "p95Ms": 14.12,
+        "maxMs": 33.4,
+        "meanMs": 8.952,
+        "droppedFrames": 3,
+        "droppedPct": 1.06,
+        "targetFrameMs": 16.667,
+        "droppedThresholdMs": 25
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 7,
+        "totalBlockingTimeMs": 545.7,
+        "maxDurationMs": 390.7
+      },
+      "memory": {
+        "jsHeapUsedMB": 9.443,
+        "jsHeapTotalMB": 14.792,
+        "decodedImagesCount": 19,
+        "decodedImagesTotalMB": 57.083,
+        "decodedParallaxCount": 10,
+        "decodedParallaxMB": 19.88
+      },
+      "timeToFirstParallaxFrameMs": 1364
+    },
+    {
+      "profile": "low-power-laptop",
+      "locationId": "alchemist_library",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 6,
+      "work": {
+        "sampleCount": 289,
+        "p50Ms": 3.1,
+        "p95Ms": 9.6,
+        "p99Ms": 11.748,
+        "maxMs": 18,
+        "meanMs": 3.961,
+        "overBudgetFrames": 1,
+        "overBudgetPct": 0.35,
+        "frameBudgetMs": 16.6
+      },
+      "cadence": {
+        "sampleCount": 288,
+        "p50Ms": 8.3,
+        "p95Ms": 9.465,
+        "maxMs": 41.7,
+        "meanMs": 8.854,
+        "droppedFrames": 1,
+        "droppedPct": 0.35,
+        "targetFrameMs": 16.667,
+        "droppedThresholdMs": 25
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 6,
+        "totalBlockingTimeMs": 579.3,
+        "maxDurationMs": 559.2
+      },
+      "memory": {
+        "jsHeapUsedMB": 10.021,
+        "jsHeapTotalMB": 13.289,
+        "decodedImagesCount": 19,
+        "decodedImagesTotalMB": 55.061,
+        "decodedParallaxCount": 10,
+        "decodedParallaxMB": 17.859
+      },
+      "timeToFirstParallaxFrameMs": 1575.8
+    },
+    {
+      "profile": "low-power-laptop",
+      "locationId": "aether_sanctuary",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 6,
+      "work": {
+        "sampleCount": 281,
+        "p50Ms": 1.4,
+        "p95Ms": 3.9,
+        "p99Ms": 5.38,
+        "maxMs": 27.2,
+        "meanMs": 1.835,
+        "overBudgetFrames": 1,
+        "overBudgetPct": 0.36,
+        "frameBudgetMs": 16.6
+      },
+      "cadence": {
+        "sampleCount": 278,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 83.3,
+        "meanMs": 9.173,
+        "droppedFrames": 5,
+        "droppedPct": 1.8,
+        "targetFrameMs": 16.667,
+        "droppedThresholdMs": 25
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 9,
+        "totalBlockingTimeMs": 636.8,
+        "maxDurationMs": 742.5
+      },
+      "memory": {
+        "jsHeapUsedMB": 12.312,
+        "jsHeapTotalMB": 15.034,
+        "decodedImagesCount": 19,
+        "decodedImagesTotalMB": 53.703,
+        "decodedParallaxCount": 10,
+        "decodedParallaxMB": 16.5
+      },
+      "timeToFirstParallaxFrameMs": 1564.3
+    },
+    {
+      "profile": "low-power-laptop",
+      "locationId": "grand_bastion",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 6,
+      "work": {
+        "sampleCount": 277,
+        "p50Ms": 1.5,
+        "p95Ms": 4.8,
+        "p99Ms": 5.672,
+        "maxMs": 19.2,
+        "meanMs": 2.107,
+        "overBudgetFrames": 1,
+        "overBudgetPct": 0.36,
+        "frameBudgetMs": 16.6
+      },
+      "cadence": {
+        "sampleCount": 276,
+        "p50Ms": 8.3,
+        "p95Ms": 8.5,
+        "maxMs": 100.1,
+        "meanMs": 9.239,
+        "droppedFrames": 3,
+        "droppedPct": 1.09,
+        "targetFrameMs": 16.667,
+        "droppedThresholdMs": 25
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 8,
+        "totalBlockingTimeMs": 432.7,
+        "maxDurationMs": 319.6
+      },
+      "memory": {
+        "jsHeapUsedMB": 10.04,
+        "jsHeapTotalMB": 14.036,
+        "decodedImagesCount": 19,
+        "decodedImagesTotalMB": 53.699,
+        "decodedParallaxCount": 10,
+        "decodedParallaxMB": 16.496
+      },
+      "timeToFirstParallaxFrameMs": 1259.8
+    },
+    {
+      "profile": "low-power-laptop",
+      "locationId": "eclipse_crown",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "cpuThrottlingRate": 6,
+      "work": {
+        "sampleCount": 301,
+        "p50Ms": 1.5,
+        "p95Ms": 6.9,
+        "p99Ms": 9.6,
+        "maxMs": 25.8,
+        "meanMs": 2.303,
+        "overBudgetFrames": 1,
+        "overBudgetPct": 0.33,
+        "frameBudgetMs": 16.6
+      },
+      "cadence": {
+        "sampleCount": 300,
+        "p50Ms": 8.3,
+        "p95Ms": 10.805,
+        "maxMs": 66.6,
+        "meanMs": 9.195,
+        "droppedFrames": 4,
+        "droppedPct": 1.33,
+        "targetFrameMs": 16.667,
+        "droppedThresholdMs": 25
+      },
+      "longFrames": {
+        "observerType": "long-animation-frame",
+        "count": 8,
+        "totalBlockingTimeMs": 461.4,
+        "maxDurationMs": 570.1
+      },
+      "memory": {
+        "jsHeapUsedMB": 11.032,
+        "jsHeapTotalMB": 14.361,
+        "decodedImagesCount": 22,
+        "decodedImagesTotalMB": 60.595,
+        "decodedParallaxCount": 12,
+        "decodedParallaxMB": 23.33
+      },
+      "timeToFirstParallaxFrameMs": 1333.3
     }
   ],
   "summary": {
-    "totalRuns": 24,
+    "totalRuns": 32,
     "failedRuns": 0,
-    "worstWorkP50Ms": 4.2,
-    "worstWorkP95Ms": 7.15,
-    "worstWorkP99Ms": 8.517,
-    "worstWorkMaxMs": 68.2,
-    "worstOverBudgetPct": 1.29,
-    "totalOverBudgetFrames": 12,
-    "totalDroppedFrames": 69,
-    "totalLongFrames": 190,
-    "totalBlockingTimeMs": 12140.6,
-    "maxDecodedParallaxMB": 94.016,
-    "maxDecodedImagesTotalMB": 124.739,
-    "maxJsHeapUsedMB": 12.377,
-    "maxFirstParallaxFrameMs": 2504.1
+    "worstWorkP50Ms": 3.1,
+    "worstWorkP95Ms": 9.6,
+    "worstWorkP99Ms": 11.748,
+    "worstWorkMaxMs": 27.2,
+    "worstOverBudgetPct": 0.36,
+    "totalOverBudgetFrames": 8,
+    "totalDroppedFrames": 45,
+    "totalLongFrames": 178,
+    "totalBlockingTimeMs": 9848,
+    "maxDecodedParallaxMB": 23.33,
+    "maxDecodedImagesTotalMB": 60.595,
+    "maxJsHeapUsedMB": 12.312,
+    "maxFirstParallaxFrameMs": 1597.3
   }
 }

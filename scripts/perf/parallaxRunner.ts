@@ -44,12 +44,15 @@ const OUT_DIR = join(ROOT_DIR, "scripts", "perf", "out");
 const PERF_BUILD_DIR = join(OUT_DIR, "dist");
 const DEFAULT_BASELINE_PATH = join(ROOT_DIR, "docs", "perf", "baseline.json");
 
+export type ParallaxQualityArg = "auto" | "high" | "mid" | "low" | "simplified" | "off";
+
 export interface RunnerCliOptions {
   readonly serverMode: ServerMode;
   readonly browser: PerfBrowserKind;
   readonly url: string | null;
   readonly skipBuild: boolean;
   readonly profile: ProfileSelection;
+  readonly quality: ParallaxQualityArg | null;
   readonly strict: boolean;
   readonly writeBaseline: boolean;
   readonly outPath: string | null;
@@ -73,6 +76,7 @@ export function parseRunnerArgs(argv: readonly string[]): RunnerCliOptions {
   let url: string | null = null;
   let skipBuild = false;
   let profile: ProfileSelection = "all";
+  let quality: ParallaxQualityArg | null = null;
   let strict = false;
   let writeBaseline = false;
   let outPath: string | null = null;
@@ -97,7 +101,23 @@ export function parseRunnerArgs(argv: readonly string[]): RunnerCliOptions {
       url = argv[++i];
     } else if (arg === "--profile" && argv[i + 1]) {
       const next = argv[++i];
-      if (next === "desktop" || next === "tablet" || next === "all") profile = next;
+      if (next === "desktop" || next === "tablet" || next === "low-power-laptop" || next === "all") {
+        profile = next;
+      } else if (next === "laptop") {
+        profile = "low-power-laptop";
+      }
+    } else if (arg === "--quality" && argv[i + 1]) {
+      const next = argv[++i];
+      if (
+        next === "auto" ||
+        next === "high" ||
+        next === "mid" ||
+        next === "low" ||
+        next === "simplified" ||
+        next === "off"
+      ) {
+        quality = next;
+      }
     } else if (arg === "--out" && argv[i + 1]) outPath = resolve(process.cwd(), argv[++i]);
     else if (arg === "--baseline" && argv[i + 1]) baselinePath = resolve(process.cwd(), argv[++i]);
     else if (arg === "--duration-ms" && argv[i + 1]) holdRightMs = parsePositiveInt(argv[++i], DEFAULT_HOLD_RIGHT_MS);
@@ -118,6 +138,7 @@ export function parseRunnerArgs(argv: readonly string[]): RunnerCliOptions {
     url,
     skipBuild,
     profile,
+    quality,
     strict,
     writeBaseline,
     outPath,
@@ -195,6 +216,28 @@ async function measureLocationDprOnce(
   try {
     const page = await context.newPage();
     await page.addInitScript(buildInPagePerfInitScript());
+    if (options.quality) {
+      const q = options.quality;
+      await page.addInitScript((qualityMode: string) => {
+        try {
+          window.localStorage.removeItem("vibrant_castle_full_settings");
+          window.localStorage.setItem(
+            "vibrant_castle_display_settings",
+            JSON.stringify({
+              aspectRatio: "auto",
+              scalingFilter: "pixel",
+              assetQuality: "high",
+              parallaxQuality: qualityMode,
+              targetFps: 60,
+              showFpsCounter: false,
+              hardwareAcceleration: true,
+            })
+          );
+        } catch {
+          // Ignore storage errors in restricted contexts.
+        }
+      }, q);
+    }
 
     // Apply CDP CPU throttling before navigation on Chromium so map-entry decode hitches are throttled too.
     if (options.browser === "chromium" && budgetSpec.cpuThrottlingRate > 1) {
@@ -208,11 +251,19 @@ async function measureLocationDprOnce(
       timeout: 30000,
     });
     await page.waitForSelector("#game-viewport-canvas", { timeout: 30000 });
-    await page.waitForFunction(
-      () => Boolean((window as PerfWindow).__vcParallaxPerf?.hasFirstParallaxFrame()),
-      undefined,
-      { timeout: 30000 }
-    );
+    if (options.quality === "off") {
+      await page.waitForFunction(
+        () => Boolean((window as PerfWindow).__vcParallaxPerf?.hasRenderedCanvasFrame()),
+        undefined,
+        { timeout: 30000 }
+      );
+    } else {
+      await page.waitForFunction(
+        () => Boolean((window as PerfWindow).__vcParallaxPerf?.hasFirstParallaxFrame()),
+        undefined,
+        { timeout: 30000 }
+      );
+    }
 
     if (options.warmupMs > 0) await page.waitForTimeout(options.warmupMs);
 
