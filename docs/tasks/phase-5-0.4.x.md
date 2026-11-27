@@ -100,6 +100,22 @@ Phase 5 opens when the [phase 4](./phase-4-0.3.x.md) gate (VC-090) passes and th
 - **Goal:** enemies use the same 30-180 attribute scale.
 - **How (AI):** convert `enemies.json` with a script and keep the time-to-kill per enemy within ±15%. Add a balance table to the PR.
 
+### VC-037 · Enemies deal damage: contact, melee, ranged, magic
+- **Phase:** 5 · **Type:** feat · **Class:** medium · **Status:** todo
+- **Goal:** every enemy can hurt the heroes through one or more damage sources, declared in data.
+- **Description:** owner request (2026-11-27). The first set of sources:
+  - **contact:** touching the enemy body;
+  - **melee:** a cold weapon swing with a short hitbox in front of the enemy;
+  - **ranged:** a firearm or thrown projectile;
+  - **magic:** a spell projectile or area.
+  Each source has its own damage, knockback and telegraph (wind-up frames). Each uses the existing hero i-frames and the attribute scale (VC-032). Combat complexity stays at the level of the early castle games: readable patterns, few attacks per enemy.
+- **How (AI):**
+  1. Add a `damageSources` list per enemy in `enemies.json`: `{ kind: contact | melee | ranged | magic, damage, knockback, windupMs, cooldownMs, range }`. Give it a parser and a schema test.
+  2. Resolve all four kinds in `combatSystem.ts` through one hit pipeline.
+  3. Ranged and magic reuse the projectile system.
+  4. Write integration tests per kind (hit, knockback, i-frames, no double hit).
+  5. Add at least one enemy per kind in the existing maps, with a screenshot strip.
+
 ### VC-033 · Valen and Aurelia progression trees
 - **Phase:** 5 · **Type:** plan · **Class:** large · **Status:** blocked (VC-030)
 - **Goal:** distinct, lore-true growth paths with smaller stat gaps.
