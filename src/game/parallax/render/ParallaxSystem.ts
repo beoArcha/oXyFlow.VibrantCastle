@@ -59,6 +59,12 @@ const DEFAULT_FLAGS: IParallaxFlags = {
   showWireframes: () => false,
 };
 
+const EMPTY_LAYERS: readonly ParallaxLayerSchema[] = [];
+
+function resolveWorldId(location: LocationDefinition): string {
+  return location.worldId || location.id;
+}
+
 /**
  * Single parallax rendering pipeline for multi-layer image worlds and procedural placeholders.
  * Reads textures, layer metadata, and debug flags strictly through injected ports.
@@ -102,13 +108,32 @@ export class ParallaxSystem implements IParallaxSystem {
     if (typeof locationOrId === "string") {
       return KNOWN_MULTI_LAYER_WORLDS.has(locationOrId);
     }
-    if (KNOWN_MULTI_LAYER_WORLDS.has(locationOrId.id)) {
+    if (KNOWN_MULTI_LAYER_WORLDS.has(resolveWorldId(locationOrId))) {
       return true;
     }
     const layers = locationOrId.parallaxBackground?.layers;
     if (!layers || layers.length === 0) return false;
     for (let i = 0; i < layers.length; i++) {
       if (layers[i].type === "image") return true;
+    }
+    return false;
+  }
+
+  public hasOpaqueFarBackdrop(location: LocationDefinition, options?: ParallaxRenderOptions): boolean {
+    if (!this.isSupported(location)) return false;
+    const layers = location.parallaxBackground?.layers;
+    if (!layers || layers.length === 0) return false;
+    if (!this.isTierEnabled("far", options)) return false;
+
+    for (let i = 0; i < layers.length; i++) {
+      const layer = layers[i];
+      if (resolveBackgroundTier(layer) !== "far") continue;
+      if (layer.opaque !== true) continue;
+      if (layer.blendMode && layer.blendMode !== "source-over") continue;
+      const img = this.peekImage(layer);
+      if (img && img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
+        return true;
+      }
     }
     return false;
   }
@@ -173,7 +198,7 @@ export class ParallaxSystem implements IParallaxSystem {
     this.backdropRenderer.renderFarStaticBackdrop(
       ctx,
       location,
-      this.isTierEnabled("far", options) ? this.tierBuckets.far : [],
+      this.isTierEnabled("far", options) ? this.tierBuckets.far : EMPTY_LAYERS,
       viewportWidth,
       viewportHeight,
       progressX,
@@ -181,6 +206,7 @@ export class ParallaxSystem implements IParallaxSystem {
       tickCount
     );
 
+    const worldId = resolveWorldId(location);
     const worldBossIntensity = this.isTierEnabled("boss_world", options)
       ? computeBossScopeIntensity(location, "world", cameraX, cameraY, viewportWidth, viewportHeight, options?.forceBossScope)
       : 0;
@@ -211,7 +237,7 @@ export class ParallaxSystem implements IParallaxSystem {
         if (worldBossIntensity > 0.01) {
           this.backdropRenderer.renderBossBackdropTier(ctx, this.tierBuckets.boss_world, "boss_world", worldBossIntensity, viewportWidth, viewportHeight, progressX, progressY, tickCount);
         }
-        this.atmosphericRenderer.renderSectorAtmosphere(ctx, location.id, viewportWidth, viewportHeight, tickCount);
+        this.atmosphericRenderer.renderSectorAtmosphere(ctx, worldId, viewportWidth, viewportHeight, tickCount);
       }
 
       if (tier === "mid_close" && stageBossIntensity > 0.01) {
@@ -236,6 +262,13 @@ export class ParallaxSystem implements IParallaxSystem {
       this.registry.resolve(layer.imageUrl) ??
       this.registry.resolve(layer.id);
     return entry?.url ?? layer.imageUrl;
+  }
+
+  private peekImage(layer: ParallaxLayerSchema): HTMLImageElement | null {
+    if (layer.imageElement) return layer.imageElement;
+    const url = this.resolveLayerUrl(layer);
+    if (!url) return null;
+    return this.loader.getTexture(url);
   }
 
   private getImage(layer: ParallaxLayerSchema): HTMLImageElement | null {

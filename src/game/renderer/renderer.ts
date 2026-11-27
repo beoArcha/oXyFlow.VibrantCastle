@@ -156,11 +156,20 @@ export class GameRenderer {
     this.cameraX = camera.x;
     this.cameraY = camera.y;
 
-    if (this.isHardwareAccelerated) {
-      this.ctx.fillStyle = "#0a0301";
-      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    } else {
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    const hasCameraShake = camera.shakeOffsetX !== 0 || camera.shakeOffsetY !== 0;
+    const skipCanvasClear =
+      !hasCameraShake &&
+      location !== undefined &&
+      location.parallaxBackground !== undefined &&
+      this.parallaxSystem.hasOpaqueFarBackdrop?.(location) === true;
+
+    if (!skipCanvasClear) {
+      if (this.isHardwareAccelerated) {
+        this.ctx.fillStyle = "#0a0301";
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      } else {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      }
     }
     this.ctx.save();
 
