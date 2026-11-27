@@ -94,6 +94,10 @@ export interface HudI18n {
   tipsTextObjectives: string;
   helpGuideSubtitle: string;
   noPauseLive: string;
+  liveBadge: string;
+  coopActive: string;
+  coopReady: string;
+  interfaceShortcutsTitle: string;
   moveAndCrouch: string;
   jumpAction: string;
   tipsTextLiveScreens: string;
@@ -838,11 +842,21 @@ export interface AtlasStudioI18n {
   atlasStudioCreateTrackBtn: string;
 }
 
+export interface DevToolsI18n {
+  devToolAtlas: string;
+  devToolLevels: string;
+  devToolDataStudio: string;
+  devToolTesting: string;
+  devToolDebug: string;
+  devToolLogs: string;
+}
+
 export interface DeveloperI18n
   extends DataStudioI18n,
     TesterI18n,
     DebugTelemetryI18n,
-    AtlasStudioI18n {}
+    AtlasStudioI18n,
+    DevToolsI18n {}
 
 export interface InventoryI18n {
   inventoryTitle: string;

@@ -10,12 +10,16 @@ import {
   Volume2,
   BarChart3,
   Keyboard,
-  Wrench,
 } from "lucide-react";
 import { Modal, Tabs, TabItem } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { InputMap, PlayerId } from "@game/types";
-import { ModalNavigationTabs, ModalId, type ModalType } from "@game-menu/modal";
+import {
+  ModalNavigationTabs,
+  ModalId,
+  GAME_MODAL_WIDTH_CLASS,
+  type ModalType,
+} from "@game-menu/modal";
 import { LanguageSelector } from "@game-menu/common";
 import type { ModalManager } from "@game-menu/menu/hooks/useModalManager";
 import { MENU_TAB_REGISTRY, MenuTabId } from "@game-menu/menu/menuTabRegistry";
@@ -54,12 +58,11 @@ const MENU_TAB_ICONS: Record<MenuTabId, React.ReactNode> = {
   [MenuTabId.Audio]: <Volume2 size={14} />,
   [MenuTabId.Controls]: <Keyboard size={14} />,
   [MenuTabId.Stats]: <BarChart3 size={14} />,
-  [MenuTabId.Developer]: <Wrench size={14} className="text-emerald-400" />,
 };
 
 /**
  * Clean OCP/DIP modal host dispatching overlays via ModalId and MenuTabId registries.
- * Exposes the full DeveloperSuite both in ModalId.Creation and in Menu -> MenuTabId.Developer.
+ * The DeveloperSuite is only exposed through ModalId.Creation (key C), never inside the game Menu.
  */
 export const GameModalHost: React.FC<GameModalHostProps> = ({
   modalManager,
@@ -76,7 +79,7 @@ export const GameModalHost: React.FC<GameModalHostProps> = ({
     () =>
       MENU_TAB_REGISTRY.map((entry) => ({
         id: entry.id,
-        label: t(entry.labelKey) || entry.fallbackLabel || entry.id,
+        label: t(entry.labelKey) || entry.id,
         icon: MENU_TAB_ICONS[entry.id],
       })),
     [t]
@@ -90,9 +93,8 @@ export const GameModalHost: React.FC<GameModalHostProps> = ({
       [MenuTabId.Audio]: () => <AudioTab />,
       [MenuTabId.Controls]: () => <ControlsMenuTab onStartRebind={onStartRebind} />,
       [MenuTabId.Stats]: () => <StatsMenuTab />,
-      [MenuTabId.Developer]: () => renderDeveloperSuite(),
     }),
-    [onStartRebind, renderDeveloperSuite]
+    [onStartRebind]
   );
 
   if (modalManager.activeModal === ModalId.None) {
@@ -118,13 +120,14 @@ export const GameModalHost: React.FC<GameModalHostProps> = ({
           subtitle={t("title")}
           icon={<MenuIcon className="w-5 h-5 text-amber-400" />}
           headerRight={<LanguageSelector />}
-          maxWidthClass={menuTab === MenuTabId.Developer ? "max-w-7xl" : "max-w-5xl"}
+          maxWidthClass={GAME_MODAL_WIDTH_CLASS}
         >
           <div className="flex flex-col gap-4">
             <ModalNavigationTabs
               currentModal={ModalId.Menu}
               onNavigate={onNavigateModal}
               onResume={onResume}
+              showCreation={false}
             />
             <Tabs<MenuTabId>
               items={menuTabs}
@@ -145,13 +148,14 @@ export const GameModalHost: React.FC<GameModalHostProps> = ({
           subtitle={t("helpGuideSubtitle")}
           icon={<HelpCircle className="w-5 h-5 text-amber-400" />}
           headerRight={<LanguageSelector />}
-          maxWidthClass="max-w-4xl"
+          maxWidthClass={GAME_MODAL_WIDTH_CLASS}
         >
           <div className="flex flex-col gap-4">
             <ModalNavigationTabs
               currentModal={ModalId.Help}
               onNavigate={onNavigateModal}
               onResume={onResume}
+              showCreation={false}
             />
             <HelpModalView />
           </div>
@@ -167,13 +171,14 @@ export const GameModalHost: React.FC<GameModalHostProps> = ({
           subtitle={t("noPauseLive")}
           icon={<Backpack className="w-5 h-5 text-amber-400" />}
           headerRight={<LanguageSelector />}
-          maxWidthClass="max-w-5xl"
+          maxWidthClass={GAME_MODAL_WIDTH_CLASS}
         >
           <div className="flex flex-col gap-4">
             <ModalNavigationTabs
               currentModal={ModalId.Inventory}
               onNavigate={onNavigateModal}
               onResume={onResume}
+              showCreation={false}
             />
             <InventoryModalView />
           </div>
@@ -192,11 +197,6 @@ export const GameModalHost: React.FC<GameModalHostProps> = ({
           maxWidthClass="max-w-7xl"
         >
           <div className="flex flex-col gap-4">
-            <ModalNavigationTabs
-              currentModal={ModalId.Creation}
-              onNavigate={onNavigateModal}
-              onResume={onResume}
-            />
             {renderDeveloperSuite()}
           </div>
         </Modal>
