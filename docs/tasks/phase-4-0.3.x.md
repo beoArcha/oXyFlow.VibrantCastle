@@ -255,6 +255,24 @@ The result: red tests and CI, levers that no longer opened gates, broken hero an
 
 ---
 
+### VC-082 · Lore: organise and develop (discussion)
+- **Phase:** 4 · **Type:** plan · **Class:** large · **Status:** todo
+- **Goal:** one coherent, owner-approved lore canon for the 8 worlds, the two heroes, the narrator and the enemies.
+- **Description:** owner request (2026-11-27): this is a discussion with the owner, not a one-shot write-up. Input: `docs/lore/*`, `docs/wiki/*`, `src/data/narrative/*`, `src/i18n/modules/lore.ts`.
+- **How (AI):**
+  1. The orchestrator prepares a short discussion brief: inconsistencies, gaps per world, open questions (5-10), proposals.
+  2. Rounds of discussion with the owner; each round updates `docs/lore/` in a small PR.
+  3. Ends with a canon summary in `docs/lore/README.md` that VC-083 and the map cards follow.
+
+### VC-083 · Demo scene scenarios, map 1 of every world
+- **Phase:** 4 · **Type:** doc · **Class:** medium · **Status:** todo
+- **Goal:** a short playable demo scenario for map 1 of each of the 8 worlds: beats (entry, mid, goal), Bastion-style narrator lines (PL + EN), enemy and lever moments, and the hook to the next world.
+- **Description:** owner request (2026-11-27). Text writing goes to the Gemini class at high effort; the orchestrator reviews against the lore canon (VC-082) and the map contract (`docs/design/maps-contract.md`).
+- **How (AI):**
+  1. One file per world in `docs/design/demo-scenes/<world>.md` with beats, narrator lines and i18n keys.
+  2. Lines short (one subtitle each), reactive, autumn and melancholic in tone, no claims of unbuilt features.
+  3. A follow-up card wires the lines into the map JSON and i18n (with the VC-075 text tool).
+
 ## G. CI and tests
 
 ### VC-060 · Coverage gate per suite, integration tests on PRs
@@ -308,6 +326,15 @@ The result: red tests and CI, levers that no longer opened gates, broken hero an
 - **Goal:** the Poziomy 8x8 audit counts the recommended starter sets correctly.
 - **Description:** follow-up to VC-004. `RECOMMENDED_TILESETS` / `RECOMMENDED_DECOR_PROPS` in `assetReadinessAudit.ts` use ids that do not match the tileset and prop folder names on disk.
 - **How (AI):** derive or align the recommended ids with the discovered folder names, and add a unit test that fails when a recommended id has no folder.
+
+### VC-075 · Tworzenie: easier map browsing and text placement
+- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** todo
+- **Goal:** in the dev dialog, browse every map comfortably and place or edit texts (narration triggers, sign labels, portal captions) without hand-editing JSON.
+- **Description:** today the Poziomy 8x8 tool previews parallax and teleports, but you cannot pan/zoom a whole map, see entities with their ids, or place a narration trigger. Owner request (2026-11-27).
+- **How (AI):**
+  1. Map browser in Poziomy: full-map minimap with pan/zoom, entity overlay (solids, levers/gates, portals, triggers, spawns) with ids, click to inspect.
+  2. Text tool: pick a point/area, create or edit a trigger with an i18n key and PL/EN text; show the text where it appears in game; export as a JSON patch for `src/data/locations/<id>.json` plus the i18n entries.
+  3. Tests for the patch builder; headless screenshot of the browser.
 
 ### VC-081 · Narrative catalogs
 - **Phase:** 4 · **Type:** chore · **Class:** small · **Status:** todo
