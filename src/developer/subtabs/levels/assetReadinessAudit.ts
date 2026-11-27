@@ -66,34 +66,32 @@ const MISSING_CORE_STRUCTURES = [
   "breakable_wall",
 ] as const;
 
-const RECOMMENDED_TILESETS = [
-  "tileset_castle_stone",
-  "tileset_ashen_crypt",
-  "tileset_clockwork_brass",
-  "tileset_obsidian_eclipse",
+/** Starter tileset folders under src/assets/tiles (one folder = one set, matched by name). */
+export const RECOMMENDED_TILESETS = [
+  "bastion_stone",
+  "courtyard_stone",
+  "clocktower_brick",
+  "sanctuary_crystal",
 ] as const;
 
-const RECOMMENDED_DECOR_PROPS = [
+/** Starter prop folders under src/assets/props (one folder = one prop, matched by name). */
+export const RECOMMENDED_DECOR_PROPS = [
   "wall_torch",
-  "castle_banner",
-  "hanging_chains",
-  "alchemy_bookshelf",
-  "ember_brazier",
-  "eclipse_monolith",
+  "tattered_banner",
+  "iron_chain",
+  "war_brazier",
+  "wall_gear",
+  "ember_skull_lantern",
 ] as const;
 
-export interface AssetSetCounts {
-  /** Sets with hi8bit sheet, hi16bit sheet and meta all present. */
-  readonly complete: number;
-  /** Sets with at least one, but not all, of those files. */
-  readonly partial: number;
+interface SetFlags {
+  readonly hi8: boolean;
+  readonly hi16: boolean;
+  readonly meta: boolean;
 }
 
-/**
- * Groups discovered files by containing folder (one folder = one asset set) and counts how many
- * sets are complete (both hi8bit and hi16bit sheets plus a meta) or only partially present.
- */
-export function countAssetSets(files: AtlasFileMap): AssetSetCounts {
+/** Folder name to presence flags, one entry per discovered asset set (folder). */
+function collectSetFlags(files: AtlasFileMap): Map<string, { hi8: boolean; hi16: boolean; meta: boolean }> {
   const sets = new Map<string, { hi8: boolean; hi16: boolean; meta: boolean }>();
   const setFor = (path: string) => {
     const segments = path.replace(/\\/g, "/").split("/");
@@ -113,20 +111,62 @@ export function countAssetSets(files: AtlasFileMap): AssetSetCounts {
   for (const path of Object.keys(files.metas)) {
     setFor(path).meta = true;
   }
-  let complete = 0;
-  let partial = 0;
-  for (const set of sets.values()) {
-    if (set.hi8 && set.hi16 && set.meta) complete += 1;
-    else if (set.hi8 || set.hi16 || set.meta) partial += 1;
-  }
-  return { complete, partial };
+  return sets;
 }
 
-/** ready when `target` sets are complete, partial when any file exists, otherwise missing. */
-export function deriveAssetStatus(counts: AssetSetCounts, target: number): AuditStatus {
-  if (counts.complete >= target) return "ready";
-  if (counts.complete > 0 || counts.partial > 0) return "partial";
+const isComplete = (set: SetFlags): boolean => set.hi8 && set.hi16 && set.meta;
+
+/** Result of matching recommended folder names against the discovered sets, reported by name. */
+export interface RecommendedSetAudit {
+  /** Recommended names whose folder has the hi8bit sheet, hi16bit sheet and meta. */
+  readonly complete: readonly string[];
+  /** Recommended names whose folder exists but lacks at least one of those files. */
+  readonly partial: readonly string[];
+  /** Recommended names with no folder on disk. */
+  readonly missing: readonly string[];
+  /** All discovered folders (not only recommended ones) with all three files. */
+  readonly discoveredComplete: number;
+  /** All discovered folders (not only recommended ones) with some but not all files. */
+  readonly discoveredPartial: number;
+}
+
+/**
+ * Matches the recommended folder names against discovered files. The audit counts by name, so a
+ * large unrelated set cannot mask a missing recommended one.
+ */
+export function auditRecommendedSets(
+  files: AtlasFileMap,
+  recommended: readonly string[]
+): RecommendedSetAudit {
+  const sets = collectSetFlags(files);
+  const complete: string[] = [];
+  const partial: string[] = [];
+  const missing: string[] = [];
+  for (const name of recommended) {
+    const set = sets.get(name);
+    if (!set) missing.push(name);
+    else if (isComplete(set)) complete.push(name);
+    else partial.push(name);
+  }
+  let discoveredComplete = 0;
+  let discoveredPartial = 0;
+  for (const set of sets.values()) {
+    if (isComplete(set)) discoveredComplete += 1;
+    else discoveredPartial += 1;
+  }
+  return { complete, partial, missing, discoveredComplete, discoveredPartial };
+}
+
+/** ready when every recommended name is complete, partial when any of them has files, otherwise missing. */
+export function deriveAssetStatus(audit: RecommendedSetAudit): AuditStatus {
+  if (audit.missing.length === 0 && audit.partial.length === 0) return "ready";
+  if (audit.complete.length > 0 || audit.partial.length > 0) return "partial";
   return "missing";
+}
+
+/** Names for detail text; the fallback is shown when the list is empty. */
+function namesOrNone(names: readonly string[], none: string): string {
+  return names.length > 0 ? names.join(", ") : none;
 }
 
 /** Real discovery of tileset and prop files (Vite glob in the app, filesystem under Bun). */
@@ -142,8 +182,8 @@ export function discoverAssetAuditFiles(): AssetAuditFileMaps {
 export function buildAssetReadinessAudit(
   files: AssetAuditFileMaps = discoverAssetAuditFiles()
 ): AssetAuditReport {
-  const tilesetCounts = countAssetSets(files.tilesetFiles);
-  const propCounts = countAssetSets(files.propFiles);
+  const tilesetAudit = auditRecommendedSets(files.tilesetFiles, RECOMMENDED_TILESETS);
+  const propAudit = auditRecommendedSets(files.propFiles, RECOMMENDED_DECOR_PROPS);
   const enemies = Object.values(CANONICAL_ENEMY_REGISTRY);
   const enemiesWithAtlasList = enemies.filter((e) => Boolean(e.atlas?.presetId));
   const uniqueAtlasSet = new Set(
@@ -247,28 +287,28 @@ export function buildAssetReadinessAudit(
     {
       id: "audit_platform_tilesets",
       category: "tiles_decor",
-      status: deriveAssetStatus(tilesetCounts, RECOMMENDED_TILESETS.length),
+      status: deriveAssetStatus(tilesetAudit),
       priority: "critical",
       titlePl: "Zestawy kafelków platform (src/assets/tiles)",
       titleEn: "Platform Tilesets (src/assets/tiles)",
-      detailPl: `Wykryto ${tilesetCounts.complete} kompletnych zestawów kafelków (hi8bit + hi16bit + meta), ${tilesetCounts.partial} niepełnych. Zalecane 4 zestawy startowe: ${RECOMMENDED_TILESETS.join(", ")}.`,
-      detailEn: `Found ${tilesetCounts.complete} complete tileset sets (hi8bit + hi16bit + meta), ${tilesetCounts.partial} incomplete. Recommended starter sets: ${RECOMMENDED_TILESETS.join(", ")}.`,
-      countLabel: `${tilesetCounts.complete}/${RECOMMENDED_TILESETS.length} zestawów`,
+      detailPl: `Zalecane zestawy startowe: ${tilesetAudit.complete.length}/${RECOMMENDED_TILESETS.length} kompletne (${namesOrNone(tilesetAudit.complete, "brak")}). Niepełne: ${namesOrNone(tilesetAudit.partial, "brak")}. Nieobecne: ${namesOrNone(tilesetAudit.missing, "brak")}. Wszystkich wykrytych zestawów: ${tilesetAudit.discoveredComplete} kompletnych, ${tilesetAudit.discoveredPartial} niepełnych.`,
+      detailEn: `Recommended starter sets complete: ${tilesetAudit.complete.length}/${RECOMMENDED_TILESETS.length} (${namesOrNone(tilesetAudit.complete, "none")}). Incomplete: ${namesOrNone(tilesetAudit.partial, "none")}. Missing: ${namesOrNone(tilesetAudit.missing, "none")}. All discovered sets: ${tilesetAudit.discoveredComplete} complete, ${tilesetAudit.discoveredPartial} incomplete.`,
+      countLabel: `${tilesetAudit.complete.length}/${RECOMMENDED_TILESETS.length} zestawów`,
     },
     {
       id: "audit_decor_props",
       category: "tiles_decor",
       // Files alone are not enough: without placed decor in any location the row stays at most partial.
       status:
-        locationsWithDecor === 0 && deriveAssetStatus(propCounts, RECOMMENDED_DECOR_PROPS.length) === "ready"
+        locationsWithDecor === 0 && deriveAssetStatus(propAudit) === "ready"
           ? "partial"
-          : deriveAssetStatus(propCounts, RECOMMENDED_DECOR_PROPS.length),
+          : deriveAssetStatus(propAudit),
       priority: "high",
       titlePl: "Rekwizyty środowiskowe (src/assets/props, layout.decor)",
       titleEn: "Environmental Decor Props (src/assets/props, layout.decor)",
-      detailPl: `Wykryto ${propCounts.complete} kompletnych rekwizytów, ${propCounts.partial} niepełnych. ${locationsWithDecor > 0 ? `Rekwizyty umieszczono w ${locationsWithDecor} lokacjach.` : "Żadna lokacja nie ma jeszcze umieszczonych rekwizytów tła."} Zalecane pierwsze rekwizyty: ${RECOMMENDED_DECOR_PROPS.join(", ")}.`,
-      detailEn: `Found ${propCounts.complete} complete props, ${propCounts.partial} incomplete. ${locationsWithDecor > 0 ? `Props placed in ${locationsWithDecor} locations.` : "No locations have placed decor props yet."} Recommended first props: ${RECOMMENDED_DECOR_PROPS.join(", ")}.`,
-      countLabel: `${propCounts.complete}/${RECOMMENDED_DECOR_PROPS.length} rekw. · ${locationsWithDecor}/${playableLocations.length} map`,
+      detailPl: `Zalecane rekwizyty: ${propAudit.complete.length}/${RECOMMENDED_DECOR_PROPS.length} kompletne (${namesOrNone(propAudit.complete, "brak")}). Niepełne: ${namesOrNone(propAudit.partial, "brak")}. Nieobecne: ${namesOrNone(propAudit.missing, "brak")}. ${locationsWithDecor > 0 ? `Rekwizyty umieszczono w ${locationsWithDecor} lokacjach.` : "Żadna lokacja nie ma jeszcze umieszczonych rekwizytów tła."}`,
+      detailEn: `Recommended props complete: ${propAudit.complete.length}/${RECOMMENDED_DECOR_PROPS.length} (${namesOrNone(propAudit.complete, "none")}). Incomplete: ${namesOrNone(propAudit.partial, "none")}. Missing: ${namesOrNone(propAudit.missing, "none")}. ${locationsWithDecor > 0 ? `Props placed in ${locationsWithDecor} locations.` : "No locations have placed decor props yet."}`,
+      countLabel: `${propAudit.complete.length}/${RECOMMENDED_DECOR_PROPS.length} rekw. · ${locationsWithDecor}/${playableLocations.length} map`,
     },
     {
       id: "audit_interactive_structures",
