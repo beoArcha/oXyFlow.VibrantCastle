@@ -1,3 +1,5 @@
+import { isDevToolsEnabled } from "@/app/appConfig";
+
 /**
  * Typed Open/Closed Modal Registry.
  * Adding a new modal overlay requires adding one entry here — pause behavior,
@@ -55,6 +57,8 @@ export interface ModalDefinition {
   readonly hotkeys: readonly string[];
   readonly navigationTab: ModalNavigationTabConfig;
   readonly headerShortcut?: ModalHeaderShortcutConfig;
+  /** Available only when developer tools are enabled (dev builds). */
+  readonly devOnly?: boolean;
 }
 
 export const MODAL_REGISTRY: readonly ModalDefinition[] = [
@@ -166,6 +170,7 @@ export const MODAL_REGISTRY: readonly ModalDefinition[] = [
   {
     id: ModalId.Creation,
     dialog: "dev",
+    devOnly: true,
     pausesGame: true,
     hotkeys: ["c"],
     navigationTab: {
@@ -199,15 +204,25 @@ export function doesModalPauseGame(modal: ModalId | ModalType): boolean {
   return MODAL_BY_ID.get(modal)?.pausesGame ?? false;
 }
 
+/** False for dev-only modals (Creation) unless developer tools are enabled. */
+export function isModalAvailable(modal: ModalId | ModalType): boolean {
+  const def = MODAL_BY_ID.get(modal);
+  return def !== undefined && (!def.devOnly || isDevToolsEnabled());
+}
+
 export function findModalByHotkey(rawKey: string): ModalDefinition | undefined {
   const lower = rawKey.toLowerCase();
   return MODAL_REGISTRY.find(
-    (def) => def.hotkeys.includes(lower) || def.hotkeys.includes(rawKey)
+    (def) =>
+      (def.hotkeys.includes(lower) || def.hotkeys.includes(rawKey)) &&
+      isModalAvailable(def.id)
   );
 }
 
 export function getHeaderModalShortcuts(): readonly ModalDefinition[] {
-  return MODAL_REGISTRY.filter((def) => def.headerShortcut !== undefined).sort(
+  return MODAL_REGISTRY.filter(
+    (def) => def.headerShortcut !== undefined && isModalAvailable(def.id)
+  ).sort(
     (a, b) => (a.headerShortcut?.order ?? 0) - (b.headerShortcut?.order ?? 0)
   );
 }

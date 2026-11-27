@@ -6,6 +6,7 @@ import { InputMap, PlayerId } from "@game/types";
 import {
   ModalId,
   isGameModal,
+  isModalAvailable,
   type ModalType,
   type OpenModalId,
 } from "@game-menu/modal";
@@ -50,6 +51,7 @@ export const GameModalHost: React.FC<GameModalHostProps> = ({
   const isGameOpen = isGameModal(modalManager.activeModal);
 
   if (modalManager.activeModal === ModalId.Creation) {
+    if (!isModalAvailable(ModalId.Creation)) return null;
     return (
       <Modal
         isOpen={true}
