@@ -170,6 +170,49 @@ describe("AtlasTextureManager", () => {
     expect(h.manager.ownsUrl("high.png")).toBe(true);
     expect(h.manager.ownsUrl("other.png")).toBe(false);
   });
+
+  it("normalises a 1-column hi8bit SVG meta so it renders the full cell instead of 1/N strips", async () => {
+    const sprites = new SpriteSourceFactory("low");
+    const manager = new AtlasTextureManager({
+      getImage: () => null,
+      loadImage: async () => undefined,
+      loadSvg: async () => ({
+        source: {} as CanvasImageSource,
+        width: 192,
+        height: 960,
+        crisp: true,
+        release: () => undefined,
+      }),
+      canLoad: () => true,
+      sprites,
+      onChange: () => undefined,
+    });
+    const svgMeta = {
+      atlas: { columns: 7, rows: 5, cellWidth: 196, cellHeight: 229 },
+      animations: {
+        fly: { row: 0, frames: 7, fps: 9, loop: true, slotSpan: [1, 1, 1, 1, 1, 1, 1], cells: [1, 1, 1, 1, 1, 1, 1] },
+        hit: { row: 2, frames: 4, fps: 12, loop: false, slotSpan: [1, 1, 1, 1], cells: [1, 1, 1, 1] },
+      },
+    } as unknown as AtlasMeta;
+    manager.register({
+      id: "owl",
+      category: "enemy",
+      variants: { low: { src: "owl_hi8bit.svg", format: "svg", meta: svgMeta } },
+    });
+    await Promise.resolve();
+    await Promise.resolve();
+
+    const source = manager.getSource("owl")!;
+    const resolvedMeta = source.meta as unknown as {
+      atlas: { columns: number };
+      animations: Record<string, { frames: number; startCol: number; slotSpan: number[] }>;
+    };
+    expect(resolvedMeta.atlas.columns).toBe(1);
+    expect(resolvedMeta.animations.fly.frames).toBe(1);
+    expect(resolvedMeta.animations.fly.startCol).toBe(0);
+    expect(resolvedMeta.animations.fly.slotSpan).toEqual([1]);
+    expect((manager.getView("owl")?.meta as unknown as { atlas: { columns: number } }).atlas.columns).toBe(1);
+  });
 });
 
 describe("svg raster", () => {
@@ -230,6 +273,15 @@ describe("svg raster", () => {
     expect(fake.ctx.imageSmoothingEnabled).toBe(false);
     expect(fake.draws).toHaveLength(1);
     expect(fake.draws[0].slice(1)).toEqual([0, 0, 768, 576]);
+  });
+
+  it("rasterises a 1-column 48x240 placeholder SVG at x4 even when PNG meta declares 7 columns", async () => {
+    const fake = fakeEnv(48, 240, true);
+
+    const texture = await loadSvgTexture("owl_hi8bit.svg", 7, fake.env);
+
+    expect(texture.width).toBe(192);
+    expect(texture.height).toBe(960);
   });
 
   it("rasterises a 96 px cell sheet at x2", async () => {

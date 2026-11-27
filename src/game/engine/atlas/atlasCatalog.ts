@@ -93,6 +93,14 @@ function declaredSvgFile(raw: unknown, tier: AssetQuality): string | null {
   return isRecord(variant) && typeof variant.file === "string" ? variant.file : null;
 }
 
+function stripPngSlicingForSvg(meta: AtlasMeta): AtlasMeta {
+  const record = meta as unknown as Record<string, unknown>;
+  if (!("slicing" in record) || record.slicing === undefined) return meta;
+  const next: Record<string, unknown> = { ...record };
+  delete next.slicing;
+  return next as unknown as AtlasMeta;
+}
+
 function buildVariants(folder: AtlasFolder): AtlasVariants {
   const { id, images, metas } = folder;
   const variants: AtlasVariants = {};
@@ -106,9 +114,14 @@ function buildVariants(folder: AtlasFolder): AtlasVariants {
   const sharedMeta = sharedRaw !== undefined ? parseAtlasMeta(sharedRaw, folder.category) : null;
 
   for (const { tier, suffix } of SVG_TIERS) {
-    const file = declaredSvgFile(sharedRaw, tier) ?? `${id}_${suffix}.svg`;
+    const declaredFile = declaredSvgFile(sharedRaw, tier);
+    const file = declaredFile ?? `${id}_${suffix}.svg`;
     const src = images.get(file);
-    if (src && sharedMeta) variants[tier] = variant(src, "svg", sharedMeta);
+    if (src && sharedMeta) {
+      // Undeclared SVG placeholders share the PNG meta; PNG freeform_rects must not crop the SVG.
+      const svgMeta = declaredFile ? sharedMeta : stripPngSlicingForSvg(sharedMeta);
+      variants[tier] = variant(src, "svg", svgMeta);
+    }
   }
 
   const packedRaw = metas.get(`${id}_packed_meta.json`);
