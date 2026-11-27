@@ -1,9 +1,8 @@
 name: Release — Promote Verified Main
 
 on:
-  schedule:
-    # Weekly promotion window: Sundays at 03:00 UTC
-    - cron: "0 3 * * 0"
+  # Releases happen only at a phase quality gate (docs/tasks/ROADMAP.md),
+  # so promotion is manual: no schedule.
   workflow_dispatch:
     inputs:
       dry_run:
