@@ -62,16 +62,16 @@ Cards and the "phase 4 so far" summary: [phase-4-0.3.x.md](./phase-4-0.3.x.md).
 | Area | Planned | Done |
 | :--- | :--- | :--- |
 | [Stabilisation](./phase-4-0.3.x.md#a-stabilisation) | | VC-001 (#62), VC-002 (#65), VC-003 (#71), VC-004 (#76), VC-005 (#69), VC-006 (#70), VC-007 (#85) |
-| [Assets](./phase-4-0.3.x.md#b-assets-and-rendering) | VC-010, VC-012 | |
-| [Design contracts](./phase-4-0.3.x.md#c-world-and-maps-8-worlds-x-8-maps-today-map-1-of-each-world) | VC-020 (review, #77), VC-030 (review, #78) | |
-| [Inventory](./phase-4-0.3.x.md#d-characters-stats-and-equipment) | VC-035 | |
-| [Menu](./phase-4-0.3.x.md#e-menu-plan-docsdesignmenu-ux-planmd) | VC-045, VC-047 | VC-040 (#63), VC-041 (#68), VC-042 (#74), VC-043 (#81), VC-044 (#84), VC-046 (#80) |
-| [Docs, settings, controls](./phase-4-0.3.x.md#f-docs-settings-and-controls) | VC-082, VC-083 | VC-050 (#88), VC-051 (#90), VC-056 (#93), VC-052 (#66), VC-053 (#67), VC-054 (#73), VC-055 (#75), VC-057 (#72) |
-| [CI and tests](./phase-4-0.3.x.md#g-ci-and-tests) | VC-061, VC-062 (part 1 #86) | VC-060 (#83), VC-063 (#79) |
-| [Developer tools](./phase-4-0.3.x.md#h-developer-tools-and-review) | VC-070, VC-075, VC-081 | VC-071 (#87), VC-072 (#82), VC-073 (#95), VC-074 (#96) |
-| [Parallax series](./phase-4-0.3.x.md#p-parallax-series-owner-request-2026-11-27) | VC-100 … VC-109 | |
-| [Asset animation fixes](./phase-4-0.3.x.md#q-asset-animation-fixes) | VC-120 … VC-123 | |
-| [Quality gate](./phase-4-0.3.x.md#z-phase-gate) | VC-090 | |
+| [Assets](./phase-4-0.3.x.md#b-assets-and-rendering) | | VC-010 (#92), VC-012 (#101) |
+| [Design contracts](./phase-4-0.3.x.md#c-world-and-maps-8-worlds-x-8-maps-today-map-1-of-each-world) | | VC-020 (#77), VC-030 (#78) |
+| [Inventory](./phase-4-0.3.x.md#d-characters-stats-and-equipment) | | VC-035 (#117) |
+| [Menu](./phase-4-0.3.x.md#e-menu-plan-docsdesignmenu-ux-planmd) | | VC-040 (#63), VC-041 (#68), VC-042 (#74), VC-043 (#81), VC-044 (#84), VC-045 (#94), VC-046 (#80), VC-047 (#99) |
+| [Docs, settings, controls](./phase-4-0.3.x.md#f-docs-settings-and-controls) | VC-058 (review, #120), VC-082 (review, round 1 #102) | VC-050 (#88), VC-051 (#90), VC-052 (#66), VC-053 (#67), VC-054 (#73), VC-055 (#75), VC-056 (#93), VC-057 (#72), VC-083 (#106) |
+| [CI and tests](./phase-4-0.3.x.md#g-ci-and-tests) | VC-061, VC-062 (parts 1-3 #86, #97, #100) | VC-060 (#83), VC-063 (#79) |
+| [Developer tools](./phase-4-0.3.x.md#h-developer-tools-and-review) | VC-070, VC-075, VC-076, VC-081 | VC-071 (#87), VC-072 (#82), VC-073 (#95), VC-074 (#96) |
+| [Parallax series](./phase-4-0.3.x.md#p-parallax-series-owner-request-2026-11-27) | VC-101 (101c), VC-103, VC-104, VC-105 (105b), VC-108, VC-109 | VC-100 (#108), VC-101a (#109), VC-101b (#114), VC-102 (#110, #116), VC-105a (#113), VC-106 (#111), VC-107 (#112) |
+| [Asset animation fixes](./phase-4-0.3.x.md#q-asset-animation-fixes) | VC-120, VC-121, VC-122, VC-123, VC-124 | |
+| [Quality gate](./phase-4-0.3.x.md#z-phase-gate) | VC-089, VC-090 | |
 
 ## Phase 5: worlds and characters (0.4.x, next)
 
