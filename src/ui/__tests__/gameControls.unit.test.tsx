@@ -275,7 +275,7 @@ describe("Domain UI Components (ItemIcon, ItemSlot, KeyedTabs, ModalNavigationTa
 
       // Verify tabs exist
       const tabs = container.querySelectorAll("[role='tab']");
-      expect(tabs.length).toBe(5); // menu, help, inventory, skillTree, creation
+      expect(tabs.length).toBe(8); // menu, locations, character, inventory, skillTree, settings, help, creation
 
       expect(container.textContent).toContain("[M]");
       expect(container.textContent).toContain("[H]");
@@ -285,7 +285,7 @@ describe("Domain UI Components (ItemIcon, ItemSlot, KeyedTabs, ModalNavigationTa
       expect(container.querySelector("button[title*='[P]']")).toBeNull();
 
       // Click inventory tab
-      const inventoryTab = tabs[2];
+      const inventoryTab = tabs[3];
       await click(inventoryTab);
       expect(handleNavigate).toHaveBeenCalledWith("inventory");
     });
@@ -300,7 +300,7 @@ describe("Domain UI Components (ItemIcon, ItemSlot, KeyedTabs, ModalNavigationTa
       );
 
       const tabs = container.querySelectorAll("[role='tab']");
-      expect(tabs.length).toBe(4); // menu, help, inventory, skillTree
+      expect(tabs.length).toBe(7); // 7 game L1 tabs
       expect(container.textContent).not.toContain("[C]");
     });
   });

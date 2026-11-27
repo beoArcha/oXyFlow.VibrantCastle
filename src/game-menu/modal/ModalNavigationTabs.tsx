@@ -1,5 +1,14 @@
 import React from "react";
-import { Menu as MenuIcon, HelpCircle, Backpack, BookOpen, Layers } from "lucide-react";
+import {
+  Menu as MenuIcon,
+  MapPin,
+  User,
+  Backpack,
+  BookOpen,
+  Settings,
+  HelpCircle,
+  Layers,
+} from "lucide-react";
 import { useI18n } from "@context/I18nContext";
 import { Tabs, TabItem } from "@ui";
 import {
@@ -21,9 +30,12 @@ export interface ModalNavigationTabsProps {
 
 const MODAL_NAV_ICONS: Record<ModalIconKey, React.ReactNode> = {
   menu: <MenuIcon size={14} className="text-amber-400 shrink-0" />,
-  help: <HelpCircle size={14} className="text-amber-400 shrink-0" />,
+  locations: <MapPin size={14} className="text-amber-400 shrink-0" />,
+  character: <User size={14} className="text-amber-400 shrink-0" />,
   inventory: <Backpack size={14} className="text-amber-400 shrink-0" />,
   skillTree: <BookOpen size={14} className="text-purple-400 shrink-0" />,
+  settings: <Settings size={14} className="text-amber-400 shrink-0" />,
+  help: <HelpCircle size={14} className="text-amber-400 shrink-0" />,
   creation: <Layers size={14} className="text-emerald-400 shrink-0" />,
 };
 

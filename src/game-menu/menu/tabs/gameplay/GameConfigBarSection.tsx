@@ -8,7 +8,7 @@ export interface GameConfigBarSectionProps {
   readonly onExportSettings: () => void;
   readonly onImportSettings: (file: File) => Promise<boolean | void>;
   readonly onResetDefaults: () => void;
-  readonly onRestartLocation: () => void;
+  readonly onRestartLocation?: () => void;
   readonly className?: string;
 }
 
@@ -59,16 +59,18 @@ export const GameConfigBarSection = ({
         </Button>
       </div>
 
-      <Button
-        id="restart-level-btn"
-        variant="secondary"
-        size="sm"
-        icon={<RotateCcw size={13} />}
-        onClick={onRestartLocation}
-        className="border-amber-700/60 hover:border-amber-500"
-      >
-        {t("restartLocation")}
-      </Button>
+      {onRestartLocation && (
+        <Button
+          id="restart-level-btn"
+          variant="secondary"
+          size="sm"
+          icon={<RotateCcw size={13} />}
+          onClick={onRestartLocation}
+          className="border-amber-700/60 hover:border-amber-500"
+        >
+          {t("restartLocation")}
+        </Button>
+      )}
     </div>
   );
 };

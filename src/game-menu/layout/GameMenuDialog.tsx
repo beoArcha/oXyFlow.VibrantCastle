@@ -1,15 +1,16 @@
 import React, { useState, useMemo, useCallback } from "react";
 import {
   Menu as MenuIcon,
-  HelpCircle,
+  MapPin,
+  User,
   Backpack,
   BookOpen,
-  Gamepad2,
-  MapPin,
+  Settings,
+  HelpCircle,
   Monitor,
   Volume2,
-  BarChart3,
   Keyboard,
+  SlidersHorizontal,
 } from "lucide-react";
 import { Modal, Tabs, TabItem } from "@ui";
 import { useI18n } from "@context/I18nContext";
@@ -24,12 +25,14 @@ import {
   type OpenModalId,
 } from "@game-menu/modal";
 import type { ActiveModalState } from "@game-menu/menu/hooks/useModalManager";
-import { MENU_TAB_REGISTRY, MenuTabId } from "@game-menu/menu/menuTabRegistry";
+import type { SubTabMap } from "@game-menu/menu/hooks/useModalCoordinator";
+import { SETTINGS_TAB_REGISTRY, SettingsTabId } from "@game-menu/menu/menuTabRegistry";
 import {
   GameplayTab,
   LocationsTab,
   DisplayTab,
   AudioTab,
+  InterfaceTab,
 } from "@game-menu/menu/tabs";
 import { SkillTreeView } from "@game-menu/skills/SkillTreeView";
 import { ControlsMenuTab } from "@game-menu/modal/views/ControlsMenuTab";
@@ -43,15 +46,15 @@ export interface GameMenuDialogProps {
   readonly isOpen?: boolean;
   readonly activeModal: ActiveModalState;
   readonly onClose: () => void;
-  readonly onNavigateModal: (modal: ModalType) => void;
+  readonly onNavigateModal: (modal: ModalType, subTab?: string) => void;
   readonly onResume: () => void;
   readonly onStartRebind: (
     action: keyof InputMap,
     player: PlayerId,
     label: string
   ) => void;
-  readonly menuTab?: MenuTabId;
-  readonly onMenuTabChange?: (tab: MenuTabId) => void;
+  readonly activeSubTabs?: SubTabMap;
+  readonly onSubTabChange?: (modal: OpenModalId, subTab: string) => void;
 }
 
 interface GameDialogHeaderMeta {
@@ -62,39 +65,53 @@ interface GameDialogHeaderMeta {
 
 const GAME_DIALOG_HEADER_META: Record<GameModalId, GameDialogHeaderMeta> = {
   [ModalId.Menu]: {
-    titleKey: "menu",
+    titleKey: "navGame",
     subtitleKey: "title",
     icon: <MenuIcon className="w-5 h-5 text-amber-400" />,
   },
-  [ModalId.Help]: {
-    titleKey: "helpModalTitle",
-    subtitleKey: "helpGuideSubtitle",
-    icon: <HelpCircle className="w-5 h-5 text-amber-400" />,
+  [ModalId.Locations]: {
+    titleKey: "navMap",
+    subtitleKey: "selectLocationTitle",
+    icon: <MapPin className="w-5 h-5 text-amber-400" />,
+  },
+  [ModalId.Character]: {
+    titleKey: "navCharacter",
+    subtitleKey: "gameStatsSubtitle",
+    icon: <User className="w-5 h-5 text-amber-400" />,
   },
   [ModalId.Inventory]: {
-    titleKey: "inventoryTitle",
+    titleKey: "inventoryBtn",
     subtitleKey: "noPauseLive",
     icon: <Backpack className="w-5 h-5 text-amber-400" />,
   },
   [ModalId.SkillTree]: {
-    titleKey: "skillTreeTitle",
+    titleKey: "headerSkillTree",
     subtitleKey: "skillTreeSubtitle",
     icon: <BookOpen className="w-5 h-5 text-purple-400" />,
   },
+  [ModalId.Settings]: {
+    titleKey: "settings",
+    subtitleKey: "menuSubtitle",
+    icon: <Settings className="w-5 h-5 text-amber-400" />,
+  },
+  [ModalId.Help]: {
+    titleKey: "headerHints",
+    subtitleKey: "helpGuideSubtitle",
+    icon: <HelpCircle className="w-5 h-5 text-amber-400" />,
+  },
 };
 
-const MENU_TAB_ICONS: Record<MenuTabId, React.ReactNode> = {
-  [MenuTabId.Gameplay]: <Gamepad2 size={14} />,
-  [MenuTabId.Locations]: <MapPin size={14} />,
-  [MenuTabId.Display]: <Monitor size={14} />,
-  [MenuTabId.Audio]: <Volume2 size={14} />,
-  [MenuTabId.Controls]: <Keyboard size={14} />,
-  [MenuTabId.Stats]: <BarChart3 size={14} />,
+const SETTINGS_TAB_ICONS: Record<SettingsTabId, React.ReactNode> = {
+  [SettingsTabId.Display]: <Monitor size={14} />,
+  [SettingsTabId.Audio]: <Volume2 size={14} />,
+  [SettingsTabId.Controls]: <Keyboard size={14} />,
+  [SettingsTabId.Interface]: <SlidersHorizontal size={14} />,
 };
 
 /**
- * Single player-facing dialog shell shared across Menu, Help, Inventory, and SkillTree.
+ * Single player-facing dialog shell shared across all game L1 tabs.
  * Keeps the dialog element mounted while switching L1 tabs and keeps header + tab rows fixed.
+ * Only Settings renders an L2 tab row.
  */
 export const GameMenuDialog: React.FC<GameMenuDialogProps> = ({
   isOpen,
@@ -103,41 +120,58 @@ export const GameMenuDialog: React.FC<GameMenuDialogProps> = ({
   onNavigateModal,
   onResume,
   onStartRebind,
-  menuTab: controlledMenuTab,
-  onMenuTabChange,
+  activeSubTabs,
+  onSubTabChange,
 }) => {
   const { t } = useI18n();
-  const [internalMenuTab, setInternalMenuTab] = useState<MenuTabId>(MenuTabId.Gameplay);
-  const activeMenuTab = controlledMenuTab ?? internalMenuTab;
-  const handleMenuTabChange = useCallback(
-    (nextTab: MenuTabId) => {
-      if (onMenuTabChange) {
-        onMenuTabChange(nextTab);
+  const [internalSubTabs, setInternalSubTabs] = useState<SubTabMap>({
+    [ModalId.Settings]: SettingsTabId.Display,
+  });
+
+  const activeSettingsTab = (activeSubTabs?.[ModalId.Settings] ??
+    internalSubTabs[ModalId.Settings] ??
+    SettingsTabId.Display) as SettingsTabId;
+
+  const handleSettingsTabChange = useCallback(
+    (nextTab: SettingsTabId) => {
+      if (onSubTabChange) {
+        onSubTabChange(ModalId.Settings, nextTab);
       } else {
-        setInternalMenuTab(nextTab);
+        setInternalSubTabs((prev) => ({ ...prev, [ModalId.Settings]: nextTab }));
       }
     },
-    [onMenuTabChange]
+    [onSubTabChange]
   );
 
-  const menuTabs = useMemo<TabItem<MenuTabId>[]>(
+  const handleDeepLink = useCallback(
+    (modal: ModalType, subTab?: string) => {
+      if (subTab !== undefined && !onSubTabChange) {
+        setInternalSubTabs((prev) => ({
+          ...prev,
+          [modal as OpenModalId]: subTab,
+        }));
+      }
+      onNavigateModal(modal, subTab);
+    },
+    [onNavigateModal, onSubTabChange]
+  );
+
+  const settingsTabs = useMemo<TabItem<SettingsTabId>[]>(
     () =>
-      MENU_TAB_REGISTRY.map((entry) => ({
+      SETTINGS_TAB_REGISTRY.map((entry) => ({
         id: entry.id,
-        label: t(entry.labelKey) || entry.id,
-        icon: MENU_TAB_ICONS[entry.id],
+        label: t(entry.labelKey),
+        icon: SETTINGS_TAB_ICONS[entry.id],
       })),
     [t]
   );
 
-  const menuTabRenderers = useMemo<Record<MenuTabId, () => React.ReactNode>>(
+  const settingsTabRenderers = useMemo<Record<SettingsTabId, () => React.ReactNode>>(
     () => ({
-      [MenuTabId.Gameplay]: () => <GameplayTab />,
-      [MenuTabId.Locations]: () => <LocationsTab />,
-      [MenuTabId.Display]: () => <DisplayTab />,
-      [MenuTabId.Audio]: () => <AudioTab />,
-      [MenuTabId.Controls]: () => <ControlsMenuTab onStartRebind={onStartRebind} />,
-      [MenuTabId.Stats]: () => <StatsMenuTab />,
+      [SettingsTabId.Display]: () => <DisplayTab />,
+      [SettingsTabId.Audio]: () => <AudioTab />,
+      [SettingsTabId.Controls]: () => <ControlsMenuTab onStartRebind={onStartRebind} />,
+      [SettingsTabId.Interface]: () => <InterfaceTab />,
     }),
     [onStartRebind]
   );
@@ -151,13 +185,25 @@ export const GameMenuDialog: React.FC<GameMenuDialogProps> = ({
   const renderBody = (): React.ReactNode => {
     switch (currentGameModal) {
       case ModalId.Menu:
-        return menuTabRenderers[activeMenuTab]();
-      case ModalId.Help:
-        return <HelpModalView />;
+        return <GameplayTab />;
+      case ModalId.Locations:
+        return <LocationsTab />;
+      case ModalId.Character:
+        return <StatsMenuTab />;
       case ModalId.Inventory:
         return <InventoryModalView />;
       case ModalId.SkillTree:
         return <SkillTreeView />;
+      case ModalId.Settings:
+        return settingsTabRenderers[activeSettingsTab]();
+      case ModalId.Help:
+        return (
+          <HelpModalView
+            onOpenControls={() =>
+              handleDeepLink(ModalId.Settings, SettingsTabId.Controls)
+            }
+          />
+        );
     }
   };
 
@@ -181,11 +227,12 @@ export const GameMenuDialog: React.FC<GameMenuDialogProps> = ({
             showCreation={false}
             wrap={false}
           />
-          {currentGameModal === ModalId.Menu && (
-            <Tabs<MenuTabId>
-              items={menuTabs}
-              activeId={activeMenuTab}
-              onChange={handleMenuTabChange}
+          {currentGameModal === ModalId.Settings && (
+            <Tabs<SettingsTabId>
+              id="settings-sub-navigation"
+              items={settingsTabs}
+              activeId={activeSettingsTab}
+              onChange={handleSettingsTabChange}
               wrap={false}
             />
           )}

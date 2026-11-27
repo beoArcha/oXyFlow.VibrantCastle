@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { RotateCcw } from "lucide-react";
-import { Button } from "@ui";
+import { RotateCcw, ScrollText } from "lucide-react";
+import { Button, Heading } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { useGameSession } from "@context/GameSessionContext";
 import { useSettings } from "@context/SettingsContext";
@@ -44,6 +44,12 @@ export const StatsMenuTab: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-2">
+        <ScrollText size={16} className="text-amber-400 shrink-0" />
+        <Heading level={3} size="base" variant="primary">
+          {t("chronicleTitle")}
+        </Heading>
+      </div>
       <StatsSessionCard summary={statsVm.sessionSummary} />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <StatsPlayerCard

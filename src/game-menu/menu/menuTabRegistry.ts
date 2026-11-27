@@ -1,27 +1,22 @@
 /**
- * Typed Open/Closed Menu Tab Registry covering the game Menu subtabs.
- * The developer tools ("Tworzenie") live in their own dialog, not here.
+ * Typed Open/Closed Settings Sub-Tab Registry covering Ustawienia (Settings) L2 sections.
  */
 
-export enum MenuTabId {
-  Gameplay = "gameplay",
-  Locations = "locations",
+export enum SettingsTabId {
   Display = "display",
   Audio = "audio",
   Controls = "controls",
-  Stats = "stats",
+  Interface = "interface",
 }
 
-export interface MenuTabDefinition {
-  readonly id: MenuTabId;
+export interface SettingsTabDefinition {
+  readonly id: SettingsTabId;
   readonly labelKey: string;
 }
 
-export const MENU_TAB_REGISTRY: readonly MenuTabDefinition[] = [
-  { id: MenuTabId.Gameplay, labelKey: "settings" },
-  { id: MenuTabId.Locations, labelKey: "locationLabel" },
-  { id: MenuTabId.Display, labelKey: "tabDisplay" },
-  { id: MenuTabId.Audio, labelKey: "tabAudio" },
-  { id: MenuTabId.Controls, labelKey: "controlsHelp" },
-  { id: MenuTabId.Stats, labelKey: "statsBtn" },
+export const SETTINGS_TAB_REGISTRY: readonly SettingsTabDefinition[] = [
+  { id: SettingsTabId.Display, labelKey: "settingsTabDisplay" },
+  { id: SettingsTabId.Audio, labelKey: "settingsTabAudio" },
+  { id: SettingsTabId.Controls, labelKey: "settingsTabControls" },
+  { id: SettingsTabId.Interface, labelKey: "settingsTabInterface" },
 ];

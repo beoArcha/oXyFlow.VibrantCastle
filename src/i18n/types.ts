@@ -70,6 +70,12 @@ export interface HudI18n {
   hints: string;
   menu: string;
   settings: string;
+  navGame: string;
+  navMap: string;
+  navCharacter: string;
+  chronicleTitle: string;
+  openControlsBtn: string;
+  helpControlsCardDesc: string;
   helpModalTitle: string;
   closeModal: string;
   closeModalHint: string;
@@ -143,6 +149,12 @@ export interface SettingsGameplayI18n {
   tabLocations: string;
   tabTester: string;
   tabDeveloper: string;
+  settingsTabDisplay: string;
+  settingsTabAudio: string;
+  settingsTabControls: string;
+  settingsTabInterface: string;
+  interfaceLanguageTitle: string;
+  interfaceLanguageDesc: string;
   gameMode: string;
   gameModeSinglePlayer: string;
   gameModeLocalCoop: string;

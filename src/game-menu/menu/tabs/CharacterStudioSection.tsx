@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Eye, Layers, Film } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Tabs, TabsList, TabsTrigger } from "@ui";
+import { Button, Card, CardHeader, CardTitle, CardContent } from "@ui";
 import { CharacterStage, AtlasSheetViewer } from "@game-menu/character";
 import { useSettings } from "@context/GameContext";
 import { useI18n } from "@context/I18nContext";
@@ -35,27 +35,26 @@ export const CharacterStudioSection: React.FC = () => {
               {t("studioTitle")}
             </CardTitle>
 
-            <Tabs
-              value={studioMode}
-              onValueChange={(val) => setStudioMode(val as "stage" | "atlas")}
-            >
-              <TabsList className="bg-black/60 p-1 border-stone-800">
-                <TabsTrigger
-                  value="stage"
-                  icon={<Film size={13} />}
-                  className="py-1 px-2.5 text-xs"
-                >
-                  {t("studioStageTab")}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="atlas"
-                  icon={<Layers size={13} />}
-                  className="py-1 px-2.5 text-xs"
-                >
-                  {t("studioAtlasTab")}
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
+            <div className="flex items-center gap-1.5 bg-black/60 p-1 rounded-lg border border-stone-800">
+              <Button
+                size="sm"
+                variant={studioMode === "stage" ? "primary" : "secondary"}
+                icon={<Film size={13} />}
+                onClick={() => setStudioMode("stage")}
+                className="py-1 px-2.5 h-7 text-xs"
+              >
+                {t("studioStageTab")}
+              </Button>
+              <Button
+                size="sm"
+                variant={studioMode === "atlas" ? "primary" : "secondary"}
+                icon={<Layers size={13} />}
+                onClick={() => setStudioMode("atlas")}
+                className="py-1 px-2.5 h-7 text-xs"
+              >
+                {t("studioAtlasTab")}
+              </Button>
+            </div>
           </div>
 
           <div className="flex items-center gap-1.5">

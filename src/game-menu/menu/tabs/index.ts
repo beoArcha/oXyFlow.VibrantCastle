@@ -1,4 +1,5 @@
 export { GameplayTab, type GameplayTabProps } from "./GameplayTab";
+export { InterfaceTab, type InterfaceTabProps } from "./InterfaceTab";
 export { LocationsTab, type LocationsTabProps, type LocationItemVM } from "./LocationsTab";
 export { DisplayTab, type DisplayTabProps } from "./DisplayTab";
 export { DisplaySettingsSection, type DisplaySettingsSectionProps } from "./DisplaySettingsSection";

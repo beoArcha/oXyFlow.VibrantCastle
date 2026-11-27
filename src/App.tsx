@@ -2,8 +2,11 @@ import React, { useCallback, useMemo } from "react";
 import {
   HelpCircle,
   Menu as MenuIcon,
+  MapPin,
+  User,
   Backpack,
   BookOpen,
+  Settings,
   Layers,
   Pause,
   Play,
@@ -29,8 +32,11 @@ import { formatGameDiagnosticReport } from "@lib/logger";
 const HEADER_SHORTCUT_ICONS: Record<ModalIconKey, React.ReactNode> = {
   help: <HelpCircle size={14} />,
   menu: <MenuIcon size={14} />,
+  locations: <MapPin size={14} />,
+  character: <User size={14} />,
   inventory: <Backpack size={14} />,
   skillTree: <BookOpen size={14} />,
+  settings: <Settings size={14} />,
   creation: <Layers size={14} />,
 };
 
@@ -156,6 +162,8 @@ function GameScreen() {
 
       <GameModalHost
         modalManager={coordinator.modalManager}
+        activeSubTabs={coordinator.activeSubTabs}
+        onSubTabChange={coordinator.setActiveSubTab}
         onClose={coordinator.closeModal}
         onNavigateModal={coordinator.openModal}
         onResume={coordinator.resumeGame}

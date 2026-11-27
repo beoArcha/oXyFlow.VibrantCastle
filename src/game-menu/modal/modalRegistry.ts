@@ -7,23 +7,29 @@
 export enum ModalId {
   None = "none",
   Menu = "menu",
-  Help = "help",
+  Locations = "locations",
+  Character = "character",
   Inventory = "inventory",
   SkillTree = "skillTree",
+  Settings = "settings",
+  Help = "help",
   Creation = "creation",
 }
 
 export type OpenModalId = Exclude<ModalId, ModalId.None>;
 
-/** Single width shared by every player-facing game modal (Menu, Help, Inventory, Skill tree). */
+/** Single width shared by every player-facing game modal. */
 export const GAME_MODAL_WIDTH_CLASS = "max-w-5xl";
 export type ModalType = `${OpenModalId}`;
 
 export type ModalIconKey =
   | "menu"
-  | "help"
+  | "locations"
+  | "character"
   | "inventory"
   | "skillTree"
+  | "settings"
+  | "help"
   | "creation";
 
 export interface ModalHeaderShortcutConfig {
@@ -35,7 +41,7 @@ export interface ModalHeaderShortcutConfig {
 
 export interface ModalNavigationTabConfig {
   readonly labelKey: string;
-  readonly keyLabel: string;
+  readonly keyLabel?: string;
   readonly iconKey: ModalIconKey;
   readonly order: number;
 }
@@ -58,7 +64,7 @@ export const MODAL_REGISTRY: readonly ModalDefinition[] = [
     pausesGame: true,
     hotkeys: ["m"],
     navigationTab: {
-      labelKey: "menu",
+      labelKey: "navGame",
       keyLabel: "M",
       iconKey: "menu",
       order: 1,
@@ -71,21 +77,25 @@ export const MODAL_REGISTRY: readonly ModalDefinition[] = [
     },
   },
   {
-    id: ModalId.Help,
+    id: ModalId.Locations,
     dialog: "game",
     pausesGame: true,
-    hotkeys: ["h", "?", "F1"],
+    hotkeys: [],
     navigationTab: {
-      labelKey: "hints",
-      keyLabel: "H",
-      iconKey: "help",
+      labelKey: "navMap",
+      iconKey: "locations",
       order: 2,
     },
-    headerShortcut: {
-      hotkeyLabel: "H",
-      labelKey: "headerHints",
-      iconKey: "help",
-      order: 4,
+  },
+  {
+    id: ModalId.Character,
+    dialog: "game",
+    pausesGame: true,
+    hotkeys: [],
+    navigationTab: {
+      labelKey: "navCharacter",
+      iconKey: "character",
+      order: 3,
     },
   },
   {
@@ -97,7 +107,7 @@ export const MODAL_REGISTRY: readonly ModalDefinition[] = [
       labelKey: "inventoryBtn",
       keyLabel: "I",
       iconKey: "inventory",
-      order: 3,
+      order: 4,
     },
     headerShortcut: {
       hotkeyLabel: "I",
@@ -112,16 +122,45 @@ export const MODAL_REGISTRY: readonly ModalDefinition[] = [
     pausesGame: false,
     hotkeys: ["k"],
     navigationTab: {
-      labelKey: "skillTreeBtn",
+      labelKey: "headerSkillTree",
       keyLabel: "K",
       iconKey: "skillTree",
-      order: 4,
+      order: 5,
     },
     headerShortcut: {
       hotkeyLabel: "K",
       labelKey: "headerSkillTree",
       iconKey: "skillTree",
       order: 2,
+    },
+  },
+  {
+    id: ModalId.Settings,
+    dialog: "game",
+    pausesGame: true,
+    hotkeys: [],
+    navigationTab: {
+      labelKey: "settings",
+      iconKey: "settings",
+      order: 6,
+    },
+  },
+  {
+    id: ModalId.Help,
+    dialog: "game",
+    pausesGame: true,
+    hotkeys: ["h", "?", "F1"],
+    navigationTab: {
+      labelKey: "headerHints",
+      keyLabel: "H",
+      iconKey: "help",
+      order: 7,
+    },
+    headerShortcut: {
+      hotkeyLabel: "H",
+      labelKey: "headerHints",
+      iconKey: "help",
+      order: 4,
     },
   },
   {
@@ -133,7 +172,7 @@ export const MODAL_REGISTRY: readonly ModalDefinition[] = [
       labelKey: "tabCreation",
       keyLabel: "C",
       iconKey: "creation",
-      order: 5,
+      order: 8,
     },
     headerShortcut: {
       hotkeyLabel: "C",

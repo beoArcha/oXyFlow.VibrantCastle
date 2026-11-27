@@ -47,16 +47,19 @@ describe("GameModalHost", () => {
     expect(document.body.querySelector('[data-testid="dev-suite-stub"]')).not.toBeNull();
     expect(document.body.querySelector("#modal-quick-navigation")).toBeNull();
     const texts = tablistTexts().join(" | ");
-    expect(texts).not.toMatch(/Menu|Ekwipunek|Drzewko|Podpowiedzi/);
+    expect(texts).not.toMatch(/Gra|Mapa|Postać|Ekwipunek|Magia|Ustawienia|Pomoc/);
 
     await unmount();
   });
 
   it.each([
-    ["Menu", ModalId.Menu],
-    ["Help", ModalId.Help],
-    ["Inventory", ModalId.Inventory],
-    ["SkillTree", ModalId.SkillTree],
+    ["Menu (Gra)", ModalId.Menu],
+    ["Locations (Mapa)", ModalId.Locations],
+    ["Character (Postać)", ModalId.Character],
+    ["Inventory (Ekwipunek)", ModalId.Inventory],
+    ["SkillTree (Magia)", ModalId.SkillTree],
+    ["Settings (Ustawienia)", ModalId.Settings],
+    ["Help (Pomoc)", ModalId.Help],
   ])("renders %s with the shared game modal width", async (_name, modal) => {
     const { unmount } = await renderHost(modal);
 
