@@ -1,10 +1,14 @@
-import { describe, it, expect, mock } from "bun:test";
+import { describe, it, expect, mock, beforeAll, afterAll } from "bun:test";
+import { setDevToolsOverride } from "@/app/appConfig";
 import React from "react";
 import { renderIntoDom, cleanupDom } from "@test-utils/domTestUtils";
 import { IntegrationTestProviders } from "@test-utils/testProviders";
 import { GameModalHost } from "../GameModalHost";
 import { ModalId } from "@game-menu/modal/modalRegistry";
 import type { ModalManager } from "@game-menu/menu/hooks/useModalManager";
+
+beforeAll(() => setDevToolsOverride(true));
+afterAll(() => setDevToolsOverride(undefined));
 
 const managerFor = (activeModal: ModalId): ModalManager =>
   ({ activeModal } as unknown as ModalManager);

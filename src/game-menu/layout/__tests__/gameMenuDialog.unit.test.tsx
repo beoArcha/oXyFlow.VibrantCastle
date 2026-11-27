@@ -1,4 +1,5 @@
-import { describe, it, expect, mock } from "bun:test";
+import { describe, it, expect, mock, beforeAll, afterAll } from "bun:test";
+import { setDevToolsOverride } from "@/app/appConfig";
 import React, { useState, act } from "react";
 import { renderIntoDom, cleanupDom } from "@test-utils/domTestUtils";
 import { IntegrationTestProviders } from "@test-utils/testProviders";
@@ -10,6 +11,9 @@ import { SettingsTabId } from "@game-menu/menu/menuTabRegistry";
 import { BINDABLE_ACTION_CATALOG } from "@game-menu/modal/views/ControlsMenuTab";
 import { translations } from "@i18n";
 import type { ModalManager } from "@game-menu/menu/hooks/useModalManager";
+
+beforeAll(() => setDevToolsOverride(true));
+afterAll(() => setDevToolsOverride(undefined));
 
 const ControlledHostHarness: React.FC<{
   initialModal?: ModalId;
