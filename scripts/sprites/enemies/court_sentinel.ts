@@ -7,11 +7,24 @@ interface Pose {
   legL: [number, number];
   legR: [number, number];
   armFront: [number, number];
+  halberdSlash: boolean;
+  collapse: number;
   flash: boolean;
   glowFlicker: boolean;
 }
 
-const REST: Pose = { dx: 0, dy: 0, headDy: 0, legL: [0, 0], legR: [0, 0], armFront: [0, 0], flash: false, glowFlicker: false };
+const REST: Pose = {
+  dx: 0,
+  dy: 0,
+  headDy: 0,
+  legL: [0, 0],
+  legR: [0, 0],
+  armFront: [0, 0],
+  halberdSlash: false,
+  collapse: 0,
+  flash: false,
+  glowFlicker: false,
+};
 
 const POSES: Partial<Record<AnimationName, Pose[]>> = {
   idle: [REST, { ...REST, dy: -1, armFront: [0, -1], glowFlicker: true }],
@@ -24,6 +37,18 @@ const POSES: Partial<Record<AnimationName, Pose[]>> = {
   hit: [
     { ...REST, dx: -2, dy: 1, headDy: 1, armFront: [-2, 1], flash: true },
     { ...REST, dx: -1, headDy: 1, armFront: [-1, 0] },
+  ],
+  attack: [
+    { ...REST, dx: -1, dy: 1, armFront: [-4, 2], glowFlicker: true },
+    { ...REST, dx: 0, dy: 0, legR: [2, 0], armFront: [1, 0], halberdSlash: true, glowFlicker: true },
+    { ...REST, dx: 0, dy: 1, legR: [2, 0], armFront: [2, 2], halberdSlash: true },
+    { ...REST, dx: 0, dy: 0, armFront: [1, 1] },
+  ],
+  death: [
+    { ...REST, dx: -1, dy: 0, headDy: 1, armFront: [-2, 1], collapse: 1, flash: true },
+    { ...REST, dx: -1, dy: 0, headDy: 2, legL: [0, 0], legR: [1, 0], armFront: [-1, 2], collapse: 1 },
+    { ...REST, collapse: 2 },
+    { ...REST, collapse: 3 },
   ],
 };
 
@@ -171,6 +196,26 @@ function drawHead(b: Brush, p: Pose): void {
 
 function drawArmAndHalberd(b: Brush, p: Pose): void {
   const { pal, s, detailed } = b;
+  if (p.halberdSlash) {
+    const ax = 26 + p.dx;
+    const ay = 18 + p.dy;
+    const [hx, hy] = p.armFront;
+    b.rect(ax + 1, ay, 4, 4, pal.bronzeMid);
+    b.rect(ax + 4, ay + 2, 5, 3, pal.ironMid);
+    // Horizontal thrusting halberd shaft + wide steel blade
+    const sx = 21 + p.dx + hx;
+    const sy = 21 + p.dy + hy;
+    b.rect(sx - 6, sy, 20, 2, pal.ironDark);
+    b.rect(sx + 11, sy - 3, 5, 6, pal.steelMid);
+    b.rect(sx + 16, sy - 1, 2, 3, pal.steelHi);
+    b.rect(sx + 9, sy - 1, 2, 4, pal.brass);
+    if (detailed) {
+      b.rect(sx + 12, sy - 3, 3, 2, pal.steelHi);
+      b.c.px((sx + 17) * s, sy * s, pal.steelHi);
+    }
+    return;
+  }
+
   const ax = 26 + p.dx;
   const ay = 17 + p.dy;
   const [hx, hy] = p.armFront;
@@ -207,6 +252,25 @@ function drawSentinel(c: PixelCanvas, s: number, detailed: boolean, anim: Animat
   const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
 
+  if (pose.collapse >= 2) {
+    // Fallen sentinel wreckage + dropped shield & halberd on bottom row 47
+    const y0 = pose.collapse === 2 ? 36 : 40;
+    b.rect(11, 43, 22, 2, pal.ironDark); // fallen halberd shaft
+    b.rect(33, 41, 5, 5, pal.steelMid);
+    b.rect(14, y0, 14, 46 - y0, pal.bronzeMid);
+    b.rect(16, y0 + 2, 6, 4, pal.ironDark);
+    b.rect(28, y0 + 2, 7, 45 - y0, pal.ironMid); // fallen helm
+    if (pose.collapse === 2) b.rect(31, y0 + 4, 3, 1, pal.furnaceMid);
+    b.rect(8, 41, 8, 6, pal.bronzeMid); // dropped shield
+    b.rect(8, 47, 30, 1, pal.ironDark);
+    if (detailed) {
+      b.rect(16, y0 + 1, 10, 2, pal.bronzeLight);
+      b.rect(34, 41, 3, 2, pal.steelHi);
+    }
+    c.outline(pal.outline);
+    return;
+  }
+
   drawKiteShield(b, pose);
   drawLeg(b, 17, pose.legL, false);
   drawLeg(b, 23, pose.legR, true);
@@ -227,6 +291,8 @@ export default defineEnemySprite({
     idle: { frames: 2, fps: 4, loop: true },
     move: { frames: 4, fps: 8, loop: true },
     hit: { frames: 2, fps: 10, loop: false },
+    attack: { frames: 4, fps: 9, loop: false },
+    death: { frames: 4, fps: 7, loop: false },
   },
   draw: {
     hi8bit: (c, anim, frame) => drawSentinel(c, 1, false, anim, frame),

@@ -3,13 +3,13 @@ import { defineEnemySprite, type AnimationName, type PixelCanvas } from "../defi
 interface Pose {
   dx: number; dy: number; headDy: number;
   legL: [number, number]; legR: [number, number];
-  armDy: number; cogPhase: number; bladePhase: number;
-  puff: boolean; eyeGlint: boolean; flash: boolean;
+  armDx: number; armDy: number; cogPhase: number; bladePhase: number;
+  puff: boolean; eyeGlint: boolean; sawLunging: boolean; collapse: number; flash: boolean;
 }
 
 const REST: Pose = {
   dx: 0, dy: 0, headDy: 0, legL: [0, 0], legR: [0, 0],
-  armDy: 0, cogPhase: 0, bladePhase: 0, puff: false, eyeGlint: false, flash: false,
+  armDx: 0, armDy: 0, cogPhase: 0, bladePhase: 0, puff: false, eyeGlint: false, sawLunging: false, collapse: 0, flash: false,
 };
 
 const POSES: Partial<Record<AnimationName, Pose[]>> = {
@@ -23,6 +23,18 @@ const POSES: Partial<Record<AnimationName, Pose[]>> = {
   hit: [
     { ...REST, dx: -2, headDy: 1, armDy: 1, legL: [-1, 0], legR: [-1, 0], flash: true },
     { ...REST, dx: -1, headDy: 0, armDy: 0, cogPhase: 1, bladePhase: 1 },
+  ],
+  attack: [
+    { ...REST, dx: -1, armDx: -3, armDy: -3, cogPhase: 1, bladePhase: 1, puff: true },
+    { ...REST, dx: 0, dy: 1, armDx: 3, armDy: 1, cogPhase: 2, bladePhase: 2, sawLunging: true, eyeGlint: true },
+    { ...REST, dx: 0, dy: 1, armDx: 4, armDy: 2, cogPhase: 3, bladePhase: 3, sawLunging: true, puff: true },
+    { ...REST, dx: 0, armDx: 1, armDy: 0, cogPhase: 0, bladePhase: 0 },
+  ],
+  death: [
+    { ...REST, dx: -1, dy: 2, headDy: 1, armDy: 2, puff: true, collapse: 1, flash: true },
+    { ...REST, dx: -1, dy: 6, headDy: 2, armDy: 5, collapse: 1 },
+    { ...REST, collapse: 2 },
+    { ...REST, collapse: 3 },
   ],
 };
 
@@ -192,11 +204,11 @@ function drawArmAndBlade(b: Brush, p: Pose): void {
   b.rect(sx + 5, sy + 1, 2, 5, pal.brassLight);
   b.rect(sx + 1, sy + 6, 5, 1, pal.brassDark);
 
-  const ax = sx + 3, ay = sy + 5;
-  b.rect(ax, ay, 4, 3, pal.steelDark);
+  const ax = sx + 3 + p.armDx, ay = sy + 5;
+  b.rect(ax - p.armDx, ay, 4 + Math.max(0, p.armDx), 3, pal.steelDark);
   b.rect(ax + 2, ay + 1, 3, 2, pal.steelMid);
 
-  const bx = ax + 5, by = ay + 2;
+  const bx = Math.min(39, ax + 5), by = ay + 2;
   b.rect(bx - 3, by - 2, 7, 5, pal.steelMid);
   b.rect(bx - 2, by - 3, 5, 7, pal.steelMid);
   b.rect(bx - 1, by - 1, 3, 3, pal.brassMid);
@@ -216,6 +228,23 @@ function drawAutomaton(c: PixelCanvas, s: number, detailed: boolean, anim: Anima
   const pose = POSES[anim]?.[frame] ?? REST;
   const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
+  if (pose.collapse >= 2) {
+    // Fallen brass boiler chassis, loose chest cog, and resting saw-blade on row 47
+    const y0 = pose.collapse === 2 ? 33 : 38;
+    b.rect(10, y0 + 2, 22, 46 - y0 - 2, pal.brassMid);
+    b.rect(12, y0 + 4, 16, 6, pal.brassDark);
+    b.rect(18, y0 + 4, 6, 6, pal.steelMid);
+    b.rect(31, y0 + 4, 8, 6, pal.steelLight); // fallen saw blade
+    b.rect(24, y0 - 2, 8, 5, pal.brassLight); // tilted dome head
+    if (pose.collapse === 2) b.rect(28, y0, 3, 2, pal.lensMid);
+    b.rect(10, 47, 29, 1, pal.steelDark);
+    if (detailed) {
+      b.rect(13, y0 + 3, 12, 2, pal.brassHi);
+      c.px(21 * s, (y0 + 7) * s, pal.brassHi);
+    }
+    c.outline(pal.outline);
+    return;
+  }
   drawExhaust(b, pose);
   drawBackArm(b, pose);
   drawLeg(b, 14, pose.legL, false);
@@ -237,6 +266,8 @@ export default defineEnemySprite({
     idle: { frames: 2, fps: 4, loop: true },
     move: { frames: 4, fps: 6, loop: true },
     hit: { frames: 2, fps: 10, loop: false },
+    attack: { frames: 4, fps: 9, loop: false },
+    death: { frames: 4, fps: 7, loop: false },
   },
   draw: {
     hi8bit: (c, anim, frame) => drawAutomaton(c, 1, false, anim, frame),

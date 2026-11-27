@@ -7,11 +7,24 @@ interface Pose {
   stoneOutward: number;
   robeWave: number;
   spearTilt: number;
+  spearAttack: number; // 0 = upright, 1 = thrust forward, 2 = flare
+  dissipate: number; // 0 = intact, 1 = cracking, 2 = unraveling, 3 = remnant
   diamondPulse: boolean;
   flash: boolean;
 }
 
-const R: Pose = { dx: 0, dy: 0, stonePhase: 0, stoneOutward: 0, robeWave: 0, spearTilt: 0, diamondPulse: false, flash: false };
+const R: Pose = {
+  dx: 0,
+  dy: 0,
+  stonePhase: 0,
+  stoneOutward: 0,
+  robeWave: 0,
+  spearTilt: 0,
+  spearAttack: 0,
+  dissipate: 0,
+  diamondPulse: false,
+  flash: false,
+};
 const POSES: Partial<Record<AnimationName, Pose[]>> = {
   idle: [R, { ...R, dy: -1, robeWave: 1, diamondPulse: true }],
   move: [
@@ -23,6 +36,18 @@ const POSES: Partial<Record<AnimationName, Pose[]>> = {
   hit: [
     { ...R, dx: -3, stoneOutward: 3, robeWave: -2, spearTilt: -1, diamondPulse: true, flash: true },
     { ...R, dx: -1, stoneOutward: 1, robeWave: -1 },
+  ],
+  attack: [
+    { ...R, dx: -2, stoneOutward: 2, robeWave: 1, spearTilt: -2, diamondPulse: true },
+    { ...R, dx: 2, dy: -1, stonePhase: 1, stoneOutward: 3, robeWave: -2, spearAttack: 1, diamondPulse: true },
+    { ...R, dx: 2, dy: 0, stonePhase: 2, stoneOutward: 4, robeWave: -1, spearAttack: 2, diamondPulse: true },
+    { ...R, dx: 1, stonePhase: 3, spearTilt: 1 },
+  ],
+  death: [
+    { ...R, dx: -2, dy: 2, stoneOutward: 4, robeWave: -2, dissipate: 1, flash: true },
+    { ...R, dx: -1, dy: 5, stoneOutward: 6, robeWave: -1, dissipate: 1 },
+    { ...R, dy: 9, stoneOutward: 8, dissipate: 2 },
+    { ...R, dy: 14, stoneOutward: 10, dissipate: 3 },
   ],
 };
 
@@ -224,9 +249,27 @@ function drawArmsAndSpear(b: Brush, p: Pose): void {
   b.rect(cx + 8, cy + 6, 2, 2, pal.goldMid);
   b.rect(cx + 9, cy + 7, 2, 2, pal.marbleLight);
 
-  // Long golden spear upright
+  // Long golden spear upright or thrusting forward
+  if (p.spearAttack > 0) {
+    const sy = 21 + p.dy;
+    const sx0 = cx - 4;
+    const sx1 = cx + (p.spearAttack === 2 ? 23 : 21);
+    b.line(sx0, sy + 2, sx1 - 6, sy, pal.goldMid);
+    b.rect(sx1 - 6, sy - 2, 4, 5, pal.goldLight);
+    b.rect(sx1 - 2, sy - 1, 4, 3, pal.cyanCore);
+    if (p.spearAttack === 2) {
+      b.rect(sx1 + 2, sy - 2, 4, 5, pal.cyanMid);
+      b.rect(sx1 + 3, sy - 1, 3, 3, pal.cyanCore);
+    }
+    if (detailed) {
+      c.line(sx0 * s, (sy + 2) * s + 1, (sx1 - 6) * s, sy * s + 1, pal.goldDark);
+      b.pixel(sx1 + 1, sy, "#ffffff");
+    }
+    return;
+  }
+
   const spX = cx + 10, tipX = spX + p.spearTilt, tipY = 5 + p.dy;
-  const buttX = spX - p.spearTilt, buttY = 52 + p.dy;
+  const buttX = spX - p.spearTilt, buttY = Math.min(68, 52 + p.dy);
 
   b.line(tipX, tipY + 8, buttX, buttY, pal.goldMid);
   b.rect(tipX, tipY, 1, 2, pal.goldLight);
@@ -248,6 +291,24 @@ function drawAetherArchon(c: PixelCanvas, s: number, detailed: boolean, anim: An
   const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
 
+  if (pose.dissipate >= 2) {
+    // Unraveling marble crest & scattered rune stones
+    const cx = 36 + pose.dx;
+    const cy = 28 + pose.dy;
+    b.rect(cx - 5, cy - 2, 10, 7, pal.marbleMid);
+    b.rect(cx - 3, cy + 5, 6, pose.dissipate === 2 ? 12 : 6, pal.cyanMid);
+    b.rect(cx - 12, cy + 4, 4, 4, pal.slateMid);
+    b.rect(cx + 9, cy + 2, 4, 4, pal.slateMid);
+    b.rect(cx + 3, cy + 10, 8, 2, pal.goldMid);
+    if (detailed) {
+      b.rect(cx - 4, cy - 1, 5, 3, pal.marbleLight);
+      b.pixel(cx - 10, cy + 6, pal.cyanDark);
+      b.pixel(cx + 11, cy + 4, pal.cyanDark);
+    }
+    c.outline(pal.outline);
+    return;
+  }
+
   drawStones(b, pose, false);
   drawArmsAndSpear(b, pose);
   drawRobe(b, pose);
@@ -268,6 +329,8 @@ export default defineEnemySprite({
     idle: { frames: 2, fps: 3, loop: true },
     move: { frames: 4, fps: 6, loop: true },
     hit: { frames: 2, fps: 10, loop: false },
+    attack: { frames: 4, fps: 8, loop: false },
+    death: { frames: 4, fps: 7, loop: false },
   },
   draw: {
     hi8bit: (c, anim, frame) => drawAetherArchon(c, 1, false, anim, frame),

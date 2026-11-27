@@ -6,10 +6,11 @@ interface Pose {
   thornBright: boolean;
   bulbSquash: number;
   bulbSwell: number;
+  wilt: number; // 0 = alive, 1 = wilting, 2 = collapsed
   flash: boolean;
 }
 
-const REST: Pose = { vineSway: 0, slitWide: false, thornBright: false, bulbSquash: 0, bulbSwell: 0, flash: false };
+const REST: Pose = { vineSway: 0, slitWide: false, thornBright: false, bulbSquash: 0, bulbSwell: 0, wilt: 0, flash: false };
 
 const POSES: Partial<Record<AnimationName, Pose[]>> = {
   idle: [REST, { ...REST, slitWide: true, vineSway: 1 }],
@@ -22,6 +23,18 @@ const POSES: Partial<Record<AnimationName, Pose[]>> = {
   hit: [
     { ...REST, vineSway: -3, bulbSquash: 2, flash: true, slitWide: false },
     { ...REST, vineSway: -1, bulbSquash: 1, flash: false, slitWide: true },
+  ],
+  attack: [
+    { ...REST, vineSway: -4, bulbSquash: 2, slitWide: true, thornBright: false },
+    { ...REST, vineSway: 6, bulbSwell: 2, slitWide: true, thornBright: true },
+    { ...REST, vineSway: 8, bulbSwell: 1, slitWide: true, thornBright: true },
+    { ...REST, vineSway: 2, slitWide: false, thornBright: false },
+  ],
+  death: [
+    { ...REST, vineSway: -2, bulbSquash: 2, flash: true },
+    { ...REST, vineSway: 2, bulbSquash: 4 },
+    { ...REST, wilt: 1 },
+    { ...REST, wilt: 2 },
   ],
 };
 
@@ -207,6 +220,21 @@ function drawCreeper(c: PixelCanvas, s: number, detailed: boolean, anim: Animati
   const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
   drawRoots(b);
+  if (pose.wilt >= 1) {
+    // Shriveled bark bulb & drooping vines over roots
+    const y0 = pose.wilt === 1 ? 33 : 37;
+    b.rect(14, y0, 20, 44 - y0, pal.barkMid);
+    b.rect(16, y0 - 2, 16, 3, pal.barkDark);
+    b.rect(22, y0 + 1, 4, 4, pal.amberDark);
+    b.line(18, y0, 11, y0 + 5, pal.vineDark);
+    b.line(30, y0, 37, y0 + 5, pal.vineDark);
+    if (detailed) {
+      b.rect(17, y0 + 1, 6, 2, pal.barkLight);
+      c.px(23 * s, (y0 + 2) * s, pal.amberMid);
+    }
+    c.outline(pal.outline);
+    return;
+  }
   drawBulb(b, pose);
   drawSlit(b, pose);
   drawThorns(b, pose);
@@ -224,6 +252,8 @@ export default defineEnemySprite({
     idle: { frames: 2, fps: 3, loop: true },
     move: { frames: 4, fps: 5, loop: true },
     hit: { frames: 2, fps: 10, loop: false },
+    attack: { frames: 4, fps: 9, loop: false },
+    death: { frames: 4, fps: 7, loop: false },
   },
   draw: {
     hi8bit: (c, anim, frame) => drawCreeper(c, 1, false, anim, frame),

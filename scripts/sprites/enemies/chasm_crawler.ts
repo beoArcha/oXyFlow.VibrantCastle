@@ -3,13 +3,13 @@ import { defineEnemySprite, type AnimationName, type PixelCanvas } from "../defi
 interface Pose {
   dx: number; dy: number; tailSway: number; tailDy: number;
   leg1Dx: number; leg2Dx: number; leg3Dx: number;
-  thornsBright: boolean; pincerSpread: number; flash: boolean;
+  thornsBright: boolean; pincerSpread: number; collapse: number; flash: boolean;
 }
 
 const REST: Pose = {
   dx: 0, dy: 0, tailSway: 0, tailDy: 0,
   leg1Dx: 0, leg2Dx: 0, leg3Dx: 0,
-  thornsBright: true, pincerSpread: 0, flash: false,
+  thornsBright: true, pincerSpread: 0, collapse: 0, flash: false,
 };
 
 const POSES: Partial<Record<AnimationName, Pose[]>> = {
@@ -23,6 +23,18 @@ const POSES: Partial<Record<AnimationName, Pose[]>> = {
   hit: [
     { ...REST, dx: -2, dy: 0, tailDy: 4, tailSway: 0, leg1Dx: -2, leg2Dx: -2, leg3Dx: -2, flash: true },
     { ...REST, dx: -1, dy: 0, tailDy: 2, tailSway: 0, leg1Dx: -1, leg2Dx: -1, leg3Dx: -1, flash: false },
+  ],
+  attack: [
+    { ...REST, dx: -2, dy: 1, tailDy: -2, tailSway: 2, pincerSpread: 2 },
+    { ...REST, dx: 1, dy: 0, tailDy: -1, tailSway: 4, leg1Dx: 1, leg3Dx: -1, pincerSpread: 2 },
+    { ...REST, dx: 1, dy: 1, tailDy: 1, tailSway: 6, leg1Dx: 1, pincerSpread: 0 },
+    { ...REST, dx: 0, dy: 0, tailDy: 0, tailSway: 1, pincerSpread: 0 },
+  ],
+  death: [
+    { ...REST, dx: -1, dy: 1, tailDy: 3, leg1Dx: -1, leg2Dx: -1, leg3Dx: -1, thornsBright: false, flash: true },
+    { ...REST, dx: 0, dy: 3, tailDy: 5, leg1Dx: 2, leg3Dx: -2, thornsBright: false },
+    { ...REST, dy: 4, collapse: 1, thornsBright: false },
+    { ...REST, dy: 6, collapse: 2, thornsBright: false },
   ],
 };
 
@@ -201,6 +213,24 @@ function drawCrawler(c: PixelCanvas, s: number, detailed: boolean, anim: Animati
   const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
 
+  if (pose.collapse >= 1) {
+    // Flattened shale carapace & dimmed amber thorns resting on row 47
+    const y0 = pose.collapse === 1 ? 39 : 41;
+    b.rect(11, y0 + 2, 24, 46 - y0 - 2, pal.shaleBase);
+    b.rect(13, y0 + 1, 18, 2, pal.shaleHi);
+    b.rect(20, y0 - 2, 4, 3, pal.amberMid);
+    b.rect(26, y0 - 1, 3, 2, pal.amberDark);
+    b.rect(7, 43, 6, 3, pal.shaleDark); // curled tail
+    b.rect(35, 43, 5, 3, pal.shaleDark); // limp pincers
+    b.rect(10, 47, 28, 1, pal.shaleDark);
+    if (detailed) {
+      b.px(21, y0 - 2, pal.amberBright);
+      c.line(19 * s, (y0 + 2) * s, 18 * s, 45 * s, pal.shaleDark);
+    }
+    c.outline(pal.outline);
+    return;
+  }
+
   drawLegs(b, pose, false);
   drawTail(b, pose);
   drawThorns(b, pose);
@@ -219,6 +249,8 @@ export default defineEnemySprite({
     idle: { frames: 2, fps: 4, loop: true },
     move: { frames: 4, fps: 10, loop: true },
     hit: { frames: 2, fps: 10, loop: false },
+    attack: { frames: 4, fps: 10, loop: false },
+    death: { frames: 4, fps: 7, loop: false },
   },
   draw: {
     hi8bit: (c, anim, frame) => drawCrawler(c, 1, false, anim, frame),
