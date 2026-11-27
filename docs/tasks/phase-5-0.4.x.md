@@ -46,8 +46,8 @@ Phase 5 opens when the [phase 4](./phase-4-0.3.x.md) gate (VC-090) passes and th
 
 ### VC-130 · Bestiary plan
 - **Phase:** 5 · **Type:** plan · **Class:** large · **Status:** todo
-- **Goal:** a complete bestiary design covering 8 base monsters (4 regional variants each = 32) plus 2 unique monsters per world (16).
-- **How (AI):** design 8 base monsters, each with a local variant for each of 4 regions/worlds (4 x 8 = 32), plus 2 monsters unique to each world (16); ensure each fits the lore coherently (e.g. the owl: castle owl, clockwork owl, blizzard owl...). Write `docs/design/bestiary.md` with names PL/EN, world, role, attacks and tiers.
+- **Goal:** a complete bestiary design covering 8 base monsters, each with a local variant in every one of the 8 worlds (8 x 8 = 64 variants), plus 2 unique monsters per world (16).
+- **How (AI):** design 8 base monsters, each with a local variant in every one of the 8 worlds (8 x 8 = 64 variants), plus 2 monsters unique to each world (16); ensure each variant fits that world's lore coherently (e.g. the owl: castle owl, clockwork owl, blizzard owl...). Write `docs/design/bestiary.md` with names PL/EN, world, role, attacks and tiers.
 
 ### VC-131 · Bestiary art and data, one PR per world
 - **Phase:** 5 · **Type:** art / feat · **Class:** medium · **Status:** blocked (VC-130)
