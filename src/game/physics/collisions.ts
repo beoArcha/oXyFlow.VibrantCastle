@@ -176,8 +176,8 @@ export class LeverCollisionStrategy implements CollisionStrategy {
       entity.isActivated = true;
       gameAudio.playSFX(SoundType.SFX_UNLOCK);
       context.triggerNarration("narration_lever");
-      if (entity.triggerId && context.onLeverActivated) {
-        context.onLeverActivated(entity.triggerId, entity);
+      if (context.onLeverActivated) {
+        context.onLeverActivated(entity.triggerId ?? entity.id, entity);
       }
     }
   }
