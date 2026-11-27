@@ -2,14 +2,20 @@
 
 ## 0.3.x (faza 4, w toku): stabilizacja i odbudowa
 
-Faza 4 odbudowuje to, co zniknęło przy porządkach w 0.3.0, które usunęły tilesety, dekoracje, potok sprite'ów, testy i dokumentację. Przywraca utracone elementy i wyznacza kierunek kolejnej fazy.
+Faza 4 odbudowuje to, co zniknęło przy porządkach w 0.3.0, które usunęły tilesety, dekoracje, potok sprite'ów, testy i dokumentację. Przywraca utracone elementy i wyznacza kierunek kolejnej fazy. Najnowsze zmiany są na początku listy.
 
-- **Menu przebudowane do jednego okna gry.** Menu gry to jedno dwupoziomowe okno z rejestrem kart. Niebezpieczne akcje pytają o potwierdzenie. Okno deweloperskie („Tworzenie”) pojawia się tylko w buildach deweloperskich.
-- **Nawigacja kartami padem i klawiaturą.** Menu obsługuje się padem: <kbd>LB</kbd> / <kbd>RB</kbd> dla kart górnych i <kbd>LT</kbd> / <kbd>RT</kbd> dla kart drugiego poziomu. Zobacz *Sterowanie*.
-- **Przywrócone grafiki i potok.** Tilesety platform, dekoracje i narzędzia sprite'ów wróciły. Tilesety platform są przywrócone na prefabrykatach podłogi i platform.
-- **Naprawione cięcie sprite'ów.** Arkusze bohaterów i sowy są znów poprawnie cięte.
-- **Testy i CI.** Testy postaci i granic błędów wróciły, a bramka pokrycia działa dla każdego zestawu.
-- **Dokumentacja i wiki.** Wiki to znów dwujęzyczna wiki Markdown, a artykuły są sprawdzone względem danych gry.
+- **Grafika zastępcza.** Dodano brakującą grafikę hi-8bit dla kilku sprite'ów. Test śledzi kilka konstrukcji i wrogów, które wciąż nie mają jednego z poziomów.
+- **Kontrakty postaci i mapy.** System postaci i kontrakt mapy są spisane jako dokumenty projektowe, tak by kolejna faza mogła na nich bazować.
+- **Karty planowania.** Karty zadań fazy 4 dotyczące dyskusji o lore, scenariuszy demo oraz narzędzia Tworzenie do map i tekstów są na tablicy zadań.
+- **Mapper pada.** W Ustawienia > Sterowanie jest mapper pada dla ograniczonego układu. Można przypisać tylko <kbd>A</kbd> / <kbd>B</kbd> / <kbd>X</kbd> / <kbd>Y</kbd>, <kbd>LB</kbd> / <kbd>RB</kbd> i <kbd>LT</kbd> / <kbd>RT</kbd>. Przywrócenie sterowania najpierw pyta o potwierdzenie.
+- **Menu przebudowane do jednego okna gry.** Menu gry to jedno dwupoziomowe okno z rejestrem kart: Gra, Mapa, Postać, Ekwipunek, Magia, Ustawienia i Pomoc. Okno deweloperskie („Tworzenie”) pojawia się tylko w buildach deweloperskich.
+- **Nawigacja padem.** Menu obsługuje się padem: <kbd>LB</kbd> / <kbd>RB</kbd> dla kart górnych, <kbd>LT</kbd> / <kbd>RT</kbd> dla kart drugiego poziomu, a menu otwiera <kbd>Start</kbd> albo przytrzymanie <kbd>LB</kbd> + <kbd>RB</kbd> przez 0,5 s. Zobacz *Sterowanie*.
+- **Potwierdzenia.** Niebezpieczne akcje najpierw pytają: restart lokacji, wczytanie zapisu, import lub reset ustawień, reset sterowania i wyrzucenie przedmiotu.
+- **Testy przywrócone.** Wróciły testy postaci, granic błędów, menu, sterowania i układu. Bramka pokrycia działa dla każdego zestawu, z minimami: 74% dla testów jednostkowych, 58% dla integracyjnych i 73% łącznie.
+- **Dokumentacja, lore i wiki przywrócone.** Wróciły lore, manifest i pliki zadań dla poszczególnych faz. Ta wiki jest napisana w Markdownie i budowana razem z grą.
+- **Tilesety i dekoracje z powrotem.** Tilesety platform są przywrócone na prefabrykatach podłogi i platform, a dekoracje i narzędzia sprite'ów wróciły do potoku.
+- **Ponownie poprawne cięcie arkuszy.** Arkusze pikselowe bohaterów i arkusz sowy-gargulca są znów cięte poprawnie.
+- **Mapa drogowa z fazami.** Plan wyznacza każdą fazę aż do wersji 1.0, z celami i bramkami jakości.
 
 ### Plan fazowy
 

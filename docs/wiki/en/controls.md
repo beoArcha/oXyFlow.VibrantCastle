@@ -1,6 +1,6 @@
 # Controls & Interface
 
-These are the shipped defaults, taken from the game's control data. Every binding can be changed in the game menu. Keyboard and gamepad work at the same time.
+These are the shipped defaults, taken from the game's control data. Every binding can be changed in **Settings > Controls**. Keyboard and gamepad work at the same time.
 
 ---
 
@@ -52,26 +52,79 @@ The pad has 4 face buttons, 2 triggers and 2 bumpers. In the menu the bumpers an
 
 - <kbd>LB</kbd> / <kbd>RB</kbd> switch the top-level tabs.
 - <kbd>LT</kbd> / <kbd>RT</kbd> switch the second-level tabs.
-- The menu opens with <kbd>Start</kbd>, or by holding <kbd>LB</kbd> + <kbd>RB</kbd> together for 0.5 s on pads without Start.
+- <kbd>Start</kbd> opens the menu. Holding <kbd>LB</kbd> + <kbd>RB</kbd> together for 0.5 s also opens it, so a pad without Start can open the menu too.
 
 **Planned (phase 5):** in gameplay the bumpers will also become selectors, so that the shipped defaults above (which use <kbd>LB</kbd>, <kbd>RB</kbd> and the triggers for potions and spells) move to selector semantics.
 
 ---
 
-## 4. Keyboard hotkeys
+## 4. Game menu tabs
 
-- <kbd>M</kbd>: the game menu.
+The game menu is one dialog with two levels of tabs. Top tabs switch with <kbd>Q</kbd> / <kbd>E</kbd> or <kbd>LB</kbd> / <kbd>RB</kbd>. Second-level tabs switch with <kbd>[</kbd> / <kbd>]</kbd> or <kbd>LT</kbd> / <kbd>RT</kbd>.
+
+| Top tab | Key | What it holds |
+| :--- | :--- | :--- |
+| Game | <kbd>M</kbd> | Saving, loading and restarting the current location |
+| Map | | Location selection |
+| Character | | Stats of the current hero |
+| Inventory | <kbd>I</kbd> | Items and equipment |
+| Magic | <kbd>K</kbd> | Skill tree |
+| Settings | | Four second-level tabs: Display, Audio, Controls and Interface |
+| Help | <kbd>H</kbd>, <kbd>?</kbd> or <kbd>F1</kbd> | Help and controls |
+
+## 5. Gamepad in the menu
+
+| Button | Action |
+| :--- | :--- |
+| <kbd>A</kbd> | Activate the focused control |
+| <kbd>B</kbd> | Back: cancels a rebind, closes the window on top, or closes the menu |
+| <kbd>Start</kbd> | Opens the menu. Inside the menu it works like <kbd>B</kbd>. |
+| <kbd>X</kbd> | Context action on the focused control |
+| <kbd>Y</kbd> | Shows or hides the button legend |
+| D-pad or left stick | Moves the focus |
+| <kbd>LB</kbd> / <kbd>RB</kbd>, <kbd>LT</kbd> / <kbd>RT</kbd> | Top and second-level tabs |
+
+---
+
+## 6. Keyboard hotkeys
+
+- <kbd>M</kbd>: opens or closes the game menu.
 - <kbd>Esc</kbd>: closes the open window, or opens the menu when none is open.
 - <kbd>P</kbd>: pause and resume.
 - <kbd>I</kbd>: inventory.
 - <kbd>K</kbd>: skill tree.
 - <kbd>H</kbd>, <kbd>?</kbd> or <kbd>F1</kbd>: help and controls.
-- <kbd>Q</kbd> / <kbd>E</kbd>: previous / next top-level tab. <kbd>[</kbd> / <kbd>]</kbd>: previous / next second-level tab.
-- <kbd>C</kbd>: the developer dialog. It exists only in development builds.
+- <kbd>Q</kbd> / <kbd>E</kbd>: previous / next top-level tab, while a game window is open.
+- <kbd>[</kbd> / <kbd>]</kbd>: previous / next second-level tab, while a game window is open.
+- <kbd>C</kbd>: the developer dialog ("Tworzenie"). It exists only in development builds.
+
+Hotkeys are ignored while you type in a text field, and the game does not use <kbd>Ctrl</kbd>, <kbd>Alt</kbd> or <kbd>Meta</kbd> combinations.
 
 ---
 
-## 5. Using the game on the web page
+## 7. Changing a binding
+
+1. Open **Settings > Controls** in the menu.
+2. Pick the action and press the new key or pad button.
+3. Press <kbd>Esc</kbd> to cancel the change.
+
+Keyboard bindings take any key except the reserved system keys: <kbd>Tab</kbd>, <kbd>Caps Lock</kbd>, the <kbd>Win</kbd> / <kbd>Cmd</kbd> keys, the context-menu key and <kbd>F1</kbd> to <kbd>F12</kbd>. On the pad, only the restricted layout can be bound: <kbd>A</kbd> / <kbd>B</kbd> / <kbd>X</kbd> / <kbd>Y</kbd>, <kbd>LB</kbd> / <kbd>RB</kbd> and <kbd>LT</kbd> / <kbd>RT</kbd>. Other buttons are refused with a message.
+
+## 8. Confirmations
+
+The game asks before any action that cannot be undone or that overwrites your progress or settings:
+
+- restarting the current location;
+- loading a save, which replaces the current state;
+- importing settings, which replaces the current configuration;
+- restoring all settings to their defaults;
+- restoring the default controls, for one player or for all players;
+- resetting the session statistics;
+- discarding an item from the inventory.
+
+---
+
+## 9. Using the game on the web page
 
 - Click the game, or press **Launch Game**, so that it receives keyboard focus.
 - The game does not trap the keyboard. Press <kbd>Tab</kbd> to leave it and return to the page.
