@@ -12,6 +12,20 @@ Phase 5 opens when the [phase 4](./phase-4-0.3.x.md) gate (VC-090) passes and th
 - the `hi16bit` build-time bake;
 - first gameplay gaps from the vision: enemy attacks, pad selector semantics, narrator wiring.
 
+**Owner scope (2026-11-27).** Phase 5 must cover:
+- **combat:** enemy damage (melee, firearm, magic, explosion, poison) and six-element Aether magic with a natural cycle: time, spirit, water, fire, earth, air;
+- **maps:** a level-2 map for each of the 8 worlds;
+- **monsters:** 1 universal monster in 8 world variants, plus 1 special monster per world;
+- **engine:** zero allocations in the engine, a working FPS cap, 60 Hz physics as the base, algorithmic optimisation, SOLID;
+- **lore and fun:** lore fixes and expansion, fun tuning, saving the game;
+- **Tworzenie:** a bigger dev dialog;
+- **menu:** fixes;
+- **RPG:** a better character RPG system;
+- **loot:** random lantern drops (details later), money, monster drops;
+- **rest zone.**
+
+The cards are in sections B2 to H below.
+
 **Exit criteria:**
 - 8 worlds each have a contract-compliant map 1;
 - attributes drive HP/MP/Stamina and combat;
@@ -25,7 +39,7 @@ Phase 5 opens when the [phase 4](./phase-4-0.3.x.md) gate (VC-090) passes and th
 - [ ] 4. Release.
 - [ ] 5. Version bump to `0.5.0`, approved by the owner.
 
-**Cards still to be written** (at the phase 4 gate): enemy attacks and contact damage; pad layout with bumpers as selectors in gameplay; the reactive narrator wired to the engine; the phase 5 gate card. Unfinished phase 4 cards that move here at the gate are added below.
+**Cards still to be written** (at the phase 4 gate): pad layout with bumpers as selectors in gameplay; the reactive narrator wired to the engine; the phase 5 gate card. Unfinished phase 4 cards that move here at the gate are added below.
 
 ---
 
@@ -46,8 +60,9 @@ Phase 5 opens when the [phase 4](./phase-4-0.3.x.md) gate (VC-090) passes and th
 
 ### VC-130 · Bestiary plan
 - **Phase:** 5 · **Type:** plan · **Class:** large · **Status:** todo
-- **Goal:** a complete bestiary design covering 8 base monsters, each with a local variant in every one of the 8 worlds (8 x 8 = 64 variants), plus 2 unique monsters per world (16).
-- **How (AI):** design 8 base monsters, each with a local variant in every one of the 8 worlds (8 x 8 = 64 variants), plus 2 monsters unique to each world (16); ensure each variant fits that world's lore coherently (e.g. the owl: castle owl, clockwork owl, blizzard owl...). Write `docs/design/bestiary.md` with names PL/EN, world, role, attacks and tiers.
+- **Goal:** the phase 5 bestiary: **1 universal monster in 8 world variants**, plus **1 special monster per world** (8 + 8 = 16 entries). The long-term target of 8 base monsters x 8 worlds plus 2 unique per world stays the vision for later phases.
+- **Owner update (2026-11-27):** the phase 5 scope is reduced to 1 universal (x8 variants) + 1 special per world.
+- **How (AI):** design the universal monster, with each world variant fitting that world's lore (e.g. the owl: castle owl, clockwork owl, blizzard owl...), plus one special monster per world. Each entry uses damage sources from VC-037 and an element from VC-038. Write `docs/design/bestiary.md` with names PL/EN, world, role, attacks, element and tiers.
 
 ### VC-131 · Bestiary art and data, one PR per world
 - **Phase:** 5 · **Type:** art / feat · **Class:** medium · **Status:** blocked (VC-130)
@@ -83,6 +98,16 @@ Phase 5 opens when the [phase 4](./phase-4-0.3.x.md) gate (VC-090) passes and th
 - **Goal:** bring the three new maps up to the contract (scale, flow, lever and gate, entries).
 - **How (AI):** same as VC-021, against the contract only.
 
+### VC-161 · Level-2 maps: one new map per world (8 PRs)
+- **Phase:** 5 · **Type:** feat · **Class:** medium · **Status:** todo (after VC-020). One PR per world.
+- **Goal:** each of the 8 worlds gets map 2, linked from map 1, following the map contract.
+- **How (AI):**
+  1. Design per the contract and the world dossier in `docs/lore/worlds/`.
+  2. Add a lever-and-gate, a rest zone (VC-179) and narration beats (Tworzenie text tool, VC-075).
+  3. Use enemies from the phase 5 bestiary.
+  4. Keep `locationLinks` and `validate-level` green.
+  5. Attach a headless walk-through strip.
+
 ---
 
 ## D. Characters, stats and equipment
@@ -100,21 +125,34 @@ Phase 5 opens when the [phase 4](./phase-4-0.3.x.md) gate (VC-090) passes and th
 - **Goal:** enemies use the same 30-180 attribute scale.
 - **How (AI):** convert `enemies.json` with a script and keep the time-to-kill per enemy within ±15%. Add a balance table to the PR.
 
-### VC-037 · Enemies deal damage: contact, melee, ranged, magic
+### VC-037 · Enemies deal damage: contact, melee, ranged, magic, explosion, poison
 - **Phase:** 5 · **Type:** feat · **Class:** medium · **Status:** todo
 - **Goal:** every enemy can hurt the heroes through one or more damage sources, declared in data.
 - **Description:** owner request (2026-11-27). The first set of sources:
   - **contact:** touching the enemy body;
   - **melee:** a cold weapon swing with a short hitbox in front of the enemy;
   - **ranged:** a firearm or thrown projectile;
-  - **magic:** a spell projectile or area.
+  - **magic:** a spell projectile or area, carrying an Aether element (VC-038);
+  - **explosion:** an area burst with falloff and knockback (bombs, exploding enemies);
+  - **poison:** damage over time with a visible status icon and a duration; a cure item or a rest zone (VC-179) clears it.
   Each source has its own damage, knockback and telegraph (wind-up frames). Each uses the existing hero i-frames and the attribute scale (VC-032). Combat complexity stays at the level of the early castle games: readable patterns, few attacks per enemy.
 - **How (AI):**
-  1. Add a `damageSources` list per enemy in `enemies.json`: `{ kind: contact | melee | ranged | magic, damage, knockback, windupMs, cooldownMs, range }`. Give it a parser and a schema test.
-  2. Resolve all four kinds in `combatSystem.ts` through one hit pipeline.
+  1. Add a `damageSources` list per enemy in `enemies.json`: `{ kind: contact | melee | ranged | magic | explosion | poison, damage, knockback, windupMs, cooldownMs, range, element?, dot? }`. Give it a parser and a schema test.
+  2. Resolve all kinds in `combatSystem.ts` through one hit pipeline.
   3. Ranged and magic reuse the projectile system.
   4. Write integration tests per kind (hit, knockback, i-frames, no double hit).
   5. Add at least one enemy per kind in the existing maps, with a screenshot strip.
+
+### VC-038 · Aether elements: six schools with a natural cycle
+- **Phase:** 5 · **Type:** plan + feat · **Class:** large · **Status:** todo
+- **Goal:** Aether magic has six elements: **time, spirit, water, fire, earth, air**. They form a natural cycle of strengths and weaknesses, inspired by classic elemental-bending stories.
+- **Description:** owner request (2026-11-27). Heroes' spells, enemy magic attacks (VC-037) and monster resistances (VC-130) all use the same element set. The cycle has to be readable: few rules, and each element has a clear counter. Time and spirit are the rare "higher" pair, tied to Aurelia's time-weaving and the Zone's spirit lore.
+- **How (AI):**
+  1. Write `docs/design/aether-elements.md`: the cycle diagram, the multipliers (e.g. x1.5 strong, x0.5 weak), the lore justification per element (link `docs/lore/`) and the status effects per element.
+  2. Add a pure `elementMatrix` module with unit tests.
+  3. Tag spells, enemy attacks and resistances in the data.
+  4. Make the damage pipeline apply the multipliers.
+  5. Add HUD and bestiary icons.
 
 ### VC-033 · Valen and Aurelia progression trees
 - **Phase:** 5 · **Type:** plan · **Class:** large · **Status:** blocked (VC-030)
@@ -131,6 +169,98 @@ Phase 5 opens when the [phase 4](./phase-4-0.3.x.md) gate (VC-090) passes and th
 - **Phase:** 5 · **Type:** art · **Class:** medium · **Status:** blocked (VC-035)
 - **Goal:** autumn and Aria-of-Sorrow look for slots, frames and icons.
 - **How (AI):** start from a mock-up and reuse the theme tokens. Visual changes only.
+
+### VC-160 · Better character RPG system (umbrella)
+- **Phase:** 5 · **Type:** plan · **Class:** large · **Status:** blocked (VC-030)
+- **Goal:** one coherent RPG system for Valen and Aurelia: attributes, growth, trees, equipment and elements, all working together.
+- **How (AI):** tie VC-030, VC-031, VC-033, VC-034 and VC-038 into one design pass. Define the level curve, the attribute priorities 1/2/3 per hero, the element affinities and the gear slots. Split the result into small `feat` cards.
+
+---
+
+## E. Engine optimisation
+
+### VC-162 · Zero allocations in the engine
+- **Phase:** 5 · **Type:** refactor · **Class:** medium · **Status:** todo
+- **Goal:** the simulation and render loops in `src/game/` allocate nothing per frame.
+- **How (AI):**
+  1. Write an allocation audit with the heap profiler over 1,000 frames per map.
+  2. Fix every hot path with pools, preallocated buffers and no closures, template strings or array literals in loops.
+  3. Add a CI guard: an allocation-spy integration test per subsystem.
+  4. Extend the arch rule from `render()` to `update()`.
+
+### VC-163 · FPS cap and 60 Hz physics base
+- **Phase:** 5 · **Type:** fix / refactor · **Class:** medium · **Status:** todo
+- **Goal:** the configured FPS cap really holds (30 / 60 / 90 / 120). Physics always runs at a 60 Hz fixed step, independent of the render rate. Rendering interpolates between physics states.
+- **How (AI):**
+  1. Make the loop accumulator 60 Hz only, while the render pacing follows the cap.
+  2. Add interpolation in the renderer.
+  3. Write tests: at every cap, the physics results are identical and the frame pacing stays within +/-1 ms.
+  4. Add a perf harness run per cap.
+
+### VC-164 · Algorithmic optimisation and SOLID pass
+- **Phase:** 5 · **Type:** refactor · **Class:** large · **Status:** todo
+- **Goal:** fewer O(n^2) passes and clean module boundaries.
+- **How (AI):**
+  1. Add a spatial hash or grid broadphase for collisions and hits, and view culling for entities and props.
+  2. Use cached lookups instead of linear scans.
+  3. Write a SOLID review of `src/game/loop`, `engine` and `renderer`, with a cut into small PRs.
+  4. Track the gain with the VC-106 harness before and after each PR.
+
+---
+
+## F. Lore, fun and saving
+
+### VC-165 · Lore fixes and expansion
+- **Phase:** 5 · **Type:** docs · **Class:** medium · **Status:** todo
+- **Goal:** the lore stays coherent with the round 1-2 canon and grows: world dossiers for map 2, NPC goals and relationships, narrator notes per map, and the Aether elements (VC-038).
+- **How (AI):** run discussion rounds with the owner (VC-082 style), then update `docs/lore/` and the wiki PL/EN.
+
+### VC-166 · Fun tuning from the play-tests
+- **Phase:** 5 · **Type:** tune · **Class:** medium · **Status:** todo (after VC-084, VC-085)
+- **Goal:** the game feels like the vision: platformer-style jump, early castle-game combat, Bastion-like narration, Aria-of-Sorrow mood.
+- **How (AI):** apply the ranked improvements from the VC-084 play-test (cards VC-150+) and the VC-085 feel metrics. Re-run both after each round.
+
+### VC-167 · Save game
+- **Phase:** 5 · **Type:** feat · **Class:** medium · **Status:** todo
+- **Goal:** the player can save and load progress: location, hero stats and gear, inventory, money, opened gates and levers, defeated bosses, and settings.
+- **How (AI):**
+  1. Define a versioned save schema with migrations.
+  2. Save at rest zones (VC-179) plus an autosave on map change.
+  3. Add 3 slots in the menu.
+  4. Write unit tests for serialisation and migration, and an integration test for save, reload, same state.
+
+---
+
+## G. Menu, Tworzenie and loot
+
+### VC-168 · Menu fixes
+- **Phase:** 5 · **Type:** fix · **Class:** small · **Status:** todo
+- **Goal:** fix the menu issues found in the phase 4 play-tests (VC-084, VC-089), and add save/load entries (VC-167).
+- **How (AI):** collect the issues from the play-test docs and fix them one small PR at a time, with headless screenshots.
+
+### VC-169 · Tworzenie expansion
+- **Phase:** 5 · **Type:** feat · **Class:** medium · **Status:** todo
+- **Goal:** a bigger dev dialog. Restore the parity gaps (VC-140 to VC-145). Add authoring for map 2 (VC-161): place entities, zones and rest zones on the map browser. Add a loot-table editor (VC-178, VC-180).
+- **How (AI):** one card per tool, building on the VC-075 map browser.
+
+### VC-178 · Lantern drops (random)
+- **Phase:** 5 · **Type:** feat · **Class:** small · **Status:** todo (details from the owner later)
+- **Goal:** breaking a lantern can drop random loot: money, potions, small items.
+- **How (AI):** a seeded deterministic loot roll from a per-world loot table in data, a drop pickup entity and tests. Wait for the owner's details before tuning the tables.
+
+### VC-179 · Rest zone
+- **Phase:** 5 · **Type:** feat · **Class:** medium · **Status:** todo
+- **Goal:** rest zones heal and cure (including poison from VC-037), save the game (VC-167) and switch the parallax to its `rest` variant (VC-103, VC-109a).
+- **How (AI):** a zone kind `rest` in the map contract plus an interaction prompt, with a short narrator line on first visit. Add at least one rest zone per world.
+
+### VC-180 · Money and monster drops
+- **Phase:** 5 · **Type:** feat · **Class:** medium · **Status:** todo
+- **Goal:** monsters drop money and items; money shows in the HUD and the inventory and is kept in saves.
+- **How (AI):**
+  1. Add a `drops` table per enemy in `enemies.json` (chance, item or money range) with a seeded roll.
+  2. Add a pickup magnet and HUD counter.
+  3. Write balance tests and a schema test.
+  4. Share the loot roll with VC-178.
 
 ---
 
