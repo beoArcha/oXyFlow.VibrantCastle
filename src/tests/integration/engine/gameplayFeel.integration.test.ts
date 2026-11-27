@@ -1,25 +1,29 @@
 /**
  * Gameplay Feel Metrics (60 Hz fixed-step, courtyard location)
  *
- * | Metric | Measured | Target | Status |
+ * | Metric | Measured | Target | Gap / Notes |
  * | :--- | :--- | :--- | :--- |
- * | Tap jump apex height | TBD px | > 0 px | Pending |
- * | Hold jump apex height | TBD px | >= 1.5x tap | Pending |
- * | Tap / Hold ratio | TBD x | >= 1.50x | Pending |
- * | Tap jump air time | TBD ticks (TBD ms) | > 0 | Pending |
- * | Hold jump air time | TBD ticks (TBD ms) | > tap | Pending |
- * | Run-jump horizontal distance | TBD px | > 0 px | Pending |
- * | Ticks to top speed (4.8 px/tick) | TBD ticks (TBD ms) | responsive | Pending |
- * | Coyote time window | TBD ticks (TBD ms) | 80-120 ms | Pending |
- * | Jump buffer window | TBD ticks (TBD ms) | 100-150 ms | Pending |
- * | Mid-air direction reversal | TBD ticks to reverse | responsive | Pending |
+ * | Tap jump apex height (1 tick) | 45.05 px | > 0 px | Meets target |
+ * | Hold jump apex height (20 ticks) | 132.93 px | >= 1.5x tap | Meets target |
+ * | Hold / Tap jump height ratio | 2.95x | >= 1.50x | Meets target (+1.45x margin) |
+ * | Tap jump air time | 29 ticks (483.3 ms) | > 0 | Meets target |
+ * | Hold jump air time | 51 ticks (850.0 ms) | > tap | Meets target |
+ * | Run-jump horizontal distance | 259.20 px | > 0 px | Meets target |
+ * | Ticks to top speed (4.8 px/tick) | 7 ticks (116.7 ms) | <= 15 ticks | Meets target |
+ * | Coyote time window | 6 ticks (100.0 ms) | 80-120 ms | Meets target (maxCoyoteFrames = 6) |
+ * | Jump buffer window | 6 ticks (100.0 ms) | 100-150 ms | At lower bound (maxJumpBufferFrames = 6) |
+ * | Mid-air direction reversal | 9 ticks (150.0 ms) | responsive | Meets target (airAcceleration = 0.55) |
+ * | Player i-frames on hit | Not implemented | > 0 ticks | Gap: Player lacks damageTimer / i-frames |
+ * | Enemy contact damage | Not implemented | HP loss + knockback | Gap: EnemyAISystem deals no contact damage |
  */
+import fs from "node:fs";
+import path from "node:path";
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { GameEngine } from "@game/loop/engine";
 import { GameInputEngine } from "@game/loop/input";
 import { debugManager } from "@game/debug/debugManager";
 import { LocationId } from "@game/locations/types";
-import { InputMap, PlayerId } from "@game/types";
+import { CollisionType, InputMap, PlayerId } from "@game/types";
 
 class ScriptedInputEngine extends GameInputEngine {
   private actions: Record<PlayerId, Partial<InputMap>> = {
@@ -198,7 +202,6 @@ describe("Given the deterministic 60 Hz gameplay simulation harness", () => {
 
       // Then
       const ratio = hold.apexHeight / tap.apexHeight;
-      console.log("[VC-085] Tap:", tap, "Hold:", hold, "Ratio:", ratio.toFixed(3));
       expect(tap.apexHeight).toBeGreaterThan(0);
       expect(hold.apexHeight).toBeGreaterThan(tap.apexHeight);
       expect(ratio).toBeGreaterThanOrEqual(1.5);
@@ -230,7 +233,6 @@ describe("Given the deterministic 60 Hz gameplay simulation harness", () => {
       harness.clearInputs();
 
       // Then
-      console.log("[VC-085] Run-jump distance:", distance.toFixed(2), "landed:", landed);
       expect(landed).toBe(true);
       expect(distance).toBeGreaterThan(100);
     });
@@ -256,7 +258,6 @@ describe("Given the deterministic 60 Hz gameplay simulation harness", () => {
       harness.clearInputs();
 
       // Then
-      console.log("[VC-085] Ticks to top speed:", ticksToTopSpeed);
       expect(ticksToTopSpeed).toBeGreaterThan(0);
       expect(ticksToTopSpeed).toBeLessThanOrEqual(15);
     });
@@ -310,7 +311,6 @@ describe("Given the deterministic 60 Hz gameplay simulation harness", () => {
       harness.clearInputs();
 
       // Then
-      console.log("[VC-085] Coyote jump vy:", coyoteJumpVy, "coyoteJumped:", coyoteJumped, "lateJumped:", lateJumped);
       expect(coyoteJumped).toBe(true);
       expect(coyoteJumpVy).toBeLessThan(0);
       expect(lateJumped).toBe(false);
@@ -382,10 +382,125 @@ describe("Given the deterministic 60 Hz gameplay simulation harness", () => {
       harness.clearInputs();
 
       // Then
-      console.log("[VC-085] Mid-air reversal ticks:", ticksToReverse, "vx:", snapAfterReverse.vx);
       expect(ticksToReverse).toBeGreaterThan(0);
       expect(snapAfterReverse.vx).toBeLessThan(0);
       expect(snapAfterReverse.facingLeft).toBe(true);
     });
+  });
+
+  describe("When engaging enemies and hazards in combat", () => {
+    it("Then a melee attack reduces enemy HP and triggers hitstun timer", () => {
+      // Given
+      const targetEnemy = harness.engine.enemies.find((e) => !e.isDead);
+      expect(targetEnemy).toBeDefined();
+      const enemy = targetEnemy!;
+      const initialHealth = enemy.health;
+      enemy.vx = 0;
+
+      // Place hero directly to the left of the enemy, facing right within sword reach (40px)
+      harness.placeHero(enemy.x - harness.snapshot().width - 10, enemy.y);
+      harness.engine.players[0].facingLeft = false;
+      harness.engine.players[0].isGrounded = true;
+
+      // When
+      harness.setInput("action1", true);
+      harness.step(1);
+      harness.setInput("action1", false);
+
+      // Then
+      expect(enemy.health).toBeLessThan(initialHealth);
+      expect(enemy.damageTimer).toBeGreaterThan(0);
+    });
+
+    it("Then repeated melee strikes defeat the enemy and mark it dead", () => {
+      // Given
+      const enemy = harness.engine.spawnEnemy("training_dummy", 400, 810);
+      enemy.health = 25;
+      enemy.maxHealth = 25;
+      enemy.vx = 0;
+
+      harness.placeHero(enemy.x - harness.snapshot().width - 10, enemy.y);
+      harness.engine.players[0].facingLeft = false;
+
+      // When
+      for (let cycle = 0; cycle < 5 && !enemy.isDead; cycle++) {
+        harness.setInput("action1", true);
+        harness.step(1);
+        harness.setInput("action1", false);
+        harness.step(25);
+      }
+
+      // Then
+      expect(enemy.health).toBe(0);
+      expect(enemy.isDead).toBe(true);
+    });
+
+    it("Then hazard contact applies knockback and reduces player HP", () => {
+      // Given
+      const hazard = harness.engine.entities.find((e) => e.type === CollisionType.Hazard);
+      expect(hazard).toBeDefined();
+      const initialHealth = harness.snapshot().health;
+
+      // Place hero overlapping the left half of the hazard
+      harness.placeHero(hazard!.x, hazard!.y - 4);
+
+      // When
+      harness.step(1);
+      const afterHit = harness.snapshot();
+
+      // Then
+      expect(afterHit.health).toBeLessThan(initialHealth);
+      expect(Math.abs(afterHit.vx)).toBeGreaterThan(0);
+      expect(afterHit.vy).toBeLessThan(0);
+    });
+
+    it.todo(
+      "Then player receives i-frames (invulnerability window) after taking damage — not implemented: Player has no damageTimer or invulnerability state"
+    );
+
+    it.todo(
+      "Then enemy contact deals damage and knockback to the player — not implemented: EnemyAISystem only updates patrol movement"
+    );
+  });
+
+  describe("When running a 10-second scripted traversal smoke test across every location", () => {
+    const locationsDir = path.resolve(process.cwd(), "src/data/locations");
+    const locationIds = fs
+      .readdirSync(locationsDir)
+      .filter((file) => file.endsWith(".json"))
+      .map((file) => file.replace(/\.json$/, "") as LocationId)
+      .sort();
+
+    for (const locationId of locationIds) {
+      it(`Then "${locationId}" simulates 600 ticks (10 s) of run + jump with damage off without NaN, out-of-bounds, or throws`, () => {
+        // Given
+        debugManager.state.godMode = true;
+        harness.engine.resetLevel(locationId);
+        harness.setInput("right", true);
+
+        // When
+        for (let tick = 0; tick < 600; tick++) {
+          const jumpActive = tick % 45 < 10;
+          harness.setInput("jump", jumpActive);
+          harness.step(1);
+
+          const snap = harness.snapshot();
+          expect(Number.isNaN(snap.x)).toBe(false);
+          expect(Number.isNaN(snap.y)).toBe(false);
+          expect(Number.isNaN(snap.vx)).toBe(false);
+          expect(Number.isNaN(snap.vy)).toBe(false);
+          expect(Number.isNaN(snap.health)).toBe(false);
+          expect(snap.isDead).toBe(false);
+          expect(snap.x).toBeGreaterThanOrEqual(0);
+          expect(snap.x + snap.width).toBeLessThanOrEqual(harness.engine.levelWidth);
+          expect(snap.y).toBeLessThanOrEqual(harness.engine.levelHeight + 100);
+        }
+
+        harness.clearInputs();
+
+        // Then
+        expect(harness.snapshot().health).toBeGreaterThan(0);
+      });
+    }
   });
 });
