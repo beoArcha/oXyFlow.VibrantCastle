@@ -7,6 +7,7 @@ import {
   type IParallaxLoader,
   type IParallaxRegistry,
   type IParallaxSystem,
+  type ParallaxSurfaceFactory,
 } from "./render";
 
 export const defaultParallaxRegistry: IParallaxRegistry = parallaxRegistry;
@@ -24,6 +25,40 @@ export const defaultParallaxFlags: IParallaxFlags = {
 };
 
 /**
+ * Creates an OffscreenCanvas-backed surface factory for pre-scaling parallax bitmaps once
+ * instead of resampling oversized sources on every frame.
+ */
+export const createBrowserParallaxSurfaceFactory: () => ParallaxSurfaceFactory = () => {
+  return (width, height) => {
+    if (typeof OffscreenCanvas !== "undefined") {
+      const canvas = new OffscreenCanvas(width, height);
+      const ctx = canvas.getContext("2d");
+      return {
+        source: canvas,
+        width,
+        height,
+        ctx,
+        commit:
+          typeof canvas.transferToImageBitmap === "function"
+            ? () => {
+                const bitmap = canvas.transferToImageBitmap();
+                return {
+                  source: bitmap,
+                  release: () => bitmap.close(),
+                };
+              }
+            : undefined,
+        release: () => {
+          canvas.width = 0;
+          canvas.height = 0;
+        },
+      };
+    }
+    return null;
+  };
+};
+
+/**
  * Creates a ParallaxSystem wired to the runtime registry, asset loader, and debug flags.
  */
 export function createDefaultParallaxSystem(): IParallaxSystem {
@@ -31,5 +66,6 @@ export function createDefaultParallaxSystem(): IParallaxSystem {
     registry: defaultParallaxRegistry,
     loader: defaultParallaxLoader,
     flags: defaultParallaxFlags,
+    surfaceFactory: createBrowserParallaxSurfaceFactory(),
   });
 }

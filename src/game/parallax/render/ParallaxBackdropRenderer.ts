@@ -9,6 +9,7 @@ import {
   resetLinearGradientSpec,
   type LinearGradientStop,
 } from "./gradientCache";
+import { createResolvedParallaxSurface, type ParallaxSurfaceCache } from "./ParallaxSurfaceCache";
 
 /**
  * Renders full-viewport parallax backdrops (far vista, fallback gradient, and boss arena overlays)
@@ -19,16 +20,19 @@ export class ParallaxBackdropRenderer {
   private readonly gradientCache = new BoundedLinearGradientCache();
   private readonly farGradientSpec = createLinearGradientSpec();
   private readonly fallbackGradientSpec = createLinearGradientSpec();
+  private readonly resolvedSurface = createResolvedParallaxSurface();
 
   constructor(
     private readonly resolveImage: (layer: ParallaxLayerSchema) => HTMLImageElement | null,
-    private readonly atmosphericRenderer: ISectorAtmosphericRenderer
+    private readonly atmosphericRenderer: ISectorAtmosphericRenderer,
+    private readonly surfaceCache?: ParallaxSurfaceCache
   ) {}
 
   public clearCaches(): void {
     this.gradientCache.clear();
     resetLinearGradientSpec(this.farGradientSpec);
     resetLinearGradientSpec(this.fallbackGradientSpec);
+    this.surfaceCache?.clear();
   }
 
   public renderFarStaticBackdrop(
@@ -67,9 +71,49 @@ export class ParallaxBackdropRenderer {
 
       // Overscan slightly by 6% horizontally so the far horizon glides subtly without exposing viewport edges.
       resolveFarBackdropRect(this.farRect, img.naturalWidth, img.naturalHeight, viewportWidth * 1.06, viewportHeight * 1.03);
+      const pixelScale = ctx.canvas ? ctx.canvas.width / Math.max(1, viewportWidth) : 1;
+      const surface = this.surfaceCache
+        ? this.surfaceCache.resolve(
+            img,
+            img.naturalWidth,
+            img.naturalHeight,
+            this.farRect.width * pixelScale,
+            this.farRect.height * pixelScale,
+            layer.blendMode !== "screen",
+            ctx.imageSmoothingEnabled,
+            this.resolvedSurface
+          )
+        : null;
+      const drawSource = surface ? surface.source : img;
+      const drawSrcW = surface ? surface.width : img.naturalWidth;
+      const drawSrcH = surface ? surface.height : img.naturalHeight;
+
       const maxPanX = Math.max(0, this.farRect.width - viewportWidth);
       const maxPanY = Math.max(0, this.farRect.height - viewportHeight);
-      ctx.drawImage(img, Math.round(-progressX * maxPanX), Math.round(-progressY * maxPanY), this.farRect.width, this.farRect.height);
+      const dx = Math.round(-progressX * maxPanX);
+      const dy = Math.round(-progressY * maxPanY);
+      const visLeft = dx > 0 ? dx : 0;
+      const visTop = dy > 0 ? dy : 0;
+      const visRight = dx + this.farRect.width < viewportWidth ? dx + this.farRect.width : viewportWidth;
+      const visBottom = dy + this.farRect.height < viewportHeight ? dy + this.farRect.height : viewportHeight;
+      if (visRight > visLeft && visBottom > visTop) {
+        if (
+          visLeft === dx &&
+          visTop === dy &&
+          visRight === dx + this.farRect.width &&
+          visBottom === dy + this.farRect.height
+        ) {
+          ctx.drawImage(drawSource, dx, dy, this.farRect.width, this.farRect.height);
+        } else {
+          const dw = visRight - visLeft;
+          const dh = visBottom - visTop;
+          const sx = ((visLeft - dx) / this.farRect.width) * drawSrcW;
+          const sy = ((visTop - dy) / this.farRect.height) * drawSrcH;
+          const sw = (dw / this.farRect.width) * drawSrcW;
+          const sh = (dh / this.farRect.height) * drawSrcH;
+          ctx.drawImage(drawSource, sx, sy, sw, sh, visLeft, visTop, dw, dh);
+        }
+      }
 
       if (needsStateSave) {
         ctx.restore();
@@ -111,15 +155,40 @@ export class ParallaxBackdropRenderer {
       }
 
       resolveFarBackdropRect(this.farRect, img.naturalWidth, img.naturalHeight, viewportWidth * 1.06, viewportHeight * 1.04);
+      const pixelScale = ctx.canvas ? ctx.canvas.width / Math.max(1, viewportWidth) : 1;
+      const surface = this.surfaceCache
+        ? this.surfaceCache.resolve(
+            img,
+            img.naturalWidth,
+            img.naturalHeight,
+            this.farRect.width * pixelScale,
+            this.farRect.height * pixelScale,
+            layer.blendMode !== "screen",
+            ctx.imageSmoothingEnabled,
+            this.resolvedSurface
+          )
+        : null;
+      const drawSource = surface ? surface.source : img;
+      const drawSrcW = surface ? surface.width : img.naturalWidth;
+      const drawSrcH = surface ? surface.height : img.naturalHeight;
+
       const shiftX = (0.5 - progressX) * viewportWidth * 0.04;
       const shiftY = (0.5 - progressY) * viewportHeight * 0.02;
-      ctx.drawImage(
-        img,
-        Math.round(this.farRect.x - viewportWidth * 0.03 + shiftX),
-        Math.round(this.farRect.y - viewportHeight * 0.02 + shiftY),
-        this.farRect.width,
-        this.farRect.height
-      );
+      const dx = Math.round(this.farRect.x - viewportWidth * 0.03 + shiftX);
+      const dy = Math.round(this.farRect.y - viewportHeight * 0.02 + shiftY);
+      const visLeft = dx > 0 ? dx : 0;
+      const visTop = dy > 0 ? dy : 0;
+      const visRight = dx + this.farRect.width < viewportWidth ? dx + this.farRect.width : viewportWidth;
+      const visBottom = dy + this.farRect.height < viewportHeight ? dy + this.farRect.height : viewportHeight;
+      if (visRight > visLeft && visBottom > visTop) {
+        const dw = visRight - visLeft;
+        const dh = visBottom - visTop;
+        const sx = ((visLeft - dx) / this.farRect.width) * drawSrcW;
+        const sy = ((visTop - dy) / this.farRect.height) * drawSrcH;
+        const sw = (dw / this.farRect.width) * drawSrcW;
+        const sh = (dh / this.farRect.height) * drawSrcH;
+        ctx.drawImage(drawSource, sx, sy, sw, sh, visLeft, visTop, dw, dh);
+      }
       ctx.restore();
     }
   }

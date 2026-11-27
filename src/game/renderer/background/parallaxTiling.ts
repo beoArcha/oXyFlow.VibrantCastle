@@ -98,6 +98,93 @@ export function drawHorizontalTiles(
   }
 }
 
+export interface ITiledSurfaceBuffer {
+  source: CanvasImageSource;
+  width: number;
+  height: number;
+}
+
+export interface ITiledSurfaceResolver {
+  resolve(
+    source: CanvasImageSource,
+    srcWidth: number,
+    srcHeight: number,
+    desiredWidth: number,
+    desiredHeight: number,
+    allowUpscale: boolean,
+    smoothing: boolean,
+    out: ITiledSurfaceBuffer
+  ): ITiledSurfaceBuffer;
+}
+
+const DEFAULT_SPEED_FALLBACK = { x: 0.5, y: 0.2 } as const;
+const TILED_SURFACE_BUFFER: ITiledSurfaceBuffer = {
+  source: null as unknown as CanvasImageSource,
+  width: 0,
+  height: 0,
+};
+
+/**
+ * Draws `img` repeated horizontally across the viewport, clipped to `[0, viewportWidth] x [0, viewportHeight]`.
+ * Tile edges share exact rounded boundaries so neighbours abut seamlessly without offscreen overdraw.
+ */
+export function drawHorizontalTilesClipped(
+  ctx: CanvasRenderingContext2D,
+  img: CanvasImageSource,
+  srcW: number,
+  srcH: number,
+  screenX: number,
+  screenY: number,
+  drawW: number,
+  drawH: number,
+  viewportWidth: number,
+  viewportHeight: number,
+  mirror: boolean
+): void {
+  const top = Math.round(screenY);
+  const height = Math.round(screenY + drawH) - top;
+  if (height <= 0 || srcW <= 0 || srcH <= 0) return;
+
+  const visTop = top > 0 ? top : 0;
+  const visBottom = top + height < viewportHeight ? top + height : viewportHeight;
+  const visH = visBottom - visTop;
+  if (visH <= 0) return;
+
+  const sy = ((visTop - top) / height) * srcH;
+  const sh = (visH / height) * srcH;
+
+  let startX = screenX % drawW;
+  if (startX > 0) startX -= drawW;
+  const firstTile = Math.round((startX - screenX) / drawW);
+
+  let left = Math.round(startX);
+  for (let n = 0; startX + n * drawW < viewportWidth; n++) {
+    const right = Math.round(startX + (n + 1) * drawW);
+    const tileW = right - left;
+    const visLeft = left > 0 ? left : 0;
+    const visRight = right < viewportWidth ? right : viewportWidth;
+    const visW = visRight - visLeft;
+
+    if (tileW > 0 && visW > 0) {
+      if (mirror && ((firstTile + n) & 1) === 1) {
+        const fx0 = right - visRight;
+        const sx = (fx0 / tileW) * srcW;
+        const sw = (visW / tileW) * srcW;
+        ctx.save();
+        ctx.translate(right, 0);
+        ctx.scale(-1, 1);
+        ctx.drawImage(img, sx, sy, sw, sh, fx0, visTop, visW, visH);
+        ctx.restore();
+      } else {
+        const sx = ((visLeft - left) / tileW) * srcW;
+        const sw = (visW / tileW) * srcW;
+        ctx.drawImage(img, sx, sy, sw, sh, visLeft, visTop, visW, visH);
+      }
+    }
+    left = right;
+  }
+}
+
 /**
  * Renders a dynamic parallax background layer with seamless horizontal tiling and vertical parallax clamping.
  */
@@ -114,24 +201,31 @@ export function renderTiledDynamicLayer(
   viewportHeight: number,
   tickCount: number,
   alphaMultiplier = 1,
-  showWireframes = false
+  showWireframes = false,
+  surfaceResolver?: ITiledSurfaceResolver
 ): void {
   if (alphaMultiplier <= 0.005) return;
 
-  ctx.save();
   const baseOpacity = layer.opacity !== undefined ? layer.opacity : 1;
   const finalAlpha = Math.max(0, Math.min(1, baseOpacity * alphaMultiplier));
-  if (finalAlpha < 1) {
-    ctx.globalAlpha = finalAlpha;
-  }
-  if (layer.blendMode) {
-    ctx.globalCompositeOperation = layer.blendMode;
+  const needsStateSave = finalAlpha < 1 || Boolean(layer.blendMode) || showWireframes;
+
+  if (needsStateSave) {
+    ctx.save();
+    if (finalAlpha < 1) {
+      ctx.globalAlpha = finalAlpha;
+    }
+    if (layer.blendMode) {
+      ctx.globalCompositeOperation = layer.blendMode;
+    }
   }
 
-  const drawH = resolveLayerDrawHeight(img.naturalHeight, boxHeight, viewportHeight);
-  const drawW = img.naturalWidth * (drawH / img.naturalHeight);
+  const srcNatW = img.naturalWidth;
+  const srcNatH = img.naturalHeight;
+  const drawH = resolveLayerDrawHeight(srcNatH, boxHeight, viewportHeight);
+  const drawW = srcNatW * (drawH / srcNatH);
 
-  const speed = DEFAULT_TIER_SPEEDS[tier] || { x: 0.5, y: 0.2 };
+  const speed = DEFAULT_TIER_SPEEDS[tier] || DEFAULT_SPEED_FALLBACK;
   const scrollSpeedX = layer.scrollSpeedX !== undefined ? layer.scrollSpeedX : speed.x;
   const scrollSpeedY = layer.scrollSpeedY !== undefined ? layer.scrollSpeedY : speed.y;
 
@@ -141,13 +235,47 @@ export function renderTiledDynamicLayer(
   const screenX = -(progressX * extraWidth * scrollSpeedX) - driftX;
   const screenY = resolveLayerScreenY(drawH, viewportHeight, progressY, scrollSpeedY, driftY);
 
-  drawHorizontalTiles(ctx, img, screenX, screenY, drawW, drawH, viewportWidth, layer.mirrorTile === true);
+  let drawSource: CanvasImageSource = img;
+  let drawSrcW = srcNatW;
+  let drawSrcH = srcNatH;
+  if (surfaceResolver) {
+    const pixelScale = ctx.canvas ? ctx.canvas.width / Math.max(1, viewportWidth) : 1;
+    const resolved = surfaceResolver.resolve(
+      img,
+      srcNatW,
+      srcNatH,
+      drawW * pixelScale,
+      drawH * pixelScale,
+      layer.blendMode !== "screen",
+      ctx.imageSmoothingEnabled,
+      TILED_SURFACE_BUFFER
+    );
+    drawSource = resolved.source;
+    drawSrcW = resolved.width;
+    drawSrcH = resolved.height;
+  }
+
+  drawHorizontalTilesClipped(
+    ctx,
+    drawSource,
+    drawSrcW,
+    drawSrcH,
+    screenX,
+    screenY,
+    drawW,
+    drawH,
+    viewportWidth,
+    viewportHeight,
+    layer.mirrorTile === true
+  );
 
   if (showWireframes) {
     renderTierWireframe(ctx, tier, layer.id, viewportWidth, viewportHeight);
   }
 
-  ctx.restore();
+  if (needsStateSave) {
+    ctx.restore();
+  }
 }
 
 
