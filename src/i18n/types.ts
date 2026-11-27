@@ -145,6 +145,8 @@ export interface HudI18n {
   statsResetConfirmLabel: string;
   statsEmptyState: string;
   statsResetNotification: string;
+  menuLegendGamepad: string;
+  menuLegendKeyboard: string;
 }
 
 export interface SettingsGameplayI18n {

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import {
   Menu as MenuIcon,
   MapPin,
@@ -12,8 +12,9 @@ import {
   Keyboard,
   SlidersHorizontal,
 } from "lucide-react";
-import { Modal, Tabs, TabItem } from "@ui";
+import { Modal, Tabs, TabItem, Text } from "@ui";
 import { useI18n } from "@context/I18nContext";
+import { useControls } from "@context/ControlsContext";
 import { InputMap, PlayerId } from "@game/types";
 import {
   ModalNavigationTabs,
@@ -55,6 +56,15 @@ export interface GameMenuDialogProps {
   ) => void;
   readonly activeSubTabs?: SubTabMap;
   readonly onSubTabChange?: (modal: OpenModalId, subTab: string) => void;
+  readonly showLegend?: boolean;
+  readonly isPadConnected?: boolean;
+}
+
+function hasLiveGamepad(): boolean {
+  if (typeof navigator === "undefined" || typeof navigator.getGamepads !== "function") {
+    return false;
+  }
+  return Array.from(navigator.getGamepads()).some((pad) => pad !== null && pad.connected !== false);
 }
 
 interface GameDialogHeaderMeta {
@@ -122,8 +132,11 @@ export const GameMenuDialog: React.FC<GameMenuDialogProps> = ({
   onStartRebind,
   activeSubTabs,
   onSubTabChange,
+  showLegend = true,
+  isPadConnected,
 }) => {
   const { t } = useI18n();
+  const { connectedGamepads } = useControls();
   const [internalSubTabs, setInternalSubTabs] = useState<SubTabMap>({
     [ModalId.Settings]: SettingsTabId.Display,
   });
@@ -181,6 +194,37 @@ export const GameMenuDialog: React.FC<GameMenuDialogProps> = ({
     isGameModal(activeModal) ? activeModal : ModalId.Menu
   ) as GameModalId;
   const headerMeta = GAME_DIALOG_HEADER_META[currentGameModal];
+  const padConnected = isPadConnected ?? (connectedGamepads.length > 0 || hasLiveGamepad());
+
+  const prevOpenRef = useRef(false);
+  const prevModalRef = useRef<GameModalId>(currentGameModal);
+  const prevSubTabRef = useRef<SettingsTabId>(activeSettingsTab);
+
+  // Put focus on the active L1 tab on open/L1 switch, or active L2 tab on Settings L2 switch.
+  useEffect(() => {
+    if (!gameModalOpen || typeof document === "undefined") {
+      prevOpenRef.current = false;
+      return;
+    }
+
+    const justOpened = !prevOpenRef.current;
+    const modalChanged = prevModalRef.current !== currentGameModal;
+    const subTabChanged = prevSubTabRef.current !== activeSettingsTab;
+
+    if (justOpened || modalChanged) {
+      document.body
+        .querySelector<HTMLElement>(`#modal-quick-navigation #tab-${currentGameModal}`)
+        ?.focus();
+    } else if (currentGameModal === ModalId.Settings && subTabChanged) {
+      document.body
+        .querySelector<HTMLElement>(`#settings-sub-navigation #tab-${activeSettingsTab}`)
+        ?.focus();
+    }
+
+    prevOpenRef.current = true;
+    prevModalRef.current = currentGameModal;
+    prevSubTabRef.current = activeSettingsTab;
+  }, [gameModalOpen, currentGameModal, activeSettingsTab]);
 
   const renderBody = (): React.ReactNode => {
     switch (currentGameModal) {
@@ -239,6 +283,17 @@ export const GameMenuDialog: React.FC<GameMenuDialogProps> = ({
         </div>
 
         <Modal.Body>{renderBody()}</Modal.Body>
+
+        {showLegend && (
+          <Modal.Footer
+            data-testid="menu-legend-footer"
+            className="justify-start py-2 border-amber-900/30 bg-surface-darkest/80"
+          >
+            <Text size="2xs" variant="muted" className="font-mono tracking-tight">
+              {t(padConnected ? "menuLegendGamepad" : "menuLegendKeyboard")}
+            </Text>
+          </Modal.Footer>
+        )}
       </Modal.Content>
     </Modal>
   );

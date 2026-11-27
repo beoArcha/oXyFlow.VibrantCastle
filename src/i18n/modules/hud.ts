@@ -132,6 +132,8 @@ export const hudTranslations: Record<LanguageCode, HudI18n> = {
     statsResetConfirmLabel: "Zresetuj",
     statsEmptyState: "Nie zebrano jeszcze żadnych statystyk. Rozpocznij przygodę, a kronika zapełni się sama.",
     statsResetNotification: "Statystyki gry zostały zresetowane i zapisane w pamięci podręcznej!",
+    menuLegendGamepad: "A Wybierz · B Wróć · LB/RB Zakładki · LT/RT Sekcje · X Akcja",
+    menuLegendKeyboard: "Enter · Esc · Q/E · [ ]",
   },
   en: {
     title: "Sunny Bastion of the Castle",
@@ -264,5 +266,7 @@ export const hudTranslations: Record<LanguageCode, HudI18n> = {
     statsResetConfirmLabel: "Reset",
     statsEmptyState: "No statistics recorded yet. Start your adventure and the chronicle will fill itself.",
     statsResetNotification: "Game statistics have been reset and saved to persistent local storage!",
+    menuLegendGamepad: "A Select · B Back · LB/RB Tabs · LT/RT Sections · X Action",
+    menuLegendKeyboard: "Enter · Esc · Q/E · [ ]",
   },
 };

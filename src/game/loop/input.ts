@@ -33,6 +33,7 @@ export class GameInputEngine {
 
   private gamepadBindings: Record<PlayerId, GamepadBindingMap>;
   private stickDeadzone: number = defaultControlsJson.stickDeadzone || 0.25;
+  private menuCapture: boolean = false;
 
   constructor() {
     this.keyboardBindings = JSON.parse(JSON.stringify(this.defaultKeyboardBindings));
@@ -162,11 +163,22 @@ export class GameInputEngine {
     this.notifyBindingsListeners();
   }
 
+  public setMenuCapture(captured: boolean): void {
+    this.menuCapture = captured;
+  }
+
+  public isMenuCaptured(): boolean {
+    return this.menuCapture;
+  }
+
   /**
    * Reads raw gamepad state for given player.
    * Player 1 matches Gamepad index 0, Player 2 matches Gamepad index 1 (if available).
    */
   public getGamepadInputs(id: PlayerId): Partial<InputMap> {
+    if (this.menuCapture) {
+      return {};
+    }
     const gamepads = this.getConnectedGamepads();
     const padIndex = id === PlayerId.Player1 ? 0 : 1;
     const pad = gamepads[padIndex];
@@ -213,6 +225,23 @@ export class GameInputEngine {
    * Combines Keyboard + Gamepad inputs for seamless play.
    */
   public getInputs(id: PlayerId): InputMap {
+    if (this.menuCapture) {
+      return {
+        left: false,
+        right: false,
+        up: false,
+        down: false,
+        jump: false,
+        action1: false,
+        action2: false,
+        magic1: false,
+        magic2: false,
+        potion1: false,
+        potion2: false,
+        potion3: false,
+      };
+    }
+
     const kb = this.keyboardBindings[id];
     const pad = this.getGamepadInputs(id);
 

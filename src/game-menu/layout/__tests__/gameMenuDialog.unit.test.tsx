@@ -305,4 +305,44 @@ describe("GameMenuDialog single shell", () => {
 
     await unmount();
   });
+
+  it("renders keyboard legend footer by default and gamepad legend when a pad is connected", async () => {
+    await cleanupDom();
+    const manager = { activeModal: ModalId.Menu, isAnyModalOpen: true } as unknown as ModalManager;
+    const { unmount: unmountKb } = await renderIntoDom(
+      <IntegrationTestProviders defaultLanguage="pl">
+        <GameModalHost
+          modalManager={manager}
+          onClose={mock()}
+          onNavigateModal={mock()}
+          onResume={mock()}
+          onStartRebind={mock()}
+          isPadConnected={false}
+          renderDeveloperSuite={() => null}
+        />
+      </IntegrationTestProviders>
+    );
+    expect(document.body.querySelector('[data-testid="menu-legend-footer"]')?.textContent).toBe(
+      translations.pl.menuLegendKeyboard
+    );
+    await unmountKb();
+
+    const { unmount: unmountPad } = await renderIntoDom(
+      <IntegrationTestProviders defaultLanguage="pl">
+        <GameModalHost
+          modalManager={manager}
+          onClose={mock()}
+          onNavigateModal={mock()}
+          onResume={mock()}
+          onStartRebind={mock()}
+          isPadConnected={true}
+          renderDeveloperSuite={() => null}
+        />
+      </IntegrationTestProviders>
+    );
+    expect(document.body.querySelector('[data-testid="menu-legend-footer"]')?.textContent).toBe(
+      translations.pl.menuLegendGamepad
+    );
+    await unmountPad();
+  });
 });
