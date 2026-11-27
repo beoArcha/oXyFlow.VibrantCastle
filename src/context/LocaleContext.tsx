@@ -16,10 +16,11 @@ import {
 import gameEngine from "@game/loop/engine";
 import { MissingContextProviderError } from "@lib/errors";
 import { BaseProviderProps } from "./IContext";
+import { SettingsStorage } from "./settings/settingsStorage";
 
 const STORAGE_LANG_KEY = "vibrant_castle_language";
 
-function readInitialLanguage(defaultLanguage?: LanguageCode): LanguageCode {
+export function readInitialLanguage(defaultLanguage?: LanguageCode): LanguageCode {
   if (defaultLanguage && SUPPORTED_LANGUAGES.includes(defaultLanguage)) {
     return defaultLanguage;
   }
@@ -28,6 +29,13 @@ function readInitialLanguage(defaultLanguage?: LanguageCode): LanguageCode {
       const saved = window.localStorage.getItem(STORAGE_LANG_KEY);
       if (saved && SUPPORTED_LANGUAGES.includes(saved as LanguageCode)) {
         return saved as LanguageCode;
+      }
+      const settings = JSON.parse(
+        window.localStorage.getItem(SettingsStorage.SETTINGS_STORAGE_KEY) || "null"
+      );
+      const savedSettingsLanguage = settings?.language;
+      if (SUPPORTED_LANGUAGES.includes(savedSettingsLanguage)) {
+        return savedSettingsLanguage;
       }
     } catch {
       // Ignore storage access errors in sandboxed iframes
