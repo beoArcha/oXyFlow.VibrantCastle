@@ -140,6 +140,10 @@ export interface HudI18n {
   crawlersKilled: string;
   statsBtn: string;
   resetStatsBtn: string;
+  statsResetConfirmTitle: string;
+  statsResetConfirmMessage: string;
+  statsResetConfirmLabel: string;
+  statsEmptyState: string;
   statsResetNotification: string;
 }
 
@@ -190,6 +194,19 @@ export interface SettingsGameplayI18n {
   saveGame: string;
   loadGame: string;
   restartLocation: string;
+  confirmCancelBtn: string;
+  settingsResetConfirmTitle: string;
+  settingsResetConfirmMessage: string;
+  settingsResetConfirmLabel: string;
+  settingsImportConfirmTitle: string;
+  settingsImportConfirmMessage: string;
+  settingsImportConfirmLabel: string;
+  restartConfirmTitle: string;
+  restartConfirmMessage: string;
+  restartConfirmLabel: string;
+  loadSaveConfirmTitle: string;
+  loadSaveConfirmMessage: string;
+  loadSaveConfirmLabel: string;
   quickPotionsTitle: string;
   close: string;
   characterSelectTitle: string;
@@ -885,7 +902,10 @@ export interface InventoryI18n {
   useItem: string;
   equipItem: string;
   unequipItem: string;
-  emptySlot: string;
+  discardConfirmTitle: string;
+  discardConfirmMessage: string;
+  discardConfirmLabel: string;
+  backpackEmptyState: string;
   itemTypeWeapon: string;
   itemTypeShield: string;
   itemTypeHelmet: string;

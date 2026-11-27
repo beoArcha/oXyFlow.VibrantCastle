@@ -7,6 +7,7 @@ import {
   CardContent,
   Button,
   Badge,
+  ConfirmDialog,
   Text,
   Paragraph,
   StatRow,
@@ -68,6 +69,9 @@ export const InventoryModalView: React.FC = () => {
   } = useInventory();
 
   const [selectedRef, setSelectedRef] = useState<SelectedItemRef | null>(null);
+  const [pendingDiscardIndex, setPendingDiscardIndex] = useState<number | null>(null);
+  const backpackItems = activeInventory?.backpack ?? [];
+  const isBackpackEmpty = backpackItems.every((entry) => !entry);
 
   // Resolve current item from live inventory so inspector never shows stale entries
   const inspectedItem = useMemo<SelectedItemRef | null>(() => {
@@ -159,10 +163,16 @@ export const InventoryModalView: React.FC = () => {
                     className={`flex items-center justify-between gap-2 text-xs py-1.5 px-2.5 rounded-lg border transition-colors ${
                       isSelected
                         ? "bg-amber-950/40 border-amber-500/70"
-                        : "bg-black/30 border-stone-800"
+                        : item
+                          ? "bg-black/30 border-stone-800"
+                          : "bg-transparent border-dashed border-stone-700"
                     }`}
                   >
-                    <Text size="2xs" variant="muted" className="truncate">
+                    <Text
+                      size="2xs"
+                      variant="muted"
+                      className={item ? "truncate" : "truncate italic"}
+                    >
                       {t(labelKey)}
                     </Text>
                     {item ? (
@@ -188,11 +198,7 @@ export const InventoryModalView: React.FC = () => {
                           ×
                         </Button>
                       </div>
-                    ) : (
-                      <Text size="2xs" variant="muted">
-                        {t("emptySlot")}
-                      </Text>
-                    )}
+                    ) : null}
                   </div>
                 );
               })}
@@ -232,65 +238,71 @@ export const InventoryModalView: React.FC = () => {
               <CardTitle>{t("backpack")}</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-3">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {(activeInventory?.backpack ?? []).map((item, idx) => {
-                  const isSelected =
-                    inspectedItem?.source === "backpack" && inspectedItem.index === idx;
-                  return (
-                    <div
-                      key={idx}
-                      className={`p-2 rounded-lg border flex flex-col justify-between gap-2 min-h-[82px] transition-colors ${
-                        isSelected
-                          ? "border-amber-400 bg-amber-950/30"
-                          : "border-stone-800 bg-black/40"
-                      }`}
-                    >
-                      {item ? (
-                        <>
-                          <div className="flex flex-col gap-1">
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() =>
-                                setSelectedRef({ source: "backpack", index: idx, item })
-                              }
-                              className="h-auto p-0 justify-start text-left text-[11px] font-semibold text-amber-100 hover:text-amber-300"
-                            >
-                              <span className="line-clamp-2">{t(item.nameKey)}</span>
-                            </Button>
-                            <Badge variant={getRarityBadgeVariant(item.rarity)}>
-                              {t(getRarityLabelKey(item.rarity))}
-                            </Badge>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Button
-                              size="sm"
-                              variant="primary"
-                              onClick={() => equipItem(idx)}
-                              className="h-6 px-2 text-[10px] flex-1 whitespace-nowrap"
-                            >
-                              {item.type === "potion" ? t("useItem") : t("equipItem")}
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => discardItem(idx)}
-                              className="h-6 px-1.5 shrink-0"
-                              aria-label={t("discardItem")}
-                            >
-                              <Trash2 size={11} />
-                            </Button>
-                          </div>
-                        </>
-                      ) : (
-                        <Text size="2xs" variant="muted" className="m-auto">
-                          —
-                        </Text>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+              {isBackpackEmpty ? (
+                <Paragraph size="xs" variant="muted" className="py-6 text-center">
+                  {t("backpackEmptyState")}
+                </Paragraph>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {backpackItems.map((item, idx) => {
+                    const isSelected =
+                      inspectedItem?.source === "backpack" && inspectedItem.index === idx;
+                    return (
+                      <div
+                        key={idx}
+                        className={`p-2 rounded-lg border flex flex-col justify-between gap-2 min-h-[82px] transition-colors ${
+                          isSelected
+                            ? "border-amber-400 bg-amber-950/30"
+                            : "border-stone-800 bg-black/40"
+                        }`}
+                      >
+                        {item ? (
+                          <>
+                            <div className="flex flex-col gap-1">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() =>
+                                  setSelectedRef({ source: "backpack", index: idx, item })
+                                }
+                                className="h-auto p-0 justify-start text-left text-[11px] font-semibold text-amber-100 hover:text-amber-300"
+                              >
+                                <span className="line-clamp-2">{t(item.nameKey)}</span>
+                              </Button>
+                              <Badge variant={getRarityBadgeVariant(item.rarity)}>
+                                {t(getRarityLabelKey(item.rarity))}
+                              </Badge>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Button
+                                size="sm"
+                                variant="primary"
+                                onClick={() => equipItem(idx)}
+                                className="h-6 px-2 text-[10px] flex-1 whitespace-nowrap"
+                              >
+                                {item.type === "potion" ? t("useItem") : t("equipItem")}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => setPendingDiscardIndex(idx)}
+                                className="h-6 px-1.5 shrink-0"
+                                aria-label={t("discardItem")}
+                              >
+                                <Trash2 size={11} />
+                              </Button>
+                            </div>
+                          </>
+                        ) : (
+                          <Text size="2xs" variant="muted" className="m-auto">
+                            —
+                          </Text>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
 
               {/* Selected Item Details Card */}
               {inspectedItem && (
@@ -322,7 +334,7 @@ export const InventoryModalView: React.FC = () => {
                             size="sm"
                             variant="outline"
                             icon={<Trash2 size={12} />}
-                            onClick={() => discardItem(inspectedItem.index)}
+                            onClick={() => setPendingDiscardIndex(inspectedItem.index)}
                             className="whitespace-nowrap shrink-0"
                           >
                             {t("discardItem")}
@@ -383,6 +395,19 @@ export const InventoryModalView: React.FC = () => {
           </Card>
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={pendingDiscardIndex !== null}
+        onClose={() => setPendingDiscardIndex(null)}
+        onConfirm={() => {
+          if (pendingDiscardIndex !== null) discardItem(pendingDiscardIndex);
+          setPendingDiscardIndex(null);
+        }}
+        title={t("discardConfirmTitle")}
+        message={t("discardConfirmMessage")}
+        confirmLabel={t("discardConfirmLabel")}
+        cancelLabel={t("confirmCancelBtn")}
+      />
     </div>
   );
 };

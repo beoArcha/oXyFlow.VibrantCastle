@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { RotateCcw, ScrollText } from "lucide-react";
-import { Button, Heading } from "@ui";
+import { Button, ConfirmDialog, Heading, Paragraph } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { useGameSession } from "@context/GameSessionContext";
 import { useSettings } from "@context/SettingsContext";
@@ -23,6 +23,7 @@ export const StatsMenuTab: React.FC = () => {
   const { p1, p2 } = useGameSession();
   const { isTwoPlayer } = useSettings();
   const [statsSnapshot, setStatsSnapshot] = useState(() => getCurrentStats());
+  const [confirmReset, setConfirmReset] = useState(false);
 
   useEffect(() => {
     return subscribeToStats(() => {
@@ -42,6 +43,13 @@ export const StatsMenuTab: React.FC = () => {
     [statsSnapshot, isTwoPlayer, p1?.score, p2?.score, t]
   );
 
+  const isEmpty =
+    statsVm.sessionSummary.totalKills === 0 &&
+    statsVm.sessionSummary.totalDamageDealt === 0 &&
+    statsVm.sessionSummary.totalPotionsConsumed === 0 &&
+    statsVm.sessionSummary.leversPulled === 0 &&
+    statsSnapshot.totalPlayTimeSeconds === 0;
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
@@ -50,7 +58,13 @@ export const StatsMenuTab: React.FC = () => {
           {t("chronicleTitle")}
         </Heading>
       </div>
-      <StatsSessionCard summary={statsVm.sessionSummary} />
+      {isEmpty ? (
+        <Paragraph size="sm" variant="muted">
+          {t("statsEmptyState")}
+        </Paragraph>
+      ) : (
+        <StatsSessionCard summary={statsVm.sessionSummary} />
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <StatsPlayerCard
           title={t("p1Status")}
@@ -75,12 +89,25 @@ export const StatsMenuTab: React.FC = () => {
           size="sm"
           variant="outline"
           icon={<RotateCcw size={13} />}
-          onClick={() => setStatsSnapshot(resetGameStats())}
+          onClick={() => setConfirmReset(true)}
           className="whitespace-nowrap shrink-0"
         >
           {t("resetStatsBtn")}
         </Button>
       </div>
+
+      <ConfirmDialog
+        isOpen={confirmReset}
+        onClose={() => setConfirmReset(false)}
+        onConfirm={() => {
+          setConfirmReset(false);
+          setStatsSnapshot(resetGameStats());
+        }}
+        title={t("statsResetConfirmTitle")}
+        message={t("statsResetConfirmMessage")}
+        confirmLabel={t("statsResetConfirmLabel")}
+        cancelLabel={t("confirmCancelBtn")}
+      />
     </div>
   );
 };

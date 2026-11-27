@@ -1,6 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { Save, FolderOpen, HardDrive, FileJson } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent, FileUploadButton, Paragraph, Text } from "@ui";
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  ConfirmDialog,
+  FileUploadButton,
+  Paragraph,
+  Text,
+} from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 
@@ -8,9 +18,13 @@ export interface GameSaveSectionProps {
   readonly onSaveToLocalStorage: () => void;
   readonly onLoadFromLocalStorage: () => void;
   readonly onSaveGame: () => void;
-  readonly onLoadGame: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  readonly onLoadGame: (file: File) => void;
   readonly className?: string;
 }
+
+type PendingLoad =
+  | { readonly kind: "quick" }
+  | { readonly kind: "file"; readonly file: File };
 
 export const GameSaveSection = ({
   onSaveToLocalStorage,
@@ -20,6 +34,18 @@ export const GameSaveSection = ({
   className,
 }: GameSaveSectionProps): React.ReactElement => {
   const { t } = useI18n();
+  const [pendingLoad, setPendingLoad] = useState<PendingLoad | null>(null);
+
+  const confirmLoad = () => {
+    const load = pendingLoad;
+    setPendingLoad(null);
+    if (!load) return;
+    if (load.kind === "quick") {
+      onLoadFromLocalStorage();
+    } else {
+      onLoadGame(load.file);
+    }
+  };
 
   return (
     <Card variant="subtle" className={cn(className)}>
@@ -57,7 +83,7 @@ export const GameSaveSection = ({
                 variant="secondary"
                 size="sm"
                 icon={<FolderOpen size={13} />}
-                onClick={onLoadFromLocalStorage}
+                onClick={() => setPendingLoad({ kind: "quick" })}
               >
                 {t("saveActionQuickLoad")}
               </Button>
@@ -89,7 +115,7 @@ export const GameSaveSection = ({
               <FileUploadButton
                 id="load-game-file-btn"
                 accept=".json"
-                onChange={onLoadGame}
+                onFileSelect={(file) => setPendingLoad({ kind: "file", file })}
                 icon={<FolderOpen size={13} className="text-amber-400" />}
                 label={t("saveActionImport")}
                 variant="secondary"
@@ -99,6 +125,16 @@ export const GameSaveSection = ({
           </div>
         </div>
       </CardContent>
+
+      <ConfirmDialog
+        isOpen={pendingLoad !== null}
+        onClose={() => setPendingLoad(null)}
+        onConfirm={confirmLoad}
+        title={t("loadSaveConfirmTitle")}
+        message={t("loadSaveConfirmMessage")}
+        confirmLabel={t("loadSaveConfirmLabel")}
+        cancelLabel={t("confirmCancelBtn")}
+      />
     </Card>
   );
 };

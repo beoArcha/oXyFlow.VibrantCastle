@@ -11,6 +11,7 @@ import { HUDStatusOverlay } from "./HUDStatusOverlay";
 import { HUDPlayerStatusCard } from "./HUDPlayerStatusCard";
 import { HUDQuickBelt } from "./HUDQuickBelt";
 import { HUDNarratorBanner } from "./HUDNarratorBanner";
+import { HUDControlsHint } from "./HUDControlsHint";
 import type { HUDOverlayProps } from "./types";
 
 export const HUDOverlay: React.FC<HUDOverlayProps> = ({
@@ -32,6 +33,8 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
     restart,
     advanceLocation,
     useQuickPotion,
+    isAudioInitialized,
+    initializeAudio,
   } = useGameSession();
 
   const { isTwoPlayer, displaySettings, hudSettings } = useSettings();
@@ -137,6 +140,14 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
           />
         ) : null
       }
+      rightFlankSlot={
+        hudSettings.showControlsHint ? (
+          <HUDControlsHint
+            isAudioInitialized={isAudioInitialized}
+            onInitializeAudio={initializeAudio}
+          />
+        ) : null
+      }
       bottomSlot={
         hudSettings.showNarratorSubtitles ? (
           <HUDNarratorBanner narration={narration} isAnimating={subAnim} />
@@ -149,14 +160,18 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
               <HUDQuickBelt
                 belt={p1QuickBeltVM}
                 onUsePotion={handleP1Potion}
-                showRpgButtons={false}
+                onOpenInventory={onOpenInventory}
+                onOpenSkillTree={onOpenSkillTree}
+                showRpgButtons={hudSettings.showRpgButtons}
               />
             )}
             {isTwoPlayer && p2QuickBeltVM && (
               <HUDQuickBelt
                 belt={p2QuickBeltVM}
                 onUsePotion={handleP2Potion}
-                showRpgButtons={false}
+                onOpenInventory={onOpenInventory}
+                onOpenSkillTree={onOpenSkillTree}
+                showRpgButtons={hudSettings.showRpgButtons}
               />
             )}
           </>

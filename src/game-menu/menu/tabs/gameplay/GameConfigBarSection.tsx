@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Save, FolderOpen, RotateCcw } from "lucide-react";
-import { Button, FileUploadButton } from "@ui";
+import { Button, ConfirmDialog, FileUploadButton } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
 
@@ -20,6 +20,9 @@ export const GameConfigBarSection = ({
   className,
 }: GameConfigBarSectionProps): React.ReactElement => {
   const { t } = useI18n();
+  const [pendingImport, setPendingImport] = useState<File | null>(null);
+  const [confirmReset, setConfirmReset] = useState(false);
+  const [confirmRestart, setConfirmRestart] = useState(false);
 
   return (
     <div
@@ -42,7 +45,7 @@ export const GameConfigBarSection = ({
         <FileUploadButton
           id="import-settings-file-btn"
           accept=".json"
-          onFileSelect={onImportSettings}
+          onFileSelect={(file) => setPendingImport(file)}
           icon={<FolderOpen size={13} className="text-amber-400" />}
           label={t("settingsImportBtn")}
           variant="secondary"
@@ -53,7 +56,7 @@ export const GameConfigBarSection = ({
           size="sm"
           variant="secondary"
           icon={<RotateCcw size={13} />}
-          onClick={onResetDefaults}
+          onClick={() => setConfirmReset(true)}
         >
           {t("settingsDefaultsBtn")}
         </Button>
@@ -65,13 +68,54 @@ export const GameConfigBarSection = ({
           variant="secondary"
           size="sm"
           icon={<RotateCcw size={13} />}
-          onClick={onRestartLocation}
+          onClick={() => setConfirmRestart(true)}
           className="border-amber-700/60 hover:border-amber-500"
         >
           {t("restartLocation")}
         </Button>
       )}
+
+      <ConfirmDialog
+        isOpen={pendingImport !== null}
+        onClose={() => setPendingImport(null)}
+        onConfirm={() => {
+          const file = pendingImport;
+          setPendingImport(null);
+          if (file) void onImportSettings(file);
+        }}
+        title={t("settingsImportConfirmTitle")}
+        message={t("settingsImportConfirmMessage")}
+        confirmLabel={t("settingsImportConfirmLabel")}
+        cancelLabel={t("confirmCancelBtn")}
+      />
+
+      <ConfirmDialog
+        isOpen={confirmReset}
+        onClose={() => setConfirmReset(false)}
+        onConfirm={() => {
+          setConfirmReset(false);
+          onResetDefaults();
+        }}
+        title={t("settingsResetConfirmTitle")}
+        message={t("settingsResetConfirmMessage")}
+        confirmLabel={t("settingsResetConfirmLabel")}
+        cancelLabel={t("confirmCancelBtn")}
+      />
+
+      {onRestartLocation && (
+        <ConfirmDialog
+          isOpen={confirmRestart}
+          onClose={() => setConfirmRestart(false)}
+          onConfirm={() => {
+            setConfirmRestart(false);
+            onRestartLocation();
+          }}
+          title={t("restartConfirmTitle")}
+          message={t("restartConfirmMessage")}
+          confirmLabel={t("restartConfirmLabel")}
+          cancelLabel={t("confirmCancelBtn")}
+        />
+      )}
     </div>
   );
 };
-
