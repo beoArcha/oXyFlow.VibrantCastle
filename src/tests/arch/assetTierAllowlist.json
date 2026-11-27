@@ -9,7 +9,6 @@
     "high"
   ],
   "enemies/bastion_sentinel_boss": [
-    "hi8bit",
     "high"
   ],
   "enemies/chasm_crawler": [
@@ -25,7 +24,6 @@
     "high"
   ],
   "enemies/clockwork_owl_gargoyle": [
-    "hi8bit",
     "hi16bit"
   ],
   "enemies/court_sentinel": [
@@ -38,30 +36,24 @@
     "high"
   ],
   "enemies/shadow_knight": [
-    "hi8bit",
     "high"
   ],
   "enemies/thorn_creeper": [
     "high"
   ],
   "enemies/training_dummy": [
-    "hi8bit",
     "hi16bit"
   ],
   "structures/aether_gate": [
-    "hi8bit",
     "hi16bit"
   ],
   "structures/chrono_lever": [
-    "hi8bit",
     "hi16bit"
   ],
   "structures/grand_portcullis": [
-    "hi8bit",
     "hi16bit"
   ],
   "structures/hazard_thorns": [
-    "hi8bit",
     "hi16bit"
   ],
   "props/aether_crystal_cluster": [
@@ -77,7 +69,6 @@
     "high"
   ],
   "props/hanging_lantern": [
-    "hi8bit",
     "high"
   ],
   "props/iron_chain": [
