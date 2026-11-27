@@ -61,7 +61,11 @@ bun scripts/validate-level.ts <id>     # Validate one map's logic
 bun scripts/sprites/compile.ts <id>    # Compile hi8bit / hi16bit sprite sheets
 bun scripts/repack-atlas.ts <id>       # Repack a painted sheet onto a clean grid
 bun run build:game                     # Production game client
+bun run build:pages                    # Full distribution (wiki + /game/)
+bun run preview:pages                  # Local static preview at /oXyFlow.VibrantCastle/
 ```
+
+> **Note:** Do not run `bun run dist/index.html` to preview the Pages build — it starts Bun's single-entry HTML dev server and serves the wiki page for every path (including `/game/index.html`). Always use `bun run build:pages` followed by `bun run preview:pages`.
 
 ## Documentation
 

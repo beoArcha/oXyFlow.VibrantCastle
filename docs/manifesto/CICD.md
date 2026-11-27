@@ -104,3 +104,5 @@ graph TD
 - **Jobs**:
   1. `build-and-smoke`: Runs `bun run build:pages` (wiki + `/game/`), verifies `bun run test:e2e`, and uploads the `dist` artifact via `actions/upload-pages-artifact@v3`.
   2. `deploy`: Publishes to the `github-pages` environment via `actions/deploy-pages@v4`.
+
+To preview the Pages distribution locally, run `bun run build:pages` followed by `bun run preview:pages` (serves `dist/` statically under `/oXyFlow.VibrantCastle/`). Do **not** run `bun run dist/index.html` — it starts Bun's single-entry HTML dev server and answers every path with the wiki page.
