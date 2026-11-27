@@ -359,12 +359,12 @@ export function gradeBossVariant(image: RgbaImage): RgbaImage {
       const b = data[idx + 2];
       const luma = 0.299 * r + 0.587 * g + 0.114 * b;
 
-      const sat = 0.44;
-      const dr = (luma + (r - luma) * sat) * 0.72 * vignette;
-      const dg = (luma + (g - luma) * sat) * 0.62 * vignette;
-      const db = (luma + (b - luma) * sat) * 0.64 * vignette;
+      const sat = 0.62;
+      const dr = (luma + (r - luma) * sat) * 0.86 * vignette;
+      const dg = (luma + (g - luma) * sat) * 0.7 * vignette;
+      const db = (luma + (b - luma) * sat) * 0.72 * vignette;
 
-      const mix = 0.34 + 0.14 * (1 - vignette);
+      const mix = 0.14 + 0.1 * (1 - vignette);
       out[idx] = clampByte(dr * (1 - mix) + crimsonR * mix);
       out[idx + 1] = clampByte(dg * (1 - mix) + crimsonG * mix);
       out[idx + 2] = clampByte(db * (1 - mix) + crimsonB * mix);
@@ -395,11 +395,11 @@ export function gradeRestVariant(image: RgbaImage): RgbaImage {
       const nx = Math.abs((x + 0.5) / width - 0.5) * 2;
       const glow = Math.max(0, 1 - 0.6 * (0.6 * nx * nx + 0.4 * ny * ny));
 
-      const lr = 255 * Math.pow(data[idx] / 255, 0.84) * 1.07 + 10;
-      const lg = 255 * Math.pow(data[idx + 1] / 255, 0.86) * 1.01 + 6;
-      const lb = 255 * Math.pow(data[idx + 2] / 255, 0.92) * 0.84;
+      const lr = 255 * Math.pow(data[idx] / 255, 0.93) * 1.05 + 4;
+      const lg = 255 * Math.pow(data[idx + 1] / 255, 0.95) * 1.0 + 2;
+      const lb = 255 * Math.pow(data[idx + 2] / 255, 0.98) * 0.9;
 
-      const mix = 0.22 + 0.16 * glow;
+      const mix = 0.1 + 0.1 * glow;
       out[idx] = clampByte(lr * (1 - mix) + amberR * mix + 14 * glow);
       out[idx + 1] = clampByte(lg * (1 - mix) + amberG * mix + 9 * glow);
       out[idx + 2] = clampByte(lb * (1 - mix) + amberB * mix + 2 * glow);
