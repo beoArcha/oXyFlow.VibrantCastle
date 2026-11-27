@@ -9,6 +9,17 @@ export interface RgbaImage {
   data: Uint8Array;
 }
 
+export interface PngEncodeOptions {
+  /** PNG color type: 2 (RGB, no alpha), 3 (indexed palette, <= 256 RGBA), or 6 (RGBA, default). */
+  colorType?: 2 | 3 | 6;
+  /** Selects the best PNG scanline filter per row for smaller files (ignored for indexed PNGs). */
+  adaptiveFilter?: boolean;
+  /** Specific scanline filter strategy (defaults to adaptive when `adaptiveFilter` is true, else none). */
+  filter?: "none" | "paeth" | "adaptive";
+  /** zlib compression level 1..9 (default 9). */
+  compressionLevel?: number;
+}
+
 const PNG_SIGNATURE = [137, 80, 78, 71, 13, 10, 26, 10];
 
 const CHANNELS_BY_COLOR_TYPE: Readonly<Record<number, number>> = { 0: 1, 2: 3, 3: 1, 4: 2, 6: 4 };
@@ -161,26 +172,166 @@ function makeChunk(type: string, body: Uint8Array): Buffer {
   return out;
 }
 
-export function encodePngBuffer(image: RgbaImage): Buffer {
+function buildRawRgbBytes(image: RgbaImage): Uint8Array {
   const { width, height, data } = image;
+  const raw = new Uint8Array(width * height * 3);
+  for (let i = 0, o = 0; i < data.length; i += 4, o += 3) {
+    raw[o] = data[i];
+    raw[o + 1] = data[i + 1];
+    raw[o + 2] = data[i + 2];
+  }
+  return raw;
+}
+
+function buildIndexedPayload(image: RgbaImage): {
+  pixels: Uint8Array;
+  plte: Buffer;
+  trns: Buffer | null;
+} {
+  const { width, height, data } = image;
+  const rgbaSet = new Set<number>();
+  for (let i = 0; i < data.length; i += 4) {
+    const key = ((data[i] << 24) | (data[i + 1] << 16) | (data[i + 2] << 8) | data[i + 3]) >>> 0;
+    rgbaSet.add(key);
+    if (rgbaSet.size > 256) {
+      throw new AssetError("Indexed PNG encoding supports at most 256 unique RGBA colors", ErrorCode.ASSET_CORRUPTED, {
+        details: { colorCount: rgbaSet.size },
+      });
+    }
+  }
+
+  // Sort transparent/translucent entries first so tRNS can stop at the last non-opaque index.
+  const entries = [...rgbaSet].sort((a, b) => (a & 0xff) - (b & 0xff) || a - b);
+  const indexByKey = new Map<number, number>();
+  const plte = Buffer.alloc(entries.length * 3);
+  let lastAlphaIdx = -1;
+
+  for (let idx = 0; idx < entries.length; idx++) {
+    const key = entries[idx];
+    indexByKey.set(key, idx);
+    plte[idx * 3] = (key >>> 24) & 0xff;
+    plte[idx * 3 + 1] = (key >>> 16) & 0xff;
+    plte[idx * 3 + 2] = (key >>> 8) & 0xff;
+    if ((key & 0xff) < 255) lastAlphaIdx = idx;
+  }
+
+  const trns = lastAlphaIdx >= 0 ? Buffer.alloc(lastAlphaIdx + 1) : null;
+  if (trns) {
+    for (let idx = 0; idx <= lastAlphaIdx; idx++) {
+      trns[idx] = entries[idx] & 0xff;
+    }
+  }
+
+  const pixels = new Uint8Array(width * height);
+  for (let p = 0; p < pixels.length; p++) {
+    const o = p * 4;
+    const key = ((data[o] << 24) | (data[o + 1] << 16) | (data[o + 2] << 8) | data[o + 3]) >>> 0;
+    pixels[p] = indexByKey.get(key) ?? 0;
+  }
+
+  return { pixels, plte, trns };
+}
+
+function filterScanlines(
+  pixels: Uint8Array,
+  width: number,
+  height: number,
+  bpp: number,
+  filterMode: "none" | "paeth" | "adaptive"
+): Buffer {
+  const stride = width * bpp;
+  const raw = Buffer.alloc(height * (stride + 1));
+  if (filterMode === "none") {
+    for (let y = 0; y < height; y++) {
+      raw.set(pixels.subarray(y * stride, (y + 1) * stride), y * (stride + 1) + 1);
+    }
+    return raw;
+  }
+
+  if (filterMode === "paeth") {
+    for (let y = 0; y < height; y++) {
+      const rowOffset = y * stride;
+      const prevOffset = (y - 1) * stride;
+      const outPos = y * (stride + 1);
+      raw[outPos] = 4;
+      for (let i = 0; i < stride; i++) {
+        const a = i >= bpp ? pixels[rowOffset + i - bpp] : 0;
+        const b = y > 0 ? pixels[prevOffset + i] : 0;
+        const c = y > 0 && i >= bpp ? pixels[prevOffset + i - bpp] : 0;
+        raw[outPos + 1 + i] = (pixels[rowOffset + i] - paeth(a, b, c)) & 0xff;
+      }
+    }
+    return raw;
+  }
+
+  const candidates = [new Uint8Array(stride), new Uint8Array(stride), new Uint8Array(stride), new Uint8Array(stride), new Uint8Array(stride)];
+  for (let y = 0; y < height; y++) {
+    const rowOffset = y * stride;
+    const prevOffset = (y - 1) * stride;
+    let bestFilter = 0;
+    let bestScore = Infinity;
+
+    for (let filter = 0; filter <= 4; filter++) {
+      const buf = candidates[filter];
+      let score = 0;
+      for (let i = 0; i < stride; i++) {
+        const cur = pixels[rowOffset + i];
+        const a = i >= bpp ? pixels[rowOffset + i - bpp] : 0;
+        const b = y > 0 ? pixels[prevOffset + i] : 0;
+        const c = y > 0 && i >= bpp ? pixels[prevOffset + i - bpp] : 0;
+        let pred = 0;
+        if (filter === 1) pred = a;
+        else if (filter === 2) pred = b;
+        else if (filter === 3) pred = (a + b) >> 1;
+        else if (filter === 4) pred = paeth(a, b, c);
+        const val = (cur - pred) & 0xff;
+        buf[i] = val;
+        score += val < 128 ? val : 256 - val;
+      }
+      if (score < bestScore) {
+        bestScore = score;
+        bestFilter = filter;
+      }
+    }
+
+    const outPos = y * (stride + 1);
+    raw[outPos] = bestFilter;
+    raw.set(candidates[bestFilter], outPos + 1);
+  }
+  return raw;
+}
+
+export function encodePngBuffer(image: RgbaImage, options: PngEncodeOptions = {}): Buffer {
+  const { width, height, data } = image;
+  const colorType = options.colorType ?? 6;
+  const filterMode: "none" | "paeth" | "adaptive" =
+    colorType === 3 ? "none" : (options.filter ?? (options.adaptiveFilter ? "adaptive" : "none"));
+  const level = options.compressionLevel ?? 9;
   const ihdr = Buffer.alloc(13);
   ihdr.writeUInt32BE(width, 0);
   ihdr.writeUInt32BE(height, 4);
   ihdr[8] = 8;
-  ihdr[9] = 6;
-  const stride = width * 4;
-  const raw = Buffer.alloc(height * (stride + 1));
-  for (let y = 0; y < height; y++) {
-    raw.set(data.subarray(y * stride, (y + 1) * stride), y * (stride + 1) + 1);
+  ihdr[9] = colorType;
+
+  const chunks: Uint8Array[] = [Buffer.from(PNG_SIGNATURE), makeChunk("IHDR", ihdr)];
+  let raw: Buffer;
+
+  if (colorType === 3) {
+    const indexed = buildIndexedPayload(image);
+    chunks.push(makeChunk("PLTE", indexed.plte));
+    if (indexed.trns) chunks.push(makeChunk("tRNS", indexed.trns));
+    raw = filterScanlines(indexed.pixels, width, height, 1, "none");
+  } else if (colorType === 2) {
+    raw = filterScanlines(buildRawRgbBytes(image), width, height, 3, filterMode);
+  } else {
+    raw = filterScanlines(data, width, height, 4, filterMode);
   }
-  return Buffer.concat([
-    Buffer.from(PNG_SIGNATURE),
-    makeChunk("IHDR", ihdr),
-    makeChunk("IDAT", deflateSync(raw, { level: 9 })),
-    makeChunk("IEND", new Uint8Array(0)),
-  ]);
+
+  chunks.push(makeChunk("IDAT", deflateSync(raw, { level })));
+  chunks.push(makeChunk("IEND", new Uint8Array(0)));
+  return Buffer.concat(chunks);
 }
 
-export function writePngFile(path: string, image: RgbaImage): void {
-  writeFileSync(path, encodePngBuffer(image));
+export function writePngFile(path: string, image: RgbaImage, options?: PngEncodeOptions): void {
+  writeFileSync(path, encodePngBuffer(image, options));
 }

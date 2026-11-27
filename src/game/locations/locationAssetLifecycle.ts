@@ -389,13 +389,13 @@ export class LocationAssetLifecycle {
   }
 
   /** Background layer URLs of a location (deduplicated). */
-  public getLayerUrls(locationId: LocationId): string[] {
+  public getLayerUrls(locationId: LocationId, tierOverride?: ParallaxQualityTier): string[] {
     if (this.parallaxQuality === "off") return [];
     const layers = this.resolveLocation(locationId)?.parallaxBackground?.layers;
     const urls: string[] = [];
     if (!layers) return urls;
     const targetTier: ParallaxQualityTier =
-      this.parallaxQuality === "simplified" ? "low" : this.parallaxQuality;
+      tierOverride ?? (this.parallaxQuality === "simplified" ? "low" : this.parallaxQuality);
     for (const layer of layers) {
       if (this.parallaxQuality === "simplified" && resolveBackgroundTier(layer) !== "far") continue;
       const target = resolveLayerTargetForTier(layer, targetTier, this.registry, this.customResolveTierUrl);

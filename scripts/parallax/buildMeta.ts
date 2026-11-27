@@ -321,6 +321,37 @@ function sortGenerated(generated: Record<string, ParallaxGeneratedEntry>): Recor
   return sorted;
 }
 
+function syncLayerZonesAndTiling(
+  existingLayers: Readonly<Record<string, ParallaxLayerMeta>>,
+  filesBySlot: ReadonlyMap<string, ParsedParallaxFile[]>,
+  generated: Readonly<Record<string, ParallaxGeneratedEntry>>
+): Record<string, ParallaxLayerMeta> {
+  const synced: Record<string, ParallaxLayerMeta> = {};
+
+  for (const [slot, layer] of Object.entries(existingLayers)) {
+    const zoneEntries: Partial<Record<ParallaxZoneKind, ParallaxZoneOverride>> = {
+      ...(layer.zones ?? {}),
+    };
+    for (const [candidateSlot, candidateFiles] of filesBySlot) {
+      const zoneKind = candidateFiles[0]?.zoneKind;
+      if (candidateFiles[0]?.baseSlot === slot && zoneKind && candidateSlot !== slot) {
+        if (!zoneEntries[zoneKind]) zoneEntries[zoneKind] = {};
+      }
+    }
+
+    const seam = generated[slot]?.seam ?? (layer.source ? generated[`${slot}_zone_boss`]?.seam : undefined);
+    const tiling = seam ? (seam[2] === "warn" ? "mirror" : "repeat") : layer.tiling;
+
+    synced[slot] = {
+      ...layer,
+      ...(tiling !== undefined ? { tiling } : {}),
+      ...(Object.keys(zoneEntries).length > 0 ? { zones: zoneEntries } : {}),
+    };
+  }
+
+  return synced;
+}
+
 export function buildWorldParallaxMeta(
   worldId: WorldId,
   existingMeta?: WorldParallaxMeta,
@@ -346,7 +377,7 @@ export function buildWorldParallaxMeta(
     return {
       worldId: existingMeta.worldId,
       placeholder: existingMeta.placeholder,
-      layers: existingMeta.layers,
+      layers: syncLayerZonesAndTiling(existingMeta.layers, filesBySlot, generated),
       ...(existingMeta.effects ? { effects: existingMeta.effects } : {}),
       generated,
     };
