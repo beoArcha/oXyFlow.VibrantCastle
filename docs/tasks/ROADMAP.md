@@ -70,6 +70,7 @@ Cards and the "phase 4 so far" summary: [phase-4-0.3.x.md](./phase-4-0.3.x.md).
 | [CI and tests](./phase-4-0.3.x.md#g-ci-and-tests) | VC-061, VC-062 (part 1 #86) | VC-060 (#83), VC-063 (#79) |
 | [Developer tools](./phase-4-0.3.x.md#h-developer-tools-and-review) | VC-070, VC-075, VC-081 | VC-071 (#87), VC-072 (#82), VC-073 (#95), VC-074 (#96) |
 | [Parallax series](./phase-4-0.3.x.md#p-parallax-series-owner-request-2026-11-27) | VC-100 … VC-109 | |
+| [Asset animation fixes](./phase-4-0.3.x.md#q-asset-animation-fixes) | VC-120 … VC-123 | |
 | [Quality gate](./phase-4-0.3.x.md#z-phase-gate) | VC-090 | |
 
 ## Phase 5: worlds and characters (0.4.x, next)
@@ -91,6 +92,7 @@ Cards: [phase-5-0.4.x.md](./phase-5-0.4.x.md).
 | Area | Planned | Done |
 | :--- | :--- | :--- |
 | [Assets](./phase-5-0.4.x.md#b-assets-and-rendering) | VC-011 | |
+| [Bestiary and world props](./phase-5-0.4.x.md#b2-bestiary-and-world-props) | VC-130 … VC-133 | |
 | [Maps](./phase-5-0.4.x.md#c-world-and-maps-8-worlds-x-8-maps-today-map-1-of-each-world) | VC-021 … VC-025, VC-026 … VC-028 | |
 | [Characters and balance](./phase-5-0.4.x.md#d-characters-stats-and-equipment) | VC-031, VC-032, VC-033, VC-034, VC-080 | |
 | [Inventory visuals](./phase-5-0.4.x.md#d-characters-stats-and-equipment) | VC-036 | |

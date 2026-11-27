@@ -397,6 +397,32 @@ Target layer model per world: **1 far background + 3 standard mid/close variatio
 - **Goal:** missing far / variation / zone layers generated for all 8 worlds in low, mid and high PNG, plus simplified placeholders; consistent with the lore world dossiers.
 - **How (AI):** one world per task; generate, slice to the taxonomy sizes, run the seam checker, review contact sheets before merge.
 
+## Q. Asset animation fixes
+
+Owner request (2026-11-27), screenshot evidence: in clocktower `clockwork_owl_gargoyle` plays no animation and its hitbox/box flickers (shown in one frame, gone in the next).
+
+### VC-120 · Asset animation review
+- **Phase:** 4 · **Type:** review · **Class:** medium · **Status:** todo
+- **Goal:** a complete audit of every used enemy, structure and prop across all tiers (`hi8bit`, `hi16bit`, `high`).
+- **How (AI):** play every used enemy, structure and prop at each tier (`hi8bit`, `hi16bit`, `high`) in the dev Atlas tool and in game; list missing animations, flickering boxes and wrong rows; output a table in `docs/design/asset-animation-review.md`.
+
+### VC-121 · Fix enemy animation playback and box flicker
+- **Phase:** 4 · **Type:** fix · **Class:** medium · **Status:** todo
+- **Goal:** `clockwork_owl_gargoyle` and all affected entities play their animations smoothly with no hitbox/box flicker; PNG-animated assets keep working.
+- **How (AI):** trace why `clockwork_owl_gargoyle` has no animation and a flickering box in clocktower, fix the root cause for all affected entities, and verify both SVG and PNG-animated assets in game and tests.
+
+### VC-122 · Missing hi16bit SVGs
+- **Phase:** 4 · **Type:** art · **Class:** medium · **Status:** todo
+- **Goal:** every used asset has a `hi16bit` SVG with at least 3 animations (`idle`, `move`, `attack`; more later).
+- **Description:** Style reference: Sega Saturn-era 2D games (Octopath Traveler is a quality reference, but the owner prefers the Saturn look); the orchestrator's earlier script-generated enemy SVGs are the quality bar.
+- **How (AI):** add missing `hi16bit` SVGs for every used asset with `idle`, `move` and `attack` animations, matching the Saturn-era 2D quality bar.
+
+### VC-123 · Better hi8bit SVGs
+- **Phase:** 4 · **Type:** art · **Class:** medium · **Status:** todo
+- **Goal:** replace crude `hi8bit` placeholders with decent `hi8bit` art and 3 animations (`idle`, `move`, `attack`).
+- **Description:** `hi8bit` means "looks 8-bit but clearly made later, a retro game on a PS2-era console".
+- **How (AI):** replace crude `hi8bit` placeholder SVGs with clean PS2-era retro 8-bit art, each with `idle`, `move` and `attack` animations.
+
 ## Z. Phase gate
 
 ### VC-090 · Phase 4 quality gate and 0.4.0
