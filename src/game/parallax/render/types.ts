@@ -4,18 +4,32 @@ import type {
   BossZoneScope,
   ParallaxLayerSchema,
 } from "@game/locations/schema/locationSchema";
+import type { ResolvedParallaxQuality } from "@game/types";
+import type { ParallaxQualityTier } from "../meta";
 
 export interface ParallaxRegistryEntry {
   readonly key: string;
   readonly tier: BackgroundLayerTier;
   readonly url: string;
+  readonly resolvedTier?: ParallaxQualityTier;
+  readonly variants?: Readonly<Partial<Record<ParallaxQualityTier, string>>>;
   readonly defaultOpacity?: number;
   readonly defaultBlendMode?: GlobalCompositeOperation;
   readonly tint?: string | null;
 }
 
 export interface IParallaxRegistry {
-  resolve(keyOrAlias: string | undefined): ParallaxRegistryEntry | undefined;
+  resolve(
+    keyOrAlias: string | undefined,
+    qualityOverride?: ResolvedParallaxQuality
+  ): ParallaxRegistryEntry | undefined;
+  resolveForTier?(
+    key: string | undefined,
+    tier: ParallaxQualityTier
+  ): ParallaxRegistryEntry | undefined;
+  getParallaxQuality?(): ResolvedParallaxQuality;
+  setParallaxQuality?(quality: ResolvedParallaxQuality): boolean;
+  subscribeQuality?(listener: (quality: ResolvedParallaxQuality) => void): () => void;
 }
 
 export interface IParallaxLoader {
@@ -48,12 +62,21 @@ export interface IPlaceholderRenderer {
     cameraY: number,
     tickCount: number
   ): void;
+  renderGradientBackdrop?(
+    ctx: CanvasRenderingContext2D,
+    location: LocationDefinition,
+    viewportWidth: number,
+    viewportHeight: number,
+    showSilhouette?: boolean
+  ): void;
   clearCaches?(): void;
 }
 
 export interface IParallaxSystem {
   isSupported(locationOrId: string | LocationDefinition): boolean;
   hasOpaqueFarBackdrop?(location: LocationDefinition, options?: ParallaxRenderOptions): boolean;
+  getParallaxQuality?(): ResolvedParallaxQuality;
+  setParallaxQuality?(quality: ResolvedParallaxQuality): void;
   preload(layers?: readonly ParallaxLayerSchema[]): void;
   render(
     ctx: CanvasRenderingContext2D,

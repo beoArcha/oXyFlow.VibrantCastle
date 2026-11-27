@@ -8,7 +8,7 @@ import { EnginePlayerUpdateStep } from "./enginePlayerUpdateStep";
 import { EngineSimulationStep } from "./engineSimulationStep";
 import { EngineLoopRunner } from "./engineLoopRunner";
 import { createDebugCheatsContext, createLevelLifecycleContext, IEngineContextHost } from "./engineContextFactory";
-import { PlayerId, Projectile } from "@game/types";
+import { PlayerId, Projectile, ResolvedParallaxQuality } from "@game/types";
 import { LocationId, LocationDefinition } from "../locations";
 import { GameAudioEngine } from "@game/engine/audioEngine";
 import { GameInputEngine } from "./input";
@@ -42,6 +42,7 @@ export interface IEngineSubsystemHost extends IEngineContextHost {
   eventBus: GameEventBus;
   isPaused: boolean;
   setDefaultPrimaryCharacter(characterId: "valen" | "aurelia"): void;
+  onParallaxQualityChanged?(quality: ResolvedParallaxQuality): void;
   setTwoPlayerMode(enabled: boolean, preserveStats?: boolean): void;
   resetLevel(locationId?: LocationId): void;
   fixedUpdate(mult: number): void;
@@ -75,6 +76,7 @@ export function createEngineControllers(
     onHardwareAccelerationChanged: (enabled) => host.getRenderer()?.setHardwareAcceleration(enabled),
     onTwoPlayerChanged: (enabled) => host.setTwoPlayerMode(enabled, true),
     onPrimaryCharacterChanged: (charId) => host.setDefaultPrimaryCharacter(charId),
+    onParallaxQualityChanged: (quality) => host.onParallaxQualityChanged?.(quality),
     getPlayerCount: () => host.players.length,
     notifyStateChanged: () => host.notifyReact(),
   });

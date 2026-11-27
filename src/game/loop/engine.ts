@@ -37,6 +37,7 @@ import { createDiscoveredTilesetManager } from "../engine/tiles";
 import { createDiscoveredPropManager } from "../engine/props";
 import { DecorRenderer } from "../renderer/decorRenderer";
 import { defaultLocationAssetLifecycle } from "../locations/locationAssetLifecycle";
+import { defaultParallaxRegistry } from "../parallax/registry";
 
 export type { IGameDependencies };
 
@@ -161,6 +162,11 @@ export class GameEngine implements IEngineSubsystemHost {
   public setTargetFps(fps: TargetFps): void { this.c.settingsController.setTargetFps(fps); }
   public setShowFpsCounter(show: boolean): void { this.c.settingsController.setShowFpsCounter(show); }
   public setHardwareAcceleration(enabled: boolean): void { this.c.settingsController.setHardwareAcceleration(enabled); }
+  public onParallaxQualityChanged(quality: ResolvedParallaxQuality): void {
+    defaultParallaxRegistry.setParallaxQuality(quality);
+    void defaultLocationAssetLifecycle.setParallaxQuality(quality);
+    this.renderer?.setParallaxQuality(quality);
+  }
 
   public attachCanvas(canvas: HTMLCanvasElement): void {
     const isGpu = this.settings.display.hardwareAcceleration !== false;

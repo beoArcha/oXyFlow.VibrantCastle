@@ -1,12 +1,15 @@
+import { resolveVariantTier } from "@game/engine/atlas/atlasVariantResolver";
 import type { BackgroundLayerTier } from "@game/locations/schema/locationSchema";
 import type { WorldId } from "@game/locations/types";
 import { assetsLogger } from "@game/logger/gameLogger";
+import type { ResolvedParallaxQuality } from "@game/types";
 import {
   resolveEffectWithDefaults,
   resolveLayerWithDefaults,
   type ParallaxBand,
   type ParallaxEffectMeta,
   type ParallaxFileTier,
+  type ParallaxQualityTier,
   type ParallaxZoneKind,
   type ResolvedParallaxLayerMeta,
   type WorldParallaxMeta,
@@ -38,8 +41,18 @@ interface FsLike {
   readFileSync(path: string, encoding: string): string;
 }
 
+interface StoredParallaxSlot {
+  readonly base: ParallaxCatalogEntry;
+  readonly byQualityTier: Readonly<Partial<Record<ParallaxQualityTier, ParallaxCatalogEntry>>>;
+}
+
 const IMAGE_FILE_PATTERN = /^(.+)_(hi8bit|hi16bit|high)\.(png|jpg)$/;
-const TIER_PRIORITY: readonly ParallaxFileTier[] = ["high", "hi16bit", "hi8bit"];
+const FILE_TO_QUALITY_TIER: Readonly<Record<ParallaxFileTier, ParallaxQualityTier>> = {
+  hi8bit: "low",
+  hi16bit: "mid",
+  high: "high",
+};
+const QUALITY_TIERS: readonly ParallaxQualityTier[] = ["low", "mid", "high"];
 
 function readViteGlobs(): ParallaxDiscoveryData | null {
   try {
@@ -97,8 +110,10 @@ function isWorldMeta(value: unknown): value is WorldParallaxMeta {
   return typeof candidate.worldId === "string" && typeof candidate.layers === "object" && candidate.layers !== null;
 }
 
-function indexImagesBySlot(images: Readonly<Record<string, string>>): Map<string, Partial<Record<ParallaxFileTier, string>>> {
-  const indexed = new Map<string, Partial<Record<ParallaxFileTier, string>>>();
+function indexImagesBySlot(
+  images: Readonly<Record<string, string>>
+): Map<string, Partial<Record<ParallaxQualityTier, string>>> {
+  const indexed = new Map<string, Partial<Record<ParallaxQualityTier, string>>>();
   for (const [rawPath, url] of Object.entries(images)) {
     const parts = rawPath.replace(/\\/g, "/").split("/");
     const folder = parts[parts.length - 2];
@@ -109,28 +124,54 @@ function indexImagesBySlot(images: Readonly<Record<string, string>>): Map<string
     if (!match) continue;
 
     const stem = match[1];
-    const tier = match[2] as ParallaxFileTier;
+    const fileTier = match[2] as ParallaxFileTier;
+    const qualityTier = FILE_TO_QUALITY_TIER[fileTier];
     const slotPrefix = folder === "_shared" ? "" : `${folder}_`;
     if (slotPrefix && !stem.startsWith(slotPrefix)) continue;
 
     const lookupKey = `${folder}:${slotPrefix ? stem.slice(slotPrefix.length) : stem}`;
     const byTier = indexed.get(lookupKey) ?? {};
-    byTier[tier] = url;
+    byTier[qualityTier] = url;
     indexed.set(lookupKey, byTier);
   }
   return indexed;
 }
 
-function pickTierUrl(
-  imagesBySlot: ReadonlyMap<string, Partial<Record<ParallaxFileTier, string>>>,
-  lookupKey: string
-): string | undefined {
-  const tiers = imagesBySlot.get(lookupKey);
-  if (!tiers) return undefined;
-  for (const tier of TIER_PRIORITY) {
-    if (tiers[tier]) return tiers[tier];
+type CatalogEntryTemplate = Omit<ParallaxCatalogEntry, "url" | "resolvedTier" | "variants" | "generatedByAi">;
+
+function buildSlotRecord(
+  template: CatalogEntryTemplate,
+  variants: Partial<Record<ParallaxQualityTier, string>> | undefined
+): StoredParallaxSlot | null {
+  if (!variants) return null;
+
+  const frozenVariants: Partial<Record<ParallaxQualityTier, string>> = { ...variants };
+  const byQualityTier: Partial<Record<ParallaxQualityTier, ParallaxCatalogEntry>> = {};
+  const entryByResolvedTier: Partial<Record<ParallaxQualityTier, ParallaxCatalogEntry>> = {};
+
+  for (const requested of QUALITY_TIERS) {
+    const pickedTier = resolveVariantTier(frozenVariants, requested);
+    if (!pickedTier) continue;
+    const url = frozenVariants[pickedTier];
+    if (!url) continue;
+
+    let entry = entryByResolvedTier[pickedTier];
+    if (!entry) {
+      entry = {
+        ...template,
+        url,
+        resolvedTier: pickedTier,
+        variants: frozenVariants,
+        generatedByAi: url.toLowerCase().endsWith(".jpg"),
+      };
+      entryByResolvedTier[pickedTier] = entry;
+    }
+    byQualityTier[requested] = entry;
   }
-  return undefined;
+
+  const base = byQualityTier.high ?? byQualityTier.mid ?? byQualityTier.low;
+  if (!base) return null;
+  return { base, byQualityTier };
 }
 
 function toEffectLayerMeta(effect: ParallaxEffectMeta): ResolvedParallaxLayerMeta {
@@ -154,10 +195,16 @@ function toEffectLayerMeta(effect: ParallaxEffectMeta): ResolvedParallaxLayerMet
  * `<world>:var_x@<zone>`, `<world>:fx_<id>`, `_shared:fx_<id>`) and zero aliases.
  */
 export class ParallaxRegistry implements IParallaxRegistry {
-  private readonly entriesByKey = new Map<string, ParallaxCatalogEntry>();
+  private readonly slotsByKey = new Map<string, StoredParallaxSlot>();
   private readonly metasByWorld = new Map<string, WorldParallaxMeta>();
+  private readonly qualityListeners = new Set<(quality: ResolvedParallaxQuality) => void>();
+  private parallaxQuality: ResolvedParallaxQuality;
 
-  constructor(discovery: ParallaxDiscoveryData = discoverParallaxFiles()) {
+  constructor(
+    discovery: ParallaxDiscoveryData = discoverParallaxFiles(),
+    initialQuality: ResolvedParallaxQuality = "high"
+  ) {
+    this.parallaxQuality = initialQuality;
     const imagesBySlot = indexImagesBySlot(discovery.images);
     const parsedMetas = Object.values(discovery.metas).filter(isWorldMeta);
     for (const meta of parsedMetas) this.metasByWorld.set(meta.worldId, meta);
@@ -168,12 +215,51 @@ export class ParallaxRegistry implements IParallaxRegistry {
     }
   }
 
-  public resolve(key: string | undefined): ParallaxCatalogEntry | undefined {
-    return key ? this.entriesByKey.get(key) : undefined;
+  public getParallaxQuality(): ResolvedParallaxQuality {
+    return this.parallaxQuality;
+  }
+
+  public setParallaxQuality(quality: ResolvedParallaxQuality): boolean {
+    if (quality === this.parallaxQuality) return false;
+    this.parallaxQuality = quality;
+    for (const listener of [...this.qualityListeners]) {
+      listener(quality);
+    }
+    return true;
+  }
+
+  public subscribeQuality(listener: (quality: ResolvedParallaxQuality) => void): () => void {
+    this.qualityListeners.add(listener);
+    return () => this.qualityListeners.delete(listener);
+  }
+
+  public resolve(
+    key: string | undefined,
+    qualityOverride?: ResolvedParallaxQuality
+  ): ParallaxCatalogEntry | undefined {
+    if (!key) return undefined;
+    const slot = this.slotsByKey.get(key);
+    if (!slot) return undefined;
+
+    const quality = qualityOverride ?? this.parallaxQuality;
+    if (quality === "off") return undefined;
+    if (quality === "simplified") {
+      if (slot.base.band !== "far" || slot.base.isFx) return undefined;
+      return slot.byQualityTier.low;
+    }
+    return slot.byQualityTier[quality];
+  }
+
+  public resolveForTier(
+    key: string | undefined,
+    tier: ParallaxQualityTier
+  ): ParallaxCatalogEntry | undefined {
+    if (!key) return undefined;
+    return this.slotsByKey.get(key)?.byQualityTier[tier];
   }
 
   public has(key: string): boolean {
-    return this.entriesByKey.has(key);
+    return this.slotsByKey.has(key);
   }
 
   public getWorldMeta(worldId: WorldId | string): WorldParallaxMeta | undefined {
@@ -185,45 +271,54 @@ export class ParallaxRegistry implements IParallaxRegistry {
   }
 
   public entries(): readonly ParallaxCatalogEntry[] {
-    return Array.from(this.entriesByKey.values());
+    const tier: ParallaxQualityTier =
+      this.parallaxQuality === "off" || this.parallaxQuality === "simplified"
+        ? "high"
+        : this.parallaxQuality;
+    const out: ParallaxCatalogEntry[] = [];
+    for (const slot of this.slotsByKey.values()) {
+      out.push(slot.byQualityTier[tier] ?? slot.base);
+    }
+    return out;
   }
 
   public keys(): readonly string[] {
-    return Array.from(this.entriesByKey.keys());
+    return Array.from(this.slotsByKey.keys());
   }
 
   public get size(): number {
-    return this.entriesByKey.size;
+    return this.slotsByKey.size;
   }
 
   private registerWorldLayers(
     meta: WorldParallaxMeta,
-    imagesBySlot: ReadonlyMap<string, Partial<Record<ParallaxFileTier, string>>>
+    imagesBySlot: ReadonlyMap<string, Partial<Record<ParallaxQualityTier, string>>>
   ): void {
     const { worldId, layers } = meta;
     for (const [slot, rawLayer] of Object.entries(layers)) {
       const resolved = resolveLayerWithDefaults(rawLayer);
-      const url = pickTierUrl(imagesBySlot, resolved.source ?? `${worldId}:${slot}`);
-      if (!url) continue;
-
       const key = `${worldId}:${slot}`;
       const label = formatSlotLabel(worldId, slot);
-      this.entriesByKey.set(key, {
-        key,
-        worldId,
-        slot,
-        band: resolved.band,
-        tier: resolved.band,
-        url,
-        meta: resolved,
-        borrowedFrom: resolved.source,
-        defaultOpacity: resolved.opacity,
-        defaultBlendMode: resolved.blend === "screen" ? "screen" : undefined,
-        tint: resolved.tint,
-        generatedByAi: url.toLowerCase().endsWith(".jpg"),
-        labelPl: label,
-        labelEn: label,
-      });
+      const record = buildSlotRecord(
+        {
+          key,
+          worldId,
+          slot,
+          band: resolved.band,
+          tier: resolved.band,
+          meta: resolved,
+          borrowedFrom: resolved.source,
+          defaultOpacity: resolved.opacity,
+          defaultBlendMode: resolved.blend === "screen" ? "screen" : undefined,
+          tint: resolved.tint,
+          labelPl: label,
+          labelEn: label,
+        },
+        imagesBySlot.get(resolved.source ?? key)
+      );
+      if (!record) continue;
+
+      this.slotsByKey.set(key, record);
       this.registerZoneVariants(worldId, slot, resolved, imagesBySlot);
     }
   }
@@ -232,71 +327,77 @@ export class ParallaxRegistry implements IParallaxRegistry {
     worldId: string,
     slot: string,
     baseMeta: ResolvedParallaxLayerMeta,
-    imagesBySlot: ReadonlyMap<string, Partial<Record<ParallaxFileTier, string>>>
+    imagesBySlot: ReadonlyMap<string, Partial<Record<ParallaxQualityTier, string>>>
   ): void {
     if (!baseMeta.zones) return;
     for (const [zoneKey, zoneOverride] of Object.entries(baseMeta.zones)) {
       const zoneKind = zoneKey as ParallaxZoneKind;
-      const url = pickTierUrl(imagesBySlot, `${worldId}:${slot}_zone_${zoneKind}`);
-      if (!url) continue;
-
       const fullKey = `${worldId}:${slot}@${zoneKind}`;
       const opacity = zoneOverride?.opacity ?? baseMeta.opacity;
       const tint = zoneOverride?.tint ?? baseMeta.tint;
       const label = formatSlotLabel(worldId, `${slot}@${zoneKind}`);
-      this.entriesByKey.set(fullKey, {
-        key: fullKey,
-        worldId,
-        slot,
-        zoneKind,
-        band: baseMeta.band,
-        tier: baseMeta.band,
-        url,
-        meta: { ...baseMeta, opacity, tint },
-        defaultOpacity: opacity,
-        defaultBlendMode: baseMeta.blend === "screen" ? "screen" : undefined,
-        tint,
-        generatedByAi: url.toLowerCase().endsWith(".jpg"),
-        labelPl: label,
-        labelEn: label,
-      });
+      const record = buildSlotRecord(
+        {
+          key: fullKey,
+          worldId,
+          slot,
+          zoneKind,
+          band: baseMeta.band,
+          tier: baseMeta.band,
+          meta: { ...baseMeta, opacity, tint },
+          defaultOpacity: opacity,
+          defaultBlendMode: baseMeta.blend === "screen" ? "screen" : undefined,
+          tint,
+          labelPl: label,
+          labelEn: label,
+        },
+        imagesBySlot.get(`${worldId}:${slot}_zone_${zoneKind}`)
+      );
+      if (record) {
+        this.slotsByKey.set(fullKey, record);
+      }
     }
   }
 
   private registerWorldEffects(
     meta: WorldParallaxMeta,
-    imagesBySlot: ReadonlyMap<string, Partial<Record<ParallaxFileTier, string>>>
+    imagesBySlot: ReadonlyMap<string, Partial<Record<ParallaxQualityTier, string>>>
   ): void {
     if (!meta.effects) return;
     for (const [effectId, rawEffect] of Object.entries(meta.effects)) {
-      if (rawEffect.kind !== "image" || !rawEffect.source || this.entriesByKey.has(rawEffect.source)) continue;
-      const url = pickTierUrl(imagesBySlot, rawEffect.source);
-      if (!url) continue;
+      if (rawEffect.kind !== "image" || !rawEffect.source || this.slotsByKey.has(rawEffect.source)) continue;
 
       const [fxWorld = meta.worldId, fxSlot = effectId] = rawEffect.source.split(":");
       const resolved = resolveEffectWithDefaults(rawEffect);
       const label = formatSlotLabel(fxWorld, fxSlot);
-      this.entriesByKey.set(rawEffect.source, {
-        key: rawEffect.source,
-        worldId: fxWorld,
-        slot: fxSlot,
-        band: resolved.band,
-        tier: rawEffect.source.includes("throne") || rawEffect.band === "mid" ? "boss_world" : "boss_stage",
-        url,
-        meta: toEffectLayerMeta(rawEffect),
-        isFx: true,
-        defaultOpacity: resolved.opacity,
-        defaultBlendMode: resolved.blend === "screen" ? "screen" : undefined,
-        generatedByAi: url.toLowerCase().endsWith(".jpg"),
-        labelPl: label,
-        labelEn: label,
-      });
+      const record = buildSlotRecord(
+        {
+          key: rawEffect.source,
+          worldId: fxWorld,
+          slot: fxSlot,
+          band: resolved.band,
+          tier: rawEffect.source.includes("throne") || rawEffect.band === "mid" ? "boss_world" : "boss_stage",
+          meta: toEffectLayerMeta(rawEffect),
+          isFx: true,
+          defaultOpacity: resolved.opacity,
+          defaultBlendMode: resolved.blend === "screen" ? "screen" : undefined,
+          labelPl: label,
+          labelEn: label,
+        },
+        imagesBySlot.get(rawEffect.source)
+      );
+      if (record) {
+        this.slotsByKey.set(rawEffect.source, record);
+      }
     }
   }
 }
 
-export function buildParallaxRegistry(discovery?: ParallaxDiscoveryData): ParallaxRegistry {
-  return new ParallaxRegistry(discovery);
+export function buildParallaxRegistry(
+  discovery?: ParallaxDiscoveryData,
+  initialQuality?: ResolvedParallaxQuality
+): ParallaxRegistry {
+  return new ParallaxRegistry(discovery, initialQuality);
 }
 
 export const defaultParallaxRegistry = new ParallaxRegistry();
