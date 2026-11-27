@@ -6,9 +6,9 @@
 
 ---
 
-## What the Real Place Was in 2034
+## What the Real Place Was Before 2028
 
-Before the cataclysm, this perimeter site was a **historic French château**—medieval and Renaissance limestone galleries, a dry moat, display armor halls, and a heritage fencing exhibition (preserving relics tied to the historic fencing treatise of Master Oakhaven). By 2034 it operated as a preserved cultural monument and restoration estate, fitted with timber scaffolding, automated security owls/drones, and maintenance micro-bots.
+Before the cataclysm, this perimeter site was a **historic French château**—medieval and Renaissance limestone galleries, a dry moat, display armor halls, and a heritage fencing exhibition (preserving relics tied to the historic fencing treatise of Master Oakhaven). By 2028 it operated as a preserved cultural monument and restoration estate, fitted with timber scaffolding, automated security owls/drones, and maintenance micro-bots.
 
 ## What the Demon Made of It
 

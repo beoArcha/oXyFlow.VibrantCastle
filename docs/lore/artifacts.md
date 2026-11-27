@@ -2,7 +2,7 @@
 
 In *Vibrant Castle*, interactive mechanisms, field equipment, and spells bridge the **2034 techno-magical Zone** with RPG progression. Many relics blend practical 2034 hardware, historic French château museum pieces, and rift-charged anomalies reshaped by the demon's medieval lens.
 
-*(Note: "Aether" in item/spell names and descriptions below reflects the **[PROVISIONAL]** working term used in current `src/data/` until final naming confirmation.)*
+*(Note: "Aether" in item/spell names and descriptions below is the confirmed canon name for magic—simply "ether", spelled with the Old Norse *ae*.)*
 
 ---
 

@@ -6,9 +6,9 @@
 
 ---
 
-## What the Real Place Was in 2034
+## What the Real Place Was Before 2028
 
-Just outside the château estate lay a **terraced limestone quarry, sunken utility cut, and botanical conservatory ravine**—a landscaped drop carrying drainage channels, high-voltage trench lines, and rail/gondola inspection tracks alongside old stonework. When the 2034 rift tore through the bedrock, the terrace sheared open into a jagged fault line.
+Just outside the château estate lay a **terraced limestone quarry, sunken utility cut, and botanical conservatory ravine**—a landscaped drop carrying drainage channels, high-voltage trench lines, and rail/gondola inspection tracks alongside old stonework. When the 2028 rift tore through the bedrock, the terrace sheared open into a jagged fault line.
 
 ## What the Demon Made of It
 

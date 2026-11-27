@@ -2,7 +2,7 @@
 
 > *"Autumn leaves on French stone, and a reception committee made of old museum plate. Still—there are worse Tuesdays in 2034."*
 
-**Vibrant Castle** is a 2D autumn metroidvania set in our own world in the year **2034**, after a localized techno-magical cataclysm. It runs directly in your browser on keyboard or gamepad and is developed in the open on GitHub.
+**Vibrant Castle** is a 2D autumn metroidvania set in our own world in the year **2034**, six years after a localized techno-magical cataclysm in **2028**. It runs directly in your browser on keyboard or gamepad and is developed in the open on GitHub.
 
 ---
 
@@ -20,11 +20,11 @@
 
 ## 2. The story so far
 
-The year is **2034**. Civilisation did not collapse: daily life continues across a patchwork of open regions, censored feeds, and quarantined perimeters. Yet small pockets struck by a sudden **cataclysm** turned into something new—places where magic became real and linear time broke down. Nobody knows *exactly* why it happened; the closest explanation is a butterfly-effect collision between an unprepared ritual performed in a magic-less world and a distant high-energy physics experiment. A rift opened, binding laboratory and ritual site across space. Outside the cordon, states, researchers, religions, criminal syndicates, and emerging mages race to turn magic into a science.
+The year is **2034**. Civilisation did not collapse: daily life continues across a patchwork of open regions, censored feeds, and quarantined perimeters. Six years earlier, in **2028**, a sudden **cataclysm** turned a swath of reality into something new—places where magic (**Aether**, simply "ether" spelled with the Old Norse *ae*) became real and linear time broke down. Nobody knows *exactly* why it happened; the closest explanation is a butterfly-effect collision between an unprepared ritual performed in a magic-less world and a distant high-energy physics experiment. A rift opened, binding laboratory and ritual site across space. Magic now works worldwide, weakening with distance—strongest inside the Zone at the laboratory and cult site, and stronger at known mystical, natural, and shamanic places.
 
-*Vibrant Castle* takes place inside one such transformed **Zone**, sealed behind a defended **buffer zone** (who staffs the perimeter remains a mystery). Within it, a **summoned demon and its hosts** reshaped real 2034 sites—a historic French château, a quarry ravine, underground heating tunnels, a robotics factory, a synthesis lab, an elevated aqueduct, and a fortified perimeter—reinterpreting 21st-century engineering in feudal and occult terms.
+*Vibrant Castle* takes place inside the transformed **Zone**, sealed behind a **state-defended buffer zone** stretching from Utah to Switzerland. Within it, a **summoned demon and its hosts** reshaped real 2028 sites—a historic French château, a quarry ravine, underground heating tunnels, a robotics factory, a synthesis lab, an elevated aqueduct, and a fortified perimeter—reinterpreting 21st-century engineering in feudal and occult terms.
 
-Two longtime friends, **Valen** (*Sun Knight*) and **Aurelia** (*Arcane Scholar*), find themselves pushed together by Zone reality. Neither is the sole protagonist; their partnership moves like Brazilian zouk, where proposals and responses pass back and forth as priorities shift. Watching them from somewhere within the world is a composed, deadpan **Narrator** whose identity is revealed only later.
+Two ordinary people and longtime friends, **Valen** (38, an engineer who designed the access bridge to the new laboratory; *Sun Knight*) and **Aurelia** (31, a brilliant police officer on track to become a detective who was investigating a new cult; *Arcane Scholar*), felt a "call" near the 2028 cataclysm and find themselves pushed together by Zone reality. Neither is the sole protagonist; their partnership moves like Brazilian zouk, where proposals and responses pass back and forth as priorities shift. Watching them from somewhere within the world is a composed, deadpan **Narrator**—a person of unknown gender, like an AI that once watched through cameras and now lives an ephemeral life, taking notes.
 
 ---
 

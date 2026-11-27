@@ -1,6 +1,8 @@
 # Świat i mapy: Strefa i osiem światów
 
-Po kataklizmie z 2034 roku świat nie przestał istnieć, ale w nielicznych miejscach pękła codzienność. Obszar, po którym poruszają się Valen i Aurelia, to jedna z odgrodzonych **Stref** — skrawek współczesnej rzeczywistości otoczony bronioną strefą buforową, gdzie czas zachowuje się kapryśnie, a przyzwany demon wraz ze swoimi zastępami przekształcił budowle XXI wieku według własnych, średniowieczno-okultystycznych wyobrażeń.
+Po **kataklizmie z 2028 roku** świat wszedł w rok **2034** bez upadku cywilizacji, lecz w pasie dotkniętym rozłamem pękła codzienność. Magia (**Aether**) ma dopiero kilka lat i działa na całym świecie, ale słabnie wraz z odległością — jest najsilniejsza w **Strefie** (w laboratorium i miejscu kultu) oraz wyraźniejsza w znanych miejscach mistycznych, naturalnych i szamańskich.
+
+Strefę otacza broniona przez państwa **strefa buforowa** ciągnąca się od **Utah po Szwajcarię** — bezpośrednio zmieniona na przestrzeni kilkunastu kilometrów, z emanacjami sięgającymi kilkudziesięciu kilometrów i miejscami dwukrotnie szersza. Można nad nią przelatywać wysoko, lecz przejazd lądem lub niski lot są ryzykowne; **Francja i USA** budują podziemne tunele, by przywrócić połączenia. Na morzu woda rozproszyła większość efektu w nitkowate emanacje, w których pojawiają się dziwne stworzenia, choć to wciąż nasz świat. Mimo zagrożeń ludzie przybywają tu po kamień filozoficzny, bogactwo, panaceum albo przygodę. Wewnątrz samej Strefy przyzwany demon wraz ze swoimi zastępami przekształcił budowle XXI wieku według własnych, średniowieczno-okultystycznych wyobrażeń.
 
 Gra obejmuje dziś **osiem połączonych światów** w pętli portali. Docelowy plan kampanii zakłada **8 światów × 8 map (64 etapy)**. Obecnie **każdy z ośmiu światów ma grywalną pierwszą mapę (mapę 1)**, a mapy 2–8 powstają na kolejnych etapach prac.
 
@@ -10,9 +12,9 @@ Dziedziniec Przebudzenia → Rozpadlina Cierni i Cieni → Katakumby Popiołu �
 
 *(Na końcu Korony Zaćmienia czas zawija się z powrotem ku progowi Strefy, zamykając pętlę przed docelowym finałem w pełnej kampanii.)*
 
-## Osiem światów (rzeczywistość 2034 i wizja demona)
+## Osiem światów (rzeczywistość 2028 i wizja demona)
 
-| # | Świat (mapa 1) | Miejsce w 2034 roku | Przeobrażenie i rola w grze |
+| # | Świat (mapa 1) | Miejsce w 2028 roku | Przeobrażenie i rola w grze |
 | :---: | :--- | :--- | :--- |
 | 1 | **Dziedziniec Przebudzenia** | Zabytkowy francuski zamek z ekspozycją muzealną i rusztowaniami konserwatorskimi | Jesienny dziedziniec startowy pełen liści; muzealne pancerze i manekiny szermiercze ożyły jako pierwsi strażnicy. Skrót z wysokiej baszty prowadzi do Wieży. |
 | 2 | **Rozpadlina Cierni i Cieni** | Tarasowy kamieniołom, wykop techniczny i podupadły wąwóz botaniczny | Pęknięta przez szczelinę przepaść z zębami bursztynowych cierni, kolejką techniczną i gargulcami na skalnych progach. |
@@ -21,7 +23,7 @@ Dziedziniec Przebudzenia → Rozpadlina Cierni i Cieni → Katakumby Popiołu �
 | 5 | **Biblioteka Alchemika** | Laboratorium syntezy chemicznej, komory czystości, serwerownie i kopuła pomiarowa | Szmaragdowe kolby zastąpiły bioreaktory, szafy danych stały się regałami z zakazanymi tomami, a pierścień czujników — wielkim astrolabium. |
 | 6 | **Sanktuarium Aetheru i Podniebny Akwedukt** | Wyniesiony wiadukt chłodniczy, linie przesyłowe i stacja przekaźnikowa | Zerwana grawitacja uniosła przęsła ponad mgłę, zamieniając przemysłowy akwedukt w lewitujące wyspy strzeżone przez Archonta. |
 | 7 | **Słoneczny Bastion** | Ufortyfikowany kompleks ochrony wojskowo-przemysłowej i poligon przed kompleksem badawczym | Złocona forteca oblężnicza (nazwa miejsca, nie zakonu) broniona przez ciężkie konstrukcje, pancerne jednostki i Komendanta Straży. |
-| 8 | **Korona Zaćmienia** | Epicentrum eksperymentu fizycznego sprzężone ze stroną rytuału | Obsydianowe iglice pod czarno-szkarłatnym zaćmieniem pierścienia akceleratora i Tron Zaćmienia — miejsce przypuszczalnej konfrontacji z Opętanym. |
+| 8 | **Korona Zaćmienia** | Epicentrum eksperymentu fizycznego sprzężone ze stroną rytuału | Obsydianowe iglice pod czarno-szkarłatnym zaćmieniem pierścienia akceleratora i Tron Zaćmienia — miejsce finałowej konfrontacji z **Opętanym**. |
 
 ## Projekt map
 

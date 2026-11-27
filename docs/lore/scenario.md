@@ -8,9 +8,9 @@
 
 ## 1. Premise: Inside the 2034 Zone
 
-In 2034, an accidental convergence between a physics experiment and an unconvinced occultist's ritual tore open a rift. Outside the quarantined perimeter, the world studies emerging magic and maneuvers around the containment zone. Inside, a **summoned demon and its hosts** have spent the post-cataclysm span remaking a French château and its neighboring industrial, research, and defense sites into an overgrown, autumn-lit stronghold.
+In **2028**, an accidental convergence between a physics experiment and an unconvinced occultist's ritual tore open a rift. Six years later, in **2034**, states defend the quarantined buffer belt from Utah to Switzerland while the wider world studies emerging magic—strongest at the laboratory and cult site, weaker with distance—and fortune-seekers probe the perimeter for the philosopher's stone, wealth, a panacea, or adventure. Inside, a **summoned demon and its hosts** have spent the post-cataclysm years remaking a French château and its neighboring industrial, research, and defense sites into an overgrown, autumn-lit stronghold.
 
-Two longtime friends—**Valen** (*Sun Knight*) and **Aurelia** (*Arcane Scholar*)—find themselves inside the Zone with slightly different personal aims, yet bound by reality to rely on one another.
+Two ordinary people and longtime friends—**Valen** (38, an engineer who designed the access bridge to the new laboratory; *Sun Knight*) and **Aurelia** (31, a brilliant police officer on track to become a detective, who was investigating a new cult; *Arcane Scholar*)—felt a **"call"** near the 2028 cataclysm. Inside the Zone, slightly different personal aims still pull at them, yet broken space and time bind them to rely on one another.
 
 * **Equal Partnership (No Main Hero):** Neither Valen nor Aurelia is "the protagonist" with a sidekick. Like Brazilian zouk, their partnership is a continuous dialogue: whoever steps forward proposes a line of action, and the other answers, refines, or takes over when priority shifts. In solo play, one leads through the current stage; in 2P co-op, both move together across the same physics rules.
 * **Tone & Humour:** Dry situational wit, subtle easter eggs, and banter between people who know each other's flaws well (her frustration when an unstable spell or plan misfires; his calm, methodical habit of fixing one bolted lock at a time). Humour **never** interrupts key dramatic beats—the gravity of the rift, the cost of the cataclysm, and the confrontation at the Crown stay sharp and dignified.
@@ -63,16 +63,16 @@ Two longtime friends—**Valen** (*Sun Knight*) and **Aurelia** (*Arcane Scholar
 
 ---
 
-## 3. Leaning Climax & Temporal Loop (NG+)
+## 3. Confirmed Climax & Temporal Loop (NG+)
 
-* **Final Boss (Leaning, Not Final):** **The Possessed** (*Opętany*) — the leader of the 2034 ritual. He did not genuinely believe in magic; he staged the ceremony for his followers without preparation, and by sheer misfortune hit the crescendo at the exact instant the distant physics experiment ruptured reality. Now bound to the summoned demon at the Throne of the Eclipse, he anchors the link between laboratory and ritual site.
+* **Final Boss (Confirmed):** **The Possessed** (*Opętany*) — the leader of the **2028** ritual. He did not genuinely believe in magic; he staged the ceremony for his followers without preparation, and by sheer misfortune hit the crescendo at the exact instant the distant physics experiment ruptured reality. Now bound to the summoned demon at the Throne of the Eclipse (`W8-8`), he anchors the link between laboratory and ritual site.
 * **The Mastery Loop (`eclipse_crown` → `courtyard`):** At the summit of `eclipse_crown`, the `mastery_loop_courtyard` portal loops back to the Courtyard of Awakening. Diegetically, time folds back upon itself at the rift's core: surviving the Crown without yet shattering the full `8 × 8` anchor drops the pair back onto the château stones in a fresh temporal cycle—stronger, carrying absorbed souls and insight, ready to push deeper (the narrative foundation for New Game Plus and Phase 6+ progression).
 
 ---
 
-## 4. Open Narrative Hooks
+## 4. Narrative Hooks & Canon Status
 
-* Why Valen and Aurelia entered the Zone and what personal goals pull them in slightly different directions (**[OPEN]**).
-* Whether outside parties (buffer-zone soldiers, smugglers, rival mages, cultists) breach the perimeter and cross paths with the pair (**[OPEN]**).
-* The true identity and motive of the in-world Narrator (**[OPEN]**, revealed later).
-* Final confirmation of **the Possessed** as the W8-8 boss alongside `eclipse_monarch_boss` (**[OPEN, leaning]**).
+* **Why Valen & Aurelia (Resolved, Round 2):** Both were ordinary people who felt a "call" near the 2028 cataclysm—Valen (38) designed the access bridge to the new laboratory, and Aurelia (31) was investigating a new cult.
+* **The Narrator (Resolved, Round 2):** A person of unknown gender, like an AI that once watched through cameras and now has an ephemeral life, taking notes.
+* **Final Boss (Resolved, Round 2):** **The Possessed** (*Opętany*) is confirmed as the W8-8 final boss (`eclipse_monarch_boss`).
+* **Outsiders Inside the Zone (Gameplay [OPEN]):** People come to the buffer zone seeking the philosopher's stone, wealth, a panacea, or adventure; whether outside human factions (soldiers, smugglers, cultists, rival mages) cross paths with Valen and Aurelia inside the Zone during gameplay remains **[OPEN]**.

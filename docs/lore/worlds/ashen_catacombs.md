@@ -6,9 +6,9 @@
 
 ---
 
-## What the Real Place Was in 2034
+## What the Real Place Was Before 2028
 
-Beneath the château and quarry ran a **two-layer underground**: genuine historic stone burial crypts connected to **modern 2034 geothermal/district-heating boiler shafts, backup incinerators, and utility service tunnels**. During the cataclysm, superheated boiler vents ruptured into the stone vaults, charring everything in ash and lingering embers.
+Beneath the château and quarry ran a **two-layer underground**: genuine historic stone burial crypts connected to **modern geothermal/district-heating boiler shafts, backup incinerators, and utility service tunnels**. During the 2028 cataclysm, superheated boiler vents ruptured into the stone vaults, charring everything in ash and lingering embers.
 
 ## What the Demon Made of It
 

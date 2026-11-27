@@ -24,7 +24,7 @@ Iron portcullises visibly lift over `1.2 s` when their linked lever is struck, s
 ## 1. Courtyard of Awakening (`courtyard`) — [Lore Dossier](./worlds/courtyard.md)
 
 * **PL / EN:** *Dziedziniec Przebudzenia* / Courtyard of Awakening
-* **2034 Origin:** Historic French château & restoration estate.
+* **2028 Origin:** Historic French château & restoration estate.
 * **Dimensions & Spawn:** `4800 × 1040 px` · default `(140, 780)` (P2 `+46 px`), entries `from_chasm`, `from_eclipse`.
 * **Atmosphere & Assets:** `#2c1e33` → `#d97706`, falling `leaf`, `musicIntensity: 0.25`; 6 parallax layers (`world:courtyard:far` opaque); tilesets `courtyard_stone`, `courtyard_wood`; 6 `hanging_lantern` props.
 * **Interactive & Portals:** 21 solids, 1 lever (`lever_courtyard_gate` → `courtyard_portcullis`), 1 hazard (`moat_thorns`), 3 triggers, portals to `thorn_chasm` and `clocktower`, `bossZones`: `courtyard_trial_square`.
@@ -33,7 +33,7 @@ Iron portcullises visibly lift over `1.2 s` when their linked lever is struck, s
 ## 2. Chasm of Thorns and Shadows (`thorn_chasm`) — [Lore Dossier](./worlds/thorn_chasm.md)
 
 * **PL / EN:** *Rozpadlina Cierni i Cieni* / Chasm of Thorns and Shadows
-* **2034 Origin:** Terraced limestone quarry, sunken utility cut & botanical conservatory ravine.
+* **2028 Origin:** Terraced limestone quarry, sunken utility cut & botanical conservatory ravine.
 * **Dimensions & Spawn:** `4560 × 1120 px` · default `(240, 740)`, entries `from_courtyard`, `from_catacombs`.
 * **Atmosphere & Assets:** `#1b1429` → `#7c2d12`, `dust`, `musicIntensity: 0.48`; 6 parallax layers (`world:thorn_chasm:far` opaque); tileset `chasm_rock`; 3 `hanging_lantern` props.
 * **Interactive & Portals:** 16 solids, 0 levers today (restoration in `VC-022`), 2 thorn hazards, portals to `courtyard` and `ashen_catacombs`, `bossZones`: `thorn_warden_lair`.
@@ -42,7 +42,7 @@ Iron portcullises visibly lift over `1.2 s` when their linked lever is struck, s
 ## 3. Ashen Catacombs (`ashen_catacombs`) — [Lore Dossier](./worlds/ashen_catacombs.md)
 
 * **PL / EN:** *Katakumby Popiołu* / Ashen Catacombs
-* **2034 Origin:** Château burial crypts merged with municipal heating boilers & underground service tunnels.
+* **2028 Origin:** Château burial crypts merged with municipal heating boilers & underground service tunnels.
 * **Dimensions & Spawn:** `2640 × 1560 px` · default `(240, 180)`, entries `from_chasm`, `from_clocktower`.
 * **Atmosphere & Assets:** `#171112` → `#7c2d12`, `dust`, `musicIntensity: 0.58`; 6 parallax layers (`world:ashen_catacombs:far` opaque); tileset `bastion_stone`; 6 `hanging_lantern` props.
 * **Interactive & Portals:** 19 solids, 1 lever (`lever_ossuary_gate` → `ossuary_portcullis`), 1 ember hazard, 1 trigger, portals to `thorn_chasm` and `clocktower`, `bossZones`: `catacombs_ember_chapel` (`VC-026`).
@@ -51,7 +51,7 @@ Iron portcullises visibly lift over `1.2 s` when their linked lever is struck, s
 ## 4. Clockwork Tower & Angled Range (`clocktower`) — [Lore Dossier](./worlds/clocktower.md)
 
 * **PL / EN:** *Wieża Zegarowa i Poligon Kątowy* / Clockwork Tower & Angled Range
-* **2034 Origin:** Automated high-bay robotics factory & optical calibration tower.
+* **2028 Origin:** Automated high-bay robotics factory & optical calibration tower.
 * **Dimensions & Spawn:** `2440 × 1740 px` · default `(240, 1500)`, entries `from_catacombs`, `from_courtyard`, `from_library`.
 * **Atmosphere & Assets:** `#1e1b4b` → `#78350f`, `spark`, `musicIntensity: 0.65`; 6 parallax layers (`world:clocktower:far` opaque); tileset `clocktower_brick`; 6 `hanging_lantern` props.
 * **Interactive & Portals:** 23 solids, 1 lever (`lever_spire_gate` → `spire_portcullis`), 1 trigger, portals to `ashen_catacombs` and `alchemist_library`, `linkedSceneId: scene_clocktower_meeting`, `bossZones`: `clocktower_summit_chamber` (`VC-023`).
@@ -60,7 +60,7 @@ Iron portcullises visibly lift over `1.2 s` when their linked lever is struck, s
 ## 5. Alchemist's Library (`alchemist_library`) — [Lore Dossier](./worlds/alchemist_library.md)
 
 * **PL / EN:** *Biblioteka Alchemika* / Alchemist's Library
-* **2034 Origin:** Synthesis laboratory, cleanroom biovats, server/data archive & containment dome.
+* **2028 Origin:** Synthesis laboratory, cleanroom biovats, server/data archive & containment dome.
 * **Dimensions & Spawn:** `3840 × 1380 px` · default `(240, 1140)`, entries `from_clocktower`, `from_sanctuary`.
 * **Atmosphere & Assets:** `#06201b` → `#115e59` (N12 palette review backlog), `magic`, `musicIntensity: 0.68`; 6 parallax layers (`world:alchemist_library:far` opaque); tileset `clocktower_brick`; 6 `hanging_lantern` props.
 * **Interactive & Portals:** 21 solids, 1 lever (`lever_archive_gate` → `library_portcullis`), 1 void hazard, 1 trigger, portals to `clocktower` and `aether_sanctuary`, `bossZones`: `library_astrolabe_rotunda` (`VC-027`).
@@ -69,7 +69,7 @@ Iron portcullises visibly lift over `1.2 s` when their linked lever is struck, s
 ## 6. Aether Sky Sanctuary & Aqueduct (`aether_sanctuary`) — [Lore Dossier](./worlds/aether_sanctuary.md)
 
 * **PL / EN:** *Sanktuarium Aetheru i Podniebny Akwedukt* / Aether Sky Sanctuary & Aqueduct
-* **2034 Origin:** Elevated coolant aqueduct, power-relay viaduct & atmospheric radar array.
+* **2028 Origin:** Elevated coolant aqueduct, power-relay viaduct & atmospheric radar array.
 * **Dimensions & Spawn:** `4240 × 1400 px` · default `(240, 1100)`, entries `from_library`, `from_bastion`.
 * **Atmosphere & Assets:** `#0f172a` → `#1e3a8a` (N12 autumn palette review backlog), `magic`, `musicIntensity: 0.75`; 6 parallax layers (`world:aether_sanctuary:far` opaque); tileset `sanctuary_crystal`; 4 `hanging_lantern` props.
 * **Interactive & Portals:** 14 solids, 0 levers today (`VC-024`), portals to `alchemist_library` and `grand_bastion`, `bossZones`: `aether_archon_altar`.
@@ -78,7 +78,7 @@ Iron portcullises visibly lift over `1.2 s` when their linked lever is struck, s
 ## 7. Sunlit Bastion (`grand_bastion`) — [Lore Dossier](./worlds/grand_bastion.md)
 
 * **PL / EN:** *Słoneczny Bastion* / Sunlit Bastion *(UI `locations.ts` currently says `"Grand Bastion Training Grounds"` / `"Słoneczny Bastion (Wielki Poligon)"` — tracked under N6/N8/N11)*
-* **2034 Origin:** Fortified military-industrial command perimeter, bunker complex & proving garrison.
+* **2028 Origin:** Fortified military-industrial command perimeter, bunker complex & proving garrison.
 * **Dimensions & Spawn:** `4840 × 1140 px` · default `(240, 880)`, entries `from_sanctuary`, `from_eclipse`.
 * **Atmosphere & Assets:** `#1e1b4b` → `#b45309`, `spark`, `musicIntensity: 0.92`; 6 parallax layers (`world:grand_bastion:far` opaque); tileset `bastion_stone`; 4 `hanging_lantern` props.
 * **Interactive & Portals:** 13 solids, 1 lever (`lever_bastion_keep` → `bastion_portcullis`; second ward gate in `VC-025`), 2 thorn hazards, portals to `aether_sanctuary` and `eclipse_crown`, `bossZones`: `bastion_commander_arena`.
@@ -87,7 +87,7 @@ Iron portcullises visibly lift over `1.2 s` when their linked lever is struck, s
 ## 8. Eclipse Crown (`eclipse_crown`) — [Lore Dossier](./worlds/eclipse_crown.md)
 
 * **PL / EN:** *Korona Zaćmienia* / Eclipse Crown
-* **2034 Origin:** High-energy physics accelerator spire entangled across space with the distant ritual site.
+* **2028 Origin:** High-energy physics accelerator spire entangled across space with the distant ritual site.
 * **Dimensions & Spawn:** `4640 × 1460 px` · default `(240, 1180)`, entry `from_bastion`.
 * **Atmosphere & Assets:** `#160711` → `#9f1239`, `spark`, `musicIntensity: 1.0`; 7 parallax layers (`world:eclipse_crown:far` opaque + `boss_stage` + `boss_world`); tilesets `bastion_stone`, `sanctuary_crystal`; 4 `hanging_lantern` props.
 * **Interactive & Portals:** 15 solids, 1 lever (`lever_eclipse_seal` → `eclipse_portcullis`), 1 thorn hazard, portals to `grand_bastion` and `courtyard` (`mastery_loop_courtyard`), `bossZones`: `eclipse_vanguard_sanctum` and `eclipse_monarch_throne` (`VC-028`).
