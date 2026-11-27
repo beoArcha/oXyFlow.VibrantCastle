@@ -121,7 +121,8 @@ function GameScreen() {
                 hotkey={cfg.hotkeyLabel}
                 label={t(cfg.labelKey)}
                 icon={HEADER_SHORTCUT_ICONS[cfg.iconKey]}
-                labelVisibility="lg"
+                labelVisibility="xl"
+                hotkeyVisibility="xl"
                 onClick={() => coordinator.openModal(def.id)}
               />
             );
@@ -137,7 +138,8 @@ function GameScreen() {
             icon={isPaused ? <Play size={14} /> : <Pause size={14} />}
             active={isPaused}
             ariaPressed={isPaused}
-            labelVisibility="md"
+            labelVisibility="lg"
+            hotkeyVisibility="lg"
             onClick={coordinator.togglePause}
           />
 
@@ -162,7 +164,7 @@ function GameScreen() {
               label={t(menuShortcut.headerShortcut.labelKey)}
               icon={HEADER_SHORTCUT_ICONS[menuShortcut.headerShortcut.iconKey]}
               emphasized
-              labelVisibility="sm"
+              labelVisibility="lg"
               onClick={() => coordinator.openModal(ModalId.Menu)}
             />
           )}

@@ -72,10 +72,10 @@ const GameLayoutBrand: React.FC<GameLayoutBrandProps> = ({
       <>
         <span
           aria-hidden="true"
-          className="hidden md:block h-4 w-px bg-amber-900/50 shrink-0"
+          className="hidden lg:block h-4 w-px bg-amber-900/50 shrink-0"
         />
         <div
-          className="hidden md:flex items-center gap-1.5 min-w-0 whitespace-nowrap"
+          className="hidden lg:flex items-center gap-1.5 min-w-0 whitespace-nowrap"
           title={locationName}
         >
           <MapPin size={13} className="text-amber-400/90 shrink-0" />
@@ -124,7 +124,10 @@ const GameLayoutHotkeyGroup: React.FC<GameLayoutHotkeyGroupProps> = ({
 }) => (
   <nav
     aria-label={ariaLabel}
-    className={cn("flex items-center gap-1 min-w-0 whitespace-nowrap", className)}
+    className={cn(
+      "flex items-center gap-1 min-w-0 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden whitespace-nowrap",
+      className
+    )}
   >
     {children}
   </nav>
@@ -151,6 +154,7 @@ export interface GameLayoutHotkeyHintProps {
   readonly active?: boolean;
   readonly ariaPressed?: boolean;
   readonly labelVisibility?: LabelVisibility;
+  readonly hotkeyVisibility?: LabelVisibility;
   readonly className?: string;
 }
 
@@ -165,6 +169,7 @@ const GameLayoutHotkeyHint: React.FC<GameLayoutHotkeyHintProps> = ({
   active = false,
   ariaPressed,
   labelVisibility = "lg",
+  hotkeyVisibility = "lg",
   className,
 }) => {
   const titleText = tooltip ?? (hotkey ? `${label} [${hotkey}]` : label);
@@ -176,6 +181,7 @@ const GameLayoutHotkeyHint: React.FC<GameLayoutHotkeyHintProps> = ({
       size="sm"
       onClick={onClick}
       aria-pressed={ariaPressed}
+      aria-label={titleText}
       title={titleText}
       leftIcon={
         icon ? (
@@ -194,6 +200,7 @@ const GameLayoutHotkeyHint: React.FC<GameLayoutHotkeyHintProps> = ({
           <Code
             size="2xs"
             className={cn(
+              LABEL_VISIBILITY_CLASS[hotkeyVisibility],
               "px-1 py-0 leading-tight rounded border-0 font-mono tabular-nums",
               active
                 ? "bg-black/30 text-amber-100"
