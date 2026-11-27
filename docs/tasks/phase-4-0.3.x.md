@@ -47,8 +47,8 @@ The result: red tests and CI, levers that no longer opened gates, broken hero an
 
 | Status | Cards |
 | :--- | :--- |
-| done | VC-001, VC-002, VC-003, VC-004, VC-005, VC-006, VC-007, VC-010, VC-012, VC-020, VC-030, VC-035, VC-040, VC-041, VC-042, VC-043, VC-044, VC-045, VC-046, VC-047, VC-050, VC-051, VC-052, VC-053, VC-054, VC-055, VC-056, VC-057, VC-058 (#120), VC-060, VC-061 (#129), VC-063, VC-071, VC-072, VC-073, VC-074, VC-075 (#126), VC-081 (#131), VC-082 (#102, #128), VC-083, VC-100, VC-101 (#109, #114, #123), VC-102, VC-103 (#130), VC-104 (#125), VC-106, VC-107, VC-121 (#124), VC-124 (#127) |
-| in-progress | VC-062 (parts 1-3 #86, #97, #100), VC-070, VC-076, VC-105 (105a #113, 105b todo), VC-120 |
+| done | VC-001, VC-002, VC-003, VC-004, VC-005, VC-006, VC-007, VC-010, VC-012, VC-020, VC-030, VC-035, VC-040, VC-041, VC-042, VC-043, VC-044, VC-045, VC-046, VC-047, VC-050, VC-051, VC-052, VC-053, VC-054, VC-055, VC-056, VC-057, VC-058 (#120), VC-060, VC-061 (#129), VC-063, VC-071, VC-072, VC-073, VC-070 (#132), VC-074, VC-075 (#126), VC-081 (#131), VC-082 (#102, #128), VC-083, VC-100, VC-101 (#109, #114, #123), VC-102, VC-103 (#130), VC-104 (#125), VC-106, VC-107, VC-121 (#124), VC-124 (#127) |
+| in-progress | VC-062 (parts 1-3 #86, #97, #100), VC-076, VC-105 (105a #113, 105b todo), VC-120 |
 | ready | VC-108 |
 | todo | VC-122, VC-123, VC-089 (last card before the gate) |
 | blocked | VC-090 (the gate), VC-109 (VC-105) |
@@ -307,8 +307,9 @@ The result: red tests and CI, levers that no longer opened gates, broken hero an
 ## H. Developer tools and review
 
 ### VC-070 · Dev tools parity check
-- **Phase:** 4 · **Type:** review · **Class:** small · **Status:** todo
+- **Phase:** 4 · **Type:** review · **Class:** small · **Status:** done
 - **Goal:** confirm what was lost: Tester speed/step card, Data Studio bestiary gallery, VN preview, JSON export modal, log item drawer, Debug collisions and state dump.
+- **Description:** parity report written in [docs/design/devtools-parity.md](../design/devtools-parity.md); follow-up cards VC-140..VC-145 opened in [phase-5-0.4.x.md](./phase-5-0.4.x.md).
 - **How (AI):** take headless screenshots of every dev tool against 8121dad. List the gaps, then open one `feat` card per gap.
 
 ### VC-071 · Split the atlas studio
