@@ -9,9 +9,10 @@ import {
   calculatePlayerDerivedStats,
   createDefaultInventory as createDefaultInvWithRegistry,
   PlayerDerivedStats,
+  syncPlayerMaxStats,
 } from "./inventoryStats";
 
-export { calculatePlayerDerivedStats };
+export { calculatePlayerDerivedStats, syncPlayerMaxStats };
 export type { PlayerDerivedStats };
 
 /**
@@ -125,11 +126,8 @@ export function equipItem(player: Player, backpackIndex: number): Result<EquipRe
     player.inventory.backpack[backpackIndex] = previous;
     gameAudio.playSFX(SoundType.SFX_UNLOCK);
 
-    // Update max stats dynamically
-    const stats = calculatePlayerDerivedStats(player);
-    player.maxHealth = stats.maxHp;
-    player.maxMana = stats.maxMana;
-    player.maxStamina = stats.maxStamina;
+    // Update max stats dynamically (and clamp current values to the new maximums)
+    syncPlayerMaxStats(player);
 
     inventoryLogger.debug(`Player ${player.id} equipped '${item.nameKey || item.id}' to slot ${targetSlot}`, {
       playerId: player.id,
@@ -183,10 +181,7 @@ export function unequipItem(player: Player, slot: keyof EquipmentState): Result<
   player.inventory.equipment[slot] = null;
   gameAudio.playSFX(SoundType.SFX_UNLOCK);
 
-  const stats = calculatePlayerDerivedStats(player);
-  player.maxHealth = stats.maxHp;
-  player.maxMana = stats.maxMana;
-  player.maxStamina = stats.maxStamina;
+  syncPlayerMaxStats(player);
 
   inventoryLogger.debug(`Player ${player.id} unequipped '${item.nameKey || item.id}' from slot ${slot}`, {
     playerId: player.id,

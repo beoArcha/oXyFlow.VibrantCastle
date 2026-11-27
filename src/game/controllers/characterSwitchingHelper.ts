@@ -1,6 +1,6 @@
 import { Player, InventoryState } from "../types";
 import {
-  calculatePlayerDerivedStats,
+  syncPlayerMaxStats,
   createDefaultInventory,
 } from "../logic/inventory";
 import { getDefaultSkillsForCharacter } from "../logic/skills";
@@ -60,13 +60,7 @@ export function applyCharacterToPlayer(player: Player, characterId: "valen" | "a
   player.characterId = characterId;
   player.characterName = characterId === "aurelia" ? "Aurelia" : "Valen";
 
-  const stats = calculatePlayerDerivedStats(player);
-  player.maxHealth = stats.maxHp;
-  player.maxMana = stats.maxMana;
-  player.maxStamina = stats.maxStamina;
-  player.health = Math.min(player.health, player.maxHealth);
-  player.mana = Math.min(player.mana, player.maxMana);
-  player.stamina = Math.min(player.stamina, player.maxStamina);
+  syncPlayerMaxStats(player);
 }
 
 /**
@@ -103,13 +97,6 @@ export function swapPlayerProgression(p1: Player, p2: Player): void {
   p1.characterProfiles = p2.characterProfiles;
   p2.characterProfiles = tempProfiles;
 
-  const p1Stats = calculatePlayerDerivedStats(p1);
-  p1.maxHealth = p1Stats.maxHp;
-  p1.maxMana = p1Stats.maxMana;
-  p1.maxStamina = p1Stats.maxStamina;
-
-  const p2Stats = calculatePlayerDerivedStats(p2);
-  p2.maxHealth = p2Stats.maxHp;
-  p2.maxMana = p2Stats.maxMana;
-  p2.maxStamina = p2Stats.maxStamina;
+  syncPlayerMaxStats(p1);
+  syncPlayerMaxStats(p2);
 }

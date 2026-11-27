@@ -1,7 +1,7 @@
 import { SkillTreeNode, Player, SoundType, PlayerId, MagicCategory, MagicTriggerType } from "../types";
 import { SPELL_REGISTRY } from "./magic";
 import { gameAudio } from "../engine/audioEngine";
-import { calculatePlayerDerivedStats } from "./inventory";
+import { syncPlayerMaxStats } from "./inventory";
 import skillsData from "@data/skills/skills.json";
 
 interface ISkillNodeJson {
@@ -184,10 +184,7 @@ export function unlockSkillNode(player: Player, nodeId: string): { success: bool
   gameAudio.playSFX(SoundType.SFX_SKILL_UNLOCK);
 
   // Recalculate stats if passive skill
-  const stats = calculatePlayerDerivedStats(player);
-  player.maxHealth = stats.maxHp;
-  player.maxMana = stats.maxMana;
-  player.maxStamina = stats.maxStamina;
+  syncPlayerMaxStats(player);
 
   return { success: true, messageKey: "skillUnlocked" };
 }
