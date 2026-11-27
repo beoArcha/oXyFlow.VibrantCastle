@@ -38,4 +38,36 @@ describe("PNG codec (scripts/lib/png)", () => {
     // Act & Assert
     expect(() => decodePngBuffer(garbage)).toThrow();
   });
+
+  it("round-trips RGB colorType 2 with adaptive filtering and no alpha", () => {
+    // Arrange
+    const image = blankImage(12, 6);
+    fillRect(image, { x: 0, y: 0, w: 12, h: 6 }, [40, 80, 120, 255]);
+    fillRect(image, { x: 2, y: 1, w: 4, h: 3 }, [200, 110, 30, 255]);
+
+    // Act
+    const encoded = encodePngBuffer(image, { colorType: 2, adaptiveFilter: true });
+    const decoded = decodePngBuffer(encoded);
+
+    // Assert
+    expect(encoded[25]).toBe(2);
+    expect(Array.from(decoded.data)).toEqual(Array.from(image.data));
+  });
+
+  it("round-trips indexed colorType 3 with PLTE and tRNS deterministically", () => {
+    // Arrange
+    const image = blankImage(10, 6);
+    fillRect(image, { x: 1, y: 1, w: 4, h: 3 }, [12, 34, 56, 255]);
+    fillRect(image, { x: 5, y: 2, w: 3, h: 3 }, [210, 140, 60, 128]);
+
+    // Act
+    const first = encodePngBuffer(image, { colorType: 3 });
+    const second = encodePngBuffer(image, { colorType: 3 });
+    const decoded = decodePngBuffer(first);
+
+    // Assert
+    expect(first[25]).toBe(3);
+    expect(first.equals(second)).toBe(true);
+    expect(Array.from(decoded.data)).toEqual(Array.from(image.data));
+  });
 });

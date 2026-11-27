@@ -333,7 +333,7 @@ describe("Level logic: parallax combo and zone rules", () => {
     bp.id = "courtyard";
     bp.worldId = "courtyard";
     bp.parallax = { layers: ["var_a", "var_d"] };
-    bp.zones = [{ id: "arena_1", kind: "boss", scope: "stage", x: 100, y: 100, width: 300, height: 300 }];
+    bp.zones = [{ id: "arena_1", kind: "secret", x: 100, y: 100, width: 300, height: 300 }];
 
     // Act
     const violations = validateLocation(bp, SYNTHETIC_ENEMIES);

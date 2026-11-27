@@ -210,8 +210,11 @@ describe("LocationAssetLifecycle", () => {
     for (const id of ids) {
       await real.enterLocation(id);
       await flushIdle();
-      const allowed = new Set<string>(real.getLayerUrls(id));
-      for (const n of real.getNeighbours(id)) for (const u of real.getLayerUrls(n)) allowed.add(u);
+      const allowed = new Set<string>([...real.getLayerUrls(id), ...real.getLayerUrls(id, "low")]);
+      for (const n of real.getNeighbours(id)) {
+        for (const u of real.getLayerUrls(n)) allowed.add(u);
+        for (const u of real.getLayerUrls(n, "low")) allowed.add(u);
+      }
       expect(loader.cache.size).toBeGreaterThan(0);
       for (const u of loader.cache) expect(allowed.has(u)).toBe(true);
     }
