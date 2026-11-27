@@ -162,6 +162,7 @@
       "stone_floor": {
         "prefabId": "stone_floor",
         "type": "solid",
+        "tileset": "bastion_stone",
         "color": "#27202b",
         "borderColor": "#e11d48",
         "labelKey": "labelStoneFloor",
@@ -170,6 +171,7 @@
       "obsidian_step": {
         "prefabId": "obsidian_step",
         "type": "oneway",
+        "tileset": "sanctuary_crystal",
         "color": "#3f2739",
         "borderColor": "#f43f5e",
         "labelKey": "labelObsidianStep",
@@ -178,6 +180,7 @@
       "moving_platform": {
         "prefabId": "moving_platform",
         "type": "solid",
+        "tileset": "sanctuary_crystal",
         "color": "#581c87",
         "borderColor": "#fbbf24",
         "labelKey": "labelMovingPlatform",

@@ -140,6 +140,7 @@
       "stone_floor": {
         "prefabId": "stone_floor",
         "type": "solid",
+        "tileset": "bastion_stone",
         "color": "#3f3834",
         "borderColor": "#1c1917",
         "labelKey": "labelStoneFloor",
@@ -148,6 +149,7 @@
       "stone_platform": {
         "prefabId": "stone_platform",
         "type": "oneway",
+        "tileset": "bastion_stone",
         "color": "#574c45",
         "borderColor": "#292524",
         "labelKey": "labelStonePlatform",
@@ -156,6 +158,7 @@
       "low_archway": {
         "prefabId": "low_archway",
         "type": "solid",
+        "tileset": "bastion_stone",
         "color": "#292524",
         "borderColor": "#f97316",
         "labelKey": "labelLowArchway",
@@ -164,6 +167,7 @@
       "moving_platform": {
         "prefabId": "moving_platform",
         "type": "solid",
+        "tileset": "bastion_stone",
         "color": "#78716c",
         "borderColor": "#fb923c",
         "labelKey": "labelMovingPlatform",

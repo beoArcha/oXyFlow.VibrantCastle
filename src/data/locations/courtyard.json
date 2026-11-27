@@ -134,6 +134,7 @@
       "stone_floor": {
         "prefabId": "stone_floor",
         "type": "solid",
+        "tileset": "courtyard_stone",
         "color": "#57534e",
         "borderColor": "#292524",
         "labelKey": "labelStoneFloor",
@@ -142,6 +143,7 @@
       "stone_platform": {
         "prefabId": "stone_platform",
         "type": "oneway",
+        "tileset": "courtyard_wood",
         "color": "#78716c",
         "borderColor": "#44403c",
         "labelKey": "labelStonePlatform",
@@ -150,6 +152,7 @@
       "high_arcade": {
         "prefabId": "high_arcade",
         "type": "solid",
+        "tileset": "courtyard_stone",
         "color": "#64748b",
         "borderColor": "#334155",
         "labelKey": "labelHighArcade",
@@ -158,6 +161,7 @@
       "moving_platform": {
         "prefabId": "moving_platform",
         "type": "solid",
+        "tileset": "courtyard_wood",
         "color": "#78716c",
         "borderColor": "#fbbf24",
         "labelKey": "labelMovingPlatform",
