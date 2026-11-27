@@ -169,9 +169,7 @@ export const HUDOverlay: React.FC<HUDOverlayProps> = ({
               <HUDQuickBelt
                 belt={p2QuickBeltVM}
                 onUsePotion={handleP2Potion}
-                onOpenInventory={onOpenInventory}
-                onOpenSkillTree={onOpenSkillTree}
-                showRpgButtons={hudSettings.showRpgButtons}
+                showRpgButtons={false}
               />
             )}
           </>
