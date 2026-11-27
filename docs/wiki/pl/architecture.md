@@ -18,12 +18,12 @@ Vibrant Castle oddziela zasady gry od tego, co widać na ekranie. Symulacja to c
 
 ## Paralaksa
 
-Tła używają pięciu poziomów głębi: `FAR` (nieprzezroczyste niebo), `MID_FAR` (odległa architektura), `MID` (blanki za płaszczyzną rozgrywki), `MID_CLOSE` (bliski kamień) i `CLOSE` (roślinność pierwszego planu). Przewijają się z różnymi prędkościami, a zbyt małe warstwy są powielane tak, by łączyć się bez szwów.
+Tła używają pięciu pasm głębi (`far`, `mid_far`, `mid`, `mid_close`, `close`) opisanych w plikach meta w `src/assets/parallax/`: nieprzezroczystego horyzontu `far` oraz wariantów, które ładują się progresywnie (najpierw `far`, potem warstwy, warianty stref, efekty i wstępne ładowanie sąsiadów) i płynnie przechodzą w strefach `boss` oraz `rest`. Ustawienia obrazu udostępniają tryby `auto`, `high`, `mid`, `low`, `simplified` i `off`, z automatycznym obniżeniem jakości przy przekroczeniu budżetu klatki.
 
 ## Budowanie i kontrole
 
 - **Tylko Bun.** Bez npm, npx, yarn i pnpm.
-- **`bun run build:pages`** buduje dystrybucję w `dist/`: wiki w katalogu głównym i grę pod `/game/`.
+- **`bun run build:pages`** buduje dystrybucję w `dist/`: wiki w katalogu głównym i grę pod `/game/`. **`bun run preview:pages`** uruchamia lokalny podgląd statyczny.
 - **Zestawy testów.** `bun test:unit`, `bun test:integration`, `bun test:arch`, `bun test:scripts` i `bun test:e2e`. Test end-to-end sprawdza gotowy build.
 - **Bramka pokrycia.** `bun run coverage:gate` wymusza minimalne pokrycie linii dla każdego zestawu: unit 74%, integracja 58%, a 73% dla widoku łączonego.
 - **Kontrole poziomów.** `bun scripts/validate-level.ts <id>` sprawdza jedną mapę, a `--all` wszystkie osiem światów.
@@ -31,7 +31,7 @@ Tła używają pięciu poziomów głębi: `FAR` (nieprzezroczyste niebo), `MID_F
 ## Ciągła integracja
 
 - Każde wypchnięcie na `main` uruchamia pełną weryfikację: sprawdzenie typów, testy jednostkowe i integracyjne z pomiarem pokrycia, kontrole architektury i poziomów, bramkę pokrycia, budowę dystrybucji i test dymny end-to-end.
-- Workflow wydania działa w każdą niedzielę o 03:00 UTC. Ponownie sprawdza `main` i przesuwa gałąź `release` na zweryfikowany commit.
+- Workflow wydania uruchamia się ręcznie na bramkach jakości faz (`workflow_dispatch`). Ponownie sprawdza `main`, przesuwa gałąź `release` na zweryfikowany commit i tworzy wersjonowane wydanie na GitHubie z paczką gry.
 - Wypchnięcie gałęzi `release` wdraża wiki i grę na GitHub Pages.
 
 ## Fazy i bramki jakości

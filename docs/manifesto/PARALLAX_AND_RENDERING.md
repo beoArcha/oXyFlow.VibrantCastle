@@ -14,11 +14,11 @@
 
 ---
 
-## 2. The Parallax Layer Hierarchy & Hybrid Registry
+## 2. The Parallax Layer Hierarchy & Meta-Driven Registry
 
-Every shipped location defines at least 5 standard background tiers (`far`, `mid_far`, `mid`, `mid_close`, `close`), and may include optional `boss_stage` (`scrollSpeedX: 0.44`) and `boss_world` (`scrollSpeedX: 0.24`, e.g. `eclipse_crown`) layers.
+Every shipped world defines an implicit opaque `far` backdrop plus `var_a`..`var_d` variations across 5 standard bands (`far`, `mid_far`, `mid`, `mid_close`, `close`), zone variants of the closest layer (`var_d_zone_boss`, `var_d_zone_rest`), and optional image effects (`_shared:fx_sigil`, `eclipse_crown:fx_throne`) in `<worldId>_parallax_meta.json` (`src/game/parallax/meta/bandDefaults.ts`):
 
-| Tier | Standard `scrollSpeedX` / `scrollSpeedY` | Alpha Contract | Visual Role |
+| Band | Standard `scrollSpeedX` / `scrollSpeedY` | Alpha Contract | Visual Role |
 | :--- | :--- | :--- | :--- |
 | **`far`** | `0.04` / `0.02` | **100% Opaque (`opaque: true`)** | Horizon / skybox covering 100% of the viewport. |
 | **`mid_far`** | `0.18` / `0.07` | True Transparency | Distant battlements and towers. |
@@ -26,14 +26,13 @@ Every shipped location defines at least 5 standard background tiers (`far`, `mid
 | **`mid_close`** | `0.56` / `0.18` | True Transparency | Near columns and framing stonework. |
 | **`close`** | `0.78` / `0.24` | True Transparency | Foreground veil and silhouettes. |
 
-### 2.1. Hybrid Parallax Layer Registry (`src/game/locations/parallaxLayerRegistry.ts`)
+### 2.1. Meta-Driven Parallax System (`src/game/parallax/`)
 
-Location JSONs reference layers by key in `PARALLAX_LAYER_CATALOG`, organized into three namespaces:
-- `world:<worldId>:far` — shared horizon backdrop per world.
-- `shared:<tier>:<motif>` — reusable intermediate layers across stages.
-- `boss:<scope>:<motif>` — dedicated spatial layers (`boss_stage`, `boss_world`).
-
-`src/tests/arch/parallaxFiles.test.ts` guarantees every catalog entry and every location `layerKey`/`imageUrl` resolves to an existing file on disk. *(Note: the 3 newer worlds currently reference `.jpg` AI backdrops in `src/assets/images/` via the registry, whereas `.agents/rules/content_and_assets.md` targets PNG for standard textures).*
+- **Registry (`src/game/parallax/registry.ts`)**: `ParallaxRegistry` (`defaultParallaxRegistry`) discovers `src/assets/parallax/*/*_parallax_meta.json` and tier images (`_hi8bit`, `_hi16bit`, `_high`), exposing canonical keys without aliases: `<worldId>:far`, `<worldId>:var_<x>`, `<worldId>:var_<x>@<zoneKind>`, `<worldId>:fx_<id>`, and `_shared:fx_<id>`.
+- **Progressive Loading (`src/game/parallax/loading/ParallaxLoadQueue.ts`)**: `LocationAssetLifecycle` delegates to `ParallaxLoadQueue` (`FAR` → `LAYER` → `ZONE_VARIANT` → `EFFECT` → `NEIGHBOUR` at `low`), decoding off-thread with `createImageBitmap` pre-scaling and 200 ms fade-ins.
+- **Zone Crossfades (`src/game/parallax/zones/zoneResolver.ts`)**: Entering `boss` or `rest` zones smoothly crossfades the closest layer (`var_d`) to its zone variant using a deterministic smoothstep feather (`featherPx: 260`).
+- **Quality Modes & Auto Heuristic (`src/game/parallax/parallaxQualityHeuristic.ts`)**: `parallaxQuality` supports `auto`, `high`, `mid`, `low`, `simplified` (`far` at `low` only), and `off` (placeholder gradient only), backed by `ParallaxFrameTimeProbe` runtime downgrade.
+- **Enforced Contracts**: `src/tests/arch/parallaxFiles.test.ts`, `parallaxTaxonomy.test.ts`, and `parallaxRenderBoundaries.test.ts`. *(8 legacy `.jpg` files in `ashen_catacombs`, `alchemist_library`, `eclipse_crown`, and `_shared/fx_sigil_high.jpg` remain on `LEGACY_PARALLAX_JPG_ALLOWLIST` until `VC-109b`.)*
 
 ---
 
@@ -65,8 +64,8 @@ graph TD
 
 ### 4.1. Parallax Geometry & View Culling
 
-- Source: `src/game/renderer/background/parallaxGeometry.ts`, `parallaxTiling.ts`, `src/game/renderer/parallax/parallaxImageRenderer.ts`.
-- `MAX_LAYER_UPSCALE = 1.65` prevents soft over-stretching on tall boxes; `mirrorTile: true` flips alternating world tiles where edges are not seamless (`bun scripts/check-parallax-seams.ts`).
+- Source: `src/game/parallax/render/ParallaxSystem.ts`, `ParallaxBackdropRenderer.ts`, `ParallaxSurfaceCache.ts`, `PlaceholderRenderer.ts`, and `src/game/renderer/background/{parallaxGeometry.ts,parallaxTiling.ts}`.
+- `MAX_LAYER_UPSCALE = 1.65` prevents soft over-stretching on tall boxes; `tiling: "mirror"` in `*_parallax_meta.json` flips alternating world tiles where edges are not seamless (`bun scripts/check-parallax-seams.ts`).
 - `ViewCuller` (`src/game/renderer/viewCulling.ts`) expands the camera rectangle by `200 px` and skips out-of-view entities with zero per-frame allocations.
 
 ---
@@ -85,10 +84,9 @@ Source: `src/game/engine/atlas/`, `src/game/renderer/atlasSpriteRenderer.ts`, `s
 ### 5.2. Current Asset Coverage
 
 * **Enemies (`src/assets/enemies/`)**:
-  * Both `hi8bit.svg` and `hi16bit.svg` exist for 11 enemies: `aether_archon`, `aether_sentinel`, `aether_wisp`, `chasm_crawler`, `chasm_gargoyle`, `chrono_hound`, `clockwork_automaton`, `court_sentinel`, `gear_mite`, `lantern_warden`, `thorn_creeper`.
-  * `hi16bit.svg` only (missing `hi8bit.svg`): `bastion_sentinel_boss`, `shadow_knight`.
-  * Painted PNGs: `clockwork_owl_gargoyle` (`*_packed_high.png` + `*_packed_meta.json`) and `training_dummy` (`*_high.png` + `*_meta.json`).
-  * **Backlog**: Automated tier completeness reporting ([`VC-010`](../tasks/phase-4-0.3.x.md#vc-010--three-tier-asset-policy-and-completeness-test)) and generating missing `hi8bit` placeholders ([`VC-012`](../tasks/phase-4-0.3.x.md#vc-012--generate-missing-hi8bit-placeholders)); painted `high` enemy sheets are Phase 6+ backlog.
+  * All **19** enemy templates (`15` asset folders, with `clockwork_owl_gargoyle` and `training_dummy` shared via `presetId`) ship both `hi8bit.svg` and `hi16bit.svg`.
+  * Painted `high` PNGs: `clockwork_owl_gargoyle` (`*_packed_high.png` + `*_packed_meta.json`) and `training_dummy` (`*_high.png` + `*_meta.json`). Remaining 13 enemy folders fall back to `hi16bit` until painted `high` sheets are added (Phase 5/6+ backlog).
+* **Structures (`src/assets/structures/`)**: All 4 structures (`aether_gate`, `chrono_lever`, `grand_portcullis`, `hazard_thorns`) ship `hi8bit.svg`, `hi16bit.svg`, and `high.png` (`VC-122`, `VC-124`).
 
 ---
 
