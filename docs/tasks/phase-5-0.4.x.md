@@ -482,6 +482,84 @@ The cards are in sections B2 to I below.
 
 ---
 
+## M. Phase 4 general review (VC-090)
+
+Follow-up cards created from [`docs/design/gate-phase4-review.md`](../design/gate-phase4-review.md) for all High and Medium findings (`VC-200`–`VC-211`).
+
+### VC-200 · Evict and upgrade zone variant parallax textures cleanly
+- **Phase:** 5 · **Type:** fix · **Class:** medium · **Status:** todo
+- **Goal:** close and evict zone variant textures (`@boss`, `@rest`, `@secret`, `@story`) when leaving a location and allow quality upgrades (`mid` -> `high`) to reload higher tiers.
+- **Description:** `LocationAssetLifecycle.unloadLocation` (`src/game/locations/locationAssetLifecycle.ts:486-503`) only evicts URLs in `location.parallaxBackground.layers`, while `buildResolvedParallax` (`src/game/locations/parser/locationParser.ts:76-140`) excludes zone variants and `ParallaxSystem.enqueueNearbyZoneVariant` (`src/game/parallax/render/ParallaxSystem.ts:990-1014`) loads them lazily. Moreover, `isManaged` (`ParallaxSystem.ts:997`) blocks upgrades when `setParallaxQuality` (`locationAssetLifecycle.ts:396-405`) skips `queue.clear()`, and `pendingVariantUrls` (`ParallaxSystem.ts:1018-1020`) is never cleared on failure.
+- **How (AI):** track enqueued zone-variant keys per location and evict/close them on `unloadLocation`; invalidate or tier-key managed variant entries on quality upgrades; clear `pendingVariantUrls` in `.finally()`, and add an integrated `LocationAssetLifecycle` + `ParallaxSystem` test.
+
+### VC-201 · Preserve `"create"` identity across repeated Map Text Tool draft edits
+- **Phase:** 5 · **Type:** fix · **Class:** small · **Status:** todo
+- **Goal:** ensure editing a newly created narration trigger and clicking "Apply Draft" multiple times keeps it in exported `jsonPatch` / `layoutDiff`.
+- **Description:** `handleCreateTriggerArea` (`src/developer/subtabs/levels/useMapBrowserState.ts:139-157`) creates triggers with `triggerIndex: undefined`, after which `handleApplyDraft` (`lines 178-200`) sets `mode: "edit-trigger"` (same on canvas selection via `mapEntities.ts:202-217` + `useMapBrowserState.ts:107-119`). Re-applying produces `kind: "edit"` with `originalIndex: undefined`, which `buildLocationTextPatch` (`src/developer/subtabs/levels/mapTextPatch.ts:173-175`) skips silently.
+- **How (AI):** keep a pending-create draft key or `kind: "create"` state when `originalIndex` is `undefined`, update the created trigger entry in place, and add unit tests covering double-apply and canvas re-selection of new triggers.
+
+### VC-202 · Dispose `ParallaxSystem` and `GameRenderer` listeners/caches on canvas reattach
+- **Phase:** 5 · **Type:** fix · **Class:** small · **Status:** todo
+- **Goal:** prevent listener and offscreen surface leaks across `GameEngine.attachCanvas` calls and mounts.
+- **Description:** `ParallaxSystem` (`src/game/parallax/render/ParallaxSystem.ts:237-239, 253-255`) drops unsubscribe callbacks from `subscribeQuality` and `subscribeRelease` (defaulting to global singletons) and exposes no `dispose()`. `GameEngine.attachCanvas` (`src/game/loop/engine.ts:184-195`) creates a fresh `GameRenderer` via `createDefaultParallaxSystem` (`src/game/parallax/parallaxWiring.ts:118-126`) without disposing any prior instance.
+- **How (AI):** store unsubscribe handles and implement `dispose()` on `ParallaxSystem` and `GameRenderer`, call `this.renderer?.dispose()` in `GameEngine.attachCanvas`, and add a unit test verifying listener cleanup after reattach.
+
+### VC-203 · Fix `release-promote.yml` duplicate Pages deploy, late tag check, and job permissions
+- **Phase:** 5 · **Type:** ci · **Class:** small · **Status:** todo
+- **Goal:** eliminate double `deploy-pages.yml` runs per release, verify tag availability before mutating `release`, and scope workflow permissions per job.
+- **Description:** `.github/workflows/release-promote.yml:23-26` sets workflow-wide write permissions (`contents`, `pages`, `id-token`), `promote` pushes `refs/heads/release` (`line 140`, firing `deploy-pages.yml` `push` trigger at `deploy-pages.yml:3-18`) while `deploy-release` also calls `deploy-pages.yml` via `workflow_call` (`lines 158-170`), and tag collision (`lines 200-207`) is checked only after `promote` and `deploy-release` already ran.
+- **How (AI):** move `permissions` down to each job (`contents: read` at workflow level), validate that `v${VERSION}` tag does not exist in `verify-main` before `promote`, and deduplicate the `deploy-pages.yml` trigger on promotion.
+
+### VC-204 · Unify runtime parallax caching under `ParallaxLoadQueue`
+- **Phase:** 5 · **Type:** fix · **Class:** medium · **Status:** todo
+- **Goal:** eliminate split texture residency between `assetLoader.textureCache` and `defaultParallaxLoadQueue` so location unloads release all decoded parallax backdrops.
+- **Description:** `createDefaultParallaxSystem` (`src/game/parallax/parallaxWiring.ts:118-126`) omits `loadQueue`, setting `useExplicitLoadQueue = false` (`src/game/parallax/render/ParallaxSystem.ts:234-235`). As a result `preload()` (`lines 333-359`) and `getImage()` fallback (`lines 695-701`) store textures in `assetLoader.textureCache` (`src/game/engine/assetLoader.ts:44`), which `defaultLocationAssetLifecycle` (`externalLoader = null` at `src/game/locations/locationAssetLifecycle.ts:360, 495`) never evicts.
+- **How (AI):** route `createDefaultParallaxSystem` preload and fallback loads through `defaultParallaxLoadQueue` (or inject managed eviction for any remaining loader entries) and verify zero stale parallax entries remain in `assetLoader` after `unloadLocation`.
+
+### VC-205 · Pin CI actions to SHAs, tighten artifact error handling, and run ESLint in `lint`
+- **Phase:** 5 · **Type:** ci · **Class:** small · **Status:** todo
+- **Goal:** make CI builds reproducible and ensure ESLint rules (`eslint.config.js`) actually execute in `bun run lint` and PR checks.
+- **Description:** Workflows (`ci-pr.yml`, `ci-main.yml`, `deploy-pages.yml`, `release-promote.yml`) and `.github/actions/setup-bun-cached/action.yml:8` use mutable tags (`@v4`, `@v2`, `@v5`, `@v3`) and `bun-version: latest`; `ci-pr.yml:94-105` and `ci-main.yml:97-108` set `continue-on-error: true` on coverage artifact downloads; `package.json:15` maps `"lint": "tsc --noEmit"` without running ESLint; `ci-main.yml` and `release-promote.yml:85-106` repeat the full suite.
+- **How (AI):** pin all third-party workflow actions to full commit SHAs and pin a default Bun version, remove `continue-on-error: true` on `download-artifact`, wire ESLint cleanly alongside `tsc --noEmit`, and trim redundant sequential re-runs if artifact/SHA checks allow.
+
+### VC-206 · Reset `ParallaxFrameTimeProbe` and sync `FPSManager` on target FPS changes
+- **Phase:** 5 · **Type:** fix · **Class:** small · **Status:** todo
+- **Goal:** re-evaluate frame-time auto-downgrade whenever `setTargetFps()` changes the target refresh rate and sync initial FPS in the constructor.
+- **Description:** `EngineSettingsController.setTargetFps` (`src/game/loop/engineSettingsController.ts:127-132`) updates `this.autoDowngradeProbe.setBudgetMs(...)` without resetting a finished probe or `hasProbeDowngraded`, and the constructor (`lines 59-87`) does not apply `initialTargetFps` to `fpsManager`.
+- **How (AI):** reset the probe window and `hasProbeDowngraded` flag when target FPS changes in `setTargetFps`, apply `initialTargetFps` to `fpsManager` in the constructor, and add AAA unit tests covering `60 <-> 120` switches.
+
+### VC-207 · Remove per-frame `render()` allocations and unify drawable readiness checks
+- **Phase:** 5 · **Type:** fix · **Class:** small · **Status:** todo
+- **Goal:** eliminate repeated Promise/object/string allocations in `render()` hot paths and guard non-extensible `ImageBitmap` readiness checks.
+- **Description:** `EngineFrameRenderer` (`src/game/loop/engineFrameRenderer.ts:40-42`) calls async `enterLocation()` every frame; `StructureRenderer.renderGoalPortal` (`src/game/renderer/structureRenderer.ts:183-192, 203`) allocates an options literal and fallback `cacheKey` string per portal per frame; `parallaxTiling.ts:227-228` and `ParallaxBackdropRenderer.ts:62, 155` check `.complete`/`.naturalWidth` directly even when `attachBitmapImageMetrics` (`browserBitmapDecoder.ts:58`) skips non-extensible bitmaps.
+- **How (AI):** skip `enterLocation()` in `EngineFrameRenderer` when `currentLocation.id` has not changed, preallocate `goalOptions` and reuse cache keys in `StructureRenderer`, route readiness checks through shared drawable helpers, and verify with allocation tests.
+
+### VC-208 · Eliminate remaining `: any` in atlas/meta parsers and raw `new Error` in scripts
+- **Phase:** 5 · **Type:** refactor · **Class:** medium · **Status:** todo
+- **Goal:** bring `src/game/engine/meta/**`, `spriteTypes.ts`, and asset/wiki scripts into full compliance with `code_cleanliness.md` §1.
+- **Description:** `AtlasSlicingEngine.ts:71, 143`, `ISlicingStrategy.ts:7-8`, `MetaParser.ts:177`, `src/game/engine/meta/parsers/*.ts`, and `spriteTypes.ts:148-150` still use `: any` or `Record<string, any>`. `scripts/review/parallaxSheet.ts:103` and `scripts/wiki/{wikiContent.ts:163, wikiAppScript.ts:61, 97}` still throw raw `new Error(...)`.
+- **How (AI):** replace all `: any` / `Record<string, any>` with `unknown` plus narrowing guards or typed interfaces, switch script throws to `AssetError` / `ParserError` where server-side imports apply, and verify `tsc --noEmit`, ESLint, and unit/script tests stay green.
+
+### VC-209 · Decompose `LevelsSubtab.tsx`, extract i18n copy, and preserve map browser drafts across tab switches
+- **Phase:** 5 · **Type:** refactor · **Class:** medium · **Status:** todo
+- **Goal:** split the 857-line `LevelsSubtab.tsx` into focused modules under ~300 LOC, remove inline translations/styles, and prevent draft loss when switching sub-views.
+- **Description:** `src/developer/subtabs/levels/LevelsSubtab.tsx` (857 LOC) mixes `matrix`, `browser`, `audit`, and `layers` views, hardcodes `isPl ? ... : ...` strings (`lines 184-240, 302-311, 397-403, 464-580, 628-754`), and uses `style={{ backgroundColor: world.accentHex }}` (`line 329`). Switching `viewMode` unmounts `MapBrowserPanel`, discarding `useMapBrowserState` drafts (`useMapBrowserState.ts:60-63`), and `line 227` leaves a `setTimeout` uncleaned on unmount.
+- **How (AI):** extract `matrix`, `audit`, and `layers` view panels into separate files, move developer level copy into `src/i18n/modules/developer.ts`, keep or confirm unsaved draft state across view switches, and clean up the clipboard timer on unmount.
+
+### VC-210 · Replace hardcoded hex styles in `src/game-menu/` with `@ui` design tokens and enforce in arch tests
+- **Phase:** 5 · **Type:** refactor · **Class:** small · **Status:** todo
+- **Goal:** align `src/game-menu/` styling with semantic design-system tokens and prevent regressions via `designSystemBoundaries.test.ts`.
+- **Description:** `GameLayout.tsx:22, 41, 242`, `DisplayTab.tsx:55`, and `GraphicsQualitySection.tsx:137` use raw hex Tailwind classes (`bg-[#120704]`, `bg-[#160804]/95`, `bg-[#0c0402]`, `bg-[#140602]`, `border-[#5c2d18]`), while `src/tests/arch/designSystemBoundaries.test.ts:65, 121` only audits `datastudio` and `src/ui/`.
+- **How (AI):** migrate the hardcoded hex classes to semantic `@ui` tokens/CSS variables, expand `designSystemBoundaries.test.ts` to cover `src/game-menu/` and `src/hud/`, and verify visually in headless browser screenshots.
+
+### VC-211 · Align `simplified` layer URL lookup, tune idle-pump burst, and isolate default parallax singletons
+- **Phase:** 5 · **Type:** fix · **Class:** medium · **Status:** todo
+- **Goal:** make `LocationAssetLifecycle.getLayerUrls` match `simplified` load tasks, avoid 1.2s per-layer idle bottlenecks under active gameplay, and add test-reset support on default singletons.
+- **Description:** `LocationAssetLifecycle.getLayerUrls` (`src/game/locations/locationAssetLifecycle.ts:430-443`) returns all layers when `parallaxQuality === "simplified"`, diverging from `buildLocationLoadTasks` (`lines 196-215`). `ParallaxLoadQueue.pump` (`src/game/parallax/loading/ParallaxLoadQueue.ts:349-352`) limits `priority > FAR` starts to 1 per idle slice (`timeout: 1200`), and module singletons (`defaultParallaxLoadQueue`, `defaultLocationAssetLifecycle`, `defaultParallaxRegistry`) have no shared reset hook for test isolation.
+- **How (AI):** return only `far` in `getLayerUrls` for `"simplified"`, support bounded concurrent or batched non-far decodes per idle slice, add test reset helpers for defaults, and cover multi-layer/quality transitions in unit/integration tests.
+
+---
+
 ## Z. Phase gate
 
 ### VC-199 · Phase 5 quality gate and 0.5.0
