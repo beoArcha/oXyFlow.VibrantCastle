@@ -271,7 +271,7 @@ export class LocationAssetLifecycle {
     this.resolveLocation = deps.resolveLocation ?? ((id) => LOCATION_REGISTRY[id]);
     this.scheduleIdle = deps.scheduleIdle ?? defaultScheduleIdle;
     this.activeTier = deps.activeTier ?? "high";
-    this.resolveTierUrl = deps.resolveTierUrl;
+    this.resolveTierUrl = deps.resolveTierUrl ?? ((layer) => layer.imageUrl ?? this.registry.resolve(layer.layerKey)?.url);
   }
 
   public get currentLocationId(): LocationId | null {
