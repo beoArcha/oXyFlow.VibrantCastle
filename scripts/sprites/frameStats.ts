@@ -43,9 +43,10 @@ export function unionBounds(list: (Bounds | null)[]): Bounds | null {
   return union;
 }
 
-/** Union of the opaque pixels over all idle frames of one tier. */
+/** Union of the opaque pixels over all idle (or fly) frames of one tier. */
 export function idleBounds(rendered: RenderedTier): Bounds | null {
-  return unionBounds((rendered.frames.idle ?? []).map(measure));
+  const frames = rendered.frames.idle ?? rendered.frames.fly ?? [];
+  return unionBounds(frames.map(measure));
 }
 
 export interface NormalizedBox {

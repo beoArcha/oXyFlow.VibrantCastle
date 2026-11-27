@@ -6,7 +6,7 @@ export type Tier = "hi8bit" | "hi16bit";
 
 /** Human-readable tier names used in compiler messages and docs. */
 export const TIER_LABEL: Readonly<Record<Tier, string>> = { hi8bit: "hi-8bit", hi16bit: "hi-16bit" };
-export type AnimationName = "idle" | "move" | "hit" | "attack" | "death";
+export type AnimationName = "idle" | "move" | "hit" | "attack" | "death" | "fly" | "bestiary";
 
 export const ANIMATION_ORDER: readonly AnimationName[] = ["idle", "move", "hit", "attack", "death"];
 
@@ -24,13 +24,13 @@ export interface EnemySpriteDefinition {
   description: string;
   hitbox: { width: number; height: number };
   cellScale: number;
-  animations: {
-    idle: AnimationSpec;
-    move: AnimationSpec;
-    hit: AnimationSpec;
-    attack?: AnimationSpec;
-    death?: AnimationSpec;
-  };
+  /** Optional custom row order for PNG-backed enemies whose meta uses non-default track names. */
+  animationOrder?: readonly AnimationName[];
+  /** Optional existing meta document to preserve while updating SVG variant entries. */
+  baseMeta?: Record<string, unknown>;
+  /** Optional state aliases merged onto baseMeta.states. */
+  metaStates?: Record<string, { animation: string }>;
+  animations: Partial<Record<AnimationName, AnimationSpec>>;
   draw: { hi8bit: DrawFn; hi16bit: DrawFn };
 }
 
@@ -42,7 +42,8 @@ export function cellSize(def: EnemySpriteDefinition, tier: Tier): number {
 }
 
 export function definedAnimations(def: EnemySpriteDefinition): AnimationName[] {
-  return ANIMATION_ORDER.filter((name) => def.animations[name] !== undefined);
+  const order = def.animationOrder ?? ANIMATION_ORDER;
+  return order.filter((name) => def.animations[name] !== undefined);
 }
 
 export function specOf(def: EnemySpriteDefinition, name: AnimationName): AnimationSpec {

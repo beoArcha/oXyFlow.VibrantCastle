@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { defaultMetaParser } from "../../src/game/engine/meta/MetaParser";
 import { decodePngBuffer } from "../lib/png";
 import {
+  DEFAULT_OUT_DIR,
   DEFAULT_STRUCTURE_OUT_DIR,
   isStructureDefinition,
   listStructureIds,
@@ -130,7 +131,7 @@ describe("compileStructureSprite", () => {
       variants: Record<"low" | "mid" | "high", { file: string; cellWidth: number; cellHeight: number; scale: number }>;
     };
     const parsed = defaultMetaParser.parseStructure(meta);
-    const png = decodePngBuffer(compiled.highPng);
+    const png = decodePngBuffer(compiled.highPng!);
 
     // Assert
     expect(compiled.warnings).toEqual([]);
@@ -166,7 +167,7 @@ describe("compileStructureSprite", () => {
     expect(a.hi8bitSvg).toBe(b.hi8bitSvg);
     expect(a.hi16bitSvg).toBe(b.hi16bitSvg);
     expect(a.metaJson).toBe(b.metaJson);
-    expect(Buffer.compare(a.highPng, b.highPng)).toBe(0);
+    expect(Buffer.compare(a.highPng!, b.highPng!)).toBe(0);
   });
 
   it("rejects frames that float above the floor, touch outer edges, or duplicate hi8bit at 2x", () => {
@@ -242,5 +243,32 @@ describe("committed structure sprites & CLI", () => {
     const code = await run(["aether_gate", "--check"], (line) => logs.push(line));
     expect(code).toBe(0);
     expect(logs).toEqual([]);
+  });
+
+  it("compiles PNG-backed structure and dummy scripts matching all committed SVGs and metas", async () => {
+    const targets: Array<[string, string]> = [
+      ["chrono_lever", DEFAULT_STRUCTURE_OUT_DIR],
+      ["grand_portcullis", DEFAULT_STRUCTURE_OUT_DIR],
+      ["hazard_thorns", DEFAULT_STRUCTURE_OUT_DIR],
+      ["training_dummy", DEFAULT_OUT_DIR],
+    ];
+    for (const [id, rootDir] of targets) {
+      const def = await loadSprite(id);
+      expect(isStructureDefinition(def)).toBe(true);
+      if (!isStructureDefinition(def)) continue;
+      const compiled = compileStructureSprite(def);
+      expect(compiled.highPng).toBeUndefined();
+      const files = outputFiles(def, compiled, rootDir);
+      const dir = join(rootDir, id);
+      expect(files.map((f) => f.path)).toEqual([
+        join(dir, `${id}_hi8bit.svg`),
+        join(dir, `${id}_hi16bit.svg`),
+        join(dir, `${id}_meta.json`),
+      ]);
+      const logs: string[] = [];
+      const code = await run([id, "--check"], (line) => logs.push(line));
+      expect(code).toBe(0);
+      expect(logs).toEqual([]);
+    }
   });
 });

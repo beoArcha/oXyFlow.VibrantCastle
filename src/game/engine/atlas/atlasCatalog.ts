@@ -112,14 +112,14 @@ function buildVariants(folder: AtlasFolder): AtlasVariants {
 
   const sharedRaw = metas.get(`${id}_meta.json`);
   const sharedMeta = sharedRaw !== undefined ? parseAtlasMeta(sharedRaw, folder.category) : null;
+  const svgMeta = sharedMeta ? stripPngSlicingForSvg(sharedMeta) : null;
 
   for (const { tier, suffix } of SVG_TIERS) {
     const declaredFile = declaredSvgFile(sharedRaw, tier);
     const file = declaredFile ?? `${id}_${suffix}.svg`;
     const src = images.get(file);
-    if (src && sharedMeta) {
-      // Undeclared SVG placeholders share the PNG meta; PNG freeform_rects must not crop the SVG.
-      const svgMeta = declaredFile ? sharedMeta : stripPngSlicingForSvg(sharedMeta);
+    if (src && svgMeta) {
+      // PNG freeform_rects slicing applies to the original PNG only, never to grid-based SVG sheets.
       variants[tier] = variant(src, "svg", svgMeta);
     }
   }

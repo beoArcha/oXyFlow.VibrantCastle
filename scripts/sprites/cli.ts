@@ -38,7 +38,7 @@ export type SpriteDefinition =
   | HeroSpriteDefinition
   | TilesetSpriteDefinition
   | PropSpriteDefinition
-  | StructureSpriteDefinition;
+  | StructureSpriteDefinition<string>;
 
 /** Where sprite scripts live and where their output goes; tests point these at temporary folders. */
 export interface SpriteDirs {
@@ -114,7 +114,7 @@ export const listStructureIds = (dir: string = STRUCTURES_DIR): string[] => list
 const isScriptPath = (idOrPath: string): boolean =>
   idOrPath.endsWith(".ts") || idOrPath.includes("/") || idOrPath.includes("\\");
 
-export function isStructureDefinition(def: SpriteDefinition): def is StructureSpriteDefinition {
+export function isStructureDefinition(def: SpriteDefinition): def is StructureSpriteDefinition<string> {
   return "states" in def && "cellSize" in def;
 }
 
@@ -187,7 +187,7 @@ function metaFileName(def: SpriteDefinition): string {
 
 export function outputFiles(def: SpriteDefinition, compiled: CompiledAny, outDir: string): OutputFile[] {
   const base = join(outDir, def.id);
-  if ("highPng" in compiled) {
+  if ("highPng" in compiled && compiled.highPng !== undefined) {
     return [
       { path: join(base, `${def.id}_hi8bit.svg`), content: compiled.hi8bitSvg },
       { path: join(base, `${def.id}_hi16bit.svg`), content: compiled.hi16bitSvg },
@@ -253,7 +253,10 @@ function writePreviews(def: SpriteDefinition, compiled: CompiledAny, dir: string
 
 function resolveOutDir(def: SpriteDefinition, options: CliOptions, dirs: SpriteDirs): string {
   if (options.outDir) return options.outDir;
-  if (isStructureDefinition(def)) return dirs.structureOut ?? DEFAULT_STRUCTURE_OUT_DIR;
+  if (isStructureDefinition(def)) {
+    if (def.assetCategory === "enemies") return dirs.enemyOut;
+    return dirs.structureOut ?? DEFAULT_STRUCTURE_OUT_DIR;
+  }
   if (isTilesetDefinition(def)) return dirs.tileOut;
   if (isPropDefinition(def)) return dirs.propOut;
   return isEnemyDefinition(def) ? dirs.enemyOut : dirs.heroOut;

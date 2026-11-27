@@ -1,6 +1,7 @@
 import { spriteError } from "./errors";
 import {
   STRUCTURE_ANIMATION_ORDER,
+  type StructureAnimationName,
   type StructureAnimationSpec,
   type StructureCellSize,
   type StructureSpriteDefinition,
@@ -39,7 +40,9 @@ function checkAnimation(id: string, name: string, spec: StructureAnimationSpec |
 }
 
 /** Validates a multi-tier structure sprite definition and returns it unchanged. */
-export function defineStructureSprite(def: StructureSpriteDefinition): StructureSpriteDefinition {
+export function defineStructureSprite<A extends string = StructureAnimationName>(
+  def: StructureSpriteDefinition<A>,
+): StructureSpriteDefinition<A> {
   const { id } = def;
   if (typeof id !== "string" || !ID_PATTERN.test(id)) {
     throw spriteError(`Structure id ${JSON.stringify(id)} must be snake_case (a-z, 0-9, _).`, { id });
@@ -54,15 +57,18 @@ export function defineStructureSprite(def: StructureSpriteDefinition): Structure
   checkCell(id, "hi16bit", def.cellSize?.hi16bit);
   checkCell(id, "high", def.cellSize?.high);
 
-  for (const name of STRUCTURE_ANIMATION_ORDER) {
+  const order = def.animationOrder ?? (STRUCTURE_ANIMATION_ORDER as readonly A[]);
+  if (order.length === 0) {
+    throw spriteError(`Structure "${id}" animationOrder must not be empty.`, { id });
+  }
+  for (const name of order) {
     checkAnimation(id, name, def.animations?.[name]);
   }
-  if (
-    typeof def.draw?.hi8bit !== "function" ||
-    typeof def.draw?.hi16bit !== "function" ||
-    typeof def.draw?.high !== "function"
-  ) {
-    throw spriteError(`Structure "${id}" needs draw.hi8bit, draw.hi16bit and draw.high functions.`, { id });
+  if (typeof def.draw?.hi8bit !== "function" || typeof def.draw?.hi16bit !== "function") {
+    throw spriteError(`Structure "${id}" needs draw.hi8bit and draw.hi16bit functions.`, { id });
+  }
+  if (!def.pngBacked && typeof def.draw?.high !== "function") {
+    throw spriteError(`Structure "${id}" needs draw.high unless pngBacked is true.`, { id });
   }
   return def;
 }

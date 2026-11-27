@@ -15,23 +15,73 @@
   },
   "anchor": {
     "x": 0.5,
-    "y": 1.0
+    "y": 1
   },
   "layout": {
-    "bodyBox": { "x": 0.1458, "y": 0.28125, "w": 0.6458, "h": 0.59375 },
-    "idle": { "row": 0, "startCol": 0, "frames": 6, "widthCells": 1 },
-    "activating": { "row": 1, "startCol": 0, "frames": 6, "widthCells": 1 },
-    "active": { "row": 2, "startCol": 0, "frames": 6, "widthCells": 1 }
+    "bodyBox": {
+      "x": 0.1458,
+      "y": 0.28125,
+      "w": 0.6458,
+      "h": 0.59375
+    },
+    "idle": {
+      "row": 0,
+      "startCol": 0,
+      "frames": 6,
+      "widthCells": 1
+    },
+    "activating": {
+      "row": 1,
+      "startCol": 0,
+      "frames": 6,
+      "widthCells": 1
+    },
+    "active": {
+      "row": 2,
+      "startCol": 0,
+      "frames": 6,
+      "widthCells": 1
+    }
   },
   "animations": {
-    "idle": { "row": 0, "frames": 6, "fps": 6, "loop": true },
-    "activating": { "row": 1, "frames": 6, "fps": 12, "loop": false },
-    "active": { "row": 2, "frames": 6, "fps": 6, "loop": true }
+    "idle": {
+      "row": 0,
+      "frames": 6,
+      "fps": 6,
+      "loop": true
+    },
+    "activating": {
+      "row": 1,
+      "frames": 6,
+      "fps": 12,
+      "loop": false
+    },
+    "active": {
+      "row": 2,
+      "frames": 6,
+      "fps": 6,
+      "loop": true
+    }
   },
   "states": {
-    "inactive": { "animation": "idle" },
-    "activating": { "animation": "activating" },
-    "active": { "animation": "active" }
+    "inactive": {
+      "animation": "idle"
+    },
+    "activating": {
+      "animation": "activating"
+    },
+    "active": {
+      "animation": "active"
+    },
+    "off": {
+      "animation": "idle"
+    },
+    "switching": {
+      "animation": "activating"
+    },
+    "on": {
+      "animation": "active"
+    }
   },
   "infoFrames": {
     "default": 0,
@@ -40,8 +90,13 @@
   },
   "interaction": {
     "type": "switch",
-    "trigger": { "onPlayerInteract": true, "radius": 50 },
-    "effects": { "openGate": true }
+    "trigger": {
+      "onPlayerInteract": true,
+      "radius": 50
+    },
+    "effects": {
+      "openGate": true
+    }
   },
   "render": {
     "layer": "interactive",
@@ -51,5 +106,25 @@
   "constraints": {
     "strictGrid": true,
     "fixedBaseline": true
+  },
+  "variants": {
+    "low": {
+      "cellWidth": 48,
+      "cellHeight": 48,
+      "scale": 0.5,
+      "file": "chrono_lever_hi8bit.svg"
+    },
+    "mid": {
+      "cellWidth": 96,
+      "cellHeight": 96,
+      "scale": 1,
+      "file": "chrono_lever_hi16bit.svg"
+    },
+    "high": {
+      "cellWidth": 96,
+      "cellHeight": 96,
+      "scale": 1,
+      "file": "chrono_lever_high.png"
+    }
   }
 }

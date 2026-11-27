@@ -15,7 +15,7 @@ import { sameAfterScaling } from "./validate";
 export interface CompiledStructure {
   hi8bitSvg: string;
   hi16bitSvg: string;
-  highPng: Uint8Array;
+  highPng?: Uint8Array;
   metaJson: string;
   warnings: string[];
   sheets: { hi8bit: SheetImage; hi16bit: SheetImage };
@@ -47,6 +47,7 @@ function checkBounds(
   bounds: Bounds | null,
   width: number,
   height: number,
+  allowBottomMargin: boolean = false,
 ): void {
   if (!bounds) {
     problems.push(`${label}: frame is empty.`);
@@ -55,25 +56,26 @@ function checkBounds(
   if (bounds.minX === 0) problems.push(`${label}: opaque pixels touch left edge.`);
   if (bounds.maxX === width - 1) problems.push(`${label}: opaque pixels touch right edge.`);
   if (bounds.minY === 0) problems.push(`${label}: opaque pixels touch top edge.`);
-  if (bounds.maxY !== height - 1) {
+  if (!allowBottomMargin && bounds.maxY !== height - 1) {
     problems.push(`${label}: bottom row is y=${bounds.maxY}, expected floor contact y=${height - 1}.`);
   }
 }
 
-function renderPixelTier(
-  def: StructureSpriteDefinition,
+function renderPixelTier<A extends string>(
+  def: StructureSpriteDefinition<A>,
   tier: "hi8bit" | "hi16bit",
+  order: readonly A[],
   columns: number,
-): { sheet: SheetImage; frames: Record<StructureAnimationName, PixelCanvas[]> } {
+): { sheet: SheetImage; frames: Record<string, PixelCanvas[]> } {
   const { width: cellW, height: cellH } = def.cellSize[tier];
-  const rows = STRUCTURE_ANIMATION_ORDER.length;
+  const rows = order.length;
   const sheetW = columns * cellW;
   const sheetH = rows * cellH;
   const pixels = new Int32Array(sheetW * sheetH).fill(TRANSPARENT);
-  const frames = {} as Record<StructureAnimationName, PixelCanvas[]>;
+  const frames: Record<string, PixelCanvas[]> = {};
 
-  STRUCTURE_ANIMATION_ORDER.forEach((anim, row) => {
-    const count = def.animations[anim].frames;
+  order.forEach((anim, row) => {
+    const count = Math.min(def.animations[anim].frames, columns);
     const list: PixelCanvas[] = [];
     for (let f = 0; f < count; f++) {
       const cell = new PixelCanvas(cellW, cellH);
@@ -97,23 +99,26 @@ function renderPixelTier(
   return { sheet, frames };
 }
 
-function renderHighTier(
-  def: StructureSpriteDefinition,
+function renderHighTier<A extends string>(
+  def: StructureSpriteDefinition<A>,
+  order: readonly A[],
   columns: number,
   problems: string[],
 ): Uint8Array {
   const { width: cellW, height: cellH } = def.cellSize.high;
-  const rows = STRUCTURE_ANIMATION_ORDER.length;
+  const rows = order.length;
   const sheetW = columns * cellW;
   const sheetH = rows * cellH;
   const rgba = new Uint8Array(sheetW * sheetH * 4);
+  const drawHigh = def.draw.high;
+  if (!drawHigh) return encodePngBuffer({ width: sheetW, height: sheetH, data: rgba });
 
-  STRUCTURE_ANIMATION_ORDER.forEach((anim, row) => {
-    const count = def.animations[anim].frames;
+  order.forEach((anim, row) => {
+    const count = Math.min(def.animations[anim].frames, columns);
     for (let f = 0; f < count; f++) {
       const buf = new RgbaFrameBuffer(cellW, cellH);
-      def.draw.high(buf, anim, f);
-      checkBounds(problems, `high ${anim} frame ${f}`, measureRgba(buf), cellW, cellH);
+      drawHigh(buf, anim, f);
+      checkBounds(problems, `high ${anim} frame ${f}`, measureRgba(buf), cellW, cellH, def.allowBottomMargin);
       const oy = row * cellH;
       const ox = f * cellW;
       for (let y = 0; y < cellH; y++) {
@@ -127,14 +132,65 @@ function renderHighTier(
   return encodePngBuffer({ width: sheetW, height: sheetH, data: rgba });
 }
 
-function buildStructureMeta(
-  def: StructureSpriteDefinition,
+function buildVariants<A extends string>(def: StructureSpriteDefinition<A>) {
+  const { hi8bit, hi16bit, high } = def.cellSize;
+  return {
+    low: {
+      cellWidth: hi8bit.width,
+      cellHeight: hi8bit.height,
+      scale: round4(hi8bit.width / high.width),
+      file: `${def.id}_hi8bit.svg`,
+    },
+    mid: {
+      cellWidth: hi16bit.width,
+      cellHeight: hi16bit.height,
+      scale: round4(hi16bit.width / high.width),
+      file: `${def.id}_hi16bit.svg`,
+    },
+    high: {
+      cellWidth: high.width,
+      cellHeight: high.height,
+      scale: 1,
+      file: `${def.id}_high.png`,
+    },
+  };
+}
+
+function mergePngBackedMeta<A extends string>(
+  def: StructureSpriteDefinition<A>,
+  bodyBox: { x: number; y: number; w: number; h: number },
+): Record<string, unknown> {
+  const base = structuredClone(def.baseMeta ?? {});
+  const existingVariants = (base.variants as Record<string, unknown> | undefined) ?? {};
+  const generatedVariants = buildVariants(def);
+  base.variants = {
+    ...existingVariants,
+    low: generatedVariants.low,
+    mid: generatedVariants.mid,
+    high: existingVariants.high ?? generatedVariants.high,
+  };
+  if (def.metaStates) {
+    const existingStates = (base.states as Record<string, unknown> | undefined) ?? {};
+    base.states = { ...existingStates, ...def.metaStates };
+  }
+  const layout = (base.layout as Record<string, unknown> | undefined) ?? {};
+  if (!layout.bodyBox) {
+    base.layout = { ...layout, bodyBox };
+  }
+  return base;
+}
+
+function buildStructureMeta<A extends string>(
+  def: StructureSpriteDefinition<A>,
+  order: readonly A[],
   columns: number,
   bodyBox: { x: number; y: number; w: number; h: number },
 ) {
-  const { hi8bit, hi16bit, high } = def.cellSize;
+  if (def.pngBacked && def.baseMeta) {
+    return mergePngBackedMeta(def, bodyBox);
+  }
   const animations = Object.fromEntries(
-    STRUCTURE_ANIMATION_ORDER.map((name, row) => {
+    order.map((name, row) => {
       const spec = def.animations[name];
       const ones = Array.from({ length: spec.frames }, () => 1);
       return [name, { row, frames: spec.frames, fps: spec.fps, loop: spec.loop, slotSpan: ones, cells: [...ones] }];
@@ -142,12 +198,13 @@ function buildStructureMeta(
   );
 
   const layoutAnims = Object.fromEntries(
-    STRUCTURE_ANIMATION_ORDER.map((name, row) => [
+    order.map((name, row) => [
       name,
       { row, startCol: 0, frames: def.animations[name].frames, widthCells: 1 },
     ]),
   );
 
+  const { high } = def.cellSize;
   return {
     entityId: def.id,
     entityType: "structure",
@@ -156,7 +213,7 @@ function buildStructureMeta(
     atlas: {
       image: `${def.id}_high.png`,
       columns,
-      rows: STRUCTURE_ANIMATION_ORDER.length,
+      rows: order.length,
       cellWidth: high.width,
       cellHeight: high.height,
       spacing: 0,
@@ -167,28 +224,9 @@ function buildStructureMeta(
       x: round4(bodyBox.x + bodyBox.w / 2),
       y: 1.0,
     },
-    variants: {
-      low: {
-        cellWidth: hi8bit.width,
-        cellHeight: hi8bit.height,
-        scale: round4(hi8bit.width / high.width),
-        file: `${def.id}_hi8bit.svg`,
-      },
-      mid: {
-        cellWidth: hi16bit.width,
-        cellHeight: hi16bit.height,
-        scale: round4(hi16bit.width / high.width),
-        file: `${def.id}_hi16bit.svg`,
-      },
-      high: {
-        cellWidth: high.width,
-        cellHeight: high.height,
-        scale: 1,
-        file: `${def.id}_high.png`,
-      },
-    },
+    variants: buildVariants(def),
     layout: {
-      ordering: [...STRUCTURE_ANIMATION_ORDER],
+      ordering: [...order],
       origin: {
         type: "feet",
         normalized: {
@@ -211,27 +249,37 @@ function buildStructureMeta(
   };
 }
 
-/** Compiles, validates, and serialises all three tiers of a structure sprite without touching disk. */
-export function compileStructureSprite(def: StructureSpriteDefinition): CompiledStructure {
-  const columns = Math.max(...STRUCTURE_ANIMATION_ORDER.map((a) => def.animations[a].frames));
+/** Compiles, validates, and serialises a structure sprite without touching disk. */
+export function compileStructureSprite<A extends string = StructureAnimationName>(
+  def: StructureSpriteDefinition<A>,
+): CompiledStructure {
+  const order = def.animationOrder ?? (STRUCTURE_ANIMATION_ORDER as readonly A[]);
+  const columns = def.columns ?? Math.max(...order.map((a) => def.animations[a].frames));
   const problems: string[] = [];
 
-  const hi8 = renderPixelTier(def, "hi8bit", columns);
-  const hi16 = renderPixelTier(def, "hi16bit", columns);
+  const hi8 = renderPixelTier(def, "hi8bit", order, columns);
+  const hi16 = renderPixelTier(def, "hi16bit", order, columns);
 
   for (const [tierLabel, tierData] of [
     ["hi8bit", hi8],
     ["hi16bit", hi16],
   ] as const) {
     const { width, height } = def.cellSize[tierLabel];
-    for (const anim of STRUCTURE_ANIMATION_ORDER) {
+    for (const anim of order) {
       tierData.frames[anim].forEach((canvas, frame) => {
-        checkBounds(problems, `${tierLabel} ${anim} frame ${frame}`, measure(canvas), width, height);
+        checkBounds(
+          problems,
+          `${tierLabel} ${anim} frame ${frame}`,
+          measure(canvas),
+          width,
+          height,
+          def.allowBottomMargin,
+        );
       });
     }
   }
 
-  for (const anim of STRUCTURE_ANIMATION_ORDER) {
+  for (const anim of order) {
     hi16.frames[anim].forEach((canvas, frame) => {
       const small = hi8.frames[anim][frame];
       if (small && sameAfterScaling(small, canvas)) {
@@ -240,7 +288,7 @@ export function compileStructureSprite(def: StructureSpriteDefinition): Compiled
     });
   }
 
-  const highPng = renderHighTier(def, columns, problems);
+  const highPng = def.pngBacked ? undefined : renderHighTier(def, order, columns, problems);
 
   if (problems.length > 0) {
     throw spriteError(`Structure "${def.id}" failed validation:\n  - ${problems.join("\n  - ")}`, {
@@ -249,18 +297,19 @@ export function compileStructureSprite(def: StructureSpriteDefinition): Compiled
     });
   }
 
-  const union = unionBounds(hi16.frames.idle.map(measure));
+  const idleAnim = (hi16.frames.idle ? "idle" : order[0]) as string;
+  const union = unionBounds(hi16.frames[idleAnim].map(measure));
   if (!union) {
-    throw spriteError(`Structure "${def.id}" has no opaque idle pixels.`, { id: def.id });
+    throw spriteError(`Structure "${def.id}" has no opaque ${idleAnim} pixels.`, { id: def.id });
   }
   const { width: midW, height: midH } = def.cellSize.hi16bit;
   const bodyBox = normalizeBox(union, midW, midH);
 
-  const meta = buildStructureMeta(def, columns, bodyBox);
+  const meta = buildStructureMeta(def, order, columns, bodyBox);
   return {
     hi8bitSvg: sheetToSvg(hi8.sheet),
     hi16bitSvg: sheetToSvg(hi16.sheet),
-    highPng,
+    ...(highPng !== undefined ? { highPng } : {}),
     metaJson: `${JSON.stringify(meta, null, 2)}\n`,
     warnings: [],
     sheets: { hi8bit: hi8.sheet, hi16bit: hi16.sheet },
