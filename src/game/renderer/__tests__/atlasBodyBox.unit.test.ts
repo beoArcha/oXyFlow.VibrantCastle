@@ -231,8 +231,8 @@ describe("AtlasSpriteRenderer with real metas", () => {
       id: "aether_gate",
       category: "structure",
       dir: "structures",
-      animations: ["inactive", "charging", "activating", "active"],
-      expectFreeformTracks: true,
+      animations: ["idle", "opening", "on", "off", "closing", "inactive", "charging", "activating", "active"],
+      expectBodyBox: true,
     },
     {
       id: "grand_portcullis",
