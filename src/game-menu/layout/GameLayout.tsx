@@ -72,10 +72,10 @@ const GameLayoutBrand: React.FC<GameLayoutBrandProps> = ({
       <>
         <span
           aria-hidden="true"
-          className="hidden md:block h-4 w-px bg-amber-900/50 shrink-0"
+          className="hidden lg:block h-4 w-px bg-amber-900/50 shrink-0"
         />
         <div
-          className="hidden md:flex items-center gap-1.5 min-w-0 whitespace-nowrap"
+          className="hidden lg:flex items-center gap-1.5 min-w-0 whitespace-nowrap"
           title={locationName}
         >
           <MapPin size={13} className="text-amber-400/90 shrink-0" />
@@ -181,6 +181,7 @@ const GameLayoutHotkeyHint: React.FC<GameLayoutHotkeyHintProps> = ({
       size="sm"
       onClick={onClick}
       aria-pressed={ariaPressed}
+      aria-label={titleText}
       title={titleText}
       leftIcon={
         icon ? (
