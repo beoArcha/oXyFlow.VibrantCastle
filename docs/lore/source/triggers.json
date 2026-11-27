@@ -1,0 +1,40 @@
+{
+  "triggers": [
+    {
+      "id": "trigger_awakening",
+      "locationId": "courtyard",
+      "type": "on_spawn",
+      "eventKey": "narrativeAwakening",
+      "soundCue": "chime_intro"
+    },
+    {
+      "id": "trigger_thorn_descent",
+      "locationId": "thorn_chasm",
+      "type": "on_hazard_near",
+      "eventKey": "narrativeThornsHazard",
+      "soundCue": "wind_gust"
+    },
+    {
+      "id": "trigger_clock_lever",
+      "locationId": "clocktower",
+      "type": "on_structure_interact",
+      "structureId": "chrono_lever",
+      "eventKey": "narrativeClockCogs",
+      "soundCue": "gear_grind"
+    },
+    {
+      "id": "trigger_sanctuary_arrival",
+      "locationId": "aether_sanctuary",
+      "type": "on_spawn",
+      "eventKey": "narrativeSanctuaryArrival",
+      "soundCue": "crystal_resonance"
+    },
+    {
+      "id": "trigger_bastion_culmination",
+      "locationId": "grand_bastion",
+      "type": "on_boss_defeat",
+      "eventKey": "narrativeBastionVictory",
+      "soundCue": "fanfare_triumph"
+    }
+  ]
+}

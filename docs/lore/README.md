@@ -1,5 +1,7 @@
 # Vibrant Castle — Lore Canon (Round 2)
 
+Archived narrative source catalogs: [source/](./source/).
+
 This directory is the canonical narrative reference for *Vibrant Castle* (`VC-082`, Round 1 & Round 2). It replaces the earlier "timeless 19th-century Citadel of Aether" lore while preserving existing world IDs, character kits, souls, and enemy data in `src/data/` and `docs/design/`.
 
 **Authority note:** Owner decisions (Round 1 & Round 2) bind the world frame below. Items marked **[OPEN]** must not be finalized without owner confirmation.
