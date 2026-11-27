@@ -8,6 +8,7 @@ Updated: 2026-11-27. The [vision](./VISION.md) says what we are building. The [t
 - Phase 4 is current, with version `0.3.x` (`package.json` is `0.3.0`).
 - Closing a phase starts the next phase and the next minor version. Closing phase 4 starts phase 5 and `0.4.0`.
 - Releases and version bumps happen only at a phase gate. A hotfix release inside a phase needs the owner's decision.
+- **Patch number.** Every build on `main` gets a patch number. `package.json` holds only `major.minor` (`x.y.0`), and the minor is bumped at a gate. The patch is the number of first-parent commits on `main` since the commit that set the current minor, so it restarts at 0 after every minor bump. `bun scripts/version.ts` prints the version. `build:pages` writes it into the game (`__APP_VERSION__`), `dist/version.json` and the wiki footer, and `release-promote` uses it for the tag and the zip (`v0.3.<patch>`). Nothing is committed back to `main`.
 - Every card lives in its phase file (`phase-N-0.M.x.md`) and has a `Phase` field. A card that is not done when its phase closes is moved to the next phase file on purpose, at the gate.
 
 ### Quality gate (end of every phase, in this order)

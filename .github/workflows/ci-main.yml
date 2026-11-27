@@ -90,10 +90,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Checkout
+      - name: Checkout full history (build version needs git history)
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Setup Bun & dependencies
         uses: ./.github/actions/setup-bun-cached
+      - name: Compute build version
+        id: version
+        run: |
+          bun scripts/version.ts --github-output
+          echo "### Build version: \`$(bun scripts/version.ts)\`" >> "$GITHUB_STEP_SUMMARY"
       - name: Download unit coverage
         uses: actions/download-artifact@v4
         with:
@@ -109,6 +116,8 @@ jobs:
       - name: Evaluate coverage gate
         run: bun run coverage:gate
       - name: Build GitHub Pages distribution package
+        env:
+          VC_APP_VERSION: ${{ steps.version.outputs.version }}
         run: bun run build:pages
       - name: Run E2E distribution smoke tests
         run: bun run test:e2e
