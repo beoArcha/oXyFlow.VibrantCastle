@@ -1,0 +1,146 @@
+{
+  "worldId": "grand_bastion",
+  "placeholder": {
+    "top": "#1e1b4b",
+    "bottom": "#b45309",
+    "silhouette": "#6d250e"
+  },
+  "layers": {
+    "far": {
+      "band": "far",
+      "depth": 0.08,
+      "speed": [
+        0.04,
+        0.02
+      ],
+      "opaque": true,
+      "fit": "cover",
+      "overscan": [
+        1.06,
+        1.03
+      ]
+    },
+    "var_a": {
+      "band": "mid_far",
+      "depth": 0.24,
+      "speed": [
+        0.18,
+        0.07
+      ],
+      "tiling": "mirror"
+    },
+    "var_b": {
+      "band": "mid",
+      "depth": 0.45,
+      "speed": [
+        0.36,
+        0.12
+      ],
+      "tiling": "mirror"
+    },
+    "var_c": {
+      "band": "mid_close",
+      "depth": 0.65,
+      "speed": [
+        0.56,
+        0.18
+      ],
+      "tiling": "mirror"
+    },
+    "var_d": {
+      "band": "close",
+      "depth": 0.86,
+      "speed": [
+        0.78,
+        0.24
+      ],
+      "tiling": "mirror"
+    }
+  },
+  "effects": {
+    "sigil": {
+      "kind": "image",
+      "band": "mid_close",
+      "source": "_shared:fx_sigil",
+      "depth": 0.72,
+      "speed": [
+        0.44,
+        0.14
+      ],
+      "opacity": 0.75,
+      "blend": "screen"
+    }
+  },
+  "generated": {
+    "far": {
+      "tiers": {
+        "high": [
+          2050,
+          767,
+          1241
+        ]
+      },
+      "avg": "#6d250e"
+    },
+    "var_a": {
+      "tiers": {
+        "high": [
+          2172,
+          724,
+          520
+        ]
+      },
+      "seam": [
+        119.8,
+        1.8,
+        "warn"
+      ],
+      "avg": "#6c382d"
+    },
+    "var_b": {
+      "tiers": {
+        "high": [
+          2172,
+          724,
+          1114
+        ]
+      },
+      "seam": [
+        47,
+        3.8,
+        "warn"
+      ],
+      "avg": "#4d281d"
+    },
+    "var_c": {
+      "tiers": {
+        "high": [
+          2172,
+          724,
+          1093
+        ]
+      },
+      "seam": [
+        27.2,
+        8.5,
+        "warn"
+      ],
+      "avg": "#462114"
+    },
+    "var_d": {
+      "tiers": {
+        "high": [
+          2172,
+          724,
+          1136
+        ]
+      },
+      "seam": [
+        43.7,
+        4.1,
+        "warn"
+      ],
+      "avg": "#933716"
+    }
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "worldId": "alchemist_library",
+  "placeholder": {
+    "top": "#06201b",
+    "bottom": "#115e59",
+    "silhouette": "#2a352a"
+  },
+  "layers": {
+    "far": {
+      "band": "far",
+      "depth": 0.08,
+      "speed": [
+        0.04,
+        0.02
+      ],
+      "opaque": true,
+      "fit": "cover",
+      "overscan": [
+        1.06,
+        1.03
+      ]
+    },
+    "var_a": {
+      "band": "mid_far",
+      "source": "aether_sanctuary:var_a",
+      "depth": 0.24,
+      "speed": [
+        0.18,
+        0.07
+      ],
+      "opacity": 0.65
+    },
+    "var_b": {
+      "band": "mid",
+      "depth": 0.45,
+      "speed": [
+        0.36,
+        0.13
+      ],
+      "tiling": "mirror",
+      "opacity": 0.54,
+      "blend": "screen"
+    },
+    "var_c": {
+      "band": "mid_close",
+      "source": "clocktower:var_c",
+      "depth": 0.65,
+      "speed": [
+        0.56,
+        0.19
+      ],
+      "opacity": 0.8
+    },
+    "var_d": {
+      "band": "close",
+      "source": "aether_sanctuary:var_d",
+      "depth": 0.86,
+      "speed": [
+        0.78,
+        0.24
+      ],
+      "opacity": 0.88
+    }
+  },
+  "effects": {
+    "sigil": {
+      "kind": "image",
+      "band": "mid_close",
+      "source": "_shared:fx_sigil",
+      "depth": 0.72,
+      "speed": [
+        0.44,
+        0.14
+      ],
+      "opacity": 0.72,
+      "blend": "screen"
+    }
+  },
+  "generated": {
+    "far": {
+      "tiers": {
+        "high": [
+          1376,
+          768,
+          973
+        ]
+      },
+      "avg": "#2a352a"
+    },
+    "var_b": {
+      "tiers": {
+        "high": [
+          1376,
+          768,
+          890
+        ]
+      },
+      "avg": "#222a1e"
+    }
+  }
+}

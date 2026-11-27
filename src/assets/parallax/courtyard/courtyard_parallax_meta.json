@@ -1,0 +1,146 @@
+{
+  "worldId": "courtyard",
+  "placeholder": {
+    "top": "#2c1e33",
+    "bottom": "#d97706",
+    "silhouette": "#93595a"
+  },
+  "layers": {
+    "far": {
+      "band": "far",
+      "depth": 0.08,
+      "speed": [
+        0.04,
+        0.02
+      ],
+      "opaque": true,
+      "fit": "cover",
+      "overscan": [
+        1.06,
+        1.03
+      ]
+    },
+    "var_a": {
+      "band": "mid_far",
+      "depth": 0.24,
+      "speed": [
+        0.18,
+        0.07
+      ],
+      "tiling": "mirror"
+    },
+    "var_b": {
+      "band": "mid",
+      "depth": 0.45,
+      "speed": [
+        0.36,
+        0.12
+      ],
+      "tiling": "repeat"
+    },
+    "var_c": {
+      "band": "mid_close",
+      "depth": 0.65,
+      "speed": [
+        0.56,
+        0.18
+      ],
+      "tiling": "mirror"
+    },
+    "var_d": {
+      "band": "close",
+      "depth": 0.86,
+      "speed": [
+        0.78,
+        0.24
+      ],
+      "tiling": "mirror"
+    }
+  },
+  "effects": {
+    "sigil": {
+      "kind": "image",
+      "band": "mid_close",
+      "source": "_shared:fx_sigil",
+      "depth": 0.72,
+      "speed": [
+        0.44,
+        0.14
+      ],
+      "opacity": 0.68,
+      "blend": "screen"
+    }
+  },
+  "generated": {
+    "far": {
+      "tiers": {
+        "high": [
+          2048,
+          768,
+          1997
+        ]
+      },
+      "avg": "#93595a"
+    },
+    "var_a": {
+      "tiers": {
+        "high": [
+          2048,
+          768,
+          2017
+        ]
+      },
+      "seam": [
+        24.9,
+        4,
+        "warn"
+      ],
+      "avg": "#7e5c63"
+    },
+    "var_b": {
+      "tiers": {
+        "high": [
+          2048,
+          768,
+          2300
+        ]
+      },
+      "seam": [
+        0,
+        9.5,
+        "pass"
+      ],
+      "avg": "#67454d"
+    },
+    "var_c": {
+      "tiers": {
+        "high": [
+          2048,
+          768,
+          2371
+        ]
+      },
+      "seam": [
+        44.8,
+        9.2,
+        "warn"
+      ],
+      "avg": "#6a4637"
+    },
+    "var_d": {
+      "tiers": {
+        "high": [
+          2048,
+          768,
+          1968
+        ]
+      },
+      "seam": [
+        50.9,
+        0,
+        "warn"
+      ],
+      "avg": "#331a16"
+    }
+  }
+}

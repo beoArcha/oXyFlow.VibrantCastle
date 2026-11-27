@@ -78,7 +78,7 @@ function findMetaFiles(dir: string): string[] {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       results.push(...findMetaFiles(full));
-    } else if (entry.isFile() && entry.name.endsWith("_meta.json")) {
+    } else if (entry.isFile() && entry.name.endsWith("_meta.json") && !entry.name.endsWith("_parallax_meta.json")) {
       results.push(full);
     }
   }
