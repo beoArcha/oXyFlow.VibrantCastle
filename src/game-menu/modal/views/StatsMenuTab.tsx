@@ -4,6 +4,7 @@ import { Button, ConfirmDialog, Heading, Paragraph } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { useGameSession } from "@context/GameSessionContext";
 import { useSettings } from "@context/SettingsContext";
+import { ReservedFeatureCard } from "@game-menu/common";
 import {
   createStatsViewModel,
   getCurrentStats,
@@ -84,6 +85,10 @@ export const StatsMenuTab: React.FC = () => {
         potions={statsVm.potionsBreakdown}
       />
       <StatsWeaponsCard weapons={statsVm.weaponsEfficacy} />
+      <ReservedFeatureCard
+        titleKey="reservedAttributesTitle"
+        descriptionKey="reservedAttributesDesc"
+      />
       <div className="flex justify-end">
         <Button
           size="sm"
