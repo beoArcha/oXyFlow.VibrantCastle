@@ -40,7 +40,6 @@ const ROUNDING_TOLERANCES: Record<string, DimensionTolerance> = {
   "characters/valen/valen_portraits_meta.json:atlas": { dx: 1, dy: 4, reason: "1161x1354 / 5x5 integer cell rounding (232x270)" },
   "enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_meta.json:atlas": { dx: 2, dy: 0, reason: "1374x1145 / 7x5 integer cell rounding (196x229)" },
   "enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_meta.json:high": { dx: 2, dy: 0, reason: "1374x1145 / 7x5 integer cell rounding (196x229)" },
-  "structures/aether_gate/aether_gate_meta.json:atlas": { dx: 2, dy: 2, reason: "1586x992 / 8x5 integer cell rounding (198x198)" },
 };
 
 const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
