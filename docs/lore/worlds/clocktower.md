@@ -6,7 +6,7 @@
 
 ---
 
-## What the Real Place Was in 2034
+## What the Real Place Was Before 2028
 
 Rising beside the estate was an **automated high-bay robotics and precision assembly factory** paired with an **optical sensor calibration tower**—complete with vertical freight elevators, overhead gantry rails, robotic welding arms, flying inspection drones, and laser/ballistic calibration targets set at 45° and 90° elevation angles.
 

@@ -1,86 +1,83 @@
 import { describe, it, expect } from "bun:test";
 import fs from "fs";
 import path from "path";
-import {
-  PARALLAX_LAYER_CATALOG,
-  resolveParallaxLayerAsset,
-} from "@game/locations/parallaxLayerRegistry";
+import { defaultParallaxRegistry } from "@game/parallax/registry";
+import type { LocationJsonSchema } from "@game/locations/schema/locationSchema";
 
 /**
  * ARCHITECTURAL TEST: Parallax layer image files exist on disk.
  *
- * The registry (src/game/locations/parallaxLayerRegistry.ts) maps layer keys to
- * static `@assets/...` imports. Resolving a key to an entry does not prove the
- * image behind it is present, so this test checks the files themselves:
- * 1. Every catalog entry's `url` identifier maps to a static import whose file exists under src/assets.
- * 2. Every layerKey / imageUrl used by src/data/locations/*.json resolves via the registry
- *    to an entry whose backing file exists.
+ * The registry (src/game/parallax/registry.ts) is built from per-world
+ * *_parallax_meta.json files and asset globs. This test verifies:
+ * 1. Every registered entry resolves to an image file that exists under src/assets/parallax.
+ * 2. Legacy keys and aliases are not registered.
+ * 3. Every layer and zone effect referenced by src/data/locations/*.json resolves to an existing file.
  */
 describe("Parallax Layer Image Files", () => {
   const rootDir = path.resolve(__dirname, "../../..");
-  const assetsDir = path.join(rootDir, "src/assets");
   const dataDir = path.join(rootDir, "src/data/locations");
-  const registryPath = path.join(rootDir, "src/game/locations/parallaxLayerRegistry.ts");
-  const registrySource = fs.readFileSync(registryPath, "utf-8");
 
-  // identifier -> asset path relative to src/assets, from static `import x from "@assets/..."`
-  const importMap = new Map<string, string>();
-  for (const m of registrySource.matchAll(/import\s+(\w+)\s+from\s+"@assets\/([^"]+)"/g)) {
-    importMap.set(m[1], m[2]);
-  }
+  it("resolves every entry in defaultParallaxRegistry to an existing image file on disk", () => {
+    const entries = defaultParallaxRegistry.entries();
+    expect(entries.length).toBeGreaterThanOrEqual(33);
 
-  // catalog key -> url identifier, parsed from the source so each entry's file can be checked
-  const keyToIdentifier = new Map<string, string>();
-  for (const m of registrySource.matchAll(/key:\s*"([^"]+)"[\s\S]*?url:\s*(\w+)\s*,/g)) {
-    keyToIdentifier.set(m[1], m[2]);
-  }
-
-  const assetExists = (rel: string) => fs.existsSync(path.join(assetsDir, rel));
-
-  it("parses the registry source consistently with the runtime catalog", () => {
-    expect(keyToIdentifier.size).toBe(PARALLAX_LAYER_CATALOG.length);
-    for (const entry of PARALLAX_LAYER_CATALOG) {
-      expect(keyToIdentifier.has(entry.key)).toBe(true);
-    }
-  });
-
-  it("every registry entry points to an import whose file exists under src/assets", () => {
-    const broken: { key: string; identifier: string; target: string }[] = [];
-    for (const [key, identifier] of keyToIdentifier) {
-      const rel = importMap.get(identifier);
-      if (!rel || !assetExists(rel)) {
-        broken.push({ key, identifier, target: rel ?? "<no static @assets import>" });
+    const missing: { key: string; url: string }[] = [];
+    for (const entry of entries) {
+      if (!entry.url || !fs.existsSync(entry.url)) {
+        missing.push({ key: entry.key, url: entry.url });
       }
     }
-    expect(broken).toEqual([]);
+    expect(missing).toEqual([]);
   });
 
-  it("every layerKey/imageUrl referenced by location blueprints resolves to an existing file", () => {
+  it("exposes no legacy aliases or world/shared/boss prefixed keys", () => {
+    const legacyKeys = [
+      "bg_far",
+      "courtyard_far_high",
+      "world:courtyard:far",
+      "shared:mid:courtyard_arches_a",
+      "boss:stage:arcane_sigil_arena",
+      "boss:world:eclipse_throne_colossus",
+    ];
+    for (const legacyKey of legacyKeys) {
+      expect(defaultParallaxRegistry.resolve(legacyKey)).toBeUndefined();
+    }
+  });
+
+  it("resolves every location blueprint parallax layer and zone image effect to an existing file", () => {
     const blueprintFiles = fs
       .readdirSync(dataDir)
       .filter((f) => f.endsWith(".json") && !f.endsWith(".schema.json"));
 
-    const problems: { file: string; layerId: string; ref: string; reason: string }[] = [];
+    const problems: { file: string; key: string; reason: string }[] = [];
     let checked = 0;
 
     for (const filename of blueprintFiles) {
-      const json = JSON.parse(fs.readFileSync(path.join(dataDir, filename), "utf-8"));
-      const layers: any[] = json.parallaxBackground?.layers ?? [];
-      for (const layer of layers) {
-        for (const ref of [layer.layerKey, layer.imageUrl]) {
-          if (!ref) continue;
+      const json = JSON.parse(fs.readFileSync(path.join(dataDir, filename), "utf-8")) as LocationJsonSchema;
+      const worldId = json.worldId || json.id;
+      const meta = defaultParallaxRegistry.getWorldMeta(worldId);
+
+      const layerKeys = [`${worldId}:far`, ...(json.parallax?.layers ?? []).map((slot) => `${worldId}:${slot}`)];
+      for (const key of layerKeys) {
+        checked++;
+        const entry = defaultParallaxRegistry.resolve(key);
+        if (!entry) {
+          problems.push({ file: filename, key, reason: "not in registry" });
+        } else if (!fs.existsSync(entry.url)) {
+          problems.push({ file: filename, key, reason: `missing file ${entry.url}` });
+        }
+      }
+
+      for (const zone of json.zones ?? []) {
+        for (const effectId of zone.effects ?? []) {
+          const source = meta?.effects?.[effectId]?.source;
+          if (!source) continue;
           checked++;
-          const entry = resolveParallaxLayerAsset(ref);
+          const entry = defaultParallaxRegistry.resolve(source);
           if (!entry) {
-            problems.push({ file: filename, layerId: layer.id, ref, reason: "not in registry" });
-            continue;
-          }
-          const identifier = keyToIdentifier.get(entry.key);
-          const rel = identifier ? importMap.get(identifier) : undefined;
-          if (!rel) {
-            problems.push({ file: filename, layerId: layer.id, ref, reason: "no static @assets import" });
-          } else if (!assetExists(rel)) {
-            problems.push({ file: filename, layerId: layer.id, ref, reason: `missing file ${rel}` });
+            problems.push({ file: filename, key: source, reason: "effect not in registry" });
+          } else if (!fs.existsSync(entry.url)) {
+            problems.push({ file: filename, key: source, reason: `missing file ${entry.url}` });
           }
         }
       }

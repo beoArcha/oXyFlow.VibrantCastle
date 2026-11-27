@@ -6,9 +6,9 @@
 
 ---
 
-## What the Real Place Was in 2034
+## What the Real Place Was Before 2028
 
-**Ground Zero.** Here stood the **high-energy physics experiment spire and containment ring**—the exact apparatus whose test overlapped in 2034 with a distant occult ritual. Because the rift forged a non-local link between two places far apart, the laboratory's shattered accelerator tower and the ritualist's altar physically collided at the summit of the Zone.
+**Ground Zero.** Here stood the **high-energy physics experiment spire and containment ring**—the exact apparatus whose test overlapped in **2028** with a distant occult ritual (and whose access bridge Valen had designed). Because the rift forged a non-local link between two places far apart, the laboratory's shattered accelerator tower and the ritualist's altar physically collided at the summit of the Zone.
 
 ## What the Demon Made of It
 
@@ -24,7 +24,7 @@ At the epicenter, the demon's cosmology fused directly with ruptured plasma phys
 * **Gate & Dual Boss Zones:** Ascending `spire_1..7` to `crimson_pinnacle` reaches `lever_eclipse_seal`, opening `eclipse_portcullis` guarding `throne_arena`.
   * `eclipse_vanguard_sanctum` (`scope: stage`, `bossEnemyId: eclipse_vanguard_knight`) frames the mid-stage vanguard preview (`maps-contract.md` §9.2).
   * `eclipse_monarch_throne` (`scope: world`, `bossEnemyId: eclipse_monarch_boss`) marks the Throne climax.
-* **Final Boss (Leaning, Not Final — N9):** The leading candidate for the true `W8-8` climax is **the Possessed** (*Opętany*)—the leader of the 2034 ritual who never believed in magic, staged the ceremony for his followers unprepared, and accidentally triggered the rift at the exact moment of the experiment. Today on Map 1, `aether_archon` and `bastion_sentinel_boss` stand in as preview guardians.
+* **Confirmed Final Boss (`W8-8`):** The confirmed boss for the true `W8-8` climax is **the Possessed** (*Opętany*)—the leader of the **2028** ritual who never believed in magic, staged the ceremony for his followers unprepared, and accidentally triggered the rift at the exact moment of the experiment. Today on Map 1, `aether_archon` and `bastion_sentinel_boss` stand in as preview guardians.
 
 ## Secret
 
@@ -38,5 +38,5 @@ At the epicenter, the demon's cosmology fused directly with ruptured plasma phys
 
 ## Narrator & Backlog Notes
 
-* **Zero Humour at the Climax:** When facing the Crown and the truth of the 2034 rift, the Narrator drops all irony—keeping the delivery quiet, poised, and human.
+* **Zero Humour at the Climax:** When facing the Crown and the truth of the 2028 rift, the Narrator drops all irony—keeping the delivery quiet, poised, and human.
 * **Contract Fixes (`VC-028`):** Replace legacy `openingNarrationKey: "trainingIntro"` (**N8**), widen to `5600+ px`, and add `checkpoint_mid` plus three distinct Crown narration beats.

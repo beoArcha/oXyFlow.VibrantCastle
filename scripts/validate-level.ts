@@ -90,6 +90,9 @@ if (import.meta.main) {
     for (const err of report.freshErrors) {
       console.error(`  ERROR [${err.code}] ${err.subject}: ${err.message}`);
     }
+    for (const warn of report.warnings) {
+      console.warn(`  WARN [${warn.code}] ${warn.subject}: ${warn.message}`);
+    }
     for (const stale of report.staleKnownDefects) {
       console.error(`  STALE KNOWN DEFECT: ${stale} (remove from knownLevelDefects.ts)`);
     }

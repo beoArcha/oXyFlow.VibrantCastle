@@ -39,93 +39,37 @@
     "fogColor": "rgba(251, 191, 36, 0.08)",
     "musicIntensity": 0.25
   },
-  "parallaxBackground": {
-    "boxWidth": 5400,
-    "boxHeight": 1160,
-    "layers": [
-      {
-        "id": "bg_far",
-        "name": "Far Sky & Citadel",
-        "tier": "far",
-        "layerKey": "world:courtyard:far",
-        "type": "image",
-        "depth": 0.08,
-        "scrollSpeedX": 0.04,
-        "scrollSpeedY": 0.02,
-        "opaque": true,
-        "imageUrl": "world:courtyard:far"
-      },
-      {
-        "id": "bg_mid_far",
-        "name": "Distant Ramparts",
-        "tier": "mid_far",
-        "layerKey": "shared:mid_far:courtyard_ramparts_a",
-        "type": "image",
-        "depth": 0.24,
-        "scrollSpeedX": 0.18,
-        "scrollSpeedY": 0.07,
-        "imageUrl": "shared:mid_far:courtyard_ramparts_a"
-      },
-      {
-        "id": "bg_mid",
-        "name": "Courtyard Arches",
-        "tier": "mid",
-        "layerKey": "shared:mid:courtyard_arches_a",
-        "type": "image",
-        "depth": 0.45,
-        "scrollSpeedX": 0.36,
-        "scrollSpeedY": 0.12,
-        "imageUrl": "shared:mid:courtyard_arches_a"
-      },
-      {
-        "id": "bg_mid_close",
-        "name": "Autumn Trees",
-        "tier": "mid_close",
-        "layerKey": "shared:mid_close:autumn_trees_a",
-        "type": "image",
-        "depth": 0.65,
-        "scrollSpeedX": 0.56,
-        "scrollSpeedY": 0.18,
-        "imageUrl": "shared:mid_close:autumn_trees_a"
-      },
-      {
-        "id": "bg_courtyard_boss_stage",
-        "name": "Trial Square Sigil",
-        "tier": "boss_stage",
-        "bossScope": "stage",
-        "layerKey": "boss:stage:arcane_sigil_arena",
-        "type": "image",
-        "depth": 0.72,
-        "scrollSpeedX": 0.44,
-        "scrollSpeedY": 0.14,
-        "opacity": 0.68,
-        "blendMode": "screen",
-        "imageUrl": "boss:stage:arcane_sigil_arena"
-      },
-      {
-        "id": "bg_close",
-        "name": "Foreground Battlements",
-        "tier": "close",
-        "layerKey": "shared:close:stone_battlements_a",
-        "type": "image",
-        "depth": 0.86,
-        "scrollSpeedX": 0.78,
-        "scrollSpeedY": 0.24,
-        "imageUrl": "shared:close:stone_battlements_a"
-      }
-    ]
+  "parallax": {
+    "layers": ["var_a", "var_b", "var_c", "var_d"],
+    "box": {
+      "width": 5400,
+      "height": 1160
+    }
   },
-  "bossZones": [
+  "zones": [
+    {
+      "id": "courtyard_sanctuary_rest",
+      "kind": "rest",
+      "x": 1240,
+      "y": 540,
+      "width": 460,
+      "height": 380,
+      "ambientColor": "rgba(56, 189, 248, 0.22)",
+      "featherPx": 260,
+      "defaultLabel": "Sanctuary Alcove"
+    },
     {
       "id": "courtyard_trial_square",
+      "kind": "boss",
       "scope": "stage",
       "x": 2660,
       "y": 180,
       "width": 580,
-      "height": 540,
-      "layerKey": "boss:stage:arcane_sigil_arena",
+      "height": 620,
       "bossEnemyId": "courtyard_captain_1",
       "ambientColor": "rgba(245, 158, 11, 0.22)",
+      "effects": ["sigil"],
+      "featherPx": 260,
       "defaultLabel": "Sentinel's Trial Square"
     }
   ],

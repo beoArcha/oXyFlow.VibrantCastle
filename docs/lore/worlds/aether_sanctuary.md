@@ -6,7 +6,7 @@
 
 ---
 
-## What the Real Place Was in 2034
+## What the Real Place Was Before 2028
 
 Above the research valley ran an **elevated concrete aqueduct, high-voltage power-relay viaduct, and atmospheric radar/telemetry array** supplying coolant and grid power toward the high-energy facility. When the rift's upper gravitational shear hit, the bridge piers snapped and hovered in mid-air.
 

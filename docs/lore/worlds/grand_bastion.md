@@ -6,7 +6,7 @@
 
 ---
 
-## What the Real Place Was in 2034
+## What the Real Place Was Before 2028
 
 Guarding the inner approach to the physics experiment stood a **fortified military-industrial security perimeter**: reinforced concrete bunkers, automated turret/mech testing ranges, blast walls, and a garrison command compound built over an older regional bastion wall.
 

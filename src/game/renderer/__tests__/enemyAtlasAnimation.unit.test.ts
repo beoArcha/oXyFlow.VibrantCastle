@@ -2,6 +2,9 @@ import { describe, it, expect } from "bun:test";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { EnemyRenderer } from "../enemyRenderer";
+import { AtlasSpriteRenderer } from "../atlasSpriteRenderer";
+import { assetLoader } from "@game/engine/assetLoader";
+import type { AtlasMeta } from "@game/engine/atlas/atlasTypes";
 import { hasAnimationTrack, resolveEffectiveFrameCount, IAtlasMetaLike } from "../atlasMetadataResolver";
 import { Enemy } from "@game/types";
 import { createMockContext2D as createMockContext } from "@test-utils";
@@ -163,5 +166,111 @@ describe("legacy animation names", () => {
     walk(join(process.cwd(), "src"));
 
     expect(hits).toEqual([]);
+  });
+});
+
+describe("EnemyRenderer consecutive frame playback and flicker prevention", () => {
+  const textureCacheOf = (loader: typeof assetLoader) =>
+    (loader as unknown as { textureCache: Map<string, HTMLImageElement> }).textureCache;
+
+  it("advances PNG-animated frames over ticks and draws every consecutive frame for clockwork_owl_gargoyle", () => {
+    const packedMeta = JSON.parse(
+      readFileSync("src/assets/enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_packed_meta.json", "utf-8")
+    ) as AtlasMeta;
+    const atlasId = "test_owl_packed_anim";
+    assetLoader.registerAtlas({
+      id: atlasId,
+      category: "enemy",
+      imageSrc: "mock://owl_packed.png",
+      meta: packedMeta,
+    });
+    textureCacheOf(assetLoader).set("mock://owl_packed.png", {
+      complete: true,
+      naturalWidth: 2114,
+      naturalHeight: 1270,
+      width: 2114,
+      height: 1270,
+    } as unknown as HTMLImageElement);
+
+    const spriteRenderer = new AtlasSpriteRenderer();
+    const renderer = new EnemyRenderer(spriteRenderer);
+    const draws: Array<{ sx: number; sy: number; sw: number; sh: number }> = [];
+    const fillRects: Array<{ x: number; y: number; w: number; h: number }> = [];
+    const ctx = {
+      ...createMockContext(),
+      drawImage: (_img: unknown, sx: number, sy: number, sw: number, sh: number) => {
+        draws.push({ sx, sy, sw, sh });
+      },
+      fillRect: (x: number, y: number, w: number, h: number) => {
+        fillRects.push({ x, y, w, h });
+      },
+    } as unknown as CanvasRenderingContext2D;
+
+    const owl = createMockEnemy({
+      atlasId,
+      isAerial: true,
+      animationState: "fly",
+      health: 50,
+      maxHealth: 75,
+    });
+
+    for (const tick of [0, 8, 16, 24]) {
+      owl.animationTicks = tick;
+      renderer.render(ctx, [owl], tick);
+    }
+
+    expect(draws.length).toBe(4);
+    expect(draws.map((d) => d.sx)).toEqual([0, 302, 604, 906]);
+    // Damaged health bar (2 fillRect calls per frame: backdrop + fill) must be drawn on every consecutive frame.
+    expect(fillRects.length).toBe(8);
+  });
+
+  it("draws the full cell on every consecutive frame for 1-column hi8bit enemies without box flicker", () => {
+    const atlasId = "test_owl_hi8bit_1col";
+    const normalized1ColMeta = {
+      atlas: { columns: 1, rows: 5, cellWidth: 196, cellHeight: 229 },
+      animations: {
+        fly: { row: 0, frames: 1, fps: 9, loop: true, startCol: 0, slotSpan: [1], cells: [1] },
+      },
+      states: { fly: { animation: "fly" } },
+    } as unknown as AtlasMeta;
+
+    assetLoader.registerAtlas({
+      id: atlasId,
+      category: "enemy",
+      imageSrc: "mock://owl_hi8bit.png",
+      meta: normalized1ColMeta,
+    });
+    textureCacheOf(assetLoader).set("mock://owl_hi8bit.png", {
+      complete: true,
+      naturalWidth: 192,
+      naturalHeight: 960,
+      width: 192,
+      height: 960,
+    } as unknown as HTMLImageElement);
+
+    const spriteRenderer = new AtlasSpriteRenderer();
+    const renderer = new EnemyRenderer(spriteRenderer);
+    const draws: Array<{ sx: number; sy: number; sw: number; sh: number }> = [];
+    const ctx = {
+      ...createMockContext(),
+      drawImage: (_img: unknown, sx: number, sy: number, sw: number, sh: number) => {
+        draws.push({ sx, sy, sw, sh });
+      },
+    } as unknown as CanvasRenderingContext2D;
+
+    const owl = createMockEnemy({ atlasId, isAerial: true, animationState: "fly" });
+    for (let tick = 0; tick < 6; tick++) {
+      owl.animationTicks = tick * 8;
+      renderer.render(ctx, [owl], tick * 8);
+    }
+
+    expect(draws.length).toBe(6);
+    for (const d of draws) {
+      expect(d.sx).toBe(0);
+      expect(d.sy).toBe(0);
+      expect(d.sw).toBe(192);
+      expect(d.sh).toBe(192);
+    }
   });
 });

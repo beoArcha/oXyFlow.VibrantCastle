@@ -6,9 +6,9 @@
 
 ---
 
-## What the Real Place Was in 2034
+## What the Real Place Was Before 2028
 
-Adjacent to the robotics tower stood a **2034 research laboratory and secure data-archive complex**: cleanroom chemical-synthesis bays, glass bioreactors, tiered server-and-microfiche stacks, and a central magnetic-telemetry rotunda used for pre-cataclysm experiments and emergency magical-science logging right after the rift opened.
+Adjacent to the robotics tower stood a **2028 research laboratory and secure data-archive complex**: cleanroom chemical-synthesis bays, glass bioreactors, tiered server-and-microfiche stacks, and a central magnetic-telemetry rotunda used for pre-cataclysm experiments and emergency magical-science logging right after the rift opened.
 
 ## What the Demon Made of It
 

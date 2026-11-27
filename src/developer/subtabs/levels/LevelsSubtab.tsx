@@ -28,11 +28,11 @@ import { useI18n } from "@context/I18nContext";
 import { useGameEngine } from "@context/GameEngineContext";
 import {
   WORLD_CAMPAIGN_REGISTRY,
-  PARALLAX_LAYER_CATALOG,
   getLocation,
   StageBlueprint,
   WorldId,
 } from "@game/locations";
+import { defaultParallaxRegistry } from "@game/parallax/registry";
 import { BackgroundLayerTier } from "@game/locations/schema/locationSchema";
 import {
   buildAssetReadinessAudit,
@@ -42,8 +42,9 @@ import {
   LevelPreviewCanvas,
   LevelOverlayOptions,
 } from "./LevelPreviewCanvas";
+import { MapBrowserPanel } from "./MapBrowserPanel";
 
-type LevelsViewMode = "matrix" | "audit" | "layers";
+type LevelsViewMode = "matrix" | "browser" | "audit" | "layers";
 type AuditFilter = "all" | "critical" | AuditCategory;
 
 const ALL_TIERS: readonly BackgroundLayerTier[] = [
@@ -157,10 +158,22 @@ export const LevelsSubtab: React.FC = () => {
     return auditReport.items.filter((item) => item.category === auditFilter);
   }, [auditFilter, auditReport.items]);
 
+  const parallaxCatalog = useMemo(
+    () =>
+      defaultParallaxRegistry
+        .entries()
+        .filter((l) => !l.borrowedFrom && !l.zoneKind)
+        .map((l) => ({
+          ...l,
+          namespace: l.isFx ? ("boss" as const) : l.slot === "far" ? ("world" as const) : ("shared" as const),
+        })),
+    []
+  );
+
   const filteredLayers = useMemo(() => {
-    if (layerFilter === "all") return PARALLAX_LAYER_CATALOG;
-    return PARALLAX_LAYER_CATALOG.filter((l) => l.namespace === layerFilter);
-  }, [layerFilter]);
+    if (layerFilter === "all") return parallaxCatalog;
+    return parallaxCatalog.filter((l) => l.namespace === layerFilter);
+  }, [layerFilter, parallaxCatalog]);
 
   return (
     <div id="subtab-content-levels" className="flex flex-col gap-4">
@@ -238,6 +251,15 @@ export const LevelsSubtab: React.FC = () => {
             onClick={() => setViewMode("matrix")}
           >
             {isPl ? "Mapa 8×8 i Podgląd" : "8×8 Map & Preview"}
+          </Button>
+          <Button
+            size="sm"
+            variant={viewMode === "browser" ? "primary" : "secondary"}
+            icon={<Eye size={14} />}
+            className="whitespace-nowrap shrink-0 px-3"
+            onClick={() => setViewMode("browser")}
+          >
+            {t("levelsMapBrowserView")}
           </Button>
           <Button
             size="sm"
@@ -590,6 +612,14 @@ export const LevelsSubtab: React.FC = () => {
         </div>
       )}
 
+      {/* VIEW 1B: Full-Map Browser & Text Placement Tool */}
+      {viewMode === "browser" && (
+        <MapBrowserPanel
+          selectedLocationId={activeLocation.id}
+          onSelectLocationId={(locationId) => handleSelectStage(locationId as WorldId, 1)}
+        />
+      )}
+
       {/* VIEW 2: Automated Missing Assets & Readiness Audit */}
       {viewMode === "audit" && (
         <Card variant="subtle">
@@ -742,23 +772,23 @@ export const LevelsSubtab: React.FC = () => {
             <div className="flex flex-wrap gap-2">
               {(
                 [
-                  ["all", t("levelsLayerFilterAll", { count: PARALLAX_LAYER_CATALOG.length })],
+                  ["all", t("levelsLayerFilterAll", { count: parallaxCatalog.length })],
                   [
                     "world",
                     t("levelsLayerFilterWorld", {
-                      count: PARALLAX_LAYER_CATALOG.filter((l) => l.namespace === "world").length,
+                      count: parallaxCatalog.filter((l) => l.namespace === "world").length,
                     }),
                   ],
                   [
                     "shared",
                     t("levelsLayerFilterShared", {
-                      count: PARALLAX_LAYER_CATALOG.filter((l) => l.namespace === "shared").length,
+                      count: parallaxCatalog.filter((l) => l.namespace === "shared").length,
                     }),
                   ],
                   [
                     "boss",
                     t("levelsLayerFilterBoss", {
-                      count: PARALLAX_LAYER_CATALOG.filter((l) => l.namespace === "boss").length,
+                      count: parallaxCatalog.filter((l) => l.namespace === "boss").length,
                     }),
                   ],
                 ] as const

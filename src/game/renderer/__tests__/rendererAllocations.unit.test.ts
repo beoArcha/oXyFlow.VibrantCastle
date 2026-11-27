@@ -8,6 +8,7 @@ import { HitboxRenderer } from "../hitboxRenderer";
 import { ViewCuller } from "../viewCulling";
 import { Player, Enemy, Entity, Projectile, Particle, PlayerId, CollisionType } from "@game/types";
 import { getLocation } from "@game/locations";
+import { ParallaxLoadQueue } from "@game/parallax/loading";
 import { createMockContext2D as createMockContext } from "@test-utils";
 
 describe("Renderer Optimization & Zero GC Pressure", () => {
@@ -192,7 +193,9 @@ describe("Renderer Optimization & Zero GC Pressure", () => {
   describe("Gradient Caching & Zero Runtime Gradient Allocations", () => {
     it("guarantees zero gradient allocations in ParallaxSystem after frame 1", () => {
       const ctx = createMockContext();
-      const parallax = new ParallaxSystem();
+      // Isolated, empty load queue: the shared default queue may already hold
+      // decoded courtyard layers from other suites, which would skip the gradient backdrop.
+      const parallax = new ParallaxSystem({ loadQueue: new ParallaxLoadQueue() });
       const loc = getLocation("courtyard");
 
       // Frame 1 initializes gradient cache

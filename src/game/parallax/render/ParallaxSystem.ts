@@ -1,4 +1,4 @@
-import type { LocationDefinition } from "@game/locations/types";
+import type { LocationDefinition, LocationTheme } from "@game/locations/types";
 import type {
   BackgroundLayerTier,
   ParallaxLayerSchema,
@@ -13,6 +13,20 @@ import {
   resolveBackgroundTier,
   renderTiledDynamicLayer,
 } from "@game/renderer/background/parallaxTiling";
+import {
+  defaultParallaxLoadQueue,
+  getWorldPlaceholderColors,
+  PARALLAX_LOAD_PRIORITY,
+  type ParallaxDrawableTexture,
+  type ParallaxQueuePriority,
+} from "../loading";
+import type { ParallaxZoneKind } from "../meta";
+import {
+  buildZoneVariantKey,
+  createZoneResolutionBuffer,
+  resolveClosestParallaxLayer,
+  resolveZoneInto,
+} from "../zones";
 import { ParallaxBackdropRenderer } from "./ParallaxBackdropRenderer";
 import { computeBossScopeIntensity } from "./bossZoneIntensity";
 import { defaultPlaceholderRenderer } from "./PlaceholderRenderer";
@@ -25,12 +39,59 @@ import type {
   ParallaxRenderOptions,
 } from "./types";
 
+export const DEFAULT_ZONE_CROSSFADE_DURATION_MS = 400;
+export const DEFAULT_ZONE_PRELOAD_MARGIN_PX = 520;
+
+const ZONE_KINDS: readonly ParallaxZoneKind[] = ["boss", "rest", "secret", "story"];
+
+interface MutableZoneVariantSlot {
+  cacheKey: string;
+  url: string | null;
+  tint: string | null;
+  hasVariantEntry: boolean;
+  readonly layer: ParallaxLayerSchema;
+}
+
+function createEmptyVariantSlot(): MutableZoneVariantSlot {
+  return {
+    cacheKey: "",
+    url: null,
+    tint: null,
+    hasVariantEntry: false,
+    layer: {
+      id: "",
+      name: "",
+      type: "image",
+      depth: 0,
+      scrollSpeedX: 0,
+      scrollSpeedY: 0,
+    },
+  };
+}
+
+export interface IParallaxFadeQueue {
+  getTexture(keyOrUrl: string): ParallaxDrawableTexture | null;
+  isManaged(keyOrUrl: string): boolean;
+  getFadeAlpha(keyOrUrl: string, nowMs?: number): number;
+  enqueue?(descriptor: {
+    readonly cacheKey: string;
+    readonly url: string;
+    readonly priority: ParallaxQueuePriority;
+    readonly subOrder?: number;
+    readonly fadeInOnReady?: boolean;
+  }): Promise<unknown>;
+}
+
 export interface ParallaxSystemDeps {
   registry?: IParallaxRegistry;
   loader?: IParallaxLoader;
   flags?: IParallaxFlags;
   atmosphericRenderer?: ISectorAtmosphericRenderer;
   placeholderRenderer?: IPlaceholderRenderer;
+  loadQueue?: IParallaxFadeQueue;
+  now?: () => number;
+  zoneCrossfadeDurationMs?: number;
+  zonePreloadMarginPx?: number;
 }
 
 const KNOWN_MULTI_LAYER_WORLDS = new Set<string>([
@@ -61,8 +122,20 @@ const DEFAULT_FLAGS: IParallaxFlags = {
 
 const EMPTY_LAYERS: readonly ParallaxLayerSchema[] = [];
 
+function defaultNow(): number {
+  return typeof performance !== "undefined" ? performance.now() : Date.now();
+}
+
 function resolveWorldId(location: LocationDefinition): string {
   return location.worldId || location.id;
+}
+
+function isDrawableReady(img: ParallaxDrawableTexture | null): boolean {
+  if (!img) return false;
+  if ("naturalWidth" in img) {
+    return img.complete && img.naturalWidth > 0 && img.naturalHeight > 0;
+  }
+  return img.width > 0 && img.height > 0;
 }
 
 /**
@@ -76,6 +149,43 @@ export class ParallaxSystem implements IParallaxSystem {
   private readonly atmosphericRenderer: ISectorAtmosphericRenderer;
   private readonly placeholderRenderer: IPlaceholderRenderer;
   private readonly backdropRenderer: ParallaxBackdropRenderer;
+  private readonly loadQueue: IParallaxFadeQueue;
+  private readonly useExplicitLoadQueue: boolean;
+  private readonly now: () => number;
+  private readonly zoneCrossfadeDurationMs: number;
+  private readonly zonePreloadMarginPx: number;
+
+  private readonly placeholderTheme: LocationTheme = {
+    bgGradientTop: "",
+    bgGradientBottom: "",
+    ambientParticle: "dust",
+    fogColor: "",
+    musicIntensity: 0,
+  };
+  private placeholderSourceLocation: LocationDefinition | null = null;
+  private placeholderLocationView: LocationDefinition | null = null;
+
+  private readonly zoneResolution = createZoneResolutionBuffer();
+  private readonly variantSlots: Record<ParallaxZoneKind, MutableZoneVariantSlot> = {
+    boss: createEmptyVariantSlot(),
+    rest: createEmptyVariantSlot(),
+    secret: createEmptyVariantSlot(),
+    story: createEmptyVariantSlot(),
+  };
+  private readonly pendingVariantUrls = new Set<string>();
+  private zoneStateLocation: LocationDefinition | null = null;
+  private zoneStateLayers: readonly ParallaxLayerSchema[] | null = null;
+  private cachedClosestLayer: ParallaxLayerSchema | null = null;
+  private activeZoneKind: ParallaxZoneKind | null = null;
+  private activeZoneAlpha = 0;
+  private activeAmbientColor: string | null = null;
+  private leavingZoneKind: ParallaxZoneKind | null = null;
+  private leavingZoneAlpha = 0;
+  private leavingAmbientColor: string | null = null;
+  private lastZoneNowMs = Number.NaN;
+  private lastTargetKind: ParallaxZoneKind | null = null;
+  private lastTargetWeight = 0;
+
   private readonly tierBuckets: Record<BackgroundLayerTier, ParallaxLayerSchema[]> = {
     far: [],
     mid_far: [],
@@ -92,16 +202,42 @@ export class ParallaxSystem implements IParallaxSystem {
     this.flags = deps.flags ?? DEFAULT_FLAGS;
     this.atmosphericRenderer = deps.atmosphericRenderer ?? defaultAtmosphericSectorRenderer;
     this.placeholderRenderer = deps.placeholderRenderer ?? defaultPlaceholderRenderer;
+    this.loadQueue = deps.loadQueue ?? defaultParallaxLoadQueue;
+    this.useExplicitLoadQueue = Boolean(deps.loadQueue);
+    this.now = deps.now ?? defaultNow;
+    this.zoneCrossfadeDurationMs =
+      deps.zoneCrossfadeDurationMs !== undefined
+        ? Math.max(0, deps.zoneCrossfadeDurationMs)
+        : DEFAULT_ZONE_CROSSFADE_DURATION_MS;
+    this.zonePreloadMarginPx =
+      deps.zonePreloadMarginPx !== undefined
+        ? Math.max(0, deps.zonePreloadMarginPx)
+        : DEFAULT_ZONE_PRELOAD_MARGIN_PX;
     this.backdropRenderer = new ParallaxBackdropRenderer(
       (layer) => this.getImage(layer),
       this.atmosphericRenderer
     );
   }
 
+  public getActiveZoneKind(): ParallaxZoneKind | null {
+    return this.activeZoneKind;
+  }
+
+  public getActiveZoneAlpha(): number {
+    return this.activeZoneAlpha;
+  }
+
   public clearCaches(): void {
     this.backdropRenderer.clearCaches();
     this.atmosphericRenderer.clearCaches();
     this.placeholderRenderer.clearCaches?.();
+    this.placeholderSourceLocation = null;
+    this.placeholderLocationView = null;
+    this.zoneStateLocation = null;
+    this.zoneStateLayers = null;
+    this.cachedClosestLayer = null;
+    this.pendingVariantUrls.clear();
+    this.resetZoneCrossfadeState();
   }
 
   public isSupported(locationOrId: string | LocationDefinition): boolean {
@@ -130,8 +266,7 @@ export class ParallaxSystem implements IParallaxSystem {
       if (resolveBackgroundTier(layer) !== "far") continue;
       if (layer.opaque !== true) continue;
       if (layer.blendMode && layer.blendMode !== "source-over") continue;
-      const img = this.peekImage(layer);
-      if (img && img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
+      if (isDrawableReady(this.peekImage(layer))) {
         return true;
       }
     }
@@ -140,6 +275,10 @@ export class ParallaxSystem implements IParallaxSystem {
 
   public preload(layers?: readonly ParallaxLayerSchema[]): void {
     if (!layers) return;
+    if (this.useExplicitLoadQueue && this.loadQueue.enqueue) {
+      this.enqueueLayersProgressive(layers);
+      return;
+    }
     for (let i = 0; i < layers.length; i++) {
       const url = this.resolveLayerUrl(layers[i]);
       if (!url) continue;
@@ -180,8 +319,10 @@ export class ParallaxSystem implements IParallaxSystem {
     }
 
     const pb = location.parallaxBackground;
+    const worldId = resolveWorldId(location);
+    const backdropLocation = this.resolveMetaPlaceholderLocation(location, worldId);
     if (!pb || !pb.layers || pb.layers.length === 0) {
-      this.backdropRenderer.renderFallbackBackdrop(ctx, location, viewportWidth, viewportHeight);
+      this.backdropRenderer.renderFallbackBackdrop(ctx, backdropLocation, viewportWidth, viewportHeight);
       return;
     }
 
@@ -192,12 +333,26 @@ export class ParallaxSystem implements IParallaxSystem {
     const maxCamY = Math.max(1, levelHeight - viewportHeight);
     const progressX = Math.max(0, Math.min(1, cameraX / maxCamX));
     const progressY = Math.max(0, Math.min(1, cameraY / maxCamY));
+    const nowMs = this.now();
+
+    this.syncLocationZoneState(location, pb.layers);
+    const camCenterX = cameraX + viewportWidth * 0.5;
+    const camCenterY = cameraY + viewportHeight * 0.5;
+    resolveZoneInto(location, camCenterX, camCenterY, this.zonePreloadMarginPx, this.zoneResolution);
+    if (options?.forceBossScope) {
+      this.zoneResolution.kind = "boss";
+      this.zoneResolution.weight = 1;
+      this.zoneResolution.nearKind = "boss";
+      this.zoneResolution.nearDistanceSq = 0;
+    }
+    this.enqueueNearbyZoneVariant();
+    this.updateZoneCrossfade(nowMs);
 
     this.bucketLayersByTier(pb.layers);
 
     this.backdropRenderer.renderFarStaticBackdrop(
       ctx,
-      location,
+      backdropLocation,
       this.isTierEnabled("far", options) ? this.tierBuckets.far : EMPTY_LAYERS,
       viewportWidth,
       viewportHeight,
@@ -206,12 +361,13 @@ export class ParallaxSystem implements IParallaxSystem {
       tickCount
     );
 
-    const worldId = resolveWorldId(location);
     const worldBossIntensity = this.isTierEnabled("boss_world", options)
-      ? computeBossScopeIntensity(location, "world", cameraX, cameraY, viewportWidth, viewportHeight, options?.forceBossScope)
+      ? computeBossScopeIntensity(location, "world", cameraX, cameraY, viewportWidth, viewportHeight, options?.forceBossScope) *
+        this.resolveBucketFadeAlpha(this.tierBuckets.boss_world, nowMs)
       : 0;
     const stageBossIntensity = this.isTierEnabled("boss_stage", options)
-      ? computeBossScopeIntensity(location, "stage", cameraX, cameraY, viewportWidth, viewportHeight, options?.forceBossScope)
+      ? computeBossScopeIntensity(location, "stage", cameraX, cameraY, viewportWidth, viewportHeight, options?.forceBossScope) *
+        this.resolveBucketFadeAlpha(this.tierBuckets.boss_stage, nowMs)
       : 0;
     const showWireframes = this.flags.showWireframes();
 
@@ -229,6 +385,7 @@ export class ParallaxSystem implements IParallaxSystem {
           viewportWidth,
           viewportHeight,
           tickCount,
+          nowMs,
           showWireframes
         );
       }
@@ -244,6 +401,55 @@ export class ParallaxSystem implements IParallaxSystem {
         this.backdropRenderer.renderBossBackdropTier(ctx, this.tierBuckets.boss_stage, "boss_stage", stageBossIntensity, viewportWidth, viewportHeight, progressX, progressY, tickCount);
       }
     }
+  }
+
+  private enqueueLayersProgressive(layers: readonly ParallaxLayerSchema[]): void {
+    for (let i = 0; i < layers.length; i++) {
+      const layer = layers[i];
+      const url = this.resolveLayerUrl(layer);
+      if (!url) continue;
+      const tier = resolveBackgroundTier(layer);
+      const priority: ParallaxQueuePriority =
+        tier === "far"
+          ? PARALLAX_LOAD_PRIORITY.FAR
+          : tier === "boss_stage" || tier === "boss_world"
+            ? PARALLAX_LOAD_PRIORITY.EFFECT
+            : PARALLAX_LOAD_PRIORITY.LAYER;
+      this.loadQueue
+        .enqueue!({
+          cacheKey: layer.layerKey || url,
+          url,
+          priority,
+          subOrder: layer.depth ?? i * 0.1,
+          fadeInOnReady: priority !== PARALLAX_LOAD_PRIORITY.FAR,
+        })
+        .catch(() => {});
+    }
+  }
+
+  private resolveMetaPlaceholderLocation(location: LocationDefinition, worldId: string): LocationDefinition {
+    const placeholder = getWorldPlaceholderColors(worldId);
+    if (!placeholder) return location;
+    if (
+      location.theme?.bgGradientTop === placeholder.top &&
+      location.theme?.bgGradientBottom === placeholder.bottom
+    ) {
+      return location;
+    }
+
+    if (this.placeholderSourceLocation !== location || !this.placeholderLocationView) {
+      this.placeholderSourceLocation = location;
+      this.placeholderTheme.bgGradientTop = placeholder.top;
+      this.placeholderTheme.bgGradientBottom = placeholder.bottom;
+      this.placeholderTheme.ambientParticle = location.theme?.ambientParticle ?? "dust";
+      this.placeholderTheme.fogColor = location.theme?.fogColor ?? "";
+      this.placeholderTheme.musicIntensity = location.theme?.musicIntensity ?? 0;
+      this.placeholderLocationView = {
+        ...location,
+        theme: this.placeholderTheme,
+      };
+    }
+    return this.placeholderLocationView;
   }
 
   private bucketLayersByTier(layers: readonly ParallaxLayerSchema[]): void {
@@ -266,20 +472,53 @@ export class ParallaxSystem implements IParallaxSystem {
 
   private peekImage(layer: ParallaxLayerSchema): HTMLImageElement | null {
     if (layer.imageElement) return layer.imageElement;
+    const key = layer.layerKey;
     const url = this.resolveLayerUrl(layer);
+    const queued = (key ? this.loadQueue.getTexture(key) : null) ?? (url ? this.loadQueue.getTexture(url) : null);
+    if (queued) return queued as HTMLImageElement;
     if (!url) return null;
     return this.loader.getTexture(url);
   }
 
   private getImage(layer: ParallaxLayerSchema): HTMLImageElement | null {
     if (layer.imageElement) return layer.imageElement;
+    const key = layer.layerKey;
     const url = this.resolveLayerUrl(layer);
+    const queued = (key ? this.loadQueue.getTexture(key) : null) ?? (url ? this.loadQueue.getTexture(url) : null);
+    if (queued) return queued as HTMLImageElement;
     if (!url) return null;
+
     const cached = this.loader.getTexture(url);
-    if (!cached) {
+    if (cached) return cached;
+
+    const managed = (key ? this.loadQueue.isManaged(key) : false) || this.loadQueue.isManaged(url);
+    if (!managed) {
       this.loader.loadTexture(url).catch(() => {});
     }
-    return cached;
+    return null;
+  }
+
+  private resolveLayerFadeAlpha(layer: ParallaxLayerSchema, nowMs: number): number {
+    if (layer.imageElement) return 1;
+    const key = layer.layerKey;
+    if (key && this.loadQueue.isManaged(key)) {
+      return this.loadQueue.getFadeAlpha(key, nowMs);
+    }
+    const url = this.resolveLayerUrl(layer);
+    if (url && this.loadQueue.isManaged(url)) {
+      return this.loadQueue.getFadeAlpha(url, nowMs);
+    }
+    return 1;
+  }
+
+  private resolveBucketFadeAlpha(layersInTier: readonly ParallaxLayerSchema[], nowMs: number): number {
+    if (layersInTier.length === 0) return 1;
+    let maxAlpha = 0;
+    for (let i = 0; i < layersInTier.length; i++) {
+      const alpha = this.resolveLayerFadeAlpha(layersInTier[i], nowMs);
+      if (alpha > maxAlpha) maxAlpha = alpha;
+    }
+    return maxAlpha;
   }
 
   private isTierEnabled(tier: BackgroundLayerTier, options?: ParallaxRenderOptions): boolean {
@@ -300,18 +539,43 @@ export class ParallaxSystem implements IParallaxSystem {
     viewportWidth: number,
     viewportHeight: number,
     tickCount: number,
+    nowMs: number,
     showWireframes: boolean
   ): void {
     for (let j = 0; j < layersInTier.length; j++) {
       const layer = layersInTier[j];
+      if (
+        layer === this.cachedClosestLayer &&
+        (this.activeZoneAlpha > 0.005 || this.leavingZoneAlpha > 0.005)
+      ) {
+        this.renderClosestLayerWithZoneCrossfade(
+          ctx,
+          layer,
+          tier,
+          boxHeight,
+          extraWidth,
+          progressX,
+          progressY,
+          viewportWidth,
+          viewportHeight,
+          tickCount,
+          nowMs,
+          showWireframes
+        );
+        continue;
+      }
+
       const img = this.getImage(layer);
-      if (!img || !img.complete || img.naturalWidth === 0) continue;
+      if (!isDrawableReady(img)) continue;
+
+      const fadeAlpha = this.resolveLayerFadeAlpha(layer, nowMs);
+      if (fadeAlpha <= 0.005) continue;
 
       renderTiledDynamicLayer(
         ctx,
         layer,
         tier,
-        img,
+        img!,
         boxHeight,
         extraWidth,
         progressX,
@@ -319,9 +583,307 @@ export class ParallaxSystem implements IParallaxSystem {
         viewportWidth,
         viewportHeight,
         tickCount,
-        1,
+        fadeAlpha,
         showWireframes
       );
     }
+  }
+
+  private renderClosestLayerWithZoneCrossfade(
+    ctx: CanvasRenderingContext2D,
+    baseLayer: ParallaxLayerSchema,
+    tier: BackgroundLayerTier,
+    boxHeight: number,
+    extraWidth: number,
+    progressX: number,
+    progressY: number,
+    viewportWidth: number,
+    viewportHeight: number,
+    tickCount: number,
+    nowMs: number,
+    showWireframes: boolean
+  ): void {
+    const baseImg = this.getImage(baseLayer);
+    const baseReady = isDrawableReady(baseImg);
+    const fadeAlpha = this.resolveLayerFadeAlpha(baseLayer, nowMs);
+    if (fadeAlpha <= 0.005) return;
+
+    const activeSlot = this.activeZoneKind ? this.variantSlots[this.activeZoneKind] : null;
+    const activeImg = activeSlot ? this.peekVariantImage(activeSlot) : null;
+    const activeReady = activeSlot !== null && isDrawableReady(activeImg);
+
+    const leavingSlot = this.leavingZoneKind ? this.variantSlots[this.leavingZoneKind] : null;
+    const leavingImg = leavingSlot ? this.peekVariantImage(leavingSlot) : null;
+    const leavingReady = leavingSlot !== null && isDrawableReady(leavingImg);
+
+    const replacedAlpha =
+      (activeReady ? this.activeZoneAlpha : 0) + (leavingReady ? this.leavingZoneAlpha : 0);
+    const baseWeight = Math.max(0, Math.min(1, 1 - replacedAlpha));
+
+    if (baseReady && baseWeight > 0.005) {
+      renderTiledDynamicLayer(
+        ctx,
+        baseLayer,
+        tier,
+        baseImg!,
+        boxHeight,
+        extraWidth,
+        progressX,
+        progressY,
+        viewportWidth,
+        viewportHeight,
+        tickCount,
+        fadeAlpha * baseWeight,
+        showWireframes
+      );
+    }
+
+    if (leavingReady && leavingSlot && this.leavingZoneAlpha > 0.005) {
+      renderTiledDynamicLayer(
+        ctx,
+        leavingSlot.layer,
+        tier,
+        leavingImg!,
+        boxHeight,
+        extraWidth,
+        progressX,
+        progressY,
+        viewportWidth,
+        viewportHeight,
+        tickCount,
+        fadeAlpha * this.leavingZoneAlpha,
+        false
+      );
+    }
+
+    if (activeReady && activeSlot && this.activeZoneAlpha > 0.005) {
+      renderTiledDynamicLayer(
+        ctx,
+        activeSlot.layer,
+        tier,
+        activeImg!,
+        boxHeight,
+        extraWidth,
+        progressX,
+        progressY,
+        viewportWidth,
+        viewportHeight,
+        tickCount,
+        fadeAlpha * this.activeZoneAlpha,
+        showWireframes && baseWeight <= 0.005
+      );
+    }
+
+    if (baseReady) {
+      if (this.leavingZoneAlpha > 0.005 && !leavingReady) {
+        const tint = leavingSlot?.tint ?? this.leavingAmbientColor;
+        if (tint) {
+          this.renderZoneFallbackTint(ctx, tint, fadeAlpha * this.leavingZoneAlpha, viewportWidth, viewportHeight);
+        }
+      }
+      if (this.activeZoneAlpha > 0.005 && !activeReady) {
+        const tint = activeSlot?.tint ?? this.activeAmbientColor;
+        if (tint) {
+          this.renderZoneFallbackTint(ctx, tint, fadeAlpha * this.activeZoneAlpha, viewportWidth, viewportHeight);
+        }
+      }
+    }
+  }
+
+  private renderZoneFallbackTint(
+    ctx: CanvasRenderingContext2D,
+    color: string,
+    alpha: number,
+    viewportWidth: number,
+    viewportHeight: number
+  ): void {
+    const clamped = Math.max(0, Math.min(1, alpha));
+    if (clamped <= 0.005) return;
+    ctx.save();
+    ctx.globalAlpha = clamped;
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, viewportWidth, viewportHeight);
+    ctx.restore();
+  }
+
+  private syncLocationZoneState(
+    location: LocationDefinition,
+    layers: readonly ParallaxLayerSchema[]
+  ): void {
+    if (this.zoneStateLocation === location && this.zoneStateLayers === layers) {
+      return;
+    }
+    this.zoneStateLocation = location;
+    this.zoneStateLayers = layers;
+    this.cachedClosestLayer = resolveClosestParallaxLayer(layers);
+    this.resetZoneCrossfadeState();
+
+    const closest = this.cachedClosestLayer;
+    for (let i = 0; i < ZONE_KINDS.length; i++) {
+      const kind = ZONE_KINDS[i];
+      const slot = this.variantSlots[kind];
+      const variantKey = closest ? buildZoneVariantKey(closest, kind) : undefined;
+      const entry = variantKey ? this.registry.resolve(variantKey) : undefined;
+
+      if (!closest || !variantKey) {
+        slot.cacheKey = "";
+        slot.url = null;
+        slot.tint = null;
+        slot.hasVariantEntry = false;
+        continue;
+      }
+
+      slot.cacheKey = variantKey;
+      slot.url = entry?.url ?? null;
+      slot.tint = entry?.tint ?? null;
+      slot.hasVariantEntry = Boolean(entry?.url);
+
+      slot.layer.id = variantKey;
+      slot.layer.name = closest.name;
+      slot.layer.tier = closest.tier;
+      slot.layer.layerKey = variantKey;
+      slot.layer.type = closest.type;
+      slot.layer.depth = closest.depth;
+      slot.layer.scrollSpeedX = closest.scrollSpeedX;
+      slot.layer.scrollSpeedY = closest.scrollSpeedY;
+      slot.layer.autoDriftX = closest.autoDriftX;
+      slot.layer.autoDriftY = closest.autoDriftY;
+      slot.layer.mirrorTile = closest.mirrorTile;
+      slot.layer.opacity = entry?.defaultOpacity ?? closest.opacity;
+      slot.layer.blendMode = entry?.defaultBlendMode ?? closest.blendMode;
+    }
+  }
+
+  private resetZoneCrossfadeState(): void {
+    this.activeZoneKind = null;
+    this.activeZoneAlpha = 0;
+    this.activeAmbientColor = null;
+    this.leavingZoneKind = null;
+    this.leavingZoneAlpha = 0;
+    this.leavingAmbientColor = null;
+    this.lastZoneNowMs = Number.NaN;
+    this.lastTargetKind = null;
+    this.lastTargetWeight = 0;
+  }
+
+  private peekVariantImage(slot: MutableZoneVariantSlot): HTMLImageElement | null {
+    if (!slot.hasVariantEntry || !slot.url) return null;
+    const queued =
+      (slot.cacheKey ? this.loadQueue.getTexture(slot.cacheKey) : null) ??
+      this.loadQueue.getTexture(slot.url);
+    if (queued) return queued as HTMLImageElement;
+    return this.loader.getTexture(slot.url);
+  }
+
+  private enqueueNearbyZoneVariant(): void {
+    const nearKind = this.zoneResolution.nearKind;
+    if (!nearKind || !this.cachedClosestLayer) return;
+    const slot = this.variantSlots[nearKind];
+    if (!slot.hasVariantEntry || !slot.url || !slot.cacheKey) return;
+
+    if (this.loadQueue.enqueue && (this.useExplicitLoadQueue || typeof Image !== "undefined")) {
+      if (!this.loadQueue.isManaged(slot.cacheKey) && !this.loadQueue.isManaged(slot.url)) {
+        this.loadQueue
+          .enqueue({
+            cacheKey: slot.cacheKey,
+            url: slot.url,
+            priority: PARALLAX_LOAD_PRIORITY.ZONE_VARIANT,
+            subOrder: this.zoneResolution.nearDistanceSq,
+            fadeInOnReady: false,
+          })
+          .catch(() => {});
+      }
+      return;
+    }
+
+    if (this.loader.getTexture(slot.url)) return;
+    if (this.loader.isTextureLoaded?.(slot.url)) return;
+    if (this.pendingVariantUrls.has(slot.url)) return;
+    this.pendingVariantUrls.add(slot.url);
+    this.loader.loadTexture(slot.url).catch(() => {});
+  }
+
+  private updateZoneCrossfade(nowMs: number): void {
+    const targetKind = this.zoneResolution.kind;
+    const targetWeight = this.zoneResolution.weight;
+    const targetColor = this.zoneResolution.ambientColor;
+    const durationMs = this.zoneCrossfadeDurationMs;
+
+    if (Number.isNaN(this.lastZoneNowMs) || durationMs <= 0) {
+      this.activeZoneKind = targetKind;
+      this.activeZoneAlpha = targetWeight;
+      this.activeAmbientColor = targetColor;
+      this.leavingZoneKind = null;
+      this.leavingZoneAlpha = 0;
+      this.leavingAmbientColor = null;
+      this.lastZoneNowMs = nowMs;
+      this.lastTargetKind = targetKind;
+      this.lastTargetWeight = targetWeight;
+      return;
+    }
+
+    const dt = Math.max(0, nowMs - this.lastZoneNowMs);
+    const step = dt / durationMs;
+    this.lastZoneNowMs = nowMs;
+
+    if (this.leavingZoneKind !== null) {
+      this.leavingZoneAlpha = Math.max(0, this.leavingZoneAlpha - step);
+      if (this.leavingZoneAlpha <= 0) {
+        this.leavingZoneKind = null;
+        this.leavingAmbientColor = null;
+      }
+    }
+
+    if (this.activeZoneKind !== null) {
+      if (this.lastTargetKind === this.activeZoneKind) {
+        const diff = this.lastTargetWeight - this.activeZoneAlpha;
+        if (Math.abs(diff) <= step) {
+          this.activeZoneAlpha = this.lastTargetWeight;
+        } else {
+          this.activeZoneAlpha += diff > 0 ? step : -step;
+        }
+      } else {
+        this.activeZoneAlpha = Math.max(0, this.activeZoneAlpha - step);
+      }
+
+      if (this.activeZoneAlpha <= 0 && targetKind === null) {
+        this.activeZoneKind = null;
+        this.activeAmbientColor = null;
+      }
+    }
+
+    if (targetKind !== null) {
+      if (this.activeZoneKind === null) {
+        this.activeZoneKind = targetKind;
+        this.activeZoneAlpha = 0;
+        this.activeAmbientColor = targetColor;
+      } else if (targetKind !== this.activeZoneKind) {
+        if (this.leavingZoneKind === targetKind) {
+          const prevKind = this.activeZoneKind;
+          const prevAlpha = this.activeZoneAlpha;
+          const prevColor = this.activeAmbientColor;
+          this.activeZoneKind = this.leavingZoneKind;
+          this.activeZoneAlpha = this.leavingZoneAlpha;
+          this.activeAmbientColor = targetColor;
+          this.leavingZoneKind = prevKind;
+          this.leavingZoneAlpha = prevAlpha;
+          this.leavingAmbientColor = prevColor;
+        } else {
+          if (this.activeZoneAlpha > 0) {
+            this.leavingZoneKind = this.activeZoneKind;
+            this.leavingZoneAlpha = this.activeZoneAlpha;
+            this.leavingAmbientColor = this.activeAmbientColor;
+          }
+          this.activeZoneKind = targetKind;
+          this.activeZoneAlpha = 0;
+          this.activeAmbientColor = targetColor;
+        }
+      } else {
+        this.activeAmbientColor = targetColor;
+      }
+    }
+
+    this.lastTargetKind = targetKind;
+    this.lastTargetWeight = targetWeight;
   }
 }

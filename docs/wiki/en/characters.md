@@ -23,7 +23,7 @@ Pick Player 1 in the game menu; in 2-player mode, Player 2 automatically takes t
 
 Valen has less natural talent than Aurelia, and knows it—so he relies on diligence, structure, and solving one problem at a time. When an arcane mechanism stalls or a room throws too many threats at once, his composure keeps the pair steady. His passive trait, **Solar Vigor**, grants higher HP and stamina, brisk stamina recovery, and faster rapier cadence.
 
-In the 2034 frame, his title (*Sun Knight* / *Solar Knight*) and solar-fencing discipline serve as provisional labels for how his thermal-photonic focus reads inside the Zone; his pre-cataclysm background and the true source of his powers remain an open mystery.
+Valen (38) and Aurelia (31) were ordinary people before the 2028 cataclysm, and both felt a "call" near it: Valen is an engineer who designed the access bridge to the new laboratory, while Aurelia was a brilliant police officer on track to become a detective who was investigating a new cult. In 2034, his title (*Sun Knight* / *Solar Knight*) and solar-fencing discipline reflect how his thermal-photonic focus reads inside the Zone.
 
 - **Weapon**: a balanced dueling rapier built for crisp thrusts and rapid recovery.
 - **Magic**: focused solar rays, fireballs, and prismatic wards that punish armored constructs.
@@ -33,7 +33,7 @@ In the 2034 frame, his title (*Sun Knight* / *Solar Knight*) and solar-fencing d
 
 Aurelia pairs genuine talent with relentless effort, though she gets visibly frustrated whenever an equation, ward, or plan refuses to cooperate—which is where Valen's patience makes the pair more than the sum of their parts. Her passive trait, **Astral Flow**, expands her mana pool and regeneration, adds +15% spell power, reduces mana costs by 10%, and trims stamina spent on evasions.
 
-Like Valen, her title (*Arcane Scholar* / *Scholar of Arcanum*) and command of astral, frost, and temporal magic reflect early 2034 attempts to classify post-cataclysm anomalies; where those gifts originated is not yet settled.
+Like Valen, her title (*Arcane Scholar* / *Scholar of Arcanum*) and command of astral, frost, and temporal magic reflect 2034 classifications of post-cataclysm Aether—magic born in 2028 and shaped by her proximity to the cult and the Zone.
 
 - **Weapon**: an arcane conduit staff (`aether_staff`) paired with sweeping offensive and protective sorcery.
 - **Magic**: astral bolts, radial frost bursts, emerald volleys, and brief temporal phases.

@@ -3,6 +3,8 @@ import {
   ParallaxBackgroundSchema,
   PortalDefinitionSchema,
   LocationJsonSchema,
+  LocationParallaxSchema,
+  LocationZoneSchema,
   DecorPlacementSchema,
   LocationSceneType,
   ParticleType,
@@ -44,6 +46,8 @@ export interface LocationDefinition {
   sceneType?: LocationSceneType;
   linkedSceneId?: string;
   nextLocationId?: LocationId;
+  parallax?: LocationParallaxSchema;
+  zones?: readonly LocationZoneSchema[];
   parallaxBackground?: ParallaxBackgroundSchema;
   bossZones?: BossZoneSchema[];
   portals?: PortalDefinitionSchema[];

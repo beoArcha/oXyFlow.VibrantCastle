@@ -7,11 +7,10 @@ import {
 } from "@game/locations/parser/locationParser";
 import {
   LocationJsonSchema,
-  BackgroundLayerTier,
   LOCATION_SCENE_TYPES,
 } from "@game/locations/schema/locationSchema";
 import { translations } from "@i18n";
-import { resolveParallaxLayerAsset } from "@game/locations/parallaxLayerRegistry";
+import { defaultParallaxRegistry } from "@game/parallax/registry";
 
 /**
  * ARCHITECTURAL TEST SUITE: Location Blueprint Schema Contracts
@@ -41,15 +40,7 @@ describe("Location Blueprint Schema Contracts", () => {
     "eclipse_crown",
   ];
 
-  const VALID_TIERS: Set<BackgroundLayerTier> = new Set([
-    "far",
-    "mid_far",
-    "mid",
-    "mid_close",
-    "close",
-    "boss_stage",
-    "boss_world",
-  ]);
+  const VALID_ZONE_KINDS = new Set(["boss", "rest", "secret", "story"]);
 
   // Read and parse all JSON blueprint files
   const blueprintFiles = fs
@@ -235,68 +226,97 @@ describe("Location Blueprint Schema Contracts", () => {
   });
 
   describe("Parallax Background & Asset File Integrity", () => {
-    it("ensures each location defines an oversized parallax bounding box with at least 5 layers", () => {
+    it("uses the new parallax and zones shape without legacy parallaxBackground, bossZones, or imageUrl keys", () => {
       for (const { filename, json } of loadedBlueprints) {
-        const bg = json.parallaxBackground;
-        expect(bg).toBeDefined();
-        expect(bg.boxWidth).toBeGreaterThanOrEqual(json.dimensions.width);
-        expect(bg.boxHeight).toBeGreaterThanOrEqual(json.dimensions.height);
-        expect(bg.layers.length).toBeGreaterThanOrEqual(5);
+        expect({ file: filename, hasParallax: Boolean(json.parallax) }).toEqual({ file: filename, hasParallax: true });
+        expect({ file: filename, hasLegacyBg: json.parallaxBackground !== undefined }).toEqual({
+          file: filename,
+          hasLegacyBg: false,
+        });
+        expect({ file: filename, hasLegacyBossZones: json.bossZones !== undefined }).toEqual({
+          file: filename,
+          hasLegacyBossZones: false,
+        });
+        expect(JSON.stringify(json.parallax)).not.toContain('"imageUrl"');
+        expect(JSON.stringify(json.zones ?? [])).not.toContain('"imageUrl"');
       }
     });
 
-    it("ensures all parallax layers have valid tiers", () => {
-      for (const { filename, json } of loadedBlueprints) {
-        for (const layer of json.parallaxBackground.layers) {
-          if (layer.tier) {
-            expect(VALID_TIERS.has(layer.tier)).toBe(true);
-          }
-        }
-      }
-    });
-
-    it("ensures every location has exactly one far layer and that it is opaque", () => {
-      for (const { filename, json } of loadedBlueprints) {
-        const farLayers = json.parallaxBackground.layers.filter((layer) => layer.tier === "far");
-        expect({ file: filename, count: farLayers.length }).toEqual({ file: filename, count: 1 });
-        expect({ file: filename, opaque: farLayers[0].opaque }).toEqual({ file: filename, opaque: true });
-      }
-    });
-
-    it("ensures no non-far parallax layer is declared opaque", () => {
-      const opaqueNonFarLayers: { file: string; layerId: string }[] = [];
-      for (const { filename, json } of loadedBlueprints) {
-        for (const layer of json.parallaxBackground.layers) {
-          if (layer.tier !== "far" && layer.opaque === true) {
-            opaqueNonFarLayers.push({ file: filename, layerId: layer.id });
-          }
-        }
-      }
-      expect(opaqueNonFarLayers).toEqual([]);
-    });
-
-    it("ensures parallax boxWidth covers the level width plus a 400px margin", () => {
-      for (const { filename, json } of loadedBlueprints) {
-        expect(json.parallaxBackground.boxWidth).toBeGreaterThanOrEqual(json.dimensions.width + 400);
-      }
-    });
-
-    it("ensures every image parallax layer resolves via the hybrid parallax layer registry", () => {
-      const missingAssets: { file: string; layerId: string; key: string }[] = [];
+    it("ensures each location selects 1 to 4 unique variation keys (far implicit) and resolves every key in ParallaxRegistry", () => {
+      const missingAssets: { file: string; key: string }[] = [];
 
       for (const { filename, json } of loadedBlueprints) {
-        for (const layer of json.parallaxBackground.layers) {
-          if (layer.type === "image") {
-            const lookupKey = layer.layerKey || layer.imageUrl || layer.id;
-            const resolved = resolveParallaxLayerAsset(lookupKey);
-            if (!resolved || !resolved.url) {
-              missingAssets.push({ file: filename, layerId: layer.id, key: lookupKey });
-            }
+        const worldId = json.worldId || json.id;
+        const layers = json.parallax?.layers ?? [];
+        expect(layers.length).toBeGreaterThanOrEqual(1);
+        expect(layers.length).toBeLessThanOrEqual(4);
+        expect(layers).not.toContain("far");
+        expect(new Set(layers).size).toBe(layers.length);
+
+        const keysToCheck = [`${worldId}:far`, ...layers.map((slot) => `${worldId}:${slot}`)];
+        for (const key of keysToCheck) {
+          const resolved = defaultParallaxRegistry.resolve(key);
+          if (!resolved || !resolved.url) {
+            missingAssets.push({ file: filename, key });
           }
         }
       }
 
       expect(missingAssets).toEqual([]);
+    });
+
+    it("ensures world meta defines an opaque far layer and non-opaque variation layers", () => {
+      for (const { filename, json } of loadedBlueprints) {
+        const worldId = json.worldId || json.id;
+        const meta = defaultParallaxRegistry.getWorldMeta(worldId);
+        expect({ file: filename, hasMeta: Boolean(meta) }).toEqual({ file: filename, hasMeta: true });
+        expect({ file: filename, farOpaque: meta?.layers.far?.opaque }).toEqual({ file: filename, farOpaque: true });
+
+        for (const slot of json.parallax?.layers ?? []) {
+          expect(meta?.layers[slot]?.opaque).not.toBe(true);
+        }
+      }
+    });
+
+    it("ensures parallax box covers the level width plus a 400px margin and level height", () => {
+      for (const { filename, json } of loadedBlueprints) {
+        expect({ file: filename, widthOk: (json.parallax?.box?.width ?? 0) >= json.dimensions.width + 400 }).toEqual({
+          file: filename,
+          widthOk: true,
+        });
+        expect({ file: filename, heightOk: (json.parallax?.box?.height ?? 0) >= json.dimensions.height }).toEqual({
+          file: filename,
+          heightOk: true,
+        });
+      }
+    });
+
+    it("ensures every zone has a valid kind, positive bounds, and resolvable image effects", () => {
+      for (const { filename, json } of loadedBlueprints) {
+        const worldId = json.worldId || json.id;
+        const meta = defaultParallaxRegistry.getWorldMeta(worldId);
+        for (const zone of json.zones ?? []) {
+          expect({ file: filename, kind: VALID_ZONE_KINDS.has(zone.kind) }).toEqual({ file: filename, kind: true });
+          expect(zone.width).toBeGreaterThan(0);
+          expect(zone.height).toBeGreaterThan(0);
+          for (const effectId of zone.effects ?? []) {
+            const effectMeta = meta?.effects?.[effectId];
+            expect(effectMeta).toBeDefined();
+            if (effectMeta?.kind === "image" && effectMeta.source) {
+              expect(defaultParallaxRegistry.resolve(effectMeta.source)?.url).toBeDefined();
+            }
+          }
+        }
+      }
+    });
+
+    it("parses locations without mutating the input blueprint", () => {
+      for (const { json } of loadedBlueprints) {
+        const snapshotBefore = JSON.stringify(json);
+        const parsed = LocationParser.parse(json);
+        expect(JSON.stringify(json)).toBe(snapshotBefore);
+        expect(parsed.parallaxBackground?.layers.some((l) => l.imageUrl !== undefined)).toBe(false);
+      }
     });
   });
 

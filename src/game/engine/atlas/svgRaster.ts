@@ -72,7 +72,9 @@ export async function loadSvgTexture(
     });
   }
 
-  const scale = chooseRasterScale(srcWidth / Math.max(1, columns));
+  // Single-column placeholder SVGs (e.g. 48x240) have 1 frame per row despite multi-column PNG metas.
+  const effectiveColumns = srcWidth <= 64 && columns > 1 && srcHeight > srcWidth ? 1 : columns;
+  const scale = chooseRasterScale(srcWidth / Math.max(1, effectiveColumns));
   const width = srcWidth * scale;
   const height = srcHeight * scale;
   const canvas = env.createCanvas(width, height);

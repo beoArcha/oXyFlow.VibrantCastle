@@ -1,104 +1,259 @@
 {
   "entityId": "aether_gate",
   "entityType": "structure",
-  "version": "4.1",
-  "description": "Ancient Aether Portal Gateway. Victory point and dimensional transition node. Activates upon player proximity, emits aether particles and triggers level completion sequence.",
+  "version": "5.0",
+  "description": "2034 containment airlock reinterpreted as an occult gothic portal arch with animated iris doors and dimensional rift.",
   "atlas": {
     "image": "aether_gate_high.png",
-    "cellWidth": 198,
-    "cellHeight": 198,
     "columns": 8,
-    "rows": 5
+    "rows": 5,
+    "cellWidth": 256,
+    "cellHeight": 320,
+    "spacing": 0,
+    "safeMargin": 1,
+    "background": "transparent"
   },
   "anchor": {
-    "x": 0.5,
-    "y": 1.0
+    "x": 0.5001,
+    "y": 1
   },
-  "slicing": {
-    "method": "freeform_rects",
-    "referenceHeight": 172,
-    "tracks": {
-      "idle": [
-        { "x": 18, "y": 16, "w": 142, "h": 169 },
-        { "x": 179, "y": 12, "w": 145, "h": 172 },
-        { "x": 343, "y": 11, "w": 145, "h": 172 },
-        { "x": 507, "y": 9, "w": 146, "h": 173 },
-        { "x": 672, "y": 9, "w": 145, "h": 172 },
-        { "x": 837, "y": 9, "w": 142, "h": 172 },
-        { "x": 998, "y": 9, "w": 143, "h": 173 }
-      ],
-      "light_up": [
-        { "x": 16, "y": 218, "w": 149, "h": 178 },
-        { "x": 191, "y": 211, "w": 173, "h": 185 },
-        { "x": 393, "y": 211, "w": 175, "h": 185 },
-        { "x": 602, "y": 211, "w": 173, "h": 185 },
-        { "x": 810, "y": 211, "w": 170, "h": 186 },
-        { "x": 1009, "y": 211, "w": 168, "h": 185 },
-        { "x": 1212, "y": 211, "w": 166, "h": 185 },
-        { "x": 1403, "y": 211, "w": 167, "h": 185 }
-      ],
-      "action": [
-        { "x": 15, "y": 405, "w": 255, "h": 191 },
-        { "x": 290, "y": 406, "w": 261, "h": 190 },
-        { "x": 570, "y": 405, "w": 267, "h": 191 },
-        { "x": 855, "y": 405, "w": 261, "h": 191 },
-        { "x": 1141, "y": 405, "w": 280, "h": 191 }
-      ],
-      "close_up": [
-        { "x": 17, "y": 611, "w": 160, "h": 177 },
-        { "x": 194, "y": 611, "w": 161, "h": 177 },
-        { "x": 374, "y": 610, "w": 161, "h": 178 },
-        { "x": 551, "y": 610, "w": 163, "h": 178 },
-        { "x": 729, "y": 610, "w": 162, "h": 178 },
-        { "x": 908, "y": 610, "w": 161, "h": 178 }
-      ],
-      "info": [
-        { "x": 16, "y": 798, "w": 162, "h": 178 },
-        { "x": 208, "y": 798, "w": 170, "h": 178 },
-        { "x": 406, "y": 800, "w": 158, "h": 174 },
-        { "x": 591, "y": 797, "w": 160, "h": 179 },
-        { "x": 773, "y": 800, "w": 143, "h": 175 },
-        { "x": 938, "y": 797, "w": 161, "h": 181 },
-        { "x": 1120, "y": 798, "w": 125, "h": 177 },
-        { "x": 1264, "y": 796, "w": 142, "h": 181 },
-        { "x": 1424, "y": 796, "w": 148, "h": 180 }
-      ]
+  "variants": {
+    "low": {
+      "cellWidth": 64,
+      "cellHeight": 80,
+      "scale": 0.25,
+      "file": "aether_gate_hi8bit.svg"
+    },
+    "mid": {
+      "cellWidth": 128,
+      "cellHeight": 160,
+      "scale": 0.5,
+      "file": "aether_gate_hi16bit.svg"
+    },
+    "high": {
+      "cellWidth": 256,
+      "cellHeight": 320,
+      "scale": 1,
+      "file": "aether_gate_high.png"
     }
   },
   "layout": {
-    "idle": { "row": 0, "startCol": 0, "frames": 7, "widthCells": 1 },
-    "light_up": { "row": 1, "startCol": 0, "frames": 8, "widthCells": 1 },
-    "action": { "row": 2, "startCol": 0, "frames": 5, "widthCells": 1 },
-    "close_up": { "row": 3, "startCol": 0, "frames": 6, "widthCells": 1 },
-    "info": { "row": 4, "startCol": 0, "frames": 9, "widthCells": 1 }
+    "ordering": [
+      "idle",
+      "opening",
+      "on",
+      "off",
+      "closing"
+    ],
+    "origin": {
+      "type": "feet",
+      "normalized": {
+        "x": 0.5001,
+        "y": 1
+      }
+    },
+    "bodyBox": {
+      "x": 0.0938,
+      "y": 0.0688,
+      "w": 0.8125,
+      "h": 0.9313
+    },
+    "idle": {
+      "row": 0,
+      "startCol": 0,
+      "frames": 4,
+      "widthCells": 1
+    },
+    "opening": {
+      "row": 1,
+      "startCol": 0,
+      "frames": 8,
+      "widthCells": 1
+    },
+    "on": {
+      "row": 2,
+      "startCol": 0,
+      "frames": 6,
+      "widthCells": 1
+    },
+    "off": {
+      "row": 3,
+      "startCol": 0,
+      "frames": 2,
+      "widthCells": 1
+    },
+    "closing": {
+      "row": 4,
+      "startCol": 0,
+      "frames": 8,
+      "widthCells": 1
+    }
   },
   "animations": {
-    "idle": { "row": 0, "frames": 7, "fps": 6, "loop": true },
-    "light_up": { "row": 1, "frames": 8, "fps": 10, "loop": false },
-    "action": { "row": 2, "frames": 5, "fps": 10, "loop": false },
-    "close_up": { "row": 3, "frames": 6, "fps": 8, "loop": true },
-    "info": { "row": 4, "frames": 9, "fps": 2, "loop": false }
+    "idle": {
+      "row": 0,
+      "frames": 4,
+      "fps": 4,
+      "loop": true,
+      "slotSpan": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "opening": {
+      "row": 1,
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "slotSpan": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "on": {
+      "row": 2,
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "slotSpan": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "off": {
+      "row": 3,
+      "frames": 2,
+      "fps": 2,
+      "loop": true,
+      "slotSpan": [
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1
+      ]
+    },
+    "closing": {
+      "row": 4,
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "slotSpan": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    }
   },
   "states": {
-    "inactive": { "animation": "idle" },
-    "charging": { "animation": "light_up" },
-    "activating": { "animation": "action" },
-    "active": { "animation": "close_up" }
+    "idle": {
+      "animation": "idle"
+    },
+    "closed": {
+      "animation": "idle"
+    },
+    "inactive": {
+      "animation": "idle"
+    },
+    "off": {
+      "animation": "off"
+    },
+    "disabled": {
+      "animation": "off"
+    },
+    "opening": {
+      "animation": "opening"
+    },
+    "charging": {
+      "animation": "opening"
+    },
+    "activating": {
+      "animation": "opening"
+    },
+    "on": {
+      "animation": "on"
+    },
+    "open": {
+      "animation": "on"
+    },
+    "active": {
+      "animation": "on"
+    },
+    "closing": {
+      "animation": "closing"
+    }
   },
   "infoFrames": {
     "default": 0,
-    "active": 1,
-    "highlight": 2,
-    "overcharged": 3,
-    "damaged": 4,
-    "ancient": 5,
-    "energized": 6,
-    "ui_focus": 7
+    "idle": 0,
+    "opening": 1,
+    "on": 2,
+    "off": 3,
+    "closing": 4
   },
   "interaction": {
     "type": "victory_gate",
-    "trigger": { "onPlayerEnterRadius": true, "radius": 180 },
-    "effects": { "playFanfare": true, "unlockNextStage": true, "emitParticles": true }
+    "trigger": {
+      "onPlayerEnterRadius": true,
+      "radius": 150
+    },
+    "effects": {
+      "playFanfare": true,
+      "unlockNextStage": true,
+      "emitParticles": true
+    }
   },
   "render": {
     "layer": "interactive",
@@ -106,9 +261,7 @@
     "blend": "normal"
   },
   "constraints": {
-    "fixedBaseline": true,
-    "noFrameOffset": true,
-    "strictGrid": false,
-    "allowOverflow": true
+    "strictGrid": true,
+    "fixedBaseline": true
   }
 }

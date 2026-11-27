@@ -47,12 +47,11 @@ The result: red tests and CI, levers that no longer opened gates, broken hero an
 
 | Status | Cards |
 | :--- | :--- |
-| done | VC-001, VC-002, VC-003, VC-004, VC-005, VC-006, VC-007, VC-010, VC-012, VC-020, VC-030, VC-035, VC-040, VC-041, VC-042, VC-043, VC-044, VC-045, VC-046, VC-047, VC-050, VC-051, VC-052, VC-053, VC-054, VC-055, VC-056, VC-057, VC-060, VC-063, VC-071, VC-072, VC-073, VC-074, VC-083, VC-100, VC-102, VC-106, VC-107 |
-| review | VC-058 (#120), VC-082 (round 1 #102, round 2) |
-| in-progress | VC-062 (parts 1-3 #86, #97, #100), VC-076, VC-101 (101a #109, 101b #114, 101c), VC-104, VC-105 (105a #113, 105b todo), VC-121 |
+| done | VC-001, VC-002, VC-003, VC-004, VC-005, VC-006, VC-007, VC-010, VC-012, VC-020, VC-030, VC-035, VC-040, VC-041, VC-042, VC-043, VC-044, VC-045, VC-046, VC-047, VC-050, VC-051, VC-052, VC-053, VC-054, VC-055, VC-056, VC-057, VC-058 (#120), VC-060, VC-061 (#129), VC-063, VC-071, VC-072, VC-073, VC-074, VC-075 (#126), VC-081 (#131), VC-082 (#102, #128), VC-083, VC-100, VC-101 (#109, #114, #123), VC-102, VC-103 (#130), VC-104 (#125), VC-106, VC-107, VC-121 (#124), VC-124 (#127) |
+| in-progress | VC-062 (parts 1-3 #86, #97, #100), VC-070, VC-076, VC-105 (105a #113, 105b todo), VC-120 |
 | ready | VC-108 |
-| todo | VC-061, VC-070, VC-075, VC-081, VC-089, VC-120, VC-122, VC-123, VC-124 |
-| blocked | VC-090 (the gate), VC-103 (VC-101), VC-109 (VC-105) |
+| todo | VC-122, VC-123, VC-089 (last card before the gate) |
+| blocked | VC-090 (the gate), VC-109 (VC-105) |
 
 ---
 
@@ -349,9 +348,9 @@ The result: red tests and CI, levers that no longer opened gates, broken hero an
 - **How (AI):** fix responsive layout and spacing for header controls on tablet and narrow widths, and verify with headless screenshots.
 
 ### VC-081 · Narrative catalogs
-- **Phase:** 4 · **Type:** chore · **Class:** small · **Status:** todo
+- **Phase:** 4 · **Type:** chore · **Class:** small · **Status:** done
 - **Goal:** decide where `scenario_act1.json` and `triggers.json` (deleted, unused at runtime) live.
-- **How (AI):** restore them under `docs/lore` as source material, or wire them into narration if VC-050 needs it.
+- **Note:** restored both under `docs/lore/source/` as archived source material; they remain unused by the game.
 
 ---
 

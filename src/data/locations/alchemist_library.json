@@ -39,99 +39,26 @@
     "fogColor": "rgba(16, 185, 129, 0.13)",
     "musicIntensity": 0.68
   },
-  "parallaxBackground": {
-    "boxWidth": 4440,
-    "boxHeight": 1500,
-    "layers": [
-      {
-        "id": "bg_library_far",
-        "name": "Alchemist Cathedral Dome",
-        "tier": "far",
-        "layerKey": "world:alchemist_library:far",
-        "type": "image",
-        "depth": 0.08,
-        "scrollSpeedX": 0.04,
-        "scrollSpeedY": 0.02,
-        "opaque": true,
-        "imageUrl": "world:alchemist_library:far"
-      },
-      {
-        "id": "bg_library_mid_far",
-        "name": "Distant Aether Arches",
-        "tier": "mid_far",
-        "layerKey": "shared:mid_far:aether_aqueduct_a",
-        "type": "image",
-        "depth": 0.24,
-        "scrollSpeedX": 0.18,
-        "scrollSpeedY": 0.07,
-        "opacity": 0.65,
-        "imageUrl": "shared:mid_far:aether_aqueduct_a"
-      },
-      {
-        "id": "bg_library_mid",
-        "name": "Emerald Bookshelf Galleries",
-        "tier": "mid",
-        "layerKey": "shared:mid:alchemy_shelves_a",
-        "type": "image",
-        "depth": 0.45,
-        "scrollSpeedX": 0.36,
-        "scrollSpeedY": 0.13,
-        "opacity": 0.54,
-        "blendMode": "screen",
-        "mirrorTile": true,
-        "imageUrl": "shared:mid:alchemy_shelves_a"
-      },
-      {
-        "id": "bg_library_mid_close",
-        "name": "Brass Astrolabe Galleries",
-        "tier": "mid_close",
-        "layerKey": "shared:mid_close:brass_galleries_a",
-        "type": "image",
-        "depth": 0.65,
-        "scrollSpeedX": 0.56,
-        "scrollSpeedY": 0.19,
-        "opacity": 0.8,
-        "imageUrl": "shared:mid_close:brass_galleries_a"
-      },
-      {
-        "id": "bg_library_boss_stage",
-        "name": "Astrolabe Sigil Rotunda",
-        "tier": "boss_stage",
-        "bossScope": "stage",
-        "layerKey": "boss:stage:arcane_sigil_arena",
-        "type": "image",
-        "depth": 0.72,
-        "scrollSpeedX": 0.44,
-        "scrollSpeedY": 0.14,
-        "opacity": 0.72,
-        "blendMode": "screen",
-        "imageUrl": "boss:stage:arcane_sigil_arena"
-      },
-      {
-        "id": "bg_library_close",
-        "name": "Foreground Arcane Runes",
-        "tier": "close",
-        "layerKey": "shared:close:foreground_runes_a",
-        "type": "image",
-        "depth": 0.86,
-        "scrollSpeedX": 0.78,
-        "scrollSpeedY": 0.24,
-        "opacity": 0.88,
-        "imageUrl": "shared:close:foreground_runes_a"
-      }
-    ]
+  "parallax": {
+    "layers": ["var_a", "var_b", "var_c", "var_d"],
+    "box": {
+      "width": 4440,
+      "height": 1500
+    }
   },
-  "bossZones": [
+  "zones": [
     {
       "id": "library_astrolabe_rotunda",
+      "kind": "boss",
       "scope": "stage",
       "x": 2240,
       "y": 220,
       "width": 760,
       "height": 580,
-      "layerKey": "boss:stage:arcane_sigil_arena",
       "bossEnemyId": "library_archon_warden",
       "ambientColor": "rgba(16, 185, 129, 0.24)",
+      "effects": ["sigil"],
+      "featherPx": 260,
       "defaultLabel": "Astrolabe Rotunda"
     }
   ],

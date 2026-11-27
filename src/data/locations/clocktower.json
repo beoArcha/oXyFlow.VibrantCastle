@@ -44,93 +44,26 @@
     "fogColor": "rgba(217, 119, 6, 0.1)",
     "musicIntensity": 0.65
   },
-  "parallaxBackground": {
-    "boxWidth": 3040,
-    "boxHeight": 1860,
-    "layers": [
-      {
-        "id": "bg_clocktower_far",
-        "name": "Tower Distant Gears",
-        "tier": "far",
-        "layerKey": "world:clocktower:far",
-        "type": "image",
-        "depth": 0.08,
-        "scrollSpeedX": 0.04,
-        "scrollSpeedY": 0.02,
-        "opaque": true,
-        "imageUrl": "world:clocktower:far"
-      },
-      {
-        "id": "bg_clocktower_mid_far",
-        "name": "Outer Pendulums",
-        "tier": "mid_far",
-        "layerKey": "shared:mid_far:clockwork_pendulums_a",
-        "type": "image",
-        "depth": 0.24,
-        "scrollSpeedX": 0.18,
-        "scrollSpeedY": 0.08,
-        "imageUrl": "shared:mid_far:clockwork_pendulums_a"
-      },
-      {
-        "id": "bg_clocktower_mid",
-        "name": "Great Clockface",
-        "tier": "mid",
-        "layerKey": "shared:mid:clockface_hall_a",
-        "type": "image",
-        "depth": 0.45,
-        "scrollSpeedX": 0.36,
-        "scrollSpeedY": 0.14,
-        "imageUrl": "shared:mid:clockface_hall_a"
-      },
-      {
-        "id": "bg_clocktower_mid_close",
-        "name": "Brass Galleries",
-        "tier": "mid_close",
-        "layerKey": "shared:mid_close:brass_galleries_a",
-        "type": "image",
-        "depth": 0.65,
-        "scrollSpeedX": 0.56,
-        "scrollSpeedY": 0.2,
-        "imageUrl": "shared:mid_close:brass_galleries_a"
-      },
-      {
-        "id": "bg_clocktower_boss_stage",
-        "name": "Automaton Chamber Sigil",
-        "tier": "boss_stage",
-        "bossScope": "stage",
-        "layerKey": "boss:stage:arcane_sigil_arena",
-        "type": "image",
-        "depth": 0.72,
-        "scrollSpeedX": 0.44,
-        "scrollSpeedY": 0.14,
-        "opacity": 0.72,
-        "blendMode": "screen",
-        "imageUrl": "boss:stage:arcane_sigil_arena"
-      },
-      {
-        "id": "bg_clocktower_close",
-        "name": "Foreground Cogs",
-        "tier": "close",
-        "layerKey": "shared:close:foreground_cogs_a",
-        "type": "image",
-        "depth": 0.86,
-        "scrollSpeedX": 0.78,
-        "scrollSpeedY": 0.25,
-        "imageUrl": "shared:close:foreground_cogs_a"
-      }
-    ]
+  "parallax": {
+    "layers": ["var_a", "var_b", "var_c", "var_d"],
+    "box": {
+      "width": 3040,
+      "height": 1860
+    }
   },
-  "bossZones": [
+  "zones": [
     {
       "id": "clocktower_summit_chamber",
+      "kind": "boss",
       "scope": "stage",
       "x": 1940,
       "y": 140,
       "width": 660,
       "height": 420,
-      "layerKey": "boss:stage:arcane_sigil_arena",
       "bossEnemyId": "tower_summit_automaton",
       "ambientColor": "rgba(234, 179, 8, 0.24)",
+      "effects": ["sigil"],
+      "featherPx": 260,
       "defaultLabel": "Automaton Summit Chamber"
     }
   ],
