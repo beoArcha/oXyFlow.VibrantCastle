@@ -14,7 +14,9 @@ The menu shows these names. The settings store them as `low`, `mid` and `high`, 
 
 Where a tier has no art for an element, the game uses the next tier down the list: from **high** it falls back to hi-16bit and then hi-8bit, and from **hi-8bit** it falls back to hi-16bit and then **high**. So every element gets a sprite on every tier.
 
-Painted **high** sheets exist today for the two heroes, the Clockwork Owl Gargoyle, the Training Dummy and four structures (gates, levers and thorns). Most enemies, platforms and decor do not have one yet.
+Every enemy, platform, prop and structure now has a hi-8bit file. Painted **high** sheets exist today for the two heroes, the Clockwork Owl Gargoyle, the Training Dummy and four structures (gates, levers and thorns). Most other enemies, platforms and decor have no painted sheet yet, so on **high** they show their hi-16bit art.
+
+The only remaining hi-16bit gaps are the Clockwork Owl Gargoyle, the Training Dummy and the four structures. On hi-16bit they show their painted sheet instead, and on hi-8bit their own hi-8bit file.
 
 ## Display settings
 

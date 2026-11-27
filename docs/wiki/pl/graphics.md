@@ -14,7 +14,9 @@ Menu pokazuje te nazwy. Ustawienia zapisują je jako `low`, `mid` i `high`, a pl
 
 Jeśli dla danego elementu brakuje grafiki na wybranym poziomie, gra korzysta z następnego poziomu na liście: z **high** przechodzi na hi-16bit, a potem hi-8bit, a z **hi-8bit** na hi-16bit, a potem **high**. Dzięki temu każdy element ma sprite na każdym poziomie.
 
-Malowane arkusze **high** istnieją dziś dla obu bohaterów, dla zegarowej sowy-gargulca, dla Kukły Treningowej i dla czterech konstrukcji (bram, dźwigni i cierni). Większość wrogów, platform i dekoracji nie ma ich jeszcze.
+Każdy wróg, platforma, dekoracja i konstrukcja ma już plik hi-8bit. Malowane arkusze **high** istnieją dziś dla obu bohaterów, dla zegarowej sowy-gargulca, dla Kukły Treningowej i dla czterech konstrukcji (bram, dźwigni i cierni). Większość pozostałych wrogów, platform i dekoracji nie ma malowanego arkusza, więc na **high** pokazują grafikę hi-16bit.
+
+Jedyne pozostałe luki w hi-16bit to zegarowa sowa-gargulec, Kukła Treningowa i cztery konstrukcje. Na poziomie hi-16bit pokazują malowany arkusz, a na hi-8bit własną grafikę hi-8bit.
 
 ## Ustawienia wyświetlania
 
