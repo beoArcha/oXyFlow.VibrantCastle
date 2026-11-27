@@ -19,7 +19,7 @@ Sources: baseline maps at `8121dad`, HEAD maps in `src/data/locations/*.json`, `
 - **Portal ids**: `portal_back_<target>` (towards the previous map), `portal_to_<target>` (forward/goal),
   `portal_side_<target>` (optional branch). Every portal names `targetLocationId` and `targetEntryKey`; no raw `targetSpawnPoint`.
 - **Two-way rule**: every portal A to B needs a portal B to A, and the entry it lands on must sit within 320 px of that return portal.
-  The one allowed exception is the campaign loop `eclipse_crown` to `courtyard` (see open questions).
+  The one allowed exception is the campaign loop `eclipse_crown` to `courtyard` (see owner decisions, section 9).
 
 ## 2. Size bands per archetype
 
@@ -117,7 +117,7 @@ bottomless pits must carry a hazard strip or a visible edge decor; nothing lands
 | alchemist_library (W5-1, new) | none | archive lever and portcullis, astrolabe rotunda | width 3840 to 5600+; unique opening key (shares `narrationMagicUsed` with aether); book-stack branch as a `hook_` or secret |
 | aether_sanctuary (W6-1) | 6400 x 1600, void hazards under islets, crystal platforms, altar lever-gate before the goal, mid narration | archon altar arena, two movers | **restore the altar lever-gate**; put back hazards (HEAD has none); beats (HEAD has no trigger); density 7 to 18 or more |
 | grand_bastion (W7-1) | 8000 x 1500, keep **and ward** gates, lift, 22-enemy siege density | commander arena | **restore the ward gate pair** before the exit; widen to 7200-8000; add beats (HEAD has no trigger) |
-| eclipse_crown (W8-1, new) | none | vanguard sanctum, obsidian layers | width 4640 to 5600+; beats (no trigger now); decide on the world-boss zone on map 1 (open question) |
+| eclipse_crown (W8-1, new) | none | vanguard sanctum, obsidian layers | width 4640 to 5600+; beats (no trigger now); keep the map-1 boss zone as a mini-boss preview (section 9) |
 
 ## 8. New validator checks for `validate-level.ts`
 
@@ -151,10 +151,12 @@ go into `KNOWN_LEVEL_DEFECTS` and leave it with the map PR that fixes them.
 | `HOOK_UNTAGGED` | warn | a surface or touchable reached only at tier D (or not at all) whose id lacks the `hook_` prefix |
 | `SECRET_BRANCH` | warn | no `secret_*` trigger on a surface outside the shortest spawn-to-goal path |
 
-## 9. Open questions for the owner
+## 9. Owner decisions (approved 2026-11-27)
 
-1. Mid checkpoint: add a real checkpoint entity and respawn logic (new card), or keep checkpoint as data only for now?
-2. `eclipse_crown` has a world-boss zone on map 1, while the registry puts the world boss on W8-8. Keep it as a preview or move it?
-3. The `eclipse_crown` to `courtyard` loop: keep it as the only allowed one-way portal (a new game plus hook), or drop it?
-4. The courtyard vault portal to clocktower skips three worlds. Keep it as a secret shortcut (two-way), or remove it?
-5. Size bands double the length of the new maps. Is 5600 px the right floor for map 1, or should new worlds stay shorter?
+1. **Mid checkpoint:** data only for now (`checkpoint_mid` entry in every map). A real checkpoint entity with respawn logic is a separate phase-5 card.
+2. **eclipse_crown boss zone on map 1:** kept as a preview (mini-boss); the real world boss stays on W8-8.
+3. **eclipse_crown -> courtyard loop:** kept as the only allowed one-way portal (campaign close, new game plus hook).
+4. **Courtyard vault -> clocktower portal:** kept as a two-way secret shortcut.
+5. **Map 1 minimum width:** 5600 px.
+
+Status: approved by the owner; this contract is binding for VC-021..VC-028.
