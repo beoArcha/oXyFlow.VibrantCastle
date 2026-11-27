@@ -11,6 +11,7 @@ export interface ParallaxRegistryEntry {
   readonly url: string;
   readonly defaultOpacity?: number;
   readonly defaultBlendMode?: GlobalCompositeOperation;
+  readonly tint?: string | null;
 }
 
 export interface IParallaxRegistry {
