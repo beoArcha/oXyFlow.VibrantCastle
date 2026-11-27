@@ -914,12 +914,64 @@ export interface DevToolsI18n {
   devToolLogs: string;
 }
 
+export interface LevelsMapBrowserI18n {
+  levelsMapBrowserView: string;
+  levelsMapSelectLocation: string;
+  levelsMapToolInspect: string;
+  levelsMapToolPan: string;
+  levelsMapToolText: string;
+  levelsMapZoomFit: string;
+  levelsMapZoomIn: string;
+  levelsMapZoomOut: string;
+  levelsMapShowCaptions: string;
+  levelsMapLayerToggles: string;
+  levelsMapEntitiesCount: string;
+  levelsMapCursorWorld: string;
+  levelsMapKindSolid: string;
+  levelsMapKindGate: string;
+  levelsMapKindLever: string;
+  levelsMapKindPortal: string;
+  levelsMapKindTrigger: string;
+  levelsMapKindSpawn: string;
+  levelsMapKindEnemy: string;
+  levelsMapKindHazard: string;
+  levelsMapInspectorTitle: string;
+  levelsMapInspectorEmpty: string;
+  levelsMapInspectorCopyJson: string;
+  levelsMapInspectorCopied: string;
+  levelsMapInspectorEditText: string;
+  levelsMapTextToolTitle: string;
+  levelsMapTextToolHint: string;
+  levelsMapTextTargetNew: string;
+  levelsMapTextTargetEdit: string;
+  levelsMapTextBeatLabel: string;
+  levelsMapTextKeyLabel: string;
+  levelsMapTextSuggestKey: string;
+  levelsMapTextPlLabel: string;
+  levelsMapTextEnLabel: string;
+  levelsMapTextPlPlaceholder: string;
+  levelsMapTextEnPlaceholder: string;
+  levelsMapTextOneShot: string;
+  levelsMapTextApplyDraft: string;
+  levelsMapTextResetDraft: string;
+  levelsMapTextDraftsCount: string;
+  levelsMapExportPatch: string;
+  levelsMapCopyPatch: string;
+  levelsMapDownloadPatch: string;
+  levelsMapPatchPreviewTitle: string;
+  levelsMapPatchNoChanges: string;
+  levelsMapPatchCopied: string;
+  levelsMapTextNoSelection: string;
+  levelsMapTextBoundsLabel: string;
+}
+
 export interface DeveloperI18n
   extends DataStudioI18n,
     TesterI18n,
     DebugTelemetryI18n,
     AtlasStudioI18n,
-    DevToolsI18n {}
+    DevToolsI18n,
+    LevelsMapBrowserI18n {}
 
 export interface InventoryI18n {
   inventoryTitle: string;
