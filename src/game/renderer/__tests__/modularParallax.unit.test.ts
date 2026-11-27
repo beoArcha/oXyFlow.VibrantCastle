@@ -1,10 +1,10 @@
 import { describe, it, expect } from "bun:test";
-import { ParallaxRenderer } from "../parallaxRenderer";
-import { CelestialRenderer, defaultCelestialRenderer } from "../parallax/celestialRenderer";
-import { CastleSilhouetteRenderer, defaultCastleSilhouetteRenderer } from "../parallax/castleSilhouetteRenderer";
-import { MountainRidgeRenderer, defaultMountainRidgeRenderer } from "../parallax/mountainRidgeRenderer";
-import { AtmosphericFogRenderer, defaultAtmosphericFogRenderer } from "../parallax/atmosphericFogRenderer";
-import { SceneryScaffoldRenderer, defaultSceneryScaffoldRenderer } from "../parallax/sceneryScaffoldRenderer";
+import { ParallaxSystem, PlaceholderRenderer } from "@game/parallax/render";
+import { CelestialRenderer } from "@game/parallax/render/placeholder/celestialRenderer";
+import { defaultCastleSilhouetteRenderer } from "@game/parallax/render/placeholder/castleSilhouetteRenderer";
+import { defaultMountainRidgeRenderer } from "@game/parallax/render/placeholder/mountainRidgeRenderer";
+import { defaultAtmosphericFogRenderer } from "@game/parallax/render/placeholder/atmosphericFogRenderer";
+import { defaultSceneryScaffoldRenderer } from "@game/parallax/render/placeholder/sceneryScaffoldRenderer";
 import { LocationDefinition } from "@game/locations/types";
 import { ParallaxLayerSchema } from "@game/locations/schema/locationSchema";
 import { createMockContext2D as createMockContext } from "@test-utils";
@@ -83,10 +83,10 @@ const mockLocation: LocationDefinition = {
 } as unknown as LocationDefinition;
 
 describe("Modular Parallax Subsystems", () => {
-  describe("ParallaxRenderer Orchestrator Delegation & DIP", () => {
-    it("renders complete parallax background without crashing and preserves save/restore balance", () => {
+  describe("ParallaxSystem & PlaceholderRenderer Delegation & DIP", () => {
+    it("renders complete procedural parallax background via ParallaxSystem and preserves save/restore balance", () => {
       const ctx = createMockContext();
-      const parallax = new ParallaxRenderer();
+      const parallax = new ParallaxSystem();
 
       parallax.render(ctx, mockLocation, 3000, 1000, 1000, 625, 500, 200, 120);
       expect(ctx.getSaveBalance()).toBe(0);
@@ -121,12 +121,13 @@ describe("Modular Parallax Subsystems", () => {
         },
       };
 
-      const parallax = new ParallaxRenderer({
-        celestialRenderer: mockCelestial as any,
-        castleSilhouetteRenderer: mockCastle as any,
-        mountainRidgeRenderer: mockMountain as any,
-        atmosphericFogRenderer: mockFog as any,
+      const placeholder = new PlaceholderRenderer({
+        celestialRenderer: mockCelestial,
+        castleSilhouetteRenderer: mockCastle,
+        mountainRidgeRenderer: mockMountain,
+        atmosphericFogRenderer: mockFog,
       });
+      const parallax = new ParallaxSystem({ placeholderRenderer: placeholder });
 
       const ctx = createMockContext();
       parallax.render(ctx, mockLocation, 3000, 1000, 1000, 625, 100, 100, 1);

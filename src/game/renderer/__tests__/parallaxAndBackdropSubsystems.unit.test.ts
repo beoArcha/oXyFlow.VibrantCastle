@@ -1,6 +1,5 @@
 import { describe, it, expect } from "bun:test";
-import { ParallaxImageRenderer } from "../parallax/parallaxImageRenderer";
-import { SceneryScaffoldRenderer } from "../parallax/sceneryScaffoldRenderer";
+import { SceneryScaffoldRenderer } from "@game/parallax/render/placeholder/sceneryScaffoldRenderer";
 import { ProceduralBackdropCache } from "../proceduralBackdropCache";
 import { ParallaxLayerSchema } from "@game/locations/schema/locationSchema";
 import { LocationDefinition } from "@game/locations/types";
@@ -8,10 +7,9 @@ import { LocationDefinition } from "@game/locations/types";
 function createMockContext() {
   let saveCalls = 0;
   let restoreCalls = 0;
-  let drawImageCalls: any[] = [];
-  let fillRectCalls: any[] = [];
+  const fillRectCalls: Array<{ x: number; y: number; w: number; h: number }> = [];
 
-  const ctx: any = {
+  const ctx = {
     canvas: { width: 1000, height: 625 },
     save: () => {
       saveCalls++;
@@ -19,112 +17,33 @@ function createMockContext() {
     restore: () => {
       restoreCalls++;
     },
-    translate: () => { },
-    rotate: () => { },
-    beginPath: () => { },
-    closePath: () => { },
-    moveTo: () => { },
-    lineTo: () => { },
-    quadraticCurveTo: () => { },
-    arc: () => { },
-    rect: () => { },
+    translate: () => {},
+    rotate: () => {},
+    beginPath: () => {},
+    closePath: () => {},
+    moveTo: () => {},
+    lineTo: () => {},
+    quadraticCurveTo: () => {},
+    arc: () => {},
+    rect: () => {},
     fillRect: (x: number, y: number, w: number, h: number) => {
       fillRectCalls.push({ x, y, w, h });
     },
-    strokeRect: () => { },
-    fill: () => { },
-    stroke: () => { },
-    drawImage: (img: any, dx: number, dy: number, dw: number, dh: number) => {
-      drawImageCalls.push({ img, dx, dy, dw, dh });
-    },
+    strokeRect: () => {},
+    fill: () => {},
+    stroke: () => {},
+    drawImage: () => {},
     fillStyle: "#000000",
     strokeStyle: "#000000",
     lineWidth: 1,
     globalAlpha: 1.0,
     getSaveBalance: () => saveCalls - restoreCalls,
-    getDrawImageCalls: () => drawImageCalls,
     getFillRectCalls: () => fillRectCalls,
   };
-  return ctx;
+  return ctx as unknown as CanvasRenderingContext2D & { getSaveBalance: () => number };
 }
 
-function createMockImage(width: number = 800, height: number = 600): HTMLImageElement {
-  return {
-    complete: true,
-    naturalWidth: width,
-    naturalHeight: height,
-    width,
-    height,
-  } as unknown as HTMLImageElement;
-}
-
-describe("Parallax Image, Scenery & Backdrop Subsystems", () => {
-  describe("ParallaxImageRenderer", () => {
-    it("renders far static backdrop scaled to viewport with center anchoring", () => {
-      const imgRenderer = new ParallaxImageRenderer();
-      const ctx = createMockContext();
-      const mockImg = createMockImage(1920, 1080);
-
-      const farLayer: ParallaxLayerSchema = {
-        id: "bastion_far",
-        name: "Bastion Far",
-        tier: "far",
-        type: "image",
-        imageUrl: "mock://bastion_far.png",
-        imageElement: mockImg,
-        depth: 0.05,
-        scrollSpeedX: 0,
-        scrollSpeedY: 0,
-        opacity: 0.9,
-      };
-
-      imgRenderer.render(ctx, farLayer, 800, 0, 0, 0, 0, 1000, 625);
-
-      expect(ctx.getSaveBalance()).toBe(0);
-      const calls = ctx.getDrawImageCalls();
-      expect(calls.length).toBe(1);
-    });
-
-    it("renders dynamic repeating layer seamlessly across the entire viewport width", () => {
-      const imgRenderer = new ParallaxImageRenderer();
-      const ctx = createMockContext();
-      const mockImg = createMockImage(400, 600); // 400px wide, viewport is 1000px => should draw at least 3-4 tiles
-
-      const midLayer: ParallaxLayerSchema = {
-        id: "court_mid",
-        name: "Courtyard Mid",
-        tier: "mid",
-        type: "image",
-        imageUrl: "mock://court_mid.png",
-        imageElement: mockImg,
-        depth: 0.4,
-        scrollSpeedX: 0.4,
-        scrollSpeedY: 0.2,
-      };
-
-      imgRenderer.render(ctx, midLayer, 800, 0.5, 100, 0, 0, 1000, 625);
-
-      expect(ctx.getSaveBalance()).toBe(0);
-      const calls = ctx.getDrawImageCalls();
-      expect(calls.length).toBeGreaterThanOrEqual(3);
-    });
-
-    it("preloads layer image URLs without throwing", () => {
-      const imgRenderer = new ParallaxImageRenderer();
-      imgRenderer.preload([
-        {
-          id: "l1",
-          name: "L1",
-          type: "image",
-          imageUrl: "mock://preload_1.png",
-          depth: 0.1,
-          scrollSpeedX: 0.1,
-          scrollSpeedY: 0.1,
-        },
-      ]);
-      expect(true).toBe(true);
-    });
-  });
+describe("Parallax Scenery & Backdrop Subsystems", () => {
 
   describe("SceneryScaffoldRenderer Thematic Geometry", () => {
     it("renders Clocktower mechanical shaft and rotating gears", () => {

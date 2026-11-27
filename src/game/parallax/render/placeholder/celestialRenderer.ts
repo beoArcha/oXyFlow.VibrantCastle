@@ -18,6 +18,7 @@ export interface ICelestialRenderer {
     viewportHeight: number,
     tickCount: number
   ): void;
+  clearCaches?(): void;
 }
 
 /**

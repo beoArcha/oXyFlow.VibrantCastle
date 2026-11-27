@@ -2,16 +2,15 @@ import { Player, Enemy, Entity, Particle, Projectile } from "../types";
 import { CameraState } from "../engine/cameraManager";
 import { LocationDefinition } from "../locations/types";
 import { LanguageCode } from "@i18n";
-import { ParallaxRenderer } from "./parallaxRenderer";
+import {
+  IParallaxSystem,
+  ParallaxSystem,
+} from "@game/parallax/render";
+import { createDefaultParallaxSystem } from "@game/parallax/parallaxWiring";
 import { IStructureRenderer, defaultStructureRenderer } from "./structureRenderer";
 import { ILevelEntityRenderer } from "./levelEntityRenderer";
 import { IActorRenderer, ActorRenderer, defaultActorRenderer } from "./actorRenderer";
 import { IFxRenderer, FxRenderer, defaultFxRenderer } from "./fxRenderer";
-import {
-  IMultiLayerBackgroundSystem,
-  MultiLayerBackgroundSystem,
-  defaultMultiLayerBackgroundSystem,
-} from "./multiLayerBackgroundSystem";
 import { IHitboxRenderer, HitboxRenderer, defaultHitboxRenderer } from "./hitboxRenderer";
 import { debugManager } from "@game/debug/debugManager";
 import { ProceduralBackdropCache, defaultProceduralBackdropCache } from "./proceduralBackdropCache";
@@ -23,16 +22,15 @@ import { IDecorRenderer, DecorRenderer } from "./decorRenderer";
 
 const SCENERY_TREE_OFFSETS = [350, 1100, 1600, 2450, 3050, 3500] as const;
 
-export type { IMultiLayerBackgroundSystem, IHitboxRenderer };
-export { MultiLayerBackgroundSystem, defaultMultiLayerBackgroundSystem, HitboxRenderer, defaultHitboxRenderer };
+export type { IParallaxSystem, IHitboxRenderer };
+export { ParallaxSystem, HitboxRenderer, defaultHitboxRenderer };
 
 export interface IRendererConfig {
   hardwareAcceleration?: boolean;
 }
 
 export interface IRendererDependencies {
-  parallaxRenderer?: ParallaxRenderer;
-  multiLayerBackgroundSystem?: IMultiLayerBackgroundSystem;
+  parallaxSystem?: IParallaxSystem;
   structureRenderer?: IStructureRenderer;
   levelEntityRenderer?: ILevelEntityRenderer;
   actorRenderer?: IActorRenderer;
@@ -61,7 +59,7 @@ export class GameRenderer {
   public cameraY: number = 0;
   public language: LanguageCode = "en";
 
-  private readonly parallaxRenderer: ParallaxRenderer;
+  private readonly parallaxSystem: IParallaxSystem;
   private readonly structureRenderer: IStructureRenderer;
   private readonly actorRenderer: IActorRenderer;
   private readonly fxRenderer: IFxRenderer;
@@ -81,9 +79,7 @@ export class GameRenderer {
     this.ctx = acquireCanvas2DContext(canvas, this.isHardwareAccelerated);
     this.ctx.imageSmoothingEnabled = false;
 
-    this.parallaxRenderer =
-      deps.parallaxRenderer ||
-      new ParallaxRenderer({ multiLayerSystem: deps.multiLayerBackgroundSystem });
+    this.parallaxSystem = deps.parallaxSystem || createDefaultParallaxSystem();
     this.structureRenderer = deps.structureRenderer || deps.levelEntityRenderer || defaultStructureRenderer;
     this.actorRenderer = deps.actorRenderer || defaultActorRenderer;
     this.fxRenderer = deps.fxRenderer || defaultFxRenderer;
@@ -177,7 +173,7 @@ export class GameRenderer {
     // 1. BACKDROP & DYNAMIC PARALLAX
     this.ctx.save();
     if (location?.parallaxBackground) {
-      this.parallaxRenderer.render(
+      this.parallaxSystem.render(
         this.ctx,
         location,
         levelWidth,

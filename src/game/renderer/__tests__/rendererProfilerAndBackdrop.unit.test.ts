@@ -1,5 +1,6 @@
 import { describe, it, expect } from "bun:test";
-import { MultiLayerBackgroundSystem } from "../multiLayerBackgroundSystem";
+import { ParallaxSystem } from "@game/parallax/render";
+import { createDefaultParallaxSystem } from "@game/parallax/parallaxWiring";
 import { AtmosphericSectorRenderer } from "../background/atmospheric/atmosphericSectorRenderer";
 import { DebugProfilerOverlay } from "../debugProfilerOverlay";
 import { HitboxRenderer } from "../hitboxRenderer";
@@ -7,43 +8,40 @@ import { getLocation } from "@game/locations";
 import { Player, PlayerId } from "@game/types";
 import { createMockContext2D as createMockContext } from "@test-utils";
 
-describe("MultiLayerBackgroundSystem & DebugProfilerOverlay", () => {
-  describe("MultiLayerBackgroundSystem AssetLoader & Subsystem Integration", () => {
+describe("ParallaxSystem & DebugProfilerOverlay", () => {
+  describe("ParallaxSystem AssetLoader & Subsystem Integration", () => {
     it("renders all supported sectors cleanly without throwing", () => {
       const sectors = ["courtyard", "thorn_chasm", "clocktower", "aether_sanctuary", "grand_bastion"];
-      const multiLayer = new MultiLayerBackgroundSystem();
+      const parallax = createDefaultParallaxSystem();
 
       for (const sector of sectors) {
         const ctx = createMockContext();
         const loc = getLocation(sector);
-        expect(multiLayer.isSupported(sector)).toBe(true);
+        expect(parallax.isSupported(sector)).toBe(true);
 
-        multiLayer.render(ctx, loc, 3000, 1000, 1000, 625, 200, 100, 60);
+        parallax.render(ctx, loc, 3000, 1000, 1000, 625, 200, 100, 60);
         expect(ctx.getSaveBalance()).toBe(0);
       }
     });
 
     it("supports injecting custom AtmosphericSectorRenderer via DIP", () => {
       let atmosphereCalled = false;
-      let proceduralCalled = false;
 
       const mockAtmospheric = {
         renderSectorAtmosphere: () => {
           atmosphereCalled = true;
         },
-        renderProceduralFarBackdrop: () => {
-          proceduralCalled = true;
-        },
-        clearCaches: () => { },
+        renderProceduralFarBackdrop: () => {},
+        clearCaches: () => {},
       };
 
-      const multiLayer = new MultiLayerBackgroundSystem({
-        atmosphericRenderer: mockAtmospheric as any,
+      const parallax = new ParallaxSystem({
+        atmosphericRenderer: mockAtmospheric,
       });
 
       const ctx = createMockContext();
       const loc = getLocation("thorn_chasm");
-      multiLayer.render(ctx, loc, 3000, 1000, 1000, 625, 100, 50, 1);
+      parallax.render(ctx, loc, 3000, 1000, 1000, 625, 100, 50, 1);
 
       expect(atmosphereCalled).toBe(true);
     });

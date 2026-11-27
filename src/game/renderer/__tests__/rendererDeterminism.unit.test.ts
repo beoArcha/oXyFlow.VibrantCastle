@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { GameRenderer } from "../renderer";
-import { ParallaxRenderer } from "../parallaxRenderer";
+import { ParallaxSystem } from "@game/parallax/render";
 import { StructureRenderer, defaultStructureRenderer, type IStructureRenderer } from "../structureRenderer";
 import { LevelEntityRenderer, defaultLevelEntityRenderer } from "../levelEntityRenderer";
 import { Entity, CollisionType } from "@game/types";
@@ -61,9 +61,9 @@ describe("GameRenderer - Determinism, Schema Immutability & Proxy Elimination", 
     });
   });
 
-  describe("Schema Immutability in ParallaxRenderer", () => {
-    it("does not mutate layer.imageElement during renderImageLayer", () => {
-      const parallax = new ParallaxRenderer();
+  describe("Schema Immutability in ParallaxSystem", () => {
+    it("does not mutate layer.imageElement during render", () => {
+      const parallax = new ParallaxSystem();
       const mockCtx = mockCanvas.getContext("2d") as unknown as CanvasRenderingContext2D;
 
       const layer: ParallaxLayerSchema = {
@@ -107,7 +107,7 @@ describe("GameRenderer - Determinism, Schema Immutability & Proxy Elimination", 
     });
 
     it("preloads layer images into cache ahead of time without schema mutation", () => {
-      const parallax = new ParallaxRenderer();
+      const parallax = new ParallaxSystem();
       const layer: ParallaxLayerSchema = {
         id: "preload_test",
         name: "Preload Test",

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { LocationDefinition } from "@game/locations/types";
 import { BackgroundLayerTier, BossZoneScope } from "@game/locations/schema/locationSchema";
-import { MultiLayerBackgroundSystem } from "@game/renderer/multiLayerBackgroundSystem";
-import { assetLoader } from "@game/engine/assetLoader";
+import type { IParallaxSystem } from "@game/parallax/render";
+import { createDefaultParallaxSystem } from "@game/parallax/parallaxWiring";
 
 export interface LevelOverlayOptions {
   readonly showSolids: boolean;
@@ -37,20 +37,15 @@ export const LevelPreviewCanvas: React.FC<LevelPreviewCanvasProps> = ({
   overlays,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const bgSystemRef = useRef<MultiLayerBackgroundSystem | null>(null);
+  const bgSystemRef = useRef<IParallaxSystem | null>(null);
 
   if (!bgSystemRef.current) {
-    bgSystemRef.current = new MultiLayerBackgroundSystem();
+    bgSystemRef.current = createDefaultParallaxSystem();
   }
 
   // Preload all textures for the selected location whenever location changes
   useEffect(() => {
-    const layers = location.parallaxBackground?.layers ?? [];
-    for (const layer of layers) {
-      if (layer.imageUrl && !assetLoader.isTextureLoaded(layer.imageUrl)) {
-        assetLoader.loadTexture(layer.imageUrl).catch(() => {});
-      }
-    }
+    bgSystemRef.current?.preload(location.parallaxBackground?.layers);
   }, [location]);
 
   useEffect(() => {
