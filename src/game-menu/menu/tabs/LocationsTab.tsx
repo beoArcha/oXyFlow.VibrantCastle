@@ -4,6 +4,7 @@ import { Button, Card, CardHeader, CardTitle, CardContent, Badge, Heading, Parag
 import { useGameSession } from "@context/GameSessionContext";
 import { useI18n } from "@context/I18nContext";
 import { cn } from "@lib/utils";
+import { ReservedFeatureCard } from "@game-menu/common";
 
 export interface LocationItemVM {
   readonly id: string;
@@ -92,6 +93,10 @@ export const LocationsTab = ({
           </div>
         </CardContent>
       </Card>
+      <ReservedFeatureCard
+        titleKey="reservedWorldsTitle"
+        descriptionKey="reservedWorldsDesc"
+      />
     </div>
   );
 };
