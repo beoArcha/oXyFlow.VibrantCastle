@@ -19,14 +19,14 @@ Players explore the ancient Citadel of Aether—once the seat of horologists, as
 
 ## Key Features
 
-* **Responsive Locomotion & Melee Combat**: Variable-height jumps with coyote time and jump buffering, slides and backsteps, melee strikes and spells. (Enemy attacks, ability gating and the restricted pad layout are still in progress; see `AGENTS.md`.)
+* **Responsive Locomotion & Melee Combat**: Variable-height jumps with coyote time and jump buffering, slides and backsteps, melee strikes and spells. (Enemy attacks, ability gating and the restricted pad layout are still in progress; see the [roadmap](docs/tasks/ROADMAP.md).)
 * **Playable Champions**:
   * **Valen (Chrono Duelist)**: A calculated scholar utilizing rapier precision and solar glyph magic.
   * **Aurelia (Aetherblade Warden)**: An agile protector commanding organic celestial energy and an ethereal manifested blade.
 * **Co-op & Solo Modes**: Experience the campaign solo or in two-player cooperative play.
-* **Citadel Sectors**: Five large linked maps: the Courtyard of Awakening, the Chasm of Thorns, the Clockwork Tower, the Aether Sky Sanctuary and the Grand Bastion, each checked by an automated level-logic validator.
-* **Art Quality Tiers**: 19 enemy types drawn in one of three tiers chosen in the Display settings: `hi-8bit` (8-bit look), `hi-16bit` (16-bit look) or `high` (painted). Definitions: `docs/manifesto/CONTENT_PIPELINE.md` §5.5.
-* **Two Menu Levels**: a game menu (settings, help, inventory, skills) and a Developer Suite (Atlas Studio, Data Studio, debug, logs).
+* **Citadel Worlds**: The campaign is planned as 8 worlds x 8 maps. Today map 1 of each world exists, from `courtyard` to `eclipse_crown`. Each map is checked by an automated level-logic validator.
+* **Art Quality Tiers**: heroes, enemies and props are drawn in one of three tiers, chosen in the Display settings: `hi8bit` (8-bit look), `hi16bit` (16-bit look) or `high` (painted). Definitions: [`.agents/rules/content_and_assets.md`](.agents/rules/content_and_assets.md) §6.1.
+* **Two Menu Levels**: a game dialog (game, map, character, inventory, magic, settings, help) and a separate dev dialog, "Tworzenie" (Atlas, levels, Data Studio, tester, debug, logs), in dev builds.
 * **Rich World & Lore**: Comprehensive documentation of characters, locations, artifacts, enemies, and lore.
 
 ## Tech Stack & Getting Started
@@ -56,13 +56,20 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ```bash
 bun run typecheck                      # Static type check
 bun test                               # Full test suite (unit, integration, scripts, arch, e2e)
+bun test src/tests/arch                # Architecture and boundary tests
 bun scripts/validate-level.ts <id>     # Validate one map's logic
-bun scripts/sprites/compile.ts <id>    # Compile hi-8bit / hi-16bit enemy sheets
-bun scripts/repack-atlas.ts <id>       # Repack an AI sheet onto a clean grid
+bun scripts/sprites/compile.ts <id>    # Compile hi8bit / hi16bit sprite sheets
+bun scripts/repack-atlas.ts <id>       # Repack a painted sheet onto a clean grid
 bun run build:game                     # Production game client
 ```
 
-The canonical design and architecture specifications live in `docs/manifesto/`.
+## Documentation
+
+* [Vision](docs/tasks/VISION.md): what we are building.
+* [Roadmap](docs/tasks/ROADMAP.md): phases, quality gates, and planned / done tasks.
+* [Task board](docs/tasks/task-board.md): the task cards.
+* [AGENTS.md](AGENTS.md) and [`.agents/rules/`](.agents/rules): engineering and orchestration rules.
+* [Design docs](docs/design/), e.g. the menu UX plan.
 
 ## License
 
