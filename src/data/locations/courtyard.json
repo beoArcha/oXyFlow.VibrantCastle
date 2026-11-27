@@ -48,13 +48,24 @@
   },
   "zones": [
     {
+      "id": "courtyard_sanctuary_rest",
+      "kind": "rest",
+      "x": 1240,
+      "y": 540,
+      "width": 460,
+      "height": 380,
+      "ambientColor": "rgba(56, 189, 248, 0.22)",
+      "featherPx": 260,
+      "defaultLabel": "Sanctuary Alcove"
+    },
+    {
       "id": "courtyard_trial_square",
       "kind": "boss",
       "scope": "stage",
       "x": 2660,
       "y": 180,
       "width": 580,
-      "height": 540,
+      "height": 620,
       "bossEnemyId": "courtyard_captain_1",
       "ambientColor": "rgba(245, 158, 11, 0.22)",
       "effects": ["sigil"],
