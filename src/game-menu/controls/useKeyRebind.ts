@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { InputMap, PlayerId } from "@game/types";
 import { useControls } from "@context/ControlsContext";
 import { useI18n } from "@context/I18nContext";
+import { isRebindCancelKey } from "@context/controls/reservedKeys";
 import { formatKeyLabel } from "./formatKeyLabel";
 
 export interface KeyRebindTarget {
@@ -45,12 +46,15 @@ export function useKeyRebind(options: UseKeyRebindOptions = {}): UseKeyRebindRes
       e.preventDefault();
       e.stopPropagation();
 
-      if (e.code === "Escape" || e.key === "Escape") {
+      if (isRebindCancelKey(e.code, e.key)) {
         setBindingTarget(null);
         return;
       }
 
-      rebindKeyboard(bindingTarget.player, bindingTarget.action, e.code, e.key);
+      // Reserved system keys are rejected: keep listening for a valid key.
+      const bound = rebindKeyboard(bindingTarget.player, bindingTarget.action, e.code, e.key);
+      if (!bound) return;
+
       const formattedKey = formatKeyLabel(e.code, t("spaceKey"));
       onSuccess?.(
         t("keyBoundNotification", {
