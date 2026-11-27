@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent, Button, Text, Paragraph } fro
 import { useI18n } from "@context/I18nContext";
 import { useControls } from "@context/ControlsContext";
 import { formatKeyLabel } from "@game-menu/controls";
+import { GamepadMapper } from "@game-menu/controls/GamepadMapper";
 import { InputMap, PlayerId } from "@game/types";
 
 export interface ControlsMenuTabProps {
@@ -105,6 +106,8 @@ export const ControlsMenuTab: React.FC<ControlsMenuTabProps> = ({ onStartRebind 
           </Card>
         ))}
       </div>
+
+      <GamepadMapper />
 
       <Card variant="subtle">
         <CardHeader>
