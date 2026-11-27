@@ -2,7 +2,7 @@
 
 > *„Jesienne liście na francuskim kamieniu i komitet powitalny z muzealnych blach. Bywały w 2034 roku gorsze wtorki.”*
 
-**Vibrant Castle** to dwuwymiarowa metroidvania w jesiennym półmroku, osadzona w naszym własnym świecie w roku 2034, po tajemniczym kataklizmie technomagicznego pochodzenia. Gra działa w przeglądarce — na klawiaturze albo na padzie — i powstaje otwarcie na GitHubie.
+**Vibrant Castle** to dwuwymiarowa metroidvania w jesiennym półmroku, osadzona w naszym własnym świecie w roku **2034**, sześć lat po tajemniczym kataklizmie technomagicznego pochodzenia z **2028 roku**. Gra działa w przeglądarce — na klawiaturze albo na padzie — i powstaje otwarcie na GitHubie.
 
 ---
 
@@ -20,11 +20,11 @@
 
 ## 2. Historia do tej pory
 
-Jest rok **2034**. Świat nie upadł — cywilizacja trwa dalej, podzielona między obszary zwykłe, strefy objęte cenzurą i nieliczne miejsca przeobrażone przez **kataklizm**, w którym na świat bez magii spadły magia i pęknięty czas. Nikt nie wie na pewno, dlaczego do tego doszło; najwięcej wskazuje na efekt motyla: pewien nieprzygotowany rytuał zbiegł się w jednej chwili z nowoczesnym eksperymentem fizycznym, otwierając **szczelinę** i wiążąc odległe od siebie miejsca. Poza kordonem rządy, badacze, religie, nowi magowie i podziemie próbują okiełznać magię jako rodzącą się naukę.
+Jest rok **2034**. Świat nie upadł — cywilizacja trwa dalej, podzielona między obszary zwykłe, strefy objęte cenzurą i tereny zmienione przez **kataklizm z 2028 roku**, w którym na świat bez magii spadły magia i pęknięty czas. Nikt nie wie na pewno, dlaczego do tego doszło; najwięcej wskazuje na efekt motyla: pewien nieprzygotowany rytuał zbiegł się w jednej chwili z nowoczesnym eksperymentem fizycznym, otwierając **szczelinę** i wiążąc odległe od siebie miejsca. Magia — nazywana **Aetherem** (po prostu „eterem” zapisanym przez staronordyckie *ae*) — ma zaledwie kilka lat, działa na całym świecie i słabnie wraz z odległością: najsilniejsza jest w Strefie (w laboratorium i miejscu kultu), a wyraźniejsza także w znanych miejscach mistycznych, naturalnych i szamańskich.
 
-Sama akcja toczy się wewnątrz jednej z takich **Stref**, otoczonej bronioną **strefą buforową**. W jej granicach przyzwany demon i jego zastępy zniekształciły rzeczywiste miejsca XXI wieku — w tym zabytkowy francuski zamek, wyrobisko, tunele grzewcze, fabrykę robotyki czy laboratorium — przekładając niezrozumiałą dla siebie technikę na język wież zegarowych, alchemii i rycerskich warowni.
+Akcja toczy się wewnątrz przeobrażonej **Strefy**, otoczonej bronioną przez państwa **strefą buforową** ciągnącą się pasem od Utah po Szwajcarię. W jej granicach przyzwany demon i jego zastępy zniekształciły rzeczywiste miejsca z 2028 roku — w tym zabytkowy francuski zamek, wyrobisko, tunele grzewcze, fabrykę robotyki czy laboratorium — przekładając niezrozumiałą dla siebie technikę na język wież zegarowych, alchemii i rycerskich warowni.
 
-Dwoje przyjaciół — **Valen** (*Słoneczny Rycerz*) oraz **Aurelia** (*Uczona Arkanów*) — porusza się przez tę Strefę ramię w ramię, bo rzeczywistość zmusiła ich do współdziałania. Nie ma tu głównego bohatera ani pomocnika: ich współpraca przypomina brazylijskiego zouka, w którym prowadzący proponuje ruch, a podążający decyduje, czy i jak na niego odpowiedzieć — i sam może przejąć prowadzenie. Nad wszystkim czuwa nienachalny, elegancko powściągliwy **Narrator**, którego tożsamość pozostaje tajemnicą.
+Dwoje zwykłych ludzi i dawnych przyjaciół — **Valen** (38 lat, inżynier, który zaprojektował most dojazdowy do nowego laboratorium; *Słoneczny Rycerz*) oraz **Aurelia** (31 lat, błyskotliwa policjantka na drodze do zostania detektywem, prowadząca śledztwo w sprawie nowego kultu; *Uczona Arkanów*) — poczuło przed kataklizmem „zew” i w Strefie musi działać ramię w ramię. Nie ma tu głównego bohatera ani pomocnika: ich współpraca przypomina brazylijskiego zouka, w którym prowadzący proponuje ruch, a podążający decyduje, czy i jak na niego odpowiedzieć — i sam może przejąć prowadzenie. Nad wszystkim czuwa nienachalny, elegancko powściągliwy **Narrator** — osoba nieznanej płci, niczym AI, która niegdyś patrzyła przez kamery, a teraz wiedzie ulotne życie i robi notatki.
 
 ---
 

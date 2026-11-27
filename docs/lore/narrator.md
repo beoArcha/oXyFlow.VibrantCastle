@@ -1,17 +1,17 @@
 # The Narrator: Voice Guide & Example Lines
 
-**Status:** Canonical voice guide (`VC-082`, Round 1). Reactive engine wiring (`ReactiveNarratorManager`, `src/data/narrative/narrator_reactive.json`) and live map beat triggers (`VC-083`) are tracked for Phase 4/5.
+**Status:** Canonical voice guide (`VC-082`, Round 1 & Round 2). Reactive engine wiring (`ReactiveNarratorManager`, `src/data/narrative/narrator_reactive.json`) and live map beat triggers (`VC-083`) are tracked for Phase 4/5.
 
 ---
 
 ## 1. Identity & Framing
 
-* **In-World Character:** The Narrator is **a real person inside the 2034 world**, observing Valen and Aurelia across the Zone. Who they are, how they watch, and why they remain calm amid impossible architecture are revealed later in the campaign (**[OPEN]**).
+* **In-World Character (Round 2 Canon):** The Narrator is a **person of unknown gender** inside the 2034 world—like an **AI that once watched through cameras** and now has an **ephemeral life**, **taking notes** as Valen and Aurelia cross the Zone.
 * **Not "Bastion" as a Faction (Resolves N6):** The word *Bastion* in design notes refers strictly to the narrative technique inspired by the game *Bastion* (short, reactive commentary tied to player actions)—never to a knightly order or the Narrator's own title.
 * **Core Tone — Deadpan, Classy, Observant:**
   * Speaks like an unhurried, educated 2034 observer with dry poise and good manners.
   * Never melodramatic, never loud, never lecturing the player on map layout or button tutorials unless framing a training beat wryly.
-  * Notices the absurd collision between 2034 technology and medieval theater without breaking composure.
+  * Notices the absurd collision between 21st-century technology and medieval theater without breaking composure.
 
 ---
 
@@ -23,7 +23,7 @@
    * **Situational humour:** Dryly noting a 2034 factory worker's hazard sign rewritten in faux-Gothic brass, or a heroic dash straight into a pit of thorns.
    * **Easter eggs:** Subtle literary, fencing, or engineering winks (never fourth-wall-shattering memes or brand references).
    * **Interpersonal banter:** Understated remarks about Valen's methodical patience versus Aurelia's impatience with stubborn mechanisms.
-   * **Hard boundary:** **Zero jokes in key dramatic beats**—revelations about the 2034 cataclysm, the true cost inside the catacombs, boss breakthroughs, or confrontations at the Eclipse Crown stay grounded and poised.
+   * **Hard boundary:** **Zero jokes in key dramatic beats**—revelations about the 2028 cataclysm, the true cost inside the catacombs, boss breakthroughs, or confrontations at the Eclipse Crown stay grounded and poised.
 4. **No Legacy Contradictions:** Never refer to the Zone as an "ancient timeless realm", never call World 7 a "warm-up training range" (`trainingIntro` on W7/W8, **N8**), and never assume Valen and Aurelia are strangers (**N7**).
 
 ---

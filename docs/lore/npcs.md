@@ -1,6 +1,6 @@
 # Non-Playable Characters, Animals & Figures (NPCs)
 
-Within the 2034 Zone, Valen and Aurelia encounter an observant Narrator, resilient animal companions drawn to temporal pockets, a surviving scholar of emerging magical science, and the historical fencing legacy of the French château.
+Within the 2034 Zone, Valen and Aurelia encounter an observant Narrator, resilient animal companions drawn to temporal pockets, a surviving scholar of emerging magical science, and the historical fencing legacy of the French château. **NPCs are not passive signposts: they have their own goals and relationships—both with each other and with Valen and Aurelia.**
 
 **Implementation status:** Today only the Narrator speaks in-game via timed subtitles (`NarrationSystem`, `src/i18n/modules/narrations.ts`). Greeting lines for Corvus, Pip/Amber, and the Sage exist in `src/i18n/modules/dialogues.ts`, while `ReactiveNarratorManager` (`narrator_reactive.json`) and `dialogues_vn.json` exist in data/logic, **not yet wired into live maps or the simulation loop** (Phases 5 and 7 backlog in [`docs/tasks/ROADMAP.md`](../tasks/ROADMAP.md)).
 
@@ -8,7 +8,7 @@ Within the 2034 Zone, Valen and Aurelia encounter an observant Narrator, resilie
 
 ## 1. The Narrator — In-World Observer (`narrator.md`)
 
-* **Role:** An **in-world 2034 character** (identity **[OPEN]**, revealed later in the campaign) offering dry, classy reactive commentary in the style of *Bastion*.
+* **Role:** A **person of unknown gender**—like an **AI that once watched through cameras** and now has an **ephemeral life**, **taking notes** and offering dry, classy reactive commentary in the style of *Bastion*.
 * **Canon Alignment (N3, N6):** "Bastion" names only the narrative style and World 7 (`grand_bastion`), never the Narrator's title or an ancient knightly order. All shared commentary must be hero-neutral across Valen solo, Aurelia solo, and 2P co-op. See [`narrator.md`](./narrator.md) for voice rules and 10 bilingual example lines.
 
 ---
@@ -43,11 +43,11 @@ Within the 2034 Zone, Valen and Aurelia encounter an observant Narrator, resilie
 ## 5. Master Oakhaven — Historic Fencing Legacy (Château Archive)
 
 * **Role:** Historical fencing master associated with the **French château** (World 1, `courtyard`), *not* an immortal builder of a timeless fantasy citadel (**resolves N5**).
-* **2034 Framing:** Before the 2034 cataclysm, the historic château housed a 19th-century fencing society wing and museum collection featuring Master Oakhaven's *Treatise on the Kinetic Rapier*, counterweight exhibition doors, and straw practice dummies. When the demon reshaped the château into its outer courtyard, Oakhaven's wooden dummies and fencing exhibits came alive as `training_dummy`, `training_target`, and `grand_dummy`.
+* **2034 Framing:** Before the 2028 cataclysm, the historic château housed a 19th-century fencing society wing and museum collection featuring Master Oakhaven's *Treatise on the Kinetic Rapier*, counterweight exhibition doors, and straw practice dummies. When the demon reshaped the château into its outer courtyard, Oakhaven's wooden dummies and fencing exhibits came alive as `training_dummy`, `training_target`, and `grand_dummy`.
 
 ---
 
-## 6. Open Questions Regarding NPCs & Outsiders
+## 6. NPC Goals, Relationships & Outsiders
 
-* **Narrator Identity:** Which 2034 character is narrating Valen and Aurelia's ascent (**[OPEN]**).
-* **Outsiders in the Zone:** Whether external human actors—buffer-zone soldiers, artifact hunters, criminal smugglers, cultists, or rival new mages—appear as NPCs inside the Zone (**[OPEN]**).
+* **Independent Agendas (Round 2 Canon):** NPCs in the Zone are not mere quest dispensers—they pursue **their own goals** and maintain **relationships with each other and with the heroes** (for example, how Corvus, Pip/Amber, and the Zone Sage react differently to Valen's methodical engineering mindset versus Aurelia's investigative drive).
+* **Outsiders & Buffer Zone Seekers (Round 2 Canon):** Across the state-defended buffer zone (Utah to Switzerland), people arrive seeking the **philosopher's stone, wealth, a panacea, or adventure**. Whether outside human factions (soldiers, smugglers, cultists, rival mages) appear as active NPCs inside the Zone during gameplay remains **[OPEN]** for Phase 7 design.

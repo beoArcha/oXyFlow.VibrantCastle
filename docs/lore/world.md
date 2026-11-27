@@ -6,43 +6,45 @@
 
 ## 1. The World of 2034
 
-*Vibrant Castle* is set in **our own world, in the year 2034**, after a localized **techno-magical cataclysm**.
+*Vibrant Castle* is set in **our own world, in the year 2034**, six years after a localized **techno-magical cataclysm in 2028**.
 
-Unlike classical post-apocalyptic fiction, **civilisation did not fall**. Power grids still hum across most continents, airlines still fly around restricted airspace, and governments still issue press briefings. The world of 2034 is an uneasy patchwork:
+Unlike classical post-apocalyptic fiction, **civilisation did not fall**. Power grids still hum across most continents, airlines still fly around restricted airspace (and fly over the affected belt at high altitude), and governments still issue press briefings. The world of 2034 is an uneasy patchwork:
 
 * **Free and ordinary regions** carry on with daily life, adapting slowly to the shock that the laws of physics now have exceptions.
-* **Censored and quarantined sectors** lie under information blackouts, exclusion perimeters, and military or regulatory cordons.
-* **Transformed Zones** — small, fiercely bounded areas directly struck by the cataclysm — turned into **"something new"**: unstable pockets where magic behaves as physical law, space folds along unexpected corridors, and time no longer runs in a straight line.
+* **Censored and quarantined sectors** lie under information blackouts, exclusion perimeters, and state cordons.
+* **Transformed Zones** — areas directly struck by the 2028 cataclysm — turned into **"something new"**: unstable pockets where magic behaves as physical law, space folds along unexpected corridors, and time no longer runs in a straight line.
 
 ---
 
-## 2. The Cataclysm: Butterfly Effect & Broken Time
+## 2. The 2028 Cataclysm: Butterfly Effect & Broken Time
 
-Nobody knows *exactly* why the cataclysm happened ("it just is"). The prevailing scientific and occult reconstruction points to a **butterfly effect**:
+Nobody knows *exactly* why the cataclysm happened ("it just is"). The prevailing scientific and occult reconstruction points to a **butterfly effect** in **2028**:
 
 1. **Two Unrelated Events, One Instant:** In a world that still had no magic, an unprepared occultist led a magic ritual for a circle of followers—not truly believing it would work. At the exact same moment, far away, a modern high-energy physics experiment pushed matter and energy across an uncharted threshold.
 2. **The Rift:** The two events resonated. A **rift** opened, tearing magic into baseline reality and breaking linear causality.
-3. **Non-Local Link:** Even though the laboratory and the ritual site stood far apart in 2034 geography, a **strange non-local link** now binds them. Inside the resulting Zone, distances compress, thresholds lead where they shouldn't, and rooms overlap like pages folded against one another.
+3. **Non-Local Link:** Even though the laboratory and the ritual site stood far apart in 2028 geography, a **strange non-local link** now binds them. Inside the resulting Zone, distances compress, thresholds lead where they shouldn't, and rooms overlap like pages folded against one another.
 4. **Time Unmoored:** Time inside the Zone is no longer uniform. Clocks freeze in the perpetual amber light of autumn, local machinery runs backward, shafts repeat the same moments, and stepping through the deepest breach loops travelers back to the outer courtyard.
 
 ---
 
-## 3. Magic as an Emerging Science
+## 3. Magic (Aether) & Its Global Reach
 
-Once magic appeared in 2034, humanity treated it the way humanity treats any newly discovered force: **with research budgets, classification tables, containment protocols, and fierce competition**.
+Magic is only a few years old—born in the **2028** cataclysm—and humanity in **2034** treats it the way humanity treats any newly discovered force: **with research budgets, classification tables, containment protocols, and fierce competition**.
 
-* Universities, state institutes, and private labs try to capture magical phenomena in repeatable equations—turning somatic gestures, thermal projections, and temporal anomalies into an **emerging science**.
-* **Interested Parties:** The Zone draws attention from every corner of 2034 society—**states**, **religious institutions**, **terrorist and criminal organizations**, **new mages** experimenting outside institutional oversight, and **otherworldly beings** drawn to the open rift. *(Whether outside human factions actively cross into the Zone during gameplay remains an **[OPEN]** question.)*
-* **Terminology [PROVISIONAL]:** Today, game spells, items, and early researchers refer to the new magical substrate as **Aether**, and to the demon-warped Zone as the **Citadel of Aether**. Both labels are **[PROVISIONAL]** defaults pending final canon lock (see [README.md](./README.md#4-open-questions-do-not-invent-final-answers)).
+* **Global Attenuation & Hotspots:** Magic works worldwide, but **weakens with distance** from the rupture. It is **strongest inside the Zone**—specifically at the **laboratory** and the **cult site**—and is also noticeably stronger at **known mystical, natural, and shamanic places worldwide**.
+* **Terminology:** The new magical substrate is called **Aether**—simply **"ether"**, spelled with the Old Norse *ae*—while the demon-warped Zone is mythically styled the **Citadel of Aether**.
+* **Interested Parties:** Universities, state institutes, and private labs try to capture magical phenomena in repeatable equations. Around the Zone orbit **states**, **religious institutions**, **terrorist and criminal organizations**, **new mages** experimenting outside institutional oversight, **otherworldly beings** drawn to the open rift, and fortune-seekers chasing the **philosopher's stone, wealth, a panacea, or adventure**. *(Whether outside human factions actively cross into the Zone during gameplay remains an **[OPEN]** question.)*
 
 ---
 
 ## 4. The Buffer Zone
 
-Surrounding the transformed Zone sits a **defended buffer zone**—a perimeter separating ordinary 2034 society from the Zone's shifting thresholds, unstable energy, and hostile entities.
+Surrounding the transformed Zone sits a **state-defended buffer zone**—a belt stretching across the globe from **Utah to Switzerland**, separating ordinary 2034 society from the Zone's shifting thresholds, unstable energy, and hostile entities.
 
-* **What is known:** Crossing the perimeter is tightly restricted; inside the perimeter, ordinary logistics, timekeeping, and radio telemetry fail or distort.
-* **What remains [OPEN]:** Who controls, funds, and staffs the buffer zone—whether a national military, an international task force, a corporate syndicate, or an alliance of institutions—is deliberately left open for Round 2.
+* **Scale & Geometry:** The belt is directly affected over a **dozen or so kilometers**, with emanations extending over **tens of kilometers**, and is **twice as wide in places**.
+* **Defense & Transit:** **States defend the perimeter.** Flying over at high altitude is possible, whereas driving through or flying low is risky due to distortions and anomalies. To restore severed overland links, **France and the USA** are building underground tunnels beneath the affected belt.
+* **At Sea:** Over open water, the ocean dispersed most of the effect into **thread-like emanations** where strange creatures appear, though it remains our world.
+* **What Draws Outsiders:** Despite state cordons and telemetry blackouts, people still come to the perimeter seeking the **philosopher's stone, wealth, a panacea, or adventure**.
 
 ---
 
@@ -50,11 +52,11 @@ Surrounding the transformed Zone sits a **defended buffer zone**—a perimeter s
 
 The rift did not merely leak magic; it pulled through a **summoned demon and its hosts**.
 
-Finding itself anchored inside a slice of 2034 infrastructure fused with a historic château estate, the demon set out to fortify and rule its domain. Yet the demon and its hosts **did not understand 21st-century human technology**. Faced with robotic manipulators, cleanroom bioreactors, optical sensors, cooling viaducts, and high-energy containment spires, they **reinterpreted modern engineering in their own medieval, occult, and cosmological terms**—physically reshaping matter and architecture to match what they believed those machines ought to be.
+Finding itself anchored inside a slice of 2028 infrastructure fused with a historic château estate, the demon set out to fortify and rule its domain. Yet the demon and its hosts **did not understand 21st-century human technology**. Faced with robotic manipulators, cleanroom bioreactors, optical sensors, cooling viaducts, and high-energy containment spires, they **reinterpreted modern engineering in their own medieval, occult, and cosmological terms**—physically reshaping matter and architecture to match what they believed those machines ought to be.
 
 ### Concrete Examples Across the 8 Worlds
 
-| World | Real Place in 2034 | What the Demon Made of It |
+| World | Real Place (2028) | What the Demon Made of It |
 | :--- | :--- | :--- |
 | **1. `courtyard`** | A **historic French château** preserved as a heritage museum and restoration estate (medieval/Renaissance arches, dry moat, display armor, perimeter drones). | An aristocratic **Courtyard of Awakening**: museum armor and perimeter units became *Courtyard Sentinels*; fencing mannequins became *Training Dummies*; repair drones became *Gear Mites*; the moat sprouted *Amber Thorns*. |
 | **2. `thorn_chasm`** | A **limestone quarry, sunken utility ravine & terraced botanical conservatory** flanking the château grounds. | The **Chasm of Thorns and Shadows**: snapped cables and shattered rock beds fused with rift-mutated briars (*Thorn Creepers*) and roof-sculpture hosts (*Chasm Gargoyles*). |

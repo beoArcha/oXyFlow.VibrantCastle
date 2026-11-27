@@ -9,16 +9,16 @@ In *Vibrant Castle*, adversaries inside the 2034 Zone span **demons, devils, con
 ## 1. Zone Factions & 2034 Origins
 
 1. **The Summoned Demon & Its Hosts (Demons & Devils):**
-   * Entities pulled through the 2034 rift or animated directly by infernal possession. They treat the Zone as a feudal castle domain, occupying gargoyle stonework (*Chasm Gargoyle*, *Gargoyle Scout*, *Bastion Gargoyle*), forging spectral duelists (*Shadow Knight*), and rallying under the Zone's sovereign force at the Eclipse Crown.
-   * **Leaning Final Boss:** **The Possessed** (*Opętany*)—the unprepared ritual leader bound to the demon at the Throne of the Eclipse (`W8-8`).
-2. **Demon-Reinterpreted Constructs (2034 Machinery & Château Hardware):**
+   * Entities pulled through the 2028 rift or animated directly by infernal possession. They treat the Zone as a feudal castle domain, occupying gargoyle stonework (*Chasm Gargoyle*, *Gargoyle Scout*, *Bastion Gargoyle*), forging spectral duelists (*Shadow Knight*), and rallying under the Zone's sovereign force at the Eclipse Crown.
+   * **Confirmed Final Boss:** **The Possessed** (*Opętany*)—the unprepared 2028 ritual leader bound to the demon at the Throne of the Eclipse (`W8-8`).
+2. **Demon-Reinterpreted Constructs (Modern Machinery & Château Hardware):**
    * Industrial robotics, autonomous factory loaders, inspection drones, maintenance bots, tunnel hounds, and château fencing dummies caught in the cataclysm. Because the demon did not grasp silicon or hydraulics, it reshaped servos and optical sensors into brass clockwork, pendulums, and animated timber (*Clockwork Automaton*, *Clockwork Owl Gargoyle*, *Gear Mite*, *Lantern Warden*, *Chrono Hound*, *Training Dummy* variants).
 3. **Cyborgs & Armored Sentinels (*Ghost in the Shell*-Style Units):**
-   * Augmented tactical guards, security exoskeletons, and neural-interface chassis stationed around 2034 facilities (or drawn into the containment perimeter) and repurposed inside the Zone. To the demon's eyes they read as bronze knights and iron commanders (*Courtyard Sentinel*, *Aether Sentinel*, *Bastion Sentinel Commander*, and the cyber-arcane *Aether Archon*). Future phases expand cyborg/tactical variety directly.
+   * Augmented tactical guards, security exoskeletons, and neural-interface chassis stationed around the 2028 facilities (or drawn into the containment perimeter) and repurposed inside the Zone. To the demon's eyes they read as bronze knights and iron commanders (*Courtyard Sentinel*, *Aether Sentinel*, *Bastion Sentinel Commander*, and the cyber-arcane *Aether Archon*). Future phases expand cyborg/tactical variety directly.
 4. **Rift Fauna & Energy Echoes:**
    * Local cavern creatures, conservatory plants, and stray laboratory energy warped into hostile flora/fauna (*Chasm Crawler*, *Thorn Creeper*) and drifting wisps (*Aether Wisp*).
 5. **External Interested Parties (World Context — Zone Entry [OPEN]):**
-   * Beyond the buffer zone, **states, religions, terrorist and criminal organizations, new mages, and otherworldly beings** watch the rift for power, weapons, salvage, or revelation. Whether outside human factions cross into the Zone as enemies or NPCs remains **[OPEN]**.
+   * Beyond the state-defended buffer zone (stretching from Utah to Switzerland), **states, religions, terrorist and criminal organizations, new mages, and otherworldly beings** watch the rift, while outsiders arrive seeking the **philosopher's stone, wealth, a panacea, or adventure**. Whether outside human factions cross into the Zone as active enemies or NPCs during gameplay remains **[OPEN]**.
 
 ---
 

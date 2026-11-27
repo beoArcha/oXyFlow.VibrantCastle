@@ -1,6 +1,6 @@
 # Characters: Valen & Aurelia
 
-**Status:** Canonical character framing (`VC-082`, Round 1) combined with live engine stats (`src/game/characters/characterProfiles.ts`) and approved Level-1 attribute profiles (`docs/design/character-system.md`, `VC-030`).
+**Status:** Canonical character framing (`VC-082`, Round 1 & Round 2) combined with live engine stats (`src/game/characters/characterProfiles.ts`) and approved Level-1 attribute profiles (`docs/design/character-system.md`, `VC-030`).
 
 ---
 
@@ -20,13 +20,15 @@ Their dynamic works like **Brazilian zouk**:
 
 ---
 
-## 2. Provisional 2034 Framing & Open Origins
+## 2. 2034 Framing, Pre-Cataclysm Past & Why Them (Round 2)
 
 * **Canonical Titles (Resolves N1):**
   * Valen: **Sun Knight** (*Słoneczny Rycerz*; `Solar Knight` in current UI i18n keys). *Retired legacy names: Crimson Duelist, Chrono Duelist, Szkarłatny Szermierz.*
   * Aurelia: **Arcane Scholar** (*Uczona Arkanów*; `Scholar of Arcanum` in current UI i18n keys). *Retired legacy names: Cyan Sentinel, Aetherblade Warden, Cyjanowa Strażniczka.*
-* **Provisional 2034 Explanation:** Why do two people in 2034 carry titles like *Sun Knight* and *Arcane Scholar* and wield solar rapier arts and astral magic? Within the emerging magical science of 2034—and inside a Zone that translates modern equipment and human intent into knightly/arcane archetypes—such labels describe distinct **resonance profiles**: Valen channels focused thermal-photonic discharges through kinetic fencing, while Aurelia interfaces directly with spatial, cryogenic, and temporal anomalies.
-* **[OPEN — Do Not Invent]:** Who Valen and Aurelia were before the 2034 cataclysm, why they entered this Zone, and where their powers originally came from remain **open questions**.
+* **Ordinary People & The Call (Round 2 Canon):** Valen and Aurelia were ordinary people before magic entered the world in **2028**. Both felt a **"call"** near the cataclysm, each tied to one half of the non-local rift:
+  * **Valen (age 38 in 2034):** An **engineer** who designed the **access bridge to the new laboratory**.
+  * **Aurelia (age 31 in 2034):** A **brilliant police officer on track to become a detective**, who was **investigating a new cult**.
+* **2034 Resonance Explanation:** Why do two ordinary people in 2034 carry titles like *Sun Knight* and *Arcane Scholar* and wield solar rapier arts and astral magic? Within the emerging magical science of Aether—born in 2028 and studied for six years—and inside a Zone that translates modern equipment and human intent into knightly/arcane archetypes, such labels describe distinct **resonance profiles**: Valen channels focused thermal-photonic discharges through kinetic fencing, while Aurelia interfaces directly with spatial, cryogenic, and temporal anomalies.
 
 ---
 
