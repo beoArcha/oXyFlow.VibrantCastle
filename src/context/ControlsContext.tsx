@@ -13,6 +13,13 @@ import {
 } from "@game/loop/input";
 import { MissingContextProviderError } from "@lib/errors";
 import { BaseProviderProps } from "./IContext";
+import { isRebindCancelKey, isReservedSystemKey } from "./controls/reservedKeys";
+
+export {
+  RESERVED_REBIND_KEYS,
+  isReservedSystemKey,
+  isRebindCancelKey,
+} from "./controls/reservedKeys";
 
 /**
  * Standalone helper to rebind a keyboard action for a player.
@@ -22,7 +29,12 @@ export function rebindKeyboardAction(
   action: keyof InputMap,
   code: string,
   key?: string
-): void {
+): boolean {
+  const keyValue = key ?? "";
+  if (isRebindCancelKey(code, keyValue) || isReservedSystemKey(code, keyValue)) {
+    return false;
+  }
+
   const keys: string[] = [code];
   if (key && key !== code) {
     keys.push(key);
@@ -32,6 +44,7 @@ export function rebindKeyboardAction(
     }
   }
   gameInputs.setKeyboardBinding(playerId, action, keys);
+  return true;
 }
 
 /**
@@ -91,7 +104,7 @@ export interface ControlsContextValue {
     action: keyof InputMap,
     code: string,
     key?: string
-  ) => void;
+  ) => boolean;
   rebindGamepad: (
     playerId: PlayerId,
     action: keyof GamepadBindingMap,
@@ -169,9 +182,7 @@ export const ControlsProvider: React.FC<ControlsProviderProps> = ({
       action: keyof InputMap,
       code: string,
       key?: string
-    ) => {
-      rebindKeyboardAction(playerId, action, code, key);
-    },
+    ) => rebindKeyboardAction(playerId, action, code, key),
     []
   );
 

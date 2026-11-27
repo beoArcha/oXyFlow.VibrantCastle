@@ -28,21 +28,24 @@ export const KeyRebindDialog: React.FC<KeyRebindDialogProps> = ({
     <Dialog
       isOpen={true}
       onClose={onCancel}
-      title={target.label}
+      title={t("rebindTitle")}
       icon={<Keyboard className="w-5 h-5 text-amber-400" />}
     >
       <div className="flex flex-col items-center gap-4 py-4 text-center">
         <Badge variant={target.player === PlayerId.Player2 ? "cyan" : "amber"}>
           {playerLabel}
         </Badge>
+        <Text size="sm" className="font-bold text-amber-400">
+          {target.label}
+        </Text>
         <Text size="sm" className="text-amber-100">
-          Press any key to assign to <span className="font-bold text-amber-400">{target.label}</span>
+          {t("rebindPrompt")}
         </Text>
         <Text size="xs" variant="muted">
-          [Esc] — {t("closeModal")}
+          [Esc] — {t("cancel")}
         </Text>
         <Button size="sm" variant="secondary" onClick={onCancel}>
-          {t("closeModal")}
+          {t("cancel")}
         </Button>
       </div>
     </Dialog>
