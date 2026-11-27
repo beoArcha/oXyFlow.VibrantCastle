@@ -255,7 +255,7 @@ export const LevelsSubtab: React.FC = () => {
             className="whitespace-nowrap shrink-0 px-3"
             onClick={() => setViewMode("layers")}
           >
-            {isPl ? "Biblioteka Warstw (Hybrydowa)" : "Hybrid Parallax Library"}
+            {t("levelsLayerLibraryView")}
           </Button>
         </div>
 
@@ -266,9 +266,7 @@ export const LevelsSubtab: React.FC = () => {
           className="whitespace-nowrap shrink-0 px-3"
           onClick={() => loadLocation(activeLocation.id, undefined, true)}
         >
-          {isPl
-            ? `Przenieś gracza: ${selectedWorld.code}`
-            : `Teleport Player: ${selectedWorld.code}`}
+          {t("levelsTeleportPlayer", { world: selectedWorld.code })}
         </Button>
       </div>
 
@@ -737,19 +735,32 @@ export const LevelsSubtab: React.FC = () => {
         <Card variant="subtle">
           <CardHeader>
             <CardTitle icon={<Layers className="w-4 h-4 text-cyan-400" />}>
-              {isPl
-                ? "Hybrydowa Biblioteka Warstw Paralaksy (world:* / shared:* / boss:*)"
-                : "Hybrid Parallax Layer Library (world:* / shared:* / boss:*)"}
+              {t("levelsLayerLibraryTitle")}
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
             <div className="flex flex-wrap gap-2">
               {(
                 [
-                  ["all", isPl ? `Wszystkie (${PARALLAX_LAYER_CATALOG.length})` : `All (${PARALLAX_LAYER_CATALOG.length})`],
-                  ["world", isPl ? "world:<świat>:far (8)" : "world:<id>:far (8)"],
-                  ["shared", isPl ? "shared:<tier>:<motyw> (23)" : "shared:<tier>:<motif> (23)"],
-                  ["boss", isPl ? "boss:<zakres>:<motyw> (2)" : "boss:<scope>:<motif> (2)"],
+                  ["all", t("levelsLayerFilterAll", { count: PARALLAX_LAYER_CATALOG.length })],
+                  [
+                    "world",
+                    t("levelsLayerFilterWorld", {
+                      count: PARALLAX_LAYER_CATALOG.filter((l) => l.namespace === "world").length,
+                    }),
+                  ],
+                  [
+                    "shared",
+                    t("levelsLayerFilterShared", {
+                      count: PARALLAX_LAYER_CATALOG.filter((l) => l.namespace === "shared").length,
+                    }),
+                  ],
+                  [
+                    "boss",
+                    t("levelsLayerFilterBoss", {
+                      count: PARALLAX_LAYER_CATALOG.filter((l) => l.namespace === "boss").length,
+                    }),
+                  ],
                 ] as const
               ).map(([ns, label]) => (
                 <Button

@@ -410,6 +410,13 @@ export interface DataStudioI18n {
   dataStudioVnTab: string;
   dataStudioSkillTreeTab: string;
   dataStudioAiTab: string;
+  levelsLayerLibraryView: string;
+  levelsLayerLibraryTitle: string;
+  levelsLayerFilterAll: string;
+  levelsLayerFilterWorld: string;
+  levelsLayerFilterShared: string;
+  levelsLayerFilterBoss: string;
+  levelsTeleportPlayer: string;
   dataStudioValidationValid: string;
   dataStudioValidationInvalid: string;
   dataStudioSelectPreset: string;

@@ -72,6 +72,7 @@ import {
 } from "@lib/schemas";
 import { useI18n } from "@context/I18nContext";
 import { ATLAS_PRESETS } from "@developer/subtabs/atlas/assetPresets";
+import { CHARACTER_PROFILE_REGISTRY } from "@game/characters/characterProfiles";
 import {
   createBlankSpellTemplate,
   createBlankEnemyTemplate,
@@ -1105,13 +1106,13 @@ export const DataStudioSubtab: React.FC = () => {
                       key={charId}
                       size="sm"
                       variant={portraitCharacter === charId ? "primary" : "secondary"}
-                      className="whitespace-nowrap shrink-0 capitalize"
+                      className="whitespace-nowrap shrink-0"
                       onClick={() => {
                         setPortraitCharacter(charId);
                         setSelectedEmotionIdx(0);
                       }}
                     >
-                      {charId}
+                      {CHARACTER_PROFILE_REGISTRY[charId].displayName}
                     </Button>
                   ))}
                 </div>
@@ -1126,8 +1127,8 @@ export const DataStudioSubtab: React.FC = () => {
                   className="rounded-xl border border-stone-700 bg-black/70 shrink-0"
                 />
                 <div className="flex flex-col gap-1">
-                  <Text size="xs" weight="bold" className="text-amber-300 capitalize">
-                    {portraitCharacter}
+                  <Text size="xs" weight="bold" className="text-amber-300">
+                    {CHARACTER_PROFILE_REGISTRY[portraitCharacter].displayName}
                   </Text>
                   <Code size="xs">{emotionsList[selectedEmotionIdx] ?? "neutral"}</Code>
                   <Text size="2xs" variant="muted" className="tabular-nums">
@@ -1167,14 +1168,14 @@ export const DataStudioSubtab: React.FC = () => {
                     key={charId}
                     size="sm"
                     variant={dagCharacter === charId ? "primary" : "secondary"}
-                    className="whitespace-nowrap shrink-0 capitalize"
+                    className="whitespace-nowrap shrink-0"
                     onClick={() => {
                       setDagCharacter(charId);
                       setSelectedTreeId("");
                       setSelectedDagNodeId("");
                     }}
                   >
-                    {charId}
+                    {CHARACTER_PROFILE_REGISTRY[charId].displayName}
                   </Button>
                 ))}
                 <Select
