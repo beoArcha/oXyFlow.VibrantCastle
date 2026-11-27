@@ -238,6 +238,8 @@ export interface SettingsControlsI18n {
   resetDefaultBindings: string;
   confirmResetControls: string;
   confirmResetControlsPrompt: string;
+  confirmResetControlsAction: string;
+  confirmResetAllControlsPrompt: string;
   remapKey: string;
   rebindTitle: string;
   rebindPrompt: string;

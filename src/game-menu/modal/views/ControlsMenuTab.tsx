@@ -1,6 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { RotateCcw, Keyboard } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Button, Text, Paragraph } from "@ui";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Button,
+  ConfirmDialog,
+  Text,
+  Paragraph,
+} from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { useControls } from "@context/ControlsContext";
 import { formatKeyLabel } from "@game-menu/controls";
@@ -39,6 +48,7 @@ export const BINDABLE_ACTION_CATALOG: readonly {
 export const ControlsMenuTab: React.FC<ControlsMenuTabProps> = ({ onStartRebind }) => {
   const { t } = useI18n();
   const { p1Keyboard, p2Keyboard, resetBindings } = useControls();
+  const [isConfirmResetOpen, setIsConfirmResetOpen] = useState(false);
 
   const playerGroups = [
     {
@@ -63,10 +73,11 @@ export const ControlsMenuTab: React.FC<ControlsMenuTabProps> = ({ onStartRebind 
           </Text>
         </div>
         <Button
+          id="reset-keyboard-bindings-btn"
           size="sm"
           variant="outline"
           icon={<RotateCcw size={13} />}
-          onClick={() => resetBindings()}
+          onClick={() => setIsConfirmResetOpen(true)}
           className="whitespace-nowrap shrink-0"
         >
           {t("resetDefaultBindings")}
@@ -108,6 +119,20 @@ export const ControlsMenuTab: React.FC<ControlsMenuTabProps> = ({ onStartRebind 
       </div>
 
       <GamepadMapper />
+
+      <ConfirmDialog
+        isOpen={isConfirmResetOpen}
+        onClose={() => setIsConfirmResetOpen(false)}
+        onConfirm={() => {
+          resetBindings();
+          setIsConfirmResetOpen(false);
+        }}
+        title={t("confirmResetControls")}
+        message={t("confirmResetAllControlsPrompt")}
+        confirmLabel={t("confirmResetControlsAction")}
+        cancelLabel={t("cancel")}
+        confirmVariant="danger"
+      />
 
       <Card variant="subtle">
         <CardHeader>

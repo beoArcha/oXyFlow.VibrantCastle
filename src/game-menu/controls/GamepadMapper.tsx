@@ -8,6 +8,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  ConfirmDialog,
   KbdKey,
   Paragraph,
   Text,
@@ -41,6 +42,7 @@ export const GamepadMapper: React.FC<GamepadMapperProps> = React.memo(function G
 }) {
   const { t } = useI18n();
   const [selectedPlayer, setSelectedPlayer] = useState<PlayerId>(PlayerId.Player1);
+  const [isConfirmResetOpen, setIsConfirmResetOpen] = useState(false);
 
   const {
     currentPad,
@@ -70,7 +72,7 @@ export const GamepadMapper: React.FC<GamepadMapperProps> = React.memo(function G
             variant="ghost"
             size="sm"
             icon={<RotateCcw size={12} />}
-            onClick={resetDefaults}
+            onClick={() => setIsConfirmResetOpen(true)}
           >
             {t("resetDefaultBindings")}
           </Button>
@@ -175,6 +177,20 @@ export const GamepadMapper: React.FC<GamepadMapperProps> = React.memo(function G
           })}
         </div>
       </CardContent>
+
+      <ConfirmDialog
+        isOpen={isConfirmResetOpen}
+        onClose={() => setIsConfirmResetOpen(false)}
+        onConfirm={() => {
+          resetDefaults();
+          setIsConfirmResetOpen(false);
+        }}
+        title={t("confirmResetControls")}
+        message={t("confirmResetControlsPrompt")}
+        confirmLabel={t("confirmResetControlsAction")}
+        cancelLabel={t("cancel")}
+        confirmVariant="danger"
+      />
     </Card>
   );
 });

@@ -1,6 +1,12 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import React from "react";
-import { setupDomEnvironment, cleanupDom, renderIntoDom, TestProviders } from "@test-utils";
+import {
+  setupDomEnvironment,
+  cleanupDom,
+  renderIntoDom,
+  dispatchKeyDown,
+  TestProviders,
+} from "@test-utils";
 import { gameInputs } from "@game/loop/input";
 import { PlayerId } from "@game/types";
 import { GamepadMapper } from "../GamepadMapper";
@@ -129,8 +135,58 @@ describe("GamepadMapper Component", () => {
     const resetBtn = container.querySelector("#reset-gamepad-bindings-btn") as HTMLElement;
     await click(resetBtn);
 
+    expect(gameInputs.getGamepadBindings(PlayerId.Player1).jump).toBe(7);
+
+    const confirmBtn = findDialogButton("Przywróć");
+    expect(confirmBtn).toBeDefined();
+    await click(confirmBtn as HTMLElement);
+
     expect(gameInputs.getGamepadBindings(PlayerId.Player1).jump).toBe(0);
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+
+    await unmount();
+  });
+
+  it("keeps bindings unchanged when the reset confirm is cancelled with Esc", async () => {
+    gameInputs.setGamepadBinding(PlayerId.Player1, "jump", 7);
+
+    const { container, click, unmount } = await renderIntoDom(
+      <TestProviders>
+        <GamepadMapper />
+      </TestProviders>
+    );
+
+    await click(container.querySelector("#reset-gamepad-bindings-btn") as HTMLElement);
+    expect(document.querySelector('[role="dialog"]')).not.toBeNull();
+
+    await dispatchKeyDown(document.activeElement ?? document.body, "Escape");
+
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+    expect(gameInputs.getGamepadBindings(PlayerId.Player1).jump).toBe(7);
+
+    await unmount();
+  });
+
+  it("focuses Anuluj by default in the reset confirm", async () => {
+    const { container, click, unmount } = await renderIntoDom(
+      <TestProviders>
+        <GamepadMapper />
+      </TestProviders>
+    );
+
+    await click(container.querySelector("#reset-gamepad-bindings-btn") as HTMLElement);
+
+    const cancelBtn = findDialogButton("Anuluj");
+    expect(cancelBtn).toBeDefined();
+    expect(document.activeElement).toBe(cancelBtn);
 
     await unmount();
   });
 });
+
+function findDialogButton(label: string): HTMLElement | undefined {
+  const dialog = document.querySelector('[role="dialog"]');
+  return Array.from(dialog?.querySelectorAll("button") ?? []).find(
+    (btn) => btn.textContent?.trim() === label
+  ) as HTMLElement | undefined;
+}
