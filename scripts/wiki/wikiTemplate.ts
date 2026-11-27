@@ -12,7 +12,7 @@ const REPO_ISSUES_URL = `${REPO_URL}/issues`;
  * - id="game-viewport" with allow="fullscreen" (and never autoplay)
  * - id="viewport-splash"
  */
-export function renderWikiIndexHtml(): string {
+export function renderWikiIndexHtml(version?: string): string {
   const pl = WIKI_DICTIONARIES.pl;
 
   return `<!doctype html>
@@ -119,7 +119,8 @@ export function renderWikiIndexHtml(): string {
         <a href="${REPO_URL}" target="_blank" rel="noopener noreferrer" data-i18n="wikiFooterRepo">${pl.wikiFooterRepo}</a>
         <a href="${REPO_ISSUES_URL}" target="_blank" rel="noopener noreferrer" data-i18n="wikiFooterIssues">${pl.wikiFooterIssues}</a>
       </nav>
-      <span data-i18n="wikiFooterCopyright">${pl.wikiFooterCopyright}</span>
+      <span data-i18n="wikiFooterCopyright">${pl.wikiFooterCopyright}</span>${version ? `
+      <span class="wiki-version">v${version}</span>` : ""}
     </footer>
 
     <script src="scripts/wiki-app.js" defer></script>

@@ -197,7 +197,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
-          VERSION=$(bun -e 'console.log(require("./package.json").version)')
+          VERSION=$(bun scripts/version.ts)
           TAG="v${VERSION}"
           ARCHIVE="vibrant-castle-${VERSION}.zip"
 

@@ -41,6 +41,14 @@ export default defineConfig(() => {
     base: process.env.VITE_BASE_PATH || (process.env.NODE_ENV === 'production' ? './' : '/'),
     plugins: [react(), tailwindcss(), characterAssetsPlugin()],
 
+    define: {
+      // Build version (major.minor from package.json + patch from git; see scripts/lib/buildVersion.ts).
+      __APP_VERSION__: JSON.stringify(
+        process.env.VC_APP_VERSION ||
+          JSON.parse(fs.readFileSync(path.join(import.meta.dirname, 'package.json'), 'utf8')).version
+      ),
+    },
+
     resolve: {
       tsconfigPaths: true,
     },
