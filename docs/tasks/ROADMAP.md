@@ -66,9 +66,9 @@ Cards and the "phase 4 so far" summary: [phase-4-0.3.x.md](./phase-4-0.3.x.md).
 | [Design contracts](./phase-4-0.3.x.md#c-world-and-maps-8-worlds-x-8-maps-today-map-1-of-each-world) | VC-020 (review, #77), VC-030 (review, #78) | |
 | [Inventory](./phase-4-0.3.x.md#d-characters-stats-and-equipment) | VC-035 | |
 | [Menu](./phase-4-0.3.x.md#e-menu-plan-docsdesignmenu-ux-planmd) | VC-045, VC-047 | VC-040 (#63), VC-041 (#68), VC-042 (#74), VC-043 (#81), VC-044 (#84), VC-046 (#80) |
-| [Docs, settings, controls](./phase-4-0.3.x.md#f-docs-settings-and-controls) | VC-051, VC-056 | VC-050 (#88), VC-052 (#66), VC-053 (#67), VC-054 (#73), VC-055 (#75), VC-057 (#72) |
+| [Docs, settings, controls](./phase-4-0.3.x.md#f-docs-settings-and-controls) | VC-082, VC-083 | VC-050 (#88), VC-051 (#90), VC-056 (#93), VC-052 (#66), VC-053 (#67), VC-054 (#73), VC-055 (#75), VC-057 (#72) |
 | [CI and tests](./phase-4-0.3.x.md#g-ci-and-tests) | VC-061, VC-062 (part 1 #86) | VC-060 (#83), VC-063 (#79) |
-| [Developer tools](./phase-4-0.3.x.md#h-developer-tools-and-review) | VC-070, VC-073, VC-074, VC-081 | VC-071 (#87), VC-072 (#82) |
+| [Developer tools](./phase-4-0.3.x.md#h-developer-tools-and-review) | VC-070, VC-075, VC-081 | VC-071 (#87), VC-072 (#82), VC-073 (#95), VC-074 (#96) |
 | [Quality gate](./phase-4-0.3.x.md#z-phase-gate) | VC-090 | |
 
 ## Phase 5: worlds and characters (0.4.x, next)
