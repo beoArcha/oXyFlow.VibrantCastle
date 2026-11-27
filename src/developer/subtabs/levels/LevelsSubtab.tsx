@@ -42,8 +42,9 @@ import {
   LevelPreviewCanvas,
   LevelOverlayOptions,
 } from "./LevelPreviewCanvas";
+import { MapBrowserPanel } from "./MapBrowserPanel";
 
-type LevelsViewMode = "matrix" | "audit" | "layers";
+type LevelsViewMode = "matrix" | "browser" | "audit" | "layers";
 type AuditFilter = "all" | "critical" | AuditCategory;
 
 const ALL_TIERS: readonly BackgroundLayerTier[] = [
@@ -250,6 +251,15 @@ export const LevelsSubtab: React.FC = () => {
             onClick={() => setViewMode("matrix")}
           >
             {isPl ? "Mapa 8×8 i Podgląd" : "8×8 Map & Preview"}
+          </Button>
+          <Button
+            size="sm"
+            variant={viewMode === "browser" ? "primary" : "secondary"}
+            icon={<Eye size={14} />}
+            className="whitespace-nowrap shrink-0 px-3"
+            onClick={() => setViewMode("browser")}
+          >
+            {t("levelsMapBrowserView")}
           </Button>
           <Button
             size="sm"
@@ -600,6 +610,14 @@ export const LevelsSubtab: React.FC = () => {
             </CardContent>
           </Card>
         </div>
+      )}
+
+      {/* VIEW 1B: Full-Map Browser & Text Placement Tool */}
+      {viewMode === "browser" && (
+        <MapBrowserPanel
+          selectedLocationId={activeLocation.id}
+          onSelectLocationId={(locationId) => handleSelectStage(locationId as WorldId, 1)}
+        />
       )}
 
       {/* VIEW 2: Automated Missing Assets & Readiness Audit */}
