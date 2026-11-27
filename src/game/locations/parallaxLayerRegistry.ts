@@ -2,45 +2,45 @@ import { BackgroundLayerTier, ParallaxLayerSchema } from "./schema/locationSchem
 import { LocationDefinition, WorldId } from "./types";
 
 // Existing 5 worlds (25 high-res parallax layers)
-import courtyardFarPng from "@assets/bg/courtyard/courtyard_far_high.png";
-import courtyardMidFarPng from "@assets/bg/courtyard/courtyard_mid-far_high.png";
-import courtyardMidPng from "@assets/bg/courtyard/courtyard_mid_high.png";
-import courtyardMidClosePng from "@assets/bg/courtyard/courtyard_mid-close_high.png";
-import courtyardClosePng from "@assets/bg/courtyard/courtyard_close_high.png";
+import courtyardFarPng from "@assets/parallax/courtyard/courtyard_far_high.png";
+import courtyardMidFarPng from "@assets/parallax/courtyard/courtyard_var_a_high.png";
+import courtyardMidPng from "@assets/parallax/courtyard/courtyard_var_b_high.png";
+import courtyardMidClosePng from "@assets/parallax/courtyard/courtyard_var_c_high.png";
+import courtyardClosePng from "@assets/parallax/courtyard/courtyard_var_d_high.png";
 
-import thornChasmFarPng from "@assets/bg/thorn_chasm/thorn_chasm_far_high.png";
-import thornChasmMidFarPng from "@assets/bg/thorn_chasm/thorn_chasm_mid_far_high.png";
-import thornChasmMidPng from "@assets/bg/thorn_chasm/thorn_chasm_mid_high.png";
-import thornChasmMidClosePng from "@assets/bg/thorn_chasm/thorn_chasm_close_mid_high.png";
-import thornChasmClosePng from "@assets/bg/thorn_chasm/thorn_chasm_close_high.png";
+import thornChasmFarPng from "@assets/parallax/thorn_chasm/thorn_chasm_far_high.png";
+import thornChasmMidFarPng from "@assets/parallax/thorn_chasm/thorn_chasm_var_a_high.png";
+import thornChasmMidPng from "@assets/parallax/thorn_chasm/thorn_chasm_var_b_high.png";
+import thornChasmMidClosePng from "@assets/parallax/thorn_chasm/thorn_chasm_var_c_high.png";
+import thornChasmClosePng from "@assets/parallax/thorn_chasm/thorn_chasm_var_d_high.png";
 
-import clocktowerFarPng from "@assets/bg/clocktower/clocktower_far_high.png";
-import clocktowerMidFarPng from "@assets/bg/clocktower/clocktower_mid_far_high.png";
-import clocktowerMidPng from "@assets/bg/clocktower/clocktower_mid_high.png";
-import clocktowerMidClosePng from "@assets/bg/clocktower/clocktower_mid_close_high.png";
-import clocktowerClosePng from "@assets/bg/clocktower/clocktower_close_high.png";
+import clocktowerFarPng from "@assets/parallax/clocktower/clocktower_far_high.png";
+import clocktowerMidFarPng from "@assets/parallax/clocktower/clocktower_var_a_high.png";
+import clocktowerMidPng from "@assets/parallax/clocktower/clocktower_var_b_high.png";
+import clocktowerMidClosePng from "@assets/parallax/clocktower/clocktower_var_c_high.png";
+import clocktowerClosePng from "@assets/parallax/clocktower/clocktower_var_d_high.png";
 
-import aetherFarPng from "@assets/bg/aether_sanctuary/aether_sanctuary_far_high.png";
-import aetherMidFarPng from "@assets/bg/aether_sanctuary/aether_sanctuary_mid_far_high.png";
-import aetherMidPng from "@assets/bg/aether_sanctuary/aether_sanctuary_mid_high.png";
-import aetherMidClosePng from "@assets/bg/aether_sanctuary/aether_sanctuary_mid_close_high.png";
-import aetherClosePng from "@assets/bg/aether_sanctuary/aether_sanctuary_close_high.png";
+import aetherFarPng from "@assets/parallax/aether_sanctuary/aether_sanctuary_far_high.png";
+import aetherMidFarPng from "@assets/parallax/aether_sanctuary/aether_sanctuary_var_a_high.png";
+import aetherMidPng from "@assets/parallax/aether_sanctuary/aether_sanctuary_var_b_high.png";
+import aetherMidClosePng from "@assets/parallax/aether_sanctuary/aether_sanctuary_var_c_high.png";
+import aetherClosePng from "@assets/parallax/aether_sanctuary/aether_sanctuary_var_d_high.png";
 
-import bastionFarPng from "@assets/bg/grand_bastion/grand_bastion_far_high.png";
-import bastionMidFarPng from "@assets/bg/grand_bastion/grand_bastion_mid_far_high.png";
-import bastionMidPng from "@assets/bg/grand_bastion/grand_bastion_mid_high.png";
-import bastionMidClosePng from "@assets/bg/grand_bastion/grand_bastion_mid_close_high.png";
-import bastionClosePng from "@assets/bg/grand_bastion/grand_bastion_close_high.png";
+import bastionFarPng from "@assets/parallax/grand_bastion/grand_bastion_far_high.png";
+import bastionMidFarPng from "@assets/parallax/grand_bastion/grand_bastion_var_a_high.png";
+import bastionMidPng from "@assets/parallax/grand_bastion/grand_bastion_var_b_high.png";
+import bastionMidClosePng from "@assets/parallax/grand_bastion/grand_bastion_var_c_high.png";
+import bastionClosePng from "@assets/parallax/grand_bastion/grand_bastion_var_d_high.png";
 
 // Newly generated AI backdrops for 3 new worlds, shared mid motifs, and Level/World Boss layers
-import ashenCatacombsFarJpg from "@assets/images/ashen_catacombs_far_1795727387342.jpg";
-import alchemistLibraryFarJpg from "@assets/images/alchemist_library_far_1795727386557.jpg";
-import eclipseCrownFarJpg from "@assets/images/eclipse_crown_far_1795727388177.jpg";
-import sharedMidCatacombArchesJpg from "@assets/images/shared_mid_catacomb_arches_1795727389151.jpg";
-import sharedMidAlchemyShelvesJpg from "@assets/images/shared_mid_alchemy_shelves_1795727389972.jpg";
-import sharedMidObsidianSpiresJpg from "@assets/images/shared_mid_obsidian_spires_1795727392169.jpg";
-import bossStageArcaneSigilJpg from "@assets/images/boss_stage_arcane_sigil_1795727392388.jpg";
-import bossWorldEclipseThroneJpg from "@assets/images/boss_world_eclipse_throne_1795727391907.jpg";
+import ashenCatacombsFarJpg from "@assets/parallax/ashen_catacombs/ashen_catacombs_far_high.jpg";
+import alchemistLibraryFarJpg from "@assets/parallax/alchemist_library/alchemist_library_far_high.jpg";
+import eclipseCrownFarJpg from "@assets/parallax/eclipse_crown/eclipse_crown_far_high.jpg";
+import sharedMidCatacombArchesJpg from "@assets/parallax/ashen_catacombs/ashen_catacombs_var_b_high.jpg";
+import sharedMidAlchemyShelvesJpg from "@assets/parallax/alchemist_library/alchemist_library_var_b_high.jpg";
+import sharedMidObsidianSpiresJpg from "@assets/parallax/eclipse_crown/eclipse_crown_var_b_high.jpg";
+import bossStageArcaneSigilJpg from "@assets/parallax/_shared/fx_sigil_high.jpg";
+import bossWorldEclipseThroneJpg from "@assets/parallax/eclipse_crown/eclipse_crown_fx_throne_high.jpg";
 
 export type ParallaxLayerNamespace = "world" | "shared" | "boss";
 
