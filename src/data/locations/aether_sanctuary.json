@@ -134,6 +134,7 @@
       "stone_floor": {
         "prefabId": "stone_floor",
         "type": "solid",
+        "tileset": "sanctuary_crystal",
         "color": "#334155",
         "borderColor": "#38bdf8",
         "labelKey": "labelStoneFloor",
@@ -142,6 +143,7 @@
       "stone_platform": {
         "prefabId": "stone_platform",
         "type": "oneway",
+        "tileset": "sanctuary_crystal",
         "color": "#475569",
         "borderColor": "#7dd3fc",
         "labelKey": "labelStonePlatform",

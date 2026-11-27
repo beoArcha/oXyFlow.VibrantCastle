@@ -139,6 +139,7 @@
       "stone_floor": {
         "prefabId": "stone_floor",
         "type": "solid",
+        "tileset": "clocktower_brick",
         "color": "#57534e",
         "borderColor": "#292524",
         "labelKey": "labelStoneFloor",
@@ -147,6 +148,7 @@
       "stone_platform": {
         "prefabId": "stone_platform",
         "type": "oneway",
+        "tileset": "clocktower_brick",
         "color": "#78716c",
         "borderColor": "#44403c",
         "labelKey": "labelStonePlatform",
@@ -155,6 +157,7 @@
       "vertical_lift": {
         "prefabId": "vertical_lift",
         "type": "solid",
+        "tileset": "clocktower_brick",
         "color": "#92400e",
         "borderColor": "#fbbf24",
         "labelKey": "labelVerticalLift",

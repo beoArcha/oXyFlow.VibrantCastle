@@ -134,6 +134,7 @@
       "stone_floor": {
         "prefabId": "stone_floor",
         "type": "solid",
+        "tileset": "chasm_rock",
         "color": "#44403c",
         "borderColor": "#1c1917",
         "labelKey": "labelStoneFloor",
@@ -142,6 +143,7 @@
       "stone_step": {
         "prefabId": "stone_step",
         "type": "oneway",
+        "tileset": "chasm_rock",
         "color": "#57534e",
         "borderColor": "#292524",
         "labelKey": "labelStoneStep",
@@ -150,6 +152,7 @@
       "low_archway": {
         "prefabId": "low_archway",
         "type": "solid",
+        "tileset": "chasm_rock",
         "color": "#3f3f46",
         "borderColor": "#18181b",
         "labelKey": "labelLowArchway",
@@ -158,6 +161,7 @@
       "moving_platform": {
         "prefabId": "moving_platform",
         "type": "solid",
+        "tileset": "chasm_rock",
         "color": "#78716c",
         "borderColor": "#d6d3d1",
         "labelKey": "labelMovingPlatform",
