@@ -124,3 +124,33 @@ Phase 5 opens when the [phase 4](./phase-4-0.3.x.md) gate (VC-090) passes and th
 - **Phase:** 5 · **Type:** review · **Class:** medium · **Status:** blocked (VC-030)
 - **Goal:** check the rewritten enemy, skill, item and structure values.
 - **How (AI):** produce a diff table against 8121dad, flag the outliers, and feed them into VC-032/VC-033.
+
+### VC-140 · Data Studio bestiary gallery
+- **Phase:** 5 · **Type:** feat · **Class:** small · **Status:** todo
+- **Goal:** restore the visual bestiary card gallery and entry inspector in Data Studio (`enemies` tab).
+- **How (AI):** restore `BestiaryGalleryView`, `BestiaryCardItem`, `BestiaryFilters`, and `BestiaryEntryInspector` from `8121dad` (`src/developer/subtabs/datastudio/components/bestiary/`) and wire a catalog/editor mode toggle into `DataStudioSubtab.tsx`.
+
+### VC-141 · Data Studio VN stage preview
+- **Phase:** 5 · **Type:** feat · **Class:** small · **Status:** todo
+- **Goal:** restore the multi-character VN stage and dialogue bubble preview in Data Studio (`vn` tab).
+- **How (AI):** restore `MultiCharacterStage`, `DialogueBubble`, and `SceneSelectorHeader` from `8121dad` (`src/developer/subtabs/datastudio/components/vn/` + `services/visualNovelService.ts`) and integrate them into `DataStudioSubtab.tsx`.
+
+### VC-142 · Data Studio JSON export modal
+- **Phase:** 5 · **Type:** feat · **Class:** tiny · **Status:** todo
+- **Goal:** restore the inspectable JSON export modal across Data Studio editors.
+- **How (AI):** restore `JsonExportModal` and `ExportToolbar` from `8121dad` (`src/developer/subtabs/datastudio/components/`) so devs can inspect formatted JSON, byte size, copy, and download from `DataStudioSubtab.tsx`.
+
+### VC-143 · Debug live state dump card
+- **Phase:** 5 · **Type:** feat · **Class:** tiny · **Status:** todo
+- **Goal:** restore the on-screen live JSON state dump card in Engine Debug.
+- **How (AI):** restore `DebugStateDumpCard` from `8121dad` (`src/developer/subtabs/debug/DebugStateDumpCard.tsx`) using `CopyableSnippet` and render it in `DebugSubtab.tsx`.
+
+### VC-144 · Log item drawer with copyable context
+- **Phase:** 5 · **Type:** feat · **Class:** tiny · **Status:** todo
+- **Goal:** restore the structured log item drawer with copyable context and styled error stack traces in Log Stream.
+- **How (AI):** restore `LogsItemDrawer` from `8121dad` (`src/developer/subtabs/logs/LogsItemDrawer.tsx`) using `CopyableSnippet` for both `context` and `error.stack`, replacing the plain `<pre>` expansion in `LogsSubtab.tsx`.
+
+### VC-145 · Atlas hero pixel tier toggle
+- **Phase:** 5 · **Type:** feat · **Class:** tiny · **Status:** todo
+- **Goal:** restore the `hi8bit` / `hi16bit` / `high` tier switcher for hero sheets in the Atlas Slicer.
+- **How (AI):** restore `AtlasTierToggle` and `heroPixelTiers.ts` from `8121dad` (`src/developer/subtabs/atlas/`) and wire it into `AtlasSlicerSubtab.tsx` / `AtlasPresetPicker.tsx`.
