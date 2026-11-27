@@ -1263,6 +1263,14 @@ export interface LoreI18n {
   aureliaLore: string;
 }
 
+export interface ReservedI18n {
+  reservedComingSoon: string;
+  reservedAttributesTitle: string;
+  reservedAttributesDesc: string;
+  reservedWorldsTitle: string;
+  reservedWorldsDesc: string;
+}
+
 export interface BestiaryI18n {
   // Bestiary entries
   bestiaryTrainingDummyDesc: string;
@@ -1388,4 +1396,5 @@ export interface GameTranslationDictionary
     NarrationsI18n,
     DialoguesI18n,
     LoreI18n,
-    BestiaryI18n {}
+    BestiaryI18n,
+    ReservedI18n {}
