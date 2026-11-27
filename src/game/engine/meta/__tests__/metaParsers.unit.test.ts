@@ -118,13 +118,16 @@ describe("MetaParser & Section Parsers", () => {
 
       // Info Frames dictionary
       expect(doc.infoFrames?.infoFrames.default).toBe(0);
-      expect(doc.infoFrames?.infoFrames.active).toBe(1);
-      expect(doc.infoFrames?.infoFrames.highlight).toBe(2);
+      expect(doc.infoFrames?.infoFrames.idle).toBe(0);
+      expect(doc.infoFrames?.infoFrames.opening).toBe(1);
+      expect(doc.infoFrames?.infoFrames.on).toBe(2);
+      expect(doc.infoFrames?.infoFrames.off).toBe(3);
+      expect(doc.infoFrames?.infoFrames.closing).toBe(4);
 
       // Gameplay Interaction & Triggers
       expect(doc.interaction?.type).toBe("victory_gate");
       expect(doc.interaction?.trigger?.onPlayerEnterRadius).toBe(true);
-      expect(doc.interaction?.trigger?.radius).toBe(180);
+      expect(doc.interaction?.trigger?.radius).toBe(150);
       expect(doc.interaction?.effects?.playFanfare).toBe(true);
       expect(doc.interaction?.effects?.unlockNextStage).toBe(true);
 
@@ -134,10 +137,15 @@ describe("MetaParser & Section Parsers", () => {
       expect(doc.render?.blend).toBe("normal");
 
       // States mapping
+      expect(doc.states?.states.idle.animation).toBe("idle");
       expect(doc.states?.states.inactive.animation).toBe("idle");
-      expect(doc.states?.states.charging.animation).toBe("light_up");
-      expect(doc.states?.states.activating.animation).toBe("action");
-      expect(doc.states?.states.active.animation).toBe("close_up");
+      expect(doc.states?.states.opening.animation).toBe("opening");
+      expect(doc.states?.states.charging.animation).toBe("opening");
+      expect(doc.states?.states.activating.animation).toBe("opening");
+      expect(doc.states?.states.on.animation).toBe("on");
+      expect(doc.states?.states.active.animation).toBe("on");
+      expect(doc.states?.states.off.animation).toBe("off");
+      expect(doc.states?.states.closing.animation).toBe("closing");
     });
 
     it("correctly parses Chrono Lever with switch interaction and activating state", () => {
