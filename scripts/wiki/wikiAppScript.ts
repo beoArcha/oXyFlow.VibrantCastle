@@ -129,7 +129,34 @@ export const WIKI_APP_SCRIPT_JS = `(function () {
     });
   }
 
+  function isEmbeddedInIframe() {
+    try {
+      return window.self !== window.top;
+    } catch (_err) {
+      return true;
+    }
+  }
+
+  function renderEmbeddedFallback() {
+    const iframe = document.getElementById("game-viewport");
+    if (iframe) iframe.remove();
+
+    const launchBtn = document.getElementById("btn-launch-game");
+    if (launchBtn && launchBtn.parentNode) {
+      const link = document.createElement("a");
+      link.id = "btn-open-game-direct";
+      link.href = GAME_ENTRY_URL;
+      link.target = "_top";
+      link.rel = "noopener noreferrer";
+      link.className = "btn-primary splash-cta";
+      link.setAttribute("data-i18n", "wikiOpenDirect");
+      link.textContent = currentLang === "pl" ? "Otwórz samą grę" : "Open standalone";
+      launchBtn.parentNode.replaceChild(link, launchBtn);
+    }
+  }
+
   function launchGame(forceReload) {
+    if (isEmbeddedInIframe()) return;
     const iframe = document.getElementById("game-viewport");
     const splash = document.getElementById("viewport-splash");
     if (!iframe) return;
@@ -220,6 +247,9 @@ export const WIKI_APP_SCRIPT_JS = `(function () {
   }
 
   document.addEventListener("DOMContentLoaded", () => {
+    if (isEmbeddedInIframe()) {
+      renderEmbeddedFallback();
+    }
     bindEvents();
     updateSectionVisibility("game");
     setLanguage(currentLang);

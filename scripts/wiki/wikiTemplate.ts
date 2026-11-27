@@ -114,7 +114,7 @@ export function renderWikiIndexHtml(): string {
 
     <footer class="wiki-footer">
       <nav class="wiki-footer-links" aria-label="Links">
-        <a href="./game/" data-i18n="wikiPlayGameLink">${pl.wikiPlayGameLink}</a>
+        <a href="./game/index.html" data-i18n="wikiPlayGameLink">${pl.wikiPlayGameLink}</a>
         <a href="${REPO_DOCS_URL}" target="_blank" rel="noopener noreferrer" data-i18n="wikiRepoDocsLink">${pl.wikiRepoDocsLink}</a>
         <a href="${REPO_URL}" target="_blank" rel="noopener noreferrer" data-i18n="wikiFooterRepo">${pl.wikiFooterRepo}</a>
         <a href="${REPO_ISSUES_URL}" target="_blank" rel="noopener noreferrer" data-i18n="wikiFooterIssues">${pl.wikiFooterIssues}</a>
