@@ -57,6 +57,9 @@
   --vital-skill-points: #8b5cf6;
 }
 
+/* No overflow clipping here: the game viewport clips itself in GameLayout.Root
+   (h-screen + overflow-hidden), and page-level content taller than the viewport
+   may scroll normally. Dialog bodies keep their own overflow-y-auto containers. */
 html,
 body,
 #root {
@@ -64,7 +67,6 @@ body,
   width: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden;
   background-color: #120704;
 }
 
