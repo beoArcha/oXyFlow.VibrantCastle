@@ -1,16 +1,5 @@
 {
   "sheets": {
-    "training_dummy": {
-      "directory": "enemies/training_dummy",
-      "margin": 10,
-      "defaultAnimation": "idle",
-      "rows": [
-        { "animation": "idle", "detectedRow": 0, "frames": 6 },
-        { "animation": "hit", "detectedRow": 1, "frames": 5 },
-        { "animation": "destroy", "detectedRow": 2, "frames": 6 },
-        { "animation": "bestiary", "detectedRow": 3, "frames": 8 }
-      ]
-    },
     "clockwork_owl_gargoyle": {
       "directory": "enemies/clockwork_owl_gargoyle",
       "margin": 10,
@@ -21,47 +10,6 @@
         { "animation": "hit", "detectedRow": 2, "frames": 4 },
         { "animation": "death", "detectedRow": 3, "frames": 6, "cutsX": [255, 525, 752, 957, 1075], "centre": "group" },
         { "animation": "bestiary", "detectedRow": 4, "frames": 7 }
-      ]
-    },
-    "aether_gate": {
-      "directory": "structures/aether_gate",
-      "margin": 10,
-      "defaultAnimation": "idle",
-      "rows": [
-        { "animation": "idle", "detectedRow": 0, "frames": 7 },
-        { "animation": "light_up", "detectedRow": 1, "frames": 8 },
-        { "animation": "action", "detectedRow": 2, "frames": 5 },
-        { "animation": "close_up", "detectedRow": 3, "frames": 6 },
-        { "animation": "info", "detectedRow": 4, "frames": 9 }
-      ]
-    },
-    "chrono_lever": {
-      "directory": "structures/chrono_lever",
-      "margin": 10,
-      "defaultAnimation": "idle",
-      "rows": [
-        { "animation": "idle", "detectedRow": 0, "frames": 6 },
-        { "animation": "activating", "detectedRow": 1, "frames": 6 },
-        { "animation": "active", "detectedRow": 2, "frames": 6 }
-      ]
-    },
-    "grand_portcullis": {
-      "directory": "structures/grand_portcullis",
-      "margin": 10,
-      "defaultAnimation": "closed",
-      "rows": [
-        { "animation": "closed", "detectedRow": 0, "frames": 6 },
-        { "animation": "opening", "detectedRow": 1, "frames": 6 },
-        { "animation": "open", "detectedRow": 2, "frames": 6 }
-      ]
-    },
-    "hazard_thorns": {
-      "directory": "structures/hazard_thorns",
-      "margin": 10,
-      "defaultAnimation": "idle",
-      "rows": [
-        { "animation": "idle", "detectedRow": 0, "frames": 6 },
-        { "animation": "active", "detectedRow": 1, "frames": 6 }
       ]
     }
   },

@@ -26,11 +26,17 @@ export function repackHero(source: RgbaImage, originalMeta: JsonObject, config: 
   const layout = planHeroLayout(rows, config, source.height);
   const high = composeHeroSheet(source, labelled, layout);
   const low = halveSheet(high);
-  const meta = buildHeroMeta(originalMeta, rows, layout, {
-    low: { width: low.width, height: low.height },
-    mid: { width: high.width, height: high.height },
-    high: { width: high.width, height: high.height },
-  });
+  const meta = buildHeroMeta(
+    originalMeta,
+    rows,
+    layout,
+    {
+      low: { width: low.width, height: low.height },
+      mid: { width: high.width, height: high.height },
+      high: { width: high.width, height: high.height },
+    },
+    high
+  );
   return { sheets: { low, mid: high, high }, meta, layout, rows };
 }
 
