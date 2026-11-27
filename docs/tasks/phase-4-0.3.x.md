@@ -49,7 +49,7 @@ The result: red tests and CI, levers that no longer opened gates, broken hero an
 | review | VC-020 (#77), VC-030 (#78) |
 | in-progress | VC-051, VC-062 |
 | ready | VC-010, VC-035, VC-045, VC-056 |
-| todo | VC-012, VC-047, VC-061, VC-070, VC-073, VC-074, VC-081 |
+| todo | VC-012, VC-047, VC-061, VC-070, VC-073, VC-074 |
 | blocked | VC-090 (the gate) |
 
 ---
@@ -337,9 +337,9 @@ The result: red tests and CI, levers that no longer opened gates, broken hero an
   3. Tests for the patch builder; headless screenshot of the browser.
 
 ### VC-081 · Narrative catalogs
-- **Phase:** 4 · **Type:** chore · **Class:** small · **Status:** todo
+- **Phase:** 4 · **Type:** chore · **Class:** small · **Status:** done
 - **Goal:** decide where `scenario_act1.json` and `triggers.json` (deleted, unused at runtime) live.
-- **How (AI):** restore them under `docs/lore` as source material, or wire them into narration if VC-050 needs it.
+- **Note:** restored both under `docs/lore/source/` as archived source material; they remain unused by the game.
 
 ---
 
