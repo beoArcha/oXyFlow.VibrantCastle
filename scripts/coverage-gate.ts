@@ -13,6 +13,10 @@ export interface FileCoverageRecord {
   readonly file: string;
   readonly lines: Map<number, number>;
   readonly functions: Map<string, number>;
+  /** Declared functions from FNF: (undefined when the report has no FNF line). */
+  functionsFound?: number;
+  /** Executed functions from FNH: (undefined when the report has no FNH line). */
+  functionsHit?: number;
 }
 
 export interface CoverageSummary {
@@ -121,6 +125,12 @@ export function parseLcov(content: string): FileCoverageRecord[] {
         const prev = current.lines.get(lineNum) ?? 0;
         current.lines.set(lineNum, prev + hits);
       }
+    } else if (line.startsWith("FNF:") && current) {
+      const found = Number(line.slice(4));
+      if (Number.isFinite(found)) current.functionsFound = found;
+    } else if (line.startsWith("FNH:") && current) {
+      const hit = Number(line.slice(4));
+      if (Number.isFinite(hit)) current.functionsHit = hit;
     } else if (line.startsWith("FNDA:") && current) {
       const commaIdx = line.indexOf(",");
       if (commaIdx > 5) {
@@ -144,7 +154,17 @@ export function parseLcov(content: string): FileCoverageRecord[] {
   return records;
 }
 
-/** Merges records per source file (summing hits) and computes the coverage summary. */
+function maxDefined(a: number | undefined, b: number | undefined): number | undefined {
+  if (a === undefined) return b;
+  if (b === undefined) return a;
+  return Math.max(a, b);
+}
+
+/**
+ * Merges records per source file (summing line hits) and computes the coverage summary.
+ * Function totals come from FNF/FNH per file; when the same file appears in several suites the
+ * max is kept, so declared functions are not double-counted in the combined view.
+ */
 export function mergeCoverageRecords(records: readonly FileCoverageRecord[]): CoverageSummary {
   const merged = new Map<string, FileCoverageRecord>();
 
@@ -155,6 +175,8 @@ export function mergeCoverageRecords(records: readonly FileCoverageRecord[]): Co
         file: rec.file,
         lines: new Map(rec.lines),
         functions: new Map(rec.functions),
+        functionsFound: rec.functionsFound,
+        functionsHit: rec.functionsHit,
       });
       continue;
     }
@@ -165,6 +187,8 @@ export function mergeCoverageRecords(records: readonly FileCoverageRecord[]): Co
     for (const [fnName, hits] of rec.functions.entries()) {
       existing.functions.set(fnName, (existing.functions.get(fnName) ?? 0) + hits);
     }
+    existing.functionsFound = maxDefined(existing.functionsFound, rec.functionsFound);
+    existing.functionsHit = maxDefined(existing.functionsHit, rec.functionsHit);
   }
 
   let linesFound = 0;
@@ -177,10 +201,9 @@ export function mergeCoverageRecords(records: readonly FileCoverageRecord[]): Co
       linesFound += 1;
       if (hits > 0) linesHit += 1;
     }
-    for (const hits of rec.functions.values()) {
-      functionsFound += 1;
-      if (hits > 0) functionsHit += 1;
-    }
+    // Prefer FNF/FNH; fall back to FNDA entries only when the report has no FNF/FNH lines.
+    functionsFound += rec.functionsFound ?? rec.functions.size;
+    functionsHit += rec.functionsHit ?? [...rec.functions.values()].filter((h) => h > 0).length;
   }
 
   const linePct = linesFound > 0 ? Number(((linesHit / linesFound) * 100).toFixed(2)) : 100;

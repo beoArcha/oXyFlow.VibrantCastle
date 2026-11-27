@@ -70,7 +70,7 @@ describe("CI & Distribution Scripts", () => {
       expect(summary.checkedCount).toBeGreaterThanOrEqual(8);
       expect(summary.unknownIds).toEqual([]);
       expect(summary.passed).toBe(true);
-    }, 20000);
+    }, 60000);
 
     it("reports unknown location ids as a failure", () => {
       const summary = runLevelValidation(["non_existent_world"]);

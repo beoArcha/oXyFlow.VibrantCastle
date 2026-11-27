@@ -136,6 +136,36 @@ end_of_record
     expect(merged.functionPct).toBe(100);
   });
 
+  it('should compute function coverage from FNF/FNH totals when present', () => {
+    const lcov = `
+SF:src/big.ts
+FNF:10
+FNH:7
+DA:1,1
+end_of_record
+`.trim();
+
+    const summary = mergeCoverageRecords(parseLcov(lcov));
+
+    expect(summary.functionsFound).toBe(10);
+    expect(summary.functionsHit).toBe(7);
+    expect(summary.functionPct).toBe(70);
+  });
+
+  it('should not fail the gate on function coverage, which is informational only', () => {
+    const lowFunctions = mergeCoverageRecords(
+      parseLcov('SF:src/f.ts\nFNF:10\nFNH:1\nDA:1,1\nDA:2,1\nend_of_record')
+    );
+
+    const result = evaluateCoverageGate(
+      { unit: lowFunctions, integration: null, combined: lowFunctions },
+      { unitMin: 50, integrationMin: 40, combinedMin: 50 }
+    );
+
+    expect(lowFunctions.functionPct).toBe(10);
+    expect(result.passed).toBe(true);
+  });
+
   it('should fail the gate when a suite is strictly below its own threshold', () => {
     const unit = mergeCoverageRecords(parseLcov('SF:src/engine.ts\nDA:1,1\nDA:2,0\nend_of_record'));
     const integration = mergeCoverageRecords(parseLcov('SF:src/engine.ts\nDA:1,0\nDA:2,0\nend_of_record'));
