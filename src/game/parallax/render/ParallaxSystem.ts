@@ -1,4 +1,4 @@
-import type { LocationDefinition } from "@game/locations/types";
+import type { LocationDefinition, LocationTheme } from "@game/locations/types";
 import type {
   BackgroundLayerTier,
   ParallaxLayerSchema,
@@ -13,6 +13,13 @@ import {
   resolveBackgroundTier,
   renderTiledDynamicLayer,
 } from "@game/renderer/background/parallaxTiling";
+import {
+  defaultParallaxLoadQueue,
+  getWorldPlaceholderColors,
+  PARALLAX_LOAD_PRIORITY,
+  type ParallaxDrawableTexture,
+  type ParallaxQueuePriority,
+} from "../loading";
 import { ParallaxBackdropRenderer } from "./ParallaxBackdropRenderer";
 import { computeBossScopeIntensity } from "./bossZoneIntensity";
 import { defaultPlaceholderRenderer } from "./PlaceholderRenderer";
@@ -25,12 +32,27 @@ import type {
   ParallaxRenderOptions,
 } from "./types";
 
+export interface IParallaxFadeQueue {
+  getTexture(keyOrUrl: string): ParallaxDrawableTexture | null;
+  isManaged(keyOrUrl: string): boolean;
+  getFadeAlpha(keyOrUrl: string, nowMs?: number): number;
+  enqueue?(descriptor: {
+    readonly cacheKey: string;
+    readonly url: string;
+    readonly priority: ParallaxQueuePriority;
+    readonly subOrder?: number;
+    readonly fadeInOnReady?: boolean;
+  }): Promise<unknown>;
+}
+
 export interface ParallaxSystemDeps {
   registry?: IParallaxRegistry;
   loader?: IParallaxLoader;
   flags?: IParallaxFlags;
   atmosphericRenderer?: ISectorAtmosphericRenderer;
   placeholderRenderer?: IPlaceholderRenderer;
+  loadQueue?: IParallaxFadeQueue;
+  now?: () => number;
 }
 
 const KNOWN_MULTI_LAYER_WORLDS = new Set<string>([
@@ -61,8 +83,20 @@ const DEFAULT_FLAGS: IParallaxFlags = {
 
 const EMPTY_LAYERS: readonly ParallaxLayerSchema[] = [];
 
+function defaultNow(): number {
+  return typeof performance !== "undefined" ? performance.now() : Date.now();
+}
+
 function resolveWorldId(location: LocationDefinition): string {
   return location.worldId || location.id;
+}
+
+function isDrawableReady(img: ParallaxDrawableTexture | null): boolean {
+  if (!img) return false;
+  if ("naturalWidth" in img) {
+    return img.complete && img.naturalWidth > 0 && img.naturalHeight > 0;
+  }
+  return img.width > 0 && img.height > 0;
 }
 
 /**
@@ -76,6 +110,20 @@ export class ParallaxSystem implements IParallaxSystem {
   private readonly atmosphericRenderer: ISectorAtmosphericRenderer;
   private readonly placeholderRenderer: IPlaceholderRenderer;
   private readonly backdropRenderer: ParallaxBackdropRenderer;
+  private readonly loadQueue: IParallaxFadeQueue;
+  private readonly useExplicitLoadQueue: boolean;
+  private readonly now: () => number;
+
+  private readonly placeholderTheme: LocationTheme = {
+    bgGradientTop: "",
+    bgGradientBottom: "",
+    ambientParticle: "dust",
+    fogColor: "",
+    musicIntensity: 0,
+  };
+  private placeholderSourceLocation: LocationDefinition | null = null;
+  private placeholderLocationView: LocationDefinition | null = null;
+
   private readonly tierBuckets: Record<BackgroundLayerTier, ParallaxLayerSchema[]> = {
     far: [],
     mid_far: [],
@@ -92,6 +140,9 @@ export class ParallaxSystem implements IParallaxSystem {
     this.flags = deps.flags ?? DEFAULT_FLAGS;
     this.atmosphericRenderer = deps.atmosphericRenderer ?? defaultAtmosphericSectorRenderer;
     this.placeholderRenderer = deps.placeholderRenderer ?? defaultPlaceholderRenderer;
+    this.loadQueue = deps.loadQueue ?? defaultParallaxLoadQueue;
+    this.useExplicitLoadQueue = Boolean(deps.loadQueue);
+    this.now = deps.now ?? defaultNow;
     this.backdropRenderer = new ParallaxBackdropRenderer(
       (layer) => this.getImage(layer),
       this.atmosphericRenderer
@@ -102,6 +153,8 @@ export class ParallaxSystem implements IParallaxSystem {
     this.backdropRenderer.clearCaches();
     this.atmosphericRenderer.clearCaches();
     this.placeholderRenderer.clearCaches?.();
+    this.placeholderSourceLocation = null;
+    this.placeholderLocationView = null;
   }
 
   public isSupported(locationOrId: string | LocationDefinition): boolean {
@@ -130,8 +183,7 @@ export class ParallaxSystem implements IParallaxSystem {
       if (resolveBackgroundTier(layer) !== "far") continue;
       if (layer.opaque !== true) continue;
       if (layer.blendMode && layer.blendMode !== "source-over") continue;
-      const img = this.peekImage(layer);
-      if (img && img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
+      if (isDrawableReady(this.peekImage(layer))) {
         return true;
       }
     }
@@ -140,6 +192,10 @@ export class ParallaxSystem implements IParallaxSystem {
 
   public preload(layers?: readonly ParallaxLayerSchema[]): void {
     if (!layers) return;
+    if (this.useExplicitLoadQueue && this.loadQueue.enqueue) {
+      this.enqueueLayersProgressive(layers);
+      return;
+    }
     for (let i = 0; i < layers.length; i++) {
       const url = this.resolveLayerUrl(layers[i]);
       if (!url) continue;
@@ -180,8 +236,10 @@ export class ParallaxSystem implements IParallaxSystem {
     }
 
     const pb = location.parallaxBackground;
+    const worldId = resolveWorldId(location);
+    const backdropLocation = this.resolveMetaPlaceholderLocation(location, worldId);
     if (!pb || !pb.layers || pb.layers.length === 0) {
-      this.backdropRenderer.renderFallbackBackdrop(ctx, location, viewportWidth, viewportHeight);
+      this.backdropRenderer.renderFallbackBackdrop(ctx, backdropLocation, viewportWidth, viewportHeight);
       return;
     }
 
@@ -192,12 +250,13 @@ export class ParallaxSystem implements IParallaxSystem {
     const maxCamY = Math.max(1, levelHeight - viewportHeight);
     const progressX = Math.max(0, Math.min(1, cameraX / maxCamX));
     const progressY = Math.max(0, Math.min(1, cameraY / maxCamY));
+    const nowMs = this.now();
 
     this.bucketLayersByTier(pb.layers);
 
     this.backdropRenderer.renderFarStaticBackdrop(
       ctx,
-      location,
+      backdropLocation,
       this.isTierEnabled("far", options) ? this.tierBuckets.far : EMPTY_LAYERS,
       viewportWidth,
       viewportHeight,
@@ -206,12 +265,13 @@ export class ParallaxSystem implements IParallaxSystem {
       tickCount
     );
 
-    const worldId = resolveWorldId(location);
     const worldBossIntensity = this.isTierEnabled("boss_world", options)
-      ? computeBossScopeIntensity(location, "world", cameraX, cameraY, viewportWidth, viewportHeight, options?.forceBossScope)
+      ? computeBossScopeIntensity(location, "world", cameraX, cameraY, viewportWidth, viewportHeight, options?.forceBossScope) *
+        this.resolveBucketFadeAlpha(this.tierBuckets.boss_world, nowMs)
       : 0;
     const stageBossIntensity = this.isTierEnabled("boss_stage", options)
-      ? computeBossScopeIntensity(location, "stage", cameraX, cameraY, viewportWidth, viewportHeight, options?.forceBossScope)
+      ? computeBossScopeIntensity(location, "stage", cameraX, cameraY, viewportWidth, viewportHeight, options?.forceBossScope) *
+        this.resolveBucketFadeAlpha(this.tierBuckets.boss_stage, nowMs)
       : 0;
     const showWireframes = this.flags.showWireframes();
 
@@ -229,6 +289,7 @@ export class ParallaxSystem implements IParallaxSystem {
           viewportWidth,
           viewportHeight,
           tickCount,
+          nowMs,
           showWireframes
         );
       }
@@ -244,6 +305,55 @@ export class ParallaxSystem implements IParallaxSystem {
         this.backdropRenderer.renderBossBackdropTier(ctx, this.tierBuckets.boss_stage, "boss_stage", stageBossIntensity, viewportWidth, viewportHeight, progressX, progressY, tickCount);
       }
     }
+  }
+
+  private enqueueLayersProgressive(layers: readonly ParallaxLayerSchema[]): void {
+    for (let i = 0; i < layers.length; i++) {
+      const layer = layers[i];
+      const url = this.resolveLayerUrl(layer);
+      if (!url) continue;
+      const tier = resolveBackgroundTier(layer);
+      const priority: ParallaxQueuePriority =
+        tier === "far"
+          ? PARALLAX_LOAD_PRIORITY.FAR
+          : tier === "boss_stage" || tier === "boss_world"
+            ? PARALLAX_LOAD_PRIORITY.EFFECT
+            : PARALLAX_LOAD_PRIORITY.LAYER;
+      this.loadQueue
+        .enqueue!({
+          cacheKey: layer.layerKey || url,
+          url,
+          priority,
+          subOrder: layer.depth ?? i * 0.1,
+          fadeInOnReady: priority !== PARALLAX_LOAD_PRIORITY.FAR,
+        })
+        .catch(() => {});
+    }
+  }
+
+  private resolveMetaPlaceholderLocation(location: LocationDefinition, worldId: string): LocationDefinition {
+    const placeholder = getWorldPlaceholderColors(worldId);
+    if (!placeholder) return location;
+    if (
+      location.theme?.bgGradientTop === placeholder.top &&
+      location.theme?.bgGradientBottom === placeholder.bottom
+    ) {
+      return location;
+    }
+
+    if (this.placeholderSourceLocation !== location || !this.placeholderLocationView) {
+      this.placeholderSourceLocation = location;
+      this.placeholderTheme.bgGradientTop = placeholder.top;
+      this.placeholderTheme.bgGradientBottom = placeholder.bottom;
+      this.placeholderTheme.ambientParticle = location.theme?.ambientParticle ?? "dust";
+      this.placeholderTheme.fogColor = location.theme?.fogColor ?? "";
+      this.placeholderTheme.musicIntensity = location.theme?.musicIntensity ?? 0;
+      this.placeholderLocationView = {
+        ...location,
+        theme: this.placeholderTheme,
+      };
+    }
+    return this.placeholderLocationView;
   }
 
   private bucketLayersByTier(layers: readonly ParallaxLayerSchema[]): void {
@@ -266,20 +376,53 @@ export class ParallaxSystem implements IParallaxSystem {
 
   private peekImage(layer: ParallaxLayerSchema): HTMLImageElement | null {
     if (layer.imageElement) return layer.imageElement;
+    const key = layer.layerKey;
     const url = this.resolveLayerUrl(layer);
+    const queued = (key ? this.loadQueue.getTexture(key) : null) ?? (url ? this.loadQueue.getTexture(url) : null);
+    if (queued) return queued as HTMLImageElement;
     if (!url) return null;
     return this.loader.getTexture(url);
   }
 
   private getImage(layer: ParallaxLayerSchema): HTMLImageElement | null {
     if (layer.imageElement) return layer.imageElement;
+    const key = layer.layerKey;
     const url = this.resolveLayerUrl(layer);
+    const queued = (key ? this.loadQueue.getTexture(key) : null) ?? (url ? this.loadQueue.getTexture(url) : null);
+    if (queued) return queued as HTMLImageElement;
     if (!url) return null;
+
     const cached = this.loader.getTexture(url);
-    if (!cached) {
+    if (cached) return cached;
+
+    const managed = (key ? this.loadQueue.isManaged(key) : false) || this.loadQueue.isManaged(url);
+    if (!managed) {
       this.loader.loadTexture(url).catch(() => {});
     }
-    return cached;
+    return null;
+  }
+
+  private resolveLayerFadeAlpha(layer: ParallaxLayerSchema, nowMs: number): number {
+    if (layer.imageElement) return 1;
+    const key = layer.layerKey;
+    if (key && this.loadQueue.isManaged(key)) {
+      return this.loadQueue.getFadeAlpha(key, nowMs);
+    }
+    const url = this.resolveLayerUrl(layer);
+    if (url && this.loadQueue.isManaged(url)) {
+      return this.loadQueue.getFadeAlpha(url, nowMs);
+    }
+    return 1;
+  }
+
+  private resolveBucketFadeAlpha(layersInTier: readonly ParallaxLayerSchema[], nowMs: number): number {
+    if (layersInTier.length === 0) return 1;
+    let maxAlpha = 0;
+    for (let i = 0; i < layersInTier.length; i++) {
+      const alpha = this.resolveLayerFadeAlpha(layersInTier[i], nowMs);
+      if (alpha > maxAlpha) maxAlpha = alpha;
+    }
+    return maxAlpha;
   }
 
   private isTierEnabled(tier: BackgroundLayerTier, options?: ParallaxRenderOptions): boolean {
@@ -300,18 +443,22 @@ export class ParallaxSystem implements IParallaxSystem {
     viewportWidth: number,
     viewportHeight: number,
     tickCount: number,
+    nowMs: number,
     showWireframes: boolean
   ): void {
     for (let j = 0; j < layersInTier.length; j++) {
       const layer = layersInTier[j];
       const img = this.getImage(layer);
-      if (!img || !img.complete || img.naturalWidth === 0) continue;
+      if (!isDrawableReady(img)) continue;
+
+      const fadeAlpha = this.resolveLayerFadeAlpha(layer, nowMs);
+      if (fadeAlpha <= 0.005) continue;
 
       renderTiledDynamicLayer(
         ctx,
         layer,
         tier,
-        img,
+        img!,
         boxHeight,
         extraWidth,
         progressX,
@@ -319,7 +466,7 @@ export class ParallaxSystem implements IParallaxSystem {
         viewportWidth,
         viewportHeight,
         tickCount,
-        1,
+        fadeAlpha,
         showWireframes
       );
     }
