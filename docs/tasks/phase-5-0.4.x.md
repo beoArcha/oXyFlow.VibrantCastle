@@ -42,6 +42,30 @@ Phase 5 opens when the [phase 4](./phase-4-0.3.x.md) gate (VC-090) passes and th
 
 ---
 
+## B2. Bestiary and world props
+
+### VC-130 · Bestiary plan
+- **Phase:** 5 · **Type:** plan · **Class:** large · **Status:** todo
+- **Goal:** a complete bestiary design covering 8 base monsters, each with a local variant in every one of the 8 worlds (8 x 8 = 64 variants), plus 2 unique monsters per world (16).
+- **How (AI):** design 8 base monsters, each with a local variant in every one of the 8 worlds (8 x 8 = 64 variants), plus 2 monsters unique to each world (16); ensure each variant fits that world's lore coherently (e.g. the owl: castle owl, clockwork owl, blizzard owl...). Write `docs/design/bestiary.md` with names PL/EN, world, role, attacks and tiers.
+
+### VC-131 · Bestiary art and data, one PR per world
+- **Phase:** 5 · **Type:** art / feat · **Class:** medium · **Status:** blocked (VC-130)
+- **Goal:** every world's bestiary entries have sprites (`hi8bit`, `hi16bit` SVG; `high` PNG), metas, `enemies.json` entries and i18n, shipped one PR per world.
+- **How (AI):** implement one world per PR following `docs/design/bestiary.md`: sprites (`hi8bit` and `hi16bit` SVG, `high` PNG), meta files, `enemies.json` entries and PL/EN i18n.
+
+### VC-132 · World lanterns
+- **Phase:** 5 · **Type:** art · **Class:** small · **Status:** todo
+- **Goal:** each world gets its own lantern type with 3 tiers (`hi8bit`, `hi16bit`, `high`).
+- **How (AI):** create a distinct lantern asset per world across all 3 tiers and wire it into the world's prop/asset registry.
+
+### VC-133 · World props
+- **Phase:** 5 · **Type:** art · **Class:** medium · **Status:** todo
+- **Goal:** each world gets its own set of decorative elements across 3 tiers (`hi8bit`, `hi16bit`, `high`).
+- **How (AI):** create world-specific decorative prop sets in all 3 tiers (`hi8bit`, `hi16bit`, `high`) matching each world's lore and palette.
+
+---
+
 ## C. World and maps (8 worlds x 8 maps; today map 1 of each world)
 
 ### VC-021 … VC-025 · Hybrid maps: courtyard, thorn_chasm, clocktower, aether_sanctuary, grand_bastion
