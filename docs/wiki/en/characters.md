@@ -1,10 +1,12 @@
 # Champions: Valen and Aurelia
 
-Two duelists explore the Citadel. Play either one solo, or both in local co-op on one keyboard or with two pads. Both heroes share the same running and jumping physics, so every map is passable for either champion. They differ in vitals, recovery and their passive trait.
+Two longtime friends walk the Zone together—bound by shared history, subtly different goals, and circumstances that leave neither of them able to go it alone. In *Vibrant Castle*, **there is no single main hero**. Play either partner solo, or command both simultaneously in local 2-player co-op on a shared keyboard or two gamepads.
 
-Choose player 1's champion in the game menu. In co-op, player 2 plays the other one.
+Their partnership follows the logic of **Brazilian zouk**: whoever holds the lead proposes a move rather than issuing orders, while the partner decides whether and how to answer—and can take over the lead whenever priorities shift. Both share identical running and jumping physics so every stage stays traversable for either champion, while differing in vitals, recovery, and combat rhythm.
 
-| Attribute | Valen · Solar Knight | Aurelia · Scholar of Arcanum |
+Pick Player 1 in the game menu; in 2-player mode, Player 2 automatically takes the other partner.
+
+| Attribute | Valen · Sun Knight | Aurelia · Arcane Scholar |
 | :--- | :---: | :---: |
 | Health (HP) | 115 | 90 |
 | Mana (MP) | 90 | 125 |
@@ -17,25 +19,29 @@ Choose player 1's champion in the game menu. In co-op, player 2 plays the other 
 
 ---
 
-## 1. Valen, the Solar Knight
+## 1. Valen, the Sun Knight
 
-Valen is a champion of the Sun Order and a master of the dueling rapier. His passive, **Solar Vigor**, gives higher HP and stamina, faster stamina recovery and quicker rapier strikes. He rewards close, resolute fencing.
+Valen has less natural talent than Aurelia, and knows it—so he relies on diligence, structure, and solving one problem at a time. When an arcane mechanism stalls or a room throws too many threats at once, his composure keeps the pair steady. His passive trait, **Solar Vigor**, grants higher HP and stamina, brisk stamina recovery, and faster rapier cadence.
 
-- **Weapon**: a slender dueling rapier for quick thrusts.
-- **Magic**: solar glyphs that sear enemies with concentrated light.
-- **Movement**: a slide under projectiles and a backstep, both on the dash.
+In the 2034 frame, his title (*Sun Knight* / *Solar Knight*) and solar-fencing discipline serve as provisional labels for how his thermal-photonic focus reads inside the Zone; his pre-cataclysm background and the true source of his powers remain an open mystery.
 
-## 2. Aurelia, the Scholar of Arcanum
+- **Weapon**: a balanced dueling rapier built for crisp thrusts and rapid recovery.
+- **Magic**: focused solar rays, fireballs, and prismatic wards that punish armored constructs.
+- **Movement**: low slides under incoming fire and disciplined backsteps.
 
-Aurelia is a researcher of Aether and chronomancy. Her passive, **Astral Flow**, deepens her mana pool and regeneration, adds 15% to spell power, cuts spell costs by 10% and makes her evasions lighter on stamina.
+## 2. Aurelia, the Arcane Scholar
 
-- **Weapon**: a blade of pure Aether, used for wide cleaves.
-- **Magic**: celestial beams of astral light.
-- **Movement**: swift slides and backsteps that cost less stamina than Valen's.
+Aurelia pairs genuine talent with relentless effort, though she gets visibly frustrated whenever an equation, ward, or plan refuses to cooperate—which is where Valen's patience makes the pair more than the sum of their parts. Her passive trait, **Astral Flow**, expands her mana pool and regeneration, adds +15% spell power, reduces mana costs by 10%, and trims stamina spent on evasions.
+
+Like Valen, her title (*Arcane Scholar* / *Scholar of Arcanum*) and command of astral, frost, and temporal magic reflect early 2034 attempts to classify post-cataclysm anomalies; where those gifts originated is not yet settled.
+
+- **Weapon**: an arcane conduit staff (`aether_staff`) paired with sweeping offensive and protective sorcery.
+- **Magic**: astral bolts, radial frost bursts, emerald volleys, and brief temporal phases.
+- **Movement**: swift slides and lighter-cost backsteps built for continuous repositioning.
 
 ---
 
 ## 3. Planned
 
-- **Attribute scores**: the six D&D-style attributes (STR, DEX, CON, INT, WIS, CHA), with the player choosing priorities, are planned for phase 5. They will drive HP, mana, stamina and combat.
-- **Progression trees and equipment**: planned for phase 5 with the attribute model.
+- **Six D&D-style attributes (STR, DEX, CON, INT, WIS, CHA)**: phase 5 moves both champions onto a D20 ×10 scale (Level 1 baseline — Valen: `151/166/156/136/146/151`, Aurelia: `131/152/136/176/162/149`), with automatic growth driven by three player-chosen priorities.
+- **Progression trees & equipment**: attribute prerequisites, gear comparison, and tandem co-op techniques expand across upcoming phases.

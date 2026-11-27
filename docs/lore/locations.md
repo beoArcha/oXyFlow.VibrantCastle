@@ -1,10 +1,10 @@
-# Locations & Castle Sectors (World Atlas)
+# Locations & Zone Sectors (Technical World Atlas — Map 1)
 
-The world of *Vibrant Castle* is set within an ancient citadel suspended in an eternal, golden autumn. Constructed in the late 19th century by a guild of aristocratic duelists, scholars, and clockwork architects, the citadel harnesses primordial Aether — the crystalline substance that binds matter and the flow of time.
+This atlas indexes the **8 currently shipped Map-1 sectors** in `src/data/locations/*.json` and aligns them with the **2034 canon** ([`world.md`](./world.md)). Narrative lore, 2034 real-world origins, and demon reinterpretations live in [`worlds/`](./worlds/courtyard.md).
 
-**Campaign Plan vs Current State**: The long-term campaign structure is **8 worlds × 8 maps** (64 stages, closer to 2D *Mario* stage flow with *Castlevania: Aria of Sorrow* exploration; [`docs/tasks/VISION.md`](../tasks/VISION.md)). Today **map 1 of each of the 8 worlds** is shipped in `src/data/locations/*.json` and registered in `LOCATION_REGISTRY` (`src/game/locations/registry.ts`). Maps 2–8 per world, the map design contract ([`VC-020`](../tasks/phase-4-0.3.x.md#vc-020--map-contract-for-the-8x8-campaign)), hybrid baseline expansions ([`VC-021`…`VC-025`](../tasks/phase-5-0.4.x.md#vc-021--vc-025--hybrid-maps-courtyard-thorn_chasm-clocktower-aether_sanctuary-grand_bastion)), and alignment fixes for the newer maps ([`VC-026`…`VC-028`](../tasks/phase-5-0.4.x.md#vc-026--vc-028--fix-new-maps-ashen_catacombs-alchemist_library-eclipse_crown)) are on the backlog in [`docs/tasks/ROADMAP.md`](../tasks/ROADMAP.md).
+**Campaign Plan vs Current State:** The full campaign is planned as **8 worlds × 8 maps** (64 stages; [`docs/design/maps-contract.md`](../design/maps-contract.md)). Today **Map 1 of each world** is shipped and registered in `LOCATION_REGISTRY` (`src/game/locations/registry.ts`). Contract expansions (`VC-021`..`VC-025`) and alignment fixes (`VC-026`..`VC-028`) are tracked on the Phase 5 backlog ([`docs/tasks/ROADMAP.md`](../tasks/ROADMAP.md)).
 
-Gates are iron portcullises that visibly lift when their lever is struck (`1.2 s`, and collision shrinks from the bottom with them). Every shipped map passes the automated level-logic validator (`bun scripts/validate-level.ts --all`) and `src/tests/arch/locationBlueprints.test.ts` / `locationLinks.test.ts`.
+Iron portcullises visibly lift over `1.2 s` when their linked lever is struck, shrinking collision from the bottom. All 8 blueprints pass `bun scripts/validate-level.ts --all`, `locationBlueprints.test.ts`, and `locationLinks.test.ts`.
 
 ---
 
@@ -14,90 +14,81 @@ Gates are iron portcullises that visibly lift when their lever is struck (`1.2 s
   [1. Courtyard] <==> [2. Thorn Chasm] <==> [3. Ashen Catacombs] <==> [4. Clockwork Tower]
          ^                                                                      ||
          |                                                                      vv
-  [8. Eclipse Crown] <==> [7. Grand Bastion] <==> [6. Aether Sanctuary] <==> [5. Alchemist's Library]
+  [8. Eclipse Crown] <==> [7. Sunlit Bastion] <==> [6. Aether Sanctuary] <==> [5. Alchemist's Library]
 ```
 
-* Canonical progression (`LocationParser`): `courtyard` → `thorn_chasm` → `ashen_catacombs` → `clocktower` → `alchemist_library` → `aether_sanctuary` → `grand_bastion` → `eclipse_crown` → `courtyard`.
-* Every world after `courtyard` also connects back to the preceding world (`courtyard` has outbound portals to `thorn_chasm` and `clocktower`; `eclipse_crown` loops back to `courtyard` via `mastery_loop_courtyard`).
+* **Canonical Order:** `courtyard` → `thorn_chasm` → `ashen_catacombs` → `clocktower` → `alchemist_library` → `aether_sanctuary` → `grand_bastion` → `eclipse_crown` → `courtyard`.
 
 ---
 
-## 1. Courtyard of Awakening (`courtyard`)
+## 1. Courtyard of Awakening (`courtyard`) — [Lore Dossier](./worlds/courtyard.md)
 
-* **Title**: Courtyard of Awakening (*Dziedziniec Przebudzenia*)
-* **Dimensions**: 4800px × 1040px
-* **Spawn Point**: `(x: 140, y: 780)` (P2 offset: `+46px`); entries `from_chasm`, `from_eclipse`
-* **Atmosphere & Theme**: Dusk plum-to-amber sky (`#2c1e33` → `#d97706`), soft golden fog (`rgba(251, 191, 36, 0.08)`), descending autumn leaves (`leaf`), tranquil ambient (`musicIntensity: 0.25`).
-* **Parallax & Tilesets**: 6 parallax layers (`bg_far` opaque + `bg_mid_far`, `bg_mid`, `bg_mid_close`, `bg_courtyard_boss_stage`, `bg_close`); tilesets `courtyard_stone`, `courtyard_wood`; 6 `hanging_lantern` decor props.
-* **Interactive Elements & Portals**: 21 solids, 1 lever (`lever_courtyard_gate` → `courtyard_portcullis`), 3 narration triggers, portals to `thorn_chasm` and `clocktower`.
-* **Inhabiting Forces (9)**: `training_dummy` (1), `training_target` (1), `gear_mite` (2), `court_sentinel` (2), `clockwork_owl_gargoyle` (1), `grand_dummy` (1), `aether_sentinel` (1).
+* **PL / EN:** *Dziedziniec Przebudzenia* / Courtyard of Awakening
+* **2034 Origin:** Historic French château & restoration estate.
+* **Dimensions & Spawn:** `4800 × 1040 px` · default `(140, 780)` (P2 `+46 px`), entries `from_chasm`, `from_eclipse`.
+* **Atmosphere & Assets:** `#2c1e33` → `#d97706`, falling `leaf`, `musicIntensity: 0.25`; 6 parallax layers (`world:courtyard:far` opaque); tilesets `courtyard_stone`, `courtyard_wood`; 6 `hanging_lantern` props.
+* **Interactive & Portals:** 21 solids, 1 lever (`lever_courtyard_gate` → `courtyard_portcullis`), 1 hazard (`moat_thorns`), 3 triggers, portals to `thorn_chasm` and `clocktower`, `bossZones`: `courtyard_trial_square`.
+* **Inhabiting Forces (9):** `training_dummy` (1), `training_target` (1), `gear_mite` (2), `court_sentinel` (2), `clockwork_owl_gargoyle` (1), `grand_dummy` (1), `aether_sentinel` (1).
 
-## 2. Chasm of Thorns and Shadows (`thorn_chasm`)
+## 2. Chasm of Thorns and Shadows (`thorn_chasm`) — [Lore Dossier](./worlds/thorn_chasm.md)
 
-* **Title**: Chasm of Thorns and Shadows (*Rozpadlina Cierni i Cieni*)
-* **Dimensions**: 4560px × 1120px
-* **Spawn Point**: `(x: 240, y: 740)` (P2 offset: `+46px`); entries `from_courtyard`, `from_catacombs`
-* **Atmosphere & Theme**: Deep violet-to-ember abyss (`#1b1429` → `#7c2d12`), amber-rust haze (`rgba(180, 83, 9, 0.12)`), drifting dust (`dust`), rising tension (`musicIntensity: 0.48`).
-* **Parallax & Tilesets**: 6 parallax layers (`bg_chasm_far` opaque + 5 foreground/stage tiers); tileset `chasm_rock`; 3 `hanging_lantern` decor props.
-* **Interactive Elements & Portals**: 16 solids, 0 levers today (restoring the lost chasm lever is tracked in [`VC-022`](../tasks/phase-5-0.4.x.md#vc-021--vc-025--hybrid-maps-courtyard-thorn_chasm-clocktower-aether_sanctuary-grand_bastion)), portals to `courtyard` and `ashen_catacombs`.
-* **Inhabiting Forces (8)**: `chasm_crawler` (2), `chasm_gargoyle` (2), `thorn_creeper` (1), `gargoyle_scout` (1), `gear_mite` (1), `aether_sentinel` (1).
+* **PL / EN:** *Rozpadlina Cierni i Cieni* / Chasm of Thorns and Shadows
+* **2034 Origin:** Terraced limestone quarry, sunken utility cut & botanical conservatory ravine.
+* **Dimensions & Spawn:** `4560 × 1120 px` · default `(240, 740)`, entries `from_courtyard`, `from_catacombs`.
+* **Atmosphere & Assets:** `#1b1429` → `#7c2d12`, `dust`, `musicIntensity: 0.48`; 6 parallax layers (`world:thorn_chasm:far` opaque); tileset `chasm_rock`; 3 `hanging_lantern` props.
+* **Interactive & Portals:** 16 solids, 0 levers today (restoration in `VC-022`), 2 thorn hazards, portals to `courtyard` and `ashen_catacombs`, `bossZones`: `thorn_warden_lair`.
+* **Inhabiting Forces (8):** `chasm_crawler` (2), `chasm_gargoyle` (2), `thorn_creeper` (1), `gargoyle_scout` (1), `gear_mite` (1), `aether_sentinel` (1).
 
-## 3. Ashen Catacombs (`ashen_catacombs`)
+## 3. Ashen Catacombs (`ashen_catacombs`) — [Lore Dossier](./worlds/ashen_catacombs.md)
 
-* **Title**: Ashen Catacombs (*Katakumby Popiołu*)
-* **Dimensions**: 2640px × 1560px
-* **Spawn Point**: `(x: 240, y: 180)` (P2 offset: `+46px`); entries `from_chasm`, `from_clocktower`
-* **Atmosphere & Theme**: Soot-charcoal to smoldering ember (`#171112` → `#7c2d12`), burnt-orange fog (`rgba(234, 88, 12, 0.14)`), drifting ash dust (`dust`), tense subterranean mood (`musicIntensity: 0.58`).
-* **Parallax & Tilesets**: 6 parallax layers (`bg_catacombs_far` opaque, `bg_catacombs_mid` mirrored); tileset `bastion_stone`; 6 `hanging_lantern` decor props.
-* **Interactive Elements & Portals**: 19 solids, 1 lever (`lever_ossuary_gate` → `ossuary_portcullis`), 1 narration trigger, portals to `thorn_chasm` and `clocktower`. Contract alignment tracked in [`VC-026`](../tasks/phase-5-0.4.x.md#vc-026--vc-028--fix-new-maps-ashen_catacombs-alchemist_library-eclipse_crown).
-* **Inhabiting Forces (7)**: `chasm_crawler` (1), `lantern_warden` (1), `gear_mite` (1), `chrono_hound` (1), `aether_wisp` (1), `aether_sentinel` (1), `shadow_knight` (1).
+* **PL / EN:** *Katakumby Popiołu* / Ashen Catacombs
+* **2034 Origin:** Château burial crypts merged with municipal heating boilers & underground service tunnels.
+* **Dimensions & Spawn:** `2640 × 1560 px` · default `(240, 180)`, entries `from_chasm`, `from_clocktower`.
+* **Atmosphere & Assets:** `#171112` → `#7c2d12`, `dust`, `musicIntensity: 0.58`; 6 parallax layers (`world:ashen_catacombs:far` opaque); tileset `bastion_stone`; 6 `hanging_lantern` props.
+* **Interactive & Portals:** 19 solids, 1 lever (`lever_ossuary_gate` → `ossuary_portcullis`), 1 ember hazard, 1 trigger, portals to `thorn_chasm` and `clocktower`, `bossZones`: `catacombs_ember_chapel` (`VC-026`).
+* **Inhabiting Forces (7):** `chasm_crawler` (1), `lantern_warden` (1), `gear_mite` (1), `chrono_hound` (1), `aether_wisp` (1), `aether_sentinel` (1), `shadow_knight` (1).
 
-## 4. Clockwork Tower & Angled Range (`clocktower`)
+## 4. Clockwork Tower & Angled Range (`clocktower`) — [Lore Dossier](./worlds/clocktower.md)
 
-* **Title**: Clockwork Tower & Angled Range (*Wieża Zegarowa & Poligon Kątowy*)
-* **Dimensions**: 2440px × 1740px (vertical emphasis)
-* **Spawn Point**: `(x: 240, y: 1500)` (P2 offset: `+46px`); entries `from_catacombs`, `from_courtyard`, `from_library`
-* **Atmosphere & Theme**: Indigo dusk to warm brass (`#1e1b4b` → `#78350f`), amber mist (`rgba(217, 119, 6, 0.1)`), copper sparks (`spark`), rhythmic mechanical intensity (`musicIntensity: 0.65`).
-* **Parallax & Tilesets**: 6 parallax layers (`bg_clocktower_far` opaque + 5 layers); tileset `clocktower_brick`; 6 `hanging_lantern` decor props.
-* **Interactive Elements & Portals**: 23 solids, 1 lever (`lever_spire_gate` → `spire_portcullis`), 1 narration trigger, portals to `ashen_catacombs` and `alchemist_library`.
-* **Inhabiting Forces (8)**: `gear_mite` (1), `chrono_hound` (1), `clockwork_automaton` (2), `clockwork_owl_gargoyle` (2), `training_target` (1), `gargoyle_scout` (1).
+* **PL / EN:** *Wieża Zegarowa i Poligon Kątowy* / Clockwork Tower & Angled Range
+* **2034 Origin:** Automated high-bay robotics factory & optical calibration tower.
+* **Dimensions & Spawn:** `2440 × 1740 px` · default `(240, 1500)`, entries `from_catacombs`, `from_courtyard`, `from_library`.
+* **Atmosphere & Assets:** `#1e1b4b` → `#78350f`, `spark`, `musicIntensity: 0.65`; 6 parallax layers (`world:clocktower:far` opaque); tileset `clocktower_brick`; 6 `hanging_lantern` props.
+* **Interactive & Portals:** 23 solids, 1 lever (`lever_spire_gate` → `spire_portcullis`), 1 trigger, portals to `ashen_catacombs` and `alchemist_library`, `linkedSceneId: scene_clocktower_meeting`, `bossZones`: `clocktower_summit_chamber` (`VC-023`).
+* **Inhabiting Forces (8):** `gear_mite` (1), `chrono_hound` (1), `clockwork_automaton` (2), `clockwork_owl_gargoyle` (2), `training_target` (1), `gargoyle_scout` (1).
 
-## 5. Alchemist's Library (`alchemist_library`)
+## 5. Alchemist's Library (`alchemist_library`) — [Lore Dossier](./worlds/alchemist_library.md)
 
-* **Title**: Alchemist's Library (*Biblioteka Alchemika*)
-* **Dimensions**: 3840px × 1380px
-* **Spawn Point**: `(x: 240, y: 1140)` (P2 offset: `+46px`); entries `from_clocktower`, `from_sanctuary`
-* **Atmosphere & Theme**: Deep emerald-teal archive (`#06201b` → `#115e59`), glowing verdant mist (`rgba(16, 185, 129, 0.13)`), floating aetheric motes (`magic`), scholarly tension (`musicIntensity: 0.68`).
-* **Parallax & Tilesets**: 6 parallax layers (`bg_library_far` opaque, `bg_library_mid` mirrored); tileset `clocktower_brick`; 6 `hanging_lantern` decor props.
-* **Interactive Elements & Portals**: 21 solids, 1 lever (`lever_archive_gate` → `library_portcullis`), 1 narration trigger, portals to `clocktower` and `aether_sanctuary`. Contract alignment tracked in [`VC-027`](../tasks/phase-5-0.4.x.md#vc-026--vc-028--fix-new-maps-ashen_catacombs-alchemist_library-eclipse_crown).
-* **Inhabiting Forces (7)**: `aether_sentinel` (2), `aether_wisp` (2), `lantern_warden` (1), `clockwork_automaton` (1), `shadow_knight` (1).
+* **PL / EN:** *Biblioteka Alchemika* / Alchemist's Library
+* **2034 Origin:** Synthesis laboratory, cleanroom biovats, server/data archive & containment dome.
+* **Dimensions & Spawn:** `3840 × 1380 px` · default `(240, 1140)`, entries `from_clocktower`, `from_sanctuary`.
+* **Atmosphere & Assets:** `#06201b` → `#115e59` (N12 palette review backlog), `magic`, `musicIntensity: 0.68`; 6 parallax layers (`world:alchemist_library:far` opaque); tileset `clocktower_brick`; 6 `hanging_lantern` props.
+* **Interactive & Portals:** 21 solids, 1 lever (`lever_archive_gate` → `library_portcullis`), 1 void hazard, 1 trigger, portals to `clocktower` and `aether_sanctuary`, `bossZones`: `library_astrolabe_rotunda` (`VC-027`).
+* **Inhabiting Forces (7):** `aether_sentinel` (2), `aether_wisp` (2), `lantern_warden` (1), `clockwork_automaton` (1), `shadow_knight` (1).
 
-## 6. Aether Sky Sanctuary & Aqueduct (`aether_sanctuary`)
+## 6. Aether Sky Sanctuary & Aqueduct (`aether_sanctuary`) — [Lore Dossier](./worlds/aether_sanctuary.md)
 
-* **Title**: Aether Sky Sanctuary & Aqueduct (*Sanktuarium Aetheru & Podniebny Akwedukt*)
-* **Dimensions**: 4240px × 1400px
-* **Spawn Point**: `(x: 240, y: 1100)` (P2 offset: `+46px`); entries `from_library`, `from_bastion`
-* **Atmosphere & Theme**: Cerulean starlight (`#0f172a` → `#1e3a8a`), cyan haze (`rgba(56, 189, 248, 0.12)`), glowing motes (`magic`), heightened choral resonance (`musicIntensity: 0.75`). **Backlog**: bringing this blue sector closer to the autumn palette is tracked in [`docs/tasks/VISION.md`](../tasks/VISION.md) and Phase 8+ of [`docs/tasks/ROADMAP.md`](../tasks/ROADMAP.md).
-* **Parallax & Tilesets**: 6 parallax layers (`bg_aether_far` opaque + 5 layers); tileset `sanctuary_crystal`; 4 `hanging_lantern` decor props.
-* **Interactive Elements & Portals**: 14 solids, 0 levers today (restoring the sanctuary lever is tracked in [`VC-024`](../tasks/phase-5-0.4.x.md#vc-021--vc-025--hybrid-maps-courtyard-thorn_chasm-clocktower-aether_sanctuary-grand_bastion)), portals to `alchemist_library` and `grand_bastion`.
-* **Inhabiting Forces (7)**: `aether_wisp` (2), `aether_sentinel` (2), `clockwork_owl_gargoyle` (1), `lantern_warden` (1), `aether_archon` (1).
+* **PL / EN:** *Sanktuarium Aetheru i Podniebny Akwedukt* / Aether Sky Sanctuary & Aqueduct
+* **2034 Origin:** Elevated coolant aqueduct, power-relay viaduct & atmospheric radar array.
+* **Dimensions & Spawn:** `4240 × 1400 px` · default `(240, 1100)`, entries `from_library`, `from_bastion`.
+* **Atmosphere & Assets:** `#0f172a` → `#1e3a8a` (N12 autumn palette review backlog), `magic`, `musicIntensity: 0.75`; 6 parallax layers (`world:aether_sanctuary:far` opaque); tileset `sanctuary_crystal`; 4 `hanging_lantern` props.
+* **Interactive & Portals:** 14 solids, 0 levers today (`VC-024`), portals to `alchemist_library` and `grand_bastion`, `bossZones`: `aether_archon_altar`.
+* **Inhabiting Forces (7):** `aether_wisp` (2), `aether_sentinel` (2), `clockwork_owl_gargoyle` (1), `lantern_warden` (1), `aether_archon` (1).
 
-## 7. Grand Bastion Training Grounds (`grand_bastion`)
+## 7. Sunlit Bastion (`grand_bastion`) — [Lore Dossier](./worlds/grand_bastion.md)
 
-* **Title**: Grand Bastion Training Grounds (*Słoneczny Bastion (Wielki Poligon)*)
-* **Dimensions**: 4840px × 1140px
-* **Spawn Point**: `(x: 240, y: 880)` (P2 offset: `+46px`); entries `from_sanctuary`, `from_eclipse`
-* **Atmosphere & Theme**: Twilight indigo to burnished gold (`#1e1b4b` → `#b45309`), amber mist (`rgba(245, 158, 11, 0.1)`), drifting sparks (`spark`), climactic martial intensity (`musicIntensity: 0.92`).
-* **Parallax & Tilesets**: 6 parallax layers (`bg_bastion_far` opaque + 5 layers); tileset `bastion_stone`; 4 `hanging_lantern` decor props.
-* **Interactive Elements & Portals**: 13 solids, 1 lever (`lever_bastion_keep` → `bastion_portcullis`; restoring the second ward gate lever is tracked in [`VC-025`](../tasks/phase-5-0.4.x.md#vc-021--vc-025--hybrid-maps-courtyard-thorn_chasm-clocktower-aether_sanctuary-grand_bastion)), portals to `aether_sanctuary` and `eclipse_crown`.
-* **Inhabiting Forces (7)**: `court_sentinel` (1), `bastion_gargoyle` (2), `clockwork_automaton` (1), `chrono_hound` (1), `shadow_knight` (1), `bastion_sentinel_boss` (1).
+* **PL / EN:** *Słoneczny Bastion* / Sunlit Bastion *(UI `locations.ts` currently says `"Grand Bastion Training Grounds"` / `"Słoneczny Bastion (Wielki Poligon)"` — tracked under N6/N8/N11)*
+* **2034 Origin:** Fortified military-industrial command perimeter, bunker complex & proving garrison.
+* **Dimensions & Spawn:** `4840 × 1140 px` · default `(240, 880)`, entries `from_sanctuary`, `from_eclipse`.
+* **Atmosphere & Assets:** `#1e1b4b` → `#b45309`, `spark`, `musicIntensity: 0.92`; 6 parallax layers (`world:grand_bastion:far` opaque); tileset `bastion_stone`; 4 `hanging_lantern` props.
+* **Interactive & Portals:** 13 solids, 1 lever (`lever_bastion_keep` → `bastion_portcullis`; second ward gate in `VC-025`), 2 thorn hazards, portals to `aether_sanctuary` and `eclipse_crown`, `bossZones`: `bastion_commander_arena`.
+* **Inhabiting Forces (7):** `court_sentinel` (1), `bastion_gargoyle` (2), `clockwork_automaton` (1), `chrono_hound` (1), `shadow_knight` (1), `bastion_sentinel_boss` (1).
 
-## 8. Eclipse Crown (`eclipse_crown`)
+## 8. Eclipse Crown (`eclipse_crown`) — [Lore Dossier](./worlds/eclipse_crown.md)
 
-* **Title**: Eclipse Crown (*Korona Zaćmienia*)
-* **Dimensions**: 4640px × 1460px
-* **Spawn Point**: `(x: 240, y: 1180)` (P2 offset: `+46px`); entry `from_bastion`
-* **Atmosphere & Theme**: Obsidian eclipse sky to crimson-rose (`#160711` → `#9f1239`), crimson haze (`rgba(225, 29, 72, 0.16)`), intense sparks (`spark`), maximum boss intensity (`musicIntensity: 1.0`).
-* **Parallax & Tilesets**: 7 parallax layers (`bg_eclipse_far` opaque, `bg_eclipse_mid` mirrored, plus `bg_eclipse_boss_world` and `bg_eclipse_boss_stage`); tilesets `bastion_stone`, `sanctuary_crystal`; 4 `hanging_lantern` decor props.
-* **Interactive Elements & Portals**: 15 solids, 1 lever (`lever_eclipse_seal` → `eclipse_portcullis`), portals back to `grand_bastion` and `courtyard` (`mastery_loop_courtyard`). Contract alignment tracked in [`VC-028`](../tasks/phase-5-0.4.x.md#vc-026--vc-028--fix-new-maps-ashen_catacombs-alchemist_library-eclipse_crown).
-* **Inhabiting Forces (7)**: `chrono_hound` (1), `aether_sentinel` (1), `lantern_warden` (1), `bastion_gargoyle` (1), `shadow_knight` (1), `aether_archon` (1), `bastion_sentinel_boss` (1).
+* **PL / EN:** *Korona Zaćmienia* / Eclipse Crown
+* **2034 Origin:** High-energy physics accelerator spire entangled across space with the distant ritual site.
+* **Dimensions & Spawn:** `4640 × 1460 px` · default `(240, 1180)`, entry `from_bastion`.
+* **Atmosphere & Assets:** `#160711` → `#9f1239`, `spark`, `musicIntensity: 1.0`; 7 parallax layers (`world:eclipse_crown:far` opaque + `boss_stage` + `boss_world`); tilesets `bastion_stone`, `sanctuary_crystal`; 4 `hanging_lantern` props.
+* **Interactive & Portals:** 15 solids, 1 lever (`lever_eclipse_seal` → `eclipse_portcullis`), 1 thorn hazard, portals to `grand_bastion` and `courtyard` (`mastery_loop_courtyard`), `bossZones`: `eclipse_vanguard_sanctum` and `eclipse_monarch_throne` (`VC-028`).
+* **Inhabiting Forces (7):** `chrono_hound` (1), `aether_sentinel` (1), `lantern_warden` (1), `bastion_gargoyle` (1), `shadow_knight` (1), `aether_archon` (1), `bastion_sentinel_boss` (1).

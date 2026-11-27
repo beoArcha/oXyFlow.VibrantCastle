@@ -1,71 +1,53 @@
-# Non-Playable Characters, Allies & Fauna (NPCs & Guides)
+# Non-Playable Characters, Animals & Figures (NPCs)
 
-The world of *Vibrant Castle* is brought to life through legendary mentors, mysterious animal companions, and the resonant voice of the citadel's chronicler, who witnesses and commemorates every step of the heroes' ascension.
+Within the 2034 Zone, Valen and Aurelia encounter an observant Narrator, resilient animal companions drawn to temporal pockets, a surviving scholar of emerging magical science, and the historical fencing legacy of the French château.
 
-**Implementation status**: Today only the Narrator speaks in-game, as timed subtitles from `NarrationSystem` (`src/game/engine/narrationSystem.ts`) using keys in `src/i18n/modules/narrations.ts`. Corvus, Amber, and the Bastion Sage have greeting lines in `src/i18n/modules/dialogues.ts`, and `ReactiveNarratorManager` (`src/game/logic/narrative/reactiveNarratorManager.ts` + `src/data/narrative/narrator_reactive.json`) and `dialogues_vn.json` exist in data/logic, **but none of these NPCs or reactive/VN systems are wired into the live engine or maps yet** (Phase 5 & Phase 7 backlog in [`docs/tasks/ROADMAP.md`](../tasks/ROADMAP.md)). Master Oakhaven exists only in lore.
-
----
-
-## 1. The Bastion Narrator (The Voice of the Past / The Chronicler)
-
-* **Role**: Omniscient Storyteller & Reactive Guide (Inspired by *Bastion*)
-* **Manifestation**:
-  * Not physically bound to the arena floor; manifests as timed subtitles on the HUD. The goal is the *Bastion* style: short, warm lines that react to what the duelists do (hazards, levers, low health, secrets, boss kills, unison strikes) without explaining the map layout.
-  * **Backlog**: Wiring `ReactiveNarratorManager` (`narrator_reactive.json`) into the simulation loop using simulation ticks instead of `Date.now()` is planned for Phase 5 ([`docs/tasks/ROADMAP.md`](../tasks/ROADMAP.md)); voice-over is planned for later phases.
-* **Personality & Philosophy**:
-  * Calibrated, observant, quietly nostalgic. Regards the duelists with quiet admiration rather than hollow cheers, treating the castle as a living clockwork organism waiting to be wound once more.
-* **Signature Commentary (`src/i18n/modules/narrations.ts`)**:
-  * *On Awakening*:
-    > *"The youth awoke upon the vast castle grounds. The crisp air carried scents of dry autumn leaves and fresh aether."*
-  * *On Movement & Footwork*:
-    > *"They took their first strides, discovering how low slides and agile backsteps grant total mastery of space."*
-  * *On Blade Combat*:
-    > *"He swung the blade. Tempered steel sliced through the autumn breeze with a sharp hiss."*
-  * *On Striking Levers*:
-    > *"The switch resisted, but a decisive slash or spell blast freed the frozen gears."*
-  * *On Opening Castle Gates*:
-    > *"Deep within the clocktower, massive iron cogs groaned, lifting the portcullis toward the clouds."*
-  * *On Stepping into Portals*:
-    > *"And so they stepped into a new dawn, fully armed and attuned to ancient Aether."*
+**Implementation status:** Today only the Narrator speaks in-game via timed subtitles (`NarrationSystem`, `src/i18n/modules/narrations.ts`). Greeting lines for Corvus, Pip/Amber, and the Sage exist in `src/i18n/modules/dialogues.ts`, while `ReactiveNarratorManager` (`narrator_reactive.json`) and `dialogues_vn.json` exist in data/logic, **not yet wired into live maps or the simulation loop** (Phases 5 and 7 backlog in [`docs/tasks/ROADMAP.md`](../tasks/ROADMAP.md)).
 
 ---
 
-## 2. Corvus – The Solar Raven (Planned NPC — Backlog Phase 7)
+## 1. The Narrator — In-World Observer (`narrator.md`)
 
-* **Role**: Celestial Scout & Aerial Sentinel
-* **Appearance**:
-  * An aristocratic raven with lustrous obsidian-and-gold plumage, iridescent violet highlights, and warm amber eyes, wearing a tiny engraved brass leg ring with the Grand Bastion seal.
-* **Intended Function in the Castle**:
-  * Perches on pivotal ledge corners and battlements, signaling safe landings and hidden levers.
-* **Dialogue Line (`src/i18n/modules/dialogues.ts`)**:
-  > **Corvus (Raven)**: *"Kraa! The summit clock is ticking in reverse. Beware the rogue clockwork automatons!"*
+* **Role:** An **in-world 2034 character** (identity **[OPEN]**, revealed later in the campaign) offering dry, classy reactive commentary in the style of *Bastion*.
+* **Canon Alignment (N3, N6):** "Bastion" names only the narrative style and World 7 (`grand_bastion`), never the Narrator's title or an ancient knightly order. All shared commentary must be hero-neutral across Valen solo, Aurelia solo, and 2P co-op. See [`narrator.md`](./narrator.md) for voice rules and 10 bilingual example lines.
 
 ---
 
-## 3. Pip / Amber – The Chrono-Cat (Planned NPC — Backlog Phase 7)
+## 2. Corvus — The Zone Raven (Planned NPC — Phase 7)
 
-* **Role**: Save Crypt Guardian & Aetheric Resonator (*Bursztynek*)
-* **Appearance**:
-  * A plush russet-furred ginger cat wearing a dark leather collar with a miniature brass hourglass.
-* **Intended Function in the Castle**:
-  * Mascot of the **Save Crypt** (`src/game/logic/save/`), advising players near dangerous Aether hazards.
-* **Dialogue Line (`src/i18n/modules/dialogues.ts`)**:
-  > **Amber (Cat)**: *"Meow... The subterranean aether is surging. Use your prismatic shield to traverse the thorn bed safely."*
+* **Role:** High-perch scout with an uncanny sense for temporal reversal and airborne threats.
+* **2034 Framing:** A remarkably sharp-eyed raven nesting among the château and robotics-tower girders. Around one leg sits a stamped brass-and-steel band—originally an ornithological or estate research ring, though local Zone folklore whispers otherwise. Corvus perches near hazards and broken machinery, squawking warnings that reflect genuine Zone phenomena.
+* **Existing Dialogue Line (`src/i18n/modules/dialogues.ts`):**
+  > **Corvus (Raven):** *"Kraa! The summit clock is ticking in reverse. Beware the rogue clockwork automatons!"*
+  *(Matches the 2034 Clocktower anomaly where rift distortion runs the repurposed factory clock backward.)*
 
 ---
 
-## 4. The Bastion Sage (Planned NPC — Backlog Phase 7)
+## 3. Pip / Amber (*Bursztynek*) — The Save-Crypt Cat (Planned NPC — Phase 7)
 
-* **Role**: Ancient Scholar & Keeper of the Celestial Portals (*Mędrzec Bastionu*)
-* **Appearance**:
-  * An elderly scholar in flowing indigo robes bordered with silver constellations, carrying an astrolabe staff.
-* **Dialogue Line (`src/i18n/modules/dialogues.ts`)**:
-  > **Bastion Sage**: *"Greetings, Guardians. The Sunlit Bastion requires both your blades and serene minds."*
+* **Role:** Safe-room companion and mascot of the **Save Crypt** (`src/game/logic/save/`).
+* **2034 Framing:** A russet ginger cat wandering the Zone's stable cellar vaults and safe thresholds—unbothered by broken time and drawn to warm pockets of energy. A worn leather collar carries a small brass hourglass charm that ticks at odd intervals when rift pressure spikes nearby.
+* **Existing Dialogue Line (`src/i18n/modules/dialogues.ts`):**
+  > **Amber (Cat):** *"Meow... The subterranean aether is surging. Use your prismatic shield to traverse the thorn bed safely."*
 
 ---
 
-## 5. Master Oakhaven (Historical Lore Character)
+## 4. The Zone Sage (*Mędrzec*) (Planned NPC — Phase 7)
 
-* **Role**: Legendary Fencing Master & Mechanical Architect
-* **Lore & Legacy**:
-  * The weaponmaster who built the proving grounds, straw training dummies, and counterweight lever locks centuries ago, and authored the *Treatise on the Kinetic Rapier*.
+* **Role:** Elder researcher of magical science and portal telemetry inside the upper Zone.
+* **2034 Framing (Resolves N6):** A veteran scholar—likely one of the first scientists or researchers caught in (or sent to study) the anomalous overlap—wearing layered expedition robes marked with astronomical/spatial calibration patterns and carrying an astrolabe conduit.
+* **Existing Dialogue Note (N6):** Current `src/i18n/modules/dialogues.ts` (`sageBastionGreeting`) phrases him as speaking for *"The Sunlit Bastion"* as if it were an organization (*"The Sunlit Bastion requires both your blades and serene minds"*). Under the new canon, **"Bastion" is only World 7 as a place**; this greeting should be updated in the Phase 7 dialogue pass to refer to holding the Zone/World 7 perimeter or surviving the breach rather than serving a Bastion order.
+
+---
+
+## 5. Master Oakhaven — Historic Fencing Legacy (Château Archive)
+
+* **Role:** Historical fencing master associated with the **French château** (World 1, `courtyard`), *not* an immortal builder of a timeless fantasy citadel (**resolves N5**).
+* **2034 Framing:** Before the 2034 cataclysm, the historic château housed a 19th-century fencing society wing and museum collection featuring Master Oakhaven's *Treatise on the Kinetic Rapier*, counterweight exhibition doors, and straw practice dummies. When the demon reshaped the château into its outer courtyard, Oakhaven's wooden dummies and fencing exhibits came alive as `training_dummy`, `training_target`, and `grand_dummy`.
+
+---
+
+## 6. Open Questions Regarding NPCs & Outsiders
+
+* **Narrator Identity:** Which 2034 character is narrating Valen and Aurelia's ascent (**[OPEN]**).
+* **Outsiders in the Zone:** Whether external human actors—buffer-zone soldiers, artifact hunters, criminal smugglers, cultists, or rival new mages—appear as NPCs inside the Zone (**[OPEN]**).

@@ -1,26 +1,23 @@
-# Game Scenario & Narrative Campaign: Vibrant Castle
+# Campaign Scenario & Narrative Arc
 
-## Introduction & World Concept
+*Vibrant Castle* pairs responsive, *Mario*-like stage flow with the melancholic exploration and soul absorption of *Castlevania: Aria of Sorrow*, observed by a deadpan, classy in-world Narrator in the manner of *Bastion*.
 
-The world of *Vibrant Castle* merges the warm, melancholic aesthetic of late 19th-century gothic fantasy (inspired by *Castlevania: Aria of Sorrow*) with kinetic, *Mario*-like platforming and dynamic narration in the manner of *Bastion*.
-
-The castle is suspended in an eternal, golden autumn. Once the illustrious seat of a guild of fencing scholars, astronomers, and horologists, the ancient Citadel of Aether fell into stasis following a catastrophic temporal fracture. Players embody the Awakened Duelists — Valen (*Solar Knight*) and Aurelia (*Scholar of Arcanum*) — who traverse the Citadel's interconnected worlds, restarting dormant clockwork mechanisms and pacifying corrupted guardians.
+**Implementation status:** The full campaign is planned as **8 worlds × 8 maps (64 stages)**. Today, **Map 1 of each of the 8 worlds** is playable in `src/data/locations/*.json`, linked in a forward/return loop with `eclipse_crown` cycling back to `courtyard`. Maps 2–8 (`VC-020`), hybrid expansions (`VC-021`..`VC-028`), reactive narration wiring, and VN scenes belong to Phases 5–7 (`docs/tasks/ROADMAP.md`).
 
 ---
 
-## Tone and Direction
+## 1. Premise: Inside the 2034 Zone
 
-* **Autumn of the Citadel**: The castle is caught in an unending golden autumn: warm ochre, amber, bronze, and crimson stone, drifting leaves and sparks, lit by lanterns against the dusk. Note: `aether_sanctuary` and `alchemist_library` currently use cooler cerulean/emerald themes; an autumn palette review is tracked in [`docs/tasks/VISION.md`](../tasks/VISION.md) and Phase 8+ of [`docs/tasks/ROADMAP.md`](../tasks/ROADMAP.md).
-* **Decay and Warmth**: Stone crumbles, leaves fall, and gears rust, yet the lamps remain lit.
-* **Movement**: Springy, forgiving jumps with coyote time, jump buffering, and variable jump height.
-* **Reactive Narrator**: Timed subtitles via `NarrationSystem` today; wiring `ReactiveNarratorManager` (`narrator_reactive.json`) and in-game VN scenes (`dialogues_vn.json`) is on the Phase 5 / Phase 7 backlog ([`docs/tasks/ROADMAP.md`](../tasks/ROADMAP.md)). Disposition of historical narrative catalogs (`scenario_act1.json`, `triggers.json`) is tracked in [`VC-081`](../tasks/phase-4-0.3.x.md#vc-081--narrative-catalogs).
-* **Loop, Not Line**: The current circuit spans 8 worlds (map 1 of each world), looping from the Eclipse Crown back to the Courtyard.
+In 2034, an accidental convergence between a physics experiment and an unconvinced occultist's ritual tore open a rift. Outside the quarantined perimeter, the world studies emerging magic and maneuvers around the containment zone. Inside, a **summoned demon and its hosts** have spent the post-cataclysm span remaking a French château and its neighboring industrial, research, and defense sites into an overgrown, autumn-lit stronghold.
+
+Two longtime friends—**Valen** (*Sun Knight*) and **Aurelia** (*Arcane Scholar*)—find themselves inside the Zone with slightly different personal aims, yet bound by reality to rely on one another.
+
+* **Equal Partnership (No Main Hero):** Neither Valen nor Aurelia is "the protagonist" with a sidekick. Like Brazilian zouk, their partnership is a continuous dialogue: whoever steps forward proposes a line of action, and the other answers, refines, or takes over when priority shifts. In solo play, one leads through the current stage; in 2P co-op, both move together across the same physics rules.
+* **Tone & Humour:** Dry situational wit, subtle easter eggs, and banter between people who know each other's flaws well (her frustration when an unstable spell or plan misfires; his calm, methodical habit of fixing one bolted lock at a time). Humour **never** interrupts key dramatic beats—the gravity of the rift, the cost of the cataclysm, and the confrontation at the Crown stay sharp and dignified.
 
 ---
 
-## Act I: The 8-World Citadel Circuit (Current Shipped Map 1 per World)
-
-The full campaign plans **8 worlds × 8 maps** ([`VC-020`](../tasks/phase-4-0.3.x.md#vc-020--map-contract-for-the-8x8-campaign)). Today, map 1 of each world forms a connected 8-world circuit in `src/data/locations/*.json`:
+## 2. The 8-World Campaign Arc
 
 ```text
 [1. courtyard] <==> [2. thorn_chasm] <==> [3. ashen_catacombs] <==> [4. clocktower]
@@ -29,22 +26,53 @@ The full campaign plans **8 worlds × 8 maps** ([`VC-020`](../tasks/phase-4-0.3.
 [8. eclipse_crown] <==> [7. grand_bastion] <==> [6. aether_sanctuary] <==> [5. alchemist_library]
 ```
 
-1. **Courtyard of Awakening (`courtyard`)**: Awakening yard, training dummies, first sentinel patrols, golden gate lever (`lever_courtyard_gate`), and portals toward `thorn_chasm` and `clocktower`.
-2. **Chasm of Thorns and Shadows (`thorn_chasm`)**: Precarious stone ledges, thorn creepers, diving gargoyles, and subterranean crawlers above the amber chasm. *(Restoring the chasm lever/gate pair is tracked in [`VC-022`](../tasks/phase-5-0.4.x.md#vc-021--vc-025--hybrid-maps-courtyard-thorn_chasm-clocktower-aether_sanctuary-grand_bastion)).*
-3. **Ashen Catacombs (`ashen_catacombs`)**: Soot-stained ossuary halls guarded by a `shadow_knight` and `chrono_hound`, sealed by `lever_ossuary_gate`. *(Map contract alignment: [`VC-026`](../tasks/phase-5-0.4.x.md#vc-026--vc-028--fix-new-maps-ashen_catacombs-alchemist_library-eclipse_crown)).*
-4. **Clockwork Tower & Angled Range (`clocktower`)**: Vertical horologium shaft with brass automatons, owls, angled targets, and `lever_spire_gate`.
-5. **Alchemist's Library (`alchemist_library`)**: Emergent arcane archive guarded by `aether_sentinel`, `aether_wisp`, and `shadow_knight`, sealed by `lever_archive_gate`. *(Map contract alignment: [`VC-027`](../tasks/phase-5-0.4.x.md#vc-026--vc-028--fix-new-maps-ashen_catacombs-alchemist_library-eclipse_crown)).*
-6. **Aether Sky Sanctuary & Aqueduct (`aether_sanctuary`)**: Floating sky islets patrolled by `aether_wisp`, `aether_sentinel`, and the `aether_archon`. *(Restoring the sanctuary altar lever/gate is tracked in [`VC-024`](../tasks/phase-5-0.4.x.md#vc-021--vc-025--hybrid-maps-courtyard-thorn_chasm-clocktower-aether_sanctuary-grand_bastion)).*
-7. **Grand Bastion Training Grounds (`grand_bastion`)**: Royal gold proving gauntlet culminating at `bastion_sentinel_boss` behind `lever_bastion_keep`. *(Restoring the second ward gate lever is tracked in [`VC-025`](../tasks/phase-5-0.4.x.md#vc-021--vc-025--hybrid-maps-courtyard-thorn_chasm-clocktower-aether_sanctuary-grand_bastion)).*
-8. **Eclipse Crown (`eclipse_crown`)**: Crimson-rose pinnacle combining elite guardians (`shadow_knight`, `aether_archon`, `bastion_sentinel_boss`) behind `lever_eclipse_seal`, with the Mastery Loop portal back to `courtyard`. *(Map contract alignment: [`VC-028`](../tasks/phase-5-0.4.x.md#vc-026--vc-028--fix-new-maps-ashen_catacombs-alchemist_library-eclipse_crown)).*
+*(Note on **N7**: Older draft data in `src/data/narrative/dialogues_vn.json` and `src/i18n/modules/dialogues.ts` treats Valen and Aurelia as strangers in the Clocktower and references opening the gate to the Sanctuary directly. Under the binding world order, World 4 leads to World 5 `alchemist_library`, and the pair already know each other—making any Clocktower scene a reunion after Zone spatial warping separates them.)*
 
-In solo play, Aurelia's meeting with Valen is drafted in `src/data/narrative/dialogues_vn.json` (not yet wired to the engine; Phase 7 backlog).
+### Act I — Outer Rim & Threshold (`W1`–`W3`)
+
+1. **World 1: Courtyard of Awakening (`courtyard`)**
+   * *2034 → Zone:* A transformed historic French château at the Zone's edge. Autumn leaves drift past stone arcades, straw fencing dummies, and a thorn-choked moat.
+   * *Arc:* Awakening inside the Zone; testing steel, movement, and early magical discharges against reinterpreted heritage sentinels and perimeter bots; uncovering the high vault shortcut toward the industrial skyline (`clocktower`) or pushing across the gate into the gorge.
+2. **World 2: Chasm of Thorns and Shadows (`thorn_chasm`)**
+   * *2034 → Zone:* The sheared quarry and botanical utility ravine beyond the château walls, split when the rift cracked the bedrock.
+   * *Arc:* Descending into exposed rift hazards—amber crystal thorns, mutated flora, and winged stone hosts—learning disciplined spacing and platform timing while signs of underground heating tunnels appear below.
+3. **World 3: Ashen Catacombs (`ashen_catacombs`)**
+   * *2034 → Zone:* Château crypts colliding with smouldering municipal boilers and service tunnels.
+   * *Arc:* Navigating soot-choked shafts, furnace movers, and the Chapel of Embers, where the Zone's temporal drift grows obvious (`chrono_hound`) and the first *Shadow Knight* proves that not every foe is merely a repurposed machine.
+
+### Act II — The Reinterpreted Works (`W4`–`W6`)
+
+4. **World 4: Clockwork Tower & Angled Range (`clocktower`)**
+   * *2034 → Zone:* An automated robotics factory and calibration tower rebuilt by the demon into a towering brass horologium whose summit clock ticks **backward**.
+   * *Arc:* Climbing vertical lifts and moving gantries, mastering angled 45° and 90° shots across the old optical range, and—when Valen and Aurelia cross paths again after a spatial rift—synchronizing their priorities before descending into the research wing.
+5. **World 5: Alchemist's Library (`alchemist_library`)**
+   * *2034 → Zone:* A synthesis lab, cleanroom, and archive dome transmuted into towering bookshelves, emerald vats, and a spinning brass astrolabe.
+   * *Arc:* The intellectual turning point (**N7** resolved): amid salvaged 2034 lab notes and demon-warped grimoires, the pair piece together what actually happened—an experiment overlapped with a ritual, and the Zone's architecture is a demon's misreading of modern tech.
+6. **World 6: Aether Sky Sanctuary & Aqueduct (`aether_sanctuary`)**
+   * *2034 → Zone:* Elevated coolant aqueducts and relay pylons torn into floating sky islets by gravity shear around the upper rift.
+   * *Arc:* Crossing suspended masonry and wind-blown rafts above the mist to defeat the *Aether Archon* guarding the high relay before the final fortified ring.
+
+### Act III — The Siege & The Epicenter (`W7`–`W8`)
+
+7. **World 7: Sunlit Bastion (`grand_bastion`)**
+   * *2034 → Zone:* A fortified military-industrial command perimeter and proving garrison reforged by the demon into royal-gold battlements. *(Note on **N8**: Current map 1 opens with `trainingIntro`; in canon and upcoming map/narrative updates, World 7 is a desperate fortress siege, not a warm-up range.)*
+   * *Arc:* Breaching heavy battlements, dual gates (`VC-025`), and cybernetic/armored garrison defenders under the *Bastion Sentinel Commander* to break into the epicenter.
+8. **World 8: Eclipse Crown (`eclipse_crown`)**
+   * *2034 → Zone:* The physics accelerator spire entangled across space with the distant ritual altar, locked beneath a blazing crimson-black eclipse.
+   * *Arc:* Ascending obsidian stairs past elite echoes of every Zone layer (`shadow_knight`, `aether_archon`, `bastion_sentinel_boss`). On Map 1 today, a vanguard clash previews the Crown; in the full `8 × 8` campaign (`W8-8`), the road across the sacrificial bridge leads to the **Throne of the Eclipse**.
 
 ---
 
-## Future Campaign Outline (Backlog: Phase 6–8+)
+## 3. Leaning Climax & Temporal Loop (NG+)
 
-*Concept only: maps 2–8 of each world, ability-gated backtracking, and later story acts are unimplemented backlog items in [`docs/tasks/ROADMAP.md`](../tasks/ROADMAP.md).*
+* **Final Boss (Leaning, Not Final):** **The Possessed** (*Opętany*) — the leader of the 2034 ritual. He did not genuinely believe in magic; he staged the ceremony for his followers without preparation, and by sheer misfortune hit the crescendo at the exact instant the distant physics experiment ruptured reality. Now bound to the summoned demon at the Throne of the Eclipse, he anchors the link between laboratory and ritual site.
+* **The Mastery Loop (`eclipse_crown` → `courtyard`):** At the summit of `eclipse_crown`, the `mastery_loop_courtyard` portal loops back to the Courtyard of Awakening. Diegetically, time folds back upon itself at the rift's core: surviving the Crown without yet shattering the full `8 × 8` anchor drops the pair back onto the château stones in a fresh temporal cycle—stronger, carrying absorbed souls and insight, ready to push deeper (the narrative foundation for New Game Plus and Phase 6+ progression).
 
-* **Expanded 8 × 8 Worlds (Phase 6–8+)**: Expanding each of the 8 worlds from 1 stage to 8 interconnected stages, adding ability pickups that unlock locked portals (`isLocked` / `unlockTriggerId`).
-* **Story & Bosses (Phase 7)**: In-game visual novel sequences, reactive *Bastion*-style narration wired to live combat/exploration events, and multi-phase boss encounters (such as the *Aether Archon*, *Bastion Sentinel Commander*, and *Grand Chronomancer*).
+---
+
+## 4. Open Narrative Hooks
+
+* Why Valen and Aurelia entered the Zone and what personal goals pull them in slightly different directions (**[OPEN]**).
+* Whether outside parties (buffer-zone soldiers, smugglers, rival mages, cultists) breach the perimeter and cross paths with the pair (**[OPEN]**).
+* The true identity and motive of the in-world Narrator (**[OPEN]**, revealed later).
+* Final confirmation of **the Possessed** as the W8-8 boss alongside `eclipse_monarch_boss` (**[OPEN, leaning]**).

@@ -1,129 +1,69 @@
-# Enemies, Automata & Bestiary (Monsters)
+# Enemies, Factions & Bestiary Origins
 
-The adversaries populating *Vibrant Castle* range from centuries-old mechanical training apparatuses and patrol automata to crystalline horrors reanimated by wild, destabilized Aether.
+In *Vibrant Castle*, adversaries inside the 2034 Zone span **demons, devils, constructs, and *Ghost in the Shell*-style cyborgs**, alongside rift-mutated life and echoes. Every defeated threat yields a crystallized **Soul** (*Aria of Sorrow* pillar) that can be studied and channeled through emerging magical science.
 
-**Implementation status**: Today enemies patrol between `patrolMinX` and `patrolMaxX`, hover, or remain stationary (`training_dummy`, `training_target`, `grand_dummy`, `thorn_creeper`). Enemy attacks, contact damage against players, ability execution, and active soul drops are **backlog** (Phase 5 in [`docs/tasks/ROADMAP.md`](../tasks/ROADMAP.md)). Converting enemy stats onto the D20x10 attribute scale is tracked in [`VC-032`](../tasks/phase-5-0.4.x.md#vc-032--monsters-on-the-attribute-scale) and balance review in [`VC-080`](../tasks/phase-5-0.4.x.md#vc-080--balance-review-after-c4758f3). All stats, soul metadata, and placements below match `src/data/enemies/enemies.json` and `src/data/locations/*.json` (17 templates total).
-
----
-
-## Complete Castle Bestiary (`src/data/enemies/enemies.json`)
-
-### 1. Straw Training Dummy (`training_dummy`, `training_target`, `grand_dummy`)
-
-* **Category**: `construct` (`isDummy: true`, stationary)
-* **Base Stats**:
-  * `training_dummy`: HP `60`, Defense `2`, Score `50`, XP `15` (Courtyard)
-  * `training_target`: HP `45`, Defense `1`, Score `40`, XP `12` (Courtyard, Clockwork Tower)
-  * `grand_dummy`: HP `120`, Defense `5`, Score `100`, XP `30` (Courtyard)
-* **Appearance & Role**: Cross-shaped solid oak timber wrapped in woven straw and crowned with a knight's sallet helmet. Interactive combat proving target that flashes on impact and drops no offensive threats.
-* **Soul Drop Metadata (Backlog)**: `soul_training_dummy` / `soul_training_target` / `soul_grand_dummy` (`enchant`, rates `0.25` / `0.20` / `0.30`).
-
-### 2. Courtyard Sentinel (`court_sentinel`)
-
-* **Category**: `sentinel` (ground patrol, `speed: 1.6`)
-* **Stats**: HP `80`, Defense `8`, Attack Power `20` (data only), Score `160`, XP `50`
-* **Locations**: `courtyard` (2), `grand_bastion` (1)
-* **Appearance & Planned Behavior**: Humanoid construct of burnished bronze and riveted wrought iron powered by an amber boiler. Designed to patrol flagstone avenues and project `sentinel_aether_beam` (planned).
-* **Soul Drop Metadata (Backlog)**: `soul_court_sentinel` (`guardian`, rate `0.15`, `sentinel_aether_beam`).
-
-### 3. Gargoyle Scout (`gargoyle_scout`) & Clockwork Owl Gargoyle (`clockwork_owl_gargoyle`)
-
-* **Category**: `gargoyle` / `clockwork` (`isAerial: true`; share atlas preset `clockwork_owl_gargoyle`)
-* **Stats**:
-  * `gargoyle_scout`: HP `55`, Defense `3`, Speed `2.9`, Attack Power `14` (data only), Score `120`, XP `36`
-  * `clockwork_owl_gargoyle`: HP `75`, Defense `4`, Speed `2.4`, Attack Power `16` (data only), Score `150`, XP `45`
-* **Locations**: `gargoyle_scout` in `thorn_chasm` (1), `clocktower` (1); `clockwork_owl_gargoyle` in `courtyard` (1), `clocktower` (2), `aether_sanctuary` (1).
-* **Planned Behavior**: Hovering aerial scouts intended to execute `gargoyle_dive` and `owl_wind_gust`.
-
-### 4. Chasm Gargoyle (`chasm_gargoyle`) & Bastion Gargoyle (`bastion_gargoyle`)
-
-* **Category**: `gargoyle` (`isAerial: true`; both use atlas preset `clockwork_owl_gargoyle` in `enemies.json` today)
-* **Stats**:
-  * `chasm_gargoyle`: HP `70`, Defense `5`, Speed `2.6`, Attack Power `18` (data only), Score `140`, XP `42`
-  * `bastion_gargoyle`: HP `105`, Defense `8`, Speed `2.2`, Attack Power `22` (data only), Score `200`, XP `60`
-* **Locations**: `chasm_gargoyle` in `thorn_chasm` (2); `bastion_gargoyle` in `grand_bastion` (2), `eclipse_crown` (1).
-* **Planned Behavior**: Aggressive aerial predators intended to swoop diagonally (`gargoyle_dive`, `owl_wind_gust`).
-
-### 5. Chasm Crawler (`chasm_crawler`)
-
-* **Category**: `beast` (ground patrol, `speed: 2.5`, dimensions `52 × 38`)
-* **Stats**: HP `55`, Defense `3`, Attack Power `15` (data only), Score `110`, XP `32`
-* **Locations**: `thorn_chasm` (2), `ashen_catacombs` (1)
-* **Appearance & Planned Behavior**: Low-slung multi-legged carapace forged from shale and amber thorns. Intended to ambush along low cavern floors (`chasm_crawler_bite`).
-
-### 6. Clockwork Automaton (`clockwork_automaton`)
-
-* **Category**: `clockwork` (ground patrol, `speed: 1.2`, dimensions `68 × 94`)
-* **Stats**: HP `130`, Defense `12`, Attack Power `28` (data only), Score `240`, XP `75`
-* **Locations**: `clocktower` (2), `alchemist_library` (1), `grand_bastion` (1)
-* **Appearance & Planned Behavior**: Heavy brass behemoth with interlocking gear trains and steam pipes. Intended to perform heavy slams (`automaton_hammer_slam`).
-
-### 7. Aether Sentinel (`aether_sentinel`)
-
-* **Category**: `sentinel` (ground patrol, `speed: 1.8`)
-* **Stats**: HP `110`, Defense `9`, Attack Power `24` (data only), Score `220`, XP `68`
-* **Locations**: `courtyard` (1), `thorn_chasm` (1), `ashen_catacombs` (1), `alchemist_library` (2), `aether_sanctuary` (2), `eclipse_crown` (1)
-* **Appearance & Planned Behavior**: Pale marble torso and armored gauntlets suspended by glowing cyan Aether ribbons. Strongly resists Aether (`0.4` multiplier); intended to project `sentinel_aether_beam`.
-
-### 8. Aether Wisp (`aether_wisp`)
-
-* **Category**: `spirit` (`isAerial: true`, `speed: 2.8`, dimensions `34 × 34`)
-* **Stats**: HP `30`, Defense `1`, Attack Power `12` (data only), Score `90`, XP `25`
-* **Locations**: `ashen_catacombs` (1), `alchemist_library` (2), `aether_sanctuary` (2)
-* **Appearance & Planned Behavior**: Compact orb of condensed starlight surrounded by orbiting crystal shards.
-
-### 9. Aether Archon (`aether_archon`)
-
-* **Category**: `boss` (`isAerial: true`, `speed: 2.0`, dimensions `74 × 102`)
-* **Stats**: HP `220`, Defense `12`, Attack Power `36` (data only), Score `500`, XP `150`
-* **Locations**: `aether_sanctuary` (1), `eclipse_crown` (1)
-* **Appearance & Planned Behavior**: Towering celestial commander encircled by carved runestones. Intended boss encounter (`aether_archon_wrath`, `sentinel_aether_beam`); boss defeat gating is planned.
-
-### 10. Shadow Knight (`shadow_knight`)
-
-* **Category**: `elite` (ground patrol, `speed: 2.2`, dimensions `62 × 90`)
-* **Stats**: HP `160`, Defense `10`, Attack Power `32` (data only), Score `320`, XP `110`
-* **Locations**: `ashen_catacombs` (1), `alchemist_library` (1), `grand_bastion` (1), `eclipse_crown` (1)
-* **Appearance & Planned Behavior**: Ethereal phantom duelist clad in crimson-and-dark-matter armor. Intended to mirror duelist dashes and slashes (`shadow_knight_slash`).
-
-### 11. Bastion Sentinel Commander (`bastion_sentinel_boss`)
-
-* **Category**: `boss` (ground patrol, `speed: 1.5`, dimensions `84 × 112`)
-* **Stats**: HP `280`, Defense `15`, Attack Power `38` (data only), Score `650`, XP `200`
-* **Locations**: `grand_bastion` (1), `eclipse_crown` (1)
-* **Planned Behavior**: Heavy elite boss variant (`automaton_hammer_slam`, `sentinel_aether_beam`).
-
-### 12. Gear Mite (`gear_mite`)
-
-* **Category**: `clockwork` (ground patrol, `speed: 3.1`, dimensions `36 × 28`)
-* **Stats**: HP `35`, Defense `2`, Attack Power `10` (data only), Score `75`, XP `20`
-* **Locations**: `courtyard` (2), `thorn_chasm` (1), `ashen_catacombs` (1), `clocktower` (1)
-
-### 13. Thorn Creeper (`thorn_creeper`)
-
-* **Category**: `flora` (stationary, `speed: 0`, dimensions `48 × 56`)
-* **Stats**: HP `65`, Defense `4`, Attack Power `16` (data only), Score `115`, XP `34`
-* **Locations**: `thorn_chasm` (1)
-
-### 14. Lantern Warden (`lantern_warden`)
-
-* **Category**: `clockwork` (`isAerial: true`, `speed: 1.4`, dimensions `44 × 58`)
-* **Stats**: HP `70`, Defense `4`, Attack Power `17` (data only), Score `135`, XP `40`
-* **Locations**: `ashen_catacombs` (1), `alchemist_library` (1), `aether_sanctuary` (1), `eclipse_crown` (1)
-
-### 15. Chrono Hound (`chrono_hound`)
-
-* **Category**: `clockwork` (ground patrol, `speed: 3.4`, dimensions `58 × 42`)
-* **Stats**: HP `85`, Defense `5`, Attack Power `22` (data only), Score `180`, XP `55`
-* **Locations**: `ashen_catacombs` (1), `clocktower` (1), `grand_bastion` (1), `eclipse_crown` (1)
+**Implementation status:** `src/data/enemies/enemies.json` defines **19 templates** (3 stationary targets + 16 combat templates; **60 total placed instances** across Map 1 of the 8 worlds). Today enemies patrol, hover, or hold position and can be defeated; active enemy attacks, player contact damage, and soul drops are Phase 5 backlog (`docs/tasks/ROADMAP.md`). Scaling onto the D20×10 attribute system is tracked in `VC-032`.
 
 ---
 
-## Elemental Damage Multipliers (`elementalResistances`)
+## 1. Zone Factions & 2034 Origins
 
-In `src/data/enemies/enemies.json`, `elementalResistances` are stored as **damage multipliers**: values **above `1.0`** indicate vulnerability (extra damage taken), while values **below `1.0`** indicate resistance.
+1. **The Summoned Demon & Its Hosts (Demons & Devils):**
+   * Entities pulled through the 2034 rift or animated directly by infernal possession. They treat the Zone as a feudal castle domain, occupying gargoyle stonework (*Chasm Gargoyle*, *Gargoyle Scout*, *Bastion Gargoyle*), forging spectral duelists (*Shadow Knight*), and rallying under the Zone's sovereign force at the Eclipse Crown.
+   * **Leaning Final Boss:** **The Possessed** (*Opętany*)—the unprepared ritual leader bound to the demon at the Throne of the Eclipse (`W8-8`).
+2. **Demon-Reinterpreted Constructs (2034 Machinery & Château Hardware):**
+   * Industrial robotics, autonomous factory loaders, inspection drones, maintenance bots, tunnel hounds, and château fencing dummies caught in the cataclysm. Because the demon did not grasp silicon or hydraulics, it reshaped servos and optical sensors into brass clockwork, pendulums, and animated timber (*Clockwork Automaton*, *Clockwork Owl Gargoyle*, *Gear Mite*, *Lantern Warden*, *Chrono Hound*, *Training Dummy* variants).
+3. **Cyborgs & Armored Sentinels (*Ghost in the Shell*-Style Units):**
+   * Augmented tactical guards, security exoskeletons, and neural-interface chassis stationed around 2034 facilities (or drawn into the containment perimeter) and repurposed inside the Zone. To the demon's eyes they read as bronze knights and iron commanders (*Courtyard Sentinel*, *Aether Sentinel*, *Bastion Sentinel Commander*, and the cyber-arcane *Aether Archon*). Future phases expand cyborg/tactical variety directly.
+4. **Rift Fauna & Energy Echoes:**
+   * Local cavern creatures, conservatory plants, and stray laboratory energy warped into hostile flora/fauna (*Chasm Crawler*, *Thorn Creeper*) and drifting wisps (*Aether Wisp*).
+5. **External Interested Parties (World Context — Zone Entry [OPEN]):**
+   * Beyond the buffer zone, **states, religions, terrorist and criminal organizations, new mages, and otherworldly beings** watch the rift for power, weapons, salvage, or revelation. Whether outside human factions cross into the Zone as enemies or NPCs remains **[OPEN]**.
 
-| Enemy | Vulnerable To (`> 1.0`) | Resists (`< 1.0`) |
+---
+
+## 2. Shipped Enemy Roster (`src/data/enemies/enemies.json` — 19 Templates)
+
+*(Note on **N10**: Canonical PL names below come from `docs/lore/README.md` and resolve discrepancies between `src/i18n/modules/locations.ts` and `docs/wiki/pl/bestiary.md`.)*
+
+### Training Targets (`isDummy: true`, Stationary)
+
+* **`training_dummy` (Training Dummy / *Słomiany Manekin*):** HP `60`, DEF `2`, Score `50`, XP `15` · `courtyard` (1). Heritage château fencing dummy; `soul_training_dummy` (`enchant`, rate `0.25`).
+* **`training_target` (Training Target / *Cel Treningowy*):** HP `45`, DEF `1`, Score `40`, XP `12` · `courtyard` (1), `clocktower` (1). Optical range & yard calibration target; `soul_training_target` (`enchant`, rate `0.20`).
+* **`grand_dummy` (Grand Training Dummy / *Wielki Manekin*):** HP `120`, DEF `5`, Score `100`, XP `30` · `courtyard` (1). Reinforced master-at-arms dummy atop the château tower vault; `soul_grand_dummy` (`enchant`, rate `0.30`).
+
+### Reinterpreted Constructs & Robotics
+
+* **`gear_mite` (Gear Mite / *Trybik*):** `clockwork` · HP `35`, DEF `2`, ATK `10`, Speed `3.1`, Score `75`, XP `20` · `courtyard` (2), `thorn_chasm` (1), `ashen_catacombs` (1), `clocktower` (1). Micro-repair drone turned brass cog-beetle; `soul_gear_mite` (`bullet`, `0.20`).
+* **`lantern_warden` (Lantern Warden / *Latarniowy Stróż*):** `clockwork` (`isAerial`) · HP `70`, DEF `4`, ATK `17`, Speed `1.4`, Score `135`, XP `40` · `ashen_catacombs` (1), `alchemist_library` (1), `aether_sanctuary` (1), `eclipse_crown` (1). Autonomous patrol lamp turned floating brass beacon; `soul_lantern_warden` (`guardian`, `0.18`).
+* **`clockwork_owl_gargoyle` (Clockwork Owl Gargoyle / *Zegarowa Sowa-Gargulec*):** `clockwork` (`isAerial`) · HP `75`, DEF `4`, ATK `16`, Speed `2.4`, Score `150`, XP `45` · `courtyard` (1), `clocktower` (2), `aether_sanctuary` (1). Plant surveillance drone reimagined as a nocturnal brass owl; `soul_clockwork_owl` (`bullet`, `0.18`).
+* **`chrono_hound` (Chrono Hound / *Chrono-Ogar*):** `clockwork` · HP `85`, DEF `5`, ATK `22`, Speed `3.4`, Score `180`, XP `55` · `ashen_catacombs` (1), `clocktower` (1), `grand_bastion` (1), `eclipse_crown` (1). High-speed quadruped security robot caught in local time acceleration; `soul_chrono_hound` (`bullet`, `0.16`).
+* **`clockwork_automaton` (Clockwork Automaton / *Zegarowy Automat*):** `clockwork` · HP `130`, DEF `12`, ATK `28`, Speed `1.2`, Score `240`, XP `75` · `clocktower` (2), `alchemist_library` (1), `grand_bastion` (1). Heavy robotic factory loader recast as a steam-and-gear colossus; `soul_clockwork_automaton` (`enchant`, `0.14`).
+
+### Cyborgs, Sentinels & Tactical Shells
+
+* **`court_sentinel` (Courtyard Sentinel / *Strażnik Dziedzińca*):** `sentinel` · HP `80`, DEF `8`, ATK `20`, Speed `1.6`, Score `160`, XP `50` · `courtyard` (2), `grand_bastion` (1). Augmented security chassis/armor fused with château plate; `soul_court_sentinel` (`guardian`, `0.15`).
+* **`aether_sentinel` (Aether Sentinel / *Strażnik Aetheru*):** `sentinel` · HP `110`, DEF `9`, ATK `24`, Speed `1.8`, Score `220`, XP `68` · `courtyard` (1), `thorn_chasm` (1), `ashen_catacombs` (1), `alchemist_library` (2), `aether_sanctuary` (2), `eclipse_crown` (1). High-tier cybernetic containment unit channeling raw rift beams; `soul_aether_sentinel` (`guardian`, `0.14`).
+* **`bastion_sentinel_boss` (Bastion Sentinel Commander / *Komendant Straży Bastionu*):** `boss` · HP `280`, DEF `15`, ATK `38`, Speed `1.5`, Score `650`, XP `200` · `grand_bastion` (1), `eclipse_crown` (1). Heavy cyborg/exoskeleton commander enforcing the Sunlit Bastion perimeter and Crown approach; `soul_bastion_sentinel_boss` (`guardian`, `0.40`).
+* **`aether_archon` (Aether Archon / *Archont Aetheru*):** `boss` (`isAerial`) · HP `220`, DEF `12`, ATK `36`, Speed `2.0`, Score `500`, XP `150` · `aether_sanctuary` (1), `eclipse_crown` (1). Elevated telemetry/neural command frame bound with celestial rift power; `soul_aether_archon` (`bullet`, `0.35`).
+
+### Demons, Devils, Rift Fauna & Echoes
+
+* **`chasm_crawler` (Chasm Crawler / *Pełzacz Rozpadliny*):** `beast` · HP `55`, DEF `3`, ATK `15`, Speed `2.5`, Score `110`, XP `32` · `thorn_chasm` (2), `ashen_catacombs` (1). Mutated trench arthropod lurking under rock ledges; `soul_chasm_crawler` (`bullet`, `0.16`).
+* **`thorn_creeper` (Thorn Creeper / *Cierniowy Pędnik*):** `flora` (stationary) · HP `65`, DEF `4`, ATK `16`, Score `115`, XP `34` · `thorn_chasm` (1). Rift-warped conservatory briar firing amber spines; `soul_thorn_creeper` (`bullet`, `0.18`).
+* **`aether_wisp` (Aether Wisp / *Iskra Aetheru*):** `spirit` (`isAerial`) · HP `30`, DEF `1`, ATK `12`, Speed `2.8`, Score `90`, XP `25` · `ashen_catacombs` (1), `alchemist_library` (2), `aether_sanctuary` (2). Condensed ambient mana and lingering rift echo; `soul_aether_wisp` (`enchant`, `0.22`).
+* **`gargoyle_scout` (Gargoyle Scout / *Zwiadowca Gargulców*):** `gargoyle` (`isAerial`) · HP `55`, DEF `3`, ATK `14`, Speed `2.9`, Score `120`, XP `36` · `thorn_chasm` (1), `clocktower` (1). Fast winged sentinel scanning high approaches; `soul_gargoyle_scout` (`enchant`, `0.18`).
+* **`chasm_gargoyle` (Chasm Gargoyle / *Gargulec z Rozpadliny*):** `gargoyle` (`isAerial`) · HP `70`, DEF `5`, ATK `18`, Speed `2.6`, Score `140`, XP `42` · `thorn_chasm` (2). Stone sculpture animated by lesser infernal hosts; `soul_chasm_gargoyle` (`bullet`, `0.15`).
+* **`bastion_gargoyle` (Bastion Gargoyle / *Gargulec Bastionu*):** `gargoyle` (`isAerial`) · HP `105`, DEF `8`, ATK `22`, Speed `2.2`, Score `200`, XP `60` · `grand_bastion` (2), `eclipse_crown` (1). Iron-reinforced gargoyle host guarding upper ramparts; `soul_bastion_gargoyle` (`guardian`, `0.15`).
+* **`shadow_knight` (Shadow Knight / *Rycerz Cienia*):** `elite` · HP `160`, DEF `10`, ATK `32`, Speed `2.2`, Score `320`, XP `110` · `ashen_catacombs` (1), `alchemist_library` (1), `grand_bastion` (1), `eclipse_crown` (1). Elite infernal duelist / void-armored echo mirroring fast blade dashes; `soul_shadow_knight` (`enchant`, `0.20`).
+
+---
+
+## 3. Elemental Damage Multipliers (`elementalResistances`)
+
+Values **above `1.0`** mark vulnerabilities (extra damage taken); values **below `1.0`** mark resistances.
+
+| Enemy ID | Vulnerable To (`> 1.0`) | Resists (`< 1.0`) |
 | :--- | :--- | :--- |
 | `training_dummy` / `training_target` / `grand_dummy` | Fire (`1.25` / `1.20` / `1.15`) | `grand_dummy`: Physical (`0.90`) |
 | `clockwork_owl_gargoyle` | Lightning (`1.40`), Frost (`1.10`) | Physical (`0.90`) |
@@ -142,29 +82,3 @@ In `src/data/enemies/enemies.json`, `elementalResistances` are stored as **damag
 | `thorn_creeper` | Fire (`1.60`), Frost (`1.20`) | Physical (`0.90`) |
 | `lantern_warden` | Frost (`1.40`), Shadow (`1.20`) | Fire (`0.50`) |
 | `chrono_hound` | Lightning (`1.35`) | Chrono (`0.50`) |
-
----
-
-## Bestiary Summary Table
-
-| ID | Default Name | Role | HP | Def | Speed | Score | XP |
-| :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| `training_dummy` | Training Dummy | Static Target | 60 | 2 | 0 | 50 | 15 |
-| `training_target` | Training Target | Static Target | 45 | 1 | 0 | 40 | 12 |
-| `grand_dummy` | Grand Training Dummy | Static Target | 120 | 5 | 0 | 100 | 30 |
-| `gear_mite` | Gear Mite | Ground Patrol | 35 | 2 | 3.1 | 75 | 20 |
-| `aether_wisp` | Aether Wisp | Aerial Spirit | 30 | 1 | 2.8 | 90 | 25 |
-| `chasm_crawler` | Chasm Crawler | Ground Beast | 55 | 3 | 2.5 | 110 | 32 |
-| `thorn_creeper` | Thorn Creeper | Static Flora | 65 | 4 | 0 | 115 | 34 |
-| `gargoyle_scout` | Gargoyle Scout | Aerial Light | 55 | 3 | 2.9 | 120 | 36 |
-| `lantern_warden` | Lantern Warden | Aerial Sentry | 70 | 4 | 1.4 | 135 | 40 |
-| `chasm_gargoyle` | Chasm Gargoyle | Aerial Predator | 70 | 5 | 2.6 | 140 | 42 |
-| `clockwork_owl_gargoyle` | Clockwork Owl Gargoyle | Aerial Clockwork | 75 | 4 | 2.4 | 150 | 45 |
-| `court_sentinel` | Courtyard Sentinel | Ground Sentinel | 80 | 8 | 1.6 | 160 | 50 |
-| `chrono_hound` | Chrono Hound | Fast Ground | 85 | 5 | 3.4 | 180 | 55 |
-| `bastion_gargoyle` | Bastion Gargoyle | Aerial Heavy | 105 | 8 | 2.2 | 200 | 60 |
-| `aether_sentinel` | Aether Sentinel | Ground Sentinel | 110 | 9 | 1.8 | 220 | 68 |
-| `clockwork_automaton` | Clockwork Automaton | Heavy Clockwork | 130 | 12 | 1.2 | 240 | 75 |
-| `shadow_knight` | Shadow Knight | Elite Duelist | 160 | 10 | 2.2 | 320 | 110 |
-| `aether_archon` | Aether Archon | Aerial Boss | 220 | 12 | 2.0 | 500 | 150 |
-| `bastion_sentinel_boss` | Bastion Sentinel Commander | Ground Boss | 280 | 15 | 1.5 | 650 | 200 |
