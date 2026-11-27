@@ -37,8 +37,8 @@ export class HumanoidSpriteExtractor
 
     const originNorm = meta.layout?.origin?.normalized ?? { x: 0.5, y: 1.0 };
 
-    // If metadata explicitly defines a slicing strategy, use unified AtlasSlicingEngine (pure math / zero flood-fill CPU overhead)
-    if (meta.slicing && meta.slicing.method) {
+    // If metadata defines a slicing strategy or packed frameRects, use unified AtlasSlicingEngine (pure math)
+    if ((meta.slicing && meta.slicing.method) || meta.frameRects) {
       return this.extractFromSlicingEngine(meta, sheetW, sheetH, baseColW, originNorm);
     }
 

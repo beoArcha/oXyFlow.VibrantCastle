@@ -9,23 +9,31 @@ import {
   CharacterPortraitMood,
 } from "./spriteTypes";
 import { AssetQuality } from "../types";
+import { AssetError, ErrorCode } from "@lib/errors";
 import { SpriteExtractorFactory } from "./extractors";
 import { buildHeroPixelSpriteMaps, composeHeroSpriteMaps, discoverHeroPixelFiles } from "./heroPixel";
 
 // Import Vite-bundled character assets from src/assets/characters (strictly immutable source)
 import valenMainPng from "@assets/characters/valen/valen_main.png";
 import valenPortraitsPng from "@assets/characters/valen/valen_portraits.png";
-import valenLowPng from "@assets/characters/valen/valen_level_1_low.png";
-import valenMidPng from "@assets/characters/valen/valen_level_1_mid.png";
-import valenHighPng from "@assets/characters/valen/valen_level_1_high.png";
-import valenMetaJson from "@assets/characters/valen/valen_meta.json";
+import valenLowPng from "@assets/characters/valen/valen_level_1_low_packed.png";
+import valenMidPng from "@assets/characters/valen/valen_level_1_mid_packed.png";
+import valenHighPng from "@assets/characters/valen/valen_level_1_high_packed.png";
+import valenMetaJson from "@assets/characters/valen/valen_packed_meta.json";
 
 import aureliaMainPng from "@assets/characters/aurelia/aurelia_main.png";
 import aureliaPortraitsPng from "@assets/characters/aurelia/aurelia_portraits.png";
-import aureliaLowPng from "@assets/characters/aurelia/aurelia_level_1_low.png";
-import aureliaMidPng from "@assets/characters/aurelia/aurelia_level_1_mid.png";
-import aureliaHighPng from "@assets/characters/aurelia/aurelia_level_1_high.png";
-import aureliaMetaJson from "@assets/characters/aurelia/aurelia_meta.json";
+import aureliaLowPng from "@assets/characters/aurelia/aurelia_level_1_low_packed.png";
+import aureliaMidPng from "@assets/characters/aurelia/aurelia_level_1_mid_packed.png";
+import aureliaHighPng from "@assets/characters/aurelia/aurelia_level_1_high_packed.png";
+import aureliaMetaJson from "@assets/characters/aurelia/aurelia_packed_meta.json";
+
+interface ICharacterAtlasLike {
+  columns?: number;
+  rows?: number;
+  cellWidth?: number;
+  cellHeight?: number;
+}
 
 interface ICharacterVariantLike {
   scale?: number;
@@ -36,34 +44,68 @@ interface ICharacterVariantLike {
 }
 
 /**
- * Resolves exact atlas sheet dimensions based on bundled spritesheet asset characteristics
+ * Resolves exact atlas sheet dimensions from metadata (`atlas` and `variants`) without hardcoded grid fallbacks.
  */
 function getAtlasDimensions(
   quality: AssetQuality,
   metaJson: Record<string, unknown>
-): { cellWidth: number; cellHeight: number; sheetWidth: number; sheetHeight: number; scale: number } {
+): {
+  columns: number;
+  rows: number;
+  cellWidth: number;
+  cellHeight: number;
+  sheetWidth: number;
+  sheetHeight: number;
+  scale: number;
+} {
+  const atlas = metaJson.atlas as ICharacterAtlasLike | undefined;
   const variants = metaJson.variants as Record<string, ICharacterVariantLike> | undefined;
-  const variant = variants?.[quality] || variants?.mid;
+  const variant = variants?.[quality] ?? variants?.mid ?? variants?.high;
   const scale = variant?.scale ?? (quality === "low" ? 0.67 : quality === "high" ? 1.5 : 1);
+
+  const rawCellW = variant?.cellWidth ?? atlas?.cellWidth;
+  const rawCellH = variant?.cellHeight ?? atlas?.cellHeight;
+
+  const columns =
+    atlas?.columns && atlas.columns > 0
+      ? atlas.columns
+      : variant?.sheetWidth && rawCellW && rawCellW > 0
+        ? Math.round(variant.sheetWidth / rawCellW)
+        : 1;
+  const rows =
+    atlas?.rows && atlas.rows > 0
+      ? atlas.rows
+      : variant?.sheetHeight && rawCellH && rawCellH > 0
+        ? Math.round(variant.sheetHeight / rawCellH)
+        : 1;
 
   if (variant?.sheetWidth && variant.sheetHeight) {
     return {
-      cellWidth: variant.sheetWidth / 12,
-      cellHeight: variant.sheetHeight / 8,
+      columns,
+      rows,
+      cellWidth: variant.cellWidth ?? variant.sheetWidth / columns,
+      cellHeight: variant.cellHeight ?? variant.sheetHeight / rows,
       sheetWidth: variant.sheetWidth,
       sheetHeight: variant.sheetHeight,
       scale,
     };
   }
 
-  const defaultCellSize = quality === "low" ? 64 : quality === "high" ? 128 : 96;
-  const cellWidth = variant?.cellWidth ?? defaultCellSize;
-  const cellHeight = variant?.cellHeight ?? defaultCellSize;
+  if (!rawCellW || !rawCellH) {
+    throw new AssetError(
+      `Missing cell dimensions in character metadata for quality "${quality}"`,
+      ErrorCode.ASSET_CORRUPTED,
+      { details: { quality } }
+    );
+  }
+
   return {
-    cellWidth,
-    cellHeight,
-    sheetWidth: cellWidth * 12,
-    sheetHeight: cellHeight * 8,
+    columns,
+    rows,
+    cellWidth: rawCellW,
+    cellHeight: rawCellH,
+    sheetWidth: rawCellW * columns,
+    sheetHeight: rawCellH * rows,
     scale,
   };
 }
@@ -97,18 +139,19 @@ function buildSpriteMapFromMeta(
   imageUrl: string,
   tier: CharacterProgressionTier = 1
 ): SpriteAtlasMap {
-  const variants = metaJson.variants as Record<string, ICharacterVariantLike> | undefined;
-  const variant = variants?.[quality] || variants?.mid;
-  const { cellWidth, cellHeight, sheetWidth, sheetHeight, scale } = getAtlasDimensions(
+  const { columns, cellWidth, cellHeight, sheetWidth, sheetHeight, scale } = getAtlasDimensions(
     quality,
     metaJson
   );
 
+  const layoutOrigin = (
+    metaJson.layout as { origin?: { normalized?: { x?: number; y?: number } } } | undefined
+  )?.origin?.normalized;
   const inset: SpriteInset = { top: 0, bottom: 0, left: 0, right: 0 };
   const innerPadding = 0;
   const characterSize = cellHeight;
-  const originX = Math.round(cellWidth * 0.5);
-  const originY = cellHeight;
+  const originX = Math.round(cellWidth * (layoutOrigin?.x ?? 0.5));
+  const originY = Math.round(cellHeight * (layoutOrigin?.y ?? 1.0));
 
   // Extract animation tracks via SpriteExtractorFactory
   const extractedTracks = SpriteExtractorFactory.extract(
@@ -129,6 +172,7 @@ function buildSpriteMapFromMeta(
       sheetHeight,
       cellWidth,
       cellHeight,
+      columns,
       inset,
       innerPadding,
       characterSize,

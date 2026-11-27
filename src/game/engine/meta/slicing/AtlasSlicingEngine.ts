@@ -116,6 +116,8 @@ export class AtlasSlicingEngine {
       } else {
         result = strategy.slice(context, metaDoc.slicing);
       }
+    } else if (metaDoc?.frameRects && typeof metaDoc.frameRects === "object") {
+      result = this.resolvePackedFrameRects(metaDoc, context, safeW, safeH);
     } else {
       // 2. Default backward-compatible fallback: by_count using atlas grid
       const defaultStrategy = this.getStrategy("by_count");
@@ -135,6 +137,65 @@ export class AtlasSlicingEngine {
     );
 
     return result;
+  }
+
+  private resolvePackedFrameRects(
+    metaDoc: any,
+    context: SlicingContext,
+    sheetW: number,
+    sheetH: number
+  ): ResolvedFrameRect[] {
+    const rects = metaDoc.frameRects as Record<
+      string,
+      { x: number; y: number; width?: number; height?: number; w?: number; h?: number; pivot?: { x: number; y: number } }
+    >;
+    const highVariant = metaDoc.variants?.high;
+    const refW = highVariant?.sheetWidth ?? sheetW;
+    const refH = highVariant?.sheetHeight ?? sheetH;
+    const scaleX = refW > 0 ? sheetW / refW : 1;
+    const scaleY = refH > 0 ? sheetH / refH : 1;
+
+    const defaultStrategy = this.getStrategy("by_count");
+    const gridFallback = defaultStrategy.slice(context, metaDoc?.atlas);
+    const anims = context.animations ?? {};
+    const resolved: ResolvedFrameRect[] = [];
+
+    for (const [trackName, trackData] of Object.entries(anims)) {
+      if (!trackData || typeof trackData !== "object") continue;
+      const frameCount = Math.max(1, Number(trackData.frames) || 1);
+      const row = Number(trackData.row) || 0;
+      const trackFrames: ResolvedFrameRect[] = [];
+      let allPresent = true;
+
+      for (let f = 0; f < frameCount; f++) {
+        const r = rects[`${trackName}_${f}`];
+        const rawW = r ? r.width ?? r.w ?? 0 : 0;
+        const rawH = r ? r.height ?? r.h ?? 0 : 0;
+        if (!r || rawW <= 0 || rawH <= 0) {
+          allPresent = false;
+          break;
+        }
+        trackFrames.push({
+          id: `${trackName}_${f}`,
+          trackName,
+          frameIndex: f,
+          row,
+          x: Math.round(r.x * scaleX),
+          y: Math.round(r.y * scaleY),
+          width: Math.max(1, Math.round(rawW * scaleX)),
+          height: Math.max(1, Math.round(rawH * scaleY)),
+          pivot: r.pivot,
+        });
+      }
+
+      if (allPresent) {
+        resolved.push(...trackFrames);
+      } else {
+        resolved.push(...gridFallback.filter((frame) => frame.trackName === trackName));
+      }
+    }
+
+    return resolved;
   }
 
   /**

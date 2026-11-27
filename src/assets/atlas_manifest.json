@@ -7,8 +7,8 @@
       "category": "character",
       "isPopular": true,
       "tags": ["hero", "duelist", "player1", "sword"],
-      "imageRelPath": "./characters/valen/valen_level_1_high.png",
-      "metaRelPath": "./characters/valen/valen_meta.json",
+      "imageRelPath": "./characters/valen/valen_level_1_high_packed.png",
+      "metaRelPath": "./characters/valen/valen_packed_meta.json",
       "description": "Master Duelist & Arcanist player character spritesheet"
     },
     {
@@ -17,8 +17,8 @@
       "category": "character",
       "isPopular": true,
       "tags": ["heroine", "mage", "player2", "staff"],
-      "imageRelPath": "./characters/aurelia/aurelia_level_1_high.png",
-      "metaRelPath": "./characters/aurelia/aurelia_meta.json",
+      "imageRelPath": "./characters/aurelia/aurelia_level_1_high_packed.png",
+      "metaRelPath": "./characters/aurelia/aurelia_packed_meta.json",
       "description": "Archmage & Astral Scholar player character spritesheet"
     },
     {
@@ -27,8 +27,8 @@
       "category": "enemy",
       "isPopular": true,
       "tags": ["enemy", "flying", "clockwork", "boss"],
-      "imageRelPath": "./enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_high.png",
-      "metaRelPath": "./enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_meta.json",
+      "imageRelPath": "./enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_packed_high.png",
+      "metaRelPath": "./enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_packed_meta.json",
       "description": "Gilded clockwork sentinel enemy"
     },
     {

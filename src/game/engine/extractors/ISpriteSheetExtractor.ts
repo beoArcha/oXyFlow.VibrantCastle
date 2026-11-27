@@ -6,6 +6,16 @@ import {
 } from "../spriteTypes";
 import { IAtlasSlicingConfig, IAtlasBackgroundConfig } from "../meta/types";
 
+export interface PackedFrameRect {
+  x: number;
+  y: number;
+  width?: number;
+  height?: number;
+  w?: number;
+  h?: number;
+  pivot?: { x: number; y: number };
+}
+
 /**
  * Common configuration for extracting sprites from an atlas sheet.
  */
@@ -15,16 +25,21 @@ export interface BaseExtractionMeta {
   entityType?: "humanoid" | "monster" | "animal" | "portrait" | "interactive_object" | "effect" | string;
   version?: string;
   slicing?: IAtlasSlicingConfig;
+  frameRects?: Record<string, PackedFrameRect>;
   backgroundConfig?: IAtlasBackgroundConfig;
   atlas?: {
     columns?: number;
     rows?: number;
+    cellWidth?: number;
+    cellHeight?: number;
     spacing?: number;
     safeMargin?: number;
   };
   variants?: Record<string, {
     cellWidth?: number;
     cellHeight?: number;
+    sheetWidth?: number;
+    sheetHeight?: number;
     scale?: number;
   }>;
   animations?: Record<string, {
