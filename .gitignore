@@ -11,3 +11,6 @@ graphify-out/
 
 # Leftover agent worktrees
 .claude/worktrees/
+
+# Parallax performance test reports and isolated perf build
+scripts/perf/out/

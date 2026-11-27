@@ -1,0 +1,497 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-27T16:02:47.962Z",
+  "environment": {
+    "machine": "DESKTOP-2GMPAJB",
+    "os": "Windows_NT 10.0.19045 (x64)",
+    "cpu": "Intel(R) Core(TM) i5-4690K CPU @ 3.50GHz",
+    "cpuCores": 4,
+    "browser": "Chromium 156.0.8078.4",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "bunVersion": "1.4.2"
+  },
+  "config": {
+    "serverMode": "build",
+    "holdRightMs": 2500,
+    "jumpAtMs": 1000,
+    "warmupMs": 150,
+    "targetHz": 120,
+    "targetFrameMs": 8.333,
+    "droppedMultiplier": 1.5,
+    "dprs": [
+      1,
+      2
+    ],
+    "locations": [
+      "courtyard",
+      "thorn_chasm",
+      "ashen_catacombs",
+      "clocktower",
+      "alchemist_library",
+      "aether_sanctuary",
+      "grand_bastion",
+      "eclipse_crown"
+    ]
+  },
+  "runs": [
+    {
+      "locationId": "courtyard",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "frameTime": {
+        "sampleCount": 281,
+        "p50Ms": 8.3,
+        "p95Ms": 8.5,
+        "maxMs": 16.8,
+        "meanMs": 8.423,
+        "droppedFrames": 3,
+        "droppedPct": 1.07,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "memory": {
+        "jsHeapUsedMB": 10.315,
+        "jsHeapTotalMB": 14.69,
+        "decodedImagesCount": 26,
+        "decodedImagesTotalMB": 124.739,
+        "decodedParallaxCount": 16,
+        "decodedParallaxMB": 94.016
+      },
+      "timeToFirstParallaxFrameMs": 1007.4
+    },
+    {
+      "locationId": "courtyard",
+      "dpr": 2,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "frameTime": {
+        "sampleCount": 330,
+        "p50Ms": 8.3,
+        "p95Ms": 8.5,
+        "maxMs": 25,
+        "meanMs": 8.535,
+        "droppedFrames": 7,
+        "droppedPct": 2.12,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "memory": {
+        "jsHeapUsedMB": 9.886,
+        "jsHeapTotalMB": 14.44,
+        "decodedImagesCount": 26,
+        "decodedImagesTotalMB": 124.739,
+        "decodedParallaxCount": 16,
+        "decodedParallaxMB": 94.016
+      },
+      "timeToFirstParallaxFrameMs": 1469.1
+    },
+    {
+      "locationId": "thorn_chasm",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "frameTime": {
+        "sampleCount": 310,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 50,
+        "meanMs": 8.522,
+        "droppedFrames": 2,
+        "droppedPct": 0.65,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "memory": {
+        "jsHeapUsedMB": 9.319,
+        "jsHeapTotalMB": 14.238,
+        "decodedImagesCount": 23,
+        "decodedImagesTotalMB": 108.788,
+        "decodedParallaxCount": 14,
+        "decodedParallaxMB": 78.083
+      },
+      "timeToFirstParallaxFrameMs": 585.3
+    },
+    {
+      "locationId": "thorn_chasm",
+      "dpr": 2,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "frameTime": {
+        "sampleCount": 288,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 158.3,
+        "meanMs": 9.028,
+        "droppedFrames": 5,
+        "droppedPct": 1.74,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "memory": {
+        "jsHeapUsedMB": 9.409,
+        "jsHeapTotalMB": 13.209,
+        "decodedImagesCount": 23,
+        "decodedImagesTotalMB": 108.788,
+        "decodedParallaxCount": 14,
+        "decodedParallaxMB": 78.083
+      },
+      "timeToFirstParallaxFrameMs": 866.6
+    },
+    {
+      "locationId": "ashen_catacombs",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "frameTime": {
+        "sampleCount": 129,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 850.1,
+        "meanMs": 19.767,
+        "droppedFrames": 2,
+        "droppedPct": 1.55,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "memory": {
+        "jsHeapUsedMB": 10.142,
+        "jsHeapTotalMB": 13.68,
+        "decodedImagesCount": 24,
+        "decodedImagesTotalMB": 114.781,
+        "decodedParallaxCount": 15,
+        "decodedParallaxMB": 84.077
+      },
+      "timeToFirstParallaxFrameMs": 1357.5
+    },
+    {
+      "locationId": "ashen_catacombs",
+      "dpr": 2,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "frameTime": {
+        "sampleCount": 297,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 158.1,
+        "meanMs": 8.923,
+        "droppedFrames": 3,
+        "droppedPct": 1.01,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "memory": {
+        "jsHeapUsedMB": 10.791,
+        "jsHeapTotalMB": 14.681,
+        "decodedImagesCount": 24,
+        "decodedImagesTotalMB": 114.781,
+        "decodedParallaxCount": 15,
+        "decodedParallaxMB": 84.077
+      },
+      "timeToFirstParallaxFrameMs": 686.7
+    },
+    {
+      "locationId": "clocktower",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "frameTime": {
+        "sampleCount": 271,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 241.7,
+        "meanMs": 9.41,
+        "droppedFrames": 3,
+        "droppedPct": 1.11,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "memory": {
+        "jsHeapUsedMB": 10.781,
+        "jsHeapTotalMB": 15.443,
+        "decodedImagesCount": 24,
+        "decodedImagesTotalMB": 110.849,
+        "decodedParallaxCount": 15,
+        "decodedParallaxMB": 80.145
+      },
+      "timeToFirstParallaxFrameMs": 677.6
+    },
+    {
+      "locationId": "clocktower",
+      "dpr": 2,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "frameTime": {
+        "sampleCount": 285,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 133.3,
+        "meanMs": 8.86,
+        "droppedFrames": 2,
+        "droppedPct": 0.7,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "memory": {
+        "jsHeapUsedMB": 11.094,
+        "jsHeapTotalMB": 14.693,
+        "decodedImagesCount": 24,
+        "decodedImagesTotalMB": 110.849,
+        "decodedParallaxCount": 15,
+        "decodedParallaxMB": 80.145
+      },
+      "timeToFirstParallaxFrameMs": 1181.5
+    },
+    {
+      "locationId": "alchemist_library",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "frameTime": {
+        "sampleCount": 302,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 8.5,
+        "meanMs": 8.333,
+        "droppedFrames": 0,
+        "droppedPct": 0,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "memory": {
+        "jsHeapUsedMB": 10.92,
+        "jsHeapTotalMB": 14.439,
+        "decodedImagesCount": 22,
+        "decodedImagesTotalMB": 102.786,
+        "decodedParallaxCount": 13,
+        "decodedParallaxMB": 72.082
+      },
+      "timeToFirstParallaxFrameMs": 794.5
+    },
+    {
+      "locationId": "alchemist_library",
+      "dpr": 2,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "frameTime": {
+        "sampleCount": 301,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 8.5,
+        "meanMs": 8.334,
+        "droppedFrames": 0,
+        "droppedPct": 0,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "memory": {
+        "jsHeapUsedMB": 10.522,
+        "jsHeapTotalMB": 12.939,
+        "decodedImagesCount": 22,
+        "decodedImagesTotalMB": 102.786,
+        "decodedParallaxCount": 13,
+        "decodedParallaxMB": 72.082
+      },
+      "timeToFirstParallaxFrameMs": 1300.4
+    },
+    {
+      "locationId": "aether_sanctuary",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "frameTime": {
+        "sampleCount": 278,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 125,
+        "meanMs": 9.053,
+        "droppedFrames": 4,
+        "droppedPct": 1.44,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "memory": {
+        "jsHeapUsedMB": 10.185,
+        "jsHeapTotalMB": 14.934,
+        "decodedImagesCount": 22,
+        "decodedImagesTotalMB": 102.786,
+        "decodedParallaxCount": 13,
+        "decodedParallaxMB": 72.082
+      },
+      "timeToFirstParallaxFrameMs": 625.5
+    },
+    {
+      "locationId": "aether_sanctuary",
+      "dpr": 2,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "frameTime": {
+        "sampleCount": 251,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 833.4,
+        "meanMs": 11.986,
+        "droppedFrames": 2,
+        "droppedPct": 0.8,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "memory": {
+        "jsHeapUsedMB": 9.164,
+        "jsHeapTotalMB": 14.684,
+        "decodedImagesCount": 22,
+        "decodedImagesTotalMB": 102.786,
+        "decodedParallaxCount": 13,
+        "decodedParallaxMB": 72.082
+      },
+      "timeToFirstParallaxFrameMs": 612.9
+    },
+    {
+      "locationId": "grand_bastion",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "frameTime": {
+        "sampleCount": 201,
+        "p50Ms": 8.3,
+        "p95Ms": 8.5,
+        "maxMs": 716.8,
+        "meanMs": 12.314,
+        "droppedFrames": 7,
+        "droppedPct": 3.48,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "memory": {
+        "jsHeapUsedMB": 9.705,
+        "jsHeapTotalMB": 12.187,
+        "decodedImagesCount": 22,
+        "decodedImagesTotalMB": 100.818,
+        "decodedParallaxCount": 13,
+        "decodedParallaxMB": 70.114
+      },
+      "timeToFirstParallaxFrameMs": 587.1
+    },
+    {
+      "locationId": "grand_bastion",
+      "dpr": 2,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "frameTime": {
+        "sampleCount": 299,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 25,
+        "meanMs": 8.389,
+        "droppedFrames": 1,
+        "droppedPct": 0.33,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "memory": {
+        "jsHeapUsedMB": 8.327,
+        "jsHeapTotalMB": 14.687,
+        "decodedImagesCount": 22,
+        "decodedImagesTotalMB": 100.818,
+        "decodedParallaxCount": 13,
+        "decodedParallaxMB": 70.114
+      },
+      "timeToFirstParallaxFrameMs": 1432.8
+    },
+    {
+      "locationId": "eclipse_crown",
+      "dpr": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "frameTime": {
+        "sampleCount": 315,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 8.9,
+        "meanMs": 8.334,
+        "droppedFrames": 0,
+        "droppedPct": 0,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "memory": {
+        "jsHeapUsedMB": 10.857,
+        "jsHeapTotalMB": 14.203,
+        "decodedImagesCount": 24,
+        "decodedImagesTotalMB": 106.885,
+        "decodedParallaxCount": 14,
+        "decodedParallaxMB": 76.118
+      },
+      "timeToFirstParallaxFrameMs": 656.1
+    },
+    {
+      "locationId": "eclipse_crown",
+      "dpr": 2,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "frameTime": {
+        "sampleCount": 302,
+        "p50Ms": 8.3,
+        "p95Ms": 8.4,
+        "maxMs": 8.5,
+        "meanMs": 8.334,
+        "droppedFrames": 0,
+        "droppedPct": 0,
+        "targetFrameMs": 8.333,
+        "droppedThresholdMs": 12.5
+      },
+      "memory": {
+        "jsHeapUsedMB": 11.618,
+        "jsHeapTotalMB": 14.953,
+        "decodedImagesCount": 24,
+        "decodedImagesTotalMB": 106.885,
+        "decodedParallaxCount": 14,
+        "decodedParallaxMB": 76.118
+      },
+      "timeToFirstParallaxFrameMs": 560.6
+    }
+  ],
+  "summary": {
+    "totalRuns": 16,
+    "failedRuns": 0,
+    "worstP50Ms": 8.3,
+    "worstP95Ms": 8.5,
+    "totalDroppedFrames": 41,
+    "maxDecodedParallaxMB": 94.016,
+    "maxDecodedImagesTotalMB": 124.739,
+    "maxJsHeapUsedMB": 11.618,
+    "maxFirstParallaxFrameMs": 1469.1
+  }
+}
