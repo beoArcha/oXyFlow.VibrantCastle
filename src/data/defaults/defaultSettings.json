@@ -8,6 +8,7 @@
     "aspectRatio": "auto",
     "scalingFilter": "pixel",
     "assetQuality": "high",
+    "parallaxQuality": "auto",
     "targetFps": 60,
     "showFpsCounter": false,
     "hardwareAcceleration": true

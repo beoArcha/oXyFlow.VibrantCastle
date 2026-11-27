@@ -48,6 +48,7 @@ describe("SettingsStorage - Domain & Persistence", () => {
           aspectRatio: "16:9",
           scalingFilter: "smooth",
           assetQuality: "high",
+          parallaxQuality: "auto",
           targetFps: 120,
           showFpsCounter: true,
           hardwareAcceleration: true,
@@ -158,6 +159,29 @@ describe("SettingsStorage - Domain & Persistence", () => {
       // Known fields still get defaults when absent
       expect(loaded?.hud.p1CharacterName).toBe("Valen");
       expect(loaded?.display.scalingFilter).toBe("pixel");
+      expect(loaded?.display.parallaxQuality).toBe("auto");
+    });
+
+    it("falls back to auto when parallaxQuality is missing or invalid in an old save", () => {
+      mockStorage.store[SettingsStorage.SETTINGS_STORAGE_KEY] = JSON.stringify({
+        display: {
+          aspectRatio: "16:9",
+          parallaxQuality: "ultra-unknown",
+        },
+      });
+
+      const loadedInvalid = settingsStorage.load();
+      expect(loadedInvalid.display.parallaxQuality).toBe("auto");
+
+      mockStorage.store[SettingsStorage.SETTINGS_STORAGE_KEY] = JSON.stringify({
+        display: {
+          aspectRatio: "16:9",
+          parallaxQuality: "simplified",
+        },
+      });
+
+      const loadedValid = settingsStorage.load();
+      expect(loadedValid.display.parallaxQuality).toBe("simplified");
     });
   });
 

@@ -1,9 +1,24 @@
-import { GameSettingsState, DEFAULT_SETTINGS, HudSettings, HudQuickKeysSettings } from "./settingsTypes";
+import { GameSettingsState, DEFAULT_SETTINGS, HudSettings, HudQuickKeysSettings, ParallaxQuality } from "./settingsTypes";
 import { DisplaySettings } from "@game/types";
 import { getLogger, ILogger } from "@lib/logger";
 import defaultGameEngine from "@game/loop/engine";
 
 const settingsLogger = getLogger("context:settings");
+
+const VALID_PARALLAX_QUALITIES: ReadonlySet<string> = new Set([
+  "auto",
+  "high",
+  "mid",
+  "low",
+  "simplified",
+  "off",
+]);
+
+function normalizeParallaxQuality(value: unknown): ParallaxQuality {
+  return typeof value === "string" && VALID_PARALLAX_QUALITIES.has(value)
+    ? (value as ParallaxQuality)
+    : DEFAULT_SETTINGS.display.parallaxQuality;
+}
 
 export interface ISettingsStorageProvider {
   getItem(key: string): string | null;
@@ -64,6 +79,7 @@ export class SettingsStorage implements ISettingsStorage {
               aspectRatio: parsedDisplay.aspectRatio || "auto",
               scalingFilter: parsedDisplay.scalingFilter || "pixel",
               assetQuality: parsedDisplay.assetQuality || "high",
+              parallaxQuality: normalizeParallaxQuality(parsedDisplay.parallaxQuality),
               targetFps: parsedDisplay.targetFps || 60,
               showFpsCounter: !!parsedDisplay.showFpsCounter,
               hardwareAcceleration:
@@ -189,7 +205,11 @@ export class SettingsStorage implements ISettingsStorage {
       ...DEFAULT_SETTINGS,
       ...(data as Partial<GameSettingsState>),
       primaryCharacter,
-      display: { ...DEFAULT_SETTINGS.display, ...display },
+      display: {
+        ...DEFAULT_SETTINGS.display,
+        ...display,
+        parallaxQuality: normalizeParallaxQuality(display.parallaxQuality),
+      },
       hud: {
         ...DEFAULT_SETTINGS.hud,
         ...hud,

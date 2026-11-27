@@ -1,6 +1,7 @@
 import {
   Player, Enemy, Entity, SoundType, GameSettings, SaveState, Projectile,
   PlayerId, EquipmentState, SupportedLanguage, PlayerStatKey, ParticleBurstType, ScalingFilterMode,
+  ResolvedParallaxQuality,
 } from "@game/types";
 import { gameAudio, GameAudioEngine } from "@game/engine/audioEngine";
 import { gameInputs, GameInputEngine } from "./input";
@@ -133,6 +134,9 @@ export class GameEngine implements IEngineSubsystemHost {
 
   public get settings(): GameSettings { return this.c.settingsController.settings; }
   public set settings(val: GameSettings) { Object.assign(this.c.settingsController.settings, val); }
+  public get resolvedParallaxQuality(): ResolvedParallaxQuality {
+    return this.c.settingsController.getResolvedParallaxQuality();
+  }
 
   public get isLoopRunning(): boolean { return this.c.loopRunner.running; }
   public get isRunning(): boolean { return this.c.loopRunner.running; }

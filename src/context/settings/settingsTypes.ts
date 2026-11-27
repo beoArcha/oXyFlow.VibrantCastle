@@ -5,6 +5,8 @@ import {
   ScalingFilterMode,
   TargetFps,
   AssetQuality,
+  ParallaxQuality,
+  ResolvedParallaxQuality,
 } from "@game/types";
 import type { PlayerTheme } from "@styles/theme";
 import { IContext } from "../IContext";
@@ -14,6 +16,8 @@ export type {
   ScalingFilterMode,
   TargetFps,
   AssetQuality,
+  ParallaxQuality,
+  ResolvedParallaxQuality,
 };
 
 export type HudThemeColor = PlayerTheme | "red";
@@ -75,6 +79,7 @@ export const DEFAULT_SETTINGS: GameSettingsState = {
     aspectRatio: "auto",
     scalingFilter: "pixel",
     assetQuality: "high",
+    parallaxQuality: "auto",
     targetFps: 60,
     showFpsCounter: false,
     hardwareAcceleration: true,

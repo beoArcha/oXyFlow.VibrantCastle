@@ -1,5 +1,5 @@
 import React from "react";
-import { Palette, Zap, Activity, Flame, Cpu } from "lucide-react";
+import { Palette, Zap, Activity, Flame, Cpu, Layers } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -14,7 +14,7 @@ import {
 } from "@ui";
 import { useSettings } from "@context/SettingsContext";
 import { useI18n } from "@context/I18nContext";
-import type { TargetFps, AssetQuality } from "@context";
+import type { TargetFps, AssetQuality, ParallaxQuality } from "@context";
 import { cn } from "@lib/utils";
 
 export interface GraphicsQualitySectionProps {
@@ -65,7 +65,45 @@ export const GraphicsQualitySection = ({
       },
     ];
 
+  const parallaxQualities: ReadonlyArray<{
+    id: ParallaxQuality;
+    title: string;
+    desc: string;
+  }> = [
+    {
+      id: "auto",
+      title: t("parallaxQualityAuto"),
+      desc: t("parallaxQualityAutoDesc"),
+    },
+    {
+      id: "high",
+      title: t("parallaxQualityHigh"),
+      desc: t("parallaxQualityHighDesc"),
+    },
+    {
+      id: "mid",
+      title: t("parallaxQualityMid"),
+      desc: t("parallaxQualityMidDesc"),
+    },
+    {
+      id: "low",
+      title: t("parallaxQualityLow"),
+      desc: t("parallaxQualityLowDesc"),
+    },
+    {
+      id: "simplified",
+      title: t("parallaxQualitySimplified"),
+      desc: t("parallaxQualitySimplifiedDesc"),
+    },
+    {
+      id: "off",
+      title: t("parallaxQualityOff"),
+      desc: t("parallaxQualityOffDesc"),
+    },
+  ];
+
   const activeFps = displaySettings.targetFps || 60;
+  const activeParallaxQuality: ParallaxQuality = displaySettings.parallaxQuality ?? "auto";
 
   return (
     <div className={cn("flex flex-col gap-4", className)}>
@@ -178,6 +216,35 @@ export const GraphicsQualitySection = ({
           <div className="flex items-center gap-1 text-[11px] px-1">
             <Flame className="w-3.5 h-3.5 text-amber-400" />
             <Text size="2xs" weight="medium" className="text-amber-400/90">{t("assetValenIdentity")}</Text>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card variant="subtle">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle icon={<Layers className="w-4 h-4 text-amber-400" />}>
+              {t("parallaxQualityOption")}
+            </CardTitle>
+            <Badge variant="amber">
+              <Code variant="plain" size="2xs" className="text-inherit">
+                {parallaxQualities.find((item) => item.id === activeParallaxQuality)?.title}
+              </Code>
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {parallaxQualities.map((item) => (
+              <SettingOptionCard
+                key={item.id}
+                id={`parallax-quality-${item.id}`}
+                selected={activeParallaxQuality === item.id}
+                onSelect={() => setDisplaySettings({ parallaxQuality: item.id })}
+                title={item.title}
+                description={item.desc}
+              />
+            ))}
           </div>
         </CardContent>
       </Card>
