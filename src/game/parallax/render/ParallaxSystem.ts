@@ -20,7 +20,8 @@ import {
   type ParallaxDrawableTexture,
   type ParallaxQueuePriority,
 } from "../loading";
-import type { ParallaxZoneKind } from "../meta";
+import type { ResolvedParallaxQuality } from "@game/types";
+import type { ParallaxQualityTier, ParallaxZoneKind } from "../meta";
 import {
   buildZoneVariantKey,
   createZoneResolutionBuffer,
@@ -73,11 +74,14 @@ export interface IParallaxFadeQueue {
   getTexture(keyOrUrl: string): ParallaxDrawableTexture | null;
   isManaged(keyOrUrl: string): boolean;
   getFadeAlpha(keyOrUrl: string, nowMs?: number): number;
+  beginGeneration?(): number;
+  clear?(): void;
   enqueue?(descriptor: {
     readonly cacheKey: string;
     readonly url: string;
     readonly priority: ParallaxQueuePriority;
     readonly subOrder?: number;
+    readonly tier?: ParallaxQualityTier;
     readonly fadeInOnReady?: boolean;
   }): Promise<unknown>;
 }
@@ -89,6 +93,7 @@ export interface ParallaxSystemDeps {
   atmosphericRenderer?: ISectorAtmosphericRenderer;
   placeholderRenderer?: IPlaceholderRenderer;
   loadQueue?: IParallaxFadeQueue;
+  parallaxQuality?: ResolvedParallaxQuality;
   now?: () => number;
   zoneCrossfadeDurationMs?: number;
   zonePreloadMarginPx?: number;
@@ -151,6 +156,7 @@ export class ParallaxSystem implements IParallaxSystem {
   private readonly backdropRenderer: ParallaxBackdropRenderer;
   private readonly loadQueue: IParallaxFadeQueue;
   private readonly useExplicitLoadQueue: boolean;
+  private parallaxQuality: ResolvedParallaxQuality;
   private readonly now: () => number;
   private readonly zoneCrossfadeDurationMs: number;
   private readonly zonePreloadMarginPx: number;
@@ -204,6 +210,10 @@ export class ParallaxSystem implements IParallaxSystem {
     this.placeholderRenderer = deps.placeholderRenderer ?? defaultPlaceholderRenderer;
     this.loadQueue = deps.loadQueue ?? defaultParallaxLoadQueue;
     this.useExplicitLoadQueue = Boolean(deps.loadQueue);
+    this.parallaxQuality = deps.parallaxQuality ?? this.registry.getParallaxQuality?.() ?? "high";
+    this.registry.subscribeQuality?.((quality) => {
+      this.setParallaxQuality(quality);
+    });
     this.now = deps.now ?? defaultNow;
     this.zoneCrossfadeDurationMs =
       deps.zoneCrossfadeDurationMs !== undefined
@@ -217,6 +227,20 @@ export class ParallaxSystem implements IParallaxSystem {
       (layer) => this.getImage(layer),
       this.atmosphericRenderer
     );
+  }
+
+  public getParallaxQuality(): ResolvedParallaxQuality {
+    return this.parallaxQuality;
+  }
+
+  public setParallaxQuality(quality: ResolvedParallaxQuality): void {
+    if (quality === this.parallaxQuality) return;
+    this.parallaxQuality = quality;
+    this.zoneStateLocation = null;
+    this.zoneStateLayers = null;
+    this.cachedClosestLayer = null;
+    this.pendingVariantUrls.clear();
+    this.resetZoneCrossfadeState();
   }
 
   public getActiveZoneKind(): ParallaxZoneKind | null {
@@ -256,6 +280,7 @@ export class ParallaxSystem implements IParallaxSystem {
   }
 
   public hasOpaqueFarBackdrop(location: LocationDefinition, options?: ParallaxRenderOptions): boolean {
+    if (this.parallaxQuality === "off") return false;
     if (!this.isSupported(location)) return false;
     const layers = location.parallaxBackground?.layers;
     if (!layers || layers.length === 0) return false;
@@ -274,20 +299,24 @@ export class ParallaxSystem implements IParallaxSystem {
   }
 
   public preload(layers?: readonly ParallaxLayerSchema[]): void {
-    if (!layers) return;
+    if (!layers || this.parallaxQuality === "off") return;
+    if (this.parallaxQuality === "simplified") {
+      const farIndex = this.findFarLayerIndex(layers);
+      if (farIndex < 0) return;
+      const farLayer = layers[farIndex];
+      if (this.useExplicitLoadQueue && this.loadQueue.enqueue) {
+        this.enqueueLayerProgressive(farLayer, farIndex);
+      } else {
+        this.preloadLayerViaLoader(farLayer);
+      }
+      return;
+    }
     if (this.useExplicitLoadQueue && this.loadQueue.enqueue) {
       this.enqueueLayersProgressive(layers);
       return;
     }
     for (let i = 0; i < layers.length; i++) {
-      const url = this.resolveLayerUrl(layers[i]);
-      if (!url) continue;
-      const alreadyLoaded = this.loader.isTextureLoaded
-        ? this.loader.isTextureLoaded(url)
-        : this.loader.getTexture(url) !== null;
-      if (!alreadyLoaded) {
-        this.loader.loadTexture(url).catch(() => {});
-      }
+      this.preloadLayerViaLoader(layers[i]);
     }
   }
 
@@ -321,8 +350,12 @@ export class ParallaxSystem implements IParallaxSystem {
     const pb = location.parallaxBackground;
     const worldId = resolveWorldId(location);
     const backdropLocation = this.resolveMetaPlaceholderLocation(location, worldId);
+    if (this.parallaxQuality === "off") {
+      this.renderPlaceholderBackdrop(ctx, backdropLocation, viewportWidth, viewportHeight, false);
+      return;
+    }
     if (!pb || !pb.layers || pb.layers.length === 0) {
-      this.backdropRenderer.renderFallbackBackdrop(ctx, backdropLocation, viewportWidth, viewportHeight);
+      this.renderPlaceholderBackdrop(ctx, backdropLocation, viewportWidth, viewportHeight, false);
       return;
     }
 
@@ -333,6 +366,22 @@ export class ParallaxSystem implements IParallaxSystem {
     const maxCamY = Math.max(1, levelHeight - viewportHeight);
     const progressX = Math.max(0, Math.min(1, cameraX / maxCamX));
     const progressY = Math.max(0, Math.min(1, cameraY / maxCamY));
+
+    if (this.parallaxQuality === "simplified") {
+      this.renderSimplified(
+        ctx,
+        backdropLocation,
+        pb.layers,
+        viewportWidth,
+        viewportHeight,
+        progressX,
+        progressY,
+        tickCount,
+        options
+      );
+      return;
+    }
+
     const nowMs = this.now();
 
     this.syncLocationZoneState(location, pb.layers);
@@ -403,27 +452,115 @@ export class ParallaxSystem implements IParallaxSystem {
     }
   }
 
+  private renderPlaceholderBackdrop(
+    ctx: CanvasRenderingContext2D,
+    backdropLocation: LocationDefinition,
+    viewportWidth: number,
+    viewportHeight: number,
+    showSilhouette: boolean
+  ): void {
+    if (this.placeholderRenderer.renderGradientBackdrop) {
+      this.placeholderRenderer.renderGradientBackdrop(
+        ctx,
+        backdropLocation,
+        viewportWidth,
+        viewportHeight,
+        showSilhouette
+      );
+      return;
+    }
+    this.backdropRenderer.renderFallbackBackdrop(ctx, backdropLocation, viewportWidth, viewportHeight);
+  }
+
+  private renderSimplified(
+    ctx: CanvasRenderingContext2D,
+    backdropLocation: LocationDefinition,
+    layers: readonly ParallaxLayerSchema[],
+    viewportWidth: number,
+    viewportHeight: number,
+    progressX: number,
+    progressY: number,
+    tickCount: number,
+    options?: ParallaxRenderOptions
+  ): void {
+    this.tierBuckets.far.length = 0;
+    let farReady = false;
+    const farEnabled = this.isTierEnabled("far", options);
+
+    if (farEnabled) {
+      for (let i = 0; i < layers.length; i++) {
+        const layer = layers[i];
+        if (resolveBackgroundTier(layer) !== "far") continue;
+        this.tierBuckets.far.push(layer);
+        if (isDrawableReady(this.getImage(layer))) {
+          farReady = true;
+        }
+      }
+    }
+
+    if (farReady) {
+      this.backdropRenderer.renderFarStaticBackdrop(
+        ctx,
+        backdropLocation,
+        this.tierBuckets.far,
+        viewportWidth,
+        viewportHeight,
+        progressX,
+        progressY,
+        tickCount
+      );
+      return;
+    }
+
+    this.renderPlaceholderBackdrop(ctx, backdropLocation, viewportWidth, viewportHeight, true);
+  }
+
+  private findFarLayerIndex(layers: readonly ParallaxLayerSchema[]): number {
+    for (let i = 0; i < layers.length; i++) {
+      if (resolveBackgroundTier(layers[i]) === "far") return i;
+    }
+    return -1;
+  }
+
+  private preloadLayerViaLoader(layer: ParallaxLayerSchema): void {
+    const url = this.resolveLayerUrl(layer);
+    if (!url) return;
+    const alreadyLoaded = this.loader.isTextureLoaded
+      ? this.loader.isTextureLoaded(url)
+      : this.loader.getTexture(url) !== null;
+    if (!alreadyLoaded) {
+      this.loader.loadTexture(url).catch(() => {});
+    }
+  }
+
+  private enqueueLayerProgressive(layer: ParallaxLayerSchema, index: number): void {
+    const entry = this.resolveRegistryEntry(layer);
+    const url = entry?.url ?? layer.imageUrl;
+    if (!url) return;
+    const tier = resolveBackgroundTier(layer);
+    const priority: ParallaxQueuePriority =
+      tier === "far"
+        ? PARALLAX_LOAD_PRIORITY.FAR
+        : tier === "boss_stage" || tier === "boss_world"
+          ? PARALLAX_LOAD_PRIORITY.EFFECT
+          : PARALLAX_LOAD_PRIORITY.LAYER;
+    const resolvedTier: ParallaxQualityTier =
+      entry?.resolvedTier ?? (this.parallaxQuality === "simplified" ? "low" : (this.parallaxQuality as ParallaxQualityTier));
+    this.loadQueue
+      .enqueue!({
+        cacheKey: layer.layerKey || url,
+        url,
+        tier: resolvedTier,
+        priority,
+        subOrder: layer.depth ?? index * 0.1,
+        fadeInOnReady: priority !== PARALLAX_LOAD_PRIORITY.FAR,
+      })
+      .catch(() => {});
+  }
+
   private enqueueLayersProgressive(layers: readonly ParallaxLayerSchema[]): void {
     for (let i = 0; i < layers.length; i++) {
-      const layer = layers[i];
-      const url = this.resolveLayerUrl(layer);
-      if (!url) continue;
-      const tier = resolveBackgroundTier(layer);
-      const priority: ParallaxQueuePriority =
-        tier === "far"
-          ? PARALLAX_LOAD_PRIORITY.FAR
-          : tier === "boss_stage" || tier === "boss_world"
-            ? PARALLAX_LOAD_PRIORITY.EFFECT
-            : PARALLAX_LOAD_PRIORITY.LAYER;
-      this.loadQueue
-        .enqueue!({
-          cacheKey: layer.layerKey || url,
-          url,
-          priority,
-          subOrder: layer.depth ?? i * 0.1,
-          fadeInOnReady: priority !== PARALLAX_LOAD_PRIORITY.FAR,
-        })
-        .catch(() => {});
+      this.enqueueLayerProgressive(layers[i], i);
     }
   }
 
@@ -462,11 +599,16 @@ export class ParallaxSystem implements IParallaxSystem {
     }
   }
 
+  private resolveRegistryEntry(layer: ParallaxLayerSchema) {
+    return (
+      this.registry.resolve(layer.layerKey, this.parallaxQuality) ??
+      this.registry.resolve(layer.imageUrl, this.parallaxQuality) ??
+      this.registry.resolve(layer.id, this.parallaxQuality)
+    );
+  }
+
   private resolveLayerUrl(layer: ParallaxLayerSchema): string | undefined {
-    const entry =
-      this.registry.resolve(layer.layerKey) ??
-      this.registry.resolve(layer.imageUrl) ??
-      this.registry.resolve(layer.id);
+    const entry = this.resolveRegistryEntry(layer);
     return entry?.url ?? layer.imageUrl;
   }
 
@@ -723,7 +865,7 @@ export class ParallaxSystem implements IParallaxSystem {
       const kind = ZONE_KINDS[i];
       const slot = this.variantSlots[kind];
       const variantKey = closest ? buildZoneVariantKey(closest, kind) : undefined;
-      const entry = variantKey ? this.registry.resolve(variantKey) : undefined;
+      const entry = variantKey ? this.registry.resolve(variantKey, this.parallaxQuality) : undefined;
 
       if (!closest || !variantKey) {
         slot.cacheKey = "";

@@ -78,4 +78,22 @@ describe("PlaceholderRenderer", () => {
     // Assert
     expect(celestialCleared).toBe(1);
   });
+
+  it("should render world meta placeholder gradient with optional silhouette and zero gradient allocations after frame 1", () => {
+    // Arrange
+    const renderer = new PlaceholderRenderer();
+    const ctx = createMockContext2D();
+    const courtyardLoc: LocationDefinition = { ...makeProceduralLocation(), id: "courtyard", worldId: "courtyard" };
+
+    // Act
+    renderer.renderGradientBackdrop(ctx, courtyardLoc, 1280, 720, true);
+    const gradsAfterFrame1 = ctx.getLinearGradientCount();
+    renderer.renderGradientBackdrop(ctx, courtyardLoc, 1280, 720, true);
+
+    // Assert
+    expect(gradsAfterFrame1).toBe(1);
+    expect(ctx.getLinearGradientCount()).toBe(1);
+    expect(ctx.getFillRectCalls().length).toBe(4);
+    expect(ctx.getSaveBalance()).toBe(0);
+  });
 });

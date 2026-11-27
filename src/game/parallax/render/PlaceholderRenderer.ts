@@ -1,5 +1,12 @@
 import type { LocationDefinition } from "@game/locations/types";
 import type { ParallaxLayerSchema } from "@game/locations/schema/locationSchema";
+import { getWorldPlaceholderColors } from "../loading/parallaxMetaPlaceholders";
+import {
+  BoundedLinearGradientCache,
+  createLinearGradientSpec,
+  prepareLinearGradientSpec,
+  resetLinearGradientSpec,
+} from "./gradientCache";
 import type { IPlaceholderRenderer } from "./types";
 import {
   type ICelestialRenderer,
@@ -32,8 +39,8 @@ export interface PlaceholderRendererDeps {
 
 /**
  * Renders procedural non-image parallax layers (sky gradients, celestial bodies,
- * castle silhouettes, mountain ridges, scenery, fog, and custom shapes).
- * Used as fallback for non-image locations and reserved for future simplified/off modes.
+ * castle silhouettes, mountain ridges, scenery, fog, and custom shapes) as well as
+ * zero-allocation world-meta placeholder backdrops for `off` and `simplified` modes.
  */
 export class PlaceholderRenderer implements IPlaceholderRenderer {
   private readonly celestialRenderer: ICelestialRenderer;
@@ -42,6 +49,8 @@ export class PlaceholderRenderer implements IPlaceholderRenderer {
   private readonly atmosphericFogRenderer: IAtmosphericFogRenderer;
   private readonly sceneryScaffoldRenderer: ISceneryScaffoldRenderer;
   private readonly sortedLayersCache = new WeakMap<ParallaxLayerSchema[], ParallaxLayerSchema[]>();
+  private readonly gradientCache = new BoundedLinearGradientCache();
+  private readonly gradientSpec = createLinearGradientSpec();
 
   constructor(deps: PlaceholderRendererDeps = {}) {
     this.celestialRenderer = deps.celestialRenderer || defaultCelestialRenderer;
@@ -53,6 +62,49 @@ export class PlaceholderRenderer implements IPlaceholderRenderer {
 
   public clearCaches(): void {
     this.celestialRenderer.clearCaches?.();
+    this.gradientCache.clear();
+    resetLinearGradientSpec(this.gradientSpec);
+  }
+
+  public renderGradientBackdrop(
+    ctx: CanvasRenderingContext2D,
+    location: LocationDefinition,
+    viewportWidth: number,
+    viewportHeight: number,
+    showSilhouette = false
+  ): void {
+    const worldId = location.worldId || location.id;
+    const metaColors = getWorldPlaceholderColors(worldId);
+    const topColor = metaColors?.top || location.theme?.bgGradientTop || "#1c0b05";
+    const bottomColor = metaColors?.bottom || location.theme?.bgGradientBottom || "#0a0301";
+    prepareLinearGradientSpec(
+      this.gradientSpec,
+      "placeholder_",
+      worldId,
+      topColor,
+      bottomColor,
+      viewportHeight
+    );
+
+    ctx.save();
+    ctx.fillStyle = this.gradientCache.getOrCreate(
+      ctx,
+      this.gradientSpec.key,
+      0,
+      0,
+      0,
+      viewportHeight,
+      this.gradientSpec.stops
+    );
+    ctx.fillRect(0, 0, viewportWidth, viewportHeight);
+
+    if (showSilhouette) {
+      const silhouetteColor = metaColors?.silhouette || bottomColor;
+      const bandTop = Math.round(viewportHeight * 0.65);
+      ctx.fillStyle = silhouetteColor;
+      ctx.fillRect(0, bandTop, viewportWidth, viewportHeight - bandTop);
+    }
+    ctx.restore();
   }
 
   public render(
@@ -67,7 +119,10 @@ export class PlaceholderRenderer implements IPlaceholderRenderer {
     tickCount: number
   ): void {
     const pb = location.parallaxBackground;
-    if (!pb || !pb.layers || pb.layers.length === 0) return;
+    if (!pb || !pb.layers || pb.layers.length === 0) {
+      this.renderGradientBackdrop(ctx, location, viewportWidth, viewportHeight, true);
+      return;
+    }
 
     const boxWidth = Math.max(pb.boxWidth || 0, levelWidth + 400);
     const boxHeight = Math.max(pb.boxHeight || 0, levelHeight + 200);

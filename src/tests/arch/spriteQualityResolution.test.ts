@@ -10,6 +10,7 @@ const srcDir = path.join(rootDir, "src");
 const TIER_RESOLVER_FILES = new Set([
   "src/game/engine/sprites/spriteSourceFactory.ts",
   "src/game/engine/atlas/atlasVariantResolver.ts",
+  "src/game/parallax/registry.ts",
 ]);
 
 const QUALITY_SETTER_FILES = new Set([

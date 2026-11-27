@@ -1,4 +1,4 @@
-import { Player, Enemy, Entity, Particle, Projectile } from "../types";
+import { Player, Enemy, Entity, Particle, Projectile, ResolvedParallaxQuality } from "../types";
 import { CameraState } from "../engine/cameraManager";
 import { LocationDefinition } from "../locations/types";
 import { LanguageCode } from "@i18n";
@@ -94,6 +94,10 @@ export class GameRenderer {
     if (enabled) {
       this.backdropCache.resize(this.viewportWidth, this.viewportHeight);
     }
+  }
+
+  public setParallaxQuality(quality: ResolvedParallaxQuality): void {
+    this.parallaxSystem.setParallaxQuality?.(quality);
   }
 
   public get scale(): number {

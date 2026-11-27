@@ -22,6 +22,7 @@ export interface IEngineSettingsContext {
   onHardwareAccelerationChanged(enabled: boolean): void;
   onTwoPlayerChanged(enabled: boolean): void;
   onPrimaryCharacterChanged?(characterId: "valen" | "aurelia"): void;
+  onParallaxQualityChanged?(quality: ResolvedParallaxQuality): void;
   getPlayerCount(): number;
   notifyStateChanged(): void;
 }
@@ -55,6 +56,7 @@ export class EngineSettingsController {
     };
     this.resolvedParallaxQuality = resolveParallaxQuality(initialParallaxQuality);
     this.context.spriteSources.setQuality(this.settings.display.assetQuality);
+    this.context.onParallaxQualityChanged?.(this.resolvedParallaxQuality);
   }
 
   public getResolvedParallaxQuality(): ResolvedParallaxQuality {
@@ -136,7 +138,11 @@ export class EngineSettingsController {
       this.context.spriteSources.setQuality(display.assetQuality);
     }
     if (display.parallaxQuality !== undefined) {
-      this.resolvedParallaxQuality = resolveParallaxQuality(display.parallaxQuality);
+      const nextQuality = resolveParallaxQuality(display.parallaxQuality);
+      if (nextQuality !== this.resolvedParallaxQuality) {
+        this.resolvedParallaxQuality = nextQuality;
+        this.context.onParallaxQualityChanged?.(nextQuality);
+      }
     }
     this.settings.display = { ...this.settings.display, ...display };
   }
