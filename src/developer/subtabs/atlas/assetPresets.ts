@@ -1,15 +1,15 @@
-import valenHighPng from "@assets/characters/valen/valen_level_1_high.png";
-import valenMetaJson from "@assets/characters/valen/valen_meta.json";
+import valenHighPng from "@assets/characters/valen/valen_level_1_high_packed.png";
+import valenMetaJson from "@assets/characters/valen/valen_packed_meta.json";
 import valenPortraitsPng from "@assets/characters/valen/valen_portraits.png";
 import valenPortraitsMetaJson from "@assets/characters/valen/valen_portraits_meta.json";
 
-import aureliaHighPng from "@assets/characters/aurelia/aurelia_level_1_high.png";
-import aureliaMetaJson from "@assets/characters/aurelia/aurelia_meta.json";
+import aureliaHighPng from "@assets/characters/aurelia/aurelia_level_1_high_packed.png";
+import aureliaMetaJson from "@assets/characters/aurelia/aurelia_packed_meta.json";
 import aureliaPortraitsPng from "@assets/characters/aurelia/aurelia_portraits.png";
 import aureliaPortraitsMetaJson from "@assets/characters/aurelia/aurelia_portraits_meta.json";
 
-import owlHighPng from "@assets/enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_high.png";
-import owlMetaJson from "@assets/enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_meta.json";
+import owlHighPng from "@assets/enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_packed_high.png";
+import owlMetaJson from "@assets/enemies/clockwork_owl_gargoyle/clockwork_owl_gargoyle_packed_meta.json";
 
 import dummyHighPng from "@assets/enemies/training_dummy/training_dummy_high.png";
 import dummyMetaJson from "@assets/enemies/training_dummy/training_dummy_meta.json";

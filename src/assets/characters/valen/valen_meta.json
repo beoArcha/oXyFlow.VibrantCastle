@@ -2,9 +2,7 @@
   "characterId": "valen",
   "entityType": "humanoid",
   "version": "4.0",
-
   "description": "Analytical duelist. Calm, precise, controlled combat style with minimalistic execution.",
-
   "atlas": {
     "columns": 12,
     "rows": 8,
@@ -12,9 +10,10 @@
     "background": "transparent",
     "safeMargin": 0,
     "noOverflow": true,
-    "noOverlap": true
+    "noOverlap": true,
+    "cellWidth": 128,
+    "cellHeight": 128
   },
-
   "variants": {
     "low": {
       "cellWidth": 64,
@@ -32,85 +31,169 @@
       "scale": 1.5
     }
   },
-
   "animations": {
     "idle": {
       "row": 0,
       "frames": 6,
       "fps": 5,
       "loop": true,
-      "slotSpan": [1, 1, 1, 1, 1, 1],
-      "cells": [1, 1, 1, 1, 1, 1]
+      "slotSpan": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
     },
-
     "run": {
       "row": 1,
       "frames": 8,
       "fps": 8,
       "loop": true,
-      "slotSpan": [1, 1, 1, 1, 1, 1, 1, 1],
-      "cells": [1, 1, 1, 1, 1, 1, 1, 1]
+      "slotSpan": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
     },
-
     "jump": {
       "row": 2,
       "frames": 3,
       "fps": 6,
       "loop": false,
-      "slotSpan": [1, 1, 1],
-      "cells": [1, 1, 1]
+      "slotSpan": [
+        1,
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1,
+        1
+      ]
     },
-
     "fall": {
       "row": 3,
       "frames": 3,
       "fps": 6,
       "loop": true,
-      "slotSpan": [1, 1, 1],
-      "cells": [1, 1, 1]
+      "slotSpan": [
+        1,
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1,
+        1
+      ]
     },
-
     "attack": {
       "row": 4,
       "frames": 5,
       "fps": 6,
       "loop": false,
       "wide": true,
-      "slotSpan": [2, 3, 2, 3, 2],
-      "cells": [2, 3, 2, 3, 2]
+      "slotSpan": [
+        2,
+        3,
+        2,
+        3,
+        2
+      ],
+      "cells": [
+        2,
+        3,
+        2,
+        3,
+        2
+      ]
     },
-
     "dash": {
       "row": 5,
       "frames": 4,
       "fps": 10,
       "loop": false,
       "wide": true,
-      "slotSpan": [2, 3, 3, 3],
-      "cells": [2, 3, 3, 3]
+      "slotSpan": [
+        2,
+        3,
+        3,
+        3
+      ],
+      "cells": [
+        2,
+        3,
+        3,
+        3
+      ]
     },
-
     "cast": {
       "row": 6,
       "frames": 6,
       "fps": 6,
       "loop": false,
       "wide": true,
-      "slotSpan": [2, 2, 2, 2, 2, 2],
-      "cells": [2, 2, 2, 2, 2, 2]
+      "slotSpan": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "cells": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ]
     },
-
     "crouch": {
       "row": 2,
       "frames": 2,
-      "frameIndices": [6, 7],
+      "frameIndices": [
+        6,
+        7
+      ],
       "fps": 8,
       "loop": true,
-      "slotSpan": [1, 1],
-      "cells": [1, 1]
+      "slotSpan": [
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1
+      ]
     }
   },
-
   "layout": {
     "ordering": [
       "idle",
@@ -124,10 +207,12 @@
     ],
     "origin": {
       "type": "feet",
-      "normalized": { "x": 0.5, "y": 1.0 }
+      "normalized": {
+        "x": 0.5,
+        "y": 1.0
+      }
     }
   },
-
   "portraits": {
     "columns": 5,
     "rows": 5,
@@ -135,14 +220,43 @@
     "cellHeight": 270,
     "spacing": 0,
     "map": [
-      ["neutral", "serious", "determined", "thoughtful", "skeptical"],
-      ["calm", "hopeful", "confident", "alert", "concerned"],
-      ["angry", "frustrated", "sad", "tired", "distant"],
-      ["disappointed", "worried", "focused", "relieved", "profile"],
-      ["resigned", "downcast", "melancholic", "pensive", "stoic_profile"]
+      [
+        "neutral",
+        "serious",
+        "determined",
+        "thoughtful",
+        "skeptical"
+      ],
+      [
+        "calm",
+        "hopeful",
+        "confident",
+        "alert",
+        "concerned"
+      ],
+      [
+        "angry",
+        "frustrated",
+        "sad",
+        "tired",
+        "distant"
+      ],
+      [
+        "disappointed",
+        "worried",
+        "focused",
+        "relieved",
+        "profile"
+      ],
+      [
+        "resigned",
+        "downcast",
+        "melancholic",
+        "pensive",
+        "stoic_profile"
+      ]
     ]
   },
-
   "generationConstraints": {
     "style": "clean_2D_stylized",
     "noPainterly": true

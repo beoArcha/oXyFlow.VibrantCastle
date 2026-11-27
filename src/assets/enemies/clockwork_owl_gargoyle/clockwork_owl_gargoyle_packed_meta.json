@@ -1,0 +1,121 @@
+{
+  "characterId": "clockwork_owl_gargoyle",
+  "entityType": "creature",
+  "version": "4.0",
+  "description": "Clockwork Owl Gargoyle. Flying brass sentinel with articulated wings and glowing cyan optics. Patrols airspace and performs precise strike attacks.",
+  "atlas": {
+    "columns": 7,
+    "rows": 5,
+    "cellWidth": 302,
+    "cellHeight": 254,
+    "spacing": 0,
+    "background": "transparent",
+    "safeMargin": 10,
+    "noOverflow": true,
+    "noOverlap": true
+  },
+  "naturalFacing": "right",
+  "variants": {
+    "low": {
+      "cellWidth": 151,
+      "cellHeight": 127,
+      "scale": 0.5
+    },
+    "mid": {
+      "cellWidth": 227,
+      "cellHeight": 191,
+      "scale": 0.75
+    },
+    "high": {
+      "cellWidth": 302,
+      "cellHeight": 254,
+      "scale": 1
+    }
+  },
+  "animations": {
+    "fly": {
+      "row": 0,
+      "frames": 7,
+      "fps": 8,
+      "loop": true,
+      "wide": false,
+      "slotSpan": [1, 1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1, 1]
+    },
+    "attack": {
+      "row": 1,
+      "frames": 7,
+      "fps": 10,
+      "loop": true,
+      "wide": false,
+      "slotSpan": [1, 1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1, 1]
+    },
+    "hit": {
+      "row": 2,
+      "frames": 4,
+      "fps": 12,
+      "loop": false,
+      "wide": true,
+      "slotSpan": [1, 1, 1, 2],
+      "cells": [1, 1, 1, 2]
+    },
+    "death": {
+      "row": 3,
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "wide": false,
+      "slotSpan": [1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1]
+    },
+    "bestiary": {
+      "row": 4,
+      "frames": 7,
+      "fps": 1,
+      "loop": false,
+      "wide": false,
+      "slotSpan": [1, 1, 1, 1, 1, 1, 1],
+      "cells": [1, 1, 1, 1, 1, 1, 1]
+    }
+  },
+  "states": {
+    "idle": {
+      "animation": "fly"
+    },
+    "fly": {
+      "animation": "fly"
+    },
+    "hit": {
+      "animation": "hit"
+    },
+    "attack": {
+      "animation": "attack"
+    },
+    "death": {
+      "animation": "death"
+    }
+  },
+  "layout": {
+    "ordering": [
+      "fly",
+      "attack",
+      "hit",
+      "death",
+      "bestiary"
+    ],
+    "origin": {
+      "type": "center",
+      "normalized": {
+        "x": 0.5,
+        "y": 0.55
+      }
+    },
+    "bodyBox": {
+      "x": 0.1722,
+      "y": 0.0433,
+      "w": 0.6556,
+      "h": 0.9173
+    }
+  }
+}
