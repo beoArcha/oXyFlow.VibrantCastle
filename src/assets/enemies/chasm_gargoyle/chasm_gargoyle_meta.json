@@ -5,7 +5,7 @@
   "description": "An aggressive flying predator of dark weathered iron with bat-like wings and glowing crimson crystals.",
   "atlas": {
     "columns": 4,
-    "rows": 3,
+    "rows": 5,
     "cellWidth": 96,
     "cellHeight": 96,
     "spacing": 0,
@@ -76,6 +76,44 @@
         1,
         1
       ]
+    },
+    "attack": {
+      "row": 3,
+      "frames": 4,
+      "fps": 10,
+      "loop": false,
+      "wide": false,
+      "slotSpan": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "death": {
+      "row": 4,
+      "frames": 4,
+      "fps": 7,
+      "loop": false,
+      "wide": false,
+      "slotSpan": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "cells": [
+        1,
+        1,
+        1,
+        1
+      ]
     }
   },
   "states": {
@@ -93,13 +131,21 @@
     },
     "fly": {
       "animation": "move"
+    },
+    "attack": {
+      "animation": "attack"
+    },
+    "death": {
+      "animation": "death"
     }
   },
   "layout": {
     "ordering": [
       "idle",
       "move",
-      "hit"
+      "hit",
+      "attack",
+      "death"
     ],
     "origin": {
       "type": "center",

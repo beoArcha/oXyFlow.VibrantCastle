@@ -171,7 +171,7 @@
         "loreQuoteKey": "bestiaryChasmGargoyleLore",
         "killThresholds": { "basic": 1, "tactics": 3, "lore": 5 }
       },
-      "atlas": { "presetId": "clockwork_owl_gargoyle", "defaultAnimation": "fly", "attackAnimation": "dive", "hitAnimation": "hit", "deathAnimation": "death" },
+      "atlas": { "presetId": "chasm_gargoyle", "defaultAnimation": "fly", "attackAnimation": "attack", "hitAnimation": "hit", "deathAnimation": "death" },
       "proceduralFallback": { "bodyColor": "#334155", "accentColor": "#a855f7", "eyesColor": "#f43f5e" }
     },
     "clockwork_automaton": {

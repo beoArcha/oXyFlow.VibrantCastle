@@ -129,18 +129,25 @@ describe("Architectural Rule: Atlas Meta & Image Consistency", () => {
       const variants = (raw.variants ?? {}) as Record<string, Record<string, any>>;
 
       // Prop metadata (frameWidth/frameHeight on variant, no atlas grid)
-      if (!raw.atlas && variants.mid?.file && variants.mid?.frameWidth && variants.mid?.frameHeight) {
-        const imgPath = path.join(dir, variants.mid.file);
-        expect(fs.existsSync(imgPath)).toBe(true);
-        const imgSize = readImageSize(imgPath);
-        const fw = Number(variants.mid.frameWidth);
-        const fh = Number(variants.mid.frameHeight);
-        expect(imgSize.width % fw).toBe(0);
-        expect(imgSize.height % fh).toBe(0);
-        const cols = imgSize.width / fw;
-        const anims = (raw.animations ?? {}) as Record<string, Record<string, any>>;
-        for (const anim of Object.values(anims)) {
-          expect(Number(anim.frames ?? 1)).toBeLessThanOrEqual(cols);
+      if (!raw.atlas && raw.propId) {
+        const propVariants = Object.entries(variants).filter(
+          ([, v]) => v?.file && v?.frameWidth && v?.frameHeight
+        );
+        expect(propVariants.length).toBeGreaterThan(0);
+        for (const [, v] of propVariants) {
+          const imgPath = path.join(dir, v.file);
+          expect(fs.existsSync(imgPath)).toBe(true);
+          const imgSize = readImageSize(imgPath);
+          const fw = Number(v.frameWidth);
+          const fh = Number(v.frameHeight);
+          expect(imgSize.width % fw).toBe(0);
+          expect(imgSize.height % fh).toBe(0);
+          const cols = imgSize.width / fw;
+          expect(Number(raw.frames ?? 1)).toBeLessThanOrEqual(cols);
+          const anims = (raw.animations ?? {}) as Record<string, Record<string, any>>;
+          for (const anim of Object.values(anims)) {
+            expect(Number(anim.frames ?? 1)).toBeLessThanOrEqual(cols);
+          }
         }
         return;
       }

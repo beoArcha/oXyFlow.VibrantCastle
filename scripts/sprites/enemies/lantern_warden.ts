@@ -5,13 +5,14 @@ interface Pose {
   dy: number;
   tilt: number;
   chainDx: [number, number, number];
-  glow: "bright" | "dim";
+  glow: "bright" | "dim" | "flare";
   eyeShut: boolean;
+  shatter: number;
   flash: boolean;
 }
 
 const REST: Pose = {
-  dx: 0, dy: 0, tilt: 0, chainDx: [0, 0, 0], glow: "bright", eyeShut: false, flash: false,
+  dx: 0, dy: 0, tilt: 0, chainDx: [0, 0, 0], glow: "bright", eyeShut: false, shatter: 0, flash: false,
 };
 
 const POSES: Partial<Record<AnimationName, Pose[]>> = {
@@ -25,6 +26,18 @@ const POSES: Partial<Record<AnimationName, Pose[]>> = {
   hit: [
     { ...REST, dx: -2, dy: 1, tilt: -1, chainDx: [2, 2, 2], eyeShut: true, flash: true },
     { ...REST, dx: -1, dy: 0, tilt: 0, chainDx: [1, 1, 1], eyeShut: false, glow: "dim" },
+  ],
+  attack: [
+    { ...REST, dx: -2, dy: -1, tilt: -1, chainDx: [1, 2, 1], glow: "dim" },
+    { ...REST, dx: 2, dy: 0, tilt: 1, chainDx: [-2, -2, -1], glow: "flare" },
+    { ...REST, dx: 2, dy: 1, tilt: 1, chainDx: [-1, -1, 0], glow: "flare" },
+    { ...REST, dx: 0, dy: 0, tilt: 0, chainDx: [0, 0, 0], glow: "bright" },
+  ],
+  death: [
+    { ...REST, dx: -1, dy: 1, tilt: -1, chainDx: [1, 1, 1], eyeShut: true, flash: true },
+    { ...REST, dy: 3, tilt: 1, chainDx: [-1, 0, 1], eyeShut: true, glow: "dim" },
+    { ...REST, dy: 5, eyeShut: true, shatter: 1, glow: "dim" },
+    { ...REST, dy: 7, eyeShut: true, shatter: 2, glow: "dim" },
   ],
 };
 
@@ -201,10 +214,38 @@ function drawLantern(c: PixelCanvas, s: number, detailed: boolean, anim: Animati
   const pose = POSES[anim]?.[frame] ?? REST;
   const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
+  if (pose.shatter >= 1) {
+    // Tilted/cracked brass lantern husk & dimmed glass shards
+    const lx = 24 + pose.dx;
+    const y0 = 16 + pose.dy;
+    b.rect(lx - 10, y0, 20, 4, pal.brassMid);
+    b.rect(lx - 8, y0 + 4, 16, 10, pal.glassDark);
+    b.rect(lx - 9, y0 + 4, 2, 10, pal.brassDark);
+    b.rect(lx + 7, y0 + 4, 2, 10, pal.brassDark);
+    if (pose.shatter === 1) {
+      b.rect(lx - 3, y0 + 8, 6, 2, pal.emberDark);
+    }
+    b.rect(lx - 9, y0 + 14, 18, 3, pal.brassDark);
+    b.rect(lx - 5, y0 + 17, 2, 4, pal.brassMid);
+    b.rect(lx + 4, y0 + 18, 2, 3, pal.brassMid);
+    if (detailed) {
+      b.rect(lx - 7, y0 + 1, 12, 1, pal.brassLight);
+      c.px((lx + 2) * s, (y0 + 7) * s, pal.glassReflect);
+    }
+    c.outline(pal.outline);
+    return;
+  }
   drawHandle(b, pose);
   drawRoof(b, pose);
   drawCageAndGlass(b, pose);
   drawEye(b, pose);
+  if (pose.glow === "flare") {
+    const fx = 34 + pose.dx;
+    const fy = 21 + pose.dy;
+    b.rect(fx - 2, fy - 2, 7, 5, pal.emberMid);
+    b.rect(fx - 1, fy - 1, 5, 3, pal.emberCore);
+    if (detailed) c.px((fx + 4) * s, fy * s, "#ffffff");
+  }
   drawBase(b, pose);
   drawChains(b, pose);
   c.outline(pal.outline);
@@ -220,6 +261,8 @@ export default defineEnemySprite({
     idle: { frames: 2, fps: 3, loop: true },
     move: { frames: 4, fps: 6, loop: true },
     hit: { frames: 2, fps: 10, loop: false },
+    attack: { frames: 4, fps: 9, loop: false },
+    death: { frames: 4, fps: 7, loop: false },
   },
   draw: {
     hi8bit: (c, anim, frame) => drawLantern(c, 1, false, anim, frame),

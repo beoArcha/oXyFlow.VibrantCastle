@@ -2,13 +2,13 @@ import { defineEnemySprite, type AnimationName, type PixelCanvas } from "../defi
 
 interface Pose {
   dx: number; dy: number; headDy: number; tailDy: number;
-  keyState: number; eyeBright: boolean; jawOpen: number; flash: boolean;
+  keyState: number; eyeBright: boolean; jawOpen: number; collapse: number; flash: boolean;
   hindFar: [number, number, number, number]; hindNear: [number, number, number, number];
   frontFar: [number, number, number, number]; frontNear: [number, number, number, number];
 }
 
 const REST: Pose = {
-  dx: 0, dy: 0, headDy: 0, tailDy: 0, keyState: 0, eyeBright: false, jawOpen: 0, flash: false,
+  dx: 0, dy: 0, headDy: 0, tailDy: 0, keyState: 0, eyeBright: false, jawOpen: 0, collapse: 0, flash: false,
   hindFar: [12, 38, 13, 47], hindNear: [14, 38, 16, 47], frontFar: [28, 37, 29, 47], frontNear: [31, 37, 33, 47],
 };
 
@@ -26,6 +26,18 @@ const POSES: Partial<Record<AnimationName, Pose[]>> = {
   hit: [
     { ...REST, dx: -2, dy: 2, headDy: 1, tailDy: 2, jawOpen: 1, flash: true, hindFar: [10, 39, 11, 47], hindNear: [12, 40, 14, 47], frontFar: [26, 39, 27, 47], frontNear: [29, 39, 31, 47] },
     { ...REST, dx: -1, dy: 1, headDy: 1, tailDy: 1, jawOpen: 0, flash: false, hindFar: [11, 38, 12, 47], hindNear: [13, 39, 15, 47], frontFar: [27, 38, 28, 47], frontNear: [30, 38, 32, 47] },
+  ],
+  attack: [
+    { ...REST, dx: -2, dy: 2, headDy: 1, tailDy: -1, keyState: 1, eyeBright: true, jawOpen: 1 },
+    { ...REST, dx: 2, dy: 0, headDy: -1, tailDy: 0, keyState: 2, eyeBright: true, jawOpen: 2, hindFar: [10, 38, 9, 47], hindNear: [12, 38, 11, 47], frontFar: [31, 36, 34, 47], frontNear: [34, 37, 37, 47] },
+    { ...REST, dx: 2, dy: 1, headDy: 0, tailDy: 1, keyState: 3, eyeBright: true, jawOpen: 0, frontFar: [30, 37, 33, 47], frontNear: [33, 38, 36, 47] },
+    { ...REST, dx: 0, dy: 0, keyState: 0 },
+  ],
+  death: [
+    { ...REST, dx: -1, dy: 3, headDy: 2, tailDy: 2, jawOpen: 1, flash: true, hindFar: [10, 40, 11, 47], hindNear: [12, 40, 14, 47], frontFar: [26, 40, 27, 47], frontNear: [29, 40, 31, 47] },
+    { ...REST, dy: 6, headDy: 3, tailDy: 3, hindFar: [9, 41, 10, 47], hindNear: [11, 41, 13, 47], frontFar: [27, 41, 29, 47], frontNear: [30, 41, 32, 47] },
+    { ...REST, collapse: 1 },
+    { ...REST, collapse: 2 },
   ],
 };
 
@@ -224,6 +236,25 @@ function drawHound(c: PixelCanvas, s: number, detailed: boolean, anim: Animation
   const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
 
+  if (pose.collapse >= 1) {
+    // Collapsed steel hound & stopped flank clock dial on bottom row 47
+    const y0 = pose.collapse === 1 ? 38 : 40;
+    b.rect(11, y0 + 2, 22, 46 - y0 - 2, pal.steelBase);
+    b.rect(13, y0 + 1, 17, 2, pal.steelMid);
+    b.rect(20, y0 + 1, 4, 4, pal.brassDark);
+    b.rect(21, y0 + 2, 2, 2, pal.dialBase);
+    b.rect(32, y0 + 1, 7, 5, pal.steelBase); // resting head
+    b.rect(36, y0 + 2, 3, 1, pal.steelLight);
+    b.rect(8, y0 + 3, 4, 2, pal.steelDark); // limp tail
+    b.rect(10, 47, 29, 1, pal.steelDark);
+    if (detailed) {
+      b.px(22, y0 - 1, pal.brassBase);
+      c.px(21 * s + 1, (y0 + 2) * s + 1, pal.steelDark);
+    }
+    c.outline(pal.outline);
+    return;
+  }
+
   drawLegs(b, pose, false);
   drawTail(b, pose);
   drawKey(b, pose);
@@ -243,6 +274,8 @@ export default defineEnemySprite({
     idle: { frames: 2, fps: 4, loop: true },
     move: { frames: 4, fps: 12, loop: true },
     hit: { frames: 2, fps: 10, loop: false },
+    attack: { frames: 4, fps: 11, loop: false },
+    death: { frames: 4, fps: 7, loop: false },
   },
   draw: {
     hi8bit: (c, anim, frame) => drawHound(c, 1, false, anim, frame),

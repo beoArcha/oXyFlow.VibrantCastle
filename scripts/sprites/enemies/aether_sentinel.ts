@@ -8,12 +8,14 @@ interface Pose {
   gauntletL: [number, number];
   gauntletR: [number, number];
   ribbonWave: number;
+  beamPhase: number; // 0 = none, 1 = charge, 2 = fire, 3 = fade
+  collapse: number; // 0 = hovering, 1 = sinking, 2 = shattered, 3 = remnants
   flash: boolean;
 }
 
 const REST: Pose = {
   dx: 0, dy: 0, headDy: 0, slitPulse: false,
-  gauntletL: [0, 0], gauntletR: [0, 0], ribbonWave: 0, flash: false,
+  gauntletL: [0, 0], gauntletR: [0, 0], ribbonWave: 0, beamPhase: 0, collapse: 0, flash: false,
 };
 
 const POSES: Partial<Record<AnimationName, Pose[]>> = {
@@ -30,6 +32,18 @@ const POSES: Partial<Record<AnimationName, Pose[]>> = {
   hit: [
     { ...REST, dx: -2, dy: 1, headDy: 1, slitPulse: true, gauntletL: [-2, -1], gauntletR: [2, -1], ribbonWave: -1, flash: true },
     { ...REST, dx: -1, headDy: 1, gauntletL: [-1, 0], gauntletR: [1, 0] },
+  ],
+  attack: [
+    { ...REST, dx: -2, dy: 1, slitPulse: true, gauntletL: [-2, -2], gauntletR: [-3, -2], beamPhase: 1 },
+    { ...REST, dx: 1, dy: 0, slitPulse: true, gauntletL: [3, 0], gauntletR: [5, -1], ribbonWave: -2, beamPhase: 2 },
+    { ...REST, dx: 1, dy: 0, slitPulse: true, gauntletL: [3, 1], gauntletR: [5, 0], ribbonWave: -1, beamPhase: 3 },
+    { ...REST, dx: 0, dy: 0, gauntletL: [1, 0], gauntletR: [1, 0] },
+  ],
+  death: [
+    { ...REST, dx: -1, dy: 2, headDy: 1, gauntletL: [-2, 2], gauntletR: [2, 2], collapse: 1, flash: true },
+    { ...REST, dy: 5, headDy: 2, gauntletL: [-3, 5], gauntletR: [3, 5], collapse: 1 },
+    { ...REST, collapse: 2 },
+    { ...REST, collapse: 3 },
   ],
 };
 
@@ -224,10 +238,48 @@ function drawHead(b: Brush, p: Pose): void {
   c.px((hx + 5) * s + 2, (hy + 4) * s, pal.cyanMid);
 }
 
+function drawAetherBeam(b: Brush, p: Pose): void {
+  if (p.beamPhase === 0) return;
+  const { pal, c, s, detailed } = b;
+  const bx = 37 + p.dx;
+  const by = 23 + p.dy;
+  if (p.beamPhase === 1) {
+    b.rect(bx - 4, by - 1, 4, 4, pal.cyanMid);
+    b.rect(bx - 3, by, 2, 2, pal.cyanCore);
+    return;
+  }
+  const len = p.beamPhase === 2 ? 9 : 7;
+  b.rect(bx - 2, by - 2, len, 5, pal.cyanMid);
+  b.rect(bx - 1, by - 1, len - 1, 3, pal.cyanCore);
+  if (detailed) {
+    c.px((bx + len - 2) * s, by * s, "#ffffff");
+    b.rect(bx, by - 3, 3, 1, pal.cyanLight);
+  }
+}
+
 function drawAetherSentinel(c: PixelCanvas, s: number, detailed: boolean, anim: AnimationName, frame: number): void {
   const pose = POSES[anim]?.[frame] ?? REST;
   const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
+
+  if (pose.collapse >= 2) {
+    // Cracked marble slabs and fading aether ribbons on floor row 47
+    const y0 = pose.collapse === 2 ? 38 : 41;
+    b.rect(12, 46, 24, 2, pal.cyanDark);
+    b.rect(15, y0, 10, 46 - y0, pal.marbleMid);
+    b.rect(26, y0 + 2, 9, 44 - y0, pal.marbleDark);
+    b.rect(18, y0 - 2, 6, 3, pal.goldLight); // broken halo piece
+    if (pose.collapse === 2) {
+      b.rect(21, y0 + 3, 4, 2, pal.cyanCore);
+    }
+    b.rect(13, 47, 22, 1, pal.marbleDark);
+    if (detailed) {
+      b.rect(16, y0 + 1, 6, 2, pal.marbleLight);
+      c.line(16 * s, (y0 + 2) * s, 21 * s, (y0 + 5) * s, pal.crack);
+    }
+    c.outline(pal.outline);
+    return;
+  }
 
   drawHalo(b, pose);
   drawGauntlet(b, 12 + pose.dx + pose.gauntletL[0], 21 + pose.dy + pose.gauntletL[1], false);
@@ -235,6 +287,7 @@ function drawAetherSentinel(c: PixelCanvas, s: number, detailed: boolean, anim: 
   drawTorso(b, pose);
   drawHead(b, pose);
   drawGauntlet(b, 31 + pose.dx + pose.gauntletR[0], 22 + pose.dy + pose.gauntletR[1], true);
+  drawAetherBeam(b, pose);
 
   c.outline(pal.outline);
 }
@@ -249,6 +302,8 @@ export default defineEnemySprite({
     idle: { frames: 2, fps: 4, loop: true },
     move: { frames: 4, fps: 8, loop: true },
     hit: { frames: 2, fps: 10, loop: false },
+    attack: { frames: 4, fps: 9, loop: false },
+    death: { frames: 4, fps: 7, loop: false },
   },
   draw: {
     hi8bit: (c, anim, frame) => drawAetherSentinel(c, 1, false, anim, frame),

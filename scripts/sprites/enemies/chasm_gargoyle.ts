@@ -5,24 +5,38 @@ interface Pose {
   dy: number;
   tailDy: number;
   wing: "half" | "up" | "level" | "down" | "folded";
+  slashArc: number; // 0 = none, 1 = lunge, 2 = slash
+  crumble: number; // 0 = flying, 1 = falling, 2 = crumpled
   flash: boolean;
   glowFlicker: boolean;
 }
 
 const POSES: Partial<Record<AnimationName, Pose[]>> = {
   idle: [
-    { dx: 0, dy: 0, tailDy: 0, wing: "half", flash: false, glowFlicker: false },
-    { dx: 0, dy: -1, tailDy: 1, wing: "half", flash: false, glowFlicker: true },
+    { dx: 0, dy: 0, tailDy: 0, wing: "half", slashArc: 0, crumble: 0, flash: false, glowFlicker: false },
+    { dx: 0, dy: -1, tailDy: 1, wing: "half", slashArc: 0, crumble: 0, flash: false, glowFlicker: true },
   ],
   move: [
-    { dx: 0, dy: 1, tailDy: 1, wing: "up", flash: false, glowFlicker: false },
-    { dx: 0, dy: 0, tailDy: 0, wing: "level", flash: false, glowFlicker: false },
-    { dx: 0, dy: -1, tailDy: -1, wing: "down", flash: false, glowFlicker: true },
-    { dx: 0, dy: 0, tailDy: 1, wing: "level", flash: false, glowFlicker: false },
+    { dx: 0, dy: 1, tailDy: 1, wing: "up", slashArc: 0, crumble: 0, flash: false, glowFlicker: false },
+    { dx: 0, dy: 0, tailDy: 0, wing: "level", slashArc: 0, crumble: 0, flash: false, glowFlicker: false },
+    { dx: 0, dy: -1, tailDy: -1, wing: "down", slashArc: 0, crumble: 0, flash: false, glowFlicker: true },
+    { dx: 0, dy: 0, tailDy: 1, wing: "level", slashArc: 0, crumble: 0, flash: false, glowFlicker: false },
   ],
   hit: [
-    { dx: -2, dy: 0, tailDy: -1, wing: "folded", flash: true, glowFlicker: false },
-    { dx: -1, dy: 0, tailDy: 0, wing: "half", flash: false, glowFlicker: false },
+    { dx: -2, dy: 0, tailDy: -1, wing: "folded", slashArc: 0, crumble: 0, flash: true, glowFlicker: false },
+    { dx: -1, dy: 0, tailDy: 0, wing: "half", slashArc: 0, crumble: 0, flash: false, glowFlicker: false },
+  ],
+  attack: [
+    { dx: -2, dy: 1, tailDy: 0, wing: "up", slashArc: 0, crumble: 0, flash: false, glowFlicker: true },
+    { dx: 1, dy: 1, tailDy: -1, wing: "folded", slashArc: 1, crumble: 0, flash: false, glowFlicker: true },
+    { dx: 1, dy: 2, tailDy: 0, wing: "down", slashArc: 2, crumble: 0, flash: false, glowFlicker: true },
+    { dx: 0, dy: 0, tailDy: 1, wing: "level", slashArc: 0, crumble: 0, flash: false, glowFlicker: false },
+  ],
+  death: [
+    { dx: -2, dy: 2, tailDy: -1, wing: "folded", slashArc: 0, crumble: 1, flash: true, glowFlicker: false },
+    { dx: -1, dy: 5, tailDy: 1, wing: "folded", slashArc: 0, crumble: 1, flash: false, glowFlicker: false },
+    { dx: 0, dy: 8, tailDy: 2, wing: "folded", slashArc: 0, crumble: 2, flash: false, glowFlicker: false },
+    { dx: 0, dy: 11, tailDy: 2, wing: "folded", slashArc: 0, crumble: 2, flash: false, glowFlicker: false },
   ],
 };
 
@@ -305,12 +319,38 @@ function drawGargoyle(c: PixelCanvas, s: number, detailed: boolean, anim: Animat
   const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
 
+  if (pose.crumble >= 2) {
+    // Fallen stone gargoyle fragments & dimming crimson shards
+    const y0 = 28 + pose.dy;
+    b.rect(12, y0, 18, 8, pal.ironDark);
+    b.rect(14, y0 + 1, 14, 5, pal.ironMid);
+    b.rect(20, y0 + 2, 5, 3, pal.crimsonDark);
+    b.rect(29, y0 + 2, 7, 5, pal.ironMid);
+    b.rect(8, y0 + 3, 6, 4, pal.wingDark);
+    if (detailed) {
+      b.rect(15, y0 + 1, 8, 2, pal.ironLight);
+      b.px(22, y0 + 3, pal.crimsonMid);
+    }
+    c.outline(pal.outline);
+    return;
+  }
+
   drawFarWing(b, pose);
   drawTail(b, pose);
   drawTorso(b, pose);
   drawTalons(b, pose);
   drawNearWing(b, pose);
   drawHead(b, pose);
+
+  if (pose.slashArc > 0) {
+    const sx = 36 + pose.dx;
+    const sy = 20 + pose.dy;
+    b.line(sx, sy - 6, sx + 5, sy, pal.crimsonCore);
+    b.line(sx + 5, sy, sx + 1, sy + 7, pal.crimsonMid);
+    if (pose.slashArc === 2 && detailed) {
+      b.line(sx + 1, sy - 5, sx + 6, sy, pal.crimsonFlare);
+    }
+  }
 
   c.outline(pal.outline);
 }
@@ -325,6 +365,8 @@ export default defineEnemySprite({
     idle: { frames: 2, fps: 4, loop: true },
     move: { frames: 4, fps: 10, loop: true },
     hit: { frames: 2, fps: 10, loop: false },
+    attack: { frames: 4, fps: 10, loop: false },
+    death: { frames: 4, fps: 7, loop: false },
   },
   draw: {
     hi8bit: (c, anim, frame) => drawGargoyle(c, 1, false, anim, frame),

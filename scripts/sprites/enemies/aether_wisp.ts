@@ -2,13 +2,15 @@ import { defineEnemySprite, type AnimationName, type PixelCanvas } from "../defi
 
 interface Pose {
   dx: number; dy: number; tailWave: number; shardAngle: number;
-  shardDist: number; corePulse: number; squashX: number; squashY: number; flash: boolean;
+  shardDist: number; corePulse: number; squashX: number; squashY: number;
+  boltPhase: number; fadePhase: number; flash: boolean;
 }
 
 const BASE_ANGLE = Math.PI / 6;
 const REST: Pose = {
   dx: 0, dy: 0, tailWave: 0, shardAngle: BASE_ANGLE,
-  shardDist: 0, corePulse: 0, squashX: 0, squashY: 0, flash: false,
+  shardDist: 0, corePulse: 0, squashX: 0, squashY: 0,
+  boltPhase: 0, fadePhase: 0, flash: false,
 };
 
 const POSES: Partial<Record<AnimationName, Pose[]>> = {
@@ -22,6 +24,18 @@ const POSES: Partial<Record<AnimationName, Pose[]>> = {
   hit: [
     { ...REST, dx: -2, shardDist: 2, squashX: 1, squashY: -2, tailWave: 1, flash: true },
     { ...REST, dx: -1, shardDist: 1, squashX: 0, squashY: -1, tailWave: 0 },
+  ],
+  attack: [
+    { ...REST, dx: -1, shardDist: -3, squashX: -1, squashY: 1, corePulse: 1 },
+    { ...REST, dx: 0, shardDist: 2, squashX: 2, squashY: -1, corePulse: 2, boltPhase: 1 },
+    { ...REST, dx: 0, shardDist: 3, squashX: 1, squashY: 0, corePulse: 2, boltPhase: 2 },
+    { ...REST, dx: 0, shardDist: 1, corePulse: 0 },
+  ],
+  death: [
+    { ...REST, dx: -1, shardDist: 3, squashX: 2, squashY: -2, fadePhase: 1, flash: true },
+    { ...REST, dy: 1, shardDist: 5, corePulse: -1, fadePhase: 1 },
+    { ...REST, dy: 3, shardDist: 6, fadePhase: 2 },
+    { ...REST, dy: 5, shardDist: 7, fadePhase: 3 },
   ],
 };
 
@@ -182,10 +196,34 @@ function drawWisp(c: PixelCanvas, s: number, detailed: boolean, anim: AnimationN
   const cx = 24 + pose.dx;
   const cy = 24 + pose.dy;
 
+  if (pose.fadePhase >= 2) {
+    // Dissolving starlight spark & scattered crystal shards
+    const r = pose.fadePhase === 2 ? 4 : 2;
+    c.ellipse(cx * s, cy * s, r * s, r * s, pal.glowMid);
+    c.ellipse(cx * s, cy * s, Math.max(1, r - 2) * s, Math.max(1, r - 2) * s, pal.core);
+    const d = pose.fadePhase === 2 ? 12 : 16;
+    c.rect((cx - d) * s, (cy - 4) * s, 3 * s, 2 * s, pal.shardBase);
+    c.rect((cx + d - 2) * s, (cy + 3) * s, 3 * s, 2 * s, pal.shardBase);
+    c.rect((cx - 2) * s, (cy - d + 4) * s, 2 * s, 3 * s, pal.shardLight);
+    if (detailed) {
+      c.px((cx - d) * s, (cy - 4) * s, pal.sparkle);
+      c.px((cx + d - 1) * s, (cy + 3) * s, pal.sparkle);
+    }
+    c.outline(pal.outline);
+    return;
+  }
+
   drawTail(b, pose, cx, cy);
   drawOrb(b, pose, cx, cy);
   drawEyes(b, pose, cx, cy);
   drawShards(b, pose, cx, cy);
+
+  if (pose.boltPhase > 0) {
+    const bx = cx + (pose.boltPhase === 1 ? 11 : 14);
+    c.rect(bx * s, (cy - 2) * s, 6 * s, 4 * s, pal.glowMid);
+    c.rect((bx + 1) * s, (cy - 1) * s, 4 * s, 2 * s, pal.core);
+    if (detailed) c.px((bx + 5) * s, cy * s, pal.sparkle);
+  }
 
   c.outline(pal.outline);
 }
@@ -200,6 +238,8 @@ export default defineEnemySprite({
     idle: { frames: 2, fps: 4, loop: true },
     move: { frames: 4, fps: 8, loop: true },
     hit: { frames: 2, fps: 10, loop: false },
+    attack: { frames: 4, fps: 10, loop: false },
+    death: { frames: 4, fps: 7, loop: false },
   },
   draw: {
     hi8bit: (c, anim, frame) => drawWisp(c, 1, false, anim, frame),

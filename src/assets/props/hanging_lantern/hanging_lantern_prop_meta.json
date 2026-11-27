@@ -6,6 +6,11 @@
   "frames": 4,
   "fps": 6,
   "variants": {
+    "low": {
+      "file": "hanging_lantern_hi8bit.svg",
+      "frameWidth": 16,
+      "frameHeight": 32
+    },
     "mid": {
       "file": "hanging_lantern_hi16bit.svg",
       "frameWidth": 32,

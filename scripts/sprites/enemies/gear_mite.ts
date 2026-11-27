@@ -3,13 +3,13 @@ import { defineEnemySprite, type AnimationName, type PixelCanvas } from "../defi
 interface Pose {
   dx: number; dy: number; gearShift: number;
   leg1Dx: number; leg2Dx: number; leg3Dx: number;
-  antennaTwitch: number; eyeBright: boolean; flash: boolean;
+  antennaTwitch: number; eyeBright: boolean; collapse: number; flash: boolean;
 }
 
 const REST: Pose = {
   dx: 0, dy: 0, gearShift: 0,
   leg1Dx: 0, leg2Dx: 0, leg3Dx: 0,
-  antennaTwitch: 0, eyeBright: true, flash: false,
+  antennaTwitch: 0, eyeBright: true, collapse: 0, flash: false,
 };
 
 const POSES: Partial<Record<AnimationName, Pose[]>> = {
@@ -23,6 +23,18 @@ const POSES: Partial<Record<AnimationName, Pose[]>> = {
   hit: [
     { ...REST, dx: -2, dy: 2, leg1Dx: -1, leg2Dx: -1, leg3Dx: -1, flash: true },
     { ...REST, dx: -1, dy: 1, leg1Dx: 0, leg2Dx: 0, leg3Dx: 0, flash: false },
+  ],
+  attack: [
+    { ...REST, dx: -2, dy: 2, gearShift: 1, antennaTwitch: -1, eyeBright: true },
+    { ...REST, dx: 2, dy: -2, leg1Dx: 2, leg2Dx: -1, leg3Dx: -2, gearShift: 2, antennaTwitch: 1, eyeBright: true },
+    { ...REST, dx: 3, dy: 0, leg1Dx: 2, leg3Dx: -1, gearShift: 3, eyeBright: true },
+    { ...REST, dx: 1, dy: 1, gearShift: 0 },
+  ],
+  death: [
+    { ...REST, dx: -1, dy: 2, leg1Dx: -1, leg3Dx: -1, eyeBright: false, flash: true },
+    { ...REST, dy: 4, leg1Dx: 2, leg3Dx: -2, eyeBright: false },
+    { ...REST, collapse: 1, eyeBright: false },
+    { ...REST, collapse: 2, eyeBright: false },
   ],
 };
 
@@ -194,6 +206,24 @@ function drawGearMite(c: PixelCanvas, s: number, detailed: boolean, anim: Animat
   const pose = POSES[anim]?.[frame] ?? REST;
   const pal = pose.flash ? FLASH_PALETTE : detailed ? HI16BIT_PALETTE : HI8BIT_PALETTE;
   const b = new Brush(c, s, detailed, pal);
+  if (pose.collapse >= 1) {
+    // Cracked brass cog carapace splayed on bottom row 47
+    const y0 = pose.collapse === 1 ? 39 : 41;
+    b.rect(12, y0 + 2, 20, 46 - y0 - 2, pal.brassMid);
+    b.rect(14, y0, 4, 2, pal.brassLow);
+    b.rect(21, y0, 4, 2, pal.brassLow);
+    b.rect(28, y0 + 1, 3, 2, pal.brassLow);
+    b.rect(20, y0 + 3, 4, 3, pal.hubDark);
+    b.rect(32, y0 + 3, 4, 3, pal.brassDark);
+    b.rect(33, y0 + 3, 2, 2, pal.eyeDark);
+    b.rect(10, 47, 27, 1, pal.hubDark);
+    if (detailed) {
+      b.rect(15, y0 + 2, 8, 2, pal.brassHi);
+      c.px(21 * s, (y0 + 4) * s, pal.brassMid);
+    }
+    c.outline(pal.outline);
+    return;
+  }
   drawLegs(b, pose, false);
   drawShell(b, pose);
   drawHeadEyeAntennae(b, pose);
@@ -211,6 +241,8 @@ export default defineEnemySprite({
     idle: { frames: 2, fps: 4, loop: true },
     move: { frames: 4, fps: 12, loop: true },
     hit: { frames: 2, fps: 10, loop: false },
+    attack: { frames: 4, fps: 11, loop: false },
+    death: { frames: 4, fps: 7, loop: false },
   },
   draw: {
     hi8bit: (c, anim, frame) => drawGearMite(c, 1, false, anim, frame),
