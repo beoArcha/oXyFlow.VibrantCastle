@@ -22,7 +22,7 @@ export interface DevToolRenderContext {
 
 export interface DevToolDefinition {
   readonly id: DevToolId;
-  readonly label: string;
+  readonly labelKey: string;
   readonly icon: React.ReactNode;
   readonly render: (ctx: DevToolRenderContext) => React.ReactNode;
 }
@@ -34,7 +34,7 @@ export interface DevToolDefinition {
 export const DEV_TOOL_REGISTRY: readonly DevToolDefinition[] = [
   {
     id: DevToolId.AtlasSlicer,
-    label: "Atlas i meta.json",
+    labelKey: "devToolAtlas",
     icon: <Layers size={14} className="text-emerald-400 shrink-0" />,
     render: ({ navigateToTool }) => (
       <AtlasSlicerSubtab onOpenLogs={() => navigateToTool(DevToolId.Logs)} />
@@ -42,31 +42,31 @@ export const DEV_TOOL_REGISTRY: readonly DevToolDefinition[] = [
   },
   {
     id: DevToolId.Levels,
-    label: "Poziomy 8×8",
+    labelKey: "devToolLevels",
     icon: <MapIcon size={14} className="text-sky-400 shrink-0" />,
     render: () => <LevelsSubtab />,
   },
   {
     id: DevToolId.DataStudio,
-    label: "Studio Danych",
+    labelKey: "devToolDataStudio",
     icon: <Database size={14} className="text-amber-400 shrink-0" />,
     render: () => <DataStudioSubtab />,
   },
   {
     id: DevToolId.Testing,
-    label: "Tester i Cheaty",
+    labelKey: "devToolTesting",
     icon: <FlaskConical size={14} className="text-purple-400 shrink-0" />,
     render: () => <TestingSubtab />,
   },
   {
     id: DevToolId.Debug,
-    label: "Debug Silnika",
+    labelKey: "devToolDebug",
     icon: <Bug size={14} className="text-cyan-400 shrink-0" />,
     render: () => <DebugSubtab />,
   },
   {
     id: DevToolId.Logs,
-    label: "Strumień Logów",
+    labelKey: "devToolLogs",
     icon: <ScrollText size={14} className="text-rose-400 shrink-0" />,
     render: () => <LogsSubtab />,
   },

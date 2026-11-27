@@ -53,7 +53,7 @@ export const HelpModalView: React.FC = () => {
                 {t("p2Status")}
               </Text>
               <Badge variant={isTwoPlayer ? "green" : "stone"}>
-                {isTwoPlayer ? "2P Active" : "Co-op Ready"}
+                {isTwoPlayer ? t("coopActive") : t("coopReady")}
               </Badge>
             </div>
             {BINDABLE_ACTION_CATALOG.map(({ action, labelKey }) => (
@@ -116,7 +116,7 @@ export const HelpModalView: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Sparkles size={15} className="text-purple-400" />
-            Skróty Interfejsu (Live vs Pauza)
+            {t("interfaceShortcutsTitle")}
           </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
@@ -128,7 +128,7 @@ export const HelpModalView: React.FC = () => {
               <Code size="xs">[{def.navigationTab.keyLabel}]</Code>
               <Text size="xs">{t(def.navigationTab.labelKey)}</Text>
               <Badge variant={def.pausesGame ? "amber" : "green"}>
-                {def.pausesGame ? "Pauza" : "Live"}
+                {def.pausesGame ? t("pause") : t("liveBadge")}
               </Badge>
             </div>
           ))}

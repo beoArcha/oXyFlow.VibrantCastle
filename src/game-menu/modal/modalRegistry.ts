@@ -14,6 +14,9 @@ export enum ModalId {
 }
 
 export type OpenModalId = Exclude<ModalId, ModalId.None>;
+
+/** Single width shared by every player-facing game modal (Menu, Help, Inventory, Skill tree). */
+export const GAME_MODAL_WIDTH_CLASS = "max-w-5xl";
 export type ModalType = `${OpenModalId}`;
 
 export type ModalIconKey =
@@ -66,7 +69,7 @@ export const MODAL_REGISTRY: readonly ModalDefinition[] = [
   {
     id: ModalId.Help,
     pausesGame: true,
-    hotkeys: ["h", "?"],
+    hotkeys: ["h", "?", "F1"],
     navigationTab: {
       labelKey: "hints",
       keyLabel: "H",

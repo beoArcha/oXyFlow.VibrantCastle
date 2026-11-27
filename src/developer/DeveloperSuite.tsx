@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Tabs, TabItem } from "@ui";
+import { useI18n } from "@context/I18nContext";
 import {
   DEV_TOOL_REGISTRY,
   DevToolId,
@@ -17,16 +18,17 @@ export interface DeveloperSuiteProps {
 export const DeveloperSuite: React.FC<DeveloperSuiteProps> = ({
   initialTool = DevToolId.AtlasSlicer,
 }) => {
+  const { t } = useI18n();
   const [activeToolId, setActiveToolId] = useState<DevToolId>(initialTool);
 
   const tabItems = useMemo<TabItem<DevToolId>[]>(
     () =>
       DEV_TOOL_REGISTRY.map((entry) => ({
         id: entry.id,
-        label: entry.label,
+        label: t(entry.labelKey),
         icon: entry.icon,
       })),
-    []
+    [t]
   );
 
   const activeTool = useMemo(

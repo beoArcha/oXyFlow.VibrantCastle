@@ -2,7 +2,7 @@ import React from "react";
 import { BookOpen } from "lucide-react";
 import { Modal } from "@ui";
 import { LanguageSelector } from "@game-menu/common";
-import { ModalNavigationTabs, ModalType } from "@game-menu/modal";
+import { ModalNavigationTabs, ModalType, GAME_MODAL_WIDTH_CLASS } from "@game-menu/modal";
 import { useI18n } from "@context/I18nContext";
 import { useSkills } from "@context/GameContext";
 import { useSettings } from "@context/SettingsContext";
@@ -39,7 +39,7 @@ export const SkillTreePanel = ({
       subtitle={t("skillTreeSubtitle")}
       icon={<BookOpen className="w-5 h-5 text-purple-400" />}
       headerRight={<LanguageSelector />}
-      maxWidthClass="max-w-4xl"
+      maxWidthClass={GAME_MODAL_WIDTH_CLASS}
     >
       <div className="flex flex-col gap-4">
         {onNavigateModal && onResume && (
@@ -47,6 +47,7 @@ export const SkillTreePanel = ({
             currentModal="skillTree"
             onNavigate={onNavigateModal}
             onResume={onResume}
+            showCreation={false}
           />
         )}
         <SkillPlayerTabs />
