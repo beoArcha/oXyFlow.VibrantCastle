@@ -3,7 +3,6 @@ import {
   ParallaxLayerSchema,
 } from "@game/locations/schema/locationSchema";
 import { MirrorableLayer, resolveLayerDrawHeight, resolveLayerScreenY } from "./parallaxGeometry";
-import { debugManager } from "@game/debug/debugManager";
 
 export const TIER_ORDER: readonly BackgroundLayerTier[] = [
   "far",
@@ -114,7 +113,8 @@ export function renderTiledDynamicLayer(
   viewportWidth: number,
   viewportHeight: number,
   tickCount: number,
-  alphaMultiplier = 1
+  alphaMultiplier = 1,
+  showWireframes = false
 ): void {
   if (alphaMultiplier <= 0.005) return;
 
@@ -143,7 +143,7 @@ export function renderTiledDynamicLayer(
 
   drawHorizontalTiles(ctx, img, screenX, screenY, drawW, drawH, viewportWidth, layer.mirrorTile === true);
 
-  if (debugManager.state.showHitboxes) {
+  if (showWireframes) {
     renderTierWireframe(ctx, tier, layer.id, viewportWidth, viewportHeight);
   }
 

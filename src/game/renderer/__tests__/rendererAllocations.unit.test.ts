@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { GameRenderer } from "../renderer";
-import { MultiLayerBackgroundSystem } from "../multiLayerBackgroundSystem";
-import { ParallaxRenderer } from "../parallaxRenderer";
+import { ParallaxSystem, PlaceholderRenderer } from "@game/parallax/render";
 import { ActorRenderer } from "../actorRenderer";
 import { FxRenderer } from "../fxRenderer";
 import { StructureRenderer } from "../structureRenderer";
@@ -138,33 +137,33 @@ describe("Renderer Optimization & Zero GC Pressure", () => {
   });
 
   describe("Parallax Layer Cache & Zero Sort Allocations", () => {
-    it("caches depth-sorted layers across frames in ParallaxRenderer", () => {
+    it("caches depth-sorted layers across frames in PlaceholderRenderer", () => {
       const ctx = createMockContext();
-      const parallax = new ParallaxRenderer();
+      const placeholder = new PlaceholderRenderer();
       const loc = getLocation("courtyard");
 
       // First render populates cache
-      parallax.render(ctx, loc, 2600, 650, 1000, 625, 0, 0, 1);
+      placeholder.render(ctx, loc, 2600, 650, 1000, 625, 0, 0, 1);
       // Subsequent render uses cached array without re-sorting
-      parallax.render(ctx, loc, 2600, 650, 1000, 625, 100, 0, 2);
+      placeholder.render(ctx, loc, 2600, 650, 1000, 625, 100, 0, 2);
 
       expect(ctx.getSaveBalance()).toBe(0);
     });
   });
 
-  describe("MultiLayerBackgroundSystem Zero Allocation Loop", () => {
+  describe("ParallaxSystem Zero Allocation Loop", () => {
     it("replaces per-frame dynamic array creation with preallocated tier buckets", () => {
       const ctx = createMockContext();
-      const multiLayer = new MultiLayerBackgroundSystem();
+      const parallax = new ParallaxSystem();
       const loc = getLocation("courtyard");
 
-      expect(multiLayer.isSupported("courtyard")).toBe(true);
+      expect(parallax.isSupported("courtyard")).toBe(true);
 
-      multiLayer.render(ctx, loc, 2600, 650, 1000, 625, 50, 0, 10);
+      parallax.render(ctx, loc, 2600, 650, 1000, 625, 50, 0, 10);
       expect(ctx.getSaveBalance()).toBe(0);
 
       // Render next frame: tierBuckets should be cleared and reused
-      multiLayer.render(ctx, loc, 2600, 650, 1000, 625, 100, 0, 11);
+      parallax.render(ctx, loc, 2600, 650, 1000, 625, 100, 0, 11);
       expect(ctx.getSaveBalance()).toBe(0);
     });
   });
@@ -191,19 +190,19 @@ describe("Renderer Optimization & Zero GC Pressure", () => {
   });
 
   describe("Gradient Caching & Zero Runtime Gradient Allocations", () => {
-    it("guarantees zero gradient allocations in MultiLayerBackgroundSystem after frame 1", () => {
+    it("guarantees zero gradient allocations in ParallaxSystem after frame 1", () => {
       const ctx = createMockContext();
-      const multiLayer = new MultiLayerBackgroundSystem();
+      const parallax = new ParallaxSystem();
       const loc = getLocation("courtyard");
 
       // Frame 1 initializes gradient cache
-      multiLayer.render(ctx, loc, 2600, 650, 1000, 625, 0, 0, 1);
+      parallax.render(ctx, loc, 2600, 650, 1000, 625, 0, 0, 1);
       const gradsAfterFrame1 = ctx.getTotalGradientCount();
       expect(gradsAfterFrame1).toBeGreaterThan(0);
 
       // Subsequent 60 frames must not allocate any new gradients
       for (let tick = 2; tick <= 60; tick++) {
-        multiLayer.render(ctx, loc, 2600, 650, 1000, 625, tick * 2, 0, tick);
+        parallax.render(ctx, loc, 2600, 650, 1000, 625, tick * 2, 0, tick);
       }
       expect(ctx.getTotalGradientCount()).toBe(gradsAfterFrame1);
       expect(ctx.getSaveBalance()).toBe(0);

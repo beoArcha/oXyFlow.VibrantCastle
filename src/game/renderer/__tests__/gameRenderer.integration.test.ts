@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { GameRenderer, IRendererDependencies } from "../renderer";
 import { ProceduralBackdropCache } from "../proceduralBackdropCache";
-import { MultiLayerBackgroundSystem } from "../multiLayerBackgroundSystem";
+import { createDefaultParallaxSystem } from "@game/parallax/parallaxWiring";
 import { debugManager } from "@game/debug/debugManager";
 import { Player, Enemy, Entity, Projectile, Particle, PlayerId } from "@game/types";
 import { CameraState } from "@game/engine/cameraManager";
@@ -96,11 +96,14 @@ describe("GameRenderer Integration & Verification", () => {
       let fxRenderCalled = false;
 
       const deps: IRendererDependencies = {
-        parallaxRenderer: {
+        parallaxSystem: {
+          isSupported: () => true,
+          preload: () => {},
+          clearCaches: () => {},
           render: () => {
             parallaxRenderCalled = true;
           },
-        } as any,
+        },
         structureRenderer: {
           render: () => {
             structureRenderCalled = true;
@@ -362,8 +365,8 @@ describe("GameRenderer Integration & Verification", () => {
       }
     });
 
-    it("renders repeating dynamic tiers and fallback backdrop in MultiLayerBackgroundSystem", () => {
-      const mlSystem = new MultiLayerBackgroundSystem();
+    it("renders repeating dynamic tiers and fallback backdrop in ParallaxSystem", () => {
+      const parallax = createDefaultParallaxSystem();
       const ctx = createMockContext2D();
 
       const dummyImage: any = {
@@ -408,7 +411,7 @@ describe("GameRenderer Integration & Verification", () => {
 
       debugManager.state.showHitboxes = true;
 
-      mlSystem.render(
+      parallax.render(
         ctx,
         locationWithLayers,
         3000,
@@ -432,7 +435,7 @@ describe("GameRenderer Integration & Verification", () => {
         },
       } as any;
 
-      mlSystem.render(
+      parallax.render(
         ctx,
         emptyLocation,
         1000,
