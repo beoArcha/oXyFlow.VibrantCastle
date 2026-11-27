@@ -52,12 +52,14 @@ describe("CI & Distribution Scripts", () => {
         ["SF:src/a.ts", "FNDA:0,fnA", "DA:1,1", "DA:2,0", "DA:3,0", "DA:4,0", "end_of_record"].join("\n")
       );
       const summary = mergeCoverageRecords(records);
-      const result = evaluateCoverageGate(summary, {
-        minLinesPct: 50,
-        minFunctionsPct: 40,
-      });
+      const result = evaluateCoverageGate(
+        { unit: summary, integration: null, combined: summary },
+        { unitMin: 50, integrationMin: 40, combinedMin: 80 }
+      );
 
       expect(result.passed).toBe(false);
+      expect(result.unitPassed).toBe(false);
+      expect(result.combinedPassed).toBe(false);
       expect(result.failures.length).toBe(2);
     });
   });
@@ -120,6 +122,8 @@ describe("CI & Distribution Scripts", () => {
       const prYaml = readFileSync(join(ROOT_DIR, ".github/workflows/ci-pr.yml"), "utf8");
       expect(prYaml).toContain("pull_request:");
       expect(prYaml).toContain("cancel-in-progress: true");
+      expect(prYaml).toContain("test:integration:coverage");
+      expect(prYaml).toContain("coverage:gate");
 
       const mainYaml = readFileSync(join(ROOT_DIR, ".github/workflows/ci-main.yml"), "utf8");
       expect(mainYaml).toContain("coverage:gate");
