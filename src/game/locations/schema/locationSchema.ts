@@ -25,6 +25,44 @@ export type BackgroundLayerTier =
 
 export type BossZoneScope = "stage" | "world";
 
+export type LocationZoneKind = "boss" | "rest" | "secret" | "story";
+
+export interface LocationParallaxOverrideSchema {
+  readonly opacity?: number;
+  readonly tint?: string | null;
+  readonly depth?: number;
+  readonly speed?: readonly [number, number];
+}
+
+export interface LocationParallaxBoxSchema {
+  readonly width: number;
+  readonly height: number;
+}
+
+export interface LocationZoneSchema {
+  readonly id: string;
+  readonly kind: LocationZoneKind;
+  readonly scope?: BossZoneScope;
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
+  readonly bossEnemyId?: string;
+  readonly ambientColor?: string;
+  readonly effects?: readonly string[];
+  readonly featherPx?: number;
+  readonly labelKey?: string;
+  readonly defaultLabel?: string;
+}
+
+export interface LocationParallaxSchema {
+  readonly layers: readonly string[];
+  readonly overrides?: Readonly<Record<string, LocationParallaxOverrideSchema>>;
+  readonly effects?: readonly string[];
+  readonly zones?: readonly LocationZoneSchema[];
+  readonly box?: LocationParallaxBoxSchema;
+}
+
 export interface BossZoneSchema {
   id: string;
   scope: BossZoneScope;
@@ -311,7 +349,9 @@ export interface LocationJsonSchema {
     fogColor: string;
     musicIntensity: number;
   };
-  parallaxBackground: ParallaxBackgroundSchema;
+  parallax?: LocationParallaxSchema;
+  zones?: LocationZoneSchema[];
+  parallaxBackground?: ParallaxBackgroundSchema;
   bossZones?: BossZoneSchema[];
   dictionaries: LocationDictionariesSchema;
   layout: LocationLayoutSchema;

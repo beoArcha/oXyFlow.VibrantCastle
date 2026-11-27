@@ -1,4 +1,6 @@
 import { assetLoader } from "@game/engine/assetLoader";
+import { defaultParallaxRegistry } from "@game/parallax/registry";
+import type { IParallaxRegistry } from "@game/parallax/render/types";
 import { assetsLogger } from "../logger/gameLogger";
 import { LOCATION_REGISTRY } from "./registry";
 import type { LocationDefinition, LocationId } from "./types";
@@ -18,6 +20,7 @@ export interface ILocationAssetLoader {
 
 export interface LocationAssetLifecycleDeps {
   loader?: ILocationAssetLoader;
+  registry?: IParallaxRegistry;
   resolveLocation?: (id: LocationId) => LocationDefinition | undefined;
   /** Defers background work until the main thread is idle. */
   scheduleIdle?: (task: () => void) => void;
@@ -42,6 +45,7 @@ function defaultScheduleIdle(task: () => void): void {
 
 export class LocationAssetLifecycle {
   private readonly loader: ILocationAssetLoader;
+  private readonly registry: IParallaxRegistry;
   private readonly resolveLocation: (id: LocationId) => LocationDefinition | undefined;
   private readonly scheduleIdle: (task: () => void) => void;
   private currentId: LocationId | null = null;
@@ -52,6 +56,7 @@ export class LocationAssetLifecycle {
 
   constructor(deps: LocationAssetLifecycleDeps = {}) {
     this.loader = deps.loader ?? assetLoader;
+    this.registry = deps.registry ?? defaultParallaxRegistry;
     this.resolveLocation = deps.resolveLocation ?? ((id) => LOCATION_REGISTRY[id]);
     this.scheduleIdle = deps.scheduleIdle ?? defaultScheduleIdle;
   }
@@ -66,7 +71,8 @@ export class LocationAssetLifecycle {
     const urls: string[] = [];
     if (!layers) return urls;
     for (const layer of layers) {
-      if (layer.imageUrl && !urls.includes(layer.imageUrl)) urls.push(layer.imageUrl);
+      const url = layer.imageUrl ?? this.registry.resolve(layer.layerKey)?.url;
+      if (url && !urls.includes(url)) urls.push(url);
     }
     return urls;
   }

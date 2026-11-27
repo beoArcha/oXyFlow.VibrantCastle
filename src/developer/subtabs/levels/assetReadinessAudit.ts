@@ -2,8 +2,8 @@ import {
   ALL_LOCATIONS,
   ALL_CAMPAIGN_STAGES,
   WORLD_CAMPAIGN_REGISTRY,
-  PARALLAX_LAYER_CATALOG,
 } from "@game/locations";
+import { defaultParallaxRegistry } from "@game/parallax/registry";
 import { CANONICAL_ENEMY_REGISTRY } from "@game/locations/parser/locationParser";
 import type { AtlasFileMap } from "@game/engine/atlas/atlasTypes";
 import { discoverTilesetFiles } from "@game/engine/tiles/tilesetDiscovery";
@@ -198,9 +198,12 @@ export function buildAssetReadinessAudit(
 
   const playableLocations = ALL_LOCATIONS;
   const playableStages = ALL_CAMPAIGN_STAGES.filter((s) => s.status === "playable").length;
-  const worldFarLayers = PARALLAX_LAYER_CATALOG.filter((l) => l.namespace === "world");
-  const sharedLayers = PARALLAX_LAYER_CATALOG.filter((l) => l.namespace === "shared");
-  const bossLayers = PARALLAX_LAYER_CATALOG.filter((l) => l.namespace === "boss");
+  const parallaxCatalog = defaultParallaxRegistry
+    .entries()
+    .filter((l) => !l.borrowedFrom && !l.zoneKind);
+  const worldFarLayers = parallaxCatalog.filter((l) => l.slot === "far");
+  const sharedLayers = parallaxCatalog.filter((l) => l.slot.startsWith("var_"));
+  const bossLayers = parallaxCatalog.filter((l) => l.isFx);
   const totalBossZones = playableLocations.reduce(
     (acc, loc) => acc + (loc.bossZones?.length ?? 0),
     0
@@ -214,7 +217,7 @@ export function buildAssetReadinessAudit(
     playableWorlds: playableLocations.length,
     totalCampaignStages: ALL_CAMPAIGN_STAGES.length,
     playableStages,
-    registeredParallaxLayers: PARALLAX_LAYER_CATALOG.length,
+    registeredParallaxLayers: parallaxCatalog.length,
     bossParallaxLayers: bossLayers.length,
     totalEnemies: enemies.length,
     enemiesWithAtlas: enemiesWithAtlasList.length,

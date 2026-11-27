@@ -39,93 +39,26 @@
     "fogColor": "rgba(56, 189, 248, 0.12)",
     "musicIntensity": 0.75
   },
-  "parallaxBackground": {
-    "boxWidth": 4840,
-    "boxHeight": 1520,
-    "layers": [
-      {
-        "id": "bg_aether_far",
-        "name": "Celestial Sky",
-        "tier": "far",
-        "layerKey": "world:aether_sanctuary:far",
-        "type": "image",
-        "depth": 0.08,
-        "scrollSpeedX": 0.04,
-        "scrollSpeedY": 0.02,
-        "opaque": true,
-        "imageUrl": "world:aether_sanctuary:far"
-      },
-      {
-        "id": "bg_aether_mid_far",
-        "name": "Distant Aqueduct",
-        "tier": "mid_far",
-        "layerKey": "shared:mid_far:aether_aqueduct_a",
-        "type": "image",
-        "depth": 0.24,
-        "scrollSpeedX": 0.18,
-        "scrollSpeedY": 0.07,
-        "imageUrl": "shared:mid_far:aether_aqueduct_a"
-      },
-      {
-        "id": "bg_aether_mid",
-        "name": "Floating Islets",
-        "tier": "mid",
-        "layerKey": "shared:mid:aether_islets_a",
-        "type": "image",
-        "depth": 0.45,
-        "scrollSpeedX": 0.36,
-        "scrollSpeedY": 0.12,
-        "imageUrl": "shared:mid:aether_islets_a"
-      },
-      {
-        "id": "bg_aether_mid_close",
-        "name": "Astral Pillars",
-        "tier": "mid_close",
-        "layerKey": "shared:mid_close:astral_pillars_a",
-        "type": "image",
-        "depth": 0.65,
-        "scrollSpeedX": 0.56,
-        "scrollSpeedY": 0.18,
-        "imageUrl": "shared:mid_close:astral_pillars_a"
-      },
-      {
-        "id": "bg_aether_boss_stage",
-        "name": "Archon Astral Sigil",
-        "tier": "boss_stage",
-        "bossScope": "stage",
-        "layerKey": "boss:stage:arcane_sigil_arena",
-        "type": "image",
-        "depth": 0.72,
-        "scrollSpeedX": 0.44,
-        "scrollSpeedY": 0.14,
-        "opacity": 0.74,
-        "blendMode": "screen",
-        "imageUrl": "boss:stage:arcane_sigil_arena"
-      },
-      {
-        "id": "bg_aether_close",
-        "name": "Foreground Runes",
-        "tier": "close",
-        "layerKey": "shared:close:foreground_runes_a",
-        "type": "image",
-        "depth": 0.86,
-        "scrollSpeedX": 0.78,
-        "scrollSpeedY": 0.24,
-        "imageUrl": "shared:close:foreground_runes_a"
-      }
-    ]
+  "parallax": {
+    "layers": ["var_a", "var_b", "var_c", "var_d"],
+    "box": {
+      "width": 4840,
+      "height": 1520
+    }
   },
-  "bossZones": [
+  "zones": [
     {
       "id": "aether_archon_altar",
+      "kind": "boss",
       "scope": "stage",
       "x": 2000,
       "y": 160,
       "width": 740,
       "height": 540,
-      "layerKey": "boss:stage:arcane_sigil_arena",
       "bossEnemyId": "aether_archon_boss",
       "ambientColor": "rgba(56, 189, 248, 0.26)",
+      "effects": ["sigil"],
+      "featherPx": 260,
       "defaultLabel": "Archon's Celestial Altar"
     }
   ],

@@ -310,3 +310,35 @@ describe("Level logic: enemy and spawn rules", () => {
     expect(has(violations, "DUP_ID", "ground")).toBe(true);
   });
 });
+
+describe("Level logic: parallax combo and zone rules", () => {
+  it("should report PARALLAX_COMBO when parallax.layers references an unknown key or duplicate", () => {
+    // Arrange
+    const bp = aBlueprint();
+    bp.id = "courtyard";
+    bp.worldId = "courtyard";
+    bp.parallax = { layers: ["var_a", "var_a", "var_missing"] };
+
+    // Act
+    const violations = validateLocation(bp, SYNTHETIC_ENEMIES);
+
+    // Assert
+    expect(has(violations, "PARALLAX_COMBO", "var_a")).toBe(true);
+    expect(has(violations, "PARALLAX_COMBO", "courtyard:var_missing")).toBe(true);
+  });
+
+  it("should warn with PARALLAX_ZONE when a zone has no variant file for the closest layer", () => {
+    // Arrange
+    const bp = aBlueprint();
+    bp.id = "courtyard";
+    bp.worldId = "courtyard";
+    bp.parallax = { layers: ["var_a", "var_d"] };
+    bp.zones = [{ id: "arena_1", kind: "boss", scope: "stage", x: 100, y: 100, width: 300, height: 300 }];
+
+    // Act
+    const violations = validateLocation(bp, SYNTHETIC_ENEMIES);
+
+    // Assert
+    expect(violations.some((v) => v.severity === "warn" && v.code === "PARALLAX_ZONE" && v.subject === "arena_1")).toBe(true);
+  });
+});

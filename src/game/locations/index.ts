@@ -1,7 +1,6 @@
 export * from "./types";
 export * from "./registry";
 export * from "./worldCampaignRegistry";
-export * from "./parallaxLayerRegistry";
 export * from "./definitions/courtyard";
 export * from "./definitions/thorn_chasm";
 export * from "./definitions/ashen_catacombs";

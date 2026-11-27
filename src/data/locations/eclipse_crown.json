@@ -35,125 +35,40 @@
     "fogColor": "rgba(225, 29, 72, 0.16)",
     "musicIntensity": 1
   },
-  "parallaxBackground": {
-    "boxWidth": 5240,
-    "boxHeight": 1580,
-    "layers": [
-      {
-        "id": "bg_eclipse_far",
-        "name": "Solar Eclipse Horizon",
-        "tier": "far",
-        "layerKey": "world:eclipse_crown:far",
-        "type": "image",
-        "depth": 0.08,
-        "scrollSpeedX": 0.04,
-        "scrollSpeedY": 0.02,
-        "opaque": true,
-        "imageUrl": "world:eclipse_crown:far"
-      },
-      {
-        "id": "bg_eclipse_mid_far",
-        "name": "Outer Citadel Walls",
-        "tier": "mid_far",
-        "layerKey": "shared:mid_far:bastion_walls_a",
-        "type": "image",
-        "depth": 0.24,
-        "scrollSpeedX": 0.18,
-        "scrollSpeedY": 0.07,
-        "opacity": 0.72,
-        "imageUrl": "shared:mid_far:bastion_walls_a"
-      },
-      {
-        "id": "bg_eclipse_mid",
-        "name": "Obsidian Rune Spires",
-        "tier": "mid",
-        "layerKey": "shared:mid:obsidian_spires_a",
-        "type": "image",
-        "depth": 0.45,
-        "scrollSpeedX": 0.36,
-        "scrollSpeedY": 0.12,
-        "opacity": 0.58,
-        "blendMode": "screen",
-        "mirrorTile": true,
-        "imageUrl": "shared:mid:obsidian_spires_a"
-      },
-      {
-        "id": "bg_eclipse_boss_world",
-        "name": "Eclipse Monarch Throne",
-        "tier": "boss_world",
-        "bossScope": "world",
-        "layerKey": "boss:world:eclipse_throne_colossus",
-        "type": "image",
-        "depth": 0.56,
-        "scrollSpeedX": 0.24,
-        "scrollSpeedY": 0.08,
-        "opacity": 0.88,
-        "blendMode": "screen",
-        "imageUrl": "boss:world:eclipse_throne_colossus"
-      },
-      {
-        "id": "bg_eclipse_mid_close",
-        "name": "Astral Monoliths",
-        "tier": "mid_close",
-        "layerKey": "shared:mid_close:astral_pillars_a",
-        "type": "image",
-        "depth": 0.68,
-        "scrollSpeedX": 0.56,
-        "scrollSpeedY": 0.18,
-        "opacity": 0.82,
-        "imageUrl": "shared:mid_close:astral_pillars_a"
-      },
-      {
-        "id": "bg_eclipse_boss_stage",
-        "name": "Vanguard Seal Altar",
-        "tier": "boss_stage",
-        "bossScope": "stage",
-        "layerKey": "boss:stage:arcane_sigil_arena",
-        "type": "image",
-        "depth": 0.74,
-        "scrollSpeedX": 0.44,
-        "scrollSpeedY": 0.14,
-        "opacity": 0.72,
-        "blendMode": "screen",
-        "imageUrl": "boss:stage:arcane_sigil_arena"
-      },
-      {
-        "id": "bg_eclipse_close",
-        "name": "Foreground Obsidian Towers",
-        "tier": "close",
-        "layerKey": "shared:close:foreground_towers_a",
-        "type": "image",
-        "depth": 0.88,
-        "scrollSpeedX": 0.8,
-        "scrollSpeedY": 0.24,
-        "opacity": 0.9,
-        "imageUrl": "shared:close:foreground_towers_a"
-      }
-    ]
+  "parallax": {
+    "layers": ["var_a", "var_b", "var_c", "var_d"],
+    "box": {
+      "width": 5240,
+      "height": 1580
+    }
   },
-  "bossZones": [
+  "zones": [
     {
       "id": "eclipse_vanguard_sanctum",
+      "kind": "boss",
       "scope": "stage",
       "x": 1160,
       "y": 240,
       "width": 620,
       "height": 540,
-      "layerKey": "boss:stage:arcane_sigil_arena",
       "bossEnemyId": "eclipse_vanguard_knight",
       "ambientColor": "rgba(245, 158, 11, 0.24)",
+      "effects": ["sigil"],
+      "featherPx": 260,
       "defaultLabel": "Vanguard Sanctum (Level Boss)"
     },
     {
       "id": "eclipse_monarch_throne",
+      "kind": "boss",
       "scope": "world",
       "x": 2420,
       "y": 140,
       "width": 1020,
       "height": 680,
-      "layerKey": "boss:world:eclipse_throne_colossus",
       "bossEnemyId": "eclipse_monarch_boss",
       "ambientColor": "rgba(225, 29, 72, 0.34)",
+      "effects": ["throne"],
+      "featherPx": 260,
       "defaultLabel": "Throne of the Eclipse (World Boss)"
     }
   ],
