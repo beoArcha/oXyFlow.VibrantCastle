@@ -16,7 +16,7 @@ Updated: 2026-11-27. Source: the regression audit of 2784276..c4758f3 against 81
 **Rules for every task:**
 - One small PR per card.
 - The orchestrator reviews and merges.
-- Never write NES, SNES or Nintendo in the repo.
+- No console brand or trademark names anywhere in the repo (enforced by the trademark-free arch test).
 - Tiers are `hi8bit` / `hi16bit` / high.
 - Commit trailer as in the repo convention.
 - Only the 6 E2E dist smoke tests may fail locally (they need `build:pages`).
