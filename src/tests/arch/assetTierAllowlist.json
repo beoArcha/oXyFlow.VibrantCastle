@@ -1,0 +1,128 @@
+{
+  "enemies/aether_archon": [
+    "high"
+  ],
+  "enemies/aether_sentinel": [
+    "high"
+  ],
+  "enemies/aether_wisp": [
+    "high"
+  ],
+  "enemies/bastion_sentinel_boss": [
+    "hi8bit",
+    "high"
+  ],
+  "enemies/chasm_crawler": [
+    "high"
+  ],
+  "enemies/chasm_gargoyle": [
+    "high"
+  ],
+  "enemies/chrono_hound": [
+    "high"
+  ],
+  "enemies/clockwork_automaton": [
+    "high"
+  ],
+  "enemies/clockwork_owl_gargoyle": [
+    "hi8bit",
+    "hi16bit"
+  ],
+  "enemies/court_sentinel": [
+    "high"
+  ],
+  "enemies/gear_mite": [
+    "high"
+  ],
+  "enemies/lantern_warden": [
+    "high"
+  ],
+  "enemies/shadow_knight": [
+    "hi8bit",
+    "high"
+  ],
+  "enemies/thorn_creeper": [
+    "high"
+  ],
+  "enemies/training_dummy": [
+    "hi8bit",
+    "hi16bit"
+  ],
+  "structures/aether_gate": [
+    "hi8bit",
+    "hi16bit"
+  ],
+  "structures/chrono_lever": [
+    "hi8bit",
+    "hi16bit"
+  ],
+  "structures/grand_portcullis": [
+    "hi8bit",
+    "hi16bit"
+  ],
+  "structures/hazard_thorns": [
+    "hi8bit",
+    "hi16bit"
+  ],
+  "props/aether_crystal_cluster": [
+    "high"
+  ],
+  "props/candelabra": [
+    "high"
+  ],
+  "props/ember_skull_lantern": [
+    "high"
+  ],
+  "props/garden_lamp_post": [
+    "high"
+  ],
+  "props/hanging_lantern": [
+    "hi8bit",
+    "high"
+  ],
+  "props/iron_chain": [
+    "high"
+  ],
+  "props/leaf_pile": [
+    "high"
+  ],
+  "props/tattered_banner": [
+    "high"
+  ],
+  "props/thorn_bramble": [
+    "high"
+  ],
+  "props/wall_gear": [
+    "high"
+  ],
+  "props/wall_torch": [
+    "high"
+  ],
+  "props/war_brazier": [
+    "high"
+  ],
+  "tiles/bastion_stone": [
+    "high"
+  ],
+  "tiles/chasm_ledge": [
+    "high"
+  ],
+  "tiles/chasm_rock": [
+    "high"
+  ],
+  "tiles/clocktower_brick": [
+    "high"
+  ],
+  "tiles/courtyard_marble": [
+    "high"
+  ],
+  "tiles/courtyard_stone": [
+    "high"
+  ],
+  "tiles/courtyard_wood": [
+    "high"
+  ],
+  "tiles/sanctuary_crystal": [
+    "high"
+  ]
+}
