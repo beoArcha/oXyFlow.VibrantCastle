@@ -22,9 +22,10 @@ Phase 5 opens when the [phase 4](./phase-4-0.3.x.md) gate (VC-090) passes and th
 - **menu:** fixes;
 - **RPG:** a better character RPG system;
 - **loot:** random lantern drops (details later), money, monster drops;
-- **rest zone.**
+- **rest zone;**
+- **repo, CI and site:** GitHub workflow optimisation and analysis, Dependabot, fixes to the github.io site, Google indexing, a security review, and GitHub repo quality.
 
-The cards are in sections B2 to H below.
+The cards are in sections B2 to I below.
 
 **Exit criteria:**
 - 8 worlds each have a contract-compliant map 1;
@@ -300,3 +301,58 @@ The cards are in sections B2 to H below.
 - **Phase:** 5 · **Type:** feat · **Class:** tiny · **Status:** todo
 - **Goal:** restore the `hi8bit` / `hi16bit` / `high` tier switcher for hero sheets in the Atlas Slicer.
 - **How (AI):** restore `AtlasTierToggle` and `heroPixelTiers.ts` from `8121dad` (`src/developer/subtabs/atlas/`) and wire it into `AtlasSlicerSubtab.tsx` / `AtlasPresetPicker.tsx`.
+
+---
+
+## I. Repo, CI and site
+
+### VC-181 · GitHub workflow analysis and optimisation
+- **Phase:** 5 · **Type:** ci · **Class:** medium · **Status:** todo
+- **Goal:** faster and cheaper CI with the same safety: find the changes the workflows need and apply them.
+- **How (AI):**
+  1. Write `docs/design/ci-review.md`: the job graph, the duration per job from recent runs (`gh run list` / `gh run view --json`), duplicate work across ci-pr, ci-main, deploy-pages and release-promote, cache hit rates, concurrency groups, path filters, and the required checks against branch protection.
+  2. Apply the safe wins one small PR at a time: dependency and build caching, shared build artifacts, `concurrency` with cancel-in-progress on PRs, path filters for docs-only changes (keeping the required checks satisfied), and pinned action versions by SHA.
+  3. Report the before/after durations.
+
+### VC-182 · Dependabot
+- **Phase:** 5 · **Type:** ci · **Class:** small · **Status:** todo
+- **Goal:** automated, grouped dependency and GitHub Actions updates.
+- **How (AI):**
+  1. Add `.github/dependabot.yml` for `bun` (or the npm ecosystem reading `package.json` / `bun.lock`, whichever Dependabot supports for Bun) and `github-actions`. Run weekly, group minor and patch updates, limit open PRs, and add labels.
+  2. Document how update PRs go through the normal review and auto-merge rules.
+
+### VC-183 · github.io site fixes
+- **Phase:** 5 · **Type:** fix · **Class:** small · **Status:** todo
+- **Goal:** the Pages site (the wiki plus the "Graj" game frame) works and looks right on desktop and mobile.
+- **How (AI):**
+  1. Run a headless pass over every wiki page PL/EN and the game page, using `bun run preview:pages`, then the live site.
+  2. Fix broken links, assets, layout, language switching and the game frame sizing.
+  3. Add a link-check script to `test:scripts`.
+
+### VC-184 · Google indexing for the site
+- **Phase:** 5 · **Type:** feat · **Class:** small · **Status:** todo (Search Console verification needs the owner)
+- **Goal:** the site is indexable and shows well in search results.
+- **How (AI):**
+  1. Generate a `sitemap.xml` and `robots.txt` in `build:pages`.
+  2. Add per-page `<title>`, meta description, canonical, `hreflang` PL/EN, Open Graph tags and a basic JSON-LD (`VideoGame` / `WebSite`).
+  3. Add a verification meta tag or file placeholder.
+  4. The owner adds the property in Google Search Console and submits the sitemap.
+  5. Add a script test that checks the sitemap and tags exist.
+
+### VC-185 · Security review of the repo
+- **Phase:** 5 · **Type:** review · **Class:** medium · **Status:** todo
+- **Goal:** a written security review with the fixes applied.
+- **How (AI):**
+  1. Enable or confirm CodeQL code scanning, secret scanning and push protection, and Dependabot alerts.
+  2. Audit the workflows: least-privilege `permissions`, no `pull_request_target` misuse, pinned actions, and safe use of `GITHUB_TOKEN` in release-promote.
+  3. Review branch protection, the dependency audit (`bun audit` or an equivalent) and the site headers.
+  4. Write `docs/design/security-review.md` with findings and severity, then fix them in small PRs.
+
+### VC-186 · GitHub repo quality
+- **Phase:** 5 · **Type:** chore · **Class:** small · **Status:** todo
+- **Goal:** the repo page is clear and well kept.
+- **How (AI):**
+  1. Write a README with a description, screenshots, the play link and build steps (Bun).
+  2. Add a license check, `CONTRIBUTING.md`, `SECURITY.md`, issue and PR templates, a `CODEOWNERS`, topics and description, and labels.
+  3. Make the release notes template match VC-061.
+  4. Clean up stale branches and worktrees, and keep only gate releases.
