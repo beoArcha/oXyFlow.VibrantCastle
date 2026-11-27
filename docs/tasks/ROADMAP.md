@@ -71,7 +71,7 @@ Cards and the "phase 4 so far" summary: [phase-4-0.3.x.md](./phase-4-0.3.x.md).
 | [Developer tools](./phase-4-0.3.x.md#h-developer-tools-and-review) | VC-070, VC-075, VC-076, VC-081 | VC-071 (#87), VC-072 (#82), VC-073 (#95), VC-074 (#96) |
 | [Parallax series](./phase-4-0.3.x.md#p-parallax-series-owner-request-2026-11-27) | VC-101 (101c), VC-103, VC-104, VC-105 (105b), VC-108, VC-109 | VC-100 (#108), VC-101a (#109), VC-101b (#114), VC-102 (#110, #116), VC-105a (#113), VC-106 (#111), VC-107 (#112) |
 | [Asset animation fixes](./phase-4-0.3.x.md#q-asset-animation-fixes) | VC-120, VC-121, VC-122, VC-123, VC-124 | |
-| [Quality gate](./phase-4-0.3.x.md#z-phase-gate) | VC-089, VC-090 | |
+| [Quality gate](./phase-4-0.3.x.md#z-phase-gate) | VC-090 | VC-089 |
 
 ## Phase 5: worlds and characters (0.4.x, next)
 

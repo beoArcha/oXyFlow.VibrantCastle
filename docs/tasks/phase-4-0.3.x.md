@@ -2,7 +2,7 @@
 
 Updated: 2026-11-28. Part of the [task folder](./README.md). Phases, gates and the card format are described in the [README](./README.md) and the [roadmap](./ROADMAP.md).
 
-**Remaining:** 21 cards (review: VC-058, VC-082; in-progress: VC-062, VC-076, VC-101, VC-104, VC-105, VC-121; ready: VC-108; todo: VC-061, VC-070, VC-075, VC-081, VC-089, VC-120, VC-122, VC-123, VC-124; blocked: VC-090, VC-103, VC-109).
+**Remaining:** 20 cards (review: VC-058, VC-082; in-progress: VC-062, VC-076, VC-101, VC-104, VC-105, VC-121; ready: VC-108; todo: VC-061, VC-070, VC-075, VC-081, VC-120, VC-122, VC-123, VC-124; blocked: VC-090, VC-103, VC-109).
 
 ## About this phase
 
@@ -47,10 +47,10 @@ The result: red tests and CI, levers that no longer opened gates, broken hero an
 
 | Status | Cards |
 | :--- | :--- |
-| done | VC-001, VC-002, VC-003, VC-004, VC-005, VC-006, VC-007, VC-010, VC-012, VC-020, VC-030, VC-035, VC-040, VC-041, VC-042, VC-043, VC-044, VC-045, VC-046, VC-047, VC-050, VC-051, VC-052, VC-053, VC-054, VC-055, VC-056, VC-057, VC-058 (#120), VC-060, VC-061 (#129), VC-063, VC-071, VC-072, VC-073, VC-070 (#132), VC-074, VC-075 (#126), VC-081 (#131), VC-082 (#102, #128), VC-083, VC-084, VC-100, VC-101 (#109, #114, #123), VC-102, VC-103 (#130), VC-104 (#125), VC-106, VC-107, VC-121 (#124), VC-124 (#127) |
+| done | VC-001, VC-002, VC-003, VC-004, VC-005, VC-006, VC-007, VC-010, VC-012, VC-020, VC-030, VC-035, VC-040, VC-041, VC-042, VC-043, VC-044, VC-045, VC-046, VC-047, VC-050, VC-051, VC-052, VC-053, VC-054, VC-055, VC-056, VC-057, VC-058 (#120), VC-060, VC-061 (#129), VC-063, VC-071, VC-072, VC-073, VC-070 (#132), VC-074, VC-075 (#126), VC-081 (#131), VC-082 (#102, #128), VC-083, VC-084, VC-089, VC-100, VC-101 (#109, #114, #123), VC-102, VC-103 (#130), VC-104 (#125), VC-106, VC-107, VC-121 (#124), VC-124 (#127) |
 | in-progress | VC-062 (parts 1-3 #86, #97, #100), VC-076, VC-105 (105a #113, 105b todo), VC-120 |
 | ready | VC-108 |
-| todo | VC-122, VC-123, VC-089 (last card before the gate) |
+| todo | VC-122, VC-123 |
 | blocked | VC-090 (the gate), VC-109 (VC-105) |
 
 ---
@@ -451,8 +451,9 @@ Owner request (2026-11-27), screenshot evidence: in clocktower `clockwork_owl_ga
 ## Z. Phase gate
 
 ### VC-089 · Final MCP play-test before the gate
-- **Phase:** 4 · **Type:** test · **Class:** medium · **Status:** todo
+- **Phase:** 4 · **Type:** test · **Class:** medium · **Status:** done
 - **Goal:** verify the built game and the dev tools end-to-end in a browser before VC-090.
+- **Description:** report written in [docs/design/final-playtest-phase4.md](../design/final-playtest-phase4.md) (24/24 checks pass, 0 console errors, 0 blockers); non-blocker follow-up cards VC-190..VC-194 opened in [phase-5-0.4.x.md](./phase-5-0.4.x.md).
 - **How (AI):**
   1. Run the built game in a browser via MCP / headless Playwright and play map 1 of all 8 worlds.
   2. Test the game dialog (every tab, keyboard and pad navigation, confirmations, settings incl. parallax quality, inventory).
