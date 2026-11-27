@@ -5,6 +5,9 @@ import {
   PARALLAX_LAYER_CATALOG,
 } from "@game/locations";
 import { CANONICAL_ENEMY_REGISTRY } from "@game/locations/parser/locationParser";
+import type { AtlasFileMap } from "@game/engine/atlas/atlasTypes";
+import { discoverTilesetFiles } from "@game/engine/tiles/tilesetDiscovery";
+import { discoverPropFiles } from "@game/engine/props/propDiscovery";
 
 export type AuditCategory = "parallax" | "enemies" | "tiles_decor" | "structures" | "campaign";
 export type AuditStatus = "ready" | "partial" | "missing";
@@ -35,6 +38,12 @@ export interface AssetAuditSummary {
   readonly enemiesMissingAtlas: readonly string[];
   readonly bossEnemiesMissingAtlas: readonly string[];
   readonly totalBossZones: number;
+}
+
+/** Discovered tileset and prop file maps; injected so the audit stays pure and testable. */
+export interface AssetAuditFileMaps {
+  readonly tilesetFiles: AtlasFileMap;
+  readonly propFiles: AtlasFileMap;
 }
 
 export interface AssetAuditReport {
@@ -73,11 +82,68 @@ const RECOMMENDED_DECOR_PROPS = [
   "eclipse_monolith",
 ] as const;
 
+export interface AssetSetCounts {
+  /** Sets with hi8bit sheet, hi16bit sheet and meta all present. */
+  readonly complete: number;
+  /** Sets with at least one, but not all, of those files. */
+  readonly partial: number;
+}
+
+/**
+ * Groups discovered files by containing folder (one folder = one asset set) and counts how many
+ * sets are complete (both hi8bit and hi16bit sheets plus a meta) or only partially present.
+ */
+export function countAssetSets(files: AtlasFileMap): AssetSetCounts {
+  const sets = new Map<string, { hi8: boolean; hi16: boolean; meta: boolean }>();
+  const setFor = (path: string) => {
+    const segments = path.replace(/\\/g, "/").split("/");
+    const folder = segments.length >= 2 ? segments[segments.length - 2] : path;
+    let set = sets.get(folder);
+    if (!set) {
+      set = { hi8: false, hi16: false, meta: false };
+      sets.set(folder, set);
+    }
+    return set;
+  };
+  for (const path of Object.keys(files.images)) {
+    const set = setFor(path);
+    if (/_hi8bit\./.test(path)) set.hi8 = true;
+    if (/_hi16bit\./.test(path)) set.hi16 = true;
+  }
+  for (const path of Object.keys(files.metas)) {
+    setFor(path).meta = true;
+  }
+  let complete = 0;
+  let partial = 0;
+  for (const set of sets.values()) {
+    if (set.hi8 && set.hi16 && set.meta) complete += 1;
+    else if (set.hi8 || set.hi16 || set.meta) partial += 1;
+  }
+  return { complete, partial };
+}
+
+/** ready when `target` sets are complete, partial when any file exists, otherwise missing. */
+export function deriveAssetStatus(counts: AssetSetCounts, target: number): AuditStatus {
+  if (counts.complete >= target) return "ready";
+  if (counts.complete > 0 || counts.partial > 0) return "partial";
+  return "missing";
+}
+
+/** Real discovery of tileset and prop files (Vite glob in the app, filesystem under Bun). */
+export function discoverAssetAuditFiles(): AssetAuditFileMaps {
+  return { tilesetFiles: discoverTilesetFiles(), propFiles: discoverPropFiles() };
+}
+
 /**
  * Pure, live audit of all game world, parallax, enemy, tileset, decor, and structure assets.
  * Computes exact numbers from registered runtime catalogs (zero fabricated metrics).
+ * Tileset and prop rows are derived from the injected file maps (default: real discovery).
  */
-export function buildAssetReadinessAudit(): AssetAuditReport {
+export function buildAssetReadinessAudit(
+  files: AssetAuditFileMaps = discoverAssetAuditFiles()
+): AssetAuditReport {
+  const tilesetCounts = countAssetSets(files.tilesetFiles);
+  const propCounts = countAssetSets(files.propFiles);
   const enemies = Object.values(CANONICAL_ENEMY_REGISTRY);
   const enemiesWithAtlasList = enemies.filter((e) => Boolean(e.atlas?.presetId));
   const uniqueAtlasSet = new Set(
@@ -181,24 +247,28 @@ export function buildAssetReadinessAudit(): AssetAuditReport {
     {
       id: "audit_platform_tilesets",
       category: "tiles_decor",
-      status: "missing",
+      status: deriveAssetStatus(tilesetCounts, RECOMMENDED_TILESETS.length),
       priority: "critical",
-      titlePl: "Brak zestawów kafelków platform (src/assets/tiles)",
-      titleEn: "Missing Platform Tilesets (src/assets/tiles)",
-      detailPl: `Schemat obsługuje pole tileset, lecz brakuje plików tekstur. Zalecane 4 zestawy startowe: ${RECOMMENDED_TILESETS.join(", ")}.`,
-      detailEn: `Schema supports tileset field, but no tile textures exist yet. Recommended starter sets: ${RECOMMENDED_TILESETS.join(", ")}.`,
-      countLabel: `0/${RECOMMENDED_TILESETS.length} zestawów`,
+      titlePl: "Zestawy kafelków platform (src/assets/tiles)",
+      titleEn: "Platform Tilesets (src/assets/tiles)",
+      detailPl: `Wykryto ${tilesetCounts.complete} kompletnych zestawów kafelków (hi8bit + hi16bit + meta), ${tilesetCounts.partial} niepełnych. Zalecane 4 zestawy startowe: ${RECOMMENDED_TILESETS.join(", ")}.`,
+      detailEn: `Found ${tilesetCounts.complete} complete tileset sets (hi8bit + hi16bit + meta), ${tilesetCounts.partial} incomplete. Recommended starter sets: ${RECOMMENDED_TILESETS.join(", ")}.`,
+      countLabel: `${tilesetCounts.complete}/${RECOMMENDED_TILESETS.length} zestawów`,
     },
     {
       id: "audit_decor_props",
       category: "tiles_decor",
-      status: locationsWithDecor > 0 ? "partial" : "missing",
+      // Files alone are not enough: without placed decor in any location the row stays at most partial.
+      status:
+        locationsWithDecor === 0 && deriveAssetStatus(propCounts, RECOMMENDED_DECOR_PROPS.length) === "ready"
+          ? "partial"
+          : deriveAssetStatus(propCounts, RECOMMENDED_DECOR_PROPS.length),
       priority: "high",
-      titlePl: "Brak dekoracji środowiskowych (layout.decor)",
-      titleEn: "Missing Environmental Decor Props (layout.decor)",
-      detailPl: `Żadna lokacja nie ma jeszcze umieszczonych rekwizytów tła. Zalecane pierwsze rekwizyty: ${RECOMMENDED_DECOR_PROPS.join(", ")}.`,
-      detailEn: `No locations have placed decor props yet. Recommended first props: ${RECOMMENDED_DECOR_PROPS.join(", ")}.`,
-      countLabel: `${locationsWithDecor}/${playableLocations.length} map`,
+      titlePl: "Rekwizyty środowiskowe (src/assets/props, layout.decor)",
+      titleEn: "Environmental Decor Props (src/assets/props, layout.decor)",
+      detailPl: `Wykryto ${propCounts.complete} kompletnych rekwizytów, ${propCounts.partial} niepełnych. ${locationsWithDecor > 0 ? `Rekwizyty umieszczono w ${locationsWithDecor} lokacjach.` : "Żadna lokacja nie ma jeszcze umieszczonych rekwizytów tła."} Zalecane pierwsze rekwizyty: ${RECOMMENDED_DECOR_PROPS.join(", ")}.`,
+      detailEn: `Found ${propCounts.complete} complete props, ${propCounts.partial} incomplete. ${locationsWithDecor > 0 ? `Props placed in ${locationsWithDecor} locations.` : "No locations have placed decor props yet."} Recommended first props: ${RECOMMENDED_DECOR_PROPS.join(", ")}.`,
+      countLabel: `${propCounts.complete}/${RECOMMENDED_DECOR_PROPS.length} rekw. · ${locationsWithDecor}/${playableLocations.length} map`,
     },
     {
       id: "audit_interactive_structures",
