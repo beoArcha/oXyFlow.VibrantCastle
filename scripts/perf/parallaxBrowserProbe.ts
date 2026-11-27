@@ -146,6 +146,7 @@ export interface InPagePerfSnapshot {
 
 export interface InPagePerfProbeHandle {
   hasFirstParallaxFrame(): boolean;
+  hasRenderedCanvasFrame(): boolean;
   startSampling(): void;
   stopSampling(): void;
   getSnapshot(): InPagePerfSnapshot;
@@ -169,6 +170,7 @@ export function buildInPagePerfInitScript(): string {
 
     const trackedImages = new Set();
     const trackedBitmaps = new Set();
+    const parallaxBitmaps = new WeakSet();
 
     const NativeImage = window.Image;
     function TrackedImage(width, height) {
@@ -185,23 +187,40 @@ export function buildInPagePerfInitScript(): string {
       window.createImageBitmap = async function (...args) {
         const bitmap = await origCreateBitmap(...args);
         const src = args[0] && typeof args[0].src === "string" ? args[0].src : "";
-        trackedBitmaps.add({ bitmap, isParallax: isParallaxUrl(src) });
+        const isPx = isParallaxUrl(src);
+        trackedBitmaps.add({ bitmap, isParallax: isPx });
+        if (isPx) parallaxBitmaps.add(bitmap);
         return bitmap;
       };
     }
 
     let firstParallaxFrameMs = null;
+    let firstCanvasFrameMs = null;
+    const origFillRect = CanvasRenderingContext2D.prototype.fillRect;
+    CanvasRenderingContext2D.prototype.fillRect = function (x, y, w, h) {
+      if (firstCanvasFrameMs === null && this.canvas && this.canvas.id === "game-viewport-canvas") {
+        firstCanvasFrameMs = performance.now();
+        CanvasRenderingContext2D.prototype.fillRect = origFillRect;
+      }
+      return origFillRect.call(this, x, y, w, h);
+    };
+
     const origDrawImage = CanvasRenderingContext2D.prototype.drawImage;
     CanvasRenderingContext2D.prototype.drawImage = function (source, ...rest) {
-      if (firstParallaxFrameMs === null && this.canvas && this.canvas.id === "game-viewport-canvas") {
-        const isHtmlImg = typeof HTMLImageElement !== "undefined" && source instanceof HTMLImageElement;
-        const isBitmap = typeof ImageBitmap !== "undefined" && source instanceof ImageBitmap;
-        if (isHtmlImg && source.complete && source.naturalWidth > 0 && isParallaxUrl(source.currentSrc || source.src)) {
-          firstParallaxFrameMs = performance.now();
-          CanvasRenderingContext2D.prototype.drawImage = origDrawImage;
-        } else if (isBitmap && source.width >= 512 && source.height >= 256) {
-          firstParallaxFrameMs = performance.now();
-          CanvasRenderingContext2D.prototype.drawImage = origDrawImage;
+      if (this.canvas && this.canvas.id === "game-viewport-canvas") {
+        if (firstCanvasFrameMs === null) {
+          firstCanvasFrameMs = performance.now();
+        }
+        if (firstParallaxFrameMs === null) {
+          const isHtmlImg = typeof HTMLImageElement !== "undefined" && source instanceof HTMLImageElement;
+          const isBitmap = typeof ImageBitmap !== "undefined" && source instanceof ImageBitmap;
+          if (isHtmlImg && source.complete && source.naturalWidth > 0 && isParallaxUrl(source.currentSrc || source.src)) {
+            firstParallaxFrameMs = performance.now();
+            CanvasRenderingContext2D.prototype.drawImage = origDrawImage;
+          } else if (isBitmap && (parallaxBitmaps.has(source) || (source.width >= 512 && source.height >= 256))) {
+            firstParallaxFrameMs = performance.now();
+            CanvasRenderingContext2D.prototype.drawImage = origDrawImage;
+          }
         }
       }
       return origDrawImage.call(this, source, ...rest);
@@ -285,6 +304,9 @@ export function buildInPagePerfInitScript(): string {
     window.__vcParallaxPerf = {
       hasFirstParallaxFrame() {
         return firstParallaxFrameMs !== null;
+      },
+      hasRenderedCanvasFrame() {
+        return firstCanvasFrameMs !== null;
       },
       startSampling() {
         workDurationsMs = [];

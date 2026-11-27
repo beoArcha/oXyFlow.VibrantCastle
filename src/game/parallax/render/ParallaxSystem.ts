@@ -4,6 +4,8 @@ import type {
   ParallaxLayerSchema,
 } from "@game/locations/schema/locationSchema";
 import {
+  AtmosphericSectorRenderer,
+  type AtmosphereSurfaceFactory,
   type ISectorAtmosphericRenderer,
   defaultAtmosphericSectorRenderer,
 } from "@game/renderer/background/atmospheric/atmosphericSectorRenderer";
@@ -22,6 +24,7 @@ import {
   type ParallaxQueuePriority,
 } from "../loading";
 import type { ResolvedParallaxQuality } from "@game/types";
+import { getParallaxQualityCapabilities } from "../parallaxQualityHeuristic";
 import type { ParallaxQualityTier, ParallaxZoneKind } from "../meta";
 import {
   buildZoneVariantKey,
@@ -95,6 +98,7 @@ export interface ParallaxSystemDeps {
   loader?: IParallaxLoader;
   flags?: IParallaxFlags;
   atmosphericRenderer?: ISectorAtmosphericRenderer;
+  atmosphereSurfaceFactory?: AtmosphereSurfaceFactory;
   placeholderRenderer?: IPlaceholderRenderer;
   loadQueue?: IParallaxFadeQueue;
   surfaceFactory?: ParallaxSurfaceFactory;
@@ -139,6 +143,13 @@ function defaultNow(): number {
 
 function resolveWorldId(location: LocationDefinition): string {
   return location.worldId || location.id;
+}
+
+function isEffectLayer(layer: ParallaxLayerSchema): boolean {
+  const tier = resolveBackgroundTier(layer);
+  if (tier === "boss_stage" || tier === "boss_world") return true;
+  const key = layer.layerKey ?? "";
+  return key.includes(":fx_") || layer.id.includes("fx_");
 }
 
 function isDrawableReady(img: ParallaxDrawableTexture | null): boolean {
@@ -214,7 +225,11 @@ export class ParallaxSystem implements IParallaxSystem {
     this.registry = deps.registry ?? DEFAULT_REGISTRY;
     this.loader = deps.loader ?? DEFAULT_LOADER;
     this.flags = deps.flags ?? DEFAULT_FLAGS;
-    this.atmosphericRenderer = deps.atmosphericRenderer ?? defaultAtmosphericSectorRenderer;
+    this.atmosphericRenderer =
+      deps.atmosphericRenderer ??
+      (deps.atmosphereSurfaceFactory
+        ? new AtmosphericSectorRenderer(deps.atmosphereSurfaceFactory)
+        : defaultAtmosphericSectorRenderer);
     this.placeholderRenderer = deps.placeholderRenderer ?? defaultPlaceholderRenderer;
     this.loadQueue = deps.loadQueue ?? defaultParallaxLoadQueue;
     this.useExplicitLoadQueue = Boolean(deps.loadQueue);
@@ -317,7 +332,9 @@ export class ParallaxSystem implements IParallaxSystem {
 
   public preload(layers?: readonly ParallaxLayerSchema[]): void {
     if (!layers || this.parallaxQuality === "off") return;
-    if (this.parallaxQuality === "simplified") {
+    const caps = getParallaxQualityCapabilities(this.parallaxQuality);
+    if (!caps.renderImages) return;
+    if (caps.farOnly) {
       const farIndex = this.findFarLayerIndex(layers);
       if (farIndex < 0) return;
       const farLayer = layers[farIndex];
@@ -329,10 +346,14 @@ export class ParallaxSystem implements IParallaxSystem {
       return;
     }
     if (this.useExplicitLoadQueue && this.loadQueue.enqueue) {
-      this.enqueueLayersProgressive(layers);
+      for (let i = 0; i < layers.length; i++) {
+        if (!caps.renderFx && isEffectLayer(layers[i])) continue;
+        this.enqueueLayerProgressive(layers[i], i);
+      }
       return;
     }
     for (let i = 0; i < layers.length; i++) {
+      if (!caps.renderFx && isEffectLayer(layers[i])) continue;
       this.preloadLayerViaLoader(layers[i]);
     }
   }
@@ -367,7 +388,8 @@ export class ParallaxSystem implements IParallaxSystem {
     const pb = location.parallaxBackground;
     const worldId = resolveWorldId(location);
     const backdropLocation = this.resolveMetaPlaceholderLocation(location, worldId);
-    if (this.parallaxQuality === "off") {
+    const caps = getParallaxQualityCapabilities(this.parallaxQuality);
+    if (!caps.renderImages) {
       this.renderPlaceholderBackdrop(ctx, backdropLocation, viewportWidth, viewportHeight, false);
       return;
     }
@@ -386,7 +408,7 @@ export class ParallaxSystem implements IParallaxSystem {
     const progressX = Math.max(0, Math.min(1, cameraX / maxCamX));
     const progressY = Math.max(0, Math.min(1, cameraY / maxCamY));
 
-    if (this.parallaxQuality === "simplified") {
+    if (caps.farOnly) {
       this.renderSimplified(
         ctx,
         backdropLocation,
@@ -403,18 +425,22 @@ export class ParallaxSystem implements IParallaxSystem {
 
     const nowMs = this.now();
 
-    this.syncLocationZoneState(location, pb.layers);
-    const camCenterX = cameraX + viewportWidth * 0.5;
-    const camCenterY = cameraY + viewportHeight * 0.5;
-    resolveZoneInto(location, camCenterX, camCenterY, this.zonePreloadMarginPx, this.zoneResolution);
-    if (options?.forceBossScope) {
-      this.zoneResolution.kind = "boss";
-      this.zoneResolution.weight = 1;
-      this.zoneResolution.nearKind = "boss";
-      this.zoneResolution.nearDistanceSq = 0;
+    if (caps.renderZoneCrossfade) {
+      this.syncLocationZoneState(location, pb.layers);
+      const camCenterX = cameraX + viewportWidth * 0.5;
+      const camCenterY = cameraY + viewportHeight * 0.5;
+      resolveZoneInto(location, camCenterX, camCenterY, this.zonePreloadMarginPx, this.zoneResolution);
+      if (options?.forceBossScope) {
+        this.zoneResolution.kind = "boss";
+        this.zoneResolution.weight = 1;
+        this.zoneResolution.nearKind = "boss";
+        this.zoneResolution.nearDistanceSq = 0;
+      }
+      this.enqueueNearbyZoneVariant();
+      this.updateZoneCrossfade(nowMs);
+    } else if (this.activeZoneKind !== null || this.leavingZoneKind !== null) {
+      this.resetZoneCrossfadeState();
     }
-    this.enqueueNearbyZoneVariant();
-    this.updateZoneCrossfade(nowMs);
 
     this.bucketLayersByTier(pb.layers);
 
@@ -429,14 +455,16 @@ export class ParallaxSystem implements IParallaxSystem {
       tickCount
     );
 
-    const worldBossIntensity = this.isTierEnabled("boss_world", options)
-      ? computeBossScopeIntensity(location, "world", cameraX, cameraY, viewportWidth, viewportHeight, options?.forceBossScope) *
-        this.resolveBucketFadeAlpha(this.tierBuckets.boss_world, nowMs)
-      : 0;
-    const stageBossIntensity = this.isTierEnabled("boss_stage", options)
-      ? computeBossScopeIntensity(location, "stage", cameraX, cameraY, viewportWidth, viewportHeight, options?.forceBossScope) *
-        this.resolveBucketFadeAlpha(this.tierBuckets.boss_stage, nowMs)
-      : 0;
+    const worldBossIntensity =
+      caps.renderBossOverlays && this.isTierEnabled("boss_world", options)
+        ? computeBossScopeIntensity(location, "world", cameraX, cameraY, viewportWidth, viewportHeight, options?.forceBossScope) *
+          this.resolveBucketFadeAlpha(this.tierBuckets.boss_world, nowMs)
+        : 0;
+    const stageBossIntensity =
+      caps.renderBossOverlays && this.isTierEnabled("boss_stage", options)
+        ? computeBossScopeIntensity(location, "stage", cameraX, cameraY, viewportWidth, viewportHeight, options?.forceBossScope) *
+          this.resolveBucketFadeAlpha(this.tierBuckets.boss_stage, nowMs)
+        : 0;
     const showWireframes = this.flags.showWireframes();
 
     for (let i = 0; i < DYNAMIC_TIERS.length; i++) {
@@ -454,7 +482,9 @@ export class ParallaxSystem implements IParallaxSystem {
           viewportHeight,
           tickCount,
           nowMs,
-          showWireframes
+          showWireframes,
+          caps.renderFx,
+          caps.renderZoneCrossfade
         );
       }
 
@@ -462,7 +492,9 @@ export class ParallaxSystem implements IParallaxSystem {
         if (worldBossIntensity > 0.01) {
           this.backdropRenderer.renderBossBackdropTier(ctx, this.tierBuckets.boss_world, "boss_world", worldBossIntensity, viewportWidth, viewportHeight, progressX, progressY, tickCount);
         }
-        this.atmosphericRenderer.renderSectorAtmosphere(ctx, worldId, viewportWidth, viewportHeight, tickCount);
+        if (caps.renderAtmosphere) {
+          this.atmosphericRenderer.renderSectorAtmosphere(ctx, worldId, viewportWidth, viewportHeight, tickCount);
+        }
       }
 
       if (tier === "mid_close" && stageBossIntensity > 0.01) {
@@ -712,11 +744,15 @@ export class ParallaxSystem implements IParallaxSystem {
     viewportHeight: number,
     tickCount: number,
     nowMs: number,
-    showWireframes: boolean
+    showWireframes: boolean,
+    renderFx: boolean = true,
+    renderZoneCrossfade: boolean = true
   ): void {
     for (let j = 0; j < layersInTier.length; j++) {
       const layer = layersInTier[j];
+      if (!renderFx && isEffectLayer(layer)) continue;
       if (
+        renderZoneCrossfade &&
         layer === this.cachedClosestLayer &&
         (this.activeZoneAlpha > 0.005 || this.leavingZoneAlpha > 0.005)
       ) {

@@ -1,5 +1,6 @@
 import { assetLoader } from "@game/engine/assetLoader";
 import { debugManager } from "@game/debug/debugManager";
+import type { AtmosphereSurfaceFactory } from "@game/renderer/background/atmospheric/atmosphericSectorRenderer";
 import { defaultParallaxRegistry as parallaxRegistry } from "./registry";
 import {
   ParallaxSystem,
@@ -77,6 +78,40 @@ export const createBrowserParallaxSurfaceFactory: () => ParallaxSurfaceFactory =
   };
 };
 
+export const createBrowserAtmosphereSurfaceFactory: () => AtmosphereSurfaceFactory = () => {
+  return (width, height) => {
+    if (typeof OffscreenCanvas !== "undefined") {
+      const canvas = new OffscreenCanvas(width, height);
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return null;
+      return {
+        source: canvas,
+        ctx,
+        release: () => {
+          canvas.width = 0;
+          canvas.height = 0;
+        },
+      };
+    }
+    if (typeof document !== "undefined") {
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return null;
+      return {
+        source: canvas,
+        ctx,
+        release: () => {
+          canvas.width = 0;
+          canvas.height = 0;
+        },
+      };
+    }
+    return null;
+  };
+};
+
 /**
  * Creates a ParallaxSystem wired to the runtime registry, asset loader, and debug flags.
  */
@@ -86,6 +121,7 @@ export function createDefaultParallaxSystem(): IParallaxSystem {
     loader: defaultParallaxLoader,
     flags: defaultParallaxFlags,
     surfaceFactory: createBrowserParallaxSurfaceFactory(),
+    atmosphereSurfaceFactory: createBrowserAtmosphereSurfaceFactory(),
     maxSurfaceCreationsPerFrame: 1,
   });
 }

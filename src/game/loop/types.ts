@@ -15,6 +15,7 @@ import { GameEventBus } from "../engine/eventBus";
 import { ILogger } from "@/lib/logger";
 import { gameSave } from "../logic/save";
 import type { ISpriteSourceFactory } from "../engine/sprites";
+import type { DeviceParallaxSignals } from "../parallax/parallaxQualityHeuristic";
 
 /**
  * Dependency container for GameEngine (Dependency Inversion Principle - DIP).
@@ -37,4 +38,5 @@ export interface IGameDependencies {
   circuitBreaker?: LoopCircuitBreaker;
   eventBus?: GameEventBus;
   spriteSources?: ISpriteSourceFactory;
+  deviceParallaxSignals?: DeviceParallaxSignals;
 }

@@ -43,6 +43,7 @@ export interface IEngineSubsystemHost extends IEngineContextHost {
   isPaused: boolean;
   setDefaultPrimaryCharacter(characterId: "valen" | "aurelia"): void;
   onParallaxQualityChanged?(quality: ResolvedParallaxQuality): void;
+  onFrameWorkMeasured?(workMs: number, nowMs: number): void;
   setTwoPlayerMode(enabled: boolean, preserveStats?: boolean): void;
   resetLevel(locationId?: LocationId): void;
   fixedUpdate(mult: number): void;
@@ -77,6 +78,7 @@ export function createEngineControllers(
     onTwoPlayerChanged: (enabled) => host.setTwoPlayerMode(enabled, true),
     onPrimaryCharacterChanged: (charId) => host.setDefaultPrimaryCharacter(charId),
     onParallaxQualityChanged: (quality) => host.onParallaxQualityChanged?.(quality),
+    initialDeviceParallaxSignals: deps.deviceParallaxSignals,
     getPlayerCount: () => host.players.length,
     notifyStateChanged: () => host.notifyReact(),
   });
@@ -160,6 +162,7 @@ export function createEngineControllers(
     fixedUpdate: (mult) => host.fixedUpdate(mult),
     renderFrame: (alpha) => host.renderFrame(alpha),
     executeProtected: (op, action) => circuitBreaker.execute(op, action),
+    onFrameWorkMeasured: (workMs, nowMs) => host.onFrameWorkMeasured?.(workMs, nowMs),
     notifyStateChanged: () => {
       host.eventBus.emit("STATE_SNAPSHOT", {
         isPaused: host.isPaused,

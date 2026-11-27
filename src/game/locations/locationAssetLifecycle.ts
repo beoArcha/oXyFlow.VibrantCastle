@@ -13,6 +13,7 @@ import {
   type ParallaxLoadTaskDescriptor,
 } from "../parallax/loading";
 import type { ParallaxQualityTier } from "../parallax/meta";
+import { getParallaxQualityCapabilities } from "../parallax/parallaxQualityHeuristic";
 import { LOCATION_REGISTRY } from "./registry";
 import type { ParallaxLayerSchema } from "./schema/locationSchema";
 import type { LocationDefinition, LocationId } from "./types";
@@ -214,8 +215,11 @@ function buildLocationLoadTasks(
   }
 
   const tasks: ParallaxLoadTaskDescriptor[] = [];
+  const caps = getParallaxQualityCapabilities(quality);
   for (let i = 0; i < layers.length; i++) {
     const layer = layers[i];
+    if (!caps.renderZoneCrossfade && isZoneVariantLayer(layer)) continue;
+    if (!caps.renderFx && isEffectLayer(layer)) continue;
     const target = resolveLayerTargetForTier(layer, quality, registry, resolveTierUrl);
     if (!target) continue;
 
@@ -589,8 +593,11 @@ export class LocationAssetLifecycle {
     const layers = this.resolveLocation(locationId)?.parallaxBackground?.layers ?? [];
     const activeTier: ParallaxQualityTier =
       this.parallaxQuality === "simplified" ? "low" : this.parallaxQuality;
+    const caps = getParallaxQualityCapabilities(this.parallaxQuality);
     for (const layer of layers) {
-      if (this.parallaxQuality === "simplified" && resolveBackgroundTier(layer) !== "far") continue;
+      if (caps.farOnly && resolveBackgroundTier(layer) !== "far") continue;
+      if (!caps.renderZoneCrossfade && isZoneVariantLayer(layer)) continue;
+      if (!caps.renderFx && isEffectLayer(layer)) continue;
       const activeTarget = resolveLayerTargetForTier(layer, activeTier, this.registry, this.customResolveTierUrl);
       const lowTarget = resolveLayerTargetForTier(layer, "low", this.registry, this.customResolveTierUrl);
       if (activeTarget) out.add(activeTarget.url);

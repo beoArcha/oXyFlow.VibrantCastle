@@ -11,7 +11,7 @@ export const ALL_WORLD_LOCATION_IDS = [
 
 export type WorldLocationId = (typeof ALL_WORLD_LOCATION_IDS)[number];
 export type DprValue = 1 | 2;
-export type ProfileName = "desktop" | "tablet";
+export type ProfileName = "desktop" | "tablet" | "low-power-laptop";
 export type ProfileSelection = ProfileName | "all";
 export type ServerMode = "build" | "dev" | "external";
 export type LongFrameObserverType = "long-animation-frame" | "longtask" | "none";
@@ -56,12 +56,23 @@ export const PARALLAX_BUDGET_PROFILES: Readonly<Record<ProfileName, BudgetProfil
     maxP95Ms: 16.6,
     droppedMultiplier: 1.5,
   },
+  "low-power-laptop": {
+    profile: "low-power-laptop",
+    viewport: { width: 1280, height: 720 },
+    dprs: [1],
+    cpuThrottlingRate: 6,
+    targetHz: 60,
+    targetFrameMs: 1000 / 60,
+    frameBudgetMs: 16.6,
+    maxP95Ms: 16.6,
+    droppedMultiplier: 1.5,
+  },
 };
 
 export const DEFAULT_HOLD_RIGHT_MS = 2500;
 export const DEFAULT_JUMP_AT_MS = 1000;
 export const DEFAULT_WARMUP_MS = 150;
-export const DEFAULT_PROFILES: readonly ProfileName[] = ["desktop", "tablet"];
+export const DEFAULT_PROFILES: readonly ProfileName[] = ["desktop", "tablet", "low-power-laptop"];
 
 export interface WorkTimeMetrics {
   readonly sampleCount: number;
