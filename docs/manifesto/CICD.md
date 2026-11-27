@@ -20,10 +20,10 @@ This document specifies the automated CI/CD pipeline, branching topology, releas
    - **Unit Tests**: **74%** (`unitMin: 74`)
    - **Integration Tests**: **58%** (`integrationMin: 58`)
    - **Combined Coverage**: **73%** (`combinedMin: 73`)
-   - Thresholds can be overridden via `COVERAGE_MIN_UNIT`, `COVERAGE_MIN_INTEGRATION`, and `COVERAGE_MIN_COMBINED`. *(Adjusting target thresholds is tracked in [`VC-060`](../tasks/task-board.md#vc-060--coverage-gate-per-suite-integration-tests-on-prs)).*
+   - Thresholds can be overridden via `COVERAGE_MIN_UNIT`, `COVERAGE_MIN_INTEGRATION`, and `COVERAGE_MIN_COMBINED`. *(Adjusting target thresholds is tracked in [`VC-060`](../tasks/phase-4-0.3.x.md#vc-060--coverage-gate-per-suite-integration-tests-on-prs)).*
 5. **Phase Gates & Releases ([`docs/tasks/ROADMAP.md`](../tasks/ROADMAP.md))**:
    - Work runs in phases tied to minor versions (`0.(N-1).x`; Phase 4 = `0.3.x`, closing into Phase 5 = `0.4.0`).
-   - Releases and version bumps happen **only at a phase gate** (Phase 4 gate: [`VC-090`](../tasks/task-board.md#vc-090--phase-4-quality-gate-and-040)), after docs conformance, docs update, and general review. Hotfix releases inside a phase require owner approval.
+   - Releases and version bumps happen **only at a phase gate** (Phase 4 gate: [`VC-090`](../tasks/phase-4-0.3.x.md#vc-090--phase-4-quality-gate-and-040)), after docs conformance, docs update, and general review. Hotfix releases inside a phase require owner approval.
 
 ---
 
@@ -96,7 +96,7 @@ graph TD
   2. `verify-main`: Checks out `target_sha` and runs `typecheck`, `test:unit:coverage`, `test:integration:coverage`, `test:arch`, `validate-level.ts --all`, `test:scripts`, `coverage:gate`, `build:pages`, and `test:e2e`.
   3. `promote`: Unless `dry_run=true`, pushes `target_sha` to `refs/heads/release` and optionally tags `release-YYYY.MM.DD-<sha7>`.
   4. `deploy-release`: Calls `./.github/workflows/deploy-pages.yml` with `ref: release`.
-- **Backlog**: Porting dedicated GitHub Release artifact packaging (`vibrant-castle-game.zip`) and SemVer bumping into `release-promote.yml` is tracked in [`VC-061`](../tasks/task-board.md#vc-061--release-artifacts).
+- **Backlog**: Porting dedicated GitHub Release artifact packaging (`vibrant-castle-game.zip`) and SemVer bumping into `release-promote.yml` is tracked in [`VC-061`](../tasks/phase-4-0.3.x.md#vc-061--release-artifacts).
 
 ### 3.4. `deploy-pages.yml` — GitHub Pages Deployment
 

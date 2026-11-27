@@ -78,7 +78,7 @@ Source: `src/game/engine/atlas/`, `src/game/renderer/atlasSpriteRenderer.ts`, `s
 ### 5.1. Tiers (`low` = `hi8bit`, `mid` = `hi16bit`, `high` = `high`)
 
 * **Fallback chain (`atlasVariantResolver.ts`)**: `low` → `low, mid, high`; `mid` → `mid, high, low`; `high` → `high, mid, low`; otherwise `proceduralFallback`.
-* **Runtime SVG Rasterisation (`svgRaster.ts`)**: Enemy SVG sheets are rasterised once into an offscreen bitmap at integer scale (`≥ 192 px` cell width). **Backlog**: build-time baking of `hi16bit` SVGs into PNG atlases is tracked in [`VC-011`](../tasks/task-board.md#vc-011--hi16bit-build-step-svg-to-png-atlas).
+* **Runtime SVG Rasterisation (`svgRaster.ts`)**: Enemy SVG sheets are rasterised once into an offscreen bitmap at integer scale (`≥ 192 px` cell width). **Backlog**: build-time baking of `hi16bit` SVGs into PNG atlases is tracked in [`VC-011`](../tasks/phase-5-0.4.x.md#vc-011--hi16bit-build-step-svg-to-png-atlas).
 * **Auto-discovery (`atlasFileDiscovery.ts`)**: Collects `src/assets/enemies/<id>/` and `src/assets/structures/<id>/` (`aether_gate`, `chrono_lever`, `grand_portcullis`, `hazard_thorns`).
 * **Hero Pixel Tiers (`src/game/engine/heroPixel/`)**: `valen` and `aurelia` ship `<hero>_hi8bit.png`, `<hero>_hi16bit.png`, `<hero>_pixel_meta.json`, and painted `*_packed.png` sheets, maintaining consistent world height across tiers.
 
@@ -88,7 +88,7 @@ Source: `src/game/engine/atlas/`, `src/game/renderer/atlasSpriteRenderer.ts`, `s
   * Both `hi8bit.svg` and `hi16bit.svg` exist for 11 enemies: `aether_archon`, `aether_sentinel`, `aether_wisp`, `chasm_crawler`, `chasm_gargoyle`, `chrono_hound`, `clockwork_automaton`, `court_sentinel`, `gear_mite`, `lantern_warden`, `thorn_creeper`.
   * `hi16bit.svg` only (missing `hi8bit.svg`): `bastion_sentinel_boss`, `shadow_knight`.
   * Painted PNGs: `clockwork_owl_gargoyle` (`*_packed_high.png` + `*_packed_meta.json`) and `training_dummy` (`*_high.png` + `*_meta.json`).
-  * **Backlog**: Automated tier completeness reporting ([`VC-010`](../tasks/task-board.md#vc-010--three-tier-asset-policy-and-completeness-test)) and generating missing `hi8bit` placeholders ([`VC-012`](../tasks/task-board.md#vc-012--generate-missing-hi8bit-placeholders)); painted `high` enemy sheets are Phase 6+ backlog.
+  * **Backlog**: Automated tier completeness reporting ([`VC-010`](../tasks/phase-4-0.3.x.md#vc-010--three-tier-asset-policy-and-completeness-test)) and generating missing `hi8bit` placeholders ([`VC-012`](../tasks/phase-4-0.3.x.md#vc-012--generate-missing-hi8bit-placeholders)); painted `high` enemy sheets are Phase 6+ backlog.
 
 ---
 

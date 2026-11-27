@@ -75,7 +75,7 @@ graph TD
 | `grand_bastion` | 4840 × 1140 | 1 | 7 | `aether_sanctuary`, `eclipse_crown` |
 | `eclipse_crown` | 4640 × 1460 | 1 | 7 | `grand_bastion`, `courtyard` |
 
-**Backlog**: Expanding to 8 × 8 maps under the map contract ([`VC-020`](../tasks/task-board.md#vc-020--map-contract-for-the-8x8-campaign)), hybrid baseline expansions ([`VC-021`…`VC-025`](../tasks/task-board.md#vc-021--vc-025--hybrid-maps-courtyard-thorn_chasm-clocktower-aether_sanctuary-grand_bastion)), contract alignment ([`VC-026`…`VC-028`](../tasks/task-board.md#vc-026--vc-028--fix-new-maps-ashen_catacombs-alchemist_library-eclipse_crown)), and ability-gated portals (Phase 6 of [`docs/tasks/ROADMAP.md`](../tasks/ROADMAP.md)).
+**Backlog**: Expanding to 8 × 8 maps under the map contract ([`VC-020`](../tasks/phase-4-0.3.x.md#vc-020--map-contract-for-the-8x8-campaign)), hybrid baseline expansions ([`VC-021`…`VC-025`](../tasks/phase-5-0.4.x.md#vc-021--vc-025--hybrid-maps-courtyard-thorn_chasm-clocktower-aether_sanctuary-grand_bastion)), contract alignment ([`VC-026`…`VC-028`](../tasks/phase-5-0.4.x.md#vc-026--vc-028--fix-new-maps-ashen_catacombs-alchemist_library-eclipse_crown)), and ability-gated portals (Phase 6 of [`docs/tasks/ROADMAP.md`](../tasks/ROADMAP.md)).
 
 ---
 
@@ -94,7 +94,7 @@ graph TD
 ### 4.3. Enemy Behaviour (Implemented vs Backlog)
 
 * **Today**: 17 templates in `src/data/enemies/enemies.json`. Non-dummy enemies patrol horizontally between `patrolMinX` and `patrolMaxX`; dummies stay still. There is no enemy chase, attack, contact damage, or live soul drop.
-* **Backlog**: Enemy attacks and contact damage (Phase 5), monster D20x10 attribute scaling ([`VC-032`](../tasks/task-board.md#vc-032--monsters-on-the-attribute-scale)), and balance audit ([`VC-080`](../tasks/task-board.md#vc-080--balance-review-after-c4758f3)).
+* **Backlog**: Enemy attacks and contact damage (Phase 5), monster D20x10 attribute scaling ([`VC-032`](../tasks/phase-5-0.4.x.md#vc-032--monsters-on-the-attribute-scale)), and balance audit ([`VC-080`](../tasks/phase-5-0.4.x.md#vc-080--balance-review-after-c4758f3)).
 
 ---
 
@@ -104,5 +104,5 @@ graph TD
   * Signature spells: `solar_flare` (`35` dmg, `12` mana, `24` cd), `solar_fireball` (`52` dmg, `24` mana, `48` cd), `radiant_strike` (`78` dmg, `35` mana, `75` cd), `shield_bash`, `prismatic_shield`, `sun_sentinel`, plus passives.
 * **Aurelia (*Scholar of Arcanum* / *Uczona Arkanów*)**: Base HP `90`, Mana `125`, Stamina `95`, Attack `18`, Defense `4`, Spell Power `1.15x`, Mana Cost `0.9x`.
   * Signature spells: `aether_bolt` (`26` dmg, `10` mana, `20` cd), `frost_nova` (`50` dmg, `26` mana, `55` cd), `emerald_barrage` (`38` dmg, `20` mana, `42` cd), `celestial_comet` (`85` dmg, `38` mana, `80` cd), `aether_barrier`, `chrono_rewind`, `sentinel_spark`, plus passives.
-* **Backlog**: D20x10 six-attribute model (`STR/DEX/CON/INT/WIS/CHA`; Valen `151/166/156/136/146/151`, Aurelia `131/152/136/176/162/149`) and player-selected 1/2/3 priority growth ([`VC-030`](../tasks/task-board.md#vc-030--character-system-design-doc), [`VC-031`](../tasks/task-board.md#vc-031--attributes-and-automatic-growth-engine), [`VC-033`](../tasks/task-board.md#vc-033--valen-and-aurelia-progression-trees)).
+* **Backlog**: D20x10 six-attribute model (`STR/DEX/CON/INT/WIS/CHA`; Valen `151/166/156/136/146/151`, Aurelia `131/152/136/176/162/149`) and player-selected 1/2/3 priority growth ([`VC-030`](../tasks/phase-4-0.3.x.md#vc-030--character-system-design-doc), [`VC-031`](../tasks/phase-5-0.4.x.md#vc-031--attributes-and-automatic-growth-engine), [`VC-033`](../tasks/phase-5-0.4.x.md#vc-033--valen-and-aurelia-progression-trees)).
 * **Controls Backlog**: Default pad bindings in `defaultControls.json` currently map bumpers/triggers directly to `magic2` and `potion1–3`; gameplay restricted-pad selector semantics (bumpers as selectors) are scheduled for Phase 5 ([`docs/tasks/ROADMAP.md`](../tasks/ROADMAP.md)).

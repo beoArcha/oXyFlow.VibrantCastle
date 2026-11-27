@@ -36,7 +36,7 @@ graph LR
 | **`items/`** | `items.json` | **Item & Equipment Registry**: 18 items (weapons, shields, helmets, armor, amulets, rings, potions). |
 | **`skills/`** | `skills.json`, `spells.json` | **Skill Constellations**: Active spells, wards, passives, and enemy ability definitions. |
 | **`structures/`** | `structures.json` | **Interactive Map Objects**: Levers, gates, hazards, and structure definitions. |
-| **`narrative/`** | `dialogues_vn.json`, `narrator_reactive.json` | **Narrative Manifests**: Visual novel character dialogue sequences and reactive narrator quotes (not yet wired to the live engine). *(Historical `scenario_act1.json` and `triggers.json` were removed in 2784276; disposition tracked in [`VC-081`](../tasks/task-board.md#vc-081--narrative-catalogs)).* |
+| **`narrative/`** | `dialogues_vn.json`, `narrator_reactive.json` | **Narrative Manifests**: Visual novel character dialogue sequences and reactive narrator quotes (not yet wired to the live engine). *(Historical `scenario_act1.json` and `triggers.json` were removed in 2784276; disposition tracked in [`VC-081`](../tasks/phase-4-0.3.x.md#vc-081--narrative-catalogs)).* |
 | **`progression/`** | `skill_trees.json` | **Skill tree layout** for Valen and Aurelia. |
 | **`defaults/`** | `defaultControls.json`, `defaultSettings.json` | **System Defaults**: Baseline keyboard/gamepad bindings, audio, display, and HUD settings. |
 
@@ -44,7 +44,7 @@ graph LR
 
 ## 3. Location Blueprint Specification
 
-Campaign design targets **8 worlds × 8 maps** ([`docs/tasks/VISION.md`](../tasks/VISION.md)); today map 1 of each world is shipped. Map contract authoring and hybrid/alignment updates are on the backlog ([`VC-020`](../tasks/task-board.md#vc-020--map-contract-for-the-8x8-campaign), [`VC-021`…`VC-028`](../tasks/task-board.md#vc-021--vc-025--hybrid-maps-courtyard-thorn_chasm-clocktower-aether_sanctuary-grand_bastion)).
+Campaign design targets **8 worlds × 8 maps** ([`docs/tasks/VISION.md`](../tasks/VISION.md)); today map 1 of each world is shipped. Map contract authoring and hybrid/alignment updates are on the backlog ([`VC-020`](../tasks/phase-4-0.3.x.md#vc-020--map-contract-for-the-8x8-campaign), [`VC-021`…`VC-028`](../tasks/phase-5-0.4.x.md#vc-021--vc-025--hybrid-maps-courtyard-thorn_chasm-clocktower-aether_sanctuary-grand_bastion)).
 
 ### 3.0. Shipped Maps (`src/data/locations/*.json`)
 
@@ -91,8 +91,8 @@ Policy: **every element** (hero, enemy, structure, prop, tile) is defined across
 
 | Code Key | Tier Name | Policy Role | Current Implementation Status |
 | :--- | :--- | :--- | :--- |
-| `low` | `hi8bit` | **Simple SVG placeholder for every element**, including elements whose high-tier art is painted PNG. 12-bit `#rgb` palette, 48 px base cell for enemies. | Implemented for 11 enemies (SVG), heroes (quantized PNG), tilesets (16 px PNG), and props (PNG). **Backlog**: [`VC-010`](../tasks/task-board.md#vc-010--three-tier-asset-policy-and-completeness-test) completeness test & [`VC-012`](../tasks/task-board.md#vc-012--generate-missing-hi8bit-placeholders) missing placeholders (e.g. `shadow_knight`, `bastion_sentinel_boss`, `training_dummy`, `clockwork_owl_gargoyle`, structures). |
-| `mid` | `hi16bit` | **SVG source baked to PNG at build time**. RGB565 palette, 96 px base cell for enemies. | Enemy `hi16bit` SVGs exist for 13 enemies and are rasterised once at runtime (`svgRaster.ts`). **Backlog**: [`VC-011`](../tasks/task-board.md#vc-011--hi16bit-build-step-svg-to-png-atlas) build-time bake to PNG atlas. Heroes, tilesets (32 px), and props ship PNGs. |
+| `low` | `hi8bit` | **Simple SVG placeholder for every element**, including elements whose high-tier art is painted PNG. 12-bit `#rgb` palette, 48 px base cell for enemies. | Implemented for 11 enemies (SVG), heroes (quantized PNG), tilesets (16 px PNG), and props (PNG). **Backlog**: [`VC-010`](../tasks/phase-4-0.3.x.md#vc-010--three-tier-asset-policy-and-completeness-test) completeness test & [`VC-012`](../tasks/phase-4-0.3.x.md#vc-012--generate-missing-hi8bit-placeholders) missing placeholders (e.g. `shadow_knight`, `bastion_sentinel_boss`, `training_dummy`, `clockwork_owl_gargoyle`, structures). |
+| `mid` | `hi16bit` | **SVG source baked to PNG at build time**. RGB565 palette, 96 px base cell for enemies. | Enemy `hi16bit` SVGs exist for 13 enemies and are rasterised once at runtime (`svgRaster.ts`). **Backlog**: [`VC-011`](../tasks/phase-5-0.4.x.md#vc-011--hi16bit-build-step-svg-to-png-atlas) build-time bake to PNG atlas. Heroes, tilesets (32 px), and props ship PNGs. |
 | `high` | `high` | **Painted PNG** (`<id>_packed_high.png` / `<hero>_level_1_high_packed.png`). | Implemented for heroes, 4 structures (`aether_gate`, `chrono_lever`, `grand_portcullis`, `hazard_thorns`), and `clockwork_owl_gargoyle` (`training_dummy` has `training_dummy_high.png`). Remaining enemies fall back to `hi16bit` until painted `high` sheets are added (Phase 6+ backlog). |
 
 * **True Alpha & FAR Invariant**: All sprites and non-`FAR` parallax layers require true alpha transparency (`alpha < 255`); the `FAR` layer must be 100% opaque (`opaque: true`).
@@ -117,7 +117,7 @@ See `scripts/sprites/README.md` for full authoring APIs (`PixelCanvas`, hero qua
 
 The Developer Workbench (`DeveloperSuite.tsx` + `src/developer/registry/devToolRegistry.tsx`) is accessible in dev builds only (`[C]`):
 
-* **Atlas Studio (`AtlasSlicerSubtab.tsx`)**: Inspects spritesheets, grids, `bodyBox`, hero quality tiers, and animation tracks. *(Splitting into focused subcomponents is tracked in [`VC-071`](../tasks/task-board.md#vc-071--split-the-atlas-studio)).*
-* **Levels 8x8 (`LevelsSubtab.tsx`)**: Previews locations and audits asset readiness (`assetReadinessAudit.ts`; wiring real tileset/prop discovery is tracked in [`VC-004`](../tasks/task-board.md#vc-004--asset-readiness-audit-reads-real-files)).
+* **Atlas Studio (`AtlasSlicerSubtab.tsx`)**: Inspects spritesheets, grids, `bodyBox`, hero quality tiers, and animation tracks. *(Splitting into focused subcomponents is tracked in [`VC-071`](../tasks/phase-4-0.3.x.md#vc-071--split-the-atlas-studio)).*
+* **Levels 8x8 (`LevelsSubtab.tsx`)**: Previews locations and audits asset readiness (`assetReadinessAudit.ts`; wiring real tileset/prop discovery is tracked in [`VC-004`](../tasks/phase-4-0.3.x.md#vc-004--asset-readiness-audit-reads-real-files)).
 * **Data Studio (`DataStudioSubtab.tsx`)**: Inspects `src/data/` blueprints and bestiary/spell schemas.
-* **Testing / Debug / Logs (`TestingSubtab.tsx`, `DebugSubtab.tsx`, `LogsSubtab.tsx`)**: Live scenario triggers, telemetry, and `RingBufferTransport` log inspection. *(Parity audit with 8121dad tools is tracked in [`VC-070`](../tasks/task-board.md#vc-070--dev-tools-parity-check)).*
+* **Testing / Debug / Logs (`TestingSubtab.tsx`, `DebugSubtab.tsx`, `LogsSubtab.tsx`)**: Live scenario triggers, telemetry, and `RingBufferTransport` log inspection. *(Parity audit with 8121dad tools is tracked in [`VC-070`](../tasks/phase-4-0.3.x.md#vc-070--dev-tools-parity-check)).*

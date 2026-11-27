@@ -2,7 +2,7 @@
 
 In *Vibrant Castle*, players command two distinct duelists forged in the melancholic, warm aesthetic of 19th-century gothic fantasy. Each character possesses unique base stats, bespoke animation tracks, distinct spell constellations, and divergent philosophies regarding combat and the flow of Aether.
 
-**Implementation status**: Both champions are playable in solo and two-player co-op modes (`src/game/characters/characterProfiles.ts`). Today they use fixed `baseStats` (HP, Mana, Stamina, Attack, Defense, regen, and cooldowns) while preserving identical running/jumping physics. The D20x10 six-attribute system (`STR/DEX/CON/INT/WIS/CHA`) and player-chosen priority growth are approved in the vision ([`docs/tasks/VISION.md`](../tasks/VISION.md)) and tracked in the backlog ([`VC-030`](../tasks/task-board.md#vc-030--character-system-design-doc) design doc, [`VC-031`](../tasks/task-board.md#vc-031--attributes-and-automatic-growth-engine) engine implementation, [`VC-033`](../tasks/task-board.md#vc-033--valen-and-aurelia-progression-trees) progression trees).
+**Implementation status**: Both champions are playable in solo and two-player co-op modes (`src/game/characters/characterProfiles.ts`). Today they use fixed `baseStats` (HP, Mana, Stamina, Attack, Defense, regen, and cooldowns) while preserving identical running/jumping physics. The D20x10 six-attribute system (`STR/DEX/CON/INT/WIS/CHA`) and player-chosen priority growth are approved in the vision ([`docs/tasks/VISION.md`](../tasks/VISION.md)) and tracked in the backlog ([`VC-030`](../tasks/phase-4-0.3.x.md#vc-030--character-system-design-doc) design doc, [`VC-031`](../tasks/phase-5-0.4.x.md#vc-031--attributes-and-automatic-growth-engine) engine implementation, [`VC-033`](../tasks/phase-5-0.4.x.md#vc-033--valen-and-aurelia-progression-trees) progression trees).
 
 ---
 
@@ -12,12 +12,12 @@ All characters and monsters are planned to share a six-attribute D&D-like model 
 
 * Level-1 average across attributes is fixed at **151**.
 * Player starting range is **110–180** (180 is a starting maximum, not a level cap).
-* Players choose priorities **1 / 2 / 3** and attribute growth is automatic on level-up; HP, Mana, and Stamina derive from attributes and level ([`VC-030`](../tasks/task-board.md#vc-030--character-system-design-doc), [`VC-031`](../tasks/task-board.md#vc-031--attributes-and-automatic-growth-engine)).
+* Players choose priorities **1 / 2 / 3** and attribute growth is automatic on level-up; HP, Mana, and Stamina derive from attributes and level ([`VC-030`](../tasks/phase-4-0.3.x.md#vc-030--character-system-design-doc), [`VC-031`](../tasks/phase-5-0.4.x.md#vc-031--attributes-and-automatic-growth-engine)).
 
 | Champion | STR | DEX | CON | INT | WIS | CHA | Status |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
-| **Valen** | 151 | 166 | 156 | 136 | 146 | 151 | Approved baseline ([`VC-030`](../tasks/task-board.md#vc-030--character-system-design-doc)) |
-| **Aurelia** | 131 | 152 | 136 | 176 | 162 | 149 | Approved baseline ([`VC-030`](../tasks/task-board.md#vc-030--character-system-design-doc)) |
+| **Valen** | 151 | 166 | 156 | 136 | 146 | 151 | Approved baseline ([`VC-030`](../tasks/phase-4-0.3.x.md#vc-030--character-system-design-doc)) |
+| **Aurelia** | 131 | 152 | 136 | 176 | 162 | 149 | Approved baseline ([`VC-030`](../tasks/phase-4-0.3.x.md#vc-030--character-system-design-doc)) |
 
 ---
 

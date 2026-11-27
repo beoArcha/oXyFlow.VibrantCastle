@@ -91,12 +91,12 @@ The simulation tick (`src/game/loop/engineSimulationStep.ts`, `enginePlayerUpdat
 - **Location backgrounds** (`src/game/locations/locationAssetLifecycle.ts`): Loads current location textures immediately, preloads direct portal-graph neighbours on idle, and evicts non-adjacent locations.
 - **Tilesets & Props**: `TilesetManager` (`src/game/engine/tiles/`) and `PropManager` (`src/game/engine/props/`) discover compiled assets via Vite `import.meta.glob` (filesystem fallback under Bun) and react to `ISpriteSourceFactory` quality changes.
 - **Hero Pixel Tiers (`src/game/engine/heroPixel/`)**: Discovers `<hero>_hi8bit.png`, `<hero>_hi16bit.png`, and `<hero>_pixel_meta.json` for live tier switching.
-- **Sprite Source Factory (`src/game/engine/sprites/spriteSourceFactory.ts`)**: Single owner of `assetQuality` (`low | mid | high`) and fallback chain (`atlasVariantResolver.ts`). Enforced by `src/tests/arch/spriteQualityResolution.test.ts`. **Backlog**: build-time baking of `hi16bit` SVGs to PNG atlases is tracked in [`VC-011`](../tasks/task-board.md#vc-011--hi16bit-build-step-svg-to-png-atlas).
+- **Sprite Source Factory (`src/game/engine/sprites/spriteSourceFactory.ts`)**: Single owner of `assetQuality` (`low | mid | high`) and fallback chain (`atlasVariantResolver.ts`). Enforced by `src/tests/arch/spriteQualityResolution.test.ts`. **Backlog**: build-time baking of `hi16bit` SVGs to PNG atlases is tracked in [`VC-011`](../tasks/phase-5-0.4.x.md#vc-011--hi16bit-build-step-svg-to-png-atlas).
 
 ### 4.4. Determinism & Backlog Notes
 
 1. Simulation code uses `dtMultiplier` and 60 Hz tick units; `ReactiveNarratorManager` (`src/game/logic/narrative/reactiveNarratorManager.ts`) uses `Date.now()` and is **not yet wired** into the engine loop (Phase 5 backlog).
-2. Attribute-driven vitals/growth ([`VC-031`](../tasks/task-board.md#vc-031--attributes-and-automatic-growth-engine)) and D20x10 monster scaling ([`VC-032`](../tasks/task-board.md#vc-032--monsters-on-the-attribute-scale)) are Phase 5 backlog.
+2. Attribute-driven vitals/growth ([`VC-031`](../tasks/phase-5-0.4.x.md#vc-031--attributes-and-automatic-growth-engine)) and D20x10 monster scaling ([`VC-032`](../tasks/phase-5-0.4.x.md#vc-032--monsters-on-the-attribute-scale)) are Phase 5 backlog.
 3. Render paths allocate zero objects (`ViewCuller`, `LayerRect`).
 
 ---

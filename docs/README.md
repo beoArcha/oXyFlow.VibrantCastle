@@ -6,7 +6,7 @@ Central navigation for project vision, roadmap, approved designs, world lore, an
 
 * [Vision](tasks/VISION.md) — Core pillars, identity, architecture overview, and current gaps.
 * [Roadmap](tasks/ROADMAP.md) — Versioned phases, exit criteria, and phase quality gates.
-* [Task Board](tasks/task-board.md) — Active and planned `VC-xxx` task cards.
+* [Tasks](tasks/README.md) — phase index and the `VC-xxx` task cards, one file per phase.
 
 ## Approved Design Contracts (`docs/design/`)
 

@@ -1,6 +1,6 @@
 # Vibrant Castle: roadmap
 
-Updated: 2026-11-27. The [vision](./VISION.md) says what we are building. The [task board](./task-board.md) holds the cards. This file says in which phase each part lands.
+Updated: 2026-11-27. The [vision](./VISION.md) says what we are building. The [task folder README](./README.md) explains the card format and indexes the phase files, which hold the cards. This file is the overview: in which phase each part lands.
 
 ## How phases work
 
@@ -8,12 +8,12 @@ Updated: 2026-11-27. The [vision](./VISION.md) says what we are building. The [t
 - Phase 4 is current, with version `0.3.x` (`package.json` is `0.3.0`).
 - Closing a phase starts the next phase and the next minor version. Closing phase 4 starts phase 5 and `0.4.0`.
 - Releases and version bumps happen only at a phase gate. A hotfix release inside a phase needs the owner's decision.
-- Every card on the task board has a `Phase` field. A card that is not done when its phase closes is moved to the next phase on purpose, at the gate.
+- Every card lives in its phase file (`phase-N-0.M.x.md`) and has a `Phase` field. A card that is not done when its phase closes is moved to the next phase file on purpose, at the gate.
 
 ### Quality gate (end of every phase, in this order)
 
 1. **Docs quality and conformance check.** The docs match the code: paths, commands, test names, counts and behaviour. Fix or file every mismatch.
-2. **Docs update.** Update the vision, roadmap, task board, `AGENTS.md`, `.agents/rules/`, the README, lore and wiki to the phase's final state.
+2. **Docs update.** Update the vision, roadmap, phase files, `AGENTS.md`, `.agents/rules/`, the README, lore and wiki to the phase's final state.
 3. **General review.** Review the phase's changes against `.agents/rules/`. Check for regressions, dead code and open risks. Run the full suite and a headless browser pass.
 4. **Release.** Promote `main` through the release workflow and publish the release artifacts.
 5. **Version bump.** Only after the release: bump the minor version, which opens the next phase.
@@ -24,13 +24,19 @@ The orchestrator runs the gate as one `review` / `workflow` card per phase (phas
 
 ## Phase 1: engine core (0.0.x, history)
 
+Summary: [phase-1-0.0.x.md](./phase-1-0.0.x.md).
+
 **Built:** the deterministic fixed-step loop, AABB collisions, `GameEventBus`, the `GameBaseError` hierarchy and logger, React contexts, the developer suite and the first AST architecture tests. Ended 2026-10-25.
 
 ## Phase 2: specifications (0.1.x, history)
 
+Summary: [phase-2-0.1.x.md](./phase-2-0.1.x.md).
+
 **Built:** the canonical system specifications (manifesto) and the removal of obsolete policies. A short documentation phase. Ended 2026-10-25.
 
 ## Phase 3: playable vertical slice (0.2.x, history)
+
+Summary: [phase-3-0.2.x.md](./phase-3-0.2.x.md) (PRs #1-#61).
 
 **Built:**
 - the UI split into `src/game-menu` / `src/hud` / `src/ui` with Base UI and semantic tokens;
@@ -41,6 +47,8 @@ The orchestrator runs the gate as one `review` / `workflow` card per phase (phas
 Closed by the bump to `0.3.0` on 2026-11-14.
 
 ## Phase 4: stabilise and set direction (0.3.x, current)
+
+Cards and the "phase 4 so far" summary: [phase-4-0.3.x.md](./phase-4-0.3.x.md).
 
 **Goal:** recover from the post-0.3.0 cleanup (2784276), which deleted tilesets, props, the sprite pipeline, tests and docs. Rebuild the menu to the two-level design. Restore the docs, the tests and the CI gates. Write the design contracts that phase 5 builds on: maps and characters.
 
@@ -53,17 +61,19 @@ Closed by the bump to `0.3.0` on 2026-11-14.
 
 | Area | Planned | Done |
 | :--- | :--- | :--- |
-| Stabilisation | VC-004 | VC-001 (#62), VC-002 (#65), VC-003 (#71), VC-005 (#69), VC-006 (#70) |
-| Assets | VC-010, VC-012 | |
-| Design contracts | VC-020, VC-030 | |
-| Inventory | VC-035 | |
-| Menu | VC-042, VC-043, VC-044, VC-045, VC-046 | VC-040 (#63), VC-041 (#68) |
-| Docs, settings, controls | VC-050, VC-051, VC-054, VC-055, VC-056, VC-057 | VC-052 (#66), VC-053 (#67) |
-| CI and tests | VC-060, VC-061, VC-062, VC-063 | |
-| Developer tools | VC-070, VC-071, VC-072, VC-081 | |
-| Quality gate | VC-090 | |
+| [Stabilisation](./phase-4-0.3.x.md#a-stabilisation) | | VC-001 (#62), VC-002 (#65), VC-003 (#71), VC-004 (#76), VC-005 (#69), VC-006 (#70), VC-007 (#85) |
+| [Assets](./phase-4-0.3.x.md#b-assets-and-rendering) | VC-010, VC-012 | |
+| [Design contracts](./phase-4-0.3.x.md#c-world-and-maps-8-worlds-x-8-maps-today-map-1-of-each-world) | VC-020 (review, #77), VC-030 (review, #78) | |
+| [Inventory](./phase-4-0.3.x.md#d-characters-stats-and-equipment) | VC-035 | |
+| [Menu](./phase-4-0.3.x.md#e-menu-plan-docsdesignmenu-ux-planmd) | VC-045, VC-047 | VC-040 (#63), VC-041 (#68), VC-042 (#74), VC-043 (#81), VC-044 (#84), VC-046 (#80) |
+| [Docs, settings, controls](./phase-4-0.3.x.md#f-docs-settings-and-controls) | VC-051, VC-056 | VC-050 (#88), VC-052 (#66), VC-053 (#67), VC-054 (#73), VC-055 (#75), VC-057 (#72) |
+| [CI and tests](./phase-4-0.3.x.md#g-ci-and-tests) | VC-061, VC-062 (part 1 #86) | VC-060 (#83), VC-063 (#79) |
+| [Developer tools](./phase-4-0.3.x.md#h-developer-tools-and-review) | VC-070, VC-073, VC-074, VC-081 | VC-071 (#87), VC-072 (#82) |
+| [Quality gate](./phase-4-0.3.x.md#z-phase-gate) | VC-090 | |
 
 ## Phase 5: worlds and characters (0.4.x, next)
+
+Cards: [phase-5-0.4.x.md](./phase-5-0.4.x.md).
 
 **Goal:**
 - build on the contracts from phase 4: hybrid and fixed maps to the map contract;
@@ -79,10 +89,10 @@ Closed by the bump to `0.3.0` on 2026-11-14.
 
 | Area | Planned | Done |
 | :--- | :--- | :--- |
-| Assets | VC-011 | |
-| Maps | VC-021 … VC-025, VC-026 … VC-028 | |
-| Characters and balance | VC-031, VC-032, VC-033, VC-034, VC-080 | |
-| Inventory visuals | VC-036 | |
+| [Assets](./phase-5-0.4.x.md#b-assets-and-rendering) | VC-011 | |
+| [Maps](./phase-5-0.4.x.md#c-world-and-maps-8-worlds-x-8-maps-today-map-1-of-each-world) | VC-021 … VC-025, VC-026 … VC-028 | |
+| [Characters and balance](./phase-5-0.4.x.md#d-characters-stats-and-equipment) | VC-031, VC-032, VC-033, VC-034, VC-080 | |
+| [Inventory visuals](./phase-5-0.4.x.md#d-characters-stats-and-equipment) | VC-036 | |
 | Gameplay gaps (cards to be written) | enemy attacks and contact damage; pad layout with bumpers as selectors in gameplay; reactive narrator wired to the engine | |
 | Quality gate | phase 5 gate card (to be written) | |
 
