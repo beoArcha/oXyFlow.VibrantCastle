@@ -53,12 +53,12 @@ Closed by the bump to `0.3.0` on 2026-11-14.
 
 | Area | Planned | Done |
 | :--- | :--- | :--- |
-| Stabilisation | VC-003, VC-004, VC-005, VC-006 | VC-001 (#62), VC-002 (#65) |
+| Stabilisation | VC-004 | VC-001 (#62), VC-002 (#65), VC-003 (#71), VC-005 (#69), VC-006 (#70) |
 | Assets | VC-010, VC-012 | |
 | Design contracts | VC-020, VC-030 | |
 | Inventory | VC-035 | |
-| Menu | VC-041, VC-042, VC-043, VC-044, VC-045, VC-046 | VC-040 (#63) |
-| Docs, settings, controls | VC-050, VC-051, VC-052, VC-053, VC-054, VC-055, VC-056, VC-057 | |
+| Menu | VC-042, VC-043, VC-044, VC-045, VC-046 | VC-040 (#63), VC-041 (#68) |
+| Docs, settings, controls | VC-050, VC-051, VC-054, VC-055, VC-056, VC-057 | VC-052 (#66), VC-053 (#67) |
 | CI and tests | VC-060, VC-061, VC-062, VC-063 | |
 | Developer tools | VC-070, VC-071, VC-072, VC-081 | |
 | Quality gate | VC-090 | |

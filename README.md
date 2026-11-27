@@ -58,6 +58,8 @@ bun run typecheck                      # Static type check
 bun test                               # Full test suite (unit, integration, scripts, arch, e2e)
 bun test src/tests/arch                # Architecture and boundary tests
 bun scripts/validate-level.ts <id>     # Validate one map's logic
+bun scripts/sprites/compile.ts <id>    # Compile hi8bit / hi16bit sprite sheets
+bun scripts/repack-atlas.ts <id>       # Repack a painted sheet onto a clean grid
 bun run build:game                     # Production game client
 ```
 

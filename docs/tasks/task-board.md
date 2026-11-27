@@ -46,7 +46,7 @@ Updated: 2026-11-27. Source: the regression audit of 2784276..c4758f3 against 81
   4. Attach a frame contact sheet per sheet and tier.
 
 ### VC-003 · Restore tilesets, props, art pipeline and enemy sprites
-- **Phase:** 4 · **Type:** chore · **Class:** small · **Status:** review (VC-002 merged; rebase next)
+- **Phase:** 4 · **Type:** chore · **Class:** small · **Status:** done (#71)
 - **Goal:** floors and props render from art again, and generated assets can be rebuilt.
 - **Description:** branch `fix/restore-tiles-props-pipeline`. Restores 24 tile files, 33 prop files, `scripts/sprites`, `scripts/atlas`, repack and seams with 20 tests, and the enemy hi8/hi16 SVGs and metas from 8121dad. Removes `public/assets/aistudio`.
 - **How (AI):** rebase after VC-002 merges. All hero-grid tests must pass with the restored packed metas.
@@ -58,7 +58,7 @@ Updated: 2026-11-27. Source: the regression audit of 2784276..c4758f3 against 81
 - **How (AI):** feed it from `discoverTilesetFiles` / `propDiscovery`, and add a unit test with a fake file map.
 
 ### VC-005 · HP above maximum in the inventory (165/135)
-- **Phase:** 4 · **Type:** fix · **Class:** small · **Status:** todo
+- **Phase:** 4 · **Type:** fix · **Class:** small · **Status:** done (#69)
 - **Goal:** current HP never exceeds maximum HP.
 - **Description:** seen in an inventory screenshot after the profile and stat changes in 422aec1.
 - **How (AI):**
@@ -67,7 +67,7 @@ Updated: 2026-11-27. Source: the regression audit of 2784276..c4758f3 against 81
   3. Add a unit test.
 
 ### VC-006 · Vertical camera easing
-- **Phase:** 4 · **Type:** fix · **Class:** tiny · **Status:** todo
+- **Phase:** 4 · **Type:** fix · **Class:** tiny · **Status:** done (#70)
 - **Goal:** the camera follows smoothly in tall levels.
 - **Description:** 2784276 changed the vertical lerp to a fixed 0.14 when the distance exceeds 90 px.
 - **How (AI):** use the shared `lerpFactor` or a configurable curve in `cameraManager.ts`, and add a unit test.
@@ -188,12 +188,12 @@ Updated: 2026-11-27. Source: the regression audit of 2784276..c4758f3 against 81
 - **How (AI):** done.
 
 ### VC-041 · Menu PR-2: single game dialog shell
-- **Phase:** 4 · **Type:** refactor · **Class:** medium · **Status:** ready
+- **Phase:** 4 · **Type:** refactor · **Class:** medium · **Status:** done (#68)
 - **Goal:** one dialog with a fixed size; Wznów in the header.
 - **How (AI):** new `GameMenuDialog`, `SkillTreeView` extracted, `Tabs wrap={false}`, Esc reopens the last tab. Tests per the plan.
 
 ### VC-042 · Menu PR-3: new tab layout and leaner Help
-- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** blocked (VC-041)
+- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** in-progress
 - **Goal:** tabs Gra · Mapa · Postać · Ekwipunek · Magia · Ustawienia(Obraz/Dźwięk/Sterowanie/Interfejs) · Pomoc.
 - **How (AI):** new registries, `InterfaceTab`, Help deep link to Sterowanie, coordinator `openModal(id, subTab)`.
 
@@ -244,12 +244,12 @@ Updated: 2026-11-27. Source: the regression audit of 2784276..c4758f3 against 81
 - **How (AI):** make `scripts/wiki/wikiContent.ts` read the Markdown files, and update the smoke test.
 
 ### VC-052 · Saved language is honoured
-- **Phase:** 4 · **Type:** fix · **Class:** small · **Status:** todo
+- **Phase:** 4 · **Type:** fix · **Class:** small · **Status:** done (#66)
 - **Goal:** a player with "en" in saved settings keeps English after the upgrade.
 - **How (AI):** fall back from `vibrant_castle_language` to the saved settings language in `LocaleContext.tsx`, and add a unit test.
 
 ### VC-053 · Rebind guard and dialog i18n
-- **Phase:** 4 · **Type:** fix · **Class:** small · **Status:** todo
+- **Phase:** 4 · **Type:** fix · **Class:** small · **Status:** done (#67)
 - **Goal:** F1-F12, Tab, Meta and ContextMenu cannot be bound; the dialog text is translated.
 - **How (AI):** restore the reserved-key list from 8121dad `ControlsContext`, use i18n keys in `KeyRebindDialog`, and add tests.
 
