@@ -41,7 +41,7 @@ The engineering rules are:
 * [`content_and_assets.md`](./.agents/rules/content_and_assets.md).
 * `graphify*.md`.
 
-The system specifications (`docs/manifesto/`) and the lore (`docs/lore/`) were removed in 2784276. VC-050 restores them; until then, the code and the rules are the reference. `docs/plan/` is git-ignored scratch space for local plans and never holds tracked files.
+The system specifications live in [`docs/manifesto/`](./docs/manifesto) and the world lore in [`docs/lore/`](./docs/lore); [`docs/README.md`](./docs/README.md) indexes all docs. `docs/plan/` is git-ignored scratch space for local plans and never holds tracked files.
 
 ---
 
@@ -81,9 +81,11 @@ bun run build:game    # Production game client
 bun run build:pages   # Full distribution (dist/), game plus wiki
 
 bun scripts/validate-level.ts <id>     # Level-logic validator for one location (exit 1 on ERROR)
+bun scripts/sprites/compile.ts <id>    # Compile hi8bit / hi16bit sprite sheets
+bun scripts/repack-atlas.ts <id>       # Repack a painted sheet onto a clean grid
 ```
 
-The sprite compiler (`scripts/sprites/`), atlas repack and parallax seam tools were removed in 2784276. VC-003 restores them, and they are documented again when it merges.
+The pipeline is described in [`docs/manifesto/CONTENT_PIPELINE.md`](./docs/manifesto/CONTENT_PIPELINE.md).
 
 Art quality tiers (`hi8bit` = code key `low`, `hi16bit` = `mid`, `high` = `high`) are defined in [`.agents/rules/content_and_assets.md`](./.agents/rules/content_and_assets.md) §6.1.
 
