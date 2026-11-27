@@ -1,0 +1,35 @@
+import React from "react";
+import { Sword, Shield, Heart, Sparkles, Zap } from "lucide-react";
+import { StatRow, Card, Text } from "@ui";
+import { useI18n } from "@context/I18nContext";
+import type { InventoryStatsVM } from "./inventory.mapper";
+
+export interface InventoryStatsProps {
+  readonly stats: InventoryStatsVM;
+}
+
+/**
+ * Presentational card displaying current player combat vitals and derived attributes.
+ */
+export const InventoryStats = React.memo(function InventoryStats({
+  stats,
+}: InventoryStatsProps) {
+  const { t } = useI18n();
+
+  return (
+    <Card variant="dark" className="p-2 mt-1.5 flex flex-col gap-0.5 border-stone-800">
+      <Text size="2xs" weight="bold" variant="amber" uppercase className="tracking-wider mb-0.5">
+        {t("tabStats")}
+      </Text>
+      <StatRow label={t("attackPower")} value={stats.attack} variant="amber" icon={<Sword size={13} />} />
+      <StatRow label={t("defense")} value={stats.defense} variant="red" icon={<Shield size={13} />} />
+      <StatRow label={t("health")} value={stats.hpDisplay} variant="red" icon={<Heart size={13} />} />
+      <StatRow label={t("mana")} value={stats.manaDisplay} variant="cyan" icon={<Sparkles size={13} />} />
+      <StatRow label={t("stamina")} value={stats.staminaDisplay} variant="amber" icon={<Zap size={13} />} />
+    </Card>
+  );
+});
+
+InventoryStats.displayName = "InventoryStats";
+
+export default InventoryStats;
