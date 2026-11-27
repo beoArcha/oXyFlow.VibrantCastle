@@ -127,6 +127,10 @@ export const hudTranslations: Record<LanguageCode, HudI18n> = {
     crawlersKilled: "Pancerne Pełzacze",
     statsBtn: "Statystyki",
     resetStatsBtn: "Zresetuj Statystyki",
+    statsResetConfirmTitle: "Zresetować statystyki?",
+    statsResetConfirmMessage: "Statystyki sesji (zabójstwa, obrażenia, czas gry) zostaną wyzerowane. Tej operacji nie można cofnąć.",
+    statsResetConfirmLabel: "Zresetuj",
+    statsEmptyState: "Nie zebrano jeszcze żadnych statystyk. Rozpocznij przygodę, a kronika zapełni się sama.",
     statsResetNotification: "Statystyki gry zostały zresetowane i zapisane w pamięci podręcznej!",
   },
   en: {
@@ -255,6 +259,10 @@ export const hudTranslations: Record<LanguageCode, HudI18n> = {
     crawlersKilled: "Armored Crawlers",
     statsBtn: "Statistics",
     resetStatsBtn: "Reset Statistics",
+    statsResetConfirmTitle: "Reset statistics?",
+    statsResetConfirmMessage: "Session statistics (kills, damage, play time) will be cleared. This cannot be undone.",
+    statsResetConfirmLabel: "Reset",
+    statsEmptyState: "No statistics recorded yet. Start your adventure and the chronicle will fill itself.",
     statsResetNotification: "Game statistics have been reset and saved to persistent local storage!",
   },
 };

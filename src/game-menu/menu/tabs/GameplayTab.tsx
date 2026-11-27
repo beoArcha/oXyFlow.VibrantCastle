@@ -1,6 +1,6 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { RotateCcw } from "lucide-react";
-import { Button } from "@ui";
+import { Button, ConfirmDialog } from "@ui";
 import { useI18n } from "@context/I18nContext";
 import { useSettings } from "@context/SettingsContext";
 import { useGameEngine } from "@context/GameEngineContext";
@@ -22,6 +22,7 @@ export const GameplayTab = ({ className }: GameplayTabProps = {}): React.ReactEl
   } = useSettings();
 
   const { restart, setPlayerCharacter } = useGameEngine();
+  const [confirmRestart, setConfirmRestart] = useState(false);
 
   const handleSelectCharacter = useCallback(
     (charId: "valen" | "aurelia") => {
@@ -65,12 +66,25 @@ export const GameplayTab = ({ className }: GameplayTabProps = {}): React.ReactEl
           variant="secondary"
           size="sm"
           icon={<RotateCcw size={13} />}
-          onClick={restart}
+          onClick={() => setConfirmRestart(true)}
           className="border-amber-700/60 hover:border-amber-500"
         >
           {t("restartLocation")}
         </Button>
       </div>
+
+      <ConfirmDialog
+        isOpen={confirmRestart}
+        onClose={() => setConfirmRestart(false)}
+        onConfirm={() => {
+          setConfirmRestart(false);
+          restart();
+        }}
+        title={t("restartConfirmTitle")}
+        message={t("restartConfirmMessage")}
+        confirmLabel={t("restartConfirmLabel")}
+        cancelLabel={t("confirmCancelBtn")}
+      />
     </div>
   );
 };

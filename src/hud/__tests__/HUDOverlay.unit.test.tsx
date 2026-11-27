@@ -24,7 +24,7 @@ describe("HUDOverlay Orchestrator Component", () => {
     gameEngine.stop();
   });
 
-  it("renders clean single-player HUD with full-height viewport, P1 lore status, and bottom dock without floating top-center toolbar or flank clutter", async () => {
+  it("renders single-player HUD with full-height viewport, P1 lore status and the default controls hint and RPG buttons", async () => {
     const { container, unmount } = await renderIntoDom(
       <TestProviders>
         <HUDOverlay
@@ -50,14 +50,74 @@ describe("HUDOverlay Orchestrator Component", () => {
     expect(container.textContent).toContain("P1");
     expect(container.textContent).toContain("Słoneczny Rycerz");
 
-    // No permanent controls hint panel cluttering the right flank
-    expect(container.textContent).not.toContain("Tryb 1P");
-
-    // No redundant RPG buttons on the quick belt dock
-    expect(container.querySelector("#flank-inventory-btn")).toBeNull();
-    expect(container.querySelector("#flank-skilltree-btn")).toBeNull();
+    // Defaults: controls hint and RPG buttons are on
+    expect(container.textContent).toContain("Tryb 1P");
+    expect(container.querySelector("#flank-inventory-btn")).not.toBeNull();
+    expect(container.querySelector("#flank-skilltree-btn")).not.toBeNull();
 
     await unmount();
+  });
+
+  describe("HUD toggles (showControlsHint / showRpgButtons)", () => {
+    const SETTINGS_KEY = "vibrant_castle_full_settings";
+
+    const seedHud = (hud: Record<string, boolean>) => {
+      window.localStorage.setItem(SETTINGS_KEY, JSON.stringify({ hud }));
+    };
+
+    afterEach(() => {
+      window.localStorage.removeItem(SETTINGS_KEY);
+    });
+
+    const renderOverlay = () =>
+      renderIntoDom(
+        <TestProviders>
+          <HUDOverlay
+            onOpenInventory={() => {}}
+            onOpenSkillTree={() => {}}
+            onOpenHelp={() => {}}
+            onOpenMenu={() => {}}
+          />
+        </TestProviders>
+      );
+
+    it("unmounts the controls hint when showControlsHint is off", async () => {
+      seedHud({ showControlsHint: false });
+      const { container, unmount } = await renderOverlay();
+
+      expect(container.textContent).not.toContain("Tryb 1P");
+
+      await unmount();
+    });
+
+    it("mounts the controls hint when showControlsHint is on", async () => {
+      seedHud({ showControlsHint: true });
+      const { container, unmount } = await renderOverlay();
+
+      expect(container.textContent).toContain("Tryb 1P");
+
+      await unmount();
+    });
+
+    it("unmounts the RPG buttons on the quick belt when showRpgButtons is off", async () => {
+      seedHud({ showRpgButtons: false });
+      const { container, unmount } = await renderOverlay();
+
+      expect(container.querySelector("#flank-inventory-btn")).toBeNull();
+      expect(container.querySelector("#flank-skilltree-btn")).toBeNull();
+
+      await unmount();
+    });
+
+    it("mounts the RPG buttons on the quick belt when showRpgButtons is on", async () => {
+      seedHud({ showRpgButtons: true });
+      const { container, unmount } = await renderOverlay();
+
+      expect(container.querySelector("#flank-inventory-btn")).not.toBeNull();
+      expect(container.querySelector("#flank-skilltree-btn")).not.toBeNull();
+
+      await unmount();
+    });
   });
 
   it("handles quick potion consumption click cleanly without errors", async () => {

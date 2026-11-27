@@ -74,6 +74,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = React.memo(
             variant="secondary"
             onClick={onClose}
             disabled={isLoading}
+            autoFocus
           >
             {cancelLabel}
           </Button>
