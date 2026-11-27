@@ -1,5 +1,6 @@
 import { describe, it, expect } from "bun:test";
 import { ParallaxSystem } from "../ParallaxSystem";
+import { ParallaxLoadQueue, PARALLAX_LOAD_PRIORITY, type IParallaxTextureDecoder } from "../../loading";
 import type { IParallaxFlags, IParallaxLoader, IParallaxRegistry, IPlaceholderRenderer } from "../types";
 import type { ISectorAtmosphericRenderer } from "@game/renderer/background/atmospheric/atmosphericSectorRenderer";
 import type { LocationDefinition } from "@game/locations/types";
@@ -259,5 +260,93 @@ describe("ParallaxSystem", () => {
     // Assert
     expect(atmosphericCleared).toBe(1);
     expect(placeholderCleared).toBe(1);
+  });
+
+  it("should render frame 1 immediately with far placeholder colours from meta when far texture is pending", () => {
+    // Arrange
+    const queue = new ParallaxLoadQueue({
+      decoder: {
+        loadAndDecode: () => new Promise(() => {}),
+      },
+    });
+    const system = new ParallaxSystem({ loadQueue: queue });
+    const location = makeLocation({
+      id: "courtyard_m2",
+      worldId: "courtyard",
+      theme: {
+        bgGradientTop: "#000000",
+        bgGradientBottom: "#000000",
+        ambientParticle: "leaf",
+        fogColor: "rgba(0,0,0,0)",
+        musicIntensity: 0.2,
+      },
+      parallaxBackground: {
+        boxWidth: 4000,
+        boxHeight: 1200,
+        layers: [makeImageLayer({ id: "far", tier: "far", layerKey: "courtyard:far", imageUrl: "courtyard_far.png" })],
+      },
+    });
+    const ctx = createMockContext2D();
+
+    // Act
+    system.render(ctx, location, 3000, 1000, 1280, 720, 0, 0, 1);
+
+    // Assert
+    expect(ctx.getFillRectCalls().length).toBeGreaterThan(0);
+    expect(ctx.getDrawImageCalls().length).toBe(0);
+    expect(ctx.getSaveBalance()).toBe(0);
+  });
+
+  it("should fade in a combination layer from 0 to 1 over 200 ms after becoming ready in ParallaxLoadQueue", async () => {
+    // Arrange
+    let fakeNow = 500;
+    const midImg = makeFakeImage(1024, 512);
+    const decoder: IParallaxTextureDecoder = {
+      async loadAndDecode() {
+        return { texture: midImg, width: 1024, height: 512, decodedBytes: 1024 * 512 * 4 };
+      },
+    };
+    const queue = new ParallaxLoadQueue({ decoder, concurrency: 1, now: () => fakeNow, fadeDurationMs: 200 });
+    await queue.enqueue({
+      cacheKey: "courtyard:var_b",
+      url: "mid.png",
+      priority: PARALLAX_LOAD_PRIORITY.LAYER,
+      fadeInOnReady: true,
+    });
+    const system = new ParallaxSystem({ loadQueue: queue, now: () => fakeNow });
+    const location = makeLocation({
+      id: "courtyard",
+      worldId: "courtyard",
+      parallaxBackground: {
+        boxWidth: 4000,
+        boxHeight: 1200,
+        layers: [makeImageLayer({ id: "mid", tier: "mid", layerKey: "courtyard:var_b", imageUrl: "mid.png" })],
+      },
+    });
+
+    const recordedAlphas: number[] = [];
+    const ctx = createMockContext2D();
+    const origDraw = ctx.drawImage.bind(ctx);
+    ctx.drawImage = ((...args: unknown[]) => {
+      recordedAlphas.push(ctx.globalAlpha);
+      (origDraw as (...inner: unknown[]) => void)(...args);
+    }) as CanvasRenderingContext2D["drawImage"];
+
+    // Act
+    fakeNow = 500;
+    ctx.globalAlpha = 1;
+    system.render(ctx, location, 3000, 1000, 1000, 625, 0, 0, 1);
+    fakeNow = 600;
+    ctx.globalAlpha = 1;
+    system.render(ctx, location, 3000, 1000, 1000, 625, 0, 0, 2);
+    fakeNow = 700;
+    ctx.globalAlpha = 1;
+    system.render(ctx, location, 3000, 1000, 1000, 625, 0, 0, 3);
+
+    // Assert
+    expect(recordedAlphas.length).toBe(2);
+    expect(recordedAlphas[0]).toBeCloseTo(0.5, 4);
+    expect(recordedAlphas[1]).toBe(1);
+    expect(ctx.getSaveBalance()).toBe(0);
   });
 });
