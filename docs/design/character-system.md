@@ -225,9 +225,11 @@ Tier 1 nodes have no requirement. A build that ignores a tree reaches it about 2
 - `CharacterBaseStats` is replaced by `baseAttributes` and `defaultPriority`. The movement constants stay. The `baseStats` numbers move to the legacy table.
 - Tests: the L1 sum is 906 and every value is in 110..180 for each hero; growth matches the table; derived L1 stays within ±10% of today; a v1 save migrates the same way every time.
 
-## 8. Open questions for the owner
+## 8. Owner decisions (approved 2026-11-27)
 
-1. **Level source:** XP from kills (`xpReward` already exists), or map milestones? Should the +1 skill point per kill move to level-ups (proposal: 1 per level, 2 at every 5th)?
-2. **Priority changes:** pick once at level 1, or allow a free respec at checkpoints? Respec is easy, because attributes are recomputed from `level` and `priority`.
-3. **Boss length:** is a boss of about 25 melee hits (about 4x today's HP) right, or should HITS for bosses be about 12?
-4. **CHA scope:** confirm CHA = solar spell power + soul drop chance (later also shop prices and narration flavor).
+1. **Level source:** XP comes from both kills (`xpReward`) and map milestones, with most XP from milestones (stage-based, Mario-like). The +1 skill point per kill moves to level-ups: 1 point per level, 2 at every 5th level.
+2. **Priority changes:** allowed, but only at a save point; attributes are recomputed from `level` and `priority`.
+3. **Boss length:** about 15 melee hits for a map boss and about 25 for a world boss (set `HITS` per boss tier accordingly).
+4. **CHA scope:** CHA drives solar spell power and soul drop chance (later also shop prices and narration flavor).
+
+Status: approved by the owner; this spec is binding for VC-031..VC-034.
