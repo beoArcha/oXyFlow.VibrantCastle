@@ -37,7 +37,6 @@ describe("HUDQuickBelt Component", () => {
     secondarySpellName: "Egida Cieni",
     primaryKeyLabel: "U",
     secondaryKeyLabel: "O",
-    potionKeyRangeLabel: "1-3",
     potions: [
       {
         slotIndex: 0,
@@ -164,7 +163,6 @@ describe("HUDQuickBelt Component", () => {
       playerNumber: 2,
       characterId: "aurelia",
       theme: "cyan",
-      potionKeyRangeLabel: "7-9",
       potions: [
         { slotIndex: 0, keyLabel: "7", count: 1, isEmpty: false },
         { slotIndex: 1, keyLabel: "8", count: 0, isEmpty: true },

@@ -165,7 +165,6 @@ describe("hud.mapper - Engine to UI Presentation Mapping", () => {
           playerNumber: 1,
           primaryKeyLabel: "Q",
           secondaryKeyLabel: "E",
-          potionKeyRangeLabel: "1-3",
         })
       ).toBeNull();
     });
@@ -186,14 +185,12 @@ describe("hud.mapper - Engine to UI Presentation Mapping", () => {
         playerNumber: 1,
         primaryKeyLabel: "Q",
         secondaryKeyLabel: "E",
-        potionKeyRangeLabel: "1-3",
       });
 
       expect(vm).not.toBeNull();
       expect(vm?.playerNumber).toBe(1);
       expect(vm?.primaryKeyLabel).toBe("Q");
       expect(vm?.secondaryKeyLabel).toBe("E");
-      expect(vm?.potionKeyRangeLabel).toBe("1-3");
       expect(vm?.potions).toHaveLength(3);
     });
   });
