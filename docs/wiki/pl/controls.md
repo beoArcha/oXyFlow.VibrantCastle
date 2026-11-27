@@ -1,6 +1,6 @@
 # Sterowanie i interfejs
 
-To są domyślne ustawienia dostarczane z grą, wzięte z danych sterowania. Każdy przycisk można zmienić w menu gry. Klawiatura i pad działają jednocześnie.
+To są domyślne ustawienia dostarczane z grą, wzięte z danych sterowania. Każdy przycisk można zmienić w **Ustawienia > Sterowanie**. Klawiatura i pad działają jednocześnie.
 
 ---
 
@@ -52,26 +52,79 @@ Pad ma 4 przyciski twarze, 2 spusty i 2 zderzaki. W menu zderzaki i spusty słu�
 
 - <kbd>LB</kbd> / <kbd>RB</kbd> przełączają karty pierwszego poziomu.
 - <kbd>LT</kbd> / <kbd>RT</kbd> przełączają karty drugiego poziomu.
-- Menu otwiera <kbd>Start</kbd>, a na padach bez Start przytrzymanie <kbd>LB</kbd> + <kbd>RB</kbd> przez 0,5 s.
+- <kbd>Start</kbd> otwiera menu. Przytrzymanie <kbd>LB</kbd> + <kbd>RB</kbd> razem przez 0,5 s też je otwiera, więc pad bez przycisku Start również da radę.
 
 **Zaplanowane (faza 5):** w grze zderzaki również mają stać się selektorami, tak by domyślne ustawienia powyżej (które używają <kbd>LB</kbd>, <kbd>RB</kbd> i spustów do mikstur i zaklęć) przeszły na semantykę selektorów.
 
 ---
 
-## 4. Skróty klawiaturowe
+## 4. Karty menu gry
 
-- <kbd>M</kbd>: menu gry.
+Menu gry to jedno okno z kartami na dwóch poziomach. Karty pierwszego poziomu przełącza się klawiszami <kbd>Q</kbd> / <kbd>E</kbd> albo <kbd>LB</kbd> / <kbd>RB</kbd>. Karty drugiego poziomu przełącza się klawiszami <kbd>[</kbd> / <kbd>]</kbd> albo <kbd>LT</kbd> / <kbd>RT</kbd>.
+
+| Karta | Klawisz | Co zawiera |
+| :--- | :--- | :--- |
+| Gra | <kbd>M</kbd> | Zapis, wczytanie i restart bieżącej lokacji |
+| Mapa | | Wybór lokacji |
+| Postać | | Statystyki bieżącego bohatera |
+| Ekwipunek | <kbd>I</kbd> | Przedmioty i wyposażenie |
+| Magia | <kbd>K</kbd> | Drzewko umiejętności |
+| Ustawienia | | Cztery karty drugiego poziomu: Obraz, Dźwięk, Sterowanie i Interfejs |
+| Pomoc | <kbd>H</kbd>, <kbd>?</kbd> lub <kbd>F1</kbd> | Pomoc i sterowanie |
+
+## 5. Pad w menu
+
+| Przycisk | Akcja |
+| :--- | :--- |
+| <kbd>A</kbd> | Aktywuje zaznaczoną kontrolkę |
+| <kbd>B</kbd> | Wstecz: anuluje przypisywanie, zamyka okno na wierzchu lub zamyka menu |
+| <kbd>Start</kbd> | Otwiera menu. W menu działa jak <kbd>B</kbd>. |
+| <kbd>X</kbd> | Akcja kontekstowa na zaznaczonej kontrolce |
+| <kbd>Y</kbd> | Pokazuje lub chowa legendę przycisków |
+| Krzyżak lub lewa gałka | Przesuwa fokus |
+| <kbd>LB</kbd> / <kbd>RB</kbd>, <kbd>LT</kbd> / <kbd>RT</kbd> | Karty pierwszego i drugiego poziomu |
+
+---
+
+## 6. Skróty klawiaturowe
+
+- <kbd>M</kbd>: otwiera lub zamyka menu gry.
 - <kbd>Esc</kbd>: zamyka otwarte okno, a gdy żadne nie jest otwarte, otwiera menu.
 - <kbd>P</kbd>: pauza i wznowienie.
 - <kbd>I</kbd>: ekwipunek.
 - <kbd>K</kbd>: drzewko umiejętności.
 - <kbd>H</kbd>, <kbd>?</kbd> lub <kbd>F1</kbd>: pomoc i sterowanie.
-- <kbd>Q</kbd> / <kbd>E</kbd>: poprzednia / następna karta pierwszego poziomu. <kbd>[</kbd> / <kbd>]</kbd>: poprzednia / następna karta drugiego poziomu.
-- <kbd>C</kbd>: okno deweloperskie. Istnieje tylko w buildach deweloperskich.
+- <kbd>Q</kbd> / <kbd>E</kbd>: poprzednia / następna karta pierwszego poziomu, gdy okno gry jest otwarte.
+- <kbd>[</kbd> / <kbd>]</kbd>: poprzednia / następna karta drugiego poziomu, gdy okno gry jest otwarte.
+- <kbd>C</kbd>: okno deweloperskie („Tworzenie”). Istnieje tylko w buildach deweloperskich.
+
+Skróty są ignorowane, gdy piszesz w polu tekstowym. Gra nie używa kombinacji z <kbd>Ctrl</kbd>, <kbd>Alt</kbd> ani <kbd>Meta</kbd>.
 
 ---
 
-## 5. Gra na stronie
+## 7. Zmiana przypisania
+
+1. Otwórz w menu **Ustawienia > Sterowanie**.
+2. Wybierz akcję i naciśnij nowy klawisz albo przycisk pada.
+3. Naciśnij <kbd>Esc</kbd>, aby anulować zmianę.
+
+Na klawiaturze można przypisać dowolny klawisz z wyjątkiem klawiszy systemowych: <kbd>Tab</kbd>, <kbd>Caps Lock</kbd>, klawiszy <kbd>Win</kbd> / <kbd>Cmd</kbd>, klawisza menu kontekstowego oraz <kbd>F1</kbd>–<kbd>F12</kbd>. Na padzie można przypisać tylko przyciski ograniczonego układu: <kbd>A</kbd> / <kbd>B</kbd> / <kbd>X</kbd> / <kbd>Y</kbd>, <kbd>LB</kbd> / <kbd>RB</kbd> i <kbd>LT</kbd> / <kbd>RT</kbd>. Inne przyciski zostaną odrzucone z komunikatem.
+
+## 8. Potwierdzenia
+
+Gra pyta o potwierdzenie przed każdą akcją, której nie da się cofnąć albo która nadpisuje postęp lub ustawienia:
+
+- restart bieżącej lokacji;
+- wczytanie zapisu, które zastępuje bieżący stan;
+- import ustawień, który zastępuje bieżącą konfigurację;
+- przywrócenie wszystkich ustawień domyślnych;
+- przywrócenie domyślnego sterowania dla jednego gracza albo dla wszystkich;
+- wyzerowanie statystyk sesji;
+- wyrzucenie przedmiotu z ekwipunku.
+
+---
+
+## 9. Gra na stronie
 
 - Kliknij grę albo wciśnij **Uruchom Grę**, aby otrzymała fokus klawiatury.
 - Gra nie blokuje klawiatury. Wciśnij <kbd>Tab</kbd>, aby z niej wyjść i wrócić na stronę.
