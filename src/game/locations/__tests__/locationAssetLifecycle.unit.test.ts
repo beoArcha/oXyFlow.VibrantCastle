@@ -75,12 +75,67 @@ describe("LocationAssetLifecycle", () => {
     expect([...loader.loadCalls].sort()).toEqual(["a1", "shared"]);
   });
 
-  it("preloads neighbours only after the current location, at idle", async () => {
+  it("preloads neighbours only after the current location, at idle, skipping already-cached shared textures", async () => {
     const lifecycle = make();
     await lifecycle.enterLocation(asId("a"));
     expect(loader.loadCalls).toEqual(["a1", "shared"]);
     await flushIdle();
-    expect(loader.loadCalls).toEqual(["a1", "shared", "b1", "shared"]);
+    expect(loader.loadCalls).toEqual(["a1", "shared", "b1"]);
+  });
+
+  it("should load current location layers in §3.7 priority order and preload only neighbour far+closest at low tier", async () => {
+    // Arrange
+    const layeredGraph: Record<string, LocationDefinition> = {
+      curr: {
+        id: "curr",
+        portals: [{ id: "p_next", targetLocationId: "next", activation: "touch" }],
+        parallaxBackground: {
+          boxWidth: 4000,
+          boxHeight: 1200,
+          layers: [
+            { id: "c_close", name: "Close", type: "image", tier: "close", depth: 0.86, scrollSpeedX: 0.8, scrollSpeedY: 0.2, imageUrl: "curr_close_high.png" },
+            { id: "c_fx", name: "Sigil", type: "image", tier: "boss_stage", depth: 0.72, scrollSpeedX: 0.4, scrollSpeedY: 0.1, imageUrl: "curr_fx_high.png" },
+            { id: "c_mid", name: "Mid", type: "image", tier: "mid", depth: 0.45, scrollSpeedX: 0.35, scrollSpeedY: 0.1, imageUrl: "curr_mid_high.png" },
+            { id: "c_far", name: "Far", type: "image", tier: "far", depth: 0.08, scrollSpeedX: 0.04, scrollSpeedY: 0.02, imageUrl: "curr_far_high.png" },
+          ],
+        },
+      } as unknown as LocationDefinition,
+      next: {
+        id: "next",
+        portals: [],
+        parallaxBackground: {
+          boxWidth: 4000,
+          boxHeight: 1200,
+          layers: [
+            { id: "n_far", name: "Next Far", type: "image", tier: "far", layerKey: "next:far", depth: 0.08, scrollSpeedX: 0.04, scrollSpeedY: 0.02, imageUrl: "next_far_high.png" },
+            { id: "n_mid", name: "Next Mid", type: "image", tier: "mid", layerKey: "next:var_b", depth: 0.45, scrollSpeedX: 0.35, scrollSpeedY: 0.1, imageUrl: "next_mid_high.png" },
+            { id: "n_close", name: "Next Close", type: "image", tier: "close", layerKey: "next:var_d", depth: 0.86, scrollSpeedX: 0.8, scrollSpeedY: 0.2, imageUrl: "next_close_high.png" },
+            { id: "n_fx", name: "Next Fx", type: "image", tier: "boss_stage", layerKey: "next:fx_sigil", depth: 0.72, scrollSpeedX: 0.4, scrollSpeedY: 0.1, imageUrl: "next_fx_high.png" },
+          ],
+        },
+      } as unknown as LocationDefinition,
+    };
+
+    const lifecycle = new LocationAssetLifecycle({
+      loader,
+      resolveLocation: (id) => layeredGraph[id as string],
+      scheduleIdle: (task) => idleTasks.push(task),
+      resolveTierUrl: (layer, tier) => layer.imageUrl?.replace("_high.png", `_${tier}.png`),
+    });
+
+    // Act
+    await lifecycle.enterLocation(asId("curr"));
+    await flushIdle();
+
+    // Assert
+    expect(loader.loadCalls).toEqual([
+      "curr_far_high.png",
+      "curr_mid_high.png",
+      "curr_close_high.png",
+      "curr_fx_high.png",
+      "next_far_low.png",
+      "next_close_low.png",
+    ]);
   });
 
   it("evicts A on A to B to C, keeping URLs shared with B", async () => {
