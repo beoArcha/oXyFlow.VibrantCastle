@@ -1,6 +1,6 @@
 # Phase 5: worlds and characters (0.4.x, next)
 
-Updated: 2026-11-27. Part of the [task folder](./README.md). Phases, gates and the card format are described in the [README](./README.md) and the [roadmap](./ROADMAP.md).
+Updated: 2026-11-28. Part of the [task folder](./README.md). Phases, gates and the card format are described in the [README](./README.md) and the [roadmap](./ROADMAP.md).
 
 ## About this phase
 
@@ -33,14 +33,14 @@ The cards are in sections B2 to I below.
 - enemies deal damage;
 - the phase 5 quality gate passes.
 
-**Quality gate checklist** (the phase 5 gate card is written at the phase 4 gate; detail in [ROADMAP.md](./ROADMAP.md#quality-gate-end-of-every-phase-in-this-order)):
+**Quality gate checklist** (card `VC-199`, detail in [ROADMAP.md](./ROADMAP.md#quality-gate-end-of-every-phase-in-this-order)):
 - [ ] 1. Docs quality and conformance check.
 - [ ] 2. Docs update.
 - [ ] 3. General review.
 - [ ] 4. Release.
 - [ ] 5. Version bump to `0.5.0`, approved by the owner.
 
-**Cards still to be written** (at the phase 4 gate): pad layout with bumpers as selectors in gameplay; the reactive narrator wired to the engine; the phase 5 gate card. Unfinished phase 4 cards that move here at the gate are added below.
+**Cards still to be written:** pad layout with bumpers as selectors in gameplay; the reactive narrator wired to the engine (`VC-155` covers engine wiring). Moved from phase 4 at the gate: `VC-109b` and `VC-195`..`VC-197`.
 
 ---
 
@@ -54,6 +54,15 @@ The cards are in sections B2 to I below.
   1. Add a script in `scripts/atlas` (playwright or resvg) plus a Vite hook or a pre-build step.
   2. Make the loader prefer the baked PNG.
   3. Add a benchmark note and tests.
+
+### VC-109b · Repaint the 3 JPG parallax worlds as 3-tier PNGs
+- **Phase:** 5 · **Type:** art · **Class:** medium · **Status:** todo (moved from Phase 4; after VC-109a #138)
+- **Goal:** replace the 3 legacy JPG fars (`ashen_catacombs`, `alchemist_library`, `eclipse_crown`), their 3 JPG `var_b` mids, the 9 borrowed variation slots, and the remaining JPG fx files with original PNGs in `hi8bit`, `hi16bit`, and `high`, clearing `LEGACY_PARALLAX_JPG_ALLOWLIST`.
+- **Description:** `VC-109a` (#138) derived `hi16bit` / `hi8bit` tiers for the 5 PNG worlds and generated `var_d_zone_boss` / `var_d_zone_rest` across all 8 worlds. The 8 files in `LEGACY_PARALLAX_JPG_ALLOWLIST` (`src/tests/arch/parallaxTaxonomy.test.ts`) and 9 borrowed `source` slots remain.
+- **How (AI):**
+  1. One world per PR: paint/generate the `far` (`2048x1152`, alpha-free PNG), own `var_a..d` (`1024 px` tall, true alpha, removing `screen` blend and `source` borrows), and derive `hi16bit` / `hi8bit` tiers.
+  2. Replace `_shared/fx_sigil_high.jpg` and `eclipse_crown_fx_throne_high.jpg` with 3-tier PNGs (`_shared` / `eclipse_crown`).
+  3. Re-run `bun scripts/parallax/buildMeta.ts` and `bun scripts/check-parallax-seams.ts`, shrink and empty `LEGACY_PARALLAX_JPG_ALLOWLIST`, and review contact sheets (`bun run review:parallax`) before merge.
 
 ---
 
@@ -451,7 +460,29 @@ The cards are in sections B2 to I below.
 
 ---
 
-## L. Phase 4 general review (VC-090)
+## L. Parallax perf follow-ups (from VC-108 round 3)
+
+### VC-195 · Measure Firefox parallax performance (`VC-108` follow-up)
+- **Phase:** 5 · **Type:** test · **Class:** small · **Status:** todo
+- **Goal:** run `bun run perf:parallax -- --browser firefox` against a matching Playwright Firefox build and verify desktop/low-power budgets.
+- **Description:** in `VC-108` round 2/3 (`docs/perf/round-2.md`), the local Playwright cache held `firefox-1555` while `playwright-core@1.65.1` expects `firefox-1572`, failing `newContext` with a Juggler protocol mismatch (`Browser.setDownloadOptions`: unknown `legacyInterceptor`).
+- **How (AI):** install the matching Playwright Firefox build (`firefox-1572`), run `bun run perf:parallax -- --browser firefox`, fix any Firefox-specific decode/composite bottlenecks if over budget, and append results to `docs/perf/`.
+
+### VC-196 · Eliminate WebKit `grand_bastion` DPR 2 tail spike (`VC-108` follow-up)
+- **Phase:** 5 · **Type:** perf · **Class:** small · **Status:** todo
+- **Goal:** bring WebKit `grand_bastion` DPR 2 `p99` (`52.60 ms`) and `max` (`64.00 ms`) within `<= 2 × p95` and `< 33 ms`.
+- **Description:** observed in `VC-108` round 3 (`docs/perf/round-3.md`): `grand_bastion` DPR 2 passes `p95` (`7.00 ms <= 8.3 ms`) on WebKit 27.2, but hits a single-frame `64.00 ms` tail spike while all other 15 WebKit runs stay at `max <= 20.00 ms`.
+- **How (AI):** profile `grand_bastion` DPR 2 under WebKit (`bun run perf:parallax -- --browser webkit --location grand_bastion`), isolate whether the spike comes from `<canvas>` fallback surface transfer or first-draw image decode, smooth/defer the work, and re-measure.
+
+### VC-197 · Fix parallax `off` mode slower than `low` on `clocktower` (`VC-108` follow-up)
+- **Phase:** 5 · **Type:** perf · **Class:** small · **Status:** todo
+- **Goal:** `parallaxQuality = "off"` renders faster than or equal to `"low"` across every map, eliminating the `clocktower` regression (`10.24 ms` vs `3.92 ms` tablet; `13.22 ms` vs `5.28 ms` laptop).
+- **Description:** observed in `VC-108` round 3 (`docs/perf/round-3.md`): when `off` renders only the placeholder gradient, `GameRenderer` cannot skip the full-canvas clear and per-frame placeholder gradient fill on `clocktower` (`2440×1740`), making `off` ~2.5× slower than `low` (`hi8bit` opaque `far` bitmap).
+- **How (AI):** cache the world's `off` placeholder backdrop onto a pre-rendered `ImageBitmap` / `<canvas>` surface (same opaque fast path as `far`), skip redundant canvas clears when opaque, and re-run `bun run perf:parallax -- --profile tablet --quality off` and `low-power-laptop`.
+
+---
+
+## M. Phase 4 general review (VC-090)
 
 Follow-up cards created from [`docs/design/gate-phase4-review.md`](../design/gate-phase4-review.md) for all High and Medium findings (`VC-200`–`VC-211`).
 
@@ -526,3 +557,19 @@ Follow-up cards created from [`docs/design/gate-phase4-review.md`](../design/gat
 - **Goal:** make `LocationAssetLifecycle.getLayerUrls` match `simplified` load tasks, avoid 1.2s per-layer idle bottlenecks under active gameplay, and add test-reset support on default singletons.
 - **Description:** `LocationAssetLifecycle.getLayerUrls` (`src/game/locations/locationAssetLifecycle.ts:430-443`) returns all layers when `parallaxQuality === "simplified"`, diverging from `buildLocationLoadTasks` (`lines 196-215`). `ParallaxLoadQueue.pump` (`src/game/parallax/loading/ParallaxLoadQueue.ts:349-352`) limits `priority > FAR` starts to 1 per idle slice (`timeout: 1200`), and module singletons (`defaultParallaxLoadQueue`, `defaultLocationAssetLifecycle`, `defaultParallaxRegistry`) have no shared reset hook for test isolation.
 - **How (AI):** return only `far` in `getLayerUrls` for `"simplified"`, support bounded concurrent or batched non-far decodes per idle slice, add test reset helpers for defaults, and cover multi-layer/quality transitions in unit/integration tests.
+
+---
+
+## Z. Phase gate
+
+### VC-199 · Phase 5 quality gate and 0.5.0
+- **Phase:** 5 · **Type:** review / workflow · **Class:** large · **Status:** blocked (all other phase 5 cards done or moved)
+- **Goal:** close phase 5 and open phase 6 with version `0.5.0`.
+- **How (AI):** run the gate from `ROADMAP.md` in order:
+  1. Docs quality and conformance check (docs against code).
+  2. Docs update.
+  3. General review.
+  4. Release.
+  5. Version bump to `0.5.0`, approved by the owner.
+
+  Move unfinished cards to phase 6 and write the phase 6 gate card.

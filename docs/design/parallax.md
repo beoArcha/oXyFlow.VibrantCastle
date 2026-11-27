@@ -1,7 +1,7 @@
 # Parallax: engine review, asset taxonomy and work plan (VC-100)
 
-Status: proposed (VC-100, phase 4, 0.3.x). Owner request 2026-11-27. This doc is the contract for VC-101..VC-109.
-Line numbers refer to `origin/main` at a9ac1bc.
+Status: **implemented** (VC-101..VC-108 and VC-109a merged in Phase 4; remaining JPG-to-PNG art (`VC-109b`) and Round 3 perf follow-ups move to Phase 5).  
+Historical baseline note: §1 line numbers refer to `origin/main` at `a9ac1bc` before the VC-101..VC-108 refactor into `src/game/parallax/`.
 
 **Target layer model per world:** 1 `far` background + 3 standard variations (up to 5) for the mid / close bands, combined
 differently across the world's 8 maps, + zone variants. A zone (boss, rest, others) swaps the map's **closest** layer for a
@@ -166,8 +166,8 @@ signals and is lowered by the VC-108 runtime guard.
 
 | Mode | What draws | Images loaded | Fallback order per layer |
 |---|---|---|---|
-| `high` / `mid` / `low` | far + combination + zone variant + effects | the requested tier | reuse `atlasVariantResolver`'s chain (high→mid→low, mid→high→low, low→mid→high), then the placeholder |
-| `simplified` | the placeholder gradient (`top`/`bottom`) + the closest layer at `low` only + procedural effects off | 1 small image | low → placeholder silhouette band (a flat `silhouette` colour rect) |
+| `high` / `mid` / `low` | far + combination + zone variant (`high`/`mid`) + effects (`high`/`mid`) | the requested tier | reuse `atlasVariantResolver`'s chain (high→mid→low, mid→high→low, low→mid→high), then the placeholder |
+| `simplified` | the `far` layer at `low` (`hi8bit`) only; procedural effects/atmosphere off | 1 small image (`far` at `low`) | `low` → placeholder gradient + silhouette band while loading |
 | `off` | the placeholder gradient only; no effects | none | n/a |
 
 Tier size targets (VC-106 confirms them):

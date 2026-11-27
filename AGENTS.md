@@ -28,7 +28,7 @@ Codebase layout:
 | **Organizer** | [`AGENTS.md`](./AGENTS.md) | This hub: mission, tooling, invariants and where to look. |
 | **Vision, roadmap, tasks** | [`docs/tasks/`](./docs/tasks) | [`VISION.md`](./docs/tasks/VISION.md): what we build. [`ROADMAP.md`](./docs/tasks/ROADMAP.md): phases, quality gates, planned / done cards. [`README.md`](./docs/tasks/README.md): card format and the index of phase files (`phase-N-0.M.x.md`) that hold the VC-xxx cards. |
 | **Engineering rules** | [`.agents/rules/`](./.agents/rules) | Mandatory standards, listed below. |
-| **Design docs** | [`docs/design/`](./docs/design) | Approved designs, e.g. [`menu-ux-plan.md`](./docs/design/menu-ux-plan.md). Map and character contracts land here (VC-020, VC-030). |
+| **Design docs** | [`docs/design/`](./docs/design) | Approved designs and contracts ([`menu-ux-plan.md`](./docs/design/menu-ux-plan.md), [`maps-contract.md`](./docs/design/maps-contract.md), [`character-system.md`](./docs/design/character-system.md), [`parallax.md`](./docs/design/parallax.md)) plus Phase 4 reviews and playtests. |
 
 The engineering rules are:
 
@@ -79,11 +79,16 @@ bun test              # Full suite
 bun run coverage:gate # Coverage quality gate
 bun run build:game    # Production game client
 bun run build:pages   # Full distribution (dist/), game plus wiki
+bun run preview:pages # Static local preview of dist/ under /oXyFlow.VibrantCastle/
 bun scripts/version.ts # Build version: major.minor (package.json) + patch (first-parent commits since the minor bump)
 
 bun scripts/validate-level.ts <id>     # Level-logic validator for one location (exit 1 on ERROR)
 bun scripts/sprites/compile.ts <id>    # Compile hi8bit / hi16bit sprite sheets
 bun scripts/repack-atlas.ts <id>       # Repack a painted sheet onto a clean grid
+bun scripts/check-parallax-seams.ts    # Horizontal seam check on parallax PNGs
+bun run perf:parallax                  # Headless parallax performance benchmark (VC-106)
+bun run review:parallax                # Visual parallax contact-sheet gallery (VC-107)
+bun run graph:build                    # Rebuild Graphify code knowledge graph (graphify-out/)
 ```
 
 The pipeline is described in [`docs/manifesto/CONTENT_PIPELINE.md`](./docs/manifesto/CONTENT_PIPELINE.md).

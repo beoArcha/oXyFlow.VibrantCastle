@@ -6,7 +6,7 @@ Enemy sprite sheets are authored as small TypeScript draw scripts (one enemy per
 - `<id>_hi16bit.svg` - "hi-16bit" sheet for quality tier `mid` (RGB565 colour, 96 px cells)
 - `<id>_meta.json` - atlas meta (same shape as `clockwork_owl_gargoyle_meta.json`, plus `layout.bodyBox`)
 
-Output goes to `src/assets/enemies/<id>/`. Fixtures in `__fixtures__/` are never compiled by `--all`. Hero sheets (Valen, Aurelia) use a second contract, see [Heroes](#heroes). Platform tilesets use a third, see [Tilesets](#tilesets). Decor props use a fourth, see [Props](#props).
+Output goes to `src/assets/enemies/<id>/`. Fixtures in `__fixtures__/` are never compiled by `--all`. Hero sheets (Valen, Aurelia) use a second contract, see [Heroes](#heroes). Platform tilesets use a third, see [Tilesets](#tilesets). Decor props use a fourth, see [Props](#props). Interactive structures (`aether_gate`, `chrono_lever`, `grand_portcullis`, `hazard_thorns`, `training_dummy`) use `defineStructureSprite` (`scripts/sprites/structures/<id>.ts`, `compileStructure.ts`).
 
 ## Authoring contract
 

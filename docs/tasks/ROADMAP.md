@@ -1,6 +1,6 @@
 # Vibrant Castle: roadmap
 
-Updated: 2026-11-27. The [vision](./VISION.md) says what we are building. The [task folder README](./README.md) explains the card format and indexes the phase files, which hold the cards. This file is the overview: in which phase each part lands.
+Updated: 2026-11-28. The [vision](./VISION.md) says what we are building. The [task folder README](./README.md) explains the card format and indexes the phase files, which hold the cards. This file is the overview: in which phase each part lands.
 
 ## How phases work
 
@@ -67,38 +67,44 @@ Cards and the "phase 4 so far" summary: [phase-4-0.3.x.md](./phase-4-0.3.x.md).
 | [Design contracts](./phase-4-0.3.x.md#c-world-and-maps-8-worlds-x-8-maps-today-map-1-of-each-world) | | VC-020 (#77), VC-030 (#78) |
 | [Inventory](./phase-4-0.3.x.md#d-characters-stats-and-equipment) | | VC-035 (#117) |
 | [Menu](./phase-4-0.3.x.md#e-menu-plan-docsdesignmenu-ux-planmd) | | VC-040 (#63), VC-041 (#68), VC-042 (#74), VC-043 (#81), VC-044 (#84), VC-045 (#94), VC-046 (#80), VC-047 (#99) |
-| [Docs, settings, controls](./phase-4-0.3.x.md#f-docs-settings-and-controls) | VC-058 (review, #120), VC-082 (review, round 1 #102) | VC-050 (#88), VC-051 (#90), VC-052 (#66), VC-053 (#67), VC-054 (#73), VC-055 (#75), VC-056 (#93), VC-057 (#72), VC-083 (#106) |
-| [CI and tests](./phase-4-0.3.x.md#g-ci-and-tests) | VC-061, VC-062 (parts 1-3 #86, #97, #100) | VC-060 (#83), VC-063 (#79) |
-| [Developer tools](./phase-4-0.3.x.md#h-developer-tools-and-review) | VC-070, VC-075, VC-076, VC-081 | VC-071 (#87), VC-072 (#82), VC-073 (#95), VC-074 (#96) |
-| [Parallax series](./phase-4-0.3.x.md#p-parallax-series-owner-request-2026-11-27) | VC-101 (101c), VC-103, VC-104, VC-105 (105b), VC-108, VC-109 | VC-100 (#108), VC-101a (#109), VC-101b (#114), VC-102 (#110, #116), VC-105a (#113), VC-106 (#111), VC-107 (#112) |
-| [Asset animation fixes](./phase-4-0.3.x.md#q-asset-animation-fixes) | VC-120, VC-121, VC-122, VC-123, VC-124 | |
-| [Quality gate](./phase-4-0.3.x.md#z-phase-gate) | VC-090 | VC-089 |
+| [Docs, settings, controls](./phase-4-0.3.x.md#f-docs-settings-and-controls) | | VC-050 (#88), VC-051 (#90), VC-052 (#66), VC-053 (#67), VC-054 (#73), VC-055 (#75), VC-056 (#93), VC-057 (#72), VC-058 (#120), VC-082 (#102, #128), VC-083 (#106) |
+| [CI and tests](./phase-4-0.3.x.md#g-ci-and-tests) | | VC-060 (#83), VC-061 (#129), VC-062 (#86, #97, #100, #137), VC-063 (#79) |
+| [Developer tools & playtests](./phase-4-0.3.x.md#h-developer-tools-and-review) | | VC-070 (#132), VC-071 (#87), VC-072 (#82), VC-073 (#95), VC-074 (#96), VC-075 (#126), VC-076 (#121), VC-081 (#131), VC-084 (#144), VC-085 (#143) |
+| [Parallax series](./phase-4-0.3.x.md#p-parallax-series-owner-request-2026-11-27) | *(VC-109b moved to Phase 5)* | VC-100 (#108), VC-101 (101a #109, 101b #114, 101c #123), VC-102 (102a #110, 102b #116), VC-103 (#130), VC-104 (#125), VC-105 (105a #113, 105b #134), VC-106 (#111), VC-107 (#112), VC-108 (r1 #142, r2 #145, r3 #146), VC-109a (#138) |
+| [Asset animation fixes](./phase-4-0.3.x.md#q-asset-animation-fixes) | | VC-120 (#133), VC-121 (#124), VC-122 (#135), VC-123 (#136), VC-124 (#127) |
+| [Quality gate](./phase-4-0.3.x.md#z-phase-gate) | VC-090 (in-progress) | VC-089 (#147) |
 
 ## Phase 5: worlds and characters (0.4.x, next)
 
 Cards: [phase-5-0.4.x.md](./phase-5-0.4.x.md).
 
 **Goal:**
-- build on the contracts from phase 4: hybrid and fixed maps to the map contract;
-- the attribute model in the engine, monsters on the same scale, progression trees and equipment;
-- the `hi16bit` build-time bake;
-- first gameplay gaps from the vision: enemy attacks, pad selector semantics, narrator wiring.
+- build on the contracts from phase 4: hybrid and fixed maps to the map contract (`VC-021`..`VC-028`) plus level-2 maps (`VC-161`);
+- the attribute model in the engine (`VC-031`), monsters on the same scale (`VC-032`), progression trees, equipment, and Aether elements (`VC-033`, `VC-034`, `VC-038`, `VC-160`);
+- the `hi16bit` build-time bake (`VC-011`), bestiary & world props (`VC-130`..`VC-133`), and repainting the remaining 3 JPG parallax worlds as 3-tier PNGs (`VC-109b`);
+- gameplay & engine priorities: enemy damage (`VC-037`, `VC-152`), lever/i-frame/coyote/hitstun feel (`VC-150`..`VC-159`), zero-allocation & 60 Hz engine optimisation (`VC-162`..`VC-164`), parallax perf follow-ups (`VC-195`..`VC-197`), rest zones/loot/saves (`VC-167`, `VC-178`..`VC-180`), Tworzenie & UI polish (`VC-140`..`VC-145`, `VC-168`..`VC-169`, `VC-190`..`VC-194`), pad selector semantics, reactive narrator wiring (`VC-155`), and repo/CI/site hardening (`VC-181`..`VC-186`).
 
 **Exit criteria:**
-- 8 worlds each have a contract-compliant map 1;
+- 8 worlds each have a contract-compliant map 1 (and level-2 map);
 - attributes drive HP/MP/Stamina and combat;
 - enemies deal damage;
-- the phase 5 quality gate passes.
+- the phase 5 quality gate (`VC-199`) passes.
 
 | Area | Planned | Done |
 | :--- | :--- | :--- |
-| [Assets](./phase-5-0.4.x.md#b-assets-and-rendering) | VC-011 | |
+| [Assets](./phase-5-0.4.x.md#b-assets-and-rendering) | VC-011, VC-109b | |
 | [Bestiary and world props](./phase-5-0.4.x.md#b2-bestiary-and-world-props) | VC-130 … VC-133 | |
-| [Maps](./phase-5-0.4.x.md#c-world-and-maps-8-worlds-x-8-maps-today-map-1-of-each-world) | VC-021 … VC-025, VC-026 … VC-028 | |
-| [Characters and balance](./phase-5-0.4.x.md#d-characters-stats-and-equipment) | VC-031, VC-032, VC-033, VC-034, VC-080 | |
-| [Inventory visuals](./phase-5-0.4.x.md#d-characters-stats-and-equipment) | VC-036 | |
-| Gameplay gaps (cards to be written) | enemy attacks and contact damage; pad layout with bumpers as selectors in gameplay; reactive narrator wired to the engine | |
-| Quality gate | phase 5 gate card (to be written) | |
+| [Maps](./phase-5-0.4.x.md#c-world-and-maps-8-worlds-x-8-maps-today-map-1-of-each-world) | VC-021 … VC-025, VC-026 … VC-028, VC-161 | |
+| [Characters, combat & balance](./phase-5-0.4.x.md#d-characters-stats-and-equipment) | VC-031, VC-032, VC-033, VC-034, VC-036, VC-037, VC-038, VC-080, VC-160 | |
+| [Engine optimisation](./phase-5-0.4.x.md#e-engine-optimisation) | VC-162, VC-163, VC-164 | |
+| [Lore, fun and saving](./phase-5-0.4.x.md#f-lore-fun-and-saving) | VC-165, VC-166, VC-167 | |
+| [Menu, Tworzenie and loot](./phase-5-0.4.x.md#g-menu-tworzenie-and-loot) | VC-168, VC-169, VC-178, VC-179, VC-180 | |
+| [Developer tools & parity](./phase-5-0.4.x.md#h-developer-tools-and-review) | VC-140 … VC-145 | |
+| [Repo, CI and site](./phase-5-0.4.x.md#i-repo-ci-and-site) | VC-181 … VC-186 | |
+| [Gameplay feel & playtest polish](./phase-5-0.4.x.md#j-gameplay-feel-combat-narration--hud-from-vc-084-playtest) | VC-150 … VC-159, VC-190 … VC-194 | |
+| [Parallax perf follow-ups](./phase-5-0.4.x.md#l-parallax-perf-follow-ups-from-vc-108-round-3) | VC-195, VC-196, VC-197 | |
+| Gameplay gaps (card to be written) | pad layout with bumpers as selectors in gameplay | |
+| [Quality gate](./phase-5-0.4.x.md#z-phase-gate) | VC-199 | |
 
 ## Later phases (outline)
 

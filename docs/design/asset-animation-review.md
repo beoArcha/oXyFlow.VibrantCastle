@@ -109,6 +109,5 @@ Audit of every **used** enemy, structure, and prop referenced in `src/data/locat
 ## Status after review (orchestrator note)
 
 - **Issue 1, `freeform_rects` box flicker on hi8bit:** fixed for enemies and props by VC-121 (#124). The `aether_gate` part is superseded by VC-124 (#127), which gives the new gate a shared `bodyBox` grid and all 3 tiers.
-- **Issues 2–4 (missing hi16bit, missing `variants.low`, crude placeholders without hit/death/attack):** carried by VC-122 (hi16bit) and VC-123 (hi8bit).
-- **The `training_dummy` `destroy` vs `broken` mismatch and the unused `chasm_gargoyle` folder:** folded into VC-123.
-- **Missing `high` PNGs for 13 enemies and `hanging_lantern` (issue 5):** moved to the phase-5 bestiary work (VC-130).
+- **Issues 2–4 (missing hi16bit, missing `variants.low`, crude placeholders without hit/death/attack):** resolved by VC-122 (#135, added `hi16bit.svg` for `clockwork_owl_gargoyle`, `training_dummy`, `chrono_lever`, `grand_portcullis`, `hazard_thorns`) and VC-123 (#136, upgraded `hi8bit` SVGs, added `variants.low` to `shadow_knight`/`bastion_sentinel_boss`/`hanging_lantern`, aligned `training_dummy` `destroy` state, and wired `chasm_gargoyle` to its own atlas). `assetTierAllowlist.json` now has 0 `low`/`mid` gaps.
+- **Missing `high` PNGs for 13 enemies and `hanging_lantern` (issue 5):** tracked in Phase 5 bestiary/props work (`VC-130`..`VC-133`) and Phase 6+.

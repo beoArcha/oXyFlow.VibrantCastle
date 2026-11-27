@@ -2,7 +2,7 @@
 
 Updated: 2026-11-28. Part of the [task folder](./README.md). Phases, gates and the card format are described in the [README](./README.md) and the [roadmap](./ROADMAP.md).
 
-**Remaining:** 20 cards (review: VC-058, VC-082; in-progress: VC-062, VC-076, VC-101, VC-104, VC-105, VC-121; ready: VC-108; todo: VC-061, VC-070, VC-075, VC-081, VC-120, VC-122, VC-123, VC-124; blocked: VC-090, VC-103, VC-109).
+**Remaining:** 1 card (`VC-090` quality gate, steps 1–2 in progress). All other Phase 4 cards are done; `VC-109b` moved to [phase 5](./phase-5-0.4.x.md).
 
 ## About this phase
 
@@ -47,11 +47,9 @@ The result: red tests and CI, levers that no longer opened gates, broken hero an
 
 | Status | Cards |
 | :--- | :--- |
-| done | VC-001, VC-002, VC-003, VC-004, VC-005, VC-006, VC-007, VC-010, VC-012, VC-020, VC-030, VC-035, VC-040, VC-041, VC-042, VC-043, VC-044, VC-045, VC-046, VC-047, VC-050, VC-051, VC-052, VC-053, VC-054, VC-055, VC-056, VC-057, VC-058 (#120), VC-060, VC-061 (#129), VC-063, VC-071, VC-072, VC-073, VC-070 (#132), VC-074, VC-075 (#126), VC-081 (#131), VC-082 (#102, #128), VC-083, VC-084, VC-089, VC-100, VC-101 (#109, #114, #123), VC-102, VC-103 (#130), VC-104 (#125), VC-106, VC-107, VC-121 (#124), VC-124 (#127) |
-| in-progress | VC-062 (parts 1-3 #86, #97, #100), VC-076, VC-105 (105a #113, 105b todo), VC-120 |
-| ready | VC-108 |
-| todo | VC-122, VC-123 |
-| blocked | VC-090 (the gate), VC-109 (VC-105) |
+| done | VC-001 (#62), VC-002 (#65), VC-003 (#71), VC-004 (#76), VC-005 (#69), VC-006 (#70), VC-007 (#85), VC-010 (#92), VC-012 (#101), VC-020 (#77), VC-030 (#78), VC-035 (#117), VC-040 (#63), VC-041 (#68), VC-042 (#74), VC-043 (#81), VC-044 (#84), VC-045 (#94), VC-046 (#80), VC-047 (#99), VC-050 (#88), VC-051 (#90), VC-052 (#66), VC-053 (#67), VC-054 (#73), VC-055 (#75), VC-056 (#93), VC-057 (#72), VC-058 (#120), VC-060 (#83), VC-061 (#129), VC-062 (#86, #97, #100, #137), VC-063 (#79), VC-070 (#132), VC-071 (#87), VC-072 (#82), VC-073 (#95), VC-074 (#96), VC-075 (#126), VC-076 (#121), VC-081 (#131), VC-082 (#102, #128), VC-083 (#106), VC-084 (#144), VC-085 (#143), VC-089 (#147), VC-100 (#108), VC-101 (101a #109, 101b #114, 101c #123), VC-102 (102a #110, 102b #116), VC-103 (#130), VC-104 (#125), VC-105 (105a #113, 105b #134), VC-106 (#111), VC-107 (#112), VC-108 (r1 #142, r2 #145, r3 #146), VC-109a (#138), VC-120 (#133), VC-121 (#124), VC-122 (#135), VC-123 (#136), VC-124 (#127) |
+| in-progress | VC-090 (the gate, steps 1–2) |
+| moved (phase 5) | VC-109b |
 
 ---
 
@@ -255,14 +253,14 @@ The result: red tests and CI, levers that no longer opened gates, broken hero an
 - **How (AI):** done in `docs/roadmap-phases`. Covers `ROADMAP.md`, `VISION.md`, the restored `AGENTS.md` and `.agents/`, and the new `orchestration_and_phases.md`.
 
 ### VC-058 · Local Pages preview
-- **Phase:** 4 · **Type:** chore · **Class:** small · **Status:** review (#120)
+- **Phase:** 4 · **Type:** chore · **Class:** small · **Status:** done (#120)
 - **Goal:** static local preview server for the Pages build.
 - **How (AI):** `bun run preview:pages` static server (#120).
 
 ---
 
 ### VC-082 · Lore: organise and develop (discussion)
-- **Phase:** 4 · **Type:** plan · **Class:** large · **Status:** review (round 1 done #102; round 2 waits for the owner)
+- **Phase:** 4 · **Type:** plan · **Class:** large · **Status:** done (#102, #128)
 - **Goal:** one coherent, owner-approved lore canon for the 8 worlds, the two heroes, the narrator and the enemies.
 - **Description:** owner request (2026-11-27): this is a discussion with the owner, not a one-shot write-up. Input: `docs/lore/*`, `docs/wiki/*`, `src/data/narrative/*`, `src/i18n/modules/lore.ts`.
 - **How (AI):**
@@ -287,14 +285,14 @@ The result: red tests and CI, levers that no longer opened gates, broken hero an
 - **How (AI):** set `COVERAGE_MIN_*` or per-suite config in `coverage-gate.ts`, add integration tests and the gate to `ci-pr.yml`, and restore the gate test.
 
 ### VC-061 · Release artifacts
-- **Phase:** 4 · **Type:** workflow · **Class:** small · **Status:** todo
+- **Phase:** 4 · **Type:** workflow · **Class:** small · **Status:** done (#129)
 - **Goal:** each promotion creates a GitHub Release with a game zip and a semver bump.
 - **How (AI):** port the release job from 8121dad `release.yml` into `release-promote.yml`.
 
 ### VC-062 · Restore the key deleted tests
-- **Phase:** 4 · **Type:** test · **Class:** medium · **Status:** in-progress (parts 1-3: #86, #97, #100)
+- **Phase:** 4 · **Type:** test · **Class:** medium · **Status:** done (#86, #97, #100, #137)
 - **Goal:** cover menu, controls, character stage, dev tools and the error boundary again.
-- **Description:** about 775 tests were removed in 2784276.
+- **Description:** about 775 tests were removed in 2784276. Nothing left to restore after #137.
 - **How (AI):** one area per PR. Restore from 8121dad and adapt to the current API. Do not restore tests for code that no longer exists.
 
 ### VC-063 · Parallax files exist (arch test)
@@ -307,7 +305,7 @@ The result: red tests and CI, levers that no longer opened gates, broken hero an
 ## H. Developer tools and review
 
 ### VC-070 · Dev tools parity check
-- **Phase:** 4 · **Type:** review · **Class:** small · **Status:** done
+- **Phase:** 4 · **Type:** review · **Class:** small · **Status:** done (#132)
 - **Goal:** confirm what was lost: Tester speed/step card, Data Studio bestiary gallery, VN preview, JSON export modal, log item drawer, Debug collisions and state dump.
 - **Description:** parity report written in [docs/design/devtools-parity.md](../design/devtools-parity.md); follow-up cards VC-140..VC-145 opened in [phase-5-0.4.x.md](./phase-5-0.4.x.md).
 - **How (AI):** take headless screenshots of every dev tool against 8121dad. List the gaps, then open one `feat` card per gap.
@@ -335,7 +333,7 @@ The result: red tests and CI, levers that no longer opened gates, broken hero an
 - **How (AI):** derive or align the recommended ids with the discovered folder names, and add a unit test that fails when a recommended id has no folder.
 
 ### VC-075 · Tworzenie: easier map browsing and text placement
-- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** todo
+- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** done (#126)
 - **Goal:** in the dev dialog, browse every map comfortably and place or edit texts (narration triggers, sign labels, portal captions) without hand-editing JSON.
 - **Description:** today the Poziomy 8x8 tool previews parallax and teleports, but you cannot pan/zoom a whole map, see entities with their ids, or place a narration trigger. Owner request (2026-11-27).
 - **How (AI):**
@@ -344,20 +342,25 @@ The result: red tests and CI, levers that no longer opened gates, broken hero an
   3. Tests for the patch builder; headless screenshot of the browser.
 
 ### VC-076 · Header buttons overlap on tablet and narrow widths
-- **Phase:** 4 · **Type:** fix · **Class:** small · **Status:** in-progress
+- **Phase:** 4 · **Type:** fix · **Class:** small · **Status:** done (#121)
 - **Goal:** header buttons do not overlap on tablet and narrow viewports.
 - **How (AI):** fix responsive layout and spacing for header controls on tablet and narrow widths, and verify with headless screenshots.
 
 ### VC-081 · Narrative catalogs
-- **Phase:** 4 · **Type:** chore · **Class:** small · **Status:** done
+- **Phase:** 4 · **Type:** chore · **Class:** small · **Status:** done (#131)
 - **Goal:** decide where `scenario_act1.json` and `triggers.json` (deleted, unused at runtime) live.
 - **Note:** restored both under `docs/lore/source/` as archived source material; they remain unused by the game.
 
 ### VC-084 · Gameplay playtest and fun assessment
-- **Phase:** 4 · **Type:** review · **Class:** large · **Status:** done
+- **Phase:** 4 · **Type:** review · **Class:** large · **Status:** done (#144)
 - **Goal:** play all 8 locations in headless Chromium, measure platforming/combat feel, evaluate narration and mood, and file top-10 Phase-5 improvement cards.
 - **Description:** report written in [docs/design/gameplay-playtest.md](../design/gameplay-playtest.md); follow-up cards VC-150..VC-159 added to [phase-5-0.4.x.md](./phase-5-0.4.x.md).
 - **How (AI):** run `bun dev` + Playwright across all 8 maps, capture screenshot/WebM strips to `%TEMP%\vc084-playtest\`, measure feel numbers, and document ranked findings.
+
+### VC-085 · Gameplay feel metrics and traversal smoke tests
+- **Phase:** 4 · **Type:** test · **Class:** medium · **Status:** done (#143)
+- **Goal:** deterministic 60 Hz integration suite measuring jump/movement/combat feel and smoke-testing traversal across all 8 locations.
+- **Description:** implemented in `src/tests/integration/engine/gameplayFeel.integration.test.ts` with baseline metrics recorded in [docs/design/gameplay-feel-metrics.md](../design/gameplay-feel-metrics.md).
 
 ---
 
@@ -371,7 +374,7 @@ Target layer model per world: **1 far background + 3 standard mid/close variatio
 - **How (AI):** read `src/game/locations/parallaxLayerRegistry.ts`, `src/game/renderer/parallax*`, the location JSONs and the assets; write `docs/design/parallax.md` with findings, the taxonomy (file names, meta schema, registry keys, zone rules), a migration plan and the cut into PRs for VC-101..VC-109.
 
 ### VC-101 · Parallax asset naming, meta files and registry migration
-- **Phase:** 4 · **Type:** refactor · **Class:** medium · **Status:** in-progress (101a #109, 101b #114 done; 101c in-progress)
+- **Phase:** 4 · **Type:** refactor · **Class:** medium · **Status:** done (101a #109, 101b #114, 101c #123)
 - **Goal:** every parallax asset follows the VC-100 taxonomy: 8 world far backgrounds, 3-5 mid/close variations per world, zone variants of the closest layer; meta files and registry keys renamed consistently; code and tests updated.
 - **How (AI):** rename files and metas with a script (no manual drift), update `parallaxLayerRegistry.ts` and location JSON layer keys, keep `parallaxFiles` / `locationBlueprints` arch tests green, add a taxonomy arch test.
 
@@ -381,17 +384,17 @@ Target layer model per world: **1 far background + 3 standard mid/close variatio
 - **How (AI):** apply the VC-100 findings in small PRs; behaviour-preserving; unit tests per unit; headless screenshot comparison before/after.
 
 ### VC-103 · Zone-aware parallax (boss, rest and other zones)
-- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** blocked (VC-101)
+- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** done (#130)
 - **Goal:** map zones (boss, rest, others) switch the closest parallax layer to its zone variant with a smooth transition.
 - **How (AI):** zone definitions in location JSON per the map contract, a zone resolver in the registry, crossfade in the renderer, tests and a screenshot strip.
 
 ### VC-104 · Progressive loading of parallax layers and effects
-- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** in-progress
+- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** done (#125)
 - **Goal:** parallax assets and effects load one after another (far, mid, close, effects) with a placeholder until ready; no blocking of the first frame.
 - **How (AI):** a prioritised loader queue with `ImageBitmap` decoding, placeholder colours from the far layer meta, tests with fake loaders, measured time-to-first-frame.
 
 ### VC-105 · Parallax quality tiers: low / mid / high PNG and off / simplified
-- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** in-progress (105a #113 done; 105b todo)
+- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** done (105a #113, 105b #134)
 - **Goal:** each layer has low / mid / high PNG; a setting chooses tier or "parallax off / simplified placeholder"; automatic fallback on weak devices.
 - **How (AI):** tier resolution in the registry, a Display setting, default by device capability, tests.
 
@@ -406,43 +409,43 @@ Target layer model per world: **1 far background + 3 standard mid/close variatio
 - **How (AI):** a script producing a contact sheet / gallery page per run; optional MCP browser use for interactive checks.
 
 ### VC-108 · Parallax optimisation rounds (browsers, systems, devices)
-- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** ready (VC-106 done)
+- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** done (r1 #142, r2 #145, r3 #146)
 - **Goal:** meet the budgets on Chromium, Firefox and WebKit, on desktop, laptop and tablet profiles.
-- **How (AI):** round 1 desktop Chromium; round 2 Firefox and WebKit; round 3 tablet / low-power (CPU throttling, DPR, reduced layers). Each round: measure with VC-106, change, re-measure, report.
+- **How (AI):** round 1 desktop Chromium (#142); round 2 decode-time pre-scaling & WebKit (#145); round 3 tablet / low-power-laptop & auto heuristic (#146). Remaining follow-ups (Firefox measurement, WebKit `grand_bastion` tail, `off` on `clocktower`) moved to Phase 5 (`VC-195`..`VC-197`).
 
-### VC-109 · New parallax art: low / mid / high PNG per the taxonomy
-- **Phase:** 4 · **Type:** art · **Class:** medium · **Status:** blocked (VC-105)
-- **Goal:** missing far / variation / zone layers generated for all 8 worlds in low, mid and high PNG, plus simplified placeholders; consistent with the lore world dossiers.
-- **How (AI):** one world per task; generate, slice to the taxonomy sizes, run the seam checker, review contact sheets before merge.
+### VC-109a · Derived PNG parallax tiers and boss/rest zone variants
+- **Phase:** 4 · **Type:** art · **Class:** medium · **Status:** done (#138)
+- **Goal:** derive `hi16bit` / `hi8bit` tiers for the 5 PNG worlds and generate `boss` / `rest` zone variants of `var_d` across all 8 worlds.
+- **Description:** split from `VC-109`; repainting the 3 JPG worlds and borrowed layers into 3-tier PNGs (`VC-109b`) moves to [phase 5](./phase-5-0.4.x.md#vc-109b--repaint-the-3-jpg-parallax-worlds-as-3-tier-pngs).
 
 ## Q. Asset animation fixes
 
 Owner request (2026-11-27), screenshot evidence: in clocktower `clockwork_owl_gargoyle` plays no animation and its hitbox/box flickers (shown in one frame, gone in the next).
 
 ### VC-120 · Asset animation review
-- **Phase:** 4 · **Type:** review · **Class:** medium · **Status:** todo
+- **Phase:** 4 · **Type:** review · **Class:** medium · **Status:** done (#133)
 - **Goal:** a complete audit of every used enemy, structure and prop across all tiers (`hi8bit`, `hi16bit`, `high`).
 - **How (AI):** play every used enemy, structure and prop at each tier (`hi8bit`, `hi16bit`, `high`) in the dev Atlas tool and in game; list missing animations, flickering boxes and wrong rows; output a table in `docs/design/asset-animation-review.md`.
 
 ### VC-121 · Fix enemy animation playback and box flicker
-- **Phase:** 4 · **Type:** fix · **Class:** medium · **Status:** in-progress
+- **Phase:** 4 · **Type:** fix · **Class:** medium · **Status:** done (#124)
 - **Goal:** `clockwork_owl_gargoyle` and all affected entities play their animations smoothly with no hitbox/box flicker; PNG-animated assets keep working.
 - **How (AI):** trace why `clockwork_owl_gargoyle` has no animation and a flickering box in clocktower, fix the root cause for all affected entities, and verify both SVG and PNG-animated assets in game and tests.
 
 ### VC-122 · Missing hi16bit SVGs
-- **Phase:** 4 · **Type:** art · **Class:** medium · **Status:** todo
+- **Phase:** 4 · **Type:** art · **Class:** medium · **Status:** done (#135)
 - **Goal:** every used asset has a `hi16bit` SVG with at least 3 animations (`idle`, `move`, `attack`; more later).
 - **Description:** Style reference: Sega Saturn-era 2D games (Octopath Traveler is a quality reference, but the owner prefers the Saturn look); the orchestrator's earlier script-generated enemy SVGs are the quality bar.
 - **How (AI):** add missing `hi16bit` SVGs for every used asset with `idle`, `move` and `attack` animations, matching the Saturn-era 2D quality bar.
 
 ### VC-123 · Better hi8bit SVGs
-- **Phase:** 4 · **Type:** art · **Class:** medium · **Status:** todo
+- **Phase:** 4 · **Type:** art · **Class:** medium · **Status:** done (#136)
 - **Goal:** replace crude `hi8bit` placeholders with decent `hi8bit` art and 3 animations (`idle`, `move`, `attack`).
 - **Description:** `hi8bit` means "looks 8-bit but clearly made later, a retro game on a PS2-era console".
 - **How (AI):** replace crude `hi8bit` placeholder SVGs with clean PS2-era retro 8-bit art, each with `idle`, `move` and `attack` animations.
 
 ### VC-124 · New Aether gate
-- **Phase:** 4 · **Type:** art · **Class:** medium · **Status:** todo
+- **Phase:** 4 · **Type:** art · **Class:** medium · **Status:** done (#127)
 - **Goal:** replace the out-of-style `aether_gate` with a new one in the game's style across all three tiers (`hi8bit` SVG, `hi16bit` SVG, and painted pixel-art PNG `high`), consistent with `docs/lore` and the autumn palette.
 - **How (AI):**
   1. Create `hi8bit` SVG, `hi16bit` SVG, and painted pixel-art PNG (`high`), each with animations: `idle`, `opening` transition, `on` (active), `off` (inactive), and `closing`.
@@ -451,7 +454,7 @@ Owner request (2026-11-27), screenshot evidence: in clocktower `clockwork_owl_ga
 ## Z. Phase gate
 
 ### VC-089 · Final MCP play-test before the gate
-- **Phase:** 4 · **Type:** test · **Class:** medium · **Status:** done
+- **Phase:** 4 · **Type:** test · **Class:** medium · **Status:** done (#147)
 - **Goal:** verify the built game and the dev tools end-to-end in a browser before VC-090.
 - **Description:** report written in [docs/design/final-playtest-phase4.md](../design/final-playtest-phase4.md) (24/24 checks pass, 0 console errors, 0 blockers); non-blocker follow-up cards VC-190..VC-194 opened in [phase-5-0.4.x.md](./phase-5-0.4.x.md).
 - **How (AI):**
@@ -461,7 +464,7 @@ Owner request (2026-11-27), screenshot evidence: in clocktower `clockwork_owl_ga
   4. Record bugs as cards, fix blockers, and attach a screenshot gallery. Must be the LAST card before VC-090.
 
 ### VC-090 · Phase 4 quality gate and 0.4.0
-- **Phase:** 4 · **Type:** review / workflow · **Class:** large · **Status:** blocked (all other phase 4 cards done or moved)
+- **Phase:** 4 · **Type:** review / workflow · **Class:** large · **Status:** in-progress (steps 1–2: docs conformance and docs update)
 - **Goal:** close phase 4 and open phase 5 with version `0.4.0`.
 - **How (AI):** run the gate from `ROADMAP.md` in order:
   1. Docs quality and conformance check (docs against code).

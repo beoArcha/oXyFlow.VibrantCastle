@@ -66,7 +66,7 @@ Restore F1: in the Help entry, `hotkeys: ["h", "?", "F1"]` (`findModalByHotkey` 
 
 - Edge-triggered with repeat (400 ms delay, 120 ms repeat). Polls with rAF **only while a dialog is open**.
 - While the game dialog is open, the menu captures pad input. Add `input.setMenuCapture(bool)` in `game/loop/input.ts` so live tabs (Ekwipunek, Magia) don't also jump or cast.
-- Pads with no Start button: open question for the owner (an LB+RB hold chord would fire potion1/magic2). Deferred.
+- Pads with no Start button: implemented in `useMenuGamepad.ts` via a 0.5 s `LB+RB` hold chord (`openChordHoldMs: 500`, `suppressBumpersRef` prevents immediate L1 tab skip).
 
 ### Focus and open/close
 - Open: focus goes to the active L1 tab. Switching L1/L2 with bumpers keeps focus on that tablist, and D-pad down enters the panel.
@@ -152,12 +152,15 @@ Add the new registry entries and settings sub-registry, split `GameplayTab` into
 
 ---
 
-## 6. Not now (deferred)
-- Inventory rebuild from 8121dad `inventory/*` (UX first, visuals later). Only the confirm and empty states land now.
+## 6. Implementation status note (Phase 4 end)
+
+The original PR-1..PR-6 plan above (`VC-040`..`VC-045`) plus the items initially deferred below have landed:
+- **Inventory paper-doll rebuild:** shipped in `VC-035` (#117).
+- **Dev dialog ("Tworzenie") hidden in release builds:** shipped in `VC-046` (#80) and lazy-loaded in `VC-073` (#95).
+- **Pad-without-Start open chord (`LB+RB` 0.5 s hold):** shipped in `useMenuGamepad.ts`.
+- **Reserved "Wkrótce" cards & dev labels:** shipped in `VC-047` (#99) and `VC-072` (#82).
+
+Still deferred to Phase 5+:
 - 6 attributes with 1/2/3 priority growth (only the Postać L2 slot and a "Wkrótce" card), and the 8x8 location select (only the Mapa panel slot, a grid not tabs).
 - Visual reskin, controller glyph art, tab transitions.
-- Dev dialog internals: raw ids valen/aurelia in Studio danych, unfilled `world:<świat>:far` placeholders in Poziomy. Separate dev-tools PR.
-- Hiding the "Tworzenie" header button in production builds. Owner decision.
-- Pad-without-Start open chord. Owner to confirm the hardware first.
-- Gameplay bugs seen in screenshots (e.g. HP 165/135 in Ekwipunek). Not UI; file separately.
 - Removing `ModalId` per-modal helpers in `useModalManager` (`openHelp` etc.). Cosmetic churn.

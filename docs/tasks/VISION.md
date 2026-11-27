@@ -27,18 +27,18 @@ What we are building. The [roadmap](./ROADMAP.md) says when each part lands, and
 
 ## Where we are and what is missing
 
-Snapshot at version 0.3.0. Every gap is planned in the [roadmap](./ROADMAP.md).
+Snapshot at end of Phase 4 (`0.3.x`). Every gap is planned in the [roadmap](./ROADMAP.md).
 
 | Pillar | Where we are | What is missing |
 | :--- | :--- | :--- |
-| Mario structure and movement | 8 maps, one per world (map 1), linked by portals. Coyote time, jump buffer, variable jump, asymmetric gravity (`src/game/physics/playerKinematics.ts`). | Maps 2-8 of every world, a map contract (VC-020), sprint tier and a tuning pass against a reference. |
-| Aria of Sorrow | 14 enemy folders with sheets, soul-drop and bestiary data, levers and gates (`src/game/physics/gateState.ts`). | Enemy attacks and contact damage (enemies only patrol), ability gating (portal `isLocked` / `unlockTriggerId` are unused), a map screen. |
-| Autumn palette | Warm location themes and amber-on-timber UI tokens (`src/styles/theme.ts`). | Review of the blue `aether_sanctuary` theme and Aurelia's cyan identity. |
-| Bastion narration | Timed subtitles from i18n keys (`src/game/engine/narrationSystem.ts`). | `reactiveNarratorManager.ts` and `narrator_reactive.json` are not wired to the engine. No voice. |
-| Restricted pad | Remappable gamepad (`src/game/loop/input.ts`). | Defaults bind bumpers and triggers directly (`defaultControls.json`), not as selectors. Menus have no pad navigation (VC-044). |
-| Two-level menu | Separate dev dialog (#63). | A single game dialog shell (VC-041/042), dev dialog hidden in release builds (VC-046). |
-| Asset tiers | Heroes have all three tiers (#65). Enemies mostly have `hi16bit` SVG only. | Tier completeness test (VC-010), placeholders (VC-012), restored tilesets/props/pipeline (VC-003), build-time bake (VC-011). |
-| Attributes | Central character stats (`src/game/logic/stats/`). | Design doc (VC-030) and the engine model (VC-031/032). |
+| Mario structure and movement | 8 maps, one per world (map 1), linked by portals; approved map contract (`docs/design/maps-contract.md`, VC-020). Coyote time, jump buffer, variable jump, asymmetric gravity (`src/game/physics/playerKinematics.ts`). | Hybrid/contract-aligned Map 1 updates (`VC-021`..`VC-028`), maps 2–8 of every world (`VC-161`+), and coyote/buffer/camera tuning (`VC-153`, `VC-159`). |
+| Aria of Sorrow | 19 enemy templates with sheets, soul-drop and bestiary data, levers and gates (`src/game/physics/gateState.ts`), rebuilt paper-doll inventory (`VC-035`). | Enemy attacks and contact damage (`VC-037`, `VC-152`), ability gating (portal `isLocked` / `unlockTriggerId` are unused), a map screen, and Phase 5 bestiary/loot (`VC-130`..`133`, `VC-178`..`180`). |
+| Autumn palette | Warm location themes, `boss`/`rest` parallax zones (`VC-103`, `VC-109a`), and amber-on-timber UI tokens (`src/styles/theme.ts`). | Review of the blue `aether_sanctuary` theme (`VC-158`), Aurelia's cyan identity, and 3-tier PNG replacements for the 3 legacy JPG worlds (`VC-109b`). |
+| Bastion narration | Timed subtitles from i18n keys (`src/game/engine/narrationSystem.ts`) plus Map-1 demo scripts (`docs/design/demo-scenes/`). | Wiring `ReactiveNarratorManager` and `narrator_reactive.json` to `GameEngine` (`VC-155`) and HUD banner placement (`VC-156`). No voice. |
+| Restricted pad | Remappable keyboard/gamepad (`src/game/loop/input.ts`) and full menu pad navigation incl. 0.5 s `LB+RB` open chord (`useMenuGamepad.ts`). | Gameplay defaults still bind bumpers and triggers directly (`defaultControls.json`), not as selectors (Phase 5). |
+| Two-level menu | Single game dialog shell (`GameMenuDialog`), Settings L2 tabs, confirmations, reserved cards, and dev-only lazy "Tworzenie" (`VC-040`..`047`, `VC-073`, `VC-075`). | Minor playtest UI fixes (`VC-168`, `VC-191`, `VC-192`, `VC-194`) and Tworzenie parity/expansion (`VC-140`..`145`, `VC-169`). |
+| Asset tiers | Every hero, enemy, structure, prop, and tileset has `hi8bit` and `hi16bit` (`VC-010`, `VC-012`, `VC-121`..`124`), plus 5 PNG parallax worlds in 3 tiers (`VC-109a`). | Build-time `hi16bit` SVG-to-PNG bake (`VC-011`), remaining `high` PNG enemy/prop/tileset sheets, and 3 JPG parallax worlds (`VC-109b`). |
+| Attributes | Central character stats (`src/game/logic/stats/`) and approved D20×10 design doc (`docs/design/character-system.md`, VC-030). | Engine attribute growth (`VC-031`), monster scaling (`VC-032`), skill trees (`VC-033`), equipment model (`VC-034`), and six Aether elements (`VC-038`). |
 
 ## Architecture in one picture
 

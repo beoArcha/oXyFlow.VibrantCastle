@@ -21,8 +21,8 @@ Players explore the ancient Citadel of Aether—once the seat of horologists, as
 
 * **Responsive Locomotion & Melee Combat**: Variable-height jumps with coyote time and jump buffering, slides and backsteps, melee strikes and spells. (Enemy attacks, ability gating and the restricted pad layout are still in progress; see the [roadmap](docs/tasks/ROADMAP.md).)
 * **Playable Champions**:
-  * **Valen (Chrono Duelist)**: A calculated scholar utilizing rapier precision and solar glyph magic.
-  * **Aurelia (Aetherblade Warden)**: An agile protector commanding organic celestial energy and an ethereal manifested blade.
+  * **Valen (Sun Knight)**: A diligent engineer utilizing rapier precision and solar glyph magic.
+  * **Aurelia (Arcane Scholar)**: A perceptive investigator commanding astral, frost, and temporal Aether magic.
 * **Co-op & Solo Modes**: Experience the campaign solo or in two-player cooperative play.
 * **Citadel Worlds**: The campaign is planned as 8 worlds x 8 maps. Today map 1 of each world exists, from `courtyard` to `eclipse_crown`. Each map is checked by an automated level-logic validator.
 * **Art Quality Tiers**: heroes, enemies and props are drawn in one of three tiers, chosen in the Display settings: `hi8bit` (8-bit look), `hi16bit` (16-bit look) or `high` (painted). Definitions: [`.agents/rules/content_and_assets.md`](.agents/rules/content_and_assets.md) §6.1.

@@ -2,7 +2,7 @@
 
 One set of rules for VC-021 to VC-028 and for every later map. A map PR that breaks a **must** rule does not merge.
 Sources: baseline maps at `8121dad`, HEAD maps in `src/data/locations/*.json`, `worldCampaignRegistry.ts`,
-`parallaxLayerRegistry.ts`, `playerKinematics.ts` and the validator constants in `src/tests/arch/helpers/levelLogic/constants.ts`.
+`src/game/parallax/registry.ts`, `playerKinematics.ts` and the validator constants in `src/tests/arch/helpers/levelLogic/constants.ts`.
 
 ## 1. Slots, ids and links (8 worlds x 8 maps)
 
@@ -76,10 +76,9 @@ Mario spine, Aria-style ribs, Bastion voice.
   | late | W6-W8 | 2.5-3.5 | up to +30% |
 
   Gauntlet and siege maps may go 0.5 above the band; secret wings 1.0 below. The boss in a boss zone does not count.
-- **Parallax**: exactly one opaque `far` layer (`world:<id>:far`), at least one `mid` and one `close` layer;
-  `mid_far` / `mid_close` are optional, five layers minimum, all keys resolved by `parallaxLayerRegistry.ts`.
-  A `boss_stage` layer requires a `stage` boss zone and the other way round; the same for `boss_world`.
-  stage_boss and world_boss maps must have the matching boss zone and layer; other maps may have one stage-scope mini arena.
+- **Parallax**: implicit opaque `far` layer (`<worldId>:far` in `<worldId>_parallax_meta.json`), 1–4 unique variation keys in `parallax.layers` (`var_a..d`, including `mid` and `close` coverage), all keys resolved by `src/game/parallax/registry.ts`.
+  Boss zones (`zones[]` with `kind: "boss"`, `scope: "stage" | "world"`) trigger zone variants and zone `effects` (`sigil`, `throne`).
+  stage_boss and world_boss maps must have the matching boss zone; other maps may have one stage-scope mini arena.
 
 ## 5. Geometry rules from the movement
 
@@ -143,7 +142,7 @@ go into `KNOWN_LEVEL_DEFECTS` and leave it with the map PR that fixes them.
 | `GOAL_AT_END` | warn | the forward portal is not in the last 15% of the width (top 20% of the height for vertical archetypes) |
 | `START_SAFE` | warn | an enemy within 400 px of the default spawn, an entry or `checkpoint_mid` |
 | `ENEMY_DENSITY` | warn | density (section 4 formula) outside the world band, after archetype offsets |
-| `PARALLAX_TIERS` | error | missing a `mid` or `close` layer, or a `boss_stage` / `boss_world` layer without the matching boss zone scope (or the reverse) |
+| `PARALLAX_COMBO` / `PARALLAX_ZONE` | error / warn | `PARALLAX_COMBO` (error): `parallax.layers` has 1–4 unique keys in world meta, no `far`, valid `effects`; `PARALLAX_ZONE` (warn): zone kind has no variant file for the closest layer |
 | `BOSS_ARENA_SIZE` | error | a boss zone under 600 x 400 (world: 1000 x 600), or its `bossEnemyId` is not placed inside it |
 | `LEDGE_TOO_NARROW` | warn / error | a surface reached at tier C that is not a gate or wall is under 128 px (warn) or under 64 px (error) |
 | `BLIND_DROP` | warn / error | walking off a surface edge falls more than 400 px (warn) or more than 540 px (error) to the next surface below the hero's x span |
