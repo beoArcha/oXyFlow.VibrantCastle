@@ -1,0 +1,101 @@
+{
+  "worldId": "ashen_catacombs",
+  "placeholder": {
+    "top": "#171112",
+    "bottom": "#7c2d12",
+    "silhouette": "#312823"
+  },
+  "layers": {
+    "far": {
+      "band": "far",
+      "depth": 0.08,
+      "speed": [
+        0.04,
+        0.02
+      ],
+      "opaque": true,
+      "fit": "cover",
+      "overscan": [
+        1.06,
+        1.03
+      ]
+    },
+    "var_a": {
+      "band": "mid_far",
+      "source": "thorn_chasm:var_a",
+      "depth": 0.24,
+      "speed": [
+        0.18,
+        0.07
+      ],
+      "opacity": 0.72
+    },
+    "var_b": {
+      "band": "mid",
+      "depth": 0.45,
+      "speed": [
+        0.36,
+        0.12
+      ],
+      "tiling": "mirror",
+      "opacity": 0.56,
+      "blend": "screen"
+    },
+    "var_c": {
+      "band": "mid_close",
+      "source": "grand_bastion:var_c",
+      "depth": 0.65,
+      "speed": [
+        0.56,
+        0.18
+      ],
+      "opacity": 0.85
+    },
+    "var_d": {
+      "band": "close",
+      "source": "courtyard:var_d",
+      "depth": 0.86,
+      "speed": [
+        0.78,
+        0.24
+      ],
+      "opacity": 0.9
+    }
+  },
+  "effects": {
+    "sigil": {
+      "kind": "image",
+      "band": "mid_close",
+      "source": "_shared:fx_sigil",
+      "depth": 0.72,
+      "speed": [
+        0.44,
+        0.14
+      ],
+      "opacity": 0.74,
+      "blend": "screen"
+    }
+  },
+  "generated": {
+    "far": {
+      "tiers": {
+        "high": [
+          1376,
+          768,
+          765
+        ]
+      },
+      "avg": "#312823"
+    },
+    "var_b": {
+      "tiers": {
+        "high": [
+          1376,
+          768,
+          724
+        ]
+      },
+      "avg": "#1e1e1d"
+    }
+  }
+}

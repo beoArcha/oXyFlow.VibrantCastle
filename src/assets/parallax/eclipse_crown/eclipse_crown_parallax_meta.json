@@ -1,0 +1,123 @@
+{
+  "worldId": "eclipse_crown",
+  "placeholder": {
+    "top": "#160711",
+    "bottom": "#9f1239",
+    "silhouette": "#221922"
+  },
+  "layers": {
+    "far": {
+      "band": "far",
+      "depth": 0.08,
+      "speed": [
+        0.04,
+        0.02
+      ],
+      "opaque": true,
+      "fit": "cover",
+      "overscan": [
+        1.06,
+        1.03
+      ]
+    },
+    "var_a": {
+      "band": "mid_far",
+      "source": "grand_bastion:var_a",
+      "depth": 0.24,
+      "speed": [
+        0.18,
+        0.07
+      ],
+      "opacity": 0.72
+    },
+    "var_b": {
+      "band": "mid",
+      "depth": 0.45,
+      "speed": [
+        0.36,
+        0.12
+      ],
+      "tiling": "mirror",
+      "opacity": 0.58,
+      "blend": "screen"
+    },
+    "var_c": {
+      "band": "mid_close",
+      "source": "aether_sanctuary:var_c",
+      "depth": 0.68,
+      "speed": [
+        0.56,
+        0.18
+      ],
+      "opacity": 0.82
+    },
+    "var_d": {
+      "band": "close",
+      "source": "grand_bastion:var_d",
+      "depth": 0.88,
+      "speed": [
+        0.8,
+        0.24
+      ],
+      "opacity": 0.9
+    }
+  },
+  "effects": {
+    "throne": {
+      "kind": "image",
+      "band": "mid",
+      "source": "eclipse_crown:fx_throne",
+      "depth": 0.56,
+      "speed": [
+        0.24,
+        0.08
+      ],
+      "opacity": 0.88,
+      "blend": "screen"
+    },
+    "sigil": {
+      "kind": "image",
+      "band": "mid_close",
+      "source": "_shared:fx_sigil",
+      "depth": 0.74,
+      "speed": [
+        0.44,
+        0.14
+      ],
+      "opacity": 0.72,
+      "blend": "screen"
+    }
+  },
+  "generated": {
+    "far": {
+      "tiers": {
+        "high": [
+          1376,
+          768,
+          675
+        ]
+      },
+      "avg": "#221922"
+    },
+    "fx_throne": {
+      "tiers": {
+        "high": [
+          1376,
+          768,
+          801
+        ]
+      },
+      "avg": "#392624"
+    },
+    "var_b": {
+      "tiers": {
+        "high": [
+          1376,
+          768,
+          728
+        ]
+      },
+      "avg": "#301f2e"
+    }
+  }
+}

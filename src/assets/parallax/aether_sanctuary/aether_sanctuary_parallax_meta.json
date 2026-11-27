@@ -1,0 +1,146 @@
+{
+  "worldId": "aether_sanctuary",
+  "placeholder": {
+    "top": "#0f172a",
+    "bottom": "#1e3a8a",
+    "silhouette": "#143a82"
+  },
+  "layers": {
+    "far": {
+      "band": "far",
+      "depth": 0.08,
+      "speed": [
+        0.04,
+        0.02
+      ],
+      "opaque": true,
+      "fit": "cover",
+      "overscan": [
+        1.06,
+        1.03
+      ]
+    },
+    "var_a": {
+      "band": "mid_far",
+      "depth": 0.24,
+      "speed": [
+        0.18,
+        0.07
+      ],
+      "tiling": "repeat"
+    },
+    "var_b": {
+      "band": "mid",
+      "depth": 0.45,
+      "speed": [
+        0.36,
+        0.12
+      ],
+      "tiling": "repeat"
+    },
+    "var_c": {
+      "band": "mid_close",
+      "depth": 0.65,
+      "speed": [
+        0.56,
+        0.18
+      ],
+      "tiling": "mirror"
+    },
+    "var_d": {
+      "band": "close",
+      "depth": 0.86,
+      "speed": [
+        0.78,
+        0.24
+      ],
+      "tiling": "mirror"
+    }
+  },
+  "effects": {
+    "sigil": {
+      "kind": "image",
+      "band": "mid_close",
+      "source": "_shared:fx_sigil",
+      "depth": 0.72,
+      "speed": [
+        0.44,
+        0.14
+      ],
+      "opacity": 0.74,
+      "blend": "screen"
+    }
+  },
+  "generated": {
+    "far": {
+      "tiers": {
+        "high": [
+          2048,
+          768,
+          1879
+        ]
+      },
+      "avg": "#143a82"
+    },
+    "var_a": {
+      "tiers": {
+        "high": [
+          2172,
+          724,
+          823
+        ]
+      },
+      "seam": [
+        0,
+        7.5,
+        "pass"
+      ],
+      "avg": "#3353a8"
+    },
+    "var_b": {
+      "tiers": {
+        "high": [
+          2172,
+          724,
+          1234
+        ]
+      },
+      "seam": [
+        0,
+        10,
+        "pass"
+      ],
+      "avg": "#24458d"
+    },
+    "var_c": {
+      "tiers": {
+        "high": [
+          2172,
+          724,
+          1093
+        ]
+      },
+      "seam": [
+        27.2,
+        8.5,
+        "warn"
+      ],
+      "avg": "#462114"
+    },
+    "var_d": {
+      "tiers": {
+        "high": [
+          2172,
+          724,
+          1900
+        ]
+      },
+      "seam": [
+        36.8,
+        5.8,
+        "warn"
+      ],
+      "avg": "#2256ee"
+    }
+  }
+}
