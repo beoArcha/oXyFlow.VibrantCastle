@@ -15,20 +15,49 @@
   },
   "anchor": {
     "x": 0.5,
-    "y": 1.0
+    "y": 1
   },
   "layout": {
-    "bodyBox": { "x": 0.0208, "y": 0.1875, "w": 0.9583, "h": 0.78125 },
-    "idle": { "row": 0, "startCol": 0, "frames": 6, "widthCells": 1 },
-    "active": { "row": 1, "startCol": 0, "frames": 6, "widthCells": 1 }
+    "bodyBox": {
+      "x": 0.0208,
+      "y": 0.1875,
+      "w": 0.9583,
+      "h": 0.78125
+    },
+    "idle": {
+      "row": 0,
+      "startCol": 0,
+      "frames": 6,
+      "widthCells": 1
+    },
+    "active": {
+      "row": 1,
+      "startCol": 0,
+      "frames": 6,
+      "widthCells": 1
+    }
   },
   "animations": {
-    "idle": { "row": 0, "frames": 6, "fps": 6, "loop": true },
-    "active": { "row": 1, "frames": 6, "fps": 10, "loop": true }
+    "idle": {
+      "row": 0,
+      "frames": 6,
+      "fps": 6,
+      "loop": true
+    },
+    "active": {
+      "row": 1,
+      "frames": 6,
+      "fps": 10,
+      "loop": true
+    }
   },
   "states": {
-    "idle": { "animation": "idle" },
-    "active": { "animation": "active" }
+    "idle": {
+      "animation": "idle"
+    },
+    "active": {
+      "animation": "active"
+    }
   },
   "infoFrames": {
     "default": 0,
@@ -42,5 +71,25 @@
   "constraints": {
     "strictGrid": true,
     "fixedBaseline": true
+  },
+  "variants": {
+    "low": {
+      "cellWidth": 96,
+      "cellHeight": 32,
+      "scale": 0.5,
+      "file": "hazard_thorns_hi8bit.svg"
+    },
+    "mid": {
+      "cellWidth": 192,
+      "cellHeight": 64,
+      "scale": 1,
+      "file": "hazard_thorns_hi16bit.svg"
+    },
+    "high": {
+      "cellWidth": 192,
+      "cellHeight": 64,
+      "scale": 1,
+      "file": "hazard_thorns_high.png"
+    }
   }
 }

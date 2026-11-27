@@ -217,7 +217,7 @@ describe("AtlasSpriteRenderer with real metas", () => {
       id: "training_dummy",
       category: "enemy",
       dir: "enemies",
-      animations: ["idle", "hit", "destroy"],
+      animations: ["idle", "hit", "broken"],
       expectFreeformTracks: true,
     },
     {

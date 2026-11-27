@@ -41,9 +41,11 @@ export function defineEnemySprite(def: EnemySpriteDefinition): EnemySpriteDefini
   if (!cells.every((cell) => Number.isInteger(cell) && cell >= 16)) {
     throw spriteError(`Sprite "${id}" cellScale ${def.cellScale} must give whole-pixel cells (try 1 or 1.5).`, { id });
   }
-  for (const name of ANIMATION_ORDER) checkAnimation(id, name, def.animations[name]);
-  for (const required of ["idle", "move", "hit"] as const) {
-    if (!def.animations[required]) throw spriteError(`Sprite "${id}" must define animation "${required}".`, { id });
+  const order = def.animationOrder ?? ANIMATION_ORDER;
+  for (const name of order) checkAnimation(id, name, def.animations[name]);
+  const required = def.animationOrder ?? (["idle", "move", "hit"] as const);
+  for (const name of required) {
+    if (!def.animations[name]) throw spriteError(`Sprite "${id}" must define animation "${name}".`, { id });
   }
   if (typeof def.draw?.hi8bit !== "function" || typeof def.draw?.hi16bit !== "function") {
     throw spriteError(`Sprite "${id}" needs both draw.hi8bit and draw.hi16bit functions.`, { id });

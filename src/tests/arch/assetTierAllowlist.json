@@ -23,9 +23,6 @@
   "enemies/clockwork_automaton": [
     "high"
   ],
-  "enemies/clockwork_owl_gargoyle": [
-    "hi16bit"
-  ],
   "enemies/court_sentinel": [
     "high"
   ],
@@ -40,18 +37,6 @@
   ],
   "enemies/thorn_creeper": [
     "high"
-  ],
-  "enemies/training_dummy": [
-    "hi16bit"
-  ],
-  "structures/chrono_lever": [
-    "hi16bit"
-  ],
-  "structures/grand_portcullis": [
-    "hi16bit"
-  ],
-  "structures/hazard_thorns": [
-    "hi16bit"
   ],
   "props/aether_crystal_cluster": [
     "high"

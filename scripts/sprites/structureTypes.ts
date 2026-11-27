@@ -21,7 +21,11 @@ export interface StructureCellSize {
   height: number;
 }
 
-export type StructurePixelDrawFn = (c: PixelCanvas, anim: StructureAnimationName, frame: number) => void;
+export type StructurePixelDrawFn<A extends string = StructureAnimationName> = (
+  c: PixelCanvas,
+  anim: A,
+  frame: number,
+) => void;
 
 /**
  * High-resolution RGBA buffer for painterly pixel-art frames with alpha dithering and glow.
@@ -65,25 +69,43 @@ export class RgbaFrameBuffer {
   }
 }
 
-export type StructureHighDrawFn = (buf: RgbaFrameBuffer, anim: StructureAnimationName, frame: number) => void;
+export type StructureHighDrawFn<A extends string = StructureAnimationName> = (
+  buf: RgbaFrameBuffer,
+  anim: A,
+  frame: number,
+) => void;
 
-export interface StructureSpriteDefinition {
+export interface StructureSpriteDefinition<A extends string = StructureAnimationName> {
   id: string;
   description: string;
   hitbox: { width: number; height: number };
+  /** Output asset folder category; defaults to "structures". */
+  assetCategory?: "structures" | "enemies";
+  /** When true, preserves the existing `_high.png` on disk instead of generating one. */
+  pngBacked?: boolean;
+  /** When true, allows a transparent margin below the sprite instead of requiring floor contact at y=height-1. */
+  allowBottomMargin?: boolean;
+  /** Optional explicit sheet column count when an existing meta has a fixed grid. */
+  columns?: number;
+  /** Optional row order for structures whose states differ from the default gate set. */
+  animationOrder?: readonly A[];
+  /** Optional existing meta document to preserve while updating variants/states/bodyBox. */
+  baseMeta?: Record<string, unknown>;
+  /** Optional state aliases merged onto baseMeta.states. */
+  metaStates?: Record<string, { animation: string }>;
   cellSize: {
     hi8bit: StructureCellSize;
     hi16bit: StructureCellSize;
     high: StructureCellSize;
   };
-  animations: Record<StructureAnimationName, StructureAnimationSpec>;
-  states: Record<string, { animation: StructureAnimationName }>;
+  animations: Record<A, StructureAnimationSpec>;
+  states: Record<string, { animation: string }>;
   infoFrames?: Record<string, number>;
   interaction?: Record<string, unknown>;
   render?: { layer: string; zIndex: number; blend: string };
   draw: {
-    hi8bit: StructurePixelDrawFn;
-    hi16bit: StructurePixelDrawFn;
-    high: StructureHighDrawFn;
+    hi8bit(c: PixelCanvas, anim: A, frame: number): void;
+    hi16bit(c: PixelCanvas, anim: A, frame: number): void;
+    high?(buf: RgbaFrameBuffer, anim: A, frame: number): void;
   };
 }
