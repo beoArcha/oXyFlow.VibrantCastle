@@ -30,6 +30,8 @@ export interface GamepadBindingMap {
 }
 
 export type { AssetQuality };
+export type ParallaxQuality = "auto" | "high" | "mid" | "low" | "simplified" | "off";
+export type ResolvedParallaxQuality = Exclude<ParallaxQuality, "auto">;
 export type AspectRatioMode = "16:10" | "16:9" | "4:3" | "auto";
 export type ScalingFilterMode = "smooth" | "pixel";
 export type TargetFps = 30 | 60 | 90 | 120;
@@ -38,6 +40,7 @@ export interface DisplaySettings {
   aspectRatio: AspectRatioMode;
   scalingFilter: ScalingFilterMode;
   assetQuality: AssetQuality;
+  parallaxQuality: ParallaxQuality;
   targetFps: TargetFps;
   showFpsCounter?: boolean;
   hardwareAcceleration?: boolean;

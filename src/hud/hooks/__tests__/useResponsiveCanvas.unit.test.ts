@@ -9,6 +9,7 @@ describe("useResponsiveCanvas Hook", () => {
     aspectRatio: "16:9",
     scalingFilter: "pixel",
     assetQuality: "high",
+    parallaxQuality: "auto",
     targetFps: 60,
     showFpsCounter: false,
     hardwareAcceleration: true,

@@ -29,6 +29,7 @@ export const DisplayTab = ({ className }: DisplayTabProps = {}): React.ReactElem
       aspectRatio: DEFAULT_SETTINGS.display.aspectRatio,
       scalingFilter: DEFAULT_SETTINGS.display.scalingFilter,
       assetQuality: DEFAULT_SETTINGS.display.assetQuality,
+      parallaxQuality: DEFAULT_SETTINGS.display.parallaxQuality,
       targetFps: DEFAULT_SETTINGS.display.targetFps,
       showFpsCounter: DEFAULT_SETTINGS.display.showFpsCounter,
     });

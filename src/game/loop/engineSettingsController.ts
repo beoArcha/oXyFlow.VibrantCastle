@@ -2,6 +2,8 @@ import {
   GameSettings,
   TargetFps,
   AssetQuality,
+  ParallaxQuality,
+  ResolvedParallaxQuality,
   AspectRatioMode,
   ScalingFilterMode,
   SupportedLanguage,
@@ -10,6 +12,7 @@ import { GameAudioEngine } from "@game/engine/audioEngine";
 import { INarrationSystem } from "@game/engine/narrationSystem";
 import { fpsManager } from "@game/engine/fpsManager";
 import type { ISpriteSourceFactory } from "@game/engine/sprites";
+import { resolveParallaxQuality } from "@game/parallax/parallaxQualityHeuristic";
 import defaultSettingsJson from "@data/defaults/defaultSettings.json";
 
 export interface IEngineSettingsContext {
@@ -29,8 +32,11 @@ export interface IEngineSettingsContext {
  */
 export class EngineSettingsController {
   public readonly settings: GameSettings;
+  private resolvedParallaxQuality: ResolvedParallaxQuality;
 
   constructor(private readonly context: IEngineSettingsContext) {
+    const initialParallaxQuality =
+      (defaultSettingsJson.display.parallaxQuality as ParallaxQuality) || "auto";
     this.settings = {
       language: defaultSettingsJson.language as SupportedLanguage,
       volumeMusic: defaultSettingsJson.volumeMusic,
@@ -41,12 +47,18 @@ export class EngineSettingsController {
         aspectRatio: defaultSettingsJson.display.aspectRatio as AspectRatioMode,
         scalingFilter: defaultSettingsJson.display.scalingFilter as ScalingFilterMode,
         assetQuality: defaultSettingsJson.display.assetQuality as AssetQuality,
+        parallaxQuality: initialParallaxQuality,
         hardwareAcceleration: defaultSettingsJson.display.hardwareAcceleration,
         targetFps: (defaultSettingsJson.display.targetFps as TargetFps) || 60,
         showFpsCounter: !!defaultSettingsJson.display.showFpsCounter,
       },
     };
+    this.resolvedParallaxQuality = resolveParallaxQuality(initialParallaxQuality);
     this.context.spriteSources.setQuality(this.settings.display.assetQuality);
+  }
+
+  public getResolvedParallaxQuality(): ResolvedParallaxQuality {
+    return this.resolvedParallaxQuality;
   }
 
   public setLanguage(lang: SupportedLanguage): void {
@@ -122,6 +134,9 @@ export class EngineSettingsController {
     }
     if (display.assetQuality !== undefined) {
       this.context.spriteSources.setQuality(display.assetQuality);
+    }
+    if (display.parallaxQuality !== undefined) {
+      this.resolvedParallaxQuality = resolveParallaxQuality(display.parallaxQuality);
     }
     this.settings.display = { ...this.settings.display, ...display };
   }
