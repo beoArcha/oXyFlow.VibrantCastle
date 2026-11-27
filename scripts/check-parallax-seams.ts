@@ -4,7 +4,7 @@ import { join, relative, sep } from "node:path";
 import { decodePngFile } from "./lib/png";
 import { measureHorizontalSeam, seamVerdict, type SeamVerdict } from "./parallax/seamMetrics";
 
-const BG_ROOT = fileURLToPath(new URL("../src/assets/bg", import.meta.url));
+const BG_ROOT = fileURLToPath(new URL("../src/assets/parallax", import.meta.url));
 
 function collectPngs(dir: string): string[] {
   const files: string[] = [];
