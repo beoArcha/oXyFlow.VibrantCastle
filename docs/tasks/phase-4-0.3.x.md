@@ -343,6 +343,60 @@ The result: red tests and CI, levers that no longer opened gates, broken hero an
 
 ---
 
+## P. Parallax series (owner request, 2026-11-27)
+
+Target layer model per world: **1 far background + 3 standard mid/close variations (up to 5) + zone layers** (boss, rest, other zones), where a zone swaps the last (closest) layer for a slightly different variant. Assets come in low / mid / high PNG plus a "no parallax / simplified placeholder" mode, and load progressively (far first, then mid, close, effects). Order of work: P1 review and taxonomy first, then refactor, loading, tiers, measurement and optimisation rounds, with new art last.
+
+### VC-100 · Parallax engine review and asset taxonomy
+- **Phase:** 4 · **Type:** review · **Class:** large · **Status:** in-progress
+- **Goal:** a written review of the parallax engine (SOLID, DRY, single place, DI, registry) and the target naming / meta / registry taxonomy for the layer model above.
+- **How (AI):** read `src/game/locations/parallaxLayerRegistry.ts`, `src/game/renderer/parallax*`, the location JSONs and the assets; write `docs/design/parallax.md` with findings, the taxonomy (file names, meta schema, registry keys, zone rules), a migration plan and the cut into PRs for VC-101..VC-109.
+
+### VC-101 · Parallax asset naming, meta files and registry migration
+- **Phase:** 4 · **Type:** refactor · **Class:** medium · **Status:** blocked (VC-100)
+- **Goal:** every parallax asset follows the VC-100 taxonomy: 8 world far backgrounds, 3-5 mid/close variations per world, zone variants of the closest layer; meta files and registry keys renamed consistently; code and tests updated.
+- **How (AI):** rename files and metas with a script (no manual drift), update `parallaxLayerRegistry.ts` and location JSON layer keys, keep `parallaxFiles` / `locationBlueprints` arch tests green, add a taxonomy arch test.
+
+### VC-102 · Parallax engine refactor (SOLID, DRY, DI, single registry)
+- **Phase:** 4 · **Type:** refactor · **Class:** medium · **Status:** blocked (VC-100)
+- **Goal:** one parallax module with an injected registry and loader, no duplicated resolution logic, renderer free of asset lookups.
+- **How (AI):** apply the VC-100 findings in small PRs; behaviour-preserving; unit tests per unit; headless screenshot comparison before/after.
+
+### VC-103 · Zone-aware parallax (boss, rest and other zones)
+- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** blocked (VC-101, VC-102)
+- **Goal:** map zones (boss, rest, others) switch the closest parallax layer to its zone variant with a smooth transition.
+- **How (AI):** zone definitions in location JSON per the map contract, a zone resolver in the registry, crossfade in the renderer, tests and a screenshot strip.
+
+### VC-104 · Progressive loading of parallax layers and effects
+- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** blocked (VC-102)
+- **Goal:** parallax assets and effects load one after another (far, mid, close, effects) with a placeholder until ready; no blocking of the first frame.
+- **How (AI):** a prioritised loader queue with `ImageBitmap` decoding, placeholder colours from the far layer meta, tests with fake loaders, measured time-to-first-frame.
+
+### VC-105 · Parallax quality tiers: low / mid / high PNG and off / simplified
+- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** blocked (VC-101)
+- **Goal:** each layer has low / mid / high PNG; a setting chooses tier or "parallax off / simplified placeholder"; automatic fallback on weak devices.
+- **How (AI):** tier resolution in the registry, a Display setting, default by device capability, tests.
+
+### VC-106 · Parallax performance test harness
+- **Phase:** 4 · **Type:** test · **Class:** medium · **Status:** todo
+- **Goal:** repeatable measurements (frame time p50/p95, dropped frames, memory, load time) per map and tier, runnable locally and in CI with budgets.
+- **How (AI):** headless Playwright runs with a scripted camera path; JSON report and a budget check; baseline numbers stored in the repo.
+
+### VC-107 · Visual "wow" review tooling (MCP / headless screenshots)
+- **Phase:** 4 · **Type:** test · **Class:** medium · **Status:** todo
+- **Goal:** a repeatable visual review of parallax depth and atmosphere: screenshot and short-clip strips per map, tier and viewport (desktop, laptop, tablet), for the orchestrator's and owner's judgement.
+- **How (AI):** a script producing a contact sheet / gallery page per run; optional MCP browser use for interactive checks.
+
+### VC-108 · Parallax optimisation rounds (browsers, systems, devices)
+- **Phase:** 4 · **Type:** feat · **Class:** medium · **Status:** blocked (VC-106)
+- **Goal:** meet the budgets on Chromium, Firefox and WebKit, on desktop, laptop and tablet profiles.
+- **How (AI):** round 1 desktop Chromium; round 2 Firefox and WebKit; round 3 tablet / low-power (CPU throttling, DPR, reduced layers). Each round: measure with VC-106, change, re-measure, report.
+
+### VC-109 · New parallax art: low / mid / high PNG per the taxonomy
+- **Phase:** 4 · **Type:** art · **Class:** medium · **Status:** blocked (VC-100, VC-105)
+- **Goal:** missing far / variation / zone layers generated for all 8 worlds in low, mid and high PNG, plus simplified placeholders; consistent with the lore world dossiers.
+- **How (AI):** one world per task; generate, slice to the taxonomy sizes, run the seam checker, review contact sheets before merge.
+
 ## Z. Phase gate
 
 ### VC-090 · Phase 4 quality gate and 0.4.0
