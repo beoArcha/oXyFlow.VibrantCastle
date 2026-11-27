@@ -8,6 +8,21 @@ export interface CameraState {
 }
 
 /**
+ * Vertical lerp factor that ramps linearly from `baseFactor` (at zero distance)
+ * to `catchUpFactor` (at `catchUpDistance` or more). Continuous, so there is no
+ * step when the vertical gap crosses a threshold.
+ */
+export function verticalLerpFactor(
+  verticalDelta: number,
+  baseFactor: number,
+  catchUpFactor: number,
+  catchUpDistance: number
+): number {
+  const progress = Math.min(1, Math.abs(verticalDelta) / catchUpDistance);
+  return baseFactor + (catchUpFactor - baseFactor) * progress;
+}
+
+/**
  * Manages viewport tracking, bounds clamping, lerping, and screen shake effects.
  * Completely decouples camera logic from drawing.
  */
@@ -17,6 +32,8 @@ export class CameraManager {
   private targetX: number = 0;
   private targetY: number = 0;
   private lerpFactor: number = 0.08;
+  private verticalCatchUpFactor: number = 0.14;
+  private verticalCatchUpDistance: number = 180;
 
   // Screen shake state
   private shakeTime: number = 0;
@@ -47,8 +64,12 @@ export class CameraManager {
     }
 
     // Smooth lerp (slightly more responsive on Y when traversing tall vertical shafts)
-    const verticalDelta = Math.abs(this.targetY - this.y);
-    const verticalLerp = verticalDelta > 90 ? 0.14 : 0.1;
+    const verticalLerp = verticalLerpFactor(
+      this.targetY - this.y,
+      this.lerpFactor,
+      this.verticalCatchUpFactor,
+      this.verticalCatchUpDistance
+    );
     this.x += (this.targetX - this.x) * this.lerpFactor;
     this.y += (this.targetY - this.y) * verticalLerp;
 
