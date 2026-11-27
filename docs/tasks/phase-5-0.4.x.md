@@ -414,3 +414,37 @@ The cards are in sections B2 to I below.
 - **Phase:** 5 · **Type:** tune · **Class:** small · **Status:** todo
 - **Goal:** smoother mid-height hop modulation (`jumpHoldAcceleration`) and subtle camera lookahead so gaps and drops (`thorn_chasm`, `aether_sanctuary`) are visible before jumping.
 - **How (AI):** refine `jumpHoldAcceleration` / `maxJumpHoldDuration` in `PlayerKinematics` for linear short-to-medium hop control, add velocity/facing lookahead + subtle downward peek in `CameraManager`, and verify with unit tests and `validate-level.ts`.
+
+---
+
+## K. Playtest polish & UI/devtools fixes (from VC-089)
+
+### VC-190 · Sync initial player max HP/MP/Stamina with equipped starter gear
+- **Phase:** 5 · **Type:** fix · **Class:** small · **Status:** todo
+- **Goal:** HUD vitals and Inventory derived stats show identical max HP, Mana, and Stamina right from initial spawn.
+- **Description:** observed in VC-089 playtest: on fresh load in `courtyard`, the HUD shows `115 / 115` HP, `90 / 90` Mana, `115 / 115` Stamina while `InventoryStats` (`calculatePlayerDerivedStats`) displays `115 / 190`, `90 / 125`, `115 / 135`.
+- **How (AI):** call the derived-stats recomputation/sync on initial player creation or level reset in `src/game/` (keeping HP/MP/Stamina clamped to max) and add a unit test asserting HUD snapshot and `calculatePlayerDerivedStats` match on spawn.
+
+### VC-191 · Keep Inventory item inspector visible above the fold at 1280×800
+- **Phase:** 5 · **Type:** fix · **Class:** small · **Status:** todo
+- **Goal:** selecting an item in the Inventory keeps the inspector card, stat comparison deltas, and action buttons visible without manual scrolling at `1280×800`.
+- **Description:** observed in VC-089 (`13_inventory_compare.png`): inside `GameMenuDialog` (`h-[min(85vh,760px)]`), `InventoryItemDetails` sits partially below the fold at `1280×800`.
+- **How (AI):** tighten vertical spacing in `InventoryPanel` / `InventoryPaperdoll` / `InventoryQuickBelt` (or auto-scroll the inspector into view on selection) and verify with a `1280×800` headless screenshot.
+
+### VC-192 · Clean up raw hero id, duplicate vitals labels, and legacy P1 status title
+- **Phase:** 5 · **Type:** fix · **Class:** tiny · **Status:** todo
+- **Goal:** replace `P1 · valen` and duplicate progress-bar numbers in `DebugSubtab.tsx`, and replace `"Gracz 1 (Valen - Szkarłat)"` in `src/i18n/modules/hud.ts`.
+- **Description:** observed in VC-089 (`19_dev_debug.png` and `06_dialog_tab_character.png`): `DebugSubtab.tsx` prints the raw `player.characterId` and repeats HP/MP/SP text above and inside `ProgressBar`, while `p1Status` still says `"Valen - Szkarłat"`.
+- **How (AI):** resolve localized hero names in `DebugSubtab.tsx`, render each vitals readout once, update `p1Status` in `src/i18n/modules/hud.ts`, and update affected unit tests.
+
+### VC-193 · Throttle or downgrade `Quick potion slot 1 is empty` warning
+- **Phase:** 5 · **Type:** fix · **Class:** tiny · **Status:** todo
+- **Goal:** empty quick-potion slot lookups no longer flood the `Logi` ring buffer with repeated `WARN` entries.
+- **Description:** observed in VC-089 (`20_dev_logs.png`): `game:inventory` emits repeated `WARN Quick potion slot 1 is empty` records during gameplay/input checks.
+- **How (AI):** downgrade empty-slot attempts to `DEBUG` (or rate-limit per slot) in the inventory potion handler and add a unit test.
+
+### VC-194 · Deduplicate floating `Włącz Dźwięk` HUD pill against header audio toggle
+- **Phase:** 5 · **Type:** fix · **Class:** tiny · **Status:** todo
+- **Goal:** show only one audio-enable prompt in the header when audio is uninitialized, instead of both a header icon and a floating canvas pill.
+- **Description:** observed in VC-089 (`02_wiki_graj_frame.png`): both the top header audio icon (`#top-audio-btn`) and the floating `Włącz Dźwięk` button on the right HUD edge render simultaneously.
+- **How (AI):** remove the redundant floating canvas audio pill (or hide it when `#top-audio-btn` is present) and verify with a headless screenshot.
