@@ -225,7 +225,7 @@ Updated: 2026-11-27. Source: the regression audit of 2784276..c4758f3 against 81
 ## F. Docs, settings and controls
 
 ### VC-050 · Docs restore and update to the new direction
-- **Phase:** 4 · **Type:** doc · **Class:** medium · **Status:** in-progress (`AGENTS.md`, rules and README links done in VC-057)
+- **Phase:** 4 · **Type:** doc · **Class:** medium · **Status:** review (`AGENTS.md`, rules and README links done in VC-057)
 - **Goal:** lore and the system specs (old manifesto, except MASTERMAP) are back and current.
 - **Description:** the vision and gaps already live in `VISION.md` and `ROADMAP.md`. Do not restore MASTERMAP.
 - **How (AI):**
