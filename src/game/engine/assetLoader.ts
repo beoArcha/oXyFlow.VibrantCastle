@@ -161,23 +161,30 @@ export class AssetLoaderEngine {
       const img = new Image();
       img.crossOrigin = "anonymous";
       img.onload = () => {
-        this.loadPromises.delete(imageUrl);
-        if (this.discardOnLoad.delete(imageUrl)) {
-          img.onload = null;
-          img.onerror = null;
-          img.src = "";
+        const finalize = () => {
+          this.loadPromises.delete(imageUrl);
+          if (this.discardOnLoad.delete(imageUrl)) {
+            img.onload = null;
+            img.onerror = null;
+            img.src = "";
+            resolve(img);
+            return;
+          }
+          this.textureCache.set(imageUrl, img);
+          extractCharacterTextures(
+            this.characterRegistry.values(),
+            (id, quality, tier) => this.spriteSources.getCharacterVariant(id, tier, quality),
+            imageUrl,
+            img
+          );
+          this.notifyListeners();
           resolve(img);
-          return;
+        };
+        if (typeof img.decode === "function") {
+          img.decode().then(finalize, finalize);
+        } else {
+          finalize();
         }
-        this.textureCache.set(imageUrl, img);
-        extractCharacterTextures(
-          this.characterRegistry.values(),
-          (id, quality, tier) => this.spriteSources.getCharacterVariant(id, tier, quality),
-          imageUrl,
-          img
-        );
-        this.notifyListeners();
-        resolve(img);
       };
       img.onerror = (err) => {
         const assetError = new AssetError(

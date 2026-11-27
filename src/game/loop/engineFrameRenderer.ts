@@ -23,6 +23,12 @@ export interface IEngineFrameRenderHost {
   isPaused: boolean;
 }
 
+const FPS_INFO_BUFFER = {
+  targetFps: 60,
+  measuredFps: 60,
+  showFps: false,
+};
+
 /**
  * Executes decoupled Canvas 2D scene rendering pass with camera tracking and sub-pixel interpolation.
  */
@@ -47,6 +53,10 @@ export function renderEngineFrame(host: IEngineFrameRenderHost, interpolationAlp
     host.simulationTicks +
     (host.isPaused ? 0 : interpolationAlpha * (debugManager.state.timeScale || 1.0));
 
+  FPS_INFO_BUFFER.targetFps = fpsManager.getTargetFps();
+  FPS_INFO_BUFFER.measuredFps = fpsManager.getMeasuredFps();
+  FPS_INFO_BUFFER.showFps = !!host.settings.display.showFpsCounter;
+
   renderer.render(
     host.players,
     host.enemies,
@@ -59,10 +69,6 @@ export function renderEngineFrame(host: IEngineFrameRenderHost, interpolationAlp
     host.currentLocation,
     host.settings.language,
     continuousTick,
-    {
-      targetFps: fpsManager.getTargetFps(),
-      measuredFps: fpsManager.getMeasuredFps(),
-      showFps: !!host.settings.display.showFpsCounter,
-    }
+    FPS_INFO_BUFFER
   );
 }

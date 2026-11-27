@@ -29,6 +29,7 @@ import {
   resolveZoneInto,
 } from "../zones";
 import { ParallaxBackdropRenderer } from "./ParallaxBackdropRenderer";
+import { ParallaxSurfaceCache, type ParallaxSurfaceFactory } from "./ParallaxSurfaceCache";
 import { computeBossScopeIntensity } from "./bossZoneIntensity";
 import { defaultPlaceholderRenderer } from "./PlaceholderRenderer";
 import type {
@@ -93,6 +94,7 @@ export interface ParallaxSystemDeps {
   atmosphericRenderer?: ISectorAtmosphericRenderer;
   placeholderRenderer?: IPlaceholderRenderer;
   loadQueue?: IParallaxFadeQueue;
+  surfaceFactory?: ParallaxSurfaceFactory;
   parallaxQuality?: ResolvedParallaxQuality;
   now?: () => number;
   zoneCrossfadeDurationMs?: number;
@@ -153,6 +155,7 @@ export class ParallaxSystem implements IParallaxSystem {
   private readonly flags: IParallaxFlags;
   private readonly atmosphericRenderer: ISectorAtmosphericRenderer;
   private readonly placeholderRenderer: IPlaceholderRenderer;
+  private readonly surfaceCache: ParallaxSurfaceCache;
   private readonly backdropRenderer: ParallaxBackdropRenderer;
   private readonly loadQueue: IParallaxFadeQueue;
   private readonly useExplicitLoadQueue: boolean;
@@ -223,9 +226,11 @@ export class ParallaxSystem implements IParallaxSystem {
       deps.zonePreloadMarginPx !== undefined
         ? Math.max(0, deps.zonePreloadMarginPx)
         : DEFAULT_ZONE_PRELOAD_MARGIN_PX;
+    this.surfaceCache = new ParallaxSurfaceCache({ factory: deps.surfaceFactory });
     this.backdropRenderer = new ParallaxBackdropRenderer(
       (layer) => this.getImage(layer),
-      this.atmosphericRenderer
+      this.atmosphericRenderer,
+      this.surfaceCache
     );
   }
 
@@ -726,7 +731,8 @@ export class ParallaxSystem implements IParallaxSystem {
         viewportHeight,
         tickCount,
         fadeAlpha,
-        showWireframes
+        showWireframes,
+        this.surfaceCache
       );
     }
   }
@@ -776,7 +782,8 @@ export class ParallaxSystem implements IParallaxSystem {
         viewportHeight,
         tickCount,
         fadeAlpha * baseWeight,
-        showWireframes
+        showWireframes,
+        this.surfaceCache
       );
     }
 
@@ -794,7 +801,8 @@ export class ParallaxSystem implements IParallaxSystem {
         viewportHeight,
         tickCount,
         fadeAlpha * this.leavingZoneAlpha,
-        false
+        false,
+        this.surfaceCache
       );
     }
 
@@ -812,7 +820,8 @@ export class ParallaxSystem implements IParallaxSystem {
         viewportHeight,
         tickCount,
         fadeAlpha * this.activeZoneAlpha,
-        showWireframes && baseWeight <= 0.005
+        showWireframes && baseWeight <= 0.005,
+        this.surfaceCache
       );
     }
 
