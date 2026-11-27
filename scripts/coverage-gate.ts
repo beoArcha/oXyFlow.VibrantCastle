@@ -1,17 +1,22 @@
 #!/usr/bin/env bun
 /**
- * Vibrant Castle — LCOV Coverage Gate
- * Parses one or more LCOV files (unit + integration), deduplicates line hits per source file,
- * and enforces minimum line/function coverage thresholds for CI.
+ * Vibrant Castle — Per-Suite LCOV Coverage Gate
+ * Measures line coverage for the unit suite, the integration suite and their merged (combined)
+ * view, and enforces the per-suite minimums declared in scripts/coverage.json.
+ * Env overrides: COVERAGE_MIN_UNIT, COVERAGE_MIN_INTEGRATION, COVERAGE_MIN_COMBINED.
  */
 
-import { existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { appendFileSync, existsSync, readFileSync } from "node:fs";
+import { join, resolve } from "node:path";
 
 export interface FileCoverageRecord {
   readonly file: string;
   readonly lines: Map<number, number>;
   readonly functions: Map<string, number>;
+  /** Declared functions from FNF: (undefined when the report has no FNF line). */
+  functionsFound?: number;
+  /** Executed functions from FNH: (undefined when the report has no FNH line). */
+  functionsHit?: number;
 }
 
 export interface CoverageSummary {
@@ -25,15 +30,77 @@ export interface CoverageSummary {
 }
 
 export interface CoverageThresholds {
-  readonly minLinesPct: number;
-  readonly minFunctionsPct: number;
+  readonly unitMin: number;
+  readonly integrationMin: number;
+  readonly combinedMin: number;
 }
 
-export interface CoverageGateResult {
-  readonly summary: CoverageSummary;
+export interface CoverageSuites {
+  readonly unit: CoverageSummary | null;
+  readonly integration: CoverageSummary | null;
+  readonly combined: CoverageSummary;
+}
+
+export interface CoverageGateResult extends CoverageSuites {
   readonly thresholds: CoverageThresholds;
+  readonly unitPassed: boolean;
+  readonly integrationPassed: boolean;
+  readonly combinedPassed: boolean;
   readonly passed: boolean;
   readonly failures: readonly string[];
+}
+
+export const FALLBACK_THRESHOLDS: CoverageThresholds = {
+  unitMin: 60,
+  integrationMin: 40,
+  combinedMin: 80,
+};
+
+function numberOr(value: unknown, fallback: number): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+function envNumber(raw: string | undefined, fallback: number): number {
+  if (raw === undefined || raw.trim() === "") return fallback;
+  const parsed = Number(raw);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+/**
+ * Loads per-suite thresholds from scripts/coverage.json (falling back to FALLBACK_THRESHOLDS),
+ * then applies COVERAGE_MIN_* environment overrides.
+ */
+export function loadThresholdsConfig(
+  configPath?: string,
+  env: Record<string, string | undefined> = process.env
+): CoverageThresholds {
+  const candidates = [
+    configPath,
+    join(import.meta.dirname, "coverage.json"),
+    resolve(process.cwd(), "scripts", "coverage.json"),
+  ].filter((p): p is string => Boolean(p));
+
+  let base = FALLBACK_THRESHOLDS;
+  for (const candidate of candidates) {
+    if (!existsSync(candidate)) continue;
+    try {
+      const parsed = JSON.parse(readFileSync(candidate, "utf8")) as Record<string, unknown>;
+      base = {
+        unitMin: numberOr(parsed.unitMin, FALLBACK_THRESHOLDS.unitMin),
+        integrationMin: numberOr(parsed.integrationMin, FALLBACK_THRESHOLDS.integrationMin),
+        combinedMin: numberOr(parsed.combinedMin, FALLBACK_THRESHOLDS.combinedMin),
+      };
+      break;
+    } catch (err) {
+      console.warn(`[coverage-gate] Failed parsing config at ${candidate}:`, err);
+    }
+  }
+
+  return {
+    unitMin: envNumber(env.COVERAGE_MIN_UNIT, base.unitMin),
+    integrationMin: envNumber(env.COVERAGE_MIN_INTEGRATION, base.integrationMin),
+    combinedMin: envNumber(env.COVERAGE_MIN_COMBINED, base.combinedMin),
+  };
 }
 
 export function parseLcov(content: string): FileCoverageRecord[] {
@@ -58,6 +125,12 @@ export function parseLcov(content: string): FileCoverageRecord[] {
         const prev = current.lines.get(lineNum) ?? 0;
         current.lines.set(lineNum, prev + hits);
       }
+    } else if (line.startsWith("FNF:") && current) {
+      const found = Number(line.slice(4));
+      if (Number.isFinite(found)) current.functionsFound = found;
+    } else if (line.startsWith("FNH:") && current) {
+      const hit = Number(line.slice(4));
+      if (Number.isFinite(hit)) current.functionsHit = hit;
     } else if (line.startsWith("FNDA:") && current) {
       const commaIdx = line.indexOf(",");
       if (commaIdx > 5) {
@@ -81,6 +154,17 @@ export function parseLcov(content: string): FileCoverageRecord[] {
   return records;
 }
 
+function maxDefined(a: number | undefined, b: number | undefined): number | undefined {
+  if (a === undefined) return b;
+  if (b === undefined) return a;
+  return Math.max(a, b);
+}
+
+/**
+ * Merges records per source file (summing line hits) and computes the coverage summary.
+ * Function totals come from FNF/FNH per file; when the same file appears in several suites the
+ * max is kept, so declared functions are not double-counted in the combined view.
+ */
 export function mergeCoverageRecords(records: readonly FileCoverageRecord[]): CoverageSummary {
   const merged = new Map<string, FileCoverageRecord>();
 
@@ -91,6 +175,8 @@ export function mergeCoverageRecords(records: readonly FileCoverageRecord[]): Co
         file: rec.file,
         lines: new Map(rec.lines),
         functions: new Map(rec.functions),
+        functionsFound: rec.functionsFound,
+        functionsHit: rec.functionsHit,
       });
       continue;
     }
@@ -101,6 +187,8 @@ export function mergeCoverageRecords(records: readonly FileCoverageRecord[]): Co
     for (const [fnName, hits] of rec.functions.entries()) {
       existing.functions.set(fnName, (existing.functions.get(fnName) ?? 0) + hits);
     }
+    existing.functionsFound = maxDefined(existing.functionsFound, rec.functionsFound);
+    existing.functionsHit = maxDefined(existing.functionsHit, rec.functionsHit);
   }
 
   let linesFound = 0;
@@ -113,10 +201,9 @@ export function mergeCoverageRecords(records: readonly FileCoverageRecord[]): Co
       linesFound += 1;
       if (hits > 0) linesHit += 1;
     }
-    for (const hits of rec.functions.values()) {
-      functionsFound += 1;
-      if (hits > 0) functionsHit += 1;
-    }
+    // Prefer FNF/FNH; fall back to FNDA entries only when the report has no FNF/FNH lines.
+    functionsFound += rec.functionsFound ?? rec.functions.size;
+    functionsHit += rec.functionsHit ?? [...rec.functions.values()].filter((h) => h > 0).length;
   }
 
   const linePct = linesFound > 0 ? Number(((linesHit / linesFound) * 100).toFixed(2)) : 100;
@@ -134,82 +221,126 @@ export function mergeCoverageRecords(records: readonly FileCoverageRecord[]): Co
   };
 }
 
+/** Checks each measured suite's line coverage against its own minimum. Null suites are skipped. */
 export function evaluateCoverageGate(
-  summary: CoverageSummary,
+  suites: CoverageSuites,
   thresholds: CoverageThresholds
 ): CoverageGateResult {
   const failures: string[] = [];
 
-  if (summary.linePct < thresholds.minLinesPct) {
-    failures.push(
-      `Line coverage ${summary.linePct.toFixed(2)}% is below threshold ${thresholds.minLinesPct.toFixed(2)}%`
-    );
-  }
-  if (summary.functionsFound > 0 && summary.functionPct < thresholds.minFunctionsPct) {
-    failures.push(
-      `Function coverage ${summary.functionPct.toFixed(2)}% is below threshold ${thresholds.minFunctionsPct.toFixed(2)}%`
-    );
-  }
+  const check = (label: string, summary: CoverageSummary | null, min: number): boolean => {
+    if (!summary) return true;
+    if (summary.linePct < min) {
+      failures.push(
+        `${label} line coverage ${summary.linePct.toFixed(2)}% is below threshold ${min.toFixed(2)}%`
+      );
+      return false;
+    }
+    return true;
+  };
+
+  const unitPassed = check("Unit", suites.unit, thresholds.unitMin);
+  const integrationPassed = check("Integration", suites.integration, thresholds.integrationMin);
+  const combinedPassed = check("Combined", suites.combined, thresholds.combinedMin);
 
   return {
-    summary,
+    ...suites,
     thresholds,
-    passed: failures.length === 0,
+    unitPassed,
+    integrationPassed,
+    combinedPassed,
+    passed: unitPassed && integrationPassed && combinedPassed,
     failures,
   };
 }
 
-const DEFAULT_LCOV_PATHS = [
-  "coverage/unit/lcov.info",
-  "coverage/integration/lcov.info",
-];
+function formatRow(label: string, summary: CoverageSummary | null, min: number, passed: boolean): string {
+  if (!summary) return `| ${label} | n/a | ${min}% | ⏭️ SKIPPED |`;
+  return `| ${label} | ${summary.linePct.toFixed(2)}% | ${min}% | ${passed ? "✅ PASS" : "❌ FAIL"} |`;
+}
+
+export function formatCoverageMarkdown(result: CoverageGateResult): string {
+  const t = result.thresholds;
+  return [
+    "## 🛡️ Test Suite Coverage Gate Report",
+    "",
+    "| Suite | Line coverage | Minimum | Status |",
+    "| --- | --- | --- | --- |",
+    formatRow("🧪 **Unit Tests**", result.unit, t.unitMin, result.unitPassed),
+    formatRow("🔌 **Integration Tests**", result.integration, t.integrationMin, result.integrationPassed),
+    formatRow("🌐 **Combined Coverage**", result.combined, t.combinedMin, result.combinedPassed),
+    "",
+    result.passed ? "**Quality Gate Passed** ✅" : "**Quality Gate Failed** ❌",
+    "",
+  ].join("\n");
+}
+
+const DEFAULT_UNIT_LCOV = "coverage/unit/lcov.info";
+const DEFAULT_INTEGRATION_LCOV = "coverage/integration/lcov.info";
+
+function loadSuiteRecords(relPath: string): FileCoverageRecord[] | null {
+  const absPath = resolve(process.cwd(), relPath);
+  if (!existsSync(absPath)) return null;
+  return parseLcov(readFileSync(absPath, "utf8"));
+}
 
 if (import.meta.main) {
   const args = process.argv.slice(2);
   const allowMissing = args.includes("--allow-missing");
-  const customPaths = args.filter((a) => !a.startsWith("--"));
-  const pathsToRead = customPaths.length > 0 ? customPaths : DEFAULT_LCOV_PATHS;
+  const positional = args.filter((a) => !a.startsWith("--"));
+  const unitPath = positional[0] ?? DEFAULT_UNIT_LCOV;
+  const integrationPath = positional[1] ?? DEFAULT_INTEGRATION_LCOV;
 
-  const rootDir = process.cwd();
-  const loadedRecords: FileCoverageRecord[] = [];
-  let filesFoundCount = 0;
+  const unitRecords = loadSuiteRecords(unitPath);
+  const integrationRecords = loadSuiteRecords(integrationPath);
 
-  for (const relPath of pathsToRead) {
-    const absPath = resolve(rootDir, relPath);
-    if (existsSync(absPath)) {
-      filesFoundCount += 1;
-      const content = readFileSync(absPath, "utf8");
-      loadedRecords.push(...parseLcov(content));
-    }
-  }
+  const missing = [
+    unitRecords === null ? `unit (${unitPath})` : null,
+    integrationRecords === null ? `integration (${integrationPath})` : null,
+  ].filter((m): m is string => m !== null);
 
-  if (filesFoundCount === 0) {
-    const message = `No LCOV files found at: ${pathsToRead.join(", ")}. Run test:unit:coverage first.`;
-    if (allowMissing) {
-      console.warn(`[coverage-gate] WARN: ${message}`);
-      process.exit(0);
-    }
-    console.error(`[coverage-gate] ERROR: ${message}`);
+  if (missing.length === 2 || (missing.length === 1 && !allowMissing)) {
+    console.error(
+      `[coverage-gate] ERROR: Missing LCOV for ${missing.join(" and ")}. Run test:unit:coverage and test:integration:coverage first.`
+    );
     process.exit(1);
   }
+  if (missing.length === 1) {
+    console.warn(`[coverage-gate] WARN: Missing LCOV for ${missing[0]}; that suite is skipped.`);
+  }
 
-  const minLinesPct = Number(process.env.COVERAGE_MIN_LINES ?? "35");
-  const minFunctionsPct = Number(process.env.COVERAGE_MIN_FUNCTIONS ?? "30");
+  const unitSummary = unitRecords ? mergeCoverageRecords(unitRecords) : null;
+  const integrationSummary = integrationRecords ? mergeCoverageRecords(integrationRecords) : null;
+  const combinedSummary = mergeCoverageRecords([...(unitRecords ?? []), ...(integrationRecords ?? [])]);
 
-  const summary = mergeCoverageRecords(loadedRecords);
-  const result = evaluateCoverageGate(summary, {
-    minLinesPct: Number.isFinite(minLinesPct) ? minLinesPct : 35,
-    minFunctionsPct: Number.isFinite(minFunctionsPct) ? minFunctionsPct : 30,
-  });
+  const result = evaluateCoverageGate(
+    { unit: unitSummary, integration: integrationSummary, combined: combinedSummary },
+    loadThresholdsConfig()
+  );
 
   console.log("=== Vibrant Castle Coverage Gate ===");
-  console.log(`Files measured : ${summary.filesCount}`);
-  console.log(
-    `Lines covered  : ${summary.linesHit}/${summary.linesFound} (${summary.linePct.toFixed(2)}% | min ${result.thresholds.minLinesPct}%)`
-  );
-  console.log(
-    `Functions cov. : ${summary.functionsHit}/${summary.functionsFound} (${summary.functionPct.toFixed(2)}% | min ${result.thresholds.minFunctionsPct}%)`
-  );
+  const rows = [
+    ["Unit", unitSummary, result.thresholds.unitMin],
+    ["Integration", integrationSummary, result.thresholds.integrationMin],
+    ["Combined", combinedSummary, result.thresholds.combinedMin],
+  ] as const;
+  for (const [label, summary, min] of rows) {
+    if (!summary) {
+      console.log(`${label.padEnd(12)}: SKIPPED (no LCOV)`);
+      continue;
+    }
+    console.log(
+      `${label.padEnd(12)}: lines ${summary.linesHit}/${summary.linesFound} (${summary.linePct.toFixed(2)}% | min ${min}%) | functions ${summary.functionPct.toFixed(2)}%`
+    );
+  }
+
+  if (process.env.GITHUB_STEP_SUMMARY) {
+    try {
+      appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${formatCoverageMarkdown(result)}\n`);
+    } catch (err) {
+      console.warn("[coverage-gate] Could not write step summary:", err);
+    }
+  }
 
   if (!result.passed) {
     for (const failure of result.failures) {

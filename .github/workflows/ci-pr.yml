@@ -25,17 +25,43 @@ jobs:
       - name: Run TypeScript typecheck
         run: bun run typecheck
 
-  unit-tests:
-    name: Unit Tests
+  unit-coverage:
+    name: Unit Tests + Coverage
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Bun & dependencies
         uses: ./.github/actions/setup-bun-cached
-      - name: Run unit tests
-        run: bun run test:unit
+      - name: Run unit tests with LCOV coverage
+        run: bun run test:unit:coverage
+      - name: Upload unit coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-unit
+          path: coverage/unit
+          retention-days: 3
+          if-no-files-found: warn
+
+  integration-coverage:
+    name: Integration Tests + Coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Bun & dependencies
+        uses: ./.github/actions/setup-bun-cached
+      - name: Run integration tests with LCOV coverage
+        run: bun run test:integration:coverage
+      - name: Upload integration coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-integration
+          path: coverage/integration
+          retention-days: 3
+          if-no-files-found: warn
 
   arch-and-levels:
     name: Architecture, Levels & Scripts
@@ -52,6 +78,33 @@ jobs:
         run: bun scripts/validate-level.ts --all
       - name: Run script unit tests
         run: bun run test:scripts
+
+  coverage-gate:
+    name: Coverage Gate
+    needs:
+      - unit-coverage
+      - integration-coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Bun & dependencies
+        uses: ./.github/actions/setup-bun-cached
+      - name: Download unit coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-unit
+          path: coverage/unit
+        continue-on-error: true
+      - name: Download integration coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-integration
+          path: coverage/integration
+        continue-on-error: true
+      - name: Evaluate coverage gate
+        run: bun run coverage:gate
 
   quick-build:
     name: Quick Client Build
