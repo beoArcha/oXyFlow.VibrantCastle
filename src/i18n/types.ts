@@ -238,6 +238,8 @@ export interface SettingsControlsI18n {
   resetDefaultBindings: string;
   confirmResetControls: string;
   confirmResetControlsPrompt: string;
+  confirmResetControlsAction: string;
+  confirmResetAllControlsPrompt: string;
   remapKey: string;
   rebindTitle: string;
   rebindPrompt: string;
@@ -248,6 +250,16 @@ export interface SettingsControlsI18n {
   noGamepadDetected: string;
   remapGamepadPrompt: string;
   lastPressedButton: string;
+  gamepadBtnA: string;
+  gamepadBtnB: string;
+  gamepadBtnX: string;
+  gamepadBtnY: string;
+  gamepadBtnLB: string;
+  gamepadBtnRB: string;
+  gamepadBtnLT: string;
+  gamepadBtnRT: string;
+  gamepadLayoutHint: string;
+  gamepadButtonNotBindable: string;
   p1Controls: string;
   p2Controls: string;
   movement: string;
